@@ -1,0 +1,111 @@
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\csc.exe
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.CodeAnalysis.dll
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.CSharp.Core.targets
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\System.Collections.Immutable.dll
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\System.Reflection.Metadata.dll
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\vbc.exe
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\VBCSCompiler.exe
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\VBCSCompiler.exe.config
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\SweetSpotDiscountGolfPOS.dll.config
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\SweetSpotDiscountGolfPOS.dll
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\SweetSpotDiscountGolfPOS.pdb
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\obj\x86\Debug\SweetSpotDiscountGolfPOS.dll
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\obj\x86\Debug\SweetSpotDiscountGolfPOS.pdb
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\EPPlus.dll
+C:\Users\tyler\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\EPPlus.xml
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\csc.exe
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.CodeAnalysis.dll
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.CSharp.Core.targets
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\System.Collections.Immutable.dll
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\System.Reflection.Metadata.dll
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\vbc.exe
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\VBCSCompiler.exe
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\VBCSCompiler.exe.config
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\SweetSpotDiscountGolfPOS.dll.config
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\SweetSpotDiscountGolfPOS.dll
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\SweetSpotDiscountGolfPOS.pdb
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\EPPlus.dll
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\EPPlus.xml
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\obj\x86\Debug\SweetSpotDiscountGolfPOS.dll
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\obj\x86\Debug\SweetSpotDiscountGolfPOS.pdb
+C:\Users\Carlo Berardi\Desktop\Production - 4.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\obj\x86\Debug\SweetSpotDiscountGolfPOS.csprojResolveAssemblyReference.cache
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\csc.exe
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.CodeAnalysis.dll
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.CSharp.Core.targets
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\System.Collections.Immutable.dll
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\System.Reflection.Metadata.dll
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\vbc.exe
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\VBCSCompiler.exe
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\roslyn\VBCSCompiler.exe.config
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\SweetSpotDiscountGolfPOS.dll.config
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\SweetSpotDiscountGolfPOS.dll
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\SweetSpotDiscountGolfPOS.pdb
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\EPPlus.dll
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\EPPlus.xml
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\obj\x86\Debug\SweetSpotDiscountGolfPOS.csproj.CoreCompileInputs.cache
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\obj\x86\Debug\SweetSpotDiscountGolfPOS.dll
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\obj\x86\Debug\SweetSpotDiscountGolfPOS.pdb
+C:\Users\tyler\Desktop\Production - 4.5.5\SweetSpotDiscountGolfPOS\SweetSpotDiscountGolfPOS\obj\x86\Debug\SweetSpotDiscountGolfPOS.csprojResolveAssemblyReference.cache
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\obj\x86\Debug\SweetSpotDiscountGolfPOS.csprojResolveAssemblyReference.cache
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\obj\x86\Debug\SweetSpotDiscountGolfPOS.dll
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\obj\x86\Debug\SweetSpotDiscountGolfPOS.pdb
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\csc.exe
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.CodeAnalysis.dll
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.CSharp.Core.targets
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\System.Collections.Immutable.dll
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\System.Reflection.Metadata.dll
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\vbc.exe
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\VBCSCompiler.exe
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\VBCSCompiler.exe.config
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\SweetSpotDiscountGolfPOS.dll.config
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\SweetSpotDiscountGolfPOS.dll
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\SweetSpotDiscountGolfPOS.pdb
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\EPPlus.dll
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\EPPlus.xml
+C:\Users\Neo\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\csc.exe
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.CodeAnalysis.dll
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.CSharp.Core.targets
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\System.Collections.Immutable.dll
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\System.Reflection.Metadata.dll
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\vbc.exe
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\VBCSCompiler.exe
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\roslyn\VBCSCompiler.exe.config
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\SweetSpotDiscountGolfPOS.dll.config
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\SweetSpotDiscountGolfPOS.dll
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\SweetSpotDiscountGolfPOS.pdb
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\EPPlus.dll
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\EPPlus.xml
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\obj\x86\Debug\SweetSpotDiscountGolfPOS.csprojResolveAssemblyReference.cache
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\obj\x86\Debug\SweetSpotDiscountGolfPOS.csproj.CoreCompileInputs.cache
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\obj\x86\Debug\SweetSpotDiscountGolfPOS.dll
+C:\Users\tyler\Desktop\SweetSpot\SweetSpotDiscountGolfPOS\obj\x86\Debug\SweetSpotDiscountGolfPOS.pdb

@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <_NewBackgroundProfile>False</_NewBackgroundProfile>
+    <_PublishTargetUrl>C:\Users\tyler\Desktop\Push</_PublishTargetUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="bin/Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll">
+      <publishTime>04/26/2017 09:45:26</publishTime>
+    </File>
+    <File Include="bin/roslyn/csc.exe">
+      <publishTime>04/26/2017 09:45:30</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.Build.Tasks.CodeAnalysis.dll">
+      <publishTime>04/26/2017 09:45:28</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.CSharp.dll">
+      <publishTime>04/26/2017 09:45:28</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.dll">
+      <publishTime>04/26/2017 09:45:30</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.VisualBasic.dll">
+      <publishTime>04/26/2017 09:45:30</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CSharp.Core.targets">
+      <publishTime>04/26/2017 09:45:28</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.VisualBasic.Core.targets">
+      <publishTime>04/26/2017 09:45:30</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Collections.Immutable.dll">
+      <publishTime>04/26/2017 09:45:30</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Reflection.Metadata.dll">
+      <publishTime>04/26/2017 09:45:30</publishTime>
+    </File>
+    <File Include="bin/roslyn/vbc.exe">
+      <publishTime>04/26/2017 09:45:30</publishTime>
+    </File>
+    <File Include="bin/roslyn/VBCSCompiler.exe">
+      <publishTime>04/26/2017 09:45:30</publishTime>
+    </File>
+    <File Include="bin/roslyn/VBCSCompiler.exe.config">
+      <publishTime>04/26/2017 09:45:30</publishTime>
+    </File>
+    <File Include="bin/SweetSpotDiscountGolfPOS.dll">
+      <publishTime>07/11/2017 15:28:12</publishTime>
+    </File>
+    <File Include="bin/SweetSpotDiscountGolfPOS.pdb">
+      <publishTime>07/11/2017 15:28:12</publishTime>
+    </File>
+    <File Include="CSS/MainStyleSheet.css">
+      <publishTime>04/28/2017 12:17:38</publishTime>
+    </File>
+    <File Include="CustomerAddNew.aspx">
+      <publishTime>06/20/2017 14:24:14</publishTime>
+    </File>
+    <File Include="CustomerHomePage.aspx">
+      <publishTime>05/10/2017 09:43:14</publishTime>
+    </File>
+    <File Include="EmployeeAddNew.aspx">
+      <publishTime>06/02/2017 09:20:28</publishTime>
+    </File>
+    <File Include="HomePage.aspx">
+      <publishTime>06/17/2017 19:01:16</publishTime>
+    </File>
+    <File Include="Images/SweetSpotLogo.jpg">
+      <publishTime>04/26/2017 09:45:26</publishTime>
+    </File>
+    <File Include="InventoryAddNew.aspx">
+      <publishTime>06/17/2017 15:01:14</publishTime>
+    </File>
+    <File Include="InventoryHomePage.aspx">
+      <publishTime>06/17/2017 18:45:10</publishTime>
+    </File>
+    <File Include="LoginPage.aspx">
+      <publishTime>06/02/2017 11:16:56</publishTime>
+    </File>
+    <File Include="MasterPage.Master">
+      <publishTime>05/03/2017 09:58:42</publishTime>
+    </File>
+    <File Include="packages.config">
+      <publishTime>07/11/2017 15:27:23</publishTime>
+    </File>
+    <File Include="PrintableInvoice.aspx">
+      <publishTime>06/18/2017 17:12:46</publishTime>
+    </File>
+    <File Include="ReportsCashOut.aspx">
+      <publishTime>06/20/2017 12:52:48</publishTime>
+    </File>
+    <File Include="ReportsHomePage.aspx">
+      <publishTime>06/18/2017 14:21:36</publishTime>
+    </File>
+    <File Include="SalesCart.aspx">
+      <publishTime>06/19/2017 17:13:16</publishTime>
+    </File>
+    <File Include="SalesCheckout.aspx">
+      <publishTime>06/21/2017 14:09:36</publishTime>
+    </File>
+    <File Include="SalesHomePage.aspx">
+      <publishTime>06/18/2017 16:28:14</publishTime>
+    </File>
+    <File Include="SettingsHomePage.aspx">
+      <publishTime>07/04/2017 12:03:22</publishTime>
+    </File>
+    <File Include="TradeINEntry.aspx">
+      <publishTime>06/13/2017 08:29:54</publishTime>
+    </File>
+    <File Include="Web.config">
+      <publishTime>07/11/2017 15:28:12</publishTime>
+    </File>
+  </ItemGroup>
+</Project>

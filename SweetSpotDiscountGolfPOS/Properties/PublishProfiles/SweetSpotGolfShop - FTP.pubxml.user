@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAjezc2vhTzECcelrEN1Z9dgAAAAACAAAAAAAQZgAAAAEAACAAAAD9HJZKhroFv8TyWWu7SQQCYcaE3rd/UDQzEZVsPYaH4gAAAAAOgAAAAAIAACAAAADTujagsDty+XFoFcDQJFkFUgZFDowVFPypLIVnkksEj4AAAADDDX8SJ+yN+c0im6prr/76LBPDLFHO5nFKcZ0lggTyWUJBEcCJmkHG9PVY1nh2ae/wb+aw1+DmwcRqEfqhkZCpuW7DGksH7CxXr9t/Tp+JDxLZW9nZCxgd2gpXpbAC7m9n5KqgdbKaRYppmuxhTw5UICaud7r1XyHenC/nj+v92kAAAADprxTI3wM0TqCFEDvcaxvzyw4HMrTYo+1I5FA/DQVZyOkhTpq5DrH8b1gL+b6jcT3KiPmoTWbK4d1gP6nx4SiO</EncryptedPassword>
+    <_NewBackgroundProfile>True</_NewBackgroundProfile>
+    <_PublishTargetUrl>ftp://waws-prod-yt1-003.ftp.azurewebsites.windows.net/site/wwwroot</_PublishTargetUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="bin/EPPlus.dll">
+      <publishTime>07/14/2016 15:57:38</publishTime>
+    </File>
+    <File Include="bin/Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll">
+      <publishTime>04/26/2017 09:45:26</publishTime>
+    </File>
+    <File Include="bin/roslyn/csc.exe">
+      <publishTime>04/26/2017 09:45:30</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.Build.Tasks.CodeAnalysis.dll">
+      <publishTime>04/26/2017 09:45:28</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.CSharp.dll">
+      <publishTime>04/26/2017 09:45:28</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.dll">
+      <publishTime>04/26/2017 09:45:30</publishTime>
+    </File>
+    <File Include="bin/SweetSpotDiscountGolfPOS.dll">
+      <publishTime>08/04/2017 18:59:49</publishTime>
+    </File>
+    <File Include="bin/SweetSpotDiscountGolfPOS.pdb">
+      <publishTime>08/04/2017 18:59:49</publishTime>
+    </File>
+    <File Include="CustomerAddNew.aspx">
+      <publishTime>06/20/2017 14:24:14</publishTime>
+    </File>
+    <File Include="CustomerHomePage.aspx">
+      <publishTime>05/10/2017 09:43:14</publishTime>
+    </File>
+    <File Include="EmployeeAddNew.aspx">
+      <publishTime>06/02/2017 09:20:28</publishTime>
+    </File>
+    <File Include="HomePage.aspx">
+      <publishTime>07/30/2017 14:15:38</publishTime>
+    </File>
+    <File Include="InventoryAddNew.aspx">
+      <publishTime>07/27/2017 16:44:08</publishTime>
+    </File>
+    <File Include="InventoryHomePage.aspx">
+      <publishTime>06/17/2017 18:45:10</publishTime>
+    </File>
+    <File Include="LoginPage.aspx">
+      <publishTime>07/17/2017 07:28:22</publishTime>
+    </File>
+    <File Include="MasterPage.Master">
+      <publishTime>08/03/2017 12:58:10</publishTime>
+    </File>
+    <File Include="packages.config">
+      <publishTime>07/31/2017 21:23:06</publishTime>
+    </File>
+    <File Include="PrintableInvoice.aspx">
+      <publishTime>08/04/2017 08:16:44</publishTime>
+    </File>
+    <File Include="ReportsCashOut.aspx">
+      <publishTime>06/20/2017 12:52:48</publishTime>
+    </File>
+    <File Include="ReportsHomePage.aspx">
+      <publishTime>08/01/2017 14:02:02</publishTime>
+    </File>
+    <File Include="SalesCart.aspx">
+      <publishTime>07/27/2017 13:39:46</publishTime>
+    </File>
+    <File Include="SalesCheckout.aspx">
+      <publishTime>07/29/2017 10:07:08</publishTime>
+    </File>
+    <File Include="SalesHomePage.aspx">
+      <publishTime>07/20/2017 08:28:46</publishTime>
+    </File>
+    <File Include="SettingsHomePage.aspx">
+      <publishTime>07/28/2017 15:58:16</publishTime>
+    </File>
+    <File Include="TradeINEntry.aspx">
+      <publishTime>07/27/2017 13:31:10</publishTime>
+    </File>
+    <File Include="Web.config">
+      <publishTime>08/04/2017 18:59:52</publishTime>
+    </File>
+  </ItemGroup>
+</Project>

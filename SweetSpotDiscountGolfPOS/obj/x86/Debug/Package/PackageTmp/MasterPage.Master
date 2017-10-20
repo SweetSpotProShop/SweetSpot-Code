@@ -1,0 +1,42 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="MasterPage.master.cs" Inherits="SweetSpotDiscountGolfPOS.MasterPage" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Sweet Spot Discount Golf</title>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            <asp:ContentPlaceHolder ID="SPMaster" runat="server">
+                <div id="menu_simple">
+                    <ul>
+                        <li><a href="HomePage.aspx">HOME</a></li>
+                        <li><a href="CustomerHomePage.aspx">CUSTOMERS</a></li>
+                        <li><a href="SalesHomePage.aspx">SALES</a></li>
+                        <li><a href="InventoryHomePage.aspx">INVENTORY</a></li>
+                        <li><a href="ReportsHomePage.aspx">REPORTS</a></li>
+                        <li><a href="SettingsHomePage.aspx">SETTINGS</a></li>
+                    </ul>
+                </div>
+                <div id="image_simple">
+                    <img src="Images/SweetSpotLogo.jpg" />
+                </div>
+
+                <div id="button_simple">
+                    <asp:Button ID="Button1" runat="server" Text="LogOut" OnClick="btnLogout_Click" />
+                </div>
+                <link rel="stylesheet" type="text/css" href="CSS/MainStyleSheet.css" />
+            </asp:ContentPlaceHolder>
+            <div id="indentContent">
+                <asp:ContentPlaceHolder ID="IndividualPageContent" runat="server">
+
+                </asp:ContentPlaceHolder>
+            </div>
+        </div>
+    </form>
+</body>
+</html>
