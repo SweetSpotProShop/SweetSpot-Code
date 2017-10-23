@@ -145,57 +145,38 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
-            //This is a mess...
             cmd.CommandText = "Insert into tbl_cashout values( " +
-                //date, time
             " @cashoutDate, @cashoutTime, " +
-                //tradein, giftcard, cash
             " @saleTradeIn, @saleGiftCard, @saleCash, " +
-                //debit, mastercard
             " @saleDebit, @saleMasterCard, " +
-                //visa, tradein
             " @saleVisa, @receiptTradeIn, " +
-                //giftcard, cash
             " @receiptGiftCard, @receiptCash, " +
-                //debit, mastercard, visa
             " @receiptDebit, @receiptMasterCard, @receiptVisa, " +
-                //pretax, gst, pst
             " @preTax, @gTax, @pTax," +
-                //overshort, finalized
             " @overShort, @finalized, " +
-                //processed, locID, empID
             " @processed, @locID, @empID); ";
-
             cmd.Parameters.AddWithValue("@cashoutDate", cas.date);
             cmd.Parameters.AddWithValue("@cashoutTime", cas.time);
             cmd.Parameters.AddWithValue("@saleTradeIn", cas.saleTradeIn);
-
             cmd.Parameters.AddWithValue("@saleGiftCard", cas.saleGiftCard);
             cmd.Parameters.AddWithValue("@saleCash", cas.saleCash);
             cmd.Parameters.AddWithValue("@saleDebit", cas.saleDebit);
-
             cmd.Parameters.AddWithValue("@saleMasterCard", cas.saleMasterCard);
             cmd.Parameters.AddWithValue("@saleVisa", cas.saleVisa);           
             cmd.Parameters.AddWithValue("@receiptTradeIn", cas.receiptTradeIn);
-
             cmd.Parameters.AddWithValue("@receiptGiftCard", cas.receiptGiftCard);
             cmd.Parameters.AddWithValue("@receiptCash", cas.receiptCash);            
             cmd.Parameters.AddWithValue("@receiptDebit", cas.receiptDebit);
-
             cmd.Parameters.AddWithValue("@receiptMasterCard", cas.receiptMasterCard);
             cmd.Parameters.AddWithValue("@receiptVisa", cas.receiptVisa);
-
             cmd.Parameters.AddWithValue("@preTax", cas.preTax);
             cmd.Parameters.AddWithValue("@gTax", cas.saleGST);
             cmd.Parameters.AddWithValue("@pTax", cas.salePST);
-
             cmd.Parameters.AddWithValue("@overShort", cas.overShort);
             cmd.Parameters.AddWithValue("@finalized", cas.finalized);
             cmd.Parameters.AddWithValue("@processed", cas.processed);
-
             cmd.Parameters.AddWithValue("@locID", locID);
             cmd.Parameters.AddWithValue("@empID", empID);
-
             cmd.Connection = con;
             con.Open();
             SqlDataReader reader = cmd.ExecuteReader();
