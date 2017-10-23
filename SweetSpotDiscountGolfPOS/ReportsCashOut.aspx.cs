@@ -300,12 +300,12 @@ namespace SweetSpotDiscountGolfPOS
                 processed = true;
                 //Creates new cashout
                 Cashout cas = new Cashout(date, time, s.saleTradeIn, s.saleGiftCard,
-                    s.saleCash, s.saleDebit, s.saleMasterCard, s.saleVisa, s.saleGST, s.salePST, s.saleSubTotal,
+                    s.saleCash, s.saleDebit, s.saleMasterCard, s.saleVisa, s.saleGST, s.salePST, s.saleSubTotal, //subtotal?
                     r.receiptTradeIn, r.receiptGiftCard, r.receiptCash,
                     r.receiptDebit, r.receiptMasterCard, r.receiptVisa, r.receiptGST, r.receiptPST, r.receiptSubTotal, r.overShort,
                     finalized, processed, Double.Parse(lblPreTaxDisplay.Text, System.Globalization.NumberStyles.Currency), cu.locationID, cu.empID);
                 //Processes as done
-                reports.insertCashout(cas);
+                reports.insertCashout(cas, cu.empID, cu.locationID);
                 //Empties current cashout sessions
                 Session["saleCashout"] = null;
                 Session["receiptCashout"] = null;

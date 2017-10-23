@@ -130,7 +130,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return tradeintotal;
         }
         //Insert the cashout into the database
-        public void insertCashout(Cashout cas)
+        public void insertCashout(Cashout cas, int empID, int locID)
         {
             int processed = 0;
             int finalized = 0;
@@ -146,49 +146,56 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             //This is a mess...
-            cmd.CommandText = "Insert into tbl_cashout values('" +
-               cas.date + "', '" + cas.time + "', " + cas.saleTradeIn + ", " + cas.saleGiftCard + ", " +
-               cas.saleCash + ", "  + cas.saleDebit + ", " + cas.saleMasterCard + ", " +
-               cas.saleVisa + ", " +  cas.receiptTradeIn + ", " + cas.receiptGiftCard + ", " +
-               cas.receiptCash + ", "  + cas.receiptDebit + ", " + cas.receiptMasterCard + ", " + cas.receiptVisa + ", " +
-               cas.preTax + ", " + cas.saleGST + ", " +  cas.salePST + ", " + 
-               cas.overShort + ", " + finalized + ", " + processed + ");";
+            cmd.CommandText = "Insert into tbl_cashout values( " +
+                //date, time
+            " @cashoutDate, @cashoutTime, " +
+                //tradein, giftcard, cash
+            " @saleTradeIn, @saleGiftCard, @saleCash, " +
+                //debit, mastercard
+            " @saleDebit, @saleMasterCard, " +
+                //visa, tradein
+            " @saleVisa, @receiptTradeIn, " +
+                //giftcard, cash
+            " @receiptGiftCard, @receiptCash, " +
+                //debit, mastercard, visa
+            " @receiptDebit, @receiptMasterCard, @receiptVisa, " +
+                //pretax, gst, pst
+            " @preTax, @gTax, @pTax," +
+                //overshort, finalized
+            " @overShort, @finalized, " +
+                //processed, locID, empID
+            " @processed, @locID, @empID); ";
 
-            //" saleTradeIn = @saleTradeIn, " +
-            //" saleGiftCard = @saleGiftCard, saleCash = @saleCash, saleCheque = @saleCheque, " +
-            //" saleDebit = @saleDebit, saleMasterCard = @saleMasterCard, saleVisa = @saleVisa, " +
-            //" saleAmex = @saleAmex, receiptTradeIn = @receiptTradeIn, receiptGiftCard = @receiptGiftCard, " +
-            //" receiptCash = @receiptCash, receiptCheque = @receiptCheque, receiptDebit = @receiptDebit, " +
-            //" receiptMasterCard = @receiptMasterCard, receiptVisa = @receiptVisa, receiptAmex = @receiptAmex, " +
-            //" overShort = @overShort, finalized = @finalized, processed = @processed);";
+            cmd.Parameters.AddWithValue("@cashoutDate", cas.date);
+            cmd.Parameters.AddWithValue("@cashoutTime", cas.time);
+            cmd.Parameters.AddWithValue("@saleTradeIn", cas.saleTradeIn);
 
-            //cmd.Parameters.AddWithValue("@cashoutDate", cas.date);
-            //cmd.Parameters.AddWithValue("@cashoutTime", cas.time);
-            //cmd.Parameters.AddWithValue("@saleTradeIn", cas.saleTradeIn);
+            cmd.Parameters.AddWithValue("@saleGiftCard", cas.saleGiftCard);
+            cmd.Parameters.AddWithValue("@saleCash", cas.saleCash);
+            cmd.Parameters.AddWithValue("@saleDebit", cas.saleDebit);
 
-            //cmd.Parameters.AddWithValue("@saleGiftCard", cas.saleGiftCard);
-            //cmd.Parameters.AddWithValue("@saleCash", cas.saleCash);
-            //cmd.Parameters.AddWithValue("@saleCheque", cas.saleCheque);
+            cmd.Parameters.AddWithValue("@saleMasterCard", cas.saleMasterCard);
+            cmd.Parameters.AddWithValue("@saleVisa", cas.saleVisa);           
+            cmd.Parameters.AddWithValue("@receiptTradeIn", cas.receiptTradeIn);
 
-            //cmd.Parameters.AddWithValue("@saleDebit", cas.saleDebit);
-            //cmd.Parameters.AddWithValue("@saleMasterCard", cas.saleMasterCard);
-            //cmd.Parameters.AddWithValue("@saleVisa", cas.saleVisa);
+            cmd.Parameters.AddWithValue("@receiptGiftCard", cas.receiptGiftCard);
+            cmd.Parameters.AddWithValue("@receiptCash", cas.receiptCash);            
+            cmd.Parameters.AddWithValue("@receiptDebit", cas.receiptDebit);
 
-            //cmd.Parameters.AddWithValue("@saleAmex", cas.saleAmex);
-            //cmd.Parameters.AddWithValue("@receiptTradeIn", cas.receiptTradeIn);
-            //cmd.Parameters.AddWithValue("@receiptGiftCard", cas.receiptGiftCard);
+            cmd.Parameters.AddWithValue("@receiptMasterCard", cas.receiptMasterCard);
+            cmd.Parameters.AddWithValue("@receiptVisa", cas.receiptVisa);
 
-            //cmd.Parameters.AddWithValue("@receiptCash", cas.receiptCash);
-            //cmd.Parameters.AddWithValue("@receiptCheque", cas.receiptCheque);
-            //cmd.Parameters.AddWithValue("@receiptDebit", cas.receiptDebit);
+            cmd.Parameters.AddWithValue("@preTax", cas.preTax);
+            cmd.Parameters.AddWithValue("@gTax", cas.saleGST);
+            cmd.Parameters.AddWithValue("@pTax", cas.salePST);
 
-            //cmd.Parameters.AddWithValue("@receiptMasterCard", cas.receiptMasterCard);
-            //cmd.Parameters.AddWithValue("@receiptVisa", cas.receiptVisa);
-            //cmd.Parameters.AddWithValue("@receiptAmex", cas.receiptAmex);
+            cmd.Parameters.AddWithValue("@overShort", cas.overShort);
+            cmd.Parameters.AddWithValue("@finalized", cas.finalized);
+            cmd.Parameters.AddWithValue("@processed", cas.processed);
 
-            //cmd.Parameters.AddWithValue("@overShort", cas.overShort);
-            //cmd.Parameters.AddWithValue("@finalized", finalized);
-            //cmd.Parameters.AddWithValue("@processed", processed);
+            cmd.Parameters.AddWithValue("@locID", locID);
+            cmd.Parameters.AddWithValue("@empID", empID);
+
             cmd.Connection = con;
             con.Open();
             SqlDataReader reader = cmd.ExecuteReader();
