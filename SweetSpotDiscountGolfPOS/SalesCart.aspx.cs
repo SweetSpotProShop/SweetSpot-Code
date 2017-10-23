@@ -219,7 +219,7 @@ namespace SweetSpotDiscountGolfPOS
             {
                 if (btnCustomerSelect.Text == "Cancel")
                 {
-                    btnCustomerSelect.Text = "Select Different Customer";
+                    btnCustomerSelect.Text = "Change Customer";
                     grdCustomersSearched.Visible = false;
                     int custNum = (int)(Convert.ToInt32(Session["key"].ToString()));
                     Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
@@ -281,8 +281,7 @@ namespace SweetSpotDiscountGolfPOS
             grdCustomersSearched.Visible = false;
             //Set name in text box
             txtCustomer.Text = fName.Text + " " + lName.Text;
-            MessageBox.ShowMessage(key, this.Page);
-            btnCustomerSelect.Text = "Select Different Customer";
+            btnCustomerSelect.Text = "Change Customer";
         }
         protected void grdCustomersSearched_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
@@ -315,7 +314,7 @@ namespace SweetSpotDiscountGolfPOS
                     //Set name in text box
                     txtCustomer.Text = c.firstName + " " + c.lastName;
                 }
-                btnCustomerSelect.Text = "Select Different Customer";
+                btnCustomerSelect.Text = "Change Customer";
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

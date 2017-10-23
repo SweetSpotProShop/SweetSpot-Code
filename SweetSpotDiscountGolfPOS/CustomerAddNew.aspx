@@ -63,7 +63,7 @@
                     <asp:TableCell>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:CheckBox ID="chkEmailList" runat="server" Text="Check to add to email list" Enabled="false"/>
+                        <asp:CheckBox ID="chkEmailList" runat="server" Text="Marketing Enrollment" Enabled="false"/>
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>

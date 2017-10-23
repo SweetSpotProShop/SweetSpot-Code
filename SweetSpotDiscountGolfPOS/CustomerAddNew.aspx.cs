@@ -132,6 +132,8 @@ namespace SweetSpotDiscountGolfPOS
                     ddlCountry.Visible = true;
                     lblCountryDisplay.Visible = false;
 
+                    chkEmailList.Enabled = true;
+
                     txtPostalCode.Visible = true;
                     lblPostalCodeDisplay.Visible = false;
                     dt = em.returnProvinceDropDown(0);
