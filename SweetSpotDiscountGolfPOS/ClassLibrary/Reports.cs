@@ -212,6 +212,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         //******************DISCOUNT REPORTING*******************************************************
         public List<Invoice> returnDiscountsBetweenDates(DateTime startDate, DateTime endDate)
         {
+            //This method returns all invoices with discounts between two dates
             List<Invoice> returns = new List<Invoice>();
 
             SqlConnection con = new SqlConnection(connectionString);
@@ -232,12 +233,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                     Convert.ToDateTime(reader["invoiceDate"]), reader["customerName"].ToString(),
                      reader["employeeName"].ToString(), Convert.ToDouble(reader["discountAmount"])));
             }
+            con.Close();
             return returns;
         }
         public double returnDiscountTotalBetweenDates(DateTime startDate, DateTime endDate)
         {
+            //This method returns the total value of discounts between two dates
             double total = 0;
-
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             cmd.CommandText = "select sum(discountAmount) as 'sumDiscountTotal' from tbl_invoice where invoiceDate between @startDate and @endDate";
@@ -249,6 +251,31 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             while (reader.Read())
             {
                 total = Convert.ToDouble(reader["sumDiscountTotal"]);
+            }
+            con.Close();
+            return total;
+        }
+        public double returnDiscountTotalsForLocations(DateTime startDate, DateTime endDate)
+        {
+            double total = 0;
+            List<Location> l = new List<Location>();
+            l = lm.getAllLocations();           
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "select sum(discountAmount) as 'sumDiscountTotal' from tbl_invoice where invoiceDate between @startDate and @endDat and discountAmount <> 0 and locationID = @locID";
+            cmd.Parameters.AddWithValue("startDate", startDate);
+            cmd.Parameters.AddWithValue("endDate", endDate);
+            foreach (Location locID in l)
+            {
+                cmd.Parameters.AddWithValue("locID", locID.locationID);
+                cmd.Connection = con;
+                con.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    total = Convert.ToDouble(reader["sumDiscountTotal"]);
+                }
+                con.Close();
             }
             return total;
         }

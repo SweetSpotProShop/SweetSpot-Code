@@ -69,6 +69,9 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
+
+
+
                     string totalDiscounts = reports.returnDiscountTotalBetweenDates(startDate, endDate).ToString();
                     lblTotalDiscounts.Text = "Total Discount: $" + totalDiscounts;
                     grdInvoiceDisplay.DataSource = discounts;
