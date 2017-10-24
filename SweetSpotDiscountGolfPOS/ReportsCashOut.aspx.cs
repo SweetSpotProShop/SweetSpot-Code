@@ -309,6 +309,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Empties current cashout sessions
                 Session["saleCashout"] = null;
                 Session["receiptCashout"] = null;
+                MessageBox.ShowMessage("Cashout has been processed", this);
+                btnPrint.Enabled = true;
+                btnProcessReport.Enabled = false;
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
