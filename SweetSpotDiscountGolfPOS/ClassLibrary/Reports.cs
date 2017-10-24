@@ -1525,5 +1525,35 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             conn.Close();
         }
+
+        //*******GST and PST totals********
+        public List<TaxReport> returnTaxReportDetails(DateTime dtmStartDate, DateTime dtmEndDate)
+        {
+            List<TaxReport> tr = new List<TaxReport>();
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "SELECT invoiceDate, locationID, sum(subTotal) AS subTotal, sum(shippingAmount) AS shippingAmount, "
+                            + "sum(discountAmount) AS discountAmount, sum(tradeInAmount) AS tradeInAmount, "
+                            + "sum(governmentTax) AS governementTax, sum(provincialTax) AS provincialTax, "
+                            + "sum(balanceDue) AS balanceDue, transactionType FROM tbl_invoice "
+                            + "WHERE invoiceDate BETWEEN @dtmStartDate and @dtmEndDate "
+                            + "GROUP BY invoiceDate, locationID, transactionType";
+            cmd.Parameters.AddWithValue("@dtmStartDate", dtmStartDate);
+            cmd.Parameters.AddWithValue("@dtmEndDate", dtmEndDate);
+            cmd.Connection = con;
+            con.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                tr.Add(new TaxReport(Convert.ToDateTime(reader["receiptDate"]), 
+                    Convert.ToInt32(reader["locatioID"]), Convert.ToDouble(reader["subTotal"]), 
+                    Convert.ToDouble(reader["shippingAmount"]), Convert.ToDouble(reader["discountAmount"]),
+                    Convert.ToDouble(reader["tradeInAmount"]), Convert.ToDouble(reader["governmentTax"]),
+                    Convert.ToDouble(reader["provincialTax"]), Convert.ToDouble(reader["balanceDue"]),
+                    Convert.ToInt32(reader["transactionType"])));
+            }
+            return tr;
+        }
+
     }
 }

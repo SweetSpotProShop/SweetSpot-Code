@@ -150,6 +150,7 @@
     <Compile Include="ClassLibrary\Reports.cs" />
     <Compile Include="ClassLibrary\SweetShopManager.cs" />
     <Compile Include="ClassLibrary\Tax.cs" />
+    <Compile Include="ClassLibrary\TaxReport.cs" />
     <Compile Include="CustomerAddNew.aspx.cs">
       <DependentUpon>CustomerAddNew.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
