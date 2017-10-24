@@ -18,8 +18,7 @@ using OfficeOpenXml;
 using System.Windows.Forms;
 
 namespace SweetSpotDiscountGolfPOS.ClassLibrary
-{
-    //This is a mess...
+{    
     public class Reports
     {
         string connectionString;
@@ -209,6 +208,51 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             return purch;
         }
+
+        //******************DISCOUNT REPORTING*******************************************************
+        public List<Invoice> returnDiscountsBetweenDates(DateTime startDate, DateTime endDate)
+        {
+            List<Invoice> returns = new List<Invoice>();
+
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "select invoiceNum, invoiceSubNum, invoiceDate, " +
+                " (select Concat(firstName , lastName) from tbl_customers where custID = tbl_invoice.custID) as 'customerName', " +
+                " (select Concat(firstName , lastName) from tbl_employee where empID = tbl_invoice.empID) as 'employeeName', " +
+                " discountAmount" +
+                " from tbl_invoice where discountAmount <> 0 and invoiceDate between @startDate and @endDate;";
+            cmd.Parameters.AddWithValue("@startDate", startDate);
+            cmd.Parameters.AddWithValue("@endDate", endDate);
+            cmd.Connection = con;
+            con.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                returns.Add(new Invoice(Convert.ToInt32(reader["invoiceNum"]), Convert.ToInt32(reader["invoiceSubNum"]),
+                    Convert.ToDateTime(reader["invoiceDate"]), reader["customerName"].ToString(),
+                     reader["employeeName"].ToString(), Convert.ToDouble(reader["discountAmount"])));
+            }
+            return returns;
+        }
+        public double returnDiscountTotalBetweenDates(DateTime startDate, DateTime endDate)
+        {
+            double total = 0;
+
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "select sum(discountAmount) as 'sumDiscountTotal' from tbl_invoice where invoiceDate between @startDate and @endDate";
+            cmd.Parameters.AddWithValue("startDate", startDate);
+            cmd.Parameters.AddWithValue("endDate", endDate);
+            cmd.Connection = con;
+            con.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                total = Convert.ToDouble(reader["sumDiscountTotal"]);
+            }
+            return total;
+        }
+
 
         //********************IMPORTING***************************************************************
 
