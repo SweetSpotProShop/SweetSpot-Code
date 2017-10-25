@@ -26,10 +26,11 @@
         <%--Taxes Breakdown--%>
         <asp:Label ID="lblTaxDate" runat="server" />
         <hr />
+        <h3>Sales</h3>
         <div>
             <asp:GridView ID="grdTaxesCollected" runat="server" AutoGenerateColumns="false" ShowFooter="true" OnRowDataBound="grdTaxesCollected_RowDataBound">
                 <Columns>
-                    <asp:BoundField HeaderText="Date" HeaderStyle-Width="33%" DataField="dtmInvoiceDate" FooterText="Totals:" />
+                    <asp:BoundField HeaderText="Date" HeaderStyle-Width="33%" DataField="dtmInvoiceDate" FooterText="Totals:" DataFormatString="{0:d}"/>
                     <asp:BoundField HeaderText="GST" HeaderStyle-Width="33%" DataField="govTax" DataFormatString="{0:C}" />
                     <asp:BoundField HeaderText="PST" HeaderStyle-Width="33%" DataField="provTax" DataFormatString="{0:C}" />
                 </Columns>
@@ -37,10 +38,11 @@
         </div>
         <br />
         <hr />
+        <h3>Returns</h3>
         <div>
             <asp:GridView ID="grdTaxesReturned" runat="server" AutoGenerateColumns="false" ShowFooter="true" OnRowDataBound="grdTaxesReturned_RowDataBound">
                 <Columns>
-                    <asp:BoundField HeaderText="Date" HeaderStyle-Width="33%" DataField="dtmInvoiceDate" FooterText="Totals:" />
+                    <asp:BoundField HeaderText="Date" HeaderStyle-Width="33%" DataField="dtmInvoiceDate" FooterText="Totals:" DataFormatString="{0:d}"/>
                     <asp:BoundField HeaderText="GST" HeaderStyle-Width="33%" DataField="govTax" DataFormatString="{0:C}" />
                     <asp:BoundField HeaderText="PST" HeaderStyle-Width="33%" DataField="provTax" DataFormatString="{0:C}" />
                 </Columns>
@@ -48,10 +50,11 @@
         </div>
         <br />
         <hr />
+        <h3>All Transactions</h3>
         <div>
             <asp:GridView ID="grdTaxesOverall" runat="server" AutoGenerateColumns="false" ShowFooter="true" OnRowDataBound="grdTaxesOverall_RowDataBound">
                 <Columns>
-                    <asp:BoundField HeaderText="Date" HeaderStyle-Width="33%" DataField="dtmInvoiceDate" FooterText="Totals:" />
+                    <asp:BoundField HeaderText="Date" HeaderStyle-Width="33%" DataField="dtmInvoiceDate" FooterText="Totals:" DataFormatString="{0:d}"/>
                     <asp:BoundField HeaderText="GST" HeaderStyle-Width="33%" DataField="govTax" DataFormatString="{0:C}" />
                     <asp:BoundField HeaderText="PST" HeaderStyle-Width="33%" DataField="provTax" DataFormatString="{0:C}" />
                 </Columns>

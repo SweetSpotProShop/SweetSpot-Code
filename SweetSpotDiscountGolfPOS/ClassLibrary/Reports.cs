@@ -1534,7 +1534,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlCommand cmd = new SqlCommand();
             cmd.CommandText = "SELECT invoiceDate, locationID, sum(subTotal) AS subTotal, sum(shippingAmount) AS shippingAmount, "
                             + "sum(discountAmount) AS discountAmount, sum(tradeInAmount) AS tradeInAmount, "
-                            + "sum(governmentTax) AS governementTax, sum(provincialTax) AS provincialTax, "
+                            + "sum(governmentTax) AS governmentTax, sum(provincialTax) AS provincialTax, "
                             + "sum(balanceDue) AS balanceDue, transactionType FROM tbl_invoice "
                             + "WHERE invoiceDate BETWEEN @dtmStartDate and @dtmEndDate "
                             + "GROUP BY invoiceDate, locationID, transactionType";
@@ -1545,8 +1545,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                tr.Add(new TaxReport(Convert.ToDateTime(reader["receiptDate"]), 
-                    Convert.ToInt32(reader["locatioID"]), Convert.ToDouble(reader["subTotal"]), 
+                tr.Add(new TaxReport(Convert.ToDateTime(reader["invoiceDate"]), 
+                    Convert.ToInt32(reader["locationID"]), Convert.ToDouble(reader["subTotal"]), 
                     Convert.ToDouble(reader["shippingAmount"]), Convert.ToDouble(reader["discountAmount"]),
                     Convert.ToDouble(reader["tradeInAmount"]), Convert.ToDouble(reader["governmentTax"]),
                     Convert.ToDouble(reader["provincialTax"]), Convert.ToDouble(reader["balanceDue"]),

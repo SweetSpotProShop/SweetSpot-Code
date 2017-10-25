@@ -7,16 +7,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 {
     public class TaxReport
     {
-        public DateTime dtmInvoiceDate;
-        public int locationID;
-        public double subTotal;
-        public double shippingAmount;
-        public double discountAmount;
-        public double tradeInAmount;
-        public double govTax;
-        public double provTax;
-        public double balanceDue;
-        public int transactionType;
+        public DateTime dtmInvoiceDate { get; set; }
+        public int locationID { get; set; }
+        public double subTotal { get; set; }
+        public double shippingAmount { get; set; }
+        public double discountAmount { get; set; }
+        public double tradeInAmount { get; set; }
+        public double govTax { get; set; }
+        public double provTax { get; set; }
+        public double balanceDue { get; set; }
+        public int transactionType { get; set; }
 
         public TaxReport() { }
         public TaxReport(DateTime Dtm, int L, double Sub, double Ship, double D, double T,
