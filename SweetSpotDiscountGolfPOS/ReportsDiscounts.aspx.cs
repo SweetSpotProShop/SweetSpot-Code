@@ -57,7 +57,7 @@ namespace SweetSpotDiscountGolfPOS
                 if (discounts.Count == 0)
                 {
                     lblInvoices.Visible = false;
-                    lblTotalDiscounts.Visible = false;
+                    lbxTotals.Visible = false;
                     lblTotals.Visible = false;
                     if (startDate == endDate)
                     {

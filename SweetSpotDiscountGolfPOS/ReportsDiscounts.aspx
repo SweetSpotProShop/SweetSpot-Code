@@ -10,26 +10,15 @@
         <table>
             <tr>
                 <td>
-                    <asp:Label ID="lblReportDate" runat="server" Text="Label"></asp:Label>
+                    <asp:Label ID="lblReportDate" runat="server" Text="Date"></asp:Label>
                 </td>
             </tr>
             <tr>
-                <td rowspan="2">
-                    <asp:Label ID="lblInvoices" runat="server" Text="Invoices"></asp:Label>
+                <td >
+                    <asp:Label ID="lblInvoices" runat="server" Text="Invoices:"></asp:Label>
                 </td>
                 <td>
-                    <asp:Label ID="lblTotals" runat="server" Text="Totals"></asp:Label>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <asp:Label ID="lblTotalDiscounts" runat="server" Text="Label"></asp:Label>
-                </td>
-                <td>
-                    <asp:Label ID="lbl" runat="server" Text="Label"></asp:Label>
-                </td>
-                <td>
-                    <asp:ListBox ID="lbxTotals" runat="server"></asp:ListBox>
+                    <asp:Label ID="lblTotals" runat="server" Text="Totals:"></asp:Label>
                 </td>
             </tr>
             <tr>
@@ -63,6 +52,9 @@
                             </asp:TemplateField>
                         </Columns>
                     </asp:GridView>
+                </td>
+                <td style="vertical-align:top">
+                    <asp:ListBox ID="lbxTotals" runat="server" ></asp:ListBox>
                 </td>
 
 

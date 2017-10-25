@@ -269,14 +269,10 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                if(Convert.ToDouble(reader["sumDiscountTotal"]).Equals(DBNull.Value))
-                {
-
-                }
-                else
+                if(reader["sumDiscountTotal"] != DBNull.Value)
                 {
                     total = Convert.ToDouble(reader["sumDiscountTotal"]);
-                }
+                }            
                 
             }
             con.Close();
