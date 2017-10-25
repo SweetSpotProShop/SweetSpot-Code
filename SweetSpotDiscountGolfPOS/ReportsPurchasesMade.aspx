@@ -27,13 +27,13 @@
         <asp:Label ID="lblPurchasesMadeDate" runat="server" />
         <hr />
         <div>
-            <asp:GridView ID="grdPurchasesMade" runat="server" AutoGenerateColumns="false" ShowFooter="true" OnRowDataBound="grdPurchasesMade_RowDataBound">
+            <asp:GridView ID="grdPurchasesMade" runat="server" Width="75%" AutoGenerateColumns="false" ShowFooter="true" OnRowDataBound="grdPurchasesMade_RowDataBound">
                 <Columns>
-                    <asp:BoundField HeaderText="Receipt Number" HeaderStyle-Width="21%" DataField="receiptNumber" FooterText="Totals:"/>
-                    <asp:BoundField HeaderText="Receipt Date" HeaderStyle-Width="21%" DataField="receiptDate" DataFormatString="{0:d}"/>
-                    <asp:BoundField HeaderText="Purchase Method" HeaderStyle-Width="21%" DataField="mopDescription" />
-                    <asp:BoundField HeaderText="Cheque Number" HeaderStyle-Width="21%" DataField="chequeNumber" />
-                    <asp:BoundField HeaderText="Purchase Amount" HeaderStyle-Width="21%" DataField="amountPaid" DataFormatString="{0:C}"/>
+                    <asp:BoundField HeaderText="Receipt Number" HeaderStyle-Width="20%" DataField="receiptNumber" FooterText="Totals:"/>
+                    <asp:BoundField HeaderText="Receipt Date" HeaderStyle-Width="20%" DataField="receiptDate" DataFormatString="{0:d}"/>
+                    <asp:BoundField HeaderText="Purchase Method" HeaderStyle-Width="20%" DataField="mopDescription" />
+                    <asp:BoundField HeaderText="Cheque Number" HeaderStyle-Width="20%" DataField="chequeNumber" />
+                    <asp:BoundField HeaderText="Purchase Amount" HeaderStyle-Width="20%" DataField="amountPaid" DataFormatString="{0:C}"/>
                 </Columns>
             </asp:GridView>
         </div>
