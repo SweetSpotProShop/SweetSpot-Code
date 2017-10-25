@@ -257,7 +257,6 @@ namespace SweetSpotDiscountGolfPOS
                 //Server.Transfer(prevPage, false);
             }
         }
-
         protected void btnTaxReport_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -265,7 +264,11 @@ namespace SweetSpotDiscountGolfPOS
             //Method currently not used
             try
             {
-                Session["reportInfo"] = new List<TaxReport>(r.returnTaxReportDetails(calStartDate.SelectedDate, calEndDate.SelectedDate));
+                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                int loc = Convert.ToInt32(ddlLocation.SelectedValue);
+                Object[] passing = new Object[2] { dtm, loc };
+                Session["reportInfo"] = passing;
+                Server.Transfer("ReportsTaxes.aspx", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
