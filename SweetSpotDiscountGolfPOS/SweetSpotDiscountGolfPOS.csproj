@@ -110,6 +110,7 @@
     <Content Include="PurchasesCart.aspx" />
     <Content Include="PurchasesCheckout.aspx" />
     <Content Include="ReportsCashOut.aspx" />
+    <Content Include="ReportsCOGSvsPM.aspx" />
     <Content Include="ReportsHomePage.aspx" />
     <Content Include="ReportsPurchasesMade.aspx" />
     <Content Include="ReturnsCart.aspx" />
@@ -247,6 +248,13 @@
     </Compile>
     <Compile Include="ReportsCashOut.aspx.designer.cs">
       <DependentUpon>ReportsCashOut.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ReportsCOGSvsPM.aspx.cs">
+      <DependentUpon>ReportsCOGSvsPM.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ReportsCOGSvsPM.aspx.designer.cs">
+      <DependentUpon>ReportsCOGSvsPM.aspx</DependentUpon>
     </Compile>
     <Compile Include="ReportsHomePage.aspx.cs">
       <DependentUpon>ReportsHomePage.aspx</DependentUpon>
