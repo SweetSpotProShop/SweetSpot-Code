@@ -210,6 +210,40 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return purch;
         }
 
+
+
+        //******************COGS and PM REPORTING*******************************************************
+        public List<Items> returnItemsForCOGS(DateTime startDate, DateTime endDate, int locationID)
+        {
+            //This method returns the invoice numbers, sku, itemCost, and itemPrice 
+            List<Items> items = new List<Items>();
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "select tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.sku, tbl_invoiceItem.itemCost, " +
+                " tbl_invoiceItem.itemPrice from tbl_invoiceItem " +
+                " inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum " +
+                " where tbl_invoice.locationID = @locationID and tbl_invoice.invoiceDate between @startDate and @endDate";
+            cmd.Parameters.AddWithValue("@startDate", startDate);
+            cmd.Parameters.AddWithValue("@endDate", endDate);
+            cmd.Parameters.AddWithValue("@locationID", locationID);
+            cmd.Connection = con;
+            con.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                items.Add(new Items(Convert.ToInt32(reader["invoiceNum"]),
+                    Convert.ToInt32(reader["invoiceSubNum"]), Convert.ToInt32(reader["sku"]),
+                    Convert.ToDouble(reader["itemCost"]), Convert.ToDouble(reader["itemPrice"])));
+            }
+            return items;
+        }
+        
+
+
+
+
+
+
         //********************IMPORTING***************************************************************
 
         //This method is the giant import method

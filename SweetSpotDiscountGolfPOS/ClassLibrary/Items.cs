@@ -24,6 +24,8 @@ namespace SweetShop
         public double cost { get; set; }
         public string location { get; set; }
         public int typeID { get; set; }
+        public int invoiceNum { get; set; }
+        public int invoiceSubNum { get; set; }
 
         public Items() { }
         public Items(int s, string d, int q, double p, double c)
@@ -52,6 +54,14 @@ namespace SweetShop
             cost = c;
             typeID = t;
             location = l;
+        }
+        public Items(int num, int subNum, int s, double c, double p)
+        {
+            invoiceNum = num;
+            invoiceSubNum = subNum;
+            sku = s;
+            cost = c;
+            price = p;
         }
     }
 }

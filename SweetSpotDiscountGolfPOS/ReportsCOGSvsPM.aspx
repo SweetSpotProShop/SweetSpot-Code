@@ -4,16 +4,19 @@
 
     <h2>Cost of Goods Sold and Profit Margin</h2>
     <hr />
-    <table>
+    <table border="1">
         <tr>
             <td>
-                <asp:label id="lblItemsSold" runat="server" text="Items Sold"></asp:label>
+                <asp:label id="lblItemsSold" runat="server" text="Items Sold:"></asp:label>
             </td>
             <td>
-                <asp:label id="lblCOGS" runat="server" text="Cost of Goods Sold"></asp:label>
+                <asp:label id="lblCost" runat="server" text="Total Cost:"></asp:label>
             </td>
             <td>
-                <asp:label id="lblPM" runat="server" text="Profit Margin"></asp:label>
+                <asp:label id="lblPM" runat="server" text="Total Sold:"></asp:label>
+            </td>
+            <td>
+                <asp:label id="lblProfitMargin" runat="server" text="Profit Margin:"></asp:label>
             </td>
         </tr>
         <tr>
@@ -43,11 +46,14 @@
                     </Columns>
                 </asp:GridView>
             </td>
-            <td>
-                <asp:label id="lblCOGSDisplay" runat="server" text="lblCOGSDisplay"></asp:label>
+            <td style="vertical-align:top">
+                <asp:label id="lblTotalCostDisplay" runat="server" text="lblTotalCostDisplay"></asp:label>
             </td>
-            <td>
-                <asp:label id="lblPMDisplay" runat="server" text="lblPMDisplay"></asp:label>
+            <td style="vertical-align:top">
+                <asp:label id="lblSoldDisplay" runat="server" text="lblSoldDisplay"></asp:label>
+            </td>
+            <td style="vertical-align:top">
+                <asp:label id="lblProfitMarginDisplay" runat="server" text="lblProfitMarginDisplay"></asp:label>
             </td>
         </tr>
     </table>
