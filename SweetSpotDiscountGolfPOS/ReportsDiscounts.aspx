@@ -26,12 +26,15 @@
                     <asp:Label ID="lblTotalDiscounts" runat="server" Text="Label"></asp:Label>
                 </td>
                 <td>
-
+                    <asp:Label ID="lbl" runat="server" Text="Label"></asp:Label>
+                </td>
+                <td>
+                    <asp:ListBox ID="lbxTotals" runat="server"></asp:ListBox>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <asp:GridView ID="grdInvoiceDisplay" runat="server" AutoGenerateColumns="false" Width="100%" >
+                    <asp:GridView ID="grdInvoiceDisplay" runat="server" AutoGenerateColumns="false" Width="100%">
                         <Columns>
                             <asp:TemplateField HeaderText="Invoice Number">
                                 <ItemTemplate>
@@ -61,7 +64,7 @@
                         </Columns>
                     </asp:GridView>
                 </td>
-                
+
 
             </tr>
         </table>

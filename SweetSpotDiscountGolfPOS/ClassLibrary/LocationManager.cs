@@ -273,12 +273,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlConnection conn = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = conn;
-            cmd.CommandText = "Select locationID from tbl_location";
+            cmd.CommandText = "Select locationID, locationName from tbl_location";
             conn.Open();
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                l.Add(new Location(Convert.ToInt32(reader["locaitonID"])));
+                l.Add(new Location(Convert.ToInt32(reader["locationID"]), reader["locationName"].ToString()));
             }
             conn.Close();
             return l;

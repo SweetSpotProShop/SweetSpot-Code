@@ -26,9 +26,10 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             postal = p;
             phone = ph;
         }
-        public Location(int id)
+        public Location(int id, string name)
         {
             locationID = id;
+            location = name;
         }
     }
 }

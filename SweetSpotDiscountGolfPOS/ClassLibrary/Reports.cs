@@ -18,7 +18,7 @@ using OfficeOpenXml;
 using System.Windows.Forms;
 
 namespace SweetSpotDiscountGolfPOS.ClassLibrary
-{    
+{
     public class Reports
     {
         string connectionString;
@@ -122,7 +122,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                tradeintotal += Convert.ToDouble(reader["tradeinAmount"]);                
+                tradeintotal += Convert.ToDouble(reader["tradeinAmount"]);
             }
             con.Close();
             //Returns the total value of the trade ins
@@ -161,10 +161,10 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             cmd.Parameters.AddWithValue("@saleCash", cas.saleCash);
             cmd.Parameters.AddWithValue("@saleDebit", cas.saleDebit);
             cmd.Parameters.AddWithValue("@saleMasterCard", cas.saleMasterCard);
-            cmd.Parameters.AddWithValue("@saleVisa", cas.saleVisa);           
+            cmd.Parameters.AddWithValue("@saleVisa", cas.saleVisa);
             cmd.Parameters.AddWithValue("@receiptTradeIn", cas.receiptTradeIn);
             cmd.Parameters.AddWithValue("@receiptGiftCard", cas.receiptGiftCard);
-            cmd.Parameters.AddWithValue("@receiptCash", cas.receiptCash);            
+            cmd.Parameters.AddWithValue("@receiptCash", cas.receiptCash);
             cmd.Parameters.AddWithValue("@receiptDebit", cas.receiptDebit);
             cmd.Parameters.AddWithValue("@receiptMasterCard", cas.receiptMasterCard);
             cmd.Parameters.AddWithValue("@receiptVisa", cas.receiptVisa);
@@ -255,28 +255,31 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             con.Close();
             return total;
         }
-        public double returnDiscountTotalsForLocations(DateTime startDate, DateTime endDate)
+        public double returnDiscountTotalsForLocations(DateTime startDate, DateTime endDate, int locID)
         {
             double total = 0;
-            List<Location> l = new List<Location>();
-            l = lm.getAllLocations();           
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "select sum(discountAmount) as 'sumDiscountTotal' from tbl_invoice where invoiceDate between @startDate and @endDat and discountAmount <> 0 and locationID = @locID";
+            cmd.CommandText = "select sum(discountAmount) as 'sumDiscountTotal' from tbl_invoice where invoiceDate between @startDate and @endDate and discountAmount <> 0 and locationID = @locID";
             cmd.Parameters.AddWithValue("startDate", startDate);
             cmd.Parameters.AddWithValue("endDate", endDate);
-            foreach (Location locID in l)
+            cmd.Parameters.AddWithValue("locID", locID);
+            cmd.Connection = con;
+            con.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
             {
-                cmd.Parameters.AddWithValue("locID", locID.locationID);
-                cmd.Connection = con;
-                con.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if(Convert.ToDouble(reader["sumDiscountTotal"]).Equals(DBNull.Value))
+                {
+
+                }
+                else
                 {
                     total = Convert.ToDouble(reader["sumDiscountTotal"]);
                 }
-                con.Close();
+                
             }
+            con.Close();
             return total;
         }
 
@@ -313,7 +316,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                     for (int i = 2; i < rowCnt; i++) //Starts on 2 because excel starts at 1, and line 1 is headers
                     {
 
- 
+
 
                         SettingsHomePage page = new SettingsHomePage();
                         //page.counter = i;
@@ -321,7 +324,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         page.progress = i.ToString() + "/" + rowCnt.ToString();
                         page.callJS();
                         //fc..Label1.Text = 
-                  //      page.lblP.Text = i.ToString() + "/" + rowCnt.ToString();
+                        //      page.lblP.Text = i.ToString() + "/" + rowCnt.ToString();
                         System.Windows.Forms.Application.DoEvents();
 
 
@@ -352,7 +355,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 //***************SKU***************
                                 //If there is a sku in column 3, proceed
                                 if (!Convert.ToInt32(worksheet.Cells[i, 3].Value).Equals(null)) //Column 3 = Sku
-                                { 
+                                {
                                     //Sets the accessory sku to the value in column 3
                                     a.sku = Convert.ToInt32(worksheet.Cells[i, 3].Value);
                                 }
@@ -513,7 +516,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                     if (!(worksheet.Cells[i, 22].Value).Equals(null)) //22
                                     {
                                         string destination = (worksheet.Cells[i, 22].Value).ToString();
-                                        a.locID = lm.getLocationIDFromDestination(destination);                                       
+                                        a.locID = lm.getLocationIDFromDestination(destination);
                                     }
                                     else
                                     {

@@ -15,6 +15,7 @@ namespace SweetSpotDiscountGolfPOS
     {
         SweetShopManager ssm = new SweetShopManager();
         ErrorReporting er = new ErrorReporting();
+        LocationManager lm = new LocationManager();
         DateTime startDate;
         DateTime endDate;
         Employee e;
@@ -49,7 +50,7 @@ namespace SweetSpotDiscountGolfPOS
                 else
                 {
                     lblReportDate.Text = "Discount report for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
-                }              
+                }
 
 
                 List<Invoice> discounts = reports.returnDiscountsBetweenDates(startDate, endDate);
@@ -70,10 +71,22 @@ namespace SweetSpotDiscountGolfPOS
                 else
                 {
 
+                    string totalDiscounts = reports.returnDiscountTotalBetweenDates(startDate, endDate).ToString();          
+                    lbxTotals.Items.Add("Total Discounts: $" + totalDiscounts);
+                    List<Location> loc = new List<Location>();
+                    loc = lm.getAllLocations();
+                    foreach(Location l in loc)
+                    {                        
+                        double total = reports.returnDiscountTotalsForLocations(startDate, endDate, l.locationID);
+                        string locationName = l.location;
+                        if(total != 0)
+                        {
+                            lbxTotals.Items.Add(locationName + " : $" + total);
+                        }                        
+                    }
 
+                    
 
-                    string totalDiscounts = reports.returnDiscountTotalBetweenDates(startDate, endDate).ToString();
-                    lblTotalDiscounts.Text = "Total Discount: $" + totalDiscounts;
                     grdInvoiceDisplay.DataSource = discounts;
                     grdInvoiceDisplay.DataBind();
                 }
