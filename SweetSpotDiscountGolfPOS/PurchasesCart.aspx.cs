@@ -20,6 +20,8 @@ namespace SweetSpotDiscountGolfPOS
         List<Cart> itemsInCart = new List<Cart>();
         Cart purchItem = new Cart();
         CurrentUser cu;
+        List<Customer> c;
+        LocationManager lm = new LocationManager();
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -99,13 +101,26 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnCustomerSelect_Click";
             try
             {
-                //Nullifies are relative sessions
-                Session["key"] = null;
-                Session["ItemsInCart"] = null;
-                Session["CheckOutTotals"] = null;
-                Session["MethodsofPayment"] = null;
-                //Changes page to Customer Home page to select a customer
-                Server.Transfer("CustomerHomePage.aspx", false);
+                if (btnCustomerSelect.Text == "Cancel")
+                {
+                    btnCustomerSelect.Text = "Change Customer";
+                    grdCustomersSearched.Visible = false;
+                    int custNum = (int)(Convert.ToInt32(Session["key"].ToString()));
+                    Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
+                    //Set name in text box
+                    txtCustomer.Text = c.firstName + " " + c.lastName;
+                }
+                else
+                {
+                    grdCustomersSearched.Visible = true;
+                    c = ssm.GetCustomerfromSearch(txtCustomer.Text);
+                    grdCustomersSearched.DataSource = c;
+                    grdCustomersSearched.DataBind();
+                    if (grdCustomersSearched.Rows.Count > 0)
+                    {
+                        btnCustomerSelect.Text = "Cancel";
+                    }
+                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -125,6 +140,78 @@ namespace SweetSpotDiscountGolfPOS
                 //Server.Transfer(prevPage, false);
             }
         }
+        protected void btnAddCustomer_Click(object sender, EventArgs e)
+        {
+            //Get info from textboxes
+            TextBox fName = grdCustomersSearched.FooterRow.FindControl("txtFirstName") as TextBox;
+            TextBox lName = grdCustomersSearched.FooterRow.FindControl("txtLastName") as TextBox;
+            TextBox phoneNumber = grdCustomersSearched.FooterRow.FindControl("txtPhoneNumber") as TextBox;
+            //Using current user's info
+            int provStateID = lm.getProvIDFromLocationID(cu.locationID);
+            int countryID = lm.countryIDFromProvince(provStateID);
+            //Creating a customer
+            Customer c = new Customer(0, fName.Text, lName.Text, "", "", phoneNumber.Text, "", false, "", "", provStateID, countryID, "");
+            //Set the session key to customer ID
+            string key = ssm.addCustomer(c).ToString();
+            Session["key"] = key;
+            //Hide stuff
+            grdCustomersSearched.Visible = false;
+            //Set name in text box
+            txtCustomer.Text = fName.Text + " " + lName.Text;
+            btnCustomerSelect.Text = "Change Customer";
+        }
+        protected void grdCustomersSearched_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            grdCustomersSearched.PageIndex = e.NewPageIndex;
+            //Looks through database and returns a list of customers
+            //based on the search criteria entered
+            SweetShopManager ssm = new SweetShopManager();
+            c = ssm.GetCustomerfromSearch(txtCustomer.Text);
+            //Binds the results to the gridview
+            grdCustomersSearched.Visible = true;
+            grdCustomersSearched.DataSource = c;
+            grdCustomersSearched.DataBind();
+        }
+        protected void grdCustomersSearched_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            //Collects current method and page for error tracking
+            string method = "grdCustomersSearched_RowCommand";
+            try
+            {
+                //grabs the command argument for the command pressed 
+                string key = e.CommandArgument.ToString();
+                if (e.CommandName == "SwitchCustomer")
+                {
+                    //if command argument is SwitchCustomer, set the new key
+                    Session["key"] = key;
+                    //Hide stuff
+                    grdCustomersSearched.Visible = false;
+                    //Get customer name
+                    Customer c = ssm.GetCustomerbyCustomerNumber(Convert.ToInt32(key));
+                    //Set name in text box
+                    txtCustomer.Text = c.firstName + " " + c.lastName;
+                }
+                btnCustomerSelect.Text = "Change Customer";
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log employee number
+                int employeeID = cu.empID;
+                //Log current page
+                string currPage = Convert.ToString(Session["currPage"]);
+                //Log all info into error table
+                er.logError(ex, employeeID, currPage, method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+                //Server.Transfer(prevPage, false);
+            }
+        }
+
         protected void btnAddPurchase_Click(object sender, EventArgs e)
         {
             //Collects current method error tracking

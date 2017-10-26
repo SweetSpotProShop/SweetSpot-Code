@@ -256,13 +256,13 @@ namespace SweetSpotDiscountGolfPOS
                 //Server.Transfer(prevPage, false);
             }
         }
-        protected void btnSearchCustomers_Click(object sender, EventArgs e)
-        {
-            grdCustomersSearched.Visible = true;
-            c = ssm.GetCustomerfromSearch(txtCustomer.Text);
-            grdCustomersSearched.DataSource = c;
-            grdCustomersSearched.DataBind();
-        }
+        //protected void btnSearchCustomers_Click(object sender, EventArgs e)
+        //{
+        //    grdCustomersSearched.Visible = true;
+        //    c = ssm.GetCustomerfromSearch(txtCustomer.Text);
+        //    grdCustomersSearched.DataSource = c;
+        //    grdCustomersSearched.DataBind();
+        //}
         protected void btnAddCustomer_Click(object sender, EventArgs e)
         {
             //Get info from textboxes
@@ -289,7 +289,7 @@ namespace SweetSpotDiscountGolfPOS
             //Looks through database and returns a list of customers
             //based on the search criteria entered
             SweetShopManager ssm = new SweetShopManager();
-            c = ssm.GetCustomerfromSearch(txtSearch.Text);
+            c = ssm.GetCustomerfromSearch(txtCustomer.Text);
             //Binds the results to the gridview
             grdCustomersSearched.Visible = true;
             grdCustomersSearched.DataSource = c;

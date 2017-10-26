@@ -62,14 +62,7 @@
             <asp:TextBox ID="txtCustomer" runat="server"></asp:TextBox>
             <asp:Button ID="btnCustomerSelect" runat="server" Text="Change Customer" OnClick="btnCustomerSelect_Click" CausesValidation="false" />
             <div>
-
-
-                <%--<div>
-                    <asp:TextBox ID="txtCustomerName" runat="server"></asp:TextBox>
-                    <asp:Button ID="btnSearchCustomers" runat="server" Text="Search" OnClick="btnSearchCustomers_Click" />
-                </div>--%>
-
-
+                <br />
                 <div>
                     <asp:GridView ID="grdCustomersSearched" runat="server" AutoGenerateColumns="false" ShowFooter="true" OnRowCommand="grdCustomersSearched_RowCommand" AllowPaging="True" PageSize="5" OnPageIndexChanging="grdCustomersSearched_PageIndexChanging">
                         <Columns>
@@ -80,7 +73,7 @@
                                 <FooterTemplate>
                                     <asp:Button ID="btnAddCustomer" runat="server" Text="Add Customer" OnClick="btnAddCustomer_Click" />
                                 </FooterTemplate>
-                            </asp:TemplateField>                            
+                            </asp:TemplateField>
                             <asp:TemplateField HeaderText="Customer Name">
                                 <ItemTemplate>
                                     <asp:Label runat="server" Text='<%#Eval("firstName") + " " + Eval("lastName") %>'></asp:Label>
@@ -105,21 +98,16 @@
                         </Columns>
                     </asp:GridView>
                 </div>
-
-
-
-
-
+                <br />
             </div>
-            <br />
-            <br />
             <%--//Radio button for InStore or Shipping--%>
             <asp:RadioButton ID="RadioButton1" runat="server" Text="In Store" Checked="True" GroupName="rgSales" />
-            <asp:RadioButton ID="RadioButton2" runat="server" Text="Shipping" GroupName="rgSales"/>
+            <asp:RadioButton ID="RadioButton2" runat="server" Text="Shipping" GroupName="rgSales" />
             <asp:Label ID="lblShipping" runat="server" Text="Shipping Amount:"></asp:Label>
             <asp:TextBox ID="txtShippingAmount" runat="server"></asp:TextBox>
             <div>
-            <asp:Button ID="btnJumpToInventory" Text="Jump to Inventory" OnClick="btnJumpToInventory_Click" runat="server" /></div>
+                <asp:Button ID="btnJumpToInventory" Text="Jump to Inventory" OnClick="btnJumpToInventory_Click" runat="server" />
+            </div>
 
             <div style="text-align: right">
                 <asp:Label ID="lblInvoiceNumber" runat="server" Text="Invoice No:"></asp:Label>
@@ -132,7 +120,7 @@
             <div>
                 <asp:TextBox ID="txtSearch" runat="server"></asp:TextBox>
                 <asp:Button ID="btnInventorySearch" runat="server" Width="150" Text="Inventory Search" OnClick="btnInventorySearch_Click" />
-               
+
             </div>
             <hr />
             <asp:GridView ID="grdInventorySearched" runat="server" AutoGenerateColumns="False" OnRowCommand="grdInventorySearched_RowCommand">
@@ -165,7 +153,7 @@
                     </asp:TemplateField>
                 </Columns>
             </asp:GridView>
-            
+
             <hr />
             <h3>Cart</h3>
             <hr />
@@ -202,13 +190,13 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Discount Amount">
                         <ItemTemplate>
-                            <asp:CheckBox ID="ckbPercentageDisplay" Checked='<%# Convert.ToBoolean(Eval("percentage")) %>' runat="server" Text="Discount by Percent" Enabled="false"/>
+                            <asp:CheckBox ID="ckbPercentageDisplay" Checked='<%# Convert.ToBoolean(Eval("percentage")) %>' runat="server" Text="Discount by Percent" Enabled="false" />
                             <div id="divAmountDisplay" class="txt" runat="server">
                                 <asp:Label ID="lblAmountDisplay" runat="server" Text='<%# Eval("discount") %>' Enabled="false"></asp:Label>
                             </div>
                         </ItemTemplate>
                         <EditItemTemplate>
-                            <asp:CheckBox ID="ckbPercentageEdit" Checked='<%# Convert.ToBoolean(Eval("percentage")) %>' runat="server" Text="Discount by Percent" Enabled="true"/>
+                            <asp:CheckBox ID="ckbPercentageEdit" Checked='<%# Convert.ToBoolean(Eval("percentage")) %>' runat="server" Text="Discount by Percent" Enabled="true" />
                             <div id="divAmountEdit" class="txt" runat="server">
                                 <asp:TextBox ID="txtAmnt" runat="server" Text='<%# Eval("discount") %>' Enabled="true"></asp:TextBox>
                             </div>
@@ -216,12 +204,12 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Trade In" Visible="false">
                         <ItemTemplate>
-                            <asp:CheckBox ID="chkTradeIn" Checked='<%# Eval("tradeIn") %>' runat="server" Enabled="false"/>
+                            <asp:CheckBox ID="chkTradeIn" Checked='<%# Eval("tradeIn") %>' runat="server" Enabled="false" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Type ID" Visible="false">
                         <ItemTemplate>
-                            <asp:Label ID="lblTypeID" Text='<%# Eval("typeID") %>' runat="server"/>
+                            <asp:Label ID="lblTypeID" Text='<%# Eval("typeID") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
