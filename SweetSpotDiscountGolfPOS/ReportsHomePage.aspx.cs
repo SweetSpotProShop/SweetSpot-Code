@@ -133,39 +133,45 @@ namespace SweetSpotDiscountGolfPOS
                 //Server.Transfer(prevPage, false);
             }
         }
+        //This is the Cashout Report
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "btnSubmit_Click";
             try
             {
-                if (txtStartDate.Text == "" || txtEndDate.Text == "")
+                if ((txtStartDate.Text == "" || txtEndDate.Text == "") || calStartDate.SelectedDate != calEndDate.SelectedDate)
                 {
                     //One of the date boxes is empty
                     lbldate.Visible = true;
-                    lbldate.Text = "Please Select a Start and End date";
+                    lbldate.Text = "Please Select a Start and End date and the same date.";
                     lbldate.ForeColor = System.Drawing.Color.Red;
 
                 }
                 else
                 {
                     //Stores report dates into Session
-                    Session["reportDates"] = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
-                    //DateTime[] reportDates = new DateTime[2];
-                    //reportDates[0] = calStartDate.SelectedDate;
-                    //reportDates[1] = calEndDate.SelectedDate;
-                    //Session["reportDates"] = reportDates;
-
-                    //  if(txtStartDate.Text == txtEndDate.Text)
-                    //  {
-
-                    // //invoice = ssm.selectAllInventorySalesBetweenDates(Convert.ToDateTime(txtStartDate.Text), Convert.ToDateTime(txtEndDate.Text).AddHours(23).AddMinutes(59));
-                    // Session["salesinvoice"] = invoice;
-
-                    //}
+                    DateTime[] dtm  = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                    int loc = Convert.ToInt32(ddlLocation.SelectedValue);
+                    Object[] repInfo = new Object[] {dtm, loc};
+                    int indicator = r.verifyCashoutCanBeProcessed(repInfo);
+                    //Check to see if there are sales first
+                    if (indicator == 0)
+                    {
+                        Session["reportInfo"] = repInfo;
+                        //Changes to the Reports Cash Out page
+                        Server.Transfer("ReportsCashOut.aspx", false);
+                    }
+                    else if (indicator == 1)
+                    {
+                        MessageBox.ShowMessage("No transactions have been processed for today.", this);
+                    }
+                    else if (indicator == 2)
+                    {
+                        MessageBox.ShowMessage("A cashout has already been completed for today.", this);
+                    }
                 }
-                //Changes to the Reports Cash Out page
-                Server.Transfer("ReportsCashOut.aspx", false);
+               
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
