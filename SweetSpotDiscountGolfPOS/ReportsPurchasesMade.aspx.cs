@@ -16,6 +16,7 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting er = new ErrorReporting();
         Reports reports = new Reports();
         CurrentUser cu = new CurrentUser();
+        LocationManager l = new LocationManager();
         double totalPurchAmount = 0;
         int totalPurchases = 0;
         int totalCheques = 0;
@@ -36,12 +37,13 @@ namespace SweetSpotDiscountGolfPOS
                 }
 
                 //Gathering the start and end dates
-                DateTime[] reportDates = (DateTime[])Session["reportDates"];
+                Object[] repInfo = (Object[])Session["reportInfo"];
+                DateTime[] reportDates = (DateTime[])repInfo[0];
                 DateTime startDate = reportDates[0];
                 DateTime endDate = reportDates[1];
+                int locationID = (int)repInfo[1];
                 //Builds string to display in label
-                lblPurchasesMadeDate.Text = "Purchases Made Between: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + cu.locationName;
-                int locationID = cu.locationID;
+                lblPurchasesMadeDate.Text = "Purchases Made Between: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);                
                 //Creating a cashout list and calling a method that grabs all mops and amounts paid
                 List<Purchases> purch = reports.returnPurchasesDuringDates(startDate, endDate, locationID);
                 grdPurchasesMade.DataSource = purch;

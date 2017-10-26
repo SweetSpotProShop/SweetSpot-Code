@@ -275,7 +275,41 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             return purch;
         }
+        public int verifyPurchasesMade(Object[] repInfo)
+        {
+            int indicator = 0;
+            if (!purchasesAvailable(repInfo))
+            {
+                indicator = 1;
+            }
+            return indicator;
+        }
+        public bool purchasesAvailable(Object[] repInfo)
+        {
+            bool bolTA = false;
+            DateTime[] dtm = (DateTime[])repInfo[0];
+            int loc = Convert.ToInt32(repInfo[1]);
 
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "Select count(receiptNumber) from tbl_receipt "
+                        + "where receiptDate between @startDate and @endDate "
+                        + "and locationID = @locationID";
+            cmd.Parameters.AddWithValue("@startDate", dtm[0]);
+            cmd.Parameters.AddWithValue("@endDate", dtm[1]);
+            cmd.Parameters.AddWithValue("@locationID", loc);
+            cmd.Connection = con;
+            con.Open();
+            cmd.ExecuteNonQuery();
+            int invoicePresent = (int)cmd.ExecuteScalar();
+            if (invoicePresent > 0)
+            {
+                bolTA = true;
+            }
+            //Closing
+            con.Close();
+            return bolTA;
+        }
         //********************IMPORTING***************************************************************
 
         //This method is the giant import method

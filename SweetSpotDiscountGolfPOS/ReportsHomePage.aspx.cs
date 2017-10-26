@@ -164,11 +164,11 @@ namespace SweetSpotDiscountGolfPOS
                     }
                     else if (indicator == 1)
                     {
-                        MessageBox.ShowMessage("No transactions have been processed for today.", this);
+                        MessageBox.ShowMessage("No transactions have been processed for selected date.", this);
                     }
                     else if (indicator == 2)
                     {
-                        MessageBox.ShowMessage("A cashout has already been completed for today.", this);
+                        MessageBox.ShowMessage("A cashout has already been completed for selected date.", this);
                     }
                 }
                
@@ -197,8 +197,21 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnPurchasesReport_Click";
             try
             {
-                Session["reportDates"] = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
-                Server.Transfer("ReportsPurchasesMade.aspx", false);
+                //Stores report dates into Session
+                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                int loc = Convert.ToInt32(ddlLocation.SelectedValue);
+                Object[] repInfo = new Object[] { dtm, loc };
+                int indicator = r.verifyPurchasesMade(repInfo);
+                //Check to see if there are sales first
+                if (indicator == 0)
+                {
+                    Session["reportInfo"] = repInfo;
+                    Server.Transfer("ReportsPurchasesMade.aspx", false);
+                }
+                else if (indicator == 1)
+                {
+                    MessageBox.ShowMessage("No purchases have been processed for selected dates.", this);
+                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
