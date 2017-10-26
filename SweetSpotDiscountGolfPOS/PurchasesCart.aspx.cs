@@ -55,9 +55,14 @@ namespace SweetSpotDiscountGolfPOS
                         //Retrieves location from Session
                         string loc = cu.locationName;
 
-                        receiptNum = idu.getNextReceiptNum();
-                        lblReceiptNumberDisplay.Text = loc + "-" + receiptNum;
-                        Session["Invoice"] = lblReceiptNumberDisplay.Text;
+                        if(Session["Invoice"] == null)
+                        {
+                            receiptNum = idu.getNextReceiptNum();
+                            lblReceiptNumberDisplay.Text = loc + "-" + receiptNum;
+                            Session["Invoice"] = lblReceiptNumberDisplay.Text;
+                        }
+                        else { lblReceiptNumberDisplay.Text = Session["Invoice"].ToString(); }
+                        
                         if (Session["ItemsInCart"] != null)
                         {
                             itemsInCart = (List<Cart>)Session["ItemsInCart"];
