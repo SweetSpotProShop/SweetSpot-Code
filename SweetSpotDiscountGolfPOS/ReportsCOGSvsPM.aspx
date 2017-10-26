@@ -18,7 +18,7 @@
                 <asp:label id="lblCost" runat="server" text="Total Cost:"></asp:label>
             </td>
             <td>
-                <asp:label id="lblPM" runat="server" text="Total Sold:"></asp:label>
+                <asp:label id="lblPM" runat="server" text="Total Price:"></asp:label>
             </td>
             <td>
                 <asp:label id="lblProfitMargin" runat="server" text="Profit Margin:"></asp:label>
