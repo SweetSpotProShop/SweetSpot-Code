@@ -264,8 +264,11 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnCOGSvsPMReport_Click";
             try
             {
-                Session["reportDates"] = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
-                Response.Redirect("ReportsCOGSvsPM.aspx", false);
+                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                int loc = Convert.ToInt32(ddlLocation.SelectedValue);
+                Object[] passing = new Object[2] { dtm, loc };
+                Session["reportInfo"] = passing;
+                Server.Transfer("ReportsCOGSvsPM.aspx", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

@@ -123,7 +123,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                tradeintotal += Convert.ToDouble(reader["tradeinAmount"]);                
+                tradeintotal += Convert.ToDouble(reader["tradeinAmount"]);
             }
             con.Close();
             //Returns the total value of the trade ins
@@ -162,10 +162,10 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             cmd.Parameters.AddWithValue("@saleCash", cas.saleCash);
             cmd.Parameters.AddWithValue("@saleDebit", cas.saleDebit);
             cmd.Parameters.AddWithValue("@saleMasterCard", cas.saleMasterCard);
-            cmd.Parameters.AddWithValue("@saleVisa", cas.saleVisa);           
+            cmd.Parameters.AddWithValue("@saleVisa", cas.saleVisa);
             cmd.Parameters.AddWithValue("@receiptTradeIn", cas.receiptTradeIn);
             cmd.Parameters.AddWithValue("@receiptGiftCard", cas.receiptGiftCard);
-            cmd.Parameters.AddWithValue("@receiptCash", cas.receiptCash);            
+            cmd.Parameters.AddWithValue("@receiptCash", cas.receiptCash);
             cmd.Parameters.AddWithValue("@receiptDebit", cas.receiptDebit);
             cmd.Parameters.AddWithValue("@receiptMasterCard", cas.receiptMasterCard);
             cmd.Parameters.AddWithValue("@receiptVisa", cas.receiptVisa);
@@ -219,10 +219,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             List<Items> items = new List<Items>();
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "select tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.sku, tbl_invoiceItem.itemCost, " +
-                " tbl_invoiceItem.itemPrice from tbl_invoiceItem " +
-                " inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum " +
-                " where tbl_invoice.locationID = @locationID and tbl_invoice.invoiceDate between @startDate and @endDate";
+            cmd.CommandText = "select " +
+                                "tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.sku, tbl_invoiceItem.itemCost, tbl_invoiceItem.itemPrice, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage, " +
+                                "CASE WHEN tbl_invoiceItem.percentage = 1 then sum(((tbl_invoiceItem.itemPrice -(tbl_invoiceItem.itemPrice * tbl_invoiceItem.itemDiscount) / 100)) -tbl_invoiceItem.itemCost)  " +
+                                "ELSE sum((tbl_invoiceItem.itemPrice -tbl_invoiceItem.itemDiscount) -tbl_invoiceItem.itemCost) END AS 'math' " +
+                                "from tbl_invoiceItem " +
+                                "inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum " +
+                                "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns) " +
+                                "and tbl_invoice.locationID = @locationID and tbl_invoice.invoiceDate between @startDate and @endDate " +
+                                "group by tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.sku, tbl_invoiceItem.itemCost, tbl_invoiceItem.itemPrice, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage " +
+                                "order by tbl_invoiceItem.invoiceNum ";
             cmd.Parameters.AddWithValue("@startDate", startDate);
             cmd.Parameters.AddWithValue("@endDate", endDate);
             cmd.Parameters.AddWithValue("@locationID", locationID);
@@ -233,11 +239,90 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             {
                 items.Add(new Items(Convert.ToInt32(reader["invoiceNum"]),
                     Convert.ToInt32(reader["invoiceSubNum"]), Convert.ToInt32(reader["sku"]),
-                    Convert.ToDouble(reader["itemCost"]), Convert.ToDouble(reader["itemPrice"])));
+                    Convert.ToDouble(reader["itemCost"]), Convert.ToDouble(reader["itemPrice"]),
+                    Convert.ToDouble(reader["math"])));
             }
             return items;
         }
-        
+        public double returnCOGSCost(DateTime startDate, DateTime endDate, int locationID)
+        {
+            //This method returns the total cost of the inventory sold
+            double tCost = 0;
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.CommandText = "select sum(tbl_invoiceItem.itemCost) as 'itemCost' from tbl_invoiceItem " +
+                                "inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum " +
+                                "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) " +
+                                "and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns) " +
+                                "and tbl_invoice.locationID = @locationID and tbl_invoice.invoiceDate between @startDate and @endDate ";
+            cmd.Parameters.AddWithValue("@startDate", startDate);
+            cmd.Parameters.AddWithValue("@endDate", endDate);
+            cmd.Parameters.AddWithValue("@locationID", locationID);
+            cmd.Connection = con;
+            con.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                tCost = Convert.ToDouble(reader["itemCost"]);
+            }
+            return tCost;
+        }
+        public double returnCOGSPrice(DateTime startDate, DateTime endDate, int locationID)
+        {
+            //This method returns the total price/sold at of the inventory sold
+            double tPrice = 0;
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.CommandText = "select sum(tbl_invoiceItem.itemPrice) as 'itemPrice' from tbl_invoiceItem " +
+                                "inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum " +
+                                "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) " +
+                                "and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns) " +
+                                "and tbl_invoice.locationID = @locationID and tbl_invoice.invoiceDate between @startDate and @endDate ";
+            cmd.Parameters.AddWithValue("@startDate", startDate);
+            cmd.Parameters.AddWithValue("@endDate", endDate);
+            cmd.Parameters.AddWithValue("@locationID", locationID);
+            cmd.Connection = con;
+            con.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                tPrice = Convert.ToDouble(reader["itemPrice"]);
+            }
+            return tPrice;
+        }
+        public double returnCOGSProfitMargin(DateTime startDate, DateTime endDate, int locationID)
+        {
+            //This method returns the total price/sold at of the inventory sold
+            double pm = 0;
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.CommandText = "create table #temp(invoiceNum int, math float, CONSTRAINT PK_key PRIMARY KEY (invoiceNum, math)) " +
+                                "insert into #temp  " +
+                                "select tbl_invoiceItem.invoiceNum,  " +
+                                "CASE WHEN tbl_invoiceItem.percentage = 1 then sum(((tbl_invoiceItem.itemPrice -(tbl_invoiceItem.itemPrice * tbl_invoiceItem.itemDiscount) / 100)) -tbl_invoiceItem.itemCost)   " +
+                                "ELSE sum((tbl_invoiceItem.itemPrice -tbl_invoiceItem.itemDiscount) -tbl_invoiceItem.itemCost) END AS 'math' from tbl_invoiceItem  " +
+                                "inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum  " +
+                                "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns)  " +
+                                "and tbl_invoice.locationID = @locationID and tbl_invoice.invoiceDate between @startDate and @endDate  " +
+                                "group by tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.sku, tbl_invoiceItem.itemCost, tbl_invoiceItem.itemPrice, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage  " +
+                                "order by tbl_invoiceItem.invoiceNum  " +
+                                "select sum(math) as 'total' from #temp   " +
+                                "drop table #temp  ";
+            cmd.Parameters.AddWithValue("@startDate", startDate);
+            cmd.Parameters.AddWithValue("@endDate", endDate);
+            cmd.Parameters.AddWithValue("@locationID", locationID);
+            cmd.Connection = con;
+            con.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                pm = Convert.ToDouble(reader["total"]);
+            }
+            return pm;
+        }
 
 
 
@@ -276,7 +361,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                     for (int i = 2; i < rowCnt; i++) //Starts on 2 because excel starts at 1, and line 1 is headers
                     {
 
- 
+
 
                         SettingsHomePage page = new SettingsHomePage();
                         //page.counter = i;
@@ -284,7 +369,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         page.progress = i.ToString() + "/" + rowCnt.ToString();
                         page.callJS();
                         //fc..Label1.Text = 
-                  //      page.lblP.Text = i.ToString() + "/" + rowCnt.ToString();
+                        //      page.lblP.Text = i.ToString() + "/" + rowCnt.ToString();
                         System.Windows.Forms.Application.DoEvents();
 
 
@@ -315,7 +400,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 //***************SKU***************
                                 //If there is a sku in column 3, proceed
                                 if (!Convert.ToInt32(worksheet.Cells[i, 3].Value).Equals(null)) //Column 3 = Sku
-                                { 
+                                {
                                     //Sets the accessory sku to the value in column 3
                                     a.sku = Convert.ToInt32(worksheet.Cells[i, 3].Value);
                                 }
@@ -476,7 +561,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                     if (!(worksheet.Cells[i, 22].Value).Equals(null)) //22
                                     {
                                         string destination = (worksheet.Cells[i, 22].Value).ToString();
-                                        a.locID = lm.getLocationIDFromDestination(destination);                                       
+                                        a.locID = lm.getLocationIDFromDestination(destination);
                                     }
                                     else
                                     {

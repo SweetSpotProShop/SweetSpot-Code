@@ -19,6 +19,8 @@ namespace SweetSpotDiscountGolfPOS
         ItemDataUtilities idu = new ItemDataUtilities();
         CustomMessageBox cmb = new CustomMessageBox();
         CurrentUser cu = new CurrentUser();
+        DateTime startDate;
+        DateTime endDate;
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -35,13 +37,33 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 if (!IsPostBack)
                 {
+                    //Gathering the start and end dates
+                    Object[] passing = (Object[])Session["reportInfo"];
+                    DateTime[] reportDates = (DateTime[])passing[0];
+                    DateTime startDate = reportDates[0];
+                    DateTime endDate = reportDates[1];
+                    int locationID = (int)passing[1];
+                    //Builds string to display in label
+                    if (startDate == endDate)
+                    {
+                        lblDates.Text = "COGs vs PM for: " + startDate.ToString("d");
+                    }
+                    else
+                    {
+                        lblDates.Text = "COGs vs PM for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
+                    }
 
-
-
-
-
-
-
+                    List<Items> items = new List<Items>();
+                    //Binding the gridview
+                    items = r.returnItemsForCOGS(startDate, endDate, locationID);
+                    grdInvoiceSelection.DataSource = items;
+                    grdInvoiceSelection.DataBind();
+                    //Displaying the total cost
+                    lblTotalCostDisplay.Text = r.returnCOGSCost(startDate, endDate, locationID).ToString("C");
+                    //Displaying the total price/sold at
+                    lblSoldDisplay.Text = r.returnCOGSPrice(startDate, endDate, locationID).ToString("C");
+                    //Displaying the profit margin
+                    lblProfitMarginDisplay.Text = r.returnCOGSProfitMargin(startDate, endDate, locationID).ToString("C");
 
 
 

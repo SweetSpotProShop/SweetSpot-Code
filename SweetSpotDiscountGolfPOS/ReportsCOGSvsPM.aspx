@@ -6,7 +6,12 @@
     <hr />
     <table border="1">
         <tr>
-            <td>
+            <td colspan="5">
+                <asp:Label ID="lblDates" runat="server" Text="lblDates"></asp:Label>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
                 <asp:label id="lblItemsSold" runat="server" text="Items Sold:"></asp:label>
             </td>
             <td>
@@ -20,12 +25,12 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td colspan="2">
                 <asp:GridView ID="grdInvoiceSelection" runat="server" AutoGenerateColumns="false" Width="100%">
                     <Columns>
                         <asp:TemplateField HeaderText="Invoice Number">
                             <ItemTemplate>
-                                <asp:Label ID="lblInvoiceNum" runat="server"  Text='<%#Eval("invoiceNum") + "-" + Eval("invoiceSub")%>' ></asp:Label>
+                                <asp:Label ID="lblInvoiceNum" runat="server"  Text='<%#Eval("invoiceNum") + "-" + Eval("invoiceSubNum")%>' ></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Sku">
@@ -35,14 +40,19 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Item Cost">
                             <ItemTemplate>
-                                <asp:Label ID="lblItemCost" runat="server" Text='<%#Eval("itemCost","{0:C}") %>'></asp:Label>
+                                <asp:Label ID="lblItemCost" runat="server" Text='<%#Eval("cost","{0:C}") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Item Price">
                             <ItemTemplate>
-                                <asp:Label ID="lblItemPrice" runat="server" Text='<%#Eval("itemPrice","{0:C}") %>'></asp:Label>
+                                <asp:Label ID="lblItemPrice" runat="server" Text='<%#Eval("price","{0:C}") %>'></asp:Label>
                             </ItemTemplate>
-                        </asp:TemplateField>                     
+                        </asp:TemplateField>       
+                        <asp:TemplateField HeaderText="Profit">
+                            <ItemTemplate>
+                                <asp:Label ID="lblItemProfit" runat="server" Text='<%#Eval("difference","{0:C}") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField> 
                     </Columns>
                 </asp:GridView>
             </td>
@@ -55,7 +65,7 @@
             <td style="vertical-align:top">
                 <asp:label id="lblProfitMarginDisplay" runat="server" text="lblProfitMarginDisplay"></asp:label>
             </td>
-        </tr>
+        </tr>        
     </table>
 
 
