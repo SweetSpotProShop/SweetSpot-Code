@@ -12,6 +12,7 @@ namespace SweetShop
 
         public int invoiceNum { get; set; }
         public int invoiceSub { get; set; }
+        public string invoice { get; set; }
         public DateTime invoiceDate { get; set; }
         public DateTime invoiceTime { get; set; }
         public int customerID { get; set; }
@@ -29,8 +30,20 @@ namespace SweetShop
         public string employeeName { get; set; }
         public string locationName { get; set; }
         public double shippingAmount { get; set; }
+        public bool percentage { get; set; }
+        public double totalProfit { get; set; }
+        public double totalCost { get; set; }
 
         public Invoice() { }
+        public Invoice(string I, double tc, double td, bool p, double tp, double tpf)
+        {
+            invoice = I;
+            totalCost = tc;
+            discountAmount = td;
+            percentage = p;
+            balanceDue = tp;
+            totalProfit = tpf;
+        }
         public Invoice(int I, int S, DateTime D, string CN, double BD, string LN, string EN)
         {
             invoiceNum = I;

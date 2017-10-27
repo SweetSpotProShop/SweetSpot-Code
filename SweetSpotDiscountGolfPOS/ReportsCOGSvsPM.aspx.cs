@@ -53,17 +53,43 @@ namespace SweetSpotDiscountGolfPOS
                         lblDates.Text = "COGs vs PM for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
                     }
 
-                    List<Items> items = new List<Items>();
+                    List<Invoice> inv = new List<Invoice>();
                     //Binding the gridview
-                    items = r.returnItemsForCOGS(startDate, endDate, locationID);
-                    grdInvoiceSelection.DataSource = items;
-                    grdInvoiceSelection.DataBind();
-                    //Displaying the total cost
-                    lblTotalCostDisplay.Text = r.returnCOGSCost(startDate, endDate, locationID).ToString("C");
-                    //Displaying the total price/sold at
-                    lblSoldDisplay.Text = r.returnCOGSPrice(startDate, endDate, locationID).ToString("C");
-                    //Displaying the profit margin
-                    lblProfitMarginDisplay.Text = r.returnCOGSProfitMargin(startDate, endDate, locationID).ToString("C");
+                    inv = r.returnInvoicesForCOGS(startDate, endDate, locationID);
+                    //Checking if there are any values
+                    if(inv.Count > 0)
+                    {
+                        grdInvoiceSelection.DataSource = inv;
+                        grdInvoiceSelection.DataBind();
+                        //Displaying the total cost
+                        lblTotalCostDisplay.Text = r.returnCOGSCost(startDate, endDate, locationID).ToString("C");
+                        //Displaying the total price/sold at
+                        lblSoldDisplay.Text = r.returnCOGSPrice(startDate, endDate, locationID).ToString("C");
+                        //Displaying the profit margin
+                        lblProfitMarginDisplay.Text = r.returnCOGSProfitMargin(startDate, endDate, locationID).ToString("C");
+                    }
+                    else
+                    {
+                        if (startDate == endDate)
+                        {
+                            lblDates.Text = "There are no invoices for: " + startDate.ToString("d");
+                        }
+                        else
+                        {
+                            lblDates.Text = "There are no invoices for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
+                        }
+                        grdInvoiceSelection.Visible = false;
+                        lblTotalCostDisplay.Visible = false;
+                        lblSoldDisplay.Visible = false;
+                        lblProfitMarginDisplay.Visible = false;
+                        lblItemsSold.Visible = false;
+                        lblCost.Visible = false;
+                        lblPM.Visible = false;
+                        lblProfitMargin.Visible = false;
+                        
+                    }
+
+                    
 
 
 
