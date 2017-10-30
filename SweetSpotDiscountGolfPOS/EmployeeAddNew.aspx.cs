@@ -72,6 +72,15 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
+                    if (!IsPostBack)
+                    {
+                        ddlLocation.SelectedValue = cu.locationID.ToString();
+                        dt = empM.returnProvinceDropDown(0);
+                        ddlProvince.DataTextField = "provName";
+                        ddlProvince.DataValueField = "provStateID";
+                        ddlProvince.DataSource = dt;
+                        ddlProvince.DataBind();
+                    }
                     //With no employee selected display text boxes and drop downs to add employee
                     txtFirstName.Visible = true;
                     lblFirstNameDisplay.Visible = false;
@@ -81,7 +90,6 @@ namespace SweetSpotDiscountGolfPOS
                     ddlJob.SelectedValue = "1";
                     lblJobDisplay.Visible = false;
                     ddlLocation.Visible = true;
-                    ddlLocation.SelectedValue = cu.locationID.ToString();
                     lblLocationDisplay.Visible = false;
                     txtEmail.Visible = true;
                     lblEmailDisplay.Visible = false;
@@ -99,11 +107,6 @@ namespace SweetSpotDiscountGolfPOS
                     lblPostalCodeDisplay.Visible = false;
                     ddlProvince.Visible = true;
                     lblProvinceDisplay.Visible = false;
-                    dt = empM.returnProvinceDropDown(0);
-                    ddlProvince.DataTextField = "provName";
-                    ddlProvince.DataValueField = "provStateID";
-                    ddlProvince.DataSource = dt;
-                    ddlProvince.DataBind();
                     ddlCountry.Visible = true;
                     lblCountryDisplay.Visible = false;
 
