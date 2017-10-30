@@ -556,7 +556,7 @@ namespace SweetSpotProShop
             cmd.Connection = conn;
             cmd.CommandText = "Insert into tbl_tempTradeInCartSkus (sku, brandID, modelID, clubType, "
                 + "shaft, numberOfClubs, premium, cost, price, quantity, clubSpec, shaftSpec, "
-                + "shaftFlex, dexterity, typeID, locationID, used, comments) values (@sku, 10, 2148, "
+                + "shaftFlex, dexterity, typeID, locationID, used, comments) values (@sku, 10, 1966, "
                 + "'', '', '', 0, 0, 0, 0, '', '', '', '', 1, @locationID, 1, '');";
             cmd.Parameters.AddWithValue("sku", tradeInSkuDisplay);
             cmd.Parameters.AddWithValue("locationID", loc);
