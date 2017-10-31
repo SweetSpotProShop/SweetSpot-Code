@@ -81,6 +81,7 @@ namespace SweetSpotDiscountGolfPOS
                 //int sku = idu.tradeInSku(storeLocation);
                 int sku = Convert.ToInt32(lblSKUDisplay.Text);
                 double cost = Convert.ToDouble(txtCost.Text);
+                double price = Convert.ToDouble(txtPrice.Text);
                 int brandID = Convert.ToInt32(ddlBrand.SelectedValue);
                 int modelID = Convert.ToInt32(ddlModel.SelectedValue);
                 int quant = Convert.ToInt32(txtQuantity.Text);
@@ -97,7 +98,7 @@ namespace SweetSpotDiscountGolfPOS
 
                 //Creating a new club
                 Clubs tradeIN = new Clubs(sku, brandID, modelID, 1, clubType,
-                    shaft, numOfClubs, 0, cost, 0, quant, clubSpec, shaftSpec,
+                    shaft, numOfClubs, 0, cost, price, quant, clubSpec, shaftSpec,
                     shaftFlex, dext, used, comments);
                 //Trade in club to be displayed
                 Clubs tradeINDisplay = new Clubs(sku, brandID, modelID, 1, clubType,

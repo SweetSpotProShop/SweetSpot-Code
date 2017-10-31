@@ -84,7 +84,7 @@ namespace SweetSpotDiscountGolfPOS
                             lblPriceDisplay.Text = a.price.ToString();
                             lblQuantityDisplay.Text = a.quantity.ToString();
                             lblLocationDisplay.Text = lm.locationName(a.locID);
-                            lblNumberofClubs.Text = "Accessory Type: ";
+                            lblNumberofClubs.Text = "Accessory Type:";
                             lblNumberofClubsDisplay.Text = a.accessoryType.ToString();
 
                             lblClubType.Text = "Size: ";
@@ -164,6 +164,7 @@ namespace SweetSpotDiscountGolfPOS
 
                     ddlLocation.Visible = true;
                     lblLocationDisplay.Visible = false;
+                    if (!IsPostBack) { ddlLocation.SelectedValue = cu.locationID.ToString(); }
 
                     lblClubTypeDisplay.Visible = false;
                     lblModelDisplay.Visible = false;
@@ -188,6 +189,7 @@ namespace SweetSpotDiscountGolfPOS
                         chkUsed.Visible = false;
                         lblModel.Visible = true;
                         ddlModel.Visible = true;
+                        lblNumberofClubs.Text = "Accessory Type:";
                         lblNumberofClubs.Visible = true;
                         txtNumberofClubs.Visible = true;
                         lblClubSpec.Visible = false;
@@ -220,6 +222,7 @@ namespace SweetSpotDiscountGolfPOS
                         lblShaftFlex.Text = "Shaft Flex: ";
                         lblShaftFlex.Visible = true;
                         lblModel.Visible = true;
+                        lblNumberofClubs.Text = "Number of Clubs:";
                         lblNumberofClubs.Visible = true;
                         lblShaftSpec.Visible = true;
                         lblDexterity.Visible = true;

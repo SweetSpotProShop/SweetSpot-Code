@@ -547,21 +547,15 @@ namespace SweetSpotProShop
         {
             int tradeInSkuDisplay = 0;
             //Grabs the trade in sku
-            tradeInSkuDisplay = tradeInSku(loc);
-            int[] range = new int[2];
-            //Returns the range for the trade in sku
-            range = tradeInSkuRange(loc);
+            tradeInSkuDisplay = tradeInSku(loc)+1;
             SqlConnection conn = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = conn;
-            cmd.CommandText = "Insert into tbl_tempTradeInCartSkus (sku, brandID, modelID, clubType, "
-                + "shaft, numberOfClubs, premium, cost, price, quantity, clubSpec, shaftSpec, "
-                + "shaftFlex, dexterity, typeID, locationID, used, comments) values (@sku, 25, 1966, "
-                + "'', '', '', 0, 0, 0, 0, '', '', '', '', 1, @locationID, 1, '');";
-            cmd.Parameters.AddWithValue("sku", tradeInSkuDisplay);
-            cmd.Parameters.AddWithValue("locationID", loc);
+            SqlCommand cmd1 = new SqlCommand();
+            cmd1.Connection = conn;
+            cmd1.CommandText = "update tbl_tradeInSkusForCart set currentSKU = @sku where locationID = @locationID";
+            cmd1.Parameters.AddWithValue("sku", tradeInSkuDisplay);
+            cmd1.Parameters.AddWithValue("locationID", loc);
             conn.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
+            cmd1.ExecuteNonQuery();
             conn.Close();
             //Returns the trade in items display sku
             return tradeInSkuDisplay;
@@ -570,43 +564,19 @@ namespace SweetSpotProShop
         public int tradeInSku(int location)
         {
             int sku = 0;
-            int[] range = new int[2];
-            //Returns the range for the trade in sku
-            range = tradeInSkuRange(location);
             SqlConnection conn = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = conn;
-            cmd.CommandText = "Select max(sku) as maxsku from tbl_tempTradeInCartSkus where locationID = @locationID";
-            cmd.Parameters.AddWithValue("locationID", location.ToString());
-            //cmd.Parameters.AddWithValue("lowerRange", range[0]);
-            //cmd.Parameters.AddWithValue("upperRange", range[1]);
+            cmd.CommandText = "Select currentSKU from tbl_tradeInSkusForCart where locationID = @locationID";
+            cmd.Parameters.AddWithValue("locationID", location);
             conn.Open();
             SqlDataReader reader = cmd.ExecuteReader();
-
-            Clubs club = new Clubs();
-            int maxSku = 0;
             while (reader.Read())
             {
                 //Gets the max sku
-                maxSku = (reader["maxsku"] as int?) ?? range[0]; //Setting it to 0
+                sku = Convert.ToInt32(reader["currentSKU"]);
             }
             conn.Close();
-
-            //If the maxSku returns as null, sets the sku as the min range
-            if (maxSku.Equals(null))
-            {
-                sku = range[0];
-            }
-            //If the maxSku is less than the upper range, sku is the max sku + 1
-            else if (maxSku < range[1])
-            {
-                sku = maxSku + 1;
-            }
-            //If the maxSku equals the upper range, sku equals the min range
-            else if (maxSku == range[1])
-            {
-                sku = range[0];
-            }
 
             //Returns the sku that will be used
             return sku;
@@ -653,16 +623,13 @@ namespace SweetSpotProShop
             if(tradeInItem.itemlocation == 0)
             { tradeInItem.itemlocation = 1; }
             cmd.Connection = conn;
-            //cmd.CommandText = "insert into tbl_tempTradeInCartSkus values(" + tradeInItem.sku + ", " + tradeInItem.brandID + ", " +
-            //    tradeInItem.modelID + ", '" + tradeInItem.clubType + "', '" + tradeInItem.shaft + "', '" + tradeInItem.numberOfClubs + "', " +
-            //    tradeInItem.premium + ", " + tradeInItem.cost + ", " + tradeInItem.price + ", " + tradeInItem.quantity + ", '" +
-            //    tradeInItem.clubSpec + "', '" + tradeInItem.shaftSpec + "', '" + tradeInItem.shaftFlex + "', '" +
-            //    tradeInItem.dexterity + "', " + tradeInItem.typeID + ", " + tradeInItem.itemlocation + ", " +
-            //    used + ", '" + tradeInItem.comments + "');";
-            cmd.CommandText = "Update tbl_tempTradeInCartSkus set brandID = @brandID, modelID = @modelID, clubType = @clubType, shaft = @shaft," +
-                "numberOfClubs = @numberOfClubs, premium = @premium, cost = @cost, price = @price, quantity = @quantity, clubSpec = @clubSpec," +
-                "shaftSpec = @shaftSpec, shaftFlex = @shaftFlex, dexterity = @dexterity, typeID = @typeID, locationID = @locationID, used = @used," +
-                "comments = @comments where sku = @sku;";
+            cmd.CommandText = "insert into tbl_tempTradeInCartSkus values(@sku, @brandID, @modelID, "
+                + "@clubType, @shaft, @numberOfClubs, @premium, @cost, @price, @quantity, @clubSpec, "
+                + "@shaftSpec, @shaftFlex, @dexterity, @typeID, @locationID, @used, @comments)";
+            //cmd.CommandText = "Update tbl_tempTradeInCartSkus set brandID = @brandID, modelID = @modelID, clubType = @clubType, shaft = @shaft," +
+            //    "numberOfClubs = @numberOfClubs, premium = @premium, cost = @cost, price = @price, quantity = @quantity, clubSpec = @clubSpec," +
+            //    "shaftSpec = @shaftSpec, shaftFlex = @shaftFlex, dexterity = @dexterity, typeID = @typeID, locationID = @locationID, used = @used," +
+            //    "comments = @comments where sku = @sku;";
             cmd.Parameters.AddWithValue("sku", sku);
             cmd.Parameters.AddWithValue("brandID", tradeInItem.brandID);
             cmd.Parameters.AddWithValue("modelID", tradeInItem.modelID);
@@ -682,7 +649,7 @@ namespace SweetSpotProShop
             cmd.Parameters.AddWithValue("used", tradeInItem.used);
             cmd.Parameters.AddWithValue("comments", tradeInItem.comments);
             conn.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
+            cmd.ExecuteNonQuery();
             conn.Close();
         }
         //Sending all of the invoice information to the database 
@@ -864,7 +831,7 @@ namespace SweetSpotProShop
             SqlConnection conn = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = conn;
-            cmd.CommandText = "Select Max(receiptNumber) as receiptNumber from tbl_receiptNumbers";
+            cmd.CommandText = "Select receiptNumber from tbl_receiptNumbers";
             conn.Open();
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
@@ -892,10 +859,10 @@ namespace SweetSpotProShop
             SqlConnection conn = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = conn;
-            cmd.CommandText = "Insert into tbl_receiptNumbers(receiptNumber) values(@recNum);";
+            cmd.CommandText = "Update tbl_receiptNumbers set receiptNumber = @recNum";
             cmd.Parameters.AddWithValue("recNum", recNum);
             conn.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
+            cmd.ExecuteNonQuery();
             conn.Close();
         }
         public int returnMOPNameasInt(string mopN)
@@ -923,11 +890,10 @@ namespace SweetSpotProShop
         public int getNextInvoiceNum()
         {
             int nextInvoiceNum = 0;
-            
             SqlConnection conn = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = conn;
-            cmd.CommandText = "Select Max(invoiceNum) as invoiceNum from tbl_InvoiceNumbers";
+            cmd.CommandText = "Select invoiceNum from tbl_InvoiceNumbers";
             conn.Open();
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
@@ -959,21 +925,10 @@ namespace SweetSpotProShop
             SqlConnection conn = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = conn;
-            //invoiceNum, invoiceSubNum, invoiceDate, invoiceTime, custID, empID, locationID, subTotal, discountAmount, tradeinAmount
-            //governmentTax, provincialTax, balanceDue, transactionType, comments
-            cmd.CommandText = "Insert into tbl_InvoiceNumbers(invoiceNum) values(@invNum);";
-
-            //"Insert into tbl_invoice(invoiceNum, invoiceSubNum, invoiceDate, invoiceTime, custID, " +
-            //"empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, " +
-            //"governmentTax, provincialTax, balanceDue, transactionType, comments) values(@invNum, @invSubNum, @date, @time" +
-            //", 1, @empID, 1, 0, 0, 0, 0, 0, 0, 0, 1, '');";
+            cmd.CommandText = "update tbl_InvoiceNumbers set invoiceNum = @invNum";
             cmd.Parameters.AddWithValue("invNum", invNum);
-            //cmd.Parameters.AddWithValue("invSubNum", subNum);
-            //cmd.Parameters.AddWithValue("date", date);
-            //cmd.Parameters.AddWithValue("time", time);            
-            //cmd.Parameters.AddWithValue("@empID", empID);
             conn.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
+            cmd.ExecuteNonQuery();
             conn.Close();
         }
         //Returns the max invoice subNum
@@ -1061,14 +1016,14 @@ namespace SweetSpotProShop
             SqlConnection conn = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = conn;
-            cmd.CommandText = "Select Max(sku) as largestSku from tbl_skuNumbers where itemType = @itemType;";
+            cmd.CommandText = "Select sku from tbl_skuNumbers where itemType = @itemType;";
             cmd.Parameters.AddWithValue("@itemType", itemType);
             conn.Open();
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
                 //If there is no sku found, set it to 0
-                if (reader["largestSku"] == DBNull.Value)
+                if (reader["sku"] == DBNull.Value)
                 {
                     maxSku = 0;
                     //Stores the max sku along with its itemType
@@ -1077,7 +1032,7 @@ namespace SweetSpotProShop
                 else
                 {
                     //If a sku is found, increment it by 1
-                    maxSku = Convert.ToInt32(reader["largestSku"]) + 1;
+                    maxSku = Convert.ToInt32(reader["sku"]) + 1;
                     //Stores the new max sku along with its itemType
                     storeMaxSku(maxSku, itemType);
                 }
@@ -1093,11 +1048,11 @@ namespace SweetSpotProShop
             SqlConnection conn = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = conn;
-            cmd.CommandText = "insert into tbl_skuNumbers values(@sku, @itemType);";
+            cmd.CommandText = "Update tbl_skuNumbers set sku = @sku where itemType = @itemType";
             cmd.Parameters.AddWithValue("@sku", sku);
             cmd.Parameters.AddWithValue("@itemType", itemType);
             conn.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
+            cmd.ExecuteNonQuery();
             conn.Close();
         }
     }
