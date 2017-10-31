@@ -27,7 +27,7 @@
                         <asp:Label ID="lblSearchDate" runat="server" Text="Enter Date to Search(leave blank if not known): "></asp:Label>
                         <br />
                         <asp:TextBox ID="txtSearchDate" runat="server"></asp:TextBox>
-                        <asp:CompareValidator ID="cvSearchDate" ControlToValidate="txtSearchDate" Operator="DataTypeCheck" Type="Date" Text="MM/DD/YY" runat="server"></asp:CompareValidator>
+                        <%--<asp:CompareValidator ID="cvSearchDate" ControlToValidate="txtSearchDate" Operator="DataTypeCheck" Type="Date" Text="MM/DD/YY" runat="server"></asp:CompareValidator>--%>
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Button ID="btnSearch" runat="server" Width="150" Text="Search" OnClick="btnSearch_Click" />
@@ -55,7 +55,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Total">
                             <ItemTemplate>
-                                <asp:Label ID="lblAmountPaid" runat="server" Text='<%#Eval("balanceDue","{0:#0.00}") %>'></asp:Label>
+                                <asp:Label ID="lblAmountPaid" runat="server" Text='<%#Eval("balanceDue","{0:C}") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Store">
