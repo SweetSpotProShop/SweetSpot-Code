@@ -126,6 +126,14 @@
                             <asp:Button ID="btnCOGSvsPMReport" runat="server" Text="COGS vs. PM Report" Width="200px" OnClick="btnCOGSvsPMReport_Click" />
                         </asp:TableCell>
                     </asp:TableRow>
+                    <asp:TableRow>
+                        <asp:TableCell>
+
+                        </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:Button ID="btnItemsSold" runat="server" Text="Items Sold" Width="200px" Onclick="btnItemsSold_Click" />
+                        </asp:TableCell>
+                    </asp:TableRow>
                 </asp:Table>
             </div>
 

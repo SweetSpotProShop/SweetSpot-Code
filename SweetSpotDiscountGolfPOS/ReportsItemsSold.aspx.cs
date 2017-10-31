@@ -11,7 +11,7 @@ using System.Web.UI.WebControls;
 
 namespace SweetSpotDiscountGolfPOS
 {
-    public partial class ReportsCOGSvsPM : System.Web.UI.Page
+    public partial class ReportsItemsSold : System.Web.UI.Page
     {
         ErrorReporting er = new ErrorReporting();
         SweetShopManager ssm = new SweetShopManager();
@@ -46,49 +46,35 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "COGs vs PM for: " + startDate.ToString("d");
+                        lblDates.Text = "Items sold for: " + startDate.ToString("d");
                     }
                     else
                     {
-                        lblDates.Text = "COGs vs PM for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
+                        lblDates.Text = "Items sold for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
                     }
 
-                    List<Invoice> inv = new List<Invoice>();
+                    List<Items> items = new List<Items>();
                     //Binding the gridview
-                    inv = r.returnInvoicesForCOGS(startDate, endDate, locationID);
+                    items = r.returnItemsSold(startDate, endDate, locationID);
                     //Checking if there are any values
-                    if(inv.Count > 0)
+                    if (items.Count > 0)
                     {
-                        grdInvoiceSelection.DataSource = inv;
-                        grdInvoiceSelection.DataBind();
-                        //Displaying the total cost
-                        lblTotalCostDisplay.Text = r.returnCOGSCost(startDate, endDate, locationID).ToString("C");
-                        //Displaying the total price/sold at
-                        lblSoldDisplay.Text = r.returnCOGSPrice(startDate, endDate, locationID).ToString("C");
-                        //Displaying the profit margin
-                        lblProfitMarginDisplay.Text = r.returnCOGSProfitMargin(startDate, endDate, locationID).ToString("C");
+                        grdItems.DataSource = items;
+                        grdItems.DataBind();                        
                     }
                     else
                     {
                         if (startDate == endDate)
                         {
-                            lblDates.Text = "There are no invoices for: " + startDate.ToString("d");
+                            lblDates.Text = "There are no items sold for: " + startDate.ToString("d");
                         }
                         else
                         {
-                            lblDates.Text = "There are no invoices for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
-                        }
-                        grdInvoiceSelection.Visible = false;
-                        lblTotalCostDisplay.Visible = false;
-                        lblSoldDisplay.Visible = false;
-                        lblProfitMarginDisplay.Visible = false;
-                        lblItemsSold.Visible = false;
-                        lblCost.Visible = false;
-                        lblPM.Visible = false;
-                        lblProfitMargin.Visible = false;
-                        
+                            lblDates.Text = "There are no items sold for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
+                        }                        
                     }
                 }
+
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -104,6 +90,38 @@ namespace SweetSpotDiscountGolfPOS
                 //Server.Transfer(prevPage, false);
             }
         }
+
+        protected void grdItems_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                Label percent = (Label)e.Row.FindControl("lblPercentage");
+                Label discount = (Label)e.Row.FindControl("lblTotalDiscount");
+                if (percent.Text.Equals("True"))
+                {
+                    discount.Text = discount.Text + "%";
+                }
+                else
+                {
+                    if (discount.Text.Equals("0"))
+                    {
+                        discount.Text = "-";
+                    }
+                    else
+                    {
+                        discount.Text = "$" + discount.Text;
+                    }                    
+                }
+                
+                Label lblProfit = (Label)e.Row.FindControl("lblTotalProfit");
+                string profitText = lblProfit.Text;
+                if (profitText.Contains("("))
+                {
+                    lblProfit.ForeColor = System.Drawing.Color.Red;
+                }
+            }
+        }
+
         protected void lbtnInvoiceNumber_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -156,36 +174,6 @@ namespace SweetSpotDiscountGolfPOS
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
                 //Server.Transfer(prevPage, false);
-            }
-        }
-
-        protected void grdInvoiceSelection_RowDataBound(object sender, GridViewRowEventArgs e)
-        {
-            if (e.Row.RowType == DataControlRowType.DataRow)
-            {
-                Label percent = (Label)e.Row.FindControl("lblPercentage");
-                Label discount = (Label)e.Row.FindControl("lblTotalDiscount");
-                if (percent.Text.Equals("True"))
-                {
-                    discount.Text = discount.Text + "%";
-                }
-                else
-                {
-                    if (discount.Text.Equals("0"))
-                    {
-                        discount.Text = "-";
-                    }
-                    else
-                    {
-                        discount.Text = "$" + discount.Text;
-                    }
-                }
-                Label lblProfit = (Label)e.Row.FindControl("lblTotalProfit");
-                string profitText = lblProfit.Text;
-                if (profitText.Contains("("))
-                {
-                    lblProfit.ForeColor = System.Drawing.Color.Red;
-                }
             }
         }
     }

@@ -276,10 +276,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return purch;
         }
 
-
-
-        //******************COGS and PM REPORTING*******************************************************
-        public List<Items> returnItemsForCOGS(DateTime startDate, DateTime endDate, int locationID)
+        //******************ITEMS SOLD REPORTING*******************************************************
+        public List<Items> returnItemsSold(DateTime startDate, DateTime endDate, int locationID)
         {
             //This method returns the invoice numbers, sku, itemCost, and itemPrice 
             List<Items> items = new List<Items>();
@@ -306,10 +304,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 items.Add(new Items(Convert.ToInt32(reader["invoiceNum"]),
                     Convert.ToInt32(reader["invoiceSubNum"]), Convert.ToInt32(reader["sku"]),
                     Convert.ToDouble(reader["itemCost"]), Convert.ToDouble(reader["itemPrice"]),
+                    Convert.ToDouble(reader["itemDiscount"]), Convert.ToBoolean(reader["percentage"]),
                     Convert.ToDouble(reader["math"])));
             }
             return items;
         }
+
+        //******************COGS and PM REPORTING*******************************************************
         public List<Invoice> returnInvoicesForCOGS(DateTime startDate, DateTime endDate, int locationID)
         {
             //This method returns a type of invoice for a report
