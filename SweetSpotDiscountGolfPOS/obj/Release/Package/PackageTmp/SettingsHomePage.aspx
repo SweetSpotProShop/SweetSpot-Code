@@ -164,6 +164,15 @@
             <asp:Button ID="btnExportClothing" runat="server" Width="150" Text="Export Clothing" OnClick="btnExportClothing_Click" />
             <asp:Button ID="btnExportAccessories" runat="server" Width="150" Text="Export Accessories" OnClick="btnExportAccessories_Click" />
             <asp:Button ID="btnExportInvoices" runat="server" Width="150" Text="Export Invoices" OnClick="btnExportInvoices_Click" />
+            <asp:Button ID="btnExportEmails" runat="server" Width="150" Text="Export Emails" OnClick="btnExportEmails_Click" />
+            <script>
+                function UpdateProgressLabel()
+                {
+                    alert("TEST");
+                    var progress = <%=this.progress%>;                    
+                    document.getElementById('IndividualPageContent_Label1').value = progress;
+                }
+            </script>
         </asp:Panel>
     </div>
 </asp:Content>

@@ -8,7 +8,7 @@
 <asp:Content ID="salesPageContent" ContentPlaceHolderID="IndividualPageContent" runat="server">
     <div id="Sales">
         <%--REMEMBER TO SET DEFAULT BUTTON--%>
-        <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnQuickSale">
+        <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnInvoiceSearch">
             <h2>Sales</h2>
             <hr />
             <asp:Table runat="server">
@@ -36,7 +36,7 @@
                     </asp:TableCell><asp:TableCell>
                         <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="True" DataSourceID="SqlDSLocation" DataTextField="locationName" DataValueField="locationID"></asp:DropDownList>
                     </asp:TableCell><asp:TableCell>
-                        <asp:Label ID="lblInvoiceNum" runat="server" Text="Enter Invoice Number:" />
+                        <asp:Label ID="lblInvoiceNum" runat="server" Text="Enter Invoice Number or SKU:" />
                     </asp:TableCell><asp:TableCell>
                         <asp:TextBox ID="txtInvoiceNum" runat="server" Text="" />
                     </asp:TableCell><asp:TableCell>
@@ -100,32 +100,32 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Discount">
                             <ItemTemplate>
-                                <asp:Label ID="lblDiscountAmount" runat="server" Text='<%#Eval("discountAmount","{0:#0.00}") %>'></asp:Label>
+                                <asp:Label ID="lblDiscountAmount" runat="server" Text='<%#Eval("discountAmount","{0:C}") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Trade In">
                             <ItemTemplate>
-                                <asp:Label ID="lblTradeInAmount" runat="server" Text='<%#Eval("tradeinAmount","{0:#0.00}") %>'></asp:Label>
+                                <asp:Label ID="lblTradeInAmount" runat="server" Text='<%#Eval("tradeinAmount","{0:C}") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Subtotal">
                             <ItemTemplate>
-                                <asp:Label ID="lblSubtotal" runat="server" Text='<%#Eval("subTotal","{0:#0.00}") %>'></asp:Label>
+                                <asp:Label ID="lblSubtotal" runat="server" Text='<%#Eval("subTotal","{0:C}") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="GST">
                             <ItemTemplate>
-                                <asp:Label ID="lblGSTAmount" runat="server" Text='<%#Eval("governmentTax","{0:#0.00}") %>'></asp:Label>
+                                <asp:Label ID="lblGSTAmount" runat="server" Text='<%#Eval("governmentTax","{0:C}") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="PST">
                             <ItemTemplate>
-                                <asp:Label ID="lblPSTAmount" runat="server" Text='<%#Eval("provincialTax","{0:#0.00}") %>'></asp:Label>
+                                <asp:Label ID="lblPSTAmount" runat="server" Text='<%#Eval("provincialTax","{0:C}") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Total">
                             <ItemTemplate>
-                                <asp:Label ID="lblAmountPaid" runat="server" Text='<%#Eval("balanceDue","{0:#0.00}") %>'></asp:Label>
+                                <asp:Label ID="lblAmountPaid" runat="server" Text='<%#Eval("balanceDue","{0:C}") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name">

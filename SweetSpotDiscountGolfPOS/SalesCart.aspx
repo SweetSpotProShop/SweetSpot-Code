@@ -60,7 +60,7 @@
             <asp:Label ID="lblCustomer" runat="server" Text="Customer Name:"></asp:Label>
             <asp:Label ID="lblCustomerDisplay" runat="server" Text="" Visible="false"></asp:Label>
             <asp:TextBox ID="txtCustomer" runat="server"></asp:TextBox>
-            <asp:Button ID="btnCustomerSelect" runat="server" Text="Select Different Customer" OnClick="btnCustomerSelect_Click" CausesValidation="false" />
+            <asp:Button ID="btnCustomerSelect" runat="server" Text="Change Customer" OnClick="btnCustomerSelect_Click" CausesValidation="false" />
             <div>
 
 

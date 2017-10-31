@@ -7,16 +7,10 @@
 
 <asp:Content ID="CustomerAddNewPageContent" ContentPlaceHolderID="IndividualPageContent" runat="server">
     <div id="NewCustomer">
-        <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnSaveCustomer">
+        <asp:panel id="pnlDefaultButton" runat="server" defaultbutton="btnSaveCustomer">
             <%--Textboxes and Labels for user to enter customer info--%>
             <h2>Customer Management</h2>
             <asp:SqlDataSource ID="sqlCountrySource" runat="server" ConnectionString="<%$ ConnectionStrings:SweetSpotDevConnectionString %>" SelectCommand="SELECT * FROM [tbl_country] ORDER BY [countryDesc]"></asp:SqlDataSource>
-            <asp:SqlDataSource ID="sqlProvinceSource" runat="server" ConnectionString="<%$ ConnectionStrings:SweetSpotDevConnectionString %>" SelectCommand="SELECT * FROM [tbl_provState] WHERE ([countryID] = @countryID) ORDER BY [provName]">
-                <SelectParameters>
-                    <asp:ControlParameter ControlID="ddlCountry" DefaultValue="0" Name="countryID" PropertyName="SelectedValue" Type="Int32" />
-                </SelectParameters>
-            </asp:SqlDataSource>
-
             <asp:Table ID="Table1" runat="server" Width="100%">
                 <asp:TableRow>
                     <asp:TableCell Width="25%">
@@ -52,11 +46,24 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
+                    </asp:TableCell>
+                    <asp:TableCell><asp:RequiredFieldValidator ID="valFirstName" runat="server" ForeColor="red" ErrorMessage="Must enter a First Name" ControlToValidate="txtFirstName"></asp:RequiredFieldValidator></asp:TableCell>
+                    <asp:TableCell>
+                    </asp:TableCell>
+                    <asp:TableCell><asp:RequiredFieldValidator ID="valLastName" runat="server" ForeColor="red" ErrorMessage="Must enter a Last Name" ControlToValidate="txtLastName"></asp:RequiredFieldValidator></asp:TableCell>
+                </asp:TableRow>
+                <asp:TableRow>
+                    <asp:TableCell>
                         <asp:Label ID="lblEmail" runat="server" Text="Email: "></asp:Label>
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:TextBox ID="txtEmail" runat="server" Visible="false"></asp:TextBox>
                         <asp:Label ID="lblEmailDisplay" runat="server" Text="" Visible="true"></asp:Label>
+                    </asp:TableCell>
+                    <asp:TableCell>
+                    </asp:TableCell>
+                    <asp:TableCell>
+                        <asp:CheckBox ID="chkEmailList" runat="server" Text="Marketing Enrollment" Enabled="false"/>
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -80,14 +87,13 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:Label ID="lblBillingAddress" runat="server" Text="Billing Address: "></asp:Label>
+                        <%--<asp:Label ID="lblBillingAddress" runat="server" Text="Billing Address: "></asp:Label>--%>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtBillingAddress" runat="server" Visible="false"></asp:TextBox>
-                        <asp:Label ID="lblBillingAddressDisplay" runat="server" Text="" Visible="true"></asp:Label>
+                        <%--<asp:TextBox ID="txtBillingAddress" runat="server" Visible="false"></asp:TextBox>
+                        <asp:Label ID="lblBillingAddressDisplay" runat="server" Text="" Visible="true"></asp:Label>--%>
                     </asp:TableCell>
                     <asp:TableCell ColumnSpan="2">
-                        <asp:CheckBox ID="chkBillingSame" runat="server" Text="Check if Billing Address is the same as Primary Address" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -111,14 +117,14 @@
                         <asp:Label ID="lblProvince" runat="server" Text="Province: "></asp:Label>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlProvince" runat="server" AutoPostBack="True" DataSourceID="sqlProvinceSource" DataTextField="provName" DataValueField="provStateID" Visible="false"></asp:DropDownList>
+                        <asp:DropDownList ID="ddlProvince" runat="server" Visible="false"></asp:DropDownList>
                         <asp:Label ID="lblProvinceDisplay" runat="server" Text="" Visible="true"></asp:Label>
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblCountry" runat="server" Text="Country: "></asp:Label>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlCountry" runat="server" AutoPostBack="True" DataSourceID="sqlCountrySource" DataTextField="countryDesc" DataValueField="countryID" Visible="false"></asp:DropDownList>
+                        <asp:DropDownList ID="ddlCountry" runat="server" AutoPostBack="True" DataSourceID="sqlCountrySource" DataTextField="countryDesc" DataValueField="countryID" Visible="false" OnSelectedIndexChanged="ddlCountry_SelectedIndexChanged"></asp:DropDownList>
                         <asp:Label ID="lblCountryDisplay" runat="server" Text="" Visible="true"></asp:Label>
                     </asp:TableCell>
                 </asp:TableRow>
@@ -144,21 +150,78 @@
                 </asp:TableRow>--%>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:Button ID="btnAddCustomer" runat="server" Text="Add Customer" OnClick="btnAddCustomer_Click" Visible="false" />
-                        <asp:Button ID="btnEditCustomer" runat="server" Text="Edit Customer" OnClick="btnEditCustomer_Click" Visible="true" />
-                        <asp:Button ID="btnSaveCustomer" runat="server" Text="Save Changes" OnClick="btnSaveCustomer_Click" Visible="false" />
+                        <asp:Button ID="btnAddCustomer" runat="server" Text="Add Customer" OnClick="btnAddCustomer_Click" Visible="false" CausesValidation="true"/>
+                        <asp:Button ID="btnEditCustomer" runat="server" Text="Edit Customer" OnClick="btnEditCustomer_Click" Visible="true" CausesValidation="false"/>
+                        <asp:Button ID="btnSaveCustomer" runat="server" Text="Save Changes" OnClick="btnSaveCustomer_Click" Visible="false" CausesValidation="true"/>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnStartSale" runat="server" Text="Start Sale" OnClick="btnStartSale_Click" Visible="true" />
+                        <asp:Button ID="btnStartSale" runat="server" Text="Start Sale" OnClick="btnStartSale_Click" Visible="true" CausesValidation="false"/>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnBackToSearch" runat="server" Text="Exit Customer" OnClick="btnBackToSearch_Click" Visible="true" />
-                        <asp:Button ID="btnCancel" runat="server" Text="Cancel" OnClick="btnCancel_Click" Visible="false" />
+                        <asp:Button ID="btnBackToSearch" runat="server" Text="Exit Customer" OnClick="btnBackToSearch_Click" Visible="true" CausesValidation="false"/>
+                        <asp:Button ID="btnCancel" runat="server" Text="Cancel" OnClick="btnCancel_Click" Visible="false" CausesValidation="false"/>
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
-            <%--<asp:RequiredFieldValidator ID="valPriAddress" runat="server" ErrorMessage="Must enter Address" ControlToValidate="txtPrimaryAddress"></asp:RequiredFieldValidator>
-        <asp:RequiredFieldValidator ID="valPriPhoneNum" runat="server" ErrorMessage="Must enter Phone Number" ControlToValidate="txtPrimaryPhoneNumber"></asp:RequiredFieldValidator>--%>
-        </asp:Panel>
+            <hr />
+            <%--Gridview for the invoices--%>
+            <h2>Customer Invoices</h2>
+            <div>
+                <asp:GridView ID="grdInvoiceSelection" runat="server" AutoGenerateColumns="false" Width="100%" OnRowCommand="grdInvoiceSelection_RowCommand">
+                    <Columns>
+                        <asp:TemplateField HeaderText=" View Invoice">
+                            <ItemTemplate>
+                                <asp:LinkButton ID="lkbInvoiceNum" runat="server" CommandName="returnInvoice" CommandArgument='<%#Eval("invoiceNum") + "-" + Eval("invoiceSub")%>' Text='<%#Eval("invoiceNum") + "-" + Eval("invoiceSub") %>'></asp:LinkButton>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Invoice Date">
+                            <ItemTemplate>
+                                <asp:Label ID="lblInvoiceDate" runat="server" Text='<%#Eval("invoiceDate","{0: MM/dd/yy}") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Customer Name">
+                            <ItemTemplate>
+                                <asp:Label ID="lblCustomerName" runat="server" Text='<%#Eval("customerName") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Discount">
+                            <ItemTemplate>
+                                <asp:Label ID="lblDiscountAmount" runat="server" Text='<%#Eval("discountAmount","{0:C}") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Trade In">
+                            <ItemTemplate>
+                                <asp:Label ID="lblTradeInAmount" runat="server" Text='<%#Eval("tradeinAmount","{0:C}") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Subtotal">
+                            <ItemTemplate>
+                                <asp:Label ID="lblSubtotal" runat="server" Text='<%#Eval("subTotal","{0:C}") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="GST">
+                            <ItemTemplate>
+                                <asp:Label ID="lblGSTAmount" runat="server" Text='<%#Eval("governmentTax","{0:C}") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="PST">
+                            <ItemTemplate>
+                                <asp:Label ID="lblPSTAmount" runat="server" Text='<%#Eval("provincialTax","{0:C}") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Total">
+                            <ItemTemplate>
+                                <asp:Label ID="lblAmountPaid" runat="server" Text='<%#Eval("balanceDue","{0:C}") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Employee Name">
+                            <ItemTemplate>
+                                <asp:Label ID="lblEmployeeName" runat="server" Text='<%#Eval("employeeName") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                    </Columns>
+                </asp:GridView>
+            </div>
+        </asp:panel>
     </div>
 </asp:Content>

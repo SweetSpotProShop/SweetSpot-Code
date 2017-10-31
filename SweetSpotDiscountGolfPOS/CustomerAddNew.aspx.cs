@@ -98,6 +98,14 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
+                    if (!IsPostBack)
+                    {
+                        dt = em.returnProvinceDropDown(0);
+                        ddlProvince.DataTextField = "provName";
+                        ddlProvince.DataValueField = "provStateID";
+                        ddlProvince.DataSource = dt;
+                        ddlProvince.DataBind();
+                    }
                     //Displays text boxes instead of label for customer creation info
                     txtFirstName.Visible = true;
                     lblFirstNameDisplay.Visible = false;
@@ -132,13 +140,11 @@ namespace SweetSpotDiscountGolfPOS
                     ddlCountry.Visible = true;
                     lblCountryDisplay.Visible = false;
 
+                    chkEmailList.Enabled = true;
+
                     txtPostalCode.Visible = true;
                     lblPostalCodeDisplay.Visible = false;
-                    dt = em.returnProvinceDropDown(0);
-                    ddlProvince.DataTextField = "provName";
-                    ddlProvince.DataValueField = "provStateID";
-                    ddlProvince.DataSource = dt;
-                    ddlProvince.DataBind();
+                    
                     //hides and displays the proper buttons for access
                     btnSaveCustomer.Visible = false;
                     btnAddCustomer.Visible = true;
