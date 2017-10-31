@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="PrintableInvoice.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.PrintableInvoice" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="PrintableReceipt.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.PrintableReceipt" %>
 
 <%--<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>--%>
@@ -31,7 +31,7 @@
     </div>
     <link rel="stylesheet" type="text/css" href="CSS/MainStyleSheet.css" />
 </asp:Content>
-<asp:Content ID="printableInvoiceDisplay" ContentPlaceHolderID="IndividualPageContent" runat="server">
+<asp:Content ID="printableReceiptDisplay" ContentPlaceHolderID="IndividualPageContent" runat="server">
 
     <script>
         function printReport(printable) {
@@ -41,23 +41,16 @@
     <link rel="stylesheet" type="text/css" href="CSS/displayPrintableInvoice.css" />
     <div id="printable" runat="server">
         <div id="Invoice" class="yesPrint">
-            <h3><b>Invoice: </b>
+            <h3><b>Receipt: </b>
                 <asp:Label ID="lblinvoiceNum" runat="server" Text=""></asp:Label></h3>
-            <p>
-                Tax Number:
-                <asp:Label ID="lblTaxNum" runat="server" Text=""></asp:Label>
-            </p>
             <p>
                 Date:
                 <asp:Label ID="lblDate" runat="server" Text=""></asp:Label>
-                <asp:Label ID="lblTime" runat="server" Text=""></asp:Label>
             </p>
             <hr />
         </div>
         <br />
         <div id="finalInvoice" class="yesPrint">
-            <asp:Label ID="lbldeletedMessage" runat="server" Text="This invoice was deleted for the following reason: " Visible="false" BackColor="Red" />
-            <asp:Label ID="lbldeletedMessageDisplay" runat="server" Visible="false" />
             <asp:Table ID="tblPartiesInvolved" runat="server" Width="100%">
                 <asp:TableRow>
                     <asp:TableCell CssClass="leftSide">
@@ -96,7 +89,7 @@
             </asp:Table>
             <hr />
 
-            <asp:GridView ID="grdItemsSoldList" runat="server" CellPadding="4" Width="70%" AutoGenerateColumns="False">
+            <asp:GridView ID="grdItemsBoughtList" runat="server" CellPadding="4" Width="70%" AutoGenerateColumns="False">
                 <Columns>
                     <asp:TemplateField HeaderText="SKU #">
                         <ItemTemplate>
@@ -113,71 +106,19 @@
                             <asp:Label ID="quantity" Text='<%#Eval("quantity")%>' runat="server"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Retail Price">
+                    <asp:TemplateField HeaderText="Cost">
                         <ItemTemplate>
-                            <asp:Label ID="retail" Text='<%# (Convert.ToInt32(Session["TranType"])  == 1 || Convert.ToInt32(Session["TranType"])  == 3) ? Eval("price","{0:C}") : (Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("price")))-Convert.ToDouble(Eval("discount"))).ToString("C") : ((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("discount")) / 100) * Convert.ToDouble(Eval("price"))))).ToString("C")) %>' runat="server"></asp:Label>
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Discounts/Bonus Applied">
-                        <ItemTemplate>
-                            <asp:Label ID="discount" Text='<%# (Convert.ToInt32(Session["TranType"])  == 1 || Convert.ToInt32(Session["TranType"])  == 3) ? Convert.ToBoolean(Eval("percentage")) == false ? (Eval("discount","{0:C}")).ToString() : ((Convert.ToDouble(Eval("discount")) / 100) * Convert.ToDouble(Eval("price"))).ToString("C") : (Convert.ToBoolean(Eval("percentage")) == false ? (((Convert.ToDouble(Eval("price")))-(Convert.ToDouble(Eval("discount")))) - Convert.ToDouble(Eval("returnAmount"))).ToString("C") : (((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("discount")) / 100) * Convert.ToDouble(Eval("price"))))) - Convert.ToDouble(Eval("returnAmount"))).ToString("C")) %>' runat="server" />
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Extended Price">
-                        <ItemTemplate>
-                            <asp:Label ID="extended" Text='<%# (Convert.ToInt32(Session["TranType"])  == 1 || Convert.ToInt32(Session["TranType"])  == 3) ? (Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("price")))-(Convert.ToDouble(Eval("discount")))).ToString("C") : ((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("discount")) / 100) * Convert.ToDouble(Eval("price"))))).ToString("C")) : Eval("returnAmount","{0:C}") %>' runat="server" />
+                            <asp:Label ID="cost" Text='<%# Eval("cost","{0:C}") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
             </asp:GridView>
             <hr />
         </div>
-        <div id="paymentDetails" class="yesPrint">
-            <h3>Payment Details</h3>
+        <div id="purchaseDetails" class="yesPrint">
+            <h3>Purchase Details</h3>
 
             <asp:Table ID="tblSummary" runat="server" Width="70%">
-                <asp:TableRow>
-                    <asp:TableCell CssClass="leftFirst">
-                        <asp:Label ID="lblDiscounts" runat="server" Text="Discounts:"></asp:Label>
-                    </asp:TableCell>
-                    <asp:TableCell CssClass="leftSecond">
-                        <asp:Label ID="lblDiscountsDisplay" runat="server" Text=""></asp:Label>
-                    </asp:TableCell>
-                    <asp:TableCell CssClass="rightFirst">
-                        <asp:Label ID="lblBlank" runat="server" Text=""></asp:Label>
-                    </asp:TableCell>
-                    <asp:TableCell CssClass="rightSecond">
-                        <asp:Label ID="lblBlankDisplay" runat="server" Text=""></asp:Label>
-                    </asp:TableCell>
-                </asp:TableRow>
-                <asp:TableRow>
-                    <asp:TableCell CssClass="leftFirst">
-                        <asp:Label ID="lblTradeIns" runat="server" Text="Trade-Ins:"></asp:Label>
-                    </asp:TableCell>
-                    <asp:TableCell CssClass="leftSecond">
-                        <asp:Label ID="lblTradeInsDisplay" runat="server" Text=""></asp:Label>
-                    </asp:TableCell>
-                    <asp:TableCell CssClass="rightFirst">
-                        <asp:Label ID="lblGST" runat="server" Text="GST:"></asp:Label>
-                    </asp:TableCell>
-                    <asp:TableCell CssClass="rightSecond">
-                        <asp:Label ID="lblGSTDisplay" runat="server" Text=""></asp:Label>
-                    </asp:TableCell>
-                </asp:TableRow>
-                <asp:TableRow>
-                    <asp:TableCell CssClass="leftFirst">
-                        <asp:Label ID="lblShipping" runat="server" Text="Shipping:"></asp:Label>
-                    </asp:TableCell>
-                    <asp:TableCell CssClass="leftSecond">
-                        <asp:Label ID="lblShippingDisplay" runat="server" Text=""></asp:Label>
-                    </asp:TableCell>
-                    <asp:TableCell CssClass="rightFirst">
-                        <asp:Label ID="lblPST" runat="server" Text="PST:"></asp:Label>
-                    </asp:TableCell>
-                    <asp:TableCell CssClass="rightSecond">
-                        <asp:Label ID="lblPSTDisplay" runat="server" Text=""></asp:Label>
-                    </asp:TableCell>
-                </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell CssClass="leftFirst">
                         <asp:Label ID="lblSubtotal" runat="server" Text="Subtotal:"></asp:Label>
@@ -198,6 +139,7 @@
                     <Columns>
                         <asp:BoundField DataField="methodOfPayment" ReadOnly="true" HeaderText="Payment Type" />
                         <asp:BoundField DataField="amountPaid" ReadOnly="true" HeaderText="Amount Paid" DataFormatString="{0:C}" />
+                        <asp:BoundField DataField="chequeNum" ReadOnly="true" HeaderText="Cheque Number" />
                     </Columns>
                 </asp:GridView>
             </p>
@@ -208,13 +150,10 @@
                 <br />
                 <asp:Button ID="btnHome" runat="server" Text="Home" Width="100px" OnClick="btnHome_Click" />
                 <br />
-                <%--<p><b>PLEASE NOTE: </b>All used equipment is sold as is and it is understood that its' condition</p>
-                <p>and usability may reflect prior use. The Sweet Spot Discount Golf assumes no responsibility</p>
-                <p>beyond the point of sale. <b>ALL SALES FINAL</b> Thank you for shopping at the Sweet Spot.</p>--%>
             </div>
-            <p><b>PLEASE NOTE: </b>All used equipment is sold as is and it is understood that its' condition</p>
+            <%--<p><b>PLEASE NOTE: </b>All used equipment is sold as is and it is understood that its' condition</p>
             <p>and usability may reflect prior use. The Sweet Spot Discount Golf assumes no responsibility</p>
-            <p>beyond the point of sale. <b>ALL SALES FINAL</b> Thank you for shopping at the Sweet Spot.</p>
+            <p>beyond the point of sale. <b>ALL SALES FINAL</b> Thank you for shopping at the Sweet Spot.</p>--%>
         </div>
     </div>
 

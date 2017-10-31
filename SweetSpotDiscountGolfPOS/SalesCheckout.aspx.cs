@@ -835,7 +835,12 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 cu = (CurrentUser)Session["currentUser"];
-                bool bolValidPassword = em.returnCanEmployeeMakeSale(em.returnEmployeeIDFromPassword(Convert.ToInt32(txtEmployeePasscode.Text)));
+                //Employee
+                //******Need to get the employee somehow
+                EmployeeManager em = new EmployeeManager();
+
+                Employee emp = em.getEmployeeByID(em.returnEmployeeIDFromPassword(Convert.ToInt32(txtEmployeePasscode.Text)));
+                bool bolValidPassword = em.returnCanEmployeeMakeSale(emp.employeeID);
                 if (bolValidPassword)
                 {
                     //Checks the amount paid and the bypass check box
@@ -857,11 +862,7 @@ namespace SweetSpotDiscountGolfPOS
                         //Customer
                         int custNum = Convert.ToInt32(Session["key"]);
                         Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
-                        //Employee
-                        //******Need to get the employee somehow
-                        EmployeeManager em = new EmployeeManager();
-                        //int empNum = idu.returnEmployeeIDfromPassword(Convert.ToInt32(Session["id"]));
-                        Employee emp = em.getEmployeeByID(cu.empID);
+                        
                         //CheckoutTotals
                         ckm = (CheckoutManager)Session["CheckOutTotals"];
                         //MOP

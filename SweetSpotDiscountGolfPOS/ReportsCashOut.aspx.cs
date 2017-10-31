@@ -63,9 +63,11 @@ namespace SweetSpotDiscountGolfPOS
                 }
 
                 //Gathering the start and end dates
-                DateTime[] reportDates = (DateTime[])Session["reportDates"];
+                Object[] repInfo = (Object[])Session["reportInfo"];
+                DateTime[] reportDates = (DateTime[])repInfo[0];
                 startDate = reportDates[0];
                 endDate = reportDates[1];
+                int locationID = (int)repInfo[1];
                 //Builds string to display in label
                 if (startDate == endDate)
                 {
@@ -75,12 +77,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     lblCashoutDate.Text = "Cashout for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
                 }
-                //Gathers current employe based on Session id
-                //EmployeeManager em = new EmployeeManager();
-                //int empNum = idu.returnEmployeeIDfromPassword(Convert.ToInt32(Session["id"]));
-                //Employee emp = em.getEmployeeByID(empNum);
-
-                int locationID = cu.locationID;
+                
                 //Creating a cashout list and calling a method that grabs all mops and amounts paid
                 List<Cashout> lc = reports.cashoutAmounts(startDate, endDate, locationID);
                 Cashout rc = reports.getRemainingCashout(startDate, endDate, locationID);

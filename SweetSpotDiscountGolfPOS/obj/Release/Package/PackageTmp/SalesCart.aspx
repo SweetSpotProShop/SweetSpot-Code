@@ -59,9 +59,58 @@
         <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnInventorySearch">
             <asp:Label ID="lblCustomer" runat="server" Text="Customer Name:"></asp:Label>
             <asp:Label ID="lblCustomerDisplay" runat="server" Text="" Visible="false"></asp:Label>
-            <asp:TextBox ID="txtCustomer" ReadOnly="true" runat="server"></asp:TextBox>
-            <asp:Button ID="btnCustomerSelect" runat="server" Text="Select Different Customer" OnClick="btnCustomerSelect_Click" CausesValidation="false" />
+            <asp:TextBox ID="txtCustomer" runat="server"></asp:TextBox>
+            <asp:Button ID="btnCustomerSelect" runat="server" Text="Change Customer" OnClick="btnCustomerSelect_Click" CausesValidation="false" />
+            <div>
 
+
+                <%--<div>
+                    <asp:TextBox ID="txtCustomerName" runat="server"></asp:TextBox>
+                    <asp:Button ID="btnSearchCustomers" runat="server" Text="Search" OnClick="btnSearchCustomers_Click" />
+                </div>--%>
+
+
+                <div>
+                    <asp:GridView ID="grdCustomersSearched" runat="server" AutoGenerateColumns="false" ShowFooter="true" OnRowCommand="grdCustomersSearched_RowCommand" AllowPaging="True" PageSize="5" OnPageIndexChanging="grdCustomersSearched_PageIndexChanging">
+                        <Columns>
+                            <asp:TemplateField HeaderText="Switch Customer">
+                                <ItemTemplate>
+                                    <asp:LinkButton ID="lbtnSwitchCustomer" CommandName="SwitchCustomer" CommandArgument='<%#Eval("CustomerId") %>' Text="Switch Customer" runat="server">Switch Customer</asp:LinkButton>
+                                </ItemTemplate>
+                                <FooterTemplate>
+                                    <asp:Button ID="btnAddCustomer" runat="server" Text="Add Customer" OnClick="btnAddCustomer_Click" />
+                                </FooterTemplate>
+                            </asp:TemplateField>                            
+                            <asp:TemplateField HeaderText="Customer Name">
+                                <ItemTemplate>
+                                    <asp:Label runat="server" Text='<%#Eval("firstName") + " " + Eval("lastName") %>'></asp:Label>
+                                </ItemTemplate>
+                                <FooterTemplate>
+                                    <div>
+                                        <asp:TextBox ID="txtFirstName" runat="server" placeholder="First Name" ToolTip="First Name"></asp:TextBox>
+                                    </div>
+                                    <div>
+                                        <asp:TextBox ID="txtLastName" runat="server" placeholder="Last Name" ToolTip="Last Name"></asp:TextBox>
+                                    </div>
+                                </FooterTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Phone Number">
+                                <ItemTemplate>
+                                    <asp:Label runat="server" Text='<%#Eval("primaryPhoneNumber") %>'></asp:Label>
+                                </ItemTemplate>
+                                <FooterTemplate>
+                                    <asp:TextBox ID="txtPhoneNumber" runat="server" placeholder="Phone Number" ToolTip="Phone Number"></asp:TextBox>
+                                </FooterTemplate>
+                            </asp:TemplateField>
+                        </Columns>
+                    </asp:GridView>
+                </div>
+
+
+
+
+
+            </div>
             <br />
             <br />
             <%--//Radio button for InStore or Shipping--%>
@@ -107,9 +156,9 @@
                     <asp:TemplateField HeaderText="Price" ItemStyle-Width="50px">
                         <ItemTemplate>
                             <div class='cost' id="divRollOverSearch" runat="server">
-                                <%#  (Eval("price","{0:.00}")).ToString() %>
+                                <%#  (Eval("price","{0:C}")).ToString() %>
                                 <div id="divPriceConvert" class="costDetail" runat="server">
-                                    <%# Convert.ToString(Eval("cost","{0:.00}")).Replace("\n","<br/>") %>
+                                    <%# Convert.ToString(Eval("cost","{0:C}")).Replace("\n","<br/>") %>
                                 </div>
                             </div>
                         </ItemTemplate>
@@ -144,9 +193,9 @@
                     <asp:TemplateField HeaderText="Price" ItemStyle-Width="50px">
                         <ItemTemplate>
                             <div class='cost' id="divRollOverCart" runat="server">
-                                <asp:Label ID="price" runat="server" Text='<%#  (Eval("price","{0:.00}")).ToString() %>'></asp:Label>
+                                <asp:Label ID="price" runat="server" Text='<%#  (Eval("price","{0:C}")).ToString() %>'></asp:Label>
                                 <div id="divCostConvert" class="costDetail" runat="server">
-                                    <asp:Label ID="cost" runat="server" Text='<%# Convert.ToString(Eval("cost","{0:.00}")).Replace("\n","<br/>") %>'></asp:Label>
+                                    <asp:Label ID="cost" runat="server" Text='<%# Convert.ToString(Eval("cost","{0:C}")).Replace("\n","<br/>") %>'></asp:Label>
                                 </div>
                             </div>
                         </ItemTemplate>

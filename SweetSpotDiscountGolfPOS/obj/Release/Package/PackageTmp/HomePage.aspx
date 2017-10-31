@@ -19,13 +19,15 @@
     </div>
 
     <hr />
-    <asp:GridView ID="grdSameDaySales" runat="server" AutoGenerateColumns="False" Width="100%" >
+    <asp:GridView ID="grdSameDaySales" runat="server" AutoGenerateColumns="False" Width="100%" ShowFooter="true" OnRowDataBound="grdSameDaySales_RowDataBound" >
         <Columns>
             <asp:TemplateField HeaderText="Invoice Number">
                 <ItemTemplate>
                     <asp:LinkButton ID="lbtnInvoiceNumber" runat="server" Text='<%#Eval("invoiceNum") + "-" + Eval("invoiceSub") %>' OnClick="lbtnInvoiceNumber_Click"></asp:LinkButton>
-                    <asp:Label ID="lblInvoiceNumber" runat="server" Text='<%#Eval("invoiceNum") + "-" + Eval("invoiceSub") %>' OnClick="lbtnInvoiceNumber_Click" Visible="false"></asp:Label>
                 </ItemTemplate>
+                 <FooterTemplate>
+                    <asp:Label ID="lblTotals" runat="server" Text="Totals" />
+                </FooterTemplate>
             </asp:TemplateField>
             <asp:BoundField DataField="customerID" ReadOnly="true" HeaderText="Customer" />
             <%--<asp:TemplateField HeaderText="Employee">
@@ -33,12 +35,12 @@
                         <asp:Label ID="lblEmployee" runat="server" Text='<%#Eval("employeeID")%>'></asp:Label>
                     </asp:ItemTemplate>
                 </asp:TemplateField>--%>
-            <asp:BoundField DataField="discountAmount" ReadOnly="true" HeaderText="Discount" DataFormatString="{0:0.00}" />
-            <asp:BoundField DataField="tradeinAmount" ReadOnly="true" HeaderText="Trade In" DataFormatString="{0:0.00}" />
-            <asp:BoundField DataField="subTotal" ReadOnly="true" HeaderText="Subtotal" DataFormatString="{0:0.00}" />
-            <asp:BoundField DataField="governmentTax" ReadOnly="true" HeaderText="Government Tax" DataFormatString="{0:0.00}" />
-            <asp:BoundField DataField="provincialTax" ReadOnly="true" HeaderText="Provincial Tax" DataFormatString="{0:0.00}" />
-            <asp:BoundField DataField="balanceDue" ReadOnly="true" HeaderText="Balance Paid" DataFormatString="{0:0.00}" />
+            <asp:BoundField DataField="discountAmount" ReadOnly="true" HeaderText="Discount" DataFormatString="{0:C}" />
+            <asp:BoundField DataField="tradeinAmount" ReadOnly="true" HeaderText="Trade In" DataFormatString="{0:C}" />
+            <asp:BoundField DataField="subTotal" ReadOnly="true" HeaderText="Subtotal" DataFormatString="{0:C}" />
+            <asp:BoundField DataField="governmentTax" ReadOnly="true" HeaderText="Government Tax" DataFormatString="{0:C}" />
+            <asp:BoundField DataField="provincialTax" ReadOnly="true" HeaderText="Provincial Tax" DataFormatString="{0:C}" />
+            <asp:BoundField DataField="balanceDue" ReadOnly="true" HeaderText="Balance Paid" DataFormatString="{0:C}" />
             <%--<asp:TemplateField HeaderText="Delete Invoice">
                 <ItemTemplate>
                     <%--<asp:LinkButton Text="Delete" runat="server" CommandName="Delete" OnClientClick="return confirm('Are you sure you want to delete?');" CausesValidation="false" />
