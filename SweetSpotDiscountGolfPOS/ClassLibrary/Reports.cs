@@ -181,6 +181,72 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlDataReader reader = cmd.ExecuteReader();
             con.Close();
         }
+        //Verify Cashout
+        public int verifyCashoutCanBeProcessed(Object[] repInfo)
+        {
+            int indicator = 0;
+            if (transactionsAvailable(repInfo))
+            {
+                if (cashoutAlreadyDone(repInfo))
+                {
+                    indicator = 2;
+                }
+            }
+            else { indicator = 1; }
+            return indicator;
+        }
+        public bool transactionsAvailable(Object[] repInfo)
+        {
+            bool bolTA = false;
+            DateTime[] dtm = (DateTime[])repInfo[0];
+            int loc = Convert.ToInt32(repInfo[1]);
+
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "Select count(invoiceNum) from tbl_invoice "
+                        + "where invoiceDate between @startDate and @endDate "
+                        + "and locationID = @locationID";
+            cmd.Parameters.AddWithValue("@startDate", dtm[0]);
+            cmd.Parameters.AddWithValue("@endDate", dtm[1]);
+            cmd.Parameters.AddWithValue("@locationID", loc);
+            cmd.Connection = con;
+            con.Open();
+            cmd.ExecuteNonQuery();
+            int invoicePresent = (int)cmd.ExecuteScalar();
+            if (invoicePresent > 0)
+            {
+                bolTA = true;
+            }
+            //Closing
+            con.Close();
+            return bolTA;
+        }
+        public bool cashoutAlreadyDone(Object[] repInfo)
+        {
+            bool bolCAD = false;
+            DateTime[] dtm = (DateTime[])repInfo[0];
+            int loc = Convert.ToInt32(repInfo[1]);
+
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "Select count(cashoutDate) from tbl_cashout "
+                        + "where cashoutDate between @startDate and @endDate "
+                        + "and locationID = @locationID";
+            cmd.Parameters.AddWithValue("@startDate", dtm[0]);
+            cmd.Parameters.AddWithValue("@endDate", dtm[1]);
+            cmd.Parameters.AddWithValue("@locationID", loc);
+            cmd.Connection = con;
+            con.Open();
+            cmd.ExecuteNonQuery();
+            int cashoutPresent = (int)cmd.ExecuteScalar();
+            if (cashoutPresent > 0)
+            {
+                bolCAD = true;
+            }
+            //Closing
+            con.Close();
+            return bolCAD;
+        }
 
         //******************PURCHASES REPORTING*******************************************************
         public List<Purchases> returnPurchasesDuringDates(DateTime startDate, DateTime endDate, int locationID)

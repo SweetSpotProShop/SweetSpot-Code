@@ -114,10 +114,19 @@
             </div>--%>
 
             <div>
-                <asp:Button ID="btnRunReport" runat="server" Text="CashOut Report" Width="200px" OnClick="btnSubmit_Click" />
+                <asp:Table runat="server">
+                    <asp:TableRow>
+                        <asp:TableCell>
+                            <asp:Button ID="btnRunReport" runat="server" Text="CashOut Report" Width="200px" OnClick="btnSubmit_Click" />
+                        </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:Button ID="btnPurchasesReport" runat="server" Text="Purchases Report" Width="200px" OnClick="btnPurchasesReport_Click" />
+                        </asp:TableCell>
+                    </asp:TableRow>
+                </asp:Table>
             </div>
 
-            
+
             <%--<div>
                 <div>
                     <asp:Label runat="server" Text="Search Between Dates For:"></asp:Label>
@@ -127,7 +136,7 @@
             </div>
             <asp:Button ID="btnReturnInvoice" runat="server" Text="Search For Invoice" OnClick="btnReturnInvoice_Click" />--%>
             <%--Testing--%>
-            <asp:Button ID="btnTesting" runat="server" Text="Test" OnClientClick="javascript:return getInput();" /><asp:Label ID="Label1" runat="server" Text="Label"></asp:Label>
+            <%--<asp:Button ID="btnTesting" runat="server" Text="Test" OnClientClick="javascript:return getInput();" /><asp:Label ID="Label1" runat="server" Text="Label"></asp:Label>--%>
 
 
 
@@ -161,10 +170,9 @@
                 </Columns>
             </asp:GridView>--%>
             <div>
-                <asp:HiddenField ID="hidden" runat="server" />
-
+                <%--<asp:HiddenField ID="hidden" runat="server" />--%>
             </div>
-            <script>
+            <%--<script>
                 function userInput() {
                     var reason = prompt("Enter reason for deleting invoice", "");
                     //User pressed okay but didn't type anything
@@ -182,7 +190,7 @@
                     }
                 }
 
-            </script>
+            </script>--%>
         </asp:Panel>
     </div>
 </asp:Content>

@@ -87,7 +87,7 @@
                     <asp:BoundField DataField="description" ReadOnly="true" HeaderText="Description" />
                     <asp:TemplateField HeaderText="Paid">
                         <ItemTemplate>
-                            <%# Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToInt32(Eval("price")))-(Convert.ToInt32(Eval("discount")))).ToString("#0.00") : ((Convert.ToInt32(Eval("price")) - ((Convert.ToDouble(Eval("discount")) / 100) * Convert.ToInt32(Eval("price"))))).ToString("#0.00") %>
+                            <%# Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("price")))-(Convert.ToDouble(Eval("discount")))).ToString("C") : ((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("discount")) / 100) * Convert.ToDouble(Eval("price"))))).ToString("C") %>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Discount Applied" Visible="false">
@@ -105,7 +105,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Amount to Refund">
                         <ItemTemplate>
-                            <asp:Textbox ID="txtReturnAmount" Text='<%# Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToInt32(Eval("price")))-(Convert.ToInt32(Eval("discount")))).ToString("#0.00") : ((Convert.ToInt32(Eval("price")) - ((Convert.ToDouble(Eval("discount")) / 100) * Convert.ToInt32(Eval("price"))))).ToString("#0.00") %>' runat="server"/>
+                            <asp:Textbox ID="txtReturnAmount" Text='<%# Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("price")))-(Convert.ToDouble(Eval("discount")))).ToString("#0.00") : ((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("discount")) / 100) * Convert.ToDouble(Eval("price"))))).ToString("#0.00") %>' runat="server"/>
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -121,7 +121,7 @@
                     <asp:BoundField DataField="sku" ReadOnly="true" HeaderText="SKU" />
                     <asp:BoundField DataField="quantity" ReadOnly="true" HeaderText="Quantity" />
                     <asp:BoundField DataField="description" ReadOnly="true" HeaderText="Description" />
-                    <asp:BoundField DataField="returnAmount" ReadOnly="true" HeaderText="Refund Amount" DataFormatString="{0:N2}"/>
+                    <asp:BoundField DataField="returnAmount" ReadOnly="true" HeaderText="Refund Amount" DataFormatString="{0:C}"/>
                     <asp:TemplateField HeaderText="Discount Applied" Visible="false">
                         <ItemTemplate>
                             <asp:CheckBox ID="ckbRIPercentage" Checked='<%# Convert.ToBoolean(Eval("percentage")) %>' runat="server" Text="Discount by Percent" Enabled="false"/>

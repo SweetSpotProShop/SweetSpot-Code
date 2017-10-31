@@ -173,7 +173,8 @@
                 </asp:TableRow>
             </asp:Table>
             <br />
-            <asp:Button class="noPrint" ID="btnProcessReport" runat="server" Text="Process and Print Cashout" Width="200px" OnClientClick="return validatePost()" OnClick="btnProcessReport_Click" /><asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="printReport()" />
+            <asp:Button class="noPrint" ID="btnProcessReport" runat="server" Text="Process Cashout" Width="200px" OnClick="btnProcessReport_Click" />
+            <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" Enabled="false" OnClientClick="printReport()" />
         </div>
     </div>
 </asp:Content>

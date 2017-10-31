@@ -7,6 +7,19 @@
     <title>Sweet Spot Discount Golf</title>
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
+    <style media="print">
+        .noPrint {
+            display: none;
+            /*margin-left: 0;*/
+        }
+
+        .yesPrint { 
+            display: inline-block !important;
+            /* margin-right:100px;
+           float: right;*/
+            margin-left: 10px !important;
+        }
+    </style>
 </head>
 <body>
     <form id="form1" runat="server">

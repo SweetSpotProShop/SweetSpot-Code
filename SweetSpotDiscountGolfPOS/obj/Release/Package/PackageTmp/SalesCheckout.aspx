@@ -34,25 +34,25 @@
                             <tr>
                                 <td>
                                     <%--<asp:Button ID="mopAmericanExpress" runat="server" Text="American Express" OnClick="mopAmericanExpress_Click" Width="163px" OnClientClick="return confirm('Confirm American Express');" />--%>
-                                    <asp:Button ID="mopCash" runat="server" Text="Cash" OnClick="mopCash_Click" Width="163px" OnClientClick="return confirm('Confirm Cash');" />
+                                    <asp:Button ID="mopCash" runat="server" Text="Cash" OnClick="mopCash_Click" Width="163px" OnClientClick="return confirm('Confirm Cash');" CausesValidation="false"/>
 
                                 </td>
                                 <td>
-                                    <asp:Button ID="mopVisa" runat="server" Text="Visa" OnClick="mopVisa_Click" Width="163px" OnClientClick="return confirm('Confirm Visa');" />
+                                    <asp:Button ID="mopVisa" runat="server" Text="Visa" OnClick="mopVisa_Click" Width="163px" OnClientClick="return confirm('Confirm Visa');" CausesValidation="false"/>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <asp:Button ID="mopMasterCard" runat="server" Text="MasterCard" OnClick="mopMasterCard_Click" Width="163px" OnClientClick="return confirm('Confirm MasterCard');" />
+                                    <asp:Button ID="mopMasterCard" runat="server" Text="MasterCard" OnClick="mopMasterCard_Click" Width="163px" OnClientClick="return confirm('Confirm MasterCard');" CausesValidation="false"/>
                                 </td>
                                 <td>
                                     <%--<asp:Button ID="mopCheque" runat="server" Text="Cheque" OnClick="mopCheque_Click" Width="163px" OnClientClick="return confirm('Confirm Cheque');" />--%>
-                                    <asp:Button ID="mopDebit" runat="server" Text="Debit" OnClick="mopDebit_Click" Width="163px" OnClientClick="return confirm('Confirm Debit');" />
+                                    <asp:Button ID="mopDebit" runat="server" Text="Debit" OnClick="mopDebit_Click" Width="163px" OnClientClick="return confirm('Confirm Debit');" CausesValidation="false"/>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <asp:Button ID="mopGiftCard" runat="server" Text="Gift Card" OnClick="mopGiftCard_Click" Width="163px" OnClientClick="return confirm('Confirm Gift Card');" />
+                                    <asp:Button ID="mopGiftCard" runat="server" Text="Gift Card" OnClick="mopGiftCard_Click" Width="163px" OnClientClick="return confirm('Confirm Gift Card');" CausesValidation="false"/>
                                 </td>
                                 <td></td>
                             </tr>
@@ -133,7 +133,7 @@
                                     <asp:Label ID="lblGovernmentAmount" runat="server" Text="" Visible="false"></asp:Label>
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:Button ID="btnRemoveGov" runat="server" Text="Remove GST" Width="163px" OnClick="btnRemoveGovTax" Visible="false" />
+                                    <asp:Button ID="btnRemoveGov" runat="server" Text="Remove GST" Width="163px" OnClick="btnRemoveGovTax" Visible="false" CausesValidation="false"/>
                                 </asp:TableCell>
                             </asp:TableRow>
                             <asp:TableRow>
@@ -144,7 +144,7 @@
                                     <asp:Label ID="lblProvincialAmount" runat="server" Text="" Visible="false"></asp:Label>
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:Button ID="btnRemoveProv" runat="server" Text="Remove PST" Width="163px" OnClick="btnRemoveProvTax" Visible="false" />
+                                    <asp:Button ID="btnRemoveProv" runat="server" Text="Remove PST" Width="163px" OnClick="btnRemoveProvTax" Visible="false" CausesValidation="false"/>
                                 </asp:TableCell>
                             </asp:TableRow>
                             <asp:TableRow>
@@ -171,7 +171,7 @@
                                     </ItemTemplate>
                                 </asp:TemplateField>
                                 <asp:BoundField DataField="methodOfPayment" ReadOnly="true" HeaderText="Payment Type" />
-                                <asp:BoundField DataField="amountPaid" ReadOnly="true" HeaderText="Amount Paid" DataFormatString="{0:0.00}" />
+                                <asp:BoundField DataField="amountPaid" ReadOnly="true" HeaderText="Amount Paid" DataFormatString="{0:C}" />
                                 <asp:TemplateField HeaderText="Table ID" Visible="false">
                                     <ItemTemplate>
                                         <asp:Label ID="lblTableID" Text='<%#Eval("tableID") %>' runat="server" />
@@ -193,20 +193,31 @@
                 </tr>
                 <tr>
                     <td>
-                        <asp:Button ID="btnCancelSale" runat="server" Text="Cancel Sale" OnClick="btnCancelSale_Click" Width="163px" />
+                        <asp:Button ID="btnCancelSale" runat="server" Text="Cancel Sale" OnClick="btnCancelSale_Click" Width="163px" CausesValidation="false"/>
                     </td>
                     <td>
-                        <asp:Button ID="btnReturnToCart" runat="server" Text="Return To Cart" OnClick="btnReturnToCart_Click" Width="163px" />
+                        <asp:Button ID="btnReturnToCart" runat="server" Text="Return To Cart" OnClick="btnReturnToCart_Click" Width="163px" CausesValidation="false"/>
                     </td>
                     <td>
-                        <asp:Button ID="btnLayaway" runat="server" Text="Layaway" OnClick="btnLayaway_Click" Width="163px" Visible="false" />
+                        <asp:Button ID="btnLayaway" runat="server" Text="Layaway" OnClick="btnLayaway_Click" Width="163px" Visible="false" CausesValidation="false"/>
                     </td>
                     <td>
-                        <asp:Button ID="btnFinalize" runat="server" Text="Process Sale" OnClick="btnFinalize_Click" Width="163px" />
+                        <asp:Button ID="btnFinalize" runat="server" Text="Process Sale" OnClick="btnFinalize_Click" Width="163px" CausesValidation="true"/>
                     </td>
                     <%--<td>
                         <asp:CheckBox ID="chbxDoesNotEqualZero" Text="Check box to bypass MOPs" runat="server" />
                     </td>--%>
+                </tr>
+                <tr>
+                    <td>
+                        <asp:Label ID="lblConfirmEmployee" runat="server" Text="Enter Employee Passcode:"></asp:Label>
+                    </td>
+                    <td>
+                        <asp:TextBox ID="txtEmployeePasscode" runat="server" TextMode="Password"></asp:TextBox>
+                    </td>
+                    <td>
+                         <asp:RequiredFieldValidator ID="valEmployeePasscode" runat="server" ForeColor="red" ErrorMessage="Must Enter Passcode" ControlToValidate="txtEmployeePasscode"></asp:RequiredFieldValidator>
+                    </td>
                 </tr>
             </table>
             <p>
@@ -218,17 +229,14 @@
     </div>
     <script>
         function userInput(owing) {
-            var given = prompt("Enter the amount of cash", "");
+            var given = prompt("Change Calculator", "");
             var change = owing - given;
             if (change < 0) {
                 var give = String(change.toFixed(2));
                 alert("Change: " + give);
             }
-            else if (change >= 0) {
-                
+            else if (change >= 0) {   
             }
-            
-
         }
 
     </script>
