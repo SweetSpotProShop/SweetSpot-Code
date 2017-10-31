@@ -12,11 +12,6 @@
         <%--REMEMBER TO SET DEFAULT BUTTON--%>
         <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnSaveEmployee">
             <asp:SqlDataSource ID="sqlCountrySource" runat="server" ConnectionString="<%$ ConnectionStrings:SweetSpotDevConnectionString %>" SelectCommand="SELECT * FROM [tbl_country] ORDER BY [countryDesc]"></asp:SqlDataSource>
-            <asp:SqlDataSource ID="sqlProvinceSource" runat="server" ConnectionString="<%$ ConnectionStrings:SweetSpotDevConnectionString %>" SelectCommand="SELECT * FROM [tbl_provState] WHERE ([countryID] = @countryID) ORDER BY [provName]">
-                <SelectParameters>
-                    <asp:ControlParameter ControlID="ddlCountry" DefaultValue="0" Name="countryID" PropertyName="SelectedValue" Type="Int32" />
-                </SelectParameters>
-            </asp:SqlDataSource>
             <asp:SqlDataSource ID="SqlJobSource" runat="server" ConnectionString="<%$ ConnectionStrings:SweetSpotDevConnectionString %>" SelectCommand="SELECT * FROM [tbl_jobPosition] ORDER BY [title]"></asp:SqlDataSource>
             <asp:SqlDataSource ID="SqlLocationSource" runat="server" ConnectionString="<%$ ConnectionStrings:SweetSpotDevConnectionString %>" SelectCommand="SELECT locationID, locationName FROM [tbl_location] ORDER BY [locationName]"></asp:SqlDataSource>
 
@@ -36,6 +31,12 @@
                         <asp:TextBox ID="txtLastName" runat="server" ValidateRequestMode="Enabled" ViewStateMode="Enabled" Visible="false"></asp:TextBox>
                         <asp:Label ID="lblLastNameDisplay" runat="server" Text="" Visible="true"></asp:Label>
                     </asp:TableCell>
+                </asp:TableRow>
+                <asp:TableRow>
+                    <asp:TableCell></asp:TableCell>
+                    <asp:TableCell><asp:RequiredFieldValidator ID="valFirstName" runat="server" ForeColor="red" ErrorMessage="Must enter a First Name" ControlToValidate="txtFirstName"></asp:RequiredFieldValidator></asp:TableCell>
+                    <asp:TableCell></asp:TableCell>
+                    <asp:TableCell><asp:RequiredFieldValidator ID="valLastName" runat="server" ForeColor="red" ErrorMessage="Must enter a Last Name" ControlToValidate="txtLastName"></asp:RequiredFieldValidator></asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
@@ -118,14 +119,14 @@
                         <asp:Label ID="lblProvince" runat="server" Text="Province: "></asp:Label>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlProvince" runat="server" AutoPostBack="True" DataSourceID="sqlProvinceSource" DataTextField="provName" DataValueField="provStateID" Visible="false"></asp:DropDownList>
+                        <asp:DropDownList ID="ddlProvince" runat="server" Visible="false"></asp:DropDownList>
                         <asp:Label ID="lblProvinceDisplay" runat="server" Text="" Visible="true"></asp:Label>
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblCountry" runat="server" Text="Country: "></asp:Label>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlCountry" runat="server" AutoPostBack="True" DataSourceID="sqlCountrySource" DataTextField="countryDesc" DataValueField="countryID" Visible="false"></asp:DropDownList>
+                        <asp:DropDownList ID="ddlCountry" runat="server" AutoPostBack="True" DataSourceID="sqlCountrySource" DataTextField="countryDesc" DataValueField="countryID" Visible="false" OnSelectedIndexChanged="ddlCountry_SelectedIndexChanged" ></asp:DropDownList>
                         <asp:Label ID="lblCountryDisplay" runat="server" Text="" Visible="true"></asp:Label>
                     </asp:TableCell>
                 </asp:TableRow>
@@ -151,7 +152,7 @@
                         <asp:TextBox ID="txtNewPassword2" TextMode="Password" runat="server" Text="" Visible="false"></asp:TextBox>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnSavePassword" runat="server" Text="Save New Password" Visible="false" OnClick="btnSavePassword_Click"></asp:Button>
+                        <asp:Button ID="btnSavePassword" runat="server" Text="Save New Password" Visible="false" OnClick="btnSavePassword_Click" CausesValidation="false"></asp:Button>
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -159,13 +160,13 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:Button ID="btnAddEmployee" runat="server" Text="Add Employee" OnClick="btnAddEmployee_Click" Visible="false" />
-                        <asp:Button ID="btnEditEmployee" runat="server" Text="Edit Employee" OnClick="btnEditEmployee_Click" Visible="true" />
-                        <asp:Button ID="btnSaveEmployee" runat="server" Text="Save Changes" OnClick="btnSaveEmployee_Click" Visible="false" />
+                        <asp:Button ID="btnAddEmployee" runat="server" Text="Add Employee" OnClick="btnAddEmployee_Click" Visible="false" CausesValidation="true"/>
+                        <asp:Button ID="btnEditEmployee" runat="server" Text="Edit Employee" OnClick="btnEditEmployee_Click" Visible="true" CausesValidation="false"/>
+                        <asp:Button ID="btnSaveEmployee" runat="server" Text="Save Changes" OnClick="btnSaveEmployee_Click" Visible="false" CausesValidation="true"/>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnBackToSearch" runat="server" Text="Exit Employee" OnClick="btnBackToSearch_Click" Visible="true" />
-                        <asp:Button ID="btnCancel" runat="server" Text="Cancel" OnClick="btnCancel_Click" Visible="false" />
+                        <asp:Button ID="btnBackToSearch" runat="server" Text="Exit Employee" OnClick="btnBackToSearch_Click" Visible="true" CausesValidation="false"/>
+                        <asp:Button ID="btnCancel" runat="server" Text="Cancel" OnClick="btnCancel_Click" Visible="false" CausesValidation="false"/>
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>

@@ -90,6 +90,7 @@ namespace SweetSpotDiscountGolfPOS
                     ddlJob.SelectedValue = "1";
                     lblJobDisplay.Visible = false;
                     ddlLocation.Visible = true;
+
                     lblLocationDisplay.Visible = false;
                     txtEmail.Visible = true;
                     lblEmailDisplay.Visible = false;
@@ -107,6 +108,7 @@ namespace SweetSpotDiscountGolfPOS
                     lblPostalCodeDisplay.Visible = false;
                     ddlProvince.Visible = true;
                     lblProvinceDisplay.Visible = false;
+
                     ddlCountry.Visible = true;
                     lblCountryDisplay.Visible = false;
 

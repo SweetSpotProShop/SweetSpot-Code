@@ -157,21 +157,21 @@ namespace SweetSpotDiscountGolfPOS
                     int indicator = r.verifyCashoutCanBeProcessed(repInfo);
                     //Check to see if there are sales first
                     if (indicator == 0)
+
                     {
                         Session["reportInfo"] = repInfo;
                         //Changes to the Reports Cash Out page
                         Server.Transfer("ReportsCashOut.aspx", false);
                     }
-                    else if (indicator == 1)
+                    else if(indicator == 1)
                     {
                         MessageBox.ShowMessage("No transactions have been processed for selected date.", this);
                     }
-                    else if (indicator == 2)
+                    else if(indicator == 2)
                     {
                         MessageBox.ShowMessage("A cashout has already been completed for selected date.", this);
                     }
                 }
-               
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

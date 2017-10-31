@@ -10,19 +10,38 @@
         <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnInventorySearch">
             <h2>Inventory Information</h2>
             <hr />
-            <asp:Label ID="lblInventoryType" runat="server" Text="Inventory Type"></asp:Label>
-            <div class="divider" />
-            <asp:DropDownList ID="ddlInventoryType" runat="server" DataSourceID="sqlInventoryTypes" DataTextField="typeDescription" DataValueField="typeID"></asp:DropDownList>
-            <asp:SqlDataSource ID="sqlInventoryTypes" runat="server" ConnectionString="<%$ ConnectionStrings:SweetSpotDevConnectionString %>" SelectCommand="SELECT [typeID], [typeDescription] FROM [tbl_itemType]"></asp:SqlDataSource>
+            <asp:Table runat="server">
+                <asp:TableRow>
+                    <asp:TableCell>
+                        <asp:Label ID="lblInventoryType" runat="server" Text="Inventory Type"></asp:Label>
+                    </asp:TableCell>
+                    <asp:TableCell>
+                        <asp:Label ID="lblSearch" runat="server" Text="Enter Search Text"></asp:Label>
+                    </asp:TableCell>
+                </asp:TableRow>
+                
+                <asp:TableRow>
+                    <asp:TableCell>
+                        <asp:DropDownList ID="ddlInventoryType" runat="server" Width="150" DataSourceID="sqlInventoryTypes" DataTextField="typeDescription" DataValueField="typeID"></asp:DropDownList>
+                        <asp:SqlDataSource ID="sqlInventoryTypes" runat="server" ConnectionString="<%$ ConnectionStrings:SweetSpotDevConnectionString %>" SelectCommand="SELECT [typeID], [typeDescription] FROM [tbl_itemType]"></asp:SqlDataSource>
+                    </asp:TableCell>
+                    <asp:TableCell>
+                        <%--Enter search text to find matching Inventory information--%>
+                        <asp:TextBox ID="txtSearch" runat="server"></asp:TextBox>
+                    </asp:TableCell>
+                    <asp:TableCell>
+                        <asp:Button ID="btnInventorySearch" runat="server" Width="150" Text="Inventory Search" OnClick="btnInventorySearch_Click" />
+                    </asp:TableCell>
+                    <asp:TableCell>
+                        <asp:Button ID="btnAddNewInventory" runat="server" Width="150" Text="Add New Inventory" OnClick="btnAddNewInventory_Click" />
+                    </asp:TableCell>
+                    <asp:TableCell>
+                        <asp:Button ID="btnMakePurchase" runat="server" Width="150" Text="Make Purchase" OnClick="btnMakePurchase_Click" />
+                    </asp:TableCell>
+                </asp:TableRow>
+            </asp:Table>
             <hr />
-            <%--Enter search text to find matching Inventory information--%>
-            <asp:TextBox ID="txtSearch" runat="server"></asp:TextBox>
-            <hr />
-            <asp:Button ID="btnInventorySearch" runat="server" Width="150" Text="Inventory Search" OnClick="btnInventorySearch_Click" />
-            <div class="divider" />
-            <asp:Button ID="btnAddNewInventory" runat="server" Width="150" Text="Add New Inventory" OnClick="btnAddNewInventory_Click" />
-            <hr />
-            <asp:GridView ID="grdInventorySearched" runat="server" AutoGenerateColumns="False" OnRowCommand="grdInventorySearched_RowCommand">
+            <asp:GridView ID="grdInventorySearched" runat="server" AutoGenerateColumns="False" OnRowCommand="grdInventorySearched_RowCommand" AllowPaging="true" PageSize="25" OnPageIndexChanging="grdInventorySearched_PageIndexChanging" >
                 <Columns>
                     <asp:TemplateField HeaderText="View Item">
                         <ItemTemplate>
@@ -51,12 +70,12 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Price">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("price")%>'></asp:Label>
+                            <asp:Label runat="server" Text='<%#Eval("price","{0:C}")%>'></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Cost">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("cost")%>'></asp:Label>
+                            <asp:Label runat="server" Text='<%#Eval("cost","{0:C}")%>'></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
