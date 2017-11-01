@@ -126,6 +126,8 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (e.CommandName == "StartSale")
                 {
+                    //Null items in cart as this is a new sale
+                    Session["ItemsInCart"] = null;
                     //Set transaction type to sale
                     Session["TranType"] = 1;
                     //Set key to the customer number
