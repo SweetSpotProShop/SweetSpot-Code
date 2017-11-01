@@ -261,7 +261,61 @@ namespace SweetSpotDiscountGolfPOS
                 //Server.Transfer(prevPage, false);
             }
         }
-        
+
+        protected void btnCOGSvsPMReport_Click(object sender, EventArgs e)
+        {
+            //Collects current method and page for error tracking
+            string method = "btnCOGSvsPMReport_Click";
+            try
+            {
+                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                int loc = Convert.ToInt32(ddlLocation.SelectedValue);
+                Object[] passing = new Object[2] { dtm, loc };
+                Session["reportInfo"] = passing;
+                Server.Transfer("ReportsCOGSvsPM.aspx", false);
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                er.logError(ex, cu.empID, Convert.ToString(Session["currPage"]), method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+                //Server.Transfer(prevPage, false);
+            }
+        }
+
+        protected void btnItemsSold_Click(object sender, EventArgs e)
+        {
+            //Collects current method and page for error tracking
+            string method = "btnItemsSold_Click";
+            try
+            {
+                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                int loc = Convert.ToInt32(ddlLocation.SelectedValue);
+                Object[] passing = new Object[2] { dtm, loc };
+                Session["reportInfo"] = passing;
+                Response.Redirect("ReportsItemsSold.aspx", false);
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                er.logError(ex, cu.empID, Convert.ToString(Session["currPage"]), method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+                //Server.Transfer(prevPage, false);
+            }
+        }
+
         //Viewing invoices
         //protected void btnInvoiceBetweenDates_Click(object sender, EventArgs e)
         //{
