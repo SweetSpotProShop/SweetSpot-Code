@@ -420,8 +420,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             return pm;
         }
-
-
+        
 
 
 

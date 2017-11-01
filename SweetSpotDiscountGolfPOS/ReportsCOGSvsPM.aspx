@@ -68,36 +68,7 @@
             </td>
         </tr>        
     </table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <asp:Button ID="btnDownload" runat="server" Text="Download" Width="200px" OnClick="btnDownload_Click" />
 
 
 

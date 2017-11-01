@@ -1,8 +1,13 @@
-﻿using SweetShop;
+﻿using OfficeOpenXml;
+using SweetShop;
 using SweetSpotDiscountGolfPOS.ClassLibrary;
 using SweetSpotProShop;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Web;
@@ -21,6 +26,7 @@ namespace SweetSpotDiscountGolfPOS
         CurrentUser cu = new CurrentUser();
         DateTime startDate;
         DateTime endDate;
+        int locationID;
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -40,9 +46,9 @@ namespace SweetSpotDiscountGolfPOS
                     //Gathering the start and end dates
                     Object[] passing = (Object[])Session["reportInfo"];
                     DateTime[] reportDates = (DateTime[])passing[0];
-                    DateTime startDate = reportDates[0];
-                    DateTime endDate = reportDates[1];
-                    int locationID = (int)passing[1];
+                    startDate = reportDates[0];
+                    endDate = reportDates[1];
+                    locationID = (int)passing[1];
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
@@ -188,5 +194,88 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
         }
+
+        protected void btnDownload_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnDownload_Click";
+            try
+            {
+                //Gathering the start and end dates
+                Object[] passing = (Object[])Session["reportInfo"];
+                DateTime[] reportDates = (DateTime[])passing[0];
+                startDate = reportDates[0];
+                endDate = reportDates[1];
+                locationID = (int)passing[1];
+                //Sets up database connection
+                string connectionString = ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString;
+                SqlConnection sqlCon = new SqlConnection(connectionString);
+                //Selects everything form the invoice table
+                DataTable cogsInvoices = new DataTable();
+                using (var cmd = new SqlCommand("getInvoiceForCOGS", sqlCon)) //Calling the SP   
+                using (var da = new SqlDataAdapter(cmd))
+                {
+                    cmd.Parameters.AddWithValue("@startDate", startDate);
+                    cmd.Parameters.AddWithValue("@endDate", endDate);
+                    cmd.Parameters.AddWithValue("@locationID", locationID);
+                    //Executing the SP
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    da.Fill(cogsInvoices);
+                }
+                DataColumnCollection headers = cogsInvoices.Columns;
+                //Sets path and file name to download report to
+                string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                string pathDownload = (pathUser + "\\Downloads\\");
+                FileInfo newFile = new FileInfo(pathDownload + "COGS.xlsx");
+                using (ExcelPackage xlPackage = new ExcelPackage(newFile))
+                {
+                    //Creates a seperate sheet for each data table
+                    ExcelWorksheet cogsExport = xlPackage.Workbook.Worksheets.Add("COGS");
+                    // write to sheet     
+
+                    cogsExport.Cells["A1"].LoadFromDataTable(cogsInvoices, true);
+                    xlPackage.Save();
+
+                    //Export main invoice
+                    for (int i = 1; i < cogsInvoices.Rows.Count; i++)
+                    {
+                        for (int j = 1; j < cogsInvoices.Columns.Count + 1; j++)
+                        {
+                            if (i == 1)
+                            {
+                                cogsExport.Cells[i, j].Value = headers[j - 1].ToString();
+                            }
+                            else
+                            {
+                                cogsExport.Cells[i, j].Value = cogsInvoices.Rows[i - 1][j - 1];
+                            }
+                        }
+                    }
+                    Response.Clear();
+                    Response.AddHeader("content-disposition", "attachment; filename=COGS.xlsx");
+                    Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    Response.BinaryWrite(xlPackage.GetAsByteArray());
+                    Response.End();
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log employee number
+                int employeeID = cu.empID;
+                //Log current page
+                string currPage = Convert.ToString(Session["currPage"]);
+                //Log all info into error table
+                er.logError(ex, employeeID, currPage, method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+                //Server.Transfer(prevPage, false);
+            }
+        }
     }
+    
 }
