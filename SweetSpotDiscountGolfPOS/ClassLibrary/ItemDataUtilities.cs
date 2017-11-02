@@ -653,7 +653,7 @@ namespace SweetSpotProShop
             conn.Close();
         }
         //Sending all of the invoice information to the database 
-        public void mainInvoice(CheckoutManager ckm, List<Cart> cart, List<Checkout> mops, Customer c, Employee e, int transactionType, string invoiceNumber, string comments)
+        public void mainInvoice(CheckoutManager ckm, List<Cart> cart, List<Checkout> mops, Customer c, Employee e, int transactionType, string invoiceNumber, string comments, CurrentUser cu)
         {
 
             string locationInitial = invoiceNumber.Split('-')[0];
@@ -714,7 +714,7 @@ namespace SweetSpotProShop
             cmd.Parameters.AddWithValue("invoiceTime", time);
             cmd.Parameters.AddWithValue("custID", c.customerId);
             cmd.Parameters.AddWithValue("empID", e.employeeID);
-            cmd.Parameters.AddWithValue("locationID", e.locationID);
+            cmd.Parameters.AddWithValue("locationID", cu.locationID);
             cmd.Parameters.AddWithValue("subTotal", ckm.dblSubTotal);
             cmd.Parameters.AddWithValue("shippingAmount", ckm.dblShipping);
             cmd.Parameters.AddWithValue("discountAmount", ckm.dblDiscounts);
@@ -777,7 +777,7 @@ namespace SweetSpotProShop
                 invoiceMOP(insert);
             }
         }
-        public void mainPurchaseInvoice(CheckoutManager ckm, List<Cart> cart, List<Checkout> mops, Customer c, Employee e, int transactionType, string invoiceNumber, string comments)
+        public void mainPurchaseInvoice(CheckoutManager ckm, List<Cart> cart, List<Checkout> mops, Customer c, Employee e, int transactionType, string invoiceNumber, string comments, CurrentUser cu)
         {
             ////Step 1: Find next invoice number 
             int receiptNumber = Convert.ToInt32(invoiceNumber.Split('-')[1]);
@@ -799,7 +799,7 @@ namespace SweetSpotProShop
             cmd.Parameters.AddWithValue("receiptTime", time);
             cmd.Parameters.AddWithValue("custID", c.customerId);
             cmd.Parameters.AddWithValue("empID", e.employeeID);
-            cmd.Parameters.AddWithValue("locationID", e.locationID);
+            cmd.Parameters.AddWithValue("locationID", cu.locationID);
             cmd.Parameters.AddWithValue("receiptTotal", ckm.dblTotal);
             cmd.Parameters.AddWithValue("transactionType", transactionType);
             cmd.Parameters.AddWithValue("comments", comments);

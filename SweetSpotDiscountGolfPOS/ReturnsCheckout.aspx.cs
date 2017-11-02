@@ -707,7 +707,7 @@ namespace SweetSpotDiscountGolfPOS
 
 
                     //CheckoutManager ckm, List<Cart> cart, List<Checkout> mops, Customer c, Employee e, int transactionType, string invoiceNumber, string comments)
-                    idu.mainInvoice(ckm, cart, mopList, c, emp, tranType, (Session["Invoice"]).ToString(), txtComments.Text);
+                    idu.mainInvoice(ckm, cart, mopList, c, emp, tranType, (Session["Invoice"]).ToString(), txtComments.Text, cu);
 
                     //Nullifies all retlated Sessions
                     Session["useInvoice"] = false;

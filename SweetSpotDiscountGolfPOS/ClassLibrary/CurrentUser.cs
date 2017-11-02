@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SweetShop
 {
     //The current user class is used to keep track of the current user's information
-    class CurrentUser
+    public class CurrentUser
     {
         public int empID { get; set; }
         public int password { get; set; }

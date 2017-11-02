@@ -428,7 +428,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             con.Close();
             return models;
         }
-        
+
         //******************COGS and PM REPORTING*******************************************************
         public List<Invoice> returnInvoicesForCOGS(DateTime startDate, DateTime endDate, int locationID)
         {
@@ -1934,8 +1934,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             cmd.CommandText = "select invoiceNum, invoiceSubNum, invoiceDate, " +
-                " (select Concat(firstName , lastName) from tbl_customers where custID = tbl_invoice.custID) as 'customerName', " +
-                " (select Concat(firstName , lastName) from tbl_employee where empID = tbl_invoice.empID) as 'employeeName', " +
+                " (select Concat(firstName, ' ', lastName) from tbl_customers where custID = tbl_invoice.custID) as 'customerName', " +
+                " (select Concat(firstName, ' ', lastName) from tbl_employee where empID = tbl_invoice.empID) as 'employeeName', " +
                 " discountAmount" +
                 " from tbl_invoice where discountAmount <> 0 and invoiceDate between @startDate and @endDate;";
             cmd.Parameters.AddWithValue("@startDate", startDate);
@@ -1964,9 +1964,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             cmd.Connection = con;
             con.Open();
             SqlDataReader reader = cmd.ExecuteReader();
-            if (reader["sumDiscountTotal"] != DBNull.Value)
+            while (reader.Read())
             {
-                total = Convert.ToDouble(reader["sumDiscountTotal"]);
+                if (reader["sumDiscountTotal"] != DBNull.Value)
+                {
+                    total = Convert.ToDouble(reader["sumDiscountTotal"]);
+                }
             }
             con.Close();
             return total;

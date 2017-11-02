@@ -505,7 +505,7 @@ namespace SweetSpotDiscountGolfPOS
                     mopList = (List<Checkout>)Session["MethodsofPayment"];
 
                     //Stores all the Sales data to the database
-                    idu.mainPurchaseInvoice(ckm, cart, mopList, c, emp, tranType, (Session["Invoice"]).ToString(), txtComments.Text);
+                    idu.mainPurchaseInvoice(ckm, cart, mopList, c, emp, tranType, (Session["Invoice"]).ToString(), txtComments.Text, cu);
 
                     //Nullifies all related sessions
                     Session["shipping"] = null;
