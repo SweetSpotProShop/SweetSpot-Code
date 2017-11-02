@@ -72,11 +72,11 @@ namespace SweetSpotDiscountGolfPOS
                 //Builds string to display in label
                 if (startDate == endDate)
                 {
-                    lblCashoutDate.Text = "Cashout for: " + startDate.ToString("d") + " at " + l.locationName(locationID);
+                    lblCashoutDate.Text = "Cashout on: " + startDate.ToString("d") + " for " + l.locationName(locationID);
                 }
                 else
                 {
-                    lblCashoutDate.Text = "Cashout for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " at " + l.locationName(locationID);
+                    lblCashoutDate.Text = "Cashout on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
                 }
                 //Gathers current employe based on Session id
                 //EmployeeManager em = new EmployeeManager();

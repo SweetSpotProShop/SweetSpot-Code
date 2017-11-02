@@ -13,12 +13,15 @@
     </script>
     <link href="MainStyleSheet.css" rel="stylesheet" type="text/css" />
     <div id="CashOut"  class="yesPrint">
-        <h2>Cash Out</h2>
+        <h2>Cashout</h2>
         <hr />
         <%--Payment Breakdown--%>       
 
        <div class="CashoutTable">
-           <asp:Label ID="lblCashoutDate" runat="server"></asp:Label>
+           <asp:Label ID="lblCashoutDate" Font-Bold="true" runat="server"></asp:Label>
+           <hr />
+           <h3>Balancing</h3>
+           <br />
             <asp:Table ID="tblCashout" runat="server" GridLines="Both" CssClass="CashoutTable">
                 <asp:TableRow>
                     <asp:TableCell ColumnSpan="9">
@@ -145,9 +148,10 @@
                 </asp:TableRow>
             </asp:Table>
         </div>
-
+        <br />
+        <hr />
         <div class="yesPrint" id="summary_header">
-            <h2>Cash Out Summary</h2>
+            <h3>Summary</h3>
         </div>
         <div class="yesPrint" id="summary">
             <asp:Table ID="tblSumm" runat="server" GridLines="none" CellSpacing="10">
@@ -173,6 +177,7 @@
                 </asp:TableRow>
             </asp:Table>
             <br />
+            <hr />
             <asp:Button class="noPrint" ID="btnProcessReport" runat="server" Text="Process Cashout" Width="200px" OnClick="btnProcessReport_Click" />
             <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" Enabled="false" OnClientClick="printReport()" />
         </div>
