@@ -119,7 +119,7 @@
                         <asp:Label ID="lblProvince" runat="server" Text="Province: "></asp:Label>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlProvince" runat="server" Visible="false"></asp:DropDownList>
+                        <asp:DropDownList ID="ddlProvince" AutoPostBack="true" runat="server" Visible="false"></asp:DropDownList>
                         <asp:Label ID="lblProvinceDisplay" runat="server" Text="" Visible="true"></asp:Label>
                     </asp:TableCell>
                     <asp:TableCell>

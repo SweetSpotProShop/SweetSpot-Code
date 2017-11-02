@@ -787,9 +787,9 @@ namespace SweetSpotProShop
             string time = DateTime.Now.ToString("HH:mm:ss");
 
             //Step 4: Insert all relevent info into the mainInvoice table
-            SqlConnection conn = new SqlConnection(connectionString);
+            //SqlConnection conn = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
-            cmd.Connection = conn;
+            //cmd.Connection = conn;
             cmd.CommandText = "Insert Into tbl_receipt (receiptNumber, receiptDate, receiptTime, custID, empID, locationID, "
                 + "receiptTotal, transactionType, comments) values(@receiptNumber, @receiptDate, @receiptTime, @custID, "
                 + "@empID, @locationID, @receiptTotal, @transactionType, @comments);";
@@ -803,27 +803,56 @@ namespace SweetSpotProShop
             cmd.Parameters.AddWithValue("receiptTotal", ckm.dblTotal);
             cmd.Parameters.AddWithValue("transactionType", transactionType);
             cmd.Parameters.AddWithValue("comments", comments);
-            conn.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            conn.Close();
+            //conn.Open();
+            //SqlDataReader reader = cmd.ExecuteReader();
+            //conn.Close();
+
+            sqlPassingTest(cmd);
+
             //Step 5: Insert each item into the invoiceItem table
             //Loops through the cart to look at the items
             foreach (Cart item in cart)
             {
-                string insert = "insert into tbl_receiptItem values(" + receiptNumber + ", " + item.sku + ", " + item.quantity + ", '" +
-                    item.description + "', " + item.cost + ");";
-                //Inserts the item
-                invoiceItem(insert);
+                //string insert = "insert into tbl_receiptItem values(" + receiptNumber + ", " + item.sku + ", " + item.quantity + ", '" +
+                //    item.description + "', " + item.cost + ");";
+                ////Inserts the item
+                //invoiceItem(insert);
+                SqlCommand cmd1 = new SqlCommand();
+                cmd1.CommandText = "Insert into tbl_receiptItem values(@receiptNum, @sku, @quantity, "
+                    + "@description, @cost)";
+                cmd1.Parameters.AddWithValue("receiptNum", receiptNumber);
+                cmd1.Parameters.AddWithValue("sku", item.sku);
+                cmd1.Parameters.AddWithValue("quantity", item.quantity);
+                cmd1.Parameters.AddWithValue("description", item.description);
+                cmd1.Parameters.AddWithValue("cost", item.cost);
+                sqlPassingTest(cmd1);
             }
             //Step 6: Insert each MOP into the invoiceMOP table
             //Loops through the checkout to get the mops
             foreach (Checkout mop in mops)
             {
-                string insert = "insert into tbl_receiptMOP values(" + receiptNumber + ", " + returnMOPNameasInt(mop.methodOfPayment) + ", " + mop.chequeNum + ", " + mop.amountPaid + ");";
-                //Inserts the mop
-                invoiceMOP(insert);
+                //string insert = "insert into tbl_receiptMOP values(" + receiptNumber + ", " + returnMOPNameasInt(mop.methodOfPayment) + ", " + mop.chequeNum + ", " + mop.amountPaid + ");";
+                ////Inserts the mop
+                //invoiceMOP(insert);
+                SqlCommand cmd2 = new SqlCommand();
+                cmd2.CommandText = "Insert into tbl_receiptMOP values(@receiptNumb, @mop, @chequeNum, @amountPaid)";
+                cmd2.Parameters.AddWithValue("receiptNumb", receiptNumber);
+                cmd2.Parameters.AddWithValue("mop", returnMOPNameasInt(mop.methodOfPayment));
+                cmd2.Parameters.AddWithValue("chequeNum", mop.chequeNum);
+                cmd2.Parameters.AddWithValue("amountPaid", mop.amountPaid);                
+                sqlPassingTest(cmd2);
             }
         }
+        //Testing something
+        public void sqlPassingTest(SqlCommand cmd)
+        {
+            SqlConnection conn = new SqlConnection(connectionString);
+            cmd.Connection = conn;
+            conn.Open();
+            cmd.ExecuteNonQuery();
+            conn.Close();
+        }
+
         public int getNextReceiptNum()
         {
             int nextReceiptNum = 0;

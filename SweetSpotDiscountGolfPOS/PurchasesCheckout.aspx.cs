@@ -474,6 +474,7 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnFinalizePurchase_Click";
             try
             {
+
                 cu = (CurrentUser)Session["currentUser"];
                 //Checks the amount paid and the bypass check box
                 if (!txtPurchaseAmount.Text.Equals("0.00"))

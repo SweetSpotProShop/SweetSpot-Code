@@ -133,6 +133,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Server.Transfer(prevPage, false);
             }
         }
+        //This is the Cashout Report
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -150,12 +151,13 @@ namespace SweetSpotDiscountGolfPOS
                 else
                 {
                     //Stores report dates into Session
-                    DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                    DateTime[] dtm  = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
                     int loc = Convert.ToInt32(ddlLocation.SelectedValue);
-                    Object[] repInfo = new Object[] { dtm, loc };
+                    Object[] repInfo = new Object[] {dtm, loc};
                     int indicator = r.verifyCashoutCanBeProcessed(repInfo);
                     //Check to see if there are sales first
-                    if(indicator == 0)
+                    if (indicator == 0)
+
                     {
                         Session["reportInfo"] = repInfo;
                         //Changes to the Reports Cash Out page
@@ -195,8 +197,21 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnPurchasesReport_Click";
             try
             {
-                Session["reportDates"] = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
-                Server.Transfer("ReportsPurchasesMade.aspx", false);
+                //Stores report dates into Session
+                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                int loc = Convert.ToInt32(ddlLocation.SelectedValue);
+                Object[] repInfo = new Object[] { dtm, loc };
+                int indicator = r.verifyPurchasesMade(repInfo);
+                //Check to see if there are sales first
+                if (indicator == 0)
+                {
+                    Session["reportInfo"] = repInfo;
+                    Server.Transfer("ReportsPurchasesMade.aspx", false);
+                }
+                else if (indicator == 1)
+                {
+                    MessageBox.ShowMessage("No purchases have been processed for selected dates.", this);
+                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

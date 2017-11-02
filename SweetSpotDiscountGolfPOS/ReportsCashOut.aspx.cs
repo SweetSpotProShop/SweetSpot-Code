@@ -22,6 +22,7 @@ namespace SweetSpotDiscountGolfPOS
         Reports reports = new Reports();
         ItemDataUtilities idu = new ItemDataUtilities();
         CurrentUser cu = new CurrentUser();
+        LocationManager l = new LocationManager();
         double cashoutTotal;
         double mcTotal = 0;
         double visaTotal = 0;
@@ -71,13 +72,16 @@ namespace SweetSpotDiscountGolfPOS
                 //Builds string to display in label
                 if (startDate == endDate)
                 {
-                    lblCashoutDate.Text = "Cashout for: " + startDate.ToString("d");
+                    lblCashoutDate.Text = "Cashout for: " + startDate.ToString("d") + " at " + l.locationName(locationID);
                 }
                 else
                 {
-                    lblCashoutDate.Text = "Cashout for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
+                    lblCashoutDate.Text = "Cashout for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " at " + l.locationName(locationID);
                 }
-                
+                //Gathers current employe based on Session id
+                //EmployeeManager em = new EmployeeManager();
+                //int empNum = idu.returnEmployeeIDfromPassword(Convert.ToInt32(Session["id"]));
+                //Employee emp = em.getEmployeeByID(empNum);
                 //Creating a cashout list and calling a method that grabs all mops and amounts paid
                 List<Cashout> lc = reports.cashoutAmounts(startDate, endDate, locationID);
                 Cashout rc = reports.getRemainingCashout(startDate, endDate, locationID);
