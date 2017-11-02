@@ -17,6 +17,7 @@ namespace SweetSpotDiscountGolfPOS
         SweetShopManager ssm = new SweetShopManager();
         Reports r = new Reports();
         ItemDataUtilities idu = new ItemDataUtilities();
+        LocationManager l = new LocationManager();
         CustomMessageBox cmb = new CustomMessageBox();
         CurrentUser cu = new CurrentUser();
         DateTime startDate;
@@ -46,11 +47,11 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "Items sold for: " + startDate.ToString("d");
+                        lblDates.Text = "Items sold for: " + startDate.ToString("d") + " for " + l.locationName(locationID); 
                     }
                     else
                     {
-                        lblDates.Text = "Items sold for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
+                        lblDates.Text = "Items sold for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID); 
                     }
 
                     List<Items> items = new List<Items>();
@@ -74,11 +75,11 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         if (startDate == endDate)
                         {
-                            lblDates.Text = "There is no data for: " + startDate.ToString("d");
+                            lblDates.Text = "There is no data for: " + startDate.ToString("d") + " for " + l.locationName(locationID); 
                         }
                         else
                         {
-                            lblDates.Text = "There is no data for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
+                            lblDates.Text = "There is no data for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID); 
                         }
                     }
                 }
