@@ -266,6 +266,22 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //REturns location ID
             return locID;
         }
-
+        //Gets all locations ID's
+        public List<Location> getAllLocations()
+        {
+            List<Location> l = new List<Location>();
+            SqlConnection conn = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = conn;
+            cmd.CommandText = "Select locationID, locationName from tbl_location";
+            conn.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                l.Add(new Location(Convert.ToInt32(reader["locationID"]), reader["locationName"].ToString()));
+            }
+            conn.Close();
+            return l;
+        }
     }
 }

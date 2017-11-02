@@ -109,6 +109,7 @@
     <Content Include="PrintableReceipt.aspx" />
     <Content Include="PurchasesCart.aspx" />
     <Content Include="PurchasesCheckout.aspx" />
+    <Content Include="ReportsDiscounts.aspx" />
     <Content Include="ReportsCashOut.aspx" />
     <Content Include="ReportsHomePage.aspx" />
     <Content Include="ReportsTaxes.aspx" />
@@ -242,6 +243,13 @@
     </Compile>
     <Compile Include="PurchasesCheckout.aspx.designer.cs">
       <DependentUpon>PurchasesCheckout.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ReportsDiscounts.aspx.cs">
+      <DependentUpon>ReportsDiscounts.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ReportsDiscounts.aspx.designer.cs">
+      <DependentUpon>ReportsDiscounts.aspx</DependentUpon>
     </Compile>
     <Compile Include="ReportsCashOut.aspx.cs">
       <DependentUpon>ReportsCashOut.aspx</DependentUpon>

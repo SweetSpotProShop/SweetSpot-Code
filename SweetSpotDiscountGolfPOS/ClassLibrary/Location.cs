@@ -14,6 +14,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public int provID { get; set; }
         public string postal { get; set; }
         public string phone { get; set; }
+        public int locationID { get; set; }
 
         public Location() { }
         public Location(string l, string a, string c, int pID, string p, string ph)
@@ -24,6 +25,11 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             provID = pID;
             postal = p;
             phone = ph;
+        }
+        public Location(int id, string name)
+        {
+            locationID = id;
+            location = name;
         }
     }
 }

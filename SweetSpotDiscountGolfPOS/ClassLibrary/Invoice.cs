@@ -104,6 +104,15 @@ namespace SweetShop
             balanceDue = BD;
             transactionType = TT;
             comments = C;
-        }        
+        }
+        public Invoice(int num, int subNum, DateTime d, string c, string e, double da)
+        {
+            invoiceNum = num;
+            invoiceSub = subNum;
+            invoiceDate = d;
+            customerName = c;
+            employeeName = e;
+            discountAmount = da;
+        }
     }
 }

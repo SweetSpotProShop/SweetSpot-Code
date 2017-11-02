@@ -93,7 +93,7 @@
                             <asp:Button ID="btnItemsSold" runat="server" Text="Items Sold" Width="200px" Onclick="btnItemsSold_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
-
+                            <asp:Button ID="btnDiscountReport" runat="server" Text="Discount Report" Width="200px" OnClick="btnDiscountReport_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
 

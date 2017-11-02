@@ -213,6 +213,131 @@ namespace SweetSpotDiscountGolfPOS
             }
 
         }
+        protected void btnTaxReport_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnTesting_Click";
+            try
+            {
+                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                int loc = Convert.ToInt32(ddlLocation.SelectedValue);
+                Object[] passing = new Object[2] { dtm, loc };
+                Session["reportInfo"] = passing;
+
+                Server.Transfer("ReportsTaxes.aspx", false);
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log employee number
+                int employeeID = cu.empID;
+                //Log current page
+                string currPage = Convert.ToString(Session["currPage"]);
+                //Log all info into error table
+                er.logError(ex, employeeID, currPage, method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+            }
+        }
+        protected void btnCOGSvsPMReport_Click(object sender, EventArgs e)
+        {
+            //Collects current method and page for error tracking
+            string method = "btnCOGSvsPMReport_Click";
+            try
+            {
+                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                int loc = Convert.ToInt32(ddlLocation.SelectedValue);
+                Object[] passing = new Object[2] { dtm, loc };
+                Session["reportInfo"] = passing;
+
+                Server.Transfer("ReportsCOGSvsPM.aspx", false);
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log employee number
+                int employeeID = cu.empID;
+                //Log current page
+                string currPage = Convert.ToString(Session["currPage"]);
+                //Log all info into error table
+                er.logError(ex, employeeID, currPage, method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+            }
+        }
+        protected void btnItemsSold_Click(object sender, EventArgs e)
+        {
+            //Collects current method and page for error tracking
+            string method = "btnItemsSold_Click";
+            try
+            {
+                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                int loc = Convert.ToInt32(ddlLocation.SelectedValue);
+                Object[] passing = new Object[2] { dtm, loc };
+                Session["reportInfo"] = passing;
+                Response.Redirect("ReportsItemsSold.aspx", false);
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                er.logError(ex, cu.empID, Convert.ToString(Session["currPage"]), method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+                //Server.Transfer(prevPage, false);
+            }
+        }
+        protected void btnDiscountReport_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnDiscountReport_Click";
+            try
+            {
+                if (txtStartDate.Text == "" || txtEndDate.Text == "")
+                {
+                    //One of the date boxes is empty
+                    lbldate.Visible = true;
+                    lbldate.Text = "Please Select a Start and End date";
+                    lbldate.ForeColor = System.Drawing.Color.Red;
+
+                }
+                else
+                {
+                    //Stores report dates into Session
+                    Session["reportDates"] = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                }
+                //Changes to the Reports Cash Out page
+                //Server.Transfer("ReportsDiscounts.aspx", false);
+                Response.Redirect("ReportsDiscounts.aspx");
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log employee number
+                int employeeID = cu.empID;
+                //Log current page
+                string currPage = Convert.ToString(Session["currPage"]);
+                //Log all info into error table
+                er.logError(ex, employeeID, currPage, method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+                //Server.Transfer(prevPage, false);
+            }
+        }
         protected void btnTesting_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -253,93 +378,6 @@ namespace SweetSpotDiscountGolfPOS
                 string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
                 er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
-                //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
-            }
-        }
-
-        protected void btnTaxReport_Click(object sender, EventArgs e)
-        {
-            //Collects current method for error tracking
-            string method = "btnTesting_Click";
-            try
-            {
-                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
-                int loc = Convert.ToInt32(ddlLocation.SelectedValue);
-                Object[] passing = new Object[2] { dtm, loc };
-                Session["reportInfo"] = passing;
-
-                Server.Transfer("ReportsTaxes.aspx", false);
-            }
-            //Exception catch
-            catch (ThreadAbortException tae) { }
-            catch (Exception ex)
-            {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
-                //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
-            }
-        }
-
-        protected void btnCOGSvsPMReport_Click(object sender, EventArgs e)
-        {
-            //Collects current method and page for error tracking
-            string method = "btnCOGSvsPMReport_Click";
-            try
-            {
-                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
-                int loc = Convert.ToInt32(ddlLocation.SelectedValue);
-                Object[] passing = new Object[2] { dtm, loc };
-                Session["reportInfo"] = passing;
-
-                Server.Transfer("ReportsCOGSvsPM.aspx", false);
-            }
-            //Exception catch
-            catch (ThreadAbortException tae) { }
-            catch (Exception ex)
-            {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
-                //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
-            }
-        }
-         
-        protected void btnItemsSold_Click(object sender, EventArgs e)
-        {
-            //Collects current method and page for error tracking
-            string method = "btnItemsSold_Click";
-            try
-            {
-                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
-                int loc = Convert.ToInt32(ddlLocation.SelectedValue);
-                Object[] passing = new Object[2] { dtm, loc };
-                Session["reportInfo"] = passing;
-                Response.Redirect("ReportsItemsSold.aspx", false);
-            }
-            //Exception catch
-            catch (ThreadAbortException tae) { }
-            catch (Exception ex)
-            {
-                //Log all info into error table
-                er.logError(ex, cu.empID, Convert.ToString(Session["currPage"]), method, this);
                 //string prevPage = Convert.ToString(Session["prevPage"]);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
