@@ -133,6 +133,9 @@
                         <asp:TableCell>
                             <asp:Button ID="btnItemsSold" runat="server" Text="Items Sold" Width="200px" Onclick="btnItemsSold_Click" />
                         </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:Button ID="btnMostSold" runat="server" Text="Marketing: Most Sold" Width="200px" Onclick="btnMostSold_Click" />
+                        </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>
             </div>
