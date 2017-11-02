@@ -31,24 +31,6 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblReportDate;
         
         /// <summary>
-        /// lblInvoices control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblInvoices;
-        
-        /// <summary>
-        /// lblTotals control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblTotals;
-        
-        /// <summary>
         /// grdInvoiceDisplay control.
         /// </summary>
         /// <remarks>
@@ -56,15 +38,6 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView grdInvoiceDisplay;
-        
-        /// <summary>
-        /// lbxTotals control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ListBox lbxTotals;
         
         /// <summary>
         /// btnPrint control.

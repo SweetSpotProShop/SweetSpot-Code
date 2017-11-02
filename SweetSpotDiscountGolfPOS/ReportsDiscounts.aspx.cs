@@ -22,6 +22,7 @@ namespace SweetSpotDiscountGolfPOS
         Reports reports = new Reports();
         ItemDataUtilities idu = new ItemDataUtilities();
         CurrentUser cu = new CurrentUser();
+        double tDiscount;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -39,26 +40,23 @@ namespace SweetSpotDiscountGolfPOS
                     Server.Transfer("LoginPage.aspx", false);
                 }
                 //Gathering the start and end dates
-                DateTime[] reportDates = (DateTime[])Session["reportDates"];
+                Object[] repInfo = (Object[])Session["reportInfo"];
+                DateTime[] reportDates = (DateTime[])repInfo[0];
                 startDate = reportDates[0];
                 endDate = reportDates[1];
+                int locID = Convert.ToInt32(repInfo[1]);
                 //Builds string to display in label
                 if (startDate == endDate)
                 {
-                    lblReportDate.Text = "Discount report for: " + startDate.ToString("d");
+                    lblReportDate.Text = "Discount Report on: " + startDate.ToString("d") + " for " + lm.locationName(locID);
                 }
                 else
                 {
-                    lblReportDate.Text = "Discount report for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
+                    lblReportDate.Text = "Discount Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + lm.locationName(locID);
                 }
-
-
                 List<Invoice> discounts = reports.returnDiscountsBetweenDates(startDate, endDate);
                 if (discounts.Count == 0)
                 {
-                    lblInvoices.Visible = false;
-                    lbxTotals.Visible = false;
-                    lblTotals.Visible = false;
                     if (startDate == endDate)
                     {
                         lblReportDate.Text = "There are no invoices with discounts on: " + startDate.ToString("d");
@@ -70,23 +68,6 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-
-                    string totalDiscounts = reports.returnDiscountTotalBetweenDates(startDate, endDate).ToString();          
-                    lbxTotals.Items.Add("Total Discounts: $" + totalDiscounts);
-                    List<Location> loc = new List<Location>();
-                    loc = lm.getAllLocations();
-                    foreach(Location l in loc)
-                    {                        
-                        double total = reports.returnDiscountTotalsForLocations(startDate, endDate, l.locationID);
-                        string locationName = l.location;
-                        if(total != 0)
-                        {
-                            lbxTotals.Items.Add(locationName + " : $" + total);
-                        }                        
-                    }
-
-                    
-
                     grdInvoiceDisplay.DataSource = discounts;
                     grdInvoiceDisplay.DataBind();
                 }
@@ -108,10 +89,39 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator", this);
                 //Server.Transfer(prevPage, false);
             }
-
         }
-
-
-
+        protected void grdInvoiceDisplay_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            //Collects current method and page for error tracking
+            string method = "grdInvoiceDisplay_RowDataBound";
+            try
+            {
+                if (e.Row.RowType == DataControlRowType.DataRow)
+                {
+                    tDiscount += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "discountAmount"));
+                }
+                else if(e.Row.RowType == DataControlRowType.Footer)
+                {
+                    e.Row.Cells[3].Text = String.Format("{0:C}", tDiscount);
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log employee number
+                int employeeID = cu.empID;
+                //Log current page
+                string currPage = Convert.ToString(Session["currPage"]);
+                //Log all info into error table
+                er.logError(ex, employeeID, currPage, method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+                //Server.Transfer(prevPage, false);
+            }
+        }
     }
 }

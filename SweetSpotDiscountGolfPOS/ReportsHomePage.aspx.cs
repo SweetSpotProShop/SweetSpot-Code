@@ -238,7 +238,6 @@ namespace SweetSpotDiscountGolfPOS
                 int loc = Convert.ToInt32(ddlLocation.SelectedValue);
                 Object[] passing = new Object[2] { dtm, loc };
                 Session["reportInfo"] = passing;
-
                 Server.Transfer("ReportsTaxes.aspx", false);
             }
             //Exception catch
@@ -313,7 +312,6 @@ namespace SweetSpotDiscountGolfPOS
                 //Server.Transfer(prevPage, false);
             }
         }
-
         protected void btnMostSold_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -357,11 +355,13 @@ namespace SweetSpotDiscountGolfPOS
                 else
                 {
                     //Stores report dates into Session
-                    Session["reportDates"] = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                    DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                    int loc = Convert.ToInt32(ddlLocation.SelectedValue);
+                    Object[] passing = new Object[2] { dtm, loc };
+                    Session["reportInfo"] = passing;
+                    //Changes to the Reports Cash Out page
+                    Server.Transfer("ReportsDiscounts.aspx", false);
                 }
-                //Changes to the Reports Cash Out page
-                Server.Transfer("ReportsDiscounts.aspx", false);
-                
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
