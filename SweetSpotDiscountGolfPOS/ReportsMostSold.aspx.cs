@@ -11,7 +11,7 @@ using System.Web.UI.WebControls;
 
 namespace SweetSpotDiscountGolfPOS
 {
-    public partial class ReportsItemsSold : System.Web.UI.Page
+    public partial class ReportsMSI : System.Web.UI.Page
     {
         ErrorReporting er = new ErrorReporting();
         SweetShopManager ssm = new SweetShopManager();
@@ -54,24 +54,32 @@ namespace SweetSpotDiscountGolfPOS
                     }
 
                     List<Items> items = new List<Items>();
+                    List<Items> models = new List<Items>();
+                    List<Items> brands = new List<Items>();
                     //Binding the gridview
-                    items = r.returnItemsSold(startDate, endDate, locationID);
+                    items = r.mostSoldItemsReport(startDate, endDate, locationID);
+                    brands = r.mostSoldBrandsReport(startDate, endDate, locationID);
+                    models = r.mostSoldModelsReport(startDate, endDate, locationID);
                     //Checking if there are any values
-                    if (items.Count > 0)
+                    if (items.Count > 0 && brands.Count > 0 && models.Count > 0)
                     {
                         grdItems.DataSource = items;
-                        grdItems.DataBind();                        
+                        grdItems.DataBind();
+                        grdBrands.DataSource = brands;
+                        grdBrands.DataBind();
+                        grdModels.DataSource = models;
+                        grdModels.DataBind();
                     }
                     else
                     {
                         if (startDate == endDate)
                         {
-                            lblDates.Text = "There are no items sold for: " + startDate.ToString("d");
+                            lblDates.Text = "There is no data for: " + startDate.ToString("d");
                         }
                         else
                         {
-                            lblDates.Text = "There are no items sold for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
-                        }                        
+                            lblDates.Text = "There is no data for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
+                        }
                     }
                 }
 
@@ -89,63 +97,15 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator", this);
                 //Server.Transfer(prevPage, false);
             }
-        }
 
-       
 
-        protected void lbtnInvoiceNumber_Click(object sender, EventArgs e)
-        {
-            //Collects current method for error tracking
-            string method = "lbtnInvoiceNumber_Click";
-            try
-            {
-                //Text of the linkbutton
-                LinkButton btn = sender as LinkButton;
-                string invoice = btn.Text;
-                //Parsing into invoiceNum and invoiceSubNum
-                char[] splitchar = { '-' };
-                string[] invoiceSplit = invoice.Split(splitchar);
-                int invNum = Convert.ToInt32(invoiceSplit[0]);
-                int invSNum = Convert.ToInt32(invoiceSplit[1]);
-                //determines the table to use for queries
-                string table = "";
-                int tran = 3;
-                if (invSNum > 1)
-                {
-                    table = "Returns";
-                    tran = 4;
-                }
-                //Stores required info into Sessions
-                Invoice rInvoice = ssm.getSingleInvoice(invNum, invSNum);
-                //Session["key"] = rInvoice.customerID;
-                //Session["Invoice"] = invoice;
-                Session["actualInvoiceInfo"] = rInvoice;
-                Session["useInvoice"] = true;
-                //Session["strDate"] = rInvoice.invoiceDate;
-                Session["ItemsInCart"] = ssm.invoice_getItems(invNum, invSNum, "tbl_invoiceItem" + table);
-                Session["CheckOutTotals"] = ssm.invoice_getCheckoutTotals(invNum, invSNum, "tbl_invoice");
-                Session["MethodsOfPayment"] = ssm.invoice_getMOP(invNum, invSNum, "tbl_invoiceMOP");
-                Session["TranType"] = tran;
-                //Changes page to display a printable invoice
-                Server.Transfer("PrintableInvoice.aspx", false);
-            }
-            //Exception catch
-            catch (ThreadAbortException tae) { }
-            catch (Exception ex)
-            {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
-                //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
-                //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
-            }
+
+
+
+
+
+
+
         }
     }
 }
