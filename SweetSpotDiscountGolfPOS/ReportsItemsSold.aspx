@@ -1,18 +1,36 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="ReportsItemsSold.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.ReportsItemsSold" %>
 
 <asp:Content ID="ReportsPageContent" ContentPlaceHolderID="IndividualPageContent" runat="server">
+    <style media="print">
+        .noPrint {
+            display: none;
+            /*margin-left: 0;*/
+        }
+
+        .yesPrint {
+            display: inline-block !important;
+            /* margin-right:100px;
+           float: right;*/
+            margin-left: 10px !important;
+        }
+    </style>
+
     <h2>Items Sold</h2>
     <hr />
     <div>
-        <asp:Label ID="lblDates" runat="server" Text="lblDates"></asp:Label>
+        <asp:Label ID="lblDates" runat="server" Font-Bold="true" Text="lblDates"></asp:Label>
     </div>
+    <hr />
     <div>
-        <asp:GridView ID="grdItems" runat="server" AutoGenerateColumns="false" Width="100%" RowStyle-HorizontalAlign="Center" OnRowDataBound="grdItems_RowDataBound">
+        <asp:GridView ID="grdItems" runat="server" AutoGenerateColumns="false" Width="100%" RowStyle-HorizontalAlign="Center" ShowFooter="true" OnRowDataBound="grdItems_RowDataBound">
             <Columns>
                 <asp:TemplateField HeaderText="Invoice Number">
                     <ItemTemplate>
                         <asp:LinkButton ID="lbtnInvoiceNumber" runat="server" Text='<%#Eval("invoice")%>' OnClick="lbtnInvoiceNumber_Click"></asp:LinkButton>
                     </ItemTemplate>
+                    <FooterTemplate>
+                        <asp:Label ID="lblTotal" runat="server" Text="Totals:"></asp:Label>
+                    </FooterTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="SKU">
                     <ItemTemplate>
@@ -38,7 +56,7 @@
                     <ItemTemplate>
                         <asp:Label ID="lblPercentage" runat="server" Text='<%#Eval("percent") %>'></asp:Label>
                     </ItemTemplate>
-                </asp:TemplateField>                
+                </asp:TemplateField>
                 <asp:TemplateField HeaderText="Item Profit">
                     <ItemTemplate>
                         <asp:Label ID="lblTotalProfit" runat="server" Text='<%#Eval("difference","{0:C}") %>'></asp:Label>
@@ -47,19 +65,19 @@
             </Columns>
         </asp:GridView>
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <br />
+    <hr />
+    <asp:Table runat="server">
+        <asp:TableRow>
+            <asp:TableCell>
+                <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="printReport()" />
+            </asp:TableCell>
+        </asp:TableRow>
+    </asp:Table>
+    <script>
+        function printReport(printable) {
+            window.print();
+        }
+    </script>
 </asp:Content>
 

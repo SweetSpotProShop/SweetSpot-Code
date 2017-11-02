@@ -19,8 +19,14 @@ namespace SweetSpotDiscountGolfPOS
         ItemDataUtilities idu = new ItemDataUtilities();
         CustomMessageBox cmb = new CustomMessageBox();
         CurrentUser cu = new CurrentUser();
+        LocationManager l = new LocationManager();
         DateTime startDate;
         DateTime endDate;
+        double tCost;
+        double tPrice;
+        //double tDiscount;
+        double tProfit;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -46,11 +52,11 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "Items sold for: " + startDate.ToString("d");
+                        lblDates.Text = "Items sold on: " + startDate.ToString("d") + " for " + l.locationName(locationID);
                     }
                     else
                     {
-                        lblDates.Text = "Items sold for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
+                        lblDates.Text = "Items sold on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
                     }
 
                     List<Items> items = new List<Items>();
@@ -111,13 +117,21 @@ namespace SweetSpotDiscountGolfPOS
                         discount.Text = "$" + discount.Text;
                     }
                 }
-
                 Label lblProfit = (Label)e.Row.FindControl("lblTotalProfit");
                 string profitText = lblProfit.Text;
                 if (profitText.Contains("("))
                 {
                     lblProfit.ForeColor = System.Drawing.Color.Red;
                 }
+                tCost += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "cost"));
+                tPrice += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "price"));
+                tProfit += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "difference"));
+            }
+            else if(e.Row.RowType == DataControlRowType.Footer)
+            {
+                e.Row.Cells[2].Text = String.Format("{0:C}", tCost);
+                e.Row.Cells[3].Text = String.Format("{0:C}", tPrice);
+                e.Row.Cells[6].Text = String.Format("{0:C}", tProfit);
             }
         }
         protected void lbtnInvoiceNumber_Click(object sender, EventArgs e)
