@@ -109,9 +109,12 @@
     <Content Include="PrintableReceipt.aspx" />
     <Content Include="PurchasesCart.aspx" />
     <Content Include="PurchasesCheckout.aspx" />
+    <Content Include="ReportsCOGSvsPM.aspx" />
     <Content Include="ReportsDiscounts.aspx" />
     <Content Include="ReportsCashOut.aspx" />
     <Content Include="ReportsHomePage.aspx" />
+    <Content Include="ReportsItemsSold.aspx" />
+    <Content Include="ReportsMostSold.aspx" />
     <Content Include="ReportsTaxes.aspx" />
     <Content Include="ReportsPurchasesMade.aspx" />
     <Content Include="ReturnsCart.aspx" />
@@ -244,6 +247,13 @@
     <Compile Include="PurchasesCheckout.aspx.designer.cs">
       <DependentUpon>PurchasesCheckout.aspx</DependentUpon>
     </Compile>
+    <Compile Include="ReportsCOGSvsPM.aspx.cs">
+      <DependentUpon>ReportsCOGSvsPM.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ReportsCOGSvsPM.aspx.designer.cs">
+      <DependentUpon>ReportsCOGSvsPM.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ReportsDiscounts.aspx.cs">
       <DependentUpon>ReportsDiscounts.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -264,6 +274,20 @@
     </Compile>
     <Compile Include="ReportsHomePage.aspx.designer.cs">
       <DependentUpon>ReportsHomePage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ReportsItemsSold.aspx.cs">
+      <DependentUpon>ReportsItemsSold.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ReportsItemsSold.aspx.designer.cs">
+      <DependentUpon>ReportsItemsSold.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ReportsMostSold.aspx.cs">
+      <DependentUpon>ReportsMostSold.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ReportsMostSold.aspx.designer.cs">
+      <DependentUpon>ReportsMostSold.aspx</DependentUpon>
     </Compile>
     <Compile Include="ReportsTaxes.aspx.cs">
       <DependentUpon>ReportsTaxes.aspx</DependentUpon>

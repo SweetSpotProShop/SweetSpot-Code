@@ -60,7 +60,7 @@ namespace SweetSpotDiscountGolfPOS
                     if (items.Count > 0)
                     {
                         grdItems.DataSource = items;
-                        grdItems.DataBind();                        
+                        grdItems.DataBind();
                     }
                     else
                     {
@@ -71,7 +71,7 @@ namespace SweetSpotDiscountGolfPOS
                         else
                         {
                             lblDates.Text = "There are no items sold for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
-                        }                        
+                        }
                     }
                 }
 
@@ -90,9 +90,36 @@ namespace SweetSpotDiscountGolfPOS
                 //Server.Transfer(prevPage, false);
             }
         }
+        protected void grdItems_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                Label percent = (Label)e.Row.FindControl("lblPercentage");
+                Label discount = (Label)e.Row.FindControl("lblTotalDiscount");
+                if (percent.Text.Equals("True"))
+                {
+                    discount.Text = discount.Text + "%";
+                }
+                else
+                {
+                    if (discount.Text.Equals("0"))
+                    {
+                        discount.Text = "-";
+                    }
+                    else
+                    {
+                        discount.Text = "$" + discount.Text;
+                    }
+                }
 
-       
-
+                Label lblProfit = (Label)e.Row.FindControl("lblTotalProfit");
+                string profitText = lblProfit.Text;
+                if (profitText.Contains("("))
+                {
+                    lblProfit.ForeColor = System.Drawing.Color.Red;
+                }
+            }
+        }
         protected void lbtnInvoiceNumber_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking

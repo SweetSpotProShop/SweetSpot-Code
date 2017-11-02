@@ -296,7 +296,8 @@ namespace SweetSpotDiscountGolfPOS
                 int loc = Convert.ToInt32(ddlLocation.SelectedValue);
                 Object[] passing = new Object[2] { dtm, loc };
                 Session["reportInfo"] = passing;
-                Server.Transfer("ReportsItemsSold.aspx", false);
+                Response.Redirect("ReportsItemsSold.aspx", false);
+                //Server.Transfer("ReportsItemsSold.aspx", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

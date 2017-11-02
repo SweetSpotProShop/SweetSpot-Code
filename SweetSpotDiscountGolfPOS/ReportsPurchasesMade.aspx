@@ -24,7 +24,7 @@
         <h2>Purchases</h2>
         <hr />
         <%--Purchases Breakdown--%>
-        <asp:Label ID="lblPurchasesMadeDate" runat="server" />
+        <asp:Label ID="lblPurchasesMadeDate" Font-Bold="true" runat="server" />
         <hr />
         <div>
             <asp:GridView ID="grdPurchasesMade" runat="server" Width="75%" AutoGenerateColumns="false" ShowFooter="true" OnRowDataBound="grdPurchasesMade_RowDataBound">
