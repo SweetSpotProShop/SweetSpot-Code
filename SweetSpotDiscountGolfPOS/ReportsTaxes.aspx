@@ -24,7 +24,7 @@
         <h2>Taxes</h2>
         <hr />
         <%--Taxes Breakdown--%>
-        <asp:Label ID="lblTaxDate" runat="server" />
+        <asp:Label ID="lblTaxDate" Font-Bold="true" runat="server" />
         <hr />
         <h3>Sales</h3>
         <div>
