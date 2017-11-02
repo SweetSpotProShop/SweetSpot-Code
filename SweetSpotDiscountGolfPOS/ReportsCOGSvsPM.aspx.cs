@@ -22,11 +22,17 @@ namespace SweetSpotDiscountGolfPOS
         SweetShopManager ssm = new SweetShopManager();
         Reports r = new Reports();
         ItemDataUtilities idu = new ItemDataUtilities();
+        LocationManager l = new LocationManager();
         CustomMessageBox cmb = new CustomMessageBox();
         CurrentUser cu = new CurrentUser();
         DateTime startDate;
         DateTime endDate;
         int locationID;
+        double tCost;
+        double tPrice;
+        //double tDiscount;
+        double tProfit;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -52,11 +58,11 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "COGs vs PM for: " + startDate.ToString("d");
+                        lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("d") + " for " + l.locationName(locationID);
                     }
                     else
                     {
-                        lblDates.Text = "COGs vs PM for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
+                        lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
                     }
 
                     List<Invoice> inv = new List<Invoice>();
@@ -68,11 +74,11 @@ namespace SweetSpotDiscountGolfPOS
                         grdInvoiceSelection.DataSource = inv;
                         grdInvoiceSelection.DataBind();
                         //Displaying the total cost
-                        lblTotalCostDisplay.Text = r.returnCOGSCost(startDate, endDate, locationID).ToString("C");
+                        //lblTotalCostDisplay.Text = r.returnCOGSCost(startDate, endDate, locationID).ToString("C");
                         //Displaying the total price/sold at
-                        lblSoldDisplay.Text = r.returnCOGSPrice(startDate, endDate, locationID).ToString("C");
+                        //lblSoldDisplay.Text = r.returnCOGSPrice(startDate, endDate, locationID).ToString("C");
                         //Displaying the profit margin
-                        lblProfitMarginDisplay.Text = r.returnCOGSProfitMargin(startDate, endDate, locationID).ToString("C");
+                        //lblProfitMarginDisplay.Text = r.returnCOGSProfitMargin(startDate, endDate, locationID).ToString("C");
                     }
                     else
                     {
@@ -85,13 +91,13 @@ namespace SweetSpotDiscountGolfPOS
                             lblDates.Text = "There are no invoices for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
                         }
                         grdInvoiceSelection.Visible = false;
-                        lblTotalCostDisplay.Visible = false;
-                        lblSoldDisplay.Visible = false;
-                        lblProfitMarginDisplay.Visible = false;
-                        lblItemsSold.Visible = false;
-                        lblCost.Visible = false;
-                        lblPM.Visible = false;
-                        lblProfitMargin.Visible = false;
+                        //lblTotalCostDisplay.Visible = false;
+                        //lblSoldDisplay.Visible = false;
+                        //lblProfitMarginDisplay.Visible = false;
+                        //lblItemsSold.Visible = false;
+                        //lblCost.Visible = false;
+                        //lblPM.Visible = false;
+                        //lblProfitMargin.Visible = false;
                         
                     }
                 }
@@ -164,7 +170,6 @@ namespace SweetSpotDiscountGolfPOS
                 //Server.Transfer(prevPage, false);
             }
         }
-
         protected void grdInvoiceSelection_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             if (e.Row.RowType == DataControlRowType.DataRow)
@@ -192,9 +197,17 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     lblProfit.ForeColor = System.Drawing.Color.Red;
                 }
+                tCost += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "totalCost"));
+                tPrice += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "balanceDue"));
+                tProfit += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "totalProfit"));
+            }
+            else if(e.Row.RowType == DataControlRowType.Footer)
+            {
+                e.Row.Cells[1].Text = String.Format("{0:C}", tCost);
+                e.Row.Cells[2].Text = String.Format("{0:C}", tPrice);
+                e.Row.Cells[5].Text = String.Format("{0:C}", tProfit);
             }
         }
-
         protected void btnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking

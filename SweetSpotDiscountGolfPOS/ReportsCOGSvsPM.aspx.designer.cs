@@ -22,42 +22,6 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblDates;
         
         /// <summary>
-        /// lblItemsSold control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblItemsSold;
-        
-        /// <summary>
-        /// lblCost control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblCost;
-        
-        /// <summary>
-        /// lblPM control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblPM;
-        
-        /// <summary>
-        /// lblProfitMargin control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblProfitMargin;
-        
-        /// <summary>
         /// grdInvoiceSelection control.
         /// </summary>
         /// <remarks>
@@ -67,31 +31,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.GridView grdInvoiceSelection;
         
         /// <summary>
-        /// lblTotalCostDisplay control.
+        /// btnPrint control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblTotalCostDisplay;
-        
-        /// <summary>
-        /// lblSoldDisplay control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblSoldDisplay;
-        
-        /// <summary>
-        /// lblProfitMarginDisplay control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblProfitMarginDisplay;
+        protected global::System.Web.UI.WebControls.Button btnPrint;
         
         /// <summary>
         /// btnDownload control.
