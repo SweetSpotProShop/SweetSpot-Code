@@ -24,6 +24,10 @@ namespace SweetShop
         public double cost { get; set; }
         public string location { get; set; }
         public int typeID { get; set; }
+        public string invoice { get; set; }
+        public double discount { get; set; }
+        public bool percent { get; set; }
+        public double difference { get; set; }
 
         public Items() { }
         public Items(int s, string d, int q, double p, double c)
@@ -52,6 +56,16 @@ namespace SweetShop
             cost = c;
             typeID = t;
             location = l;
+        }
+        public Items(int num, int subNum, int s, double c, double p, double disc, bool perc, double d)
+        {
+            invoice = num.ToString() + "-" + subNum.ToString();
+            sku = s;
+            cost = c;
+            price = p;
+            discount = disc;
+            percent = perc;
+            difference = d;
         }
     }
 }
