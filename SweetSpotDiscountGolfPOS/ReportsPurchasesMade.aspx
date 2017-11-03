@@ -29,7 +29,14 @@
         <div>
             <asp:GridView ID="grdPurchasesMade" runat="server" Width="75%" AutoGenerateColumns="false" ShowFooter="true" OnRowDataBound="grdPurchasesMade_RowDataBound">
                 <Columns>
-                    <asp:BoundField HeaderText="Receipt Number" HeaderStyle-Width="20%" DataField="receiptNumber" FooterText="Totals:"/>
+                    <asp:TemplateField HeaderText="Receipt Number" HeaderStyle-Width ="20%">
+                        <ItemTemplate>
+                            <asp:LinkButton ID="lbtnReceiptNumber" runat="server" Text='<%#Eval("receiptNumber") %>' OnClick="lbtnReceiptNumber_Click"></asp:LinkButton>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                            <asp:Label ID="lblTotals" runat="server" Text="Totals:"></asp:Label>
+                        </FooterTemplate>
+                    </asp:TemplateField>
                     <asp:BoundField HeaderText="Receipt Date" HeaderStyle-Width="20%" DataField="receiptDate" DataFormatString="{0:d}"/>
                     <asp:BoundField HeaderText="Purchase Method" HeaderStyle-Width="20%" DataField="mopDescription" />
                     <asp:BoundField HeaderText="Cheque Number" HeaderStyle-Width="20%" DataField="chequeNumber" />
