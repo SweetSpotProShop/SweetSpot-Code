@@ -1858,6 +1858,67 @@ namespace SweetShop
             //Returns the invoice
             return i;
         }
+
+        public Object[] getSingleReceipt(int receiptID)
+        {
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "SELECT receiptNumber, receiptDate, receiptTime, custID, empID, "
+                + "locationID, receiptTotal, transactionType, comments "
+                + "FROM tbl_receipt WHERE receiptNumber = @recNum";
+            cmd.Parameters.AddWithValue("recNum", receiptID);
+            cmd.Connection = con;
+            con.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            Invoice r = new Invoice();
+            while (reader.Read())
+            {
+                r.invoiceNum = Convert.ToInt32(reader["receiptNumber"]);
+                r.invoiceDate = Convert.ToDateTime(reader["receiptDate"]);
+                r.invoiceTime = Convert.ToDateTime(reader["receiptTime"]);
+                r.customerID = Convert.ToInt32(reader["custID"]);
+                r.employeeID = Convert.ToInt32(reader["empID"]);
+                r.locationID = Convert.ToInt32(reader["locationID"]);
+                r.balanceDue = Convert.ToDouble(reader["receiptTotal"]);
+                r.transactionType = Convert.ToInt32(reader["transactionType"]);
+                r.comments = reader["comments"].ToString();
+            }
+            con.Close();
+
+            SqlCommand cmd2 = new SqlCommand();
+            cmd2.CommandText = "SELECT sku, itemQuantity, description, itemCost "
+                + "FROM tbl_receiptItem WHERE receiptNumber = @recNum2";
+            cmd2.Parameters.AddWithValue("recNum2", receiptID);
+            cmd2.Connection = con;
+            con.Open();
+            SqlDataReader reader2 = cmd2.ExecuteReader();
+            List<Items> i = new List<Items>();
+            while (reader2.Read())
+            {
+                i.Add(new Items(Convert.ToInt32(reader["sku"]), Convert.ToString(reader["description"]),
+                    Convert.ToInt32(reader["itemQuantity"]), 0, Convert.ToDouble(reader["itemCost"])));
+            }
+            con.Close();
+
+            SqlCommand cmd3 = new SqlCommand();
+            cmd3.CommandText = "SELECT ID, mopType, chequeNum, amountPaid "
+                + "FROM tbl_receiptMOP WHERE receiptNumber = @recNum";
+            cmd3.Parameters.AddWithValue("recNum3", receiptID);
+            cmd3.Connection = con;
+            con.Open();
+            SqlDataReader reader3 = cmd3.ExecuteReader();
+            List<Checkout> m = new List<Checkout>();
+            while (reader.Read())
+            {
+                m.Add(new Checkout(idu.returnMOPIntasName(Convert.ToInt32(reader["mopType"])), Convert.ToDouble(reader["amountPaid"]),
+                    Convert.ToInt32(reader["chequeNum"])));
+            }
+            con.Close();
+
+            Object[] o = new Object[3] { r, i, m };
+            //Returns the object holding invoice, items, and mop
+            return o;
+        }
         /*******Tax Utilities************************************************************************************/
         public List<Tax> getTaxes(int provStateID, DateTime recDate)
         {

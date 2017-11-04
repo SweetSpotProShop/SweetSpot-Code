@@ -915,6 +915,26 @@ namespace SweetSpotProShop
             //Returns the methodID
             return mop;
         }
+        public string returnMOPIntasName(int mopN)
+        {
+            SqlConnection conn = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+
+            cmd.Connection = conn;
+            cmd.CommandText = "Select methodDesc from tbl_methodOfPayment where methodID = @mopN";
+            cmd.Parameters.AddWithValue("mopN", mopN);
+            conn.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            string mop = "";
+
+            while (reader.Read())
+            {
+                mop = Convert.ToString(reader["methodDesc"]);
+            }
+            conn.Close();
+            //Returns the methodID
+            return mop;
+        }
         //Returns the max invoice num + 1
         public int getNextInvoiceNum()
         {

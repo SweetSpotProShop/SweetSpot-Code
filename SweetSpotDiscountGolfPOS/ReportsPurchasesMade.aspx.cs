@@ -17,6 +17,7 @@ namespace SweetSpotDiscountGolfPOS
         Reports reports = new Reports();
         CurrentUser cu = new CurrentUser();
         LocationManager l = new LocationManager();
+        SweetShopManager ssm = new SweetShopManager();
         double totalPurchAmount = 0;
         int totalPurchases = 0;
         int totalCheques = 0;
@@ -125,18 +126,23 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 LinkButton btn = sender as LinkButton;
-                int receiptNum = Convert.ToInt32(btn.Text);
+                Object[] o = new Object[3];
+                o = ssm.getSingleReceipt(Convert.ToInt32(btn.Text));
 
+                Invoice receipt = (Invoice)o[0];
+                List<Items> rItems = (List<Items>)o[1];
+                List<Checkout> rOut = (List<Checkout>)o[2];
 
-
-                Session["key"] = null;
-                Session["Invoice"] = null;
-                Session["strDate"] = null;
+                Session["key"] = receipt.customerID;
+                Session["Invoice"] = receipt.invoiceNum;
+                Session["strDate"] = receipt.invoiceDate;
                 Session["TranType"] = 5;
-                Session["ItemsInCart"] = null;
-                Session["CheckOutTotals"] = null;
-                Session["MethodsofPayment"] = null;
+                Session["ItemsInCart"] = rItems;
+                Session["CheckOutTotals"] = receipt.subTotal;
+                Session["MethodsofPayment"] = rOut;
 
+                //Changes to the Reports Cash Out page
+                Server.Transfer("PrintablReceipt.aspx", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
