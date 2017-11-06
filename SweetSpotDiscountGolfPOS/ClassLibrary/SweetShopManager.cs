@@ -1863,7 +1863,7 @@ namespace SweetShop
         {
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "SELECT receiptNumber, receiptDate, receiptTime, custID, empID, "
+            cmd.CommandText = "SELECT receiptNumber, receiptDate, Cast(receiptTime as DATETIME) as receiptTime, custID, empID, "
                 + "locationID, receiptTotal, transactionType, comments "
                 + "FROM tbl_receipt WHERE receiptNumber = @recNum";
             cmd.Parameters.AddWithValue("recNum", receiptID);
@@ -1887,31 +1887,31 @@ namespace SweetShop
 
             SqlCommand cmd2 = new SqlCommand();
             cmd2.CommandText = "SELECT sku, itemQuantity, description, itemCost "
-                + "FROM tbl_receiptItem WHERE receiptNumber = @recNum2";
+                + "FROM tbl_receiptItem WHERE receiptNum = @recNum2";
             cmd2.Parameters.AddWithValue("recNum2", receiptID);
             cmd2.Connection = con;
             con.Open();
             SqlDataReader reader2 = cmd2.ExecuteReader();
-            List<Items> i = new List<Items>();
+            List<Cart> i = new List<Cart>();
             while (reader2.Read())
             {
-                i.Add(new Items(Convert.ToInt32(reader["sku"]), Convert.ToString(reader["description"]),
-                    Convert.ToInt32(reader["itemQuantity"]), 0, Convert.ToDouble(reader["itemCost"])));
+                i.Add(new Cart(Convert.ToInt32(reader2["sku"]), Convert.ToString(reader2["description"]),
+                    Convert.ToInt32(reader2["itemQuantity"]), 0, Convert.ToDouble(reader2["itemCost"]), 0, false, 0));
             }
             con.Close();
 
             SqlCommand cmd3 = new SqlCommand();
             cmd3.CommandText = "SELECT ID, mopType, chequeNum, amountPaid "
-                + "FROM tbl_receiptMOP WHERE receiptNumber = @recNum";
+                + "FROM tbl_receiptMOP WHERE receiptNum = @recNum3";
             cmd3.Parameters.AddWithValue("recNum3", receiptID);
             cmd3.Connection = con;
             con.Open();
             SqlDataReader reader3 = cmd3.ExecuteReader();
             List<Checkout> m = new List<Checkout>();
-            while (reader.Read())
+            while (reader3.Read())
             {
-                m.Add(new Checkout(idu.returnMOPIntasName(Convert.ToInt32(reader["mopType"])), Convert.ToDouble(reader["amountPaid"]),
-                    Convert.ToInt32(reader["chequeNum"])));
+                m.Add(new Checkout(idu.returnMOPIntasName(Convert.ToInt32(reader3["mopType"])), Convert.ToDouble(reader3["amountPaid"]),
+                    Convert.ToInt32(reader3["chequeNum"])));
             }
             con.Close();
 

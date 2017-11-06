@@ -130,7 +130,7 @@ namespace SweetSpotDiscountGolfPOS
                 o = ssm.getSingleReceipt(Convert.ToInt32(btn.Text));
 
                 Invoice receipt = (Invoice)o[0];
-                List<Items> rItems = (List<Items>)o[1];
+                List<Cart> rItems = (List<Cart>)o[1];
                 List<Checkout> rOut = (List<Checkout>)o[2];
 
                 Session["key"] = receipt.customerID;
@@ -138,11 +138,11 @@ namespace SweetSpotDiscountGolfPOS
                 Session["strDate"] = receipt.invoiceDate;
                 Session["TranType"] = 5;
                 Session["ItemsInCart"] = rItems;
-                Session["CheckOutTotals"] = receipt.subTotal;
+                Session["CheckOutTotals"] = new CheckoutManager(receipt.balanceDue);
                 Session["MethodsofPayment"] = rOut;
 
                 //Changes to the Reports Cash Out page
-                Server.Transfer("PrintablReceipt.aspx", false);
+                Server.Transfer("PrintableReceipt.aspx", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
