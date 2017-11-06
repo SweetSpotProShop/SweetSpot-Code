@@ -203,6 +203,27 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //Returns object location
             return locationN;
         }
+        public Location returnLocationForReceiptFromID(int locationID)
+        {
+            SqlConnection conn = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = conn;
+            cmd.CommandText = "Select locationName, PrimaryPhoneINT, secondaryPhoneINT, email, address, "
+                + "city, provStateID, country, postZip, secondaryIdentifier, taxNumber from tbl_location where locationID = @locationID";
+            cmd.Parameters.AddWithValue("locationID", locationID);
+            conn.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            Location locationN = null;
+            while (reader.Read())
+            {
+                locationN = new Location(reader["locationName"].ToString(), reader["address"].ToString(),
+                    reader["city"].ToString(), Convert.ToInt32(reader["provStateID"]),
+                    reader["postZip"].ToString(), reader["PrimaryPhoneINT"].ToString());
+            }
+            conn.Close();
+            //Returns object location
+            return locationN;
+        }
         //Gets city based on location id
         public string locationCity(int locID)
         {
@@ -265,6 +286,25 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             conn.Close();
             //REturns location ID
             return locID;
+        }
+        //returning the location ID from a Receipt Number
+        public int returnlocationIDFromReceiptNumber(int number)
+        {
+            int locationID = 1;
+            SqlConnection conn = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = conn;
+            cmd.CommandText = "Select locationID from tbl_receipt where receiptNumber  = @receiptNumber";
+            cmd.Parameters.AddWithValue("receiptNumber", number);
+            conn.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+
+                locationID = Convert.ToInt32(reader["locationID"]);
+            }
+            conn.Close();
+            return locationID;
         }
         //Gets all locations ID's
         public List<Location> getAllLocations()

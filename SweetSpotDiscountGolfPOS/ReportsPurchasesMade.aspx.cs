@@ -136,7 +136,7 @@ namespace SweetSpotDiscountGolfPOS
                 Session["key"] = receipt.customerID;
                 Session["Invoice"] = receipt.invoiceNum;
                 Session["strDate"] = receipt.invoiceDate;
-                Session["TranType"] = 5;
+                Session["TranType"] = 6;
                 Session["ItemsInCart"] = rItems;
                 Session["CheckOutTotals"] = new CheckoutManager(receipt.balanceDue);
                 Session["MethodsofPayment"] = rOut;

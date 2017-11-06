@@ -48,9 +48,14 @@ namespace SweetSpotDiscountGolfPOS
                 lblinvoiceNum.Text = Convert.ToString(Session["Invoice"]);
                 lblDate.Text = Convert.ToDateTime(Session["strDate"]).ToString("yyyy-MM-dd");
                 Location l = new Location();
-
+                //Gather transaction type from Session
+                tranType = Convert.ToInt32(Session["TranType"]);
+                int ln = 0;
+                //Determins the session to get the cart items from
+                if (tranType == 5) { cart = (List<Cart>)Session["ItemsInCart"]; ln = cu.locationID; }
+                else if(tranType == 6){ cart = (List<Cart>)Session["ItemsInCart"]; ln = lm.returnlocationIDFromReceiptNumber(Convert.ToInt32(Session["Invoice"])); }
                 //Use current location to display on invoice
-                l = lm.returnLocationForInvoice(cu.locationName);
+                l = lm.returnLocationForReceiptFromID(ln);
 
                 //Display the location information
                 lblSweetShopName.Text = l.location.ToString();
@@ -58,10 +63,7 @@ namespace SweetSpotDiscountGolfPOS
                 lblSweetShopPostalAddress.Text = l.city.ToString() + ", " + lm.provinceName(l.provID) + " " + l.postal.ToString();
                 lblSweetShopPhone.Text = l.phone.ToString();
 
-                //Gather transaction type from Session
-                tranType = Convert.ToInt32(Session["TranType"]);
-                //Determins the session to get the cart items from
-                if (tranType == 5) { cart = (List<Cart>)Session["ItemsInCart"]; }
+
                 //Gathers stored totals
                 ckm = (CheckoutManager)Session["CheckOutTotals"];
                 //Gathers stored payment methods
