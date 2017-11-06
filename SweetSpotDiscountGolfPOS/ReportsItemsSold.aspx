@@ -14,7 +14,23 @@
             margin-left: 10px !important;
         }
     </style>
+    <script>
+        function CallPrint(strid) {
+            var prtContent = document.getElementById(strid);
+            var WinPrint = window.open('', '', 'letf=10,top=10,width="450",height="250",toolbar=1,scrollbars=1,status=0');
 
+            WinPrint.document.write("<html><head><LINK rel=\"stylesheet\" type\"text/css\" href=\"css/print.css\" media=\"print\"><LINK rel=\"stylesheet\" type\"text/css\" href=\"css/print.css\" media=\"screen\"></head><body>");
+
+            WinPrint.document.write(prtContent.innerHTML);
+            WinPrint.document.write("</body></html>");
+            WinPrint.document.close();
+            WinPrint.focus();
+            WinPrint.print();
+            WinPrint.close();
+            return false;
+        }
+    </script>
+    <div id="print">
     <h2>Items Sold</h2>
     <hr />
     <div>
@@ -67,10 +83,11 @@
     </div>
     <br />
     <hr />
+    </div>
     <asp:Table runat="server">
         <asp:TableRow>
             <asp:TableCell>
-                <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="printReport()" />
+                <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('print');" />
             </asp:TableCell>
         </asp:TableRow>
     </asp:Table>

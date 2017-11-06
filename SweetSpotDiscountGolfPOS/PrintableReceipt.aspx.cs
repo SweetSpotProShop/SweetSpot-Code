@@ -24,6 +24,8 @@ namespace SweetSpotDiscountGolfPOS
         double dblAmountPaid;
         protected void Page_Load(object sender, EventArgs e)
         {
+            //comment
+
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "PrintableReceipt.aspx";
