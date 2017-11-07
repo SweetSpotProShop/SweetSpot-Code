@@ -16,13 +16,13 @@
             return false;
         }
     </script>
-    <h2>Marketing: Most Sold Report</h2>
+    <h2>Top Selling Items Report</h2>
     <hr />
     <div>
         <asp:Label ID="lblDates" runat="server" Text="lblDates" font-bold="true"></asp:Label>
     </div>
     <hr />
-    <h2>Most Sold Items</h2>
+    <h3>Most Sold Items</h3>
     <div>
         <asp:GridView ID="grdItems" runat="server" AutoGenerateColumns="false" RowStyle-HorizontalAlign="Center">
             <Columns>
@@ -77,21 +77,12 @@
     </div>
     <br />
     <hr />
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <asp:Table runat="server">
+        <asp:TableRow>
+            <asp:TableCell>
+                <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('print');" />
+            </asp:TableCell>
+        </asp:TableRow>
+    </asp:Table>
 </asp:Content>
 

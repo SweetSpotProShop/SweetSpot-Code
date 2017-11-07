@@ -85,7 +85,7 @@
                             <asp:Button ID="btnTaxReport" runat="server" Text="Tax Report" Width="200px" OnClick="btnTaxReport_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Button ID="btnCOGSvsPMReport" runat="server" Text="COGS vs. PM Report" Width="200px" OnClick="btnCOGSvsPMReport_Click" />
+                            <asp:Button ID="btnCOGSvsPMReport" runat="server" Text="COGS & Profit Margin Report" Width="200px" OnClick="btnCOGSvsPMReport_Click" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
@@ -99,10 +99,7 @@
 
                         </asp:TableCell>
                         <asp:TableCell>
-
-                        </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Button ID="btnMostSold" runat="server" Text="Marketing: Most Sold" Width="200px" Onclick="btnMostSold_Click" />
+                            <asp:Button ID="btnMostSold" runat="server" Text="Top Selling Items Report" Width="200px" Onclick="btnMostSold_Click" />
                         </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>

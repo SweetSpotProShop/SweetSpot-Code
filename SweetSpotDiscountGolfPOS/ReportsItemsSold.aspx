@@ -91,10 +91,10 @@
             </asp:TableCell>
         </asp:TableRow>
     </asp:Table>
-    <script>
+    <%--<script>
         function printReport(printable) {
             window.print();
         }
-    </script>
+    </script>--%>
 </asp:Content>
 
