@@ -9,7 +9,7 @@
             /*margin-left: 0;*/
         }
 
-        .yesPrint { 
+        .yesPrint {
             display: inline-block !important;
             /* margin-right:100px;
            float: right;*/
@@ -26,9 +26,7 @@
             <li><a>SETTINGS</a></li>
         </ul>
     </div>
-    <div id="image_simple">
-        <img src="Images/combinedLogo.jpg" />
-    </div>
+
     <link rel="stylesheet" type="text/css" href="CSS/MainStyleSheet.css" />
 </asp:Content>
 <asp:Content ID="printableInvoiceDisplay" ContentPlaceHolderID="IndividualPageContent" runat="server">
@@ -37,9 +35,32 @@
         function printReport(printable) {
             window.print();
         }
+
+        function CallPrint(mainPage, disclaimer) {
+
+            var prtContent = document.getElementById(mainPage);
+            var prtDisclaimer = document.getElementById(disclaimer);
+            var WinPrint = window.open('', '', 'letf=10,top=10,width="450",height="250",toolbar=1,scrollbars=1,status=0');
+
+            WinPrint.document.write("<html><head><LINK rel=\"stylesheet\" type\"text/css\" href=\"css/print.css\" media=\"print\"><LINK rel=\"stylesheet\" type\"text/css\" href=\"css/print.css\" media=\"screen\"></head><body>");
+
+            WinPrint.document.write(prtContent.innerHTML);
+            WinPrint.document.write(prtDisclaimer.innerHTML);
+            WinPrint.document.write("</body></html>");
+            WinPrint.document.close();
+            WinPrint.focus();
+            WinPrint.print();
+            WinPrint.close();
+
+            return false;
+        }
+
     </script>
     <link rel="stylesheet" type="text/css" href="CSS/displayPrintableInvoice.css" />
-    <div id="printable" runat="server">
+    <div id="print">
+        <div id="image_simple">
+            <img src="Images/combinedLogo.jpg" />
+        </div>
         <div id="Invoice" class="yesPrint">
             <h3><b>Invoice: </b>
                 <asp:Label ID="lblinvoiceNum" runat="server" Text=""></asp:Label></h3>
@@ -202,9 +223,11 @@
                 </asp:GridView>
             </p>
             <br />
+            </div>
+        </div>
             <div class="noPrint">
                 <%--added a cssclass here for testing--%>
-                <asp:Button ID="btnPrint" CssClass="noPrint" runat="server" Text="Print" Width="100px" OnClientClick="printReport()" />
+                <asp:Button ID="btnPrint" CssClass="noPrint" runat="server" Text="Print" Width="100px" OnClientClick="CallPrint('print', 'disclaimer');" />
                 <br />
                 <asp:Button ID="btnHome" runat="server" Text="Home" Width="100px" OnClick="btnHome_Click" />
                 <br />
@@ -212,10 +235,10 @@
                 <p>and usability may reflect prior use. The Sweet Spot Discount Golf assumes no responsibility</p>
                 <p>beyond the point of sale. <b>ALL SALES FINAL</b> Thank you for shopping at the Sweet Spot.</p>--%>
             </div>
+        <div id="disclaimer"> 
             <p><b>PLEASE NOTE: </b>All used equipment is sold as is and it is understood that its' condition</p>
             <p>and usability may reflect prior use. The Sweet Spot Discount Golf assumes no responsibility</p>
             <p>beyond the point of sale. <b>ALL SALES FINAL</b> Thank you for shopping at the Sweet Spot.</p>
         </div>
-    </div>
-
+    
 </asp:Content>

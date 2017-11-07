@@ -19,6 +19,22 @@
             margin-left: 10px !important;
         }
     </style>
+    <script>
+        function CallPrint(strid) {
+            var prtContent = document.getElementById(strid);
+            var WinPrint = window.open('', '', 'letf=10,top=10,width="450",height="250",toolbar=1,scrollbars=1,status=0');
+
+            WinPrint.document.write("<html><head><LINK rel=\"stylesheet\" type\"text/css\" href=\"css/print.css\" media=\"print\"><LINK rel=\"stylesheet\" type\"text/css\" href=\"css/print.css\" media=\"screen\"></head><body>");
+
+            WinPrint.document.write(prtContent.innerHTML);
+            WinPrint.document.write("</body></html>");
+            WinPrint.document.close();
+            WinPrint.focus();
+            WinPrint.print();
+            WinPrint.close();
+            return false;
+        }
+    </script>
     <link href="MainStyleSheet.css" rel="stylesheet" type="text/css" />
     <div id="Purchases" class="yesPrint">
         <h2>Purchases</h2>
@@ -47,7 +63,7 @@
         <br />
         <hr />
     </div>
-    <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="printReport()" />
+    <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px"  OnClientClick="CallPrint('Purchases');" />
     <script>
         function printReport(printable) {
             window.print();
