@@ -269,11 +269,18 @@ namespace SweetSpotDiscountGolfPOS
             TextBox fName = grdCustomersSearched.FooterRow.FindControl("txtFirstName") as TextBox;
             TextBox lName = grdCustomersSearched.FooterRow.FindControl("txtLastName") as TextBox;
             TextBox phoneNumber = grdCustomersSearched.FooterRow.FindControl("txtPhoneNumber") as TextBox;
+            TextBox email = grdCustomersSearched.FooterRow.FindControl("txtEmail") as TextBox;
+            CheckBox marketing = grdCustomersSearched.FooterRow.FindControl("chkMarketingEnrollment") as CheckBox;
+            bool enrolled = false;
+            if (marketing.Checked)
+            {
+                enrolled = true;
+            }
             //Using current user's info
             int provStateID = lm.getProvIDFromLocationID(cu.locationID);
             int countryID = lm.countryIDFromProvince(provStateID);
             //Creating a customer
-            Customer c = new Customer(0, fName.Text, lName.Text, "", "", phoneNumber.Text, "", false, "", "", provStateID, countryID, "");
+            Customer c = new Customer(0, fName.Text, lName.Text, "", "", phoneNumber.Text, "", enrolled, email.Text, "", provStateID, countryID, "");
             //Set the session key to customer ID
             string key = ssm.addCustomer(c).ToString();
             Session["key"] = key;

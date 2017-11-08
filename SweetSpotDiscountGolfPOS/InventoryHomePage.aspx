@@ -41,7 +41,7 @@
                 </asp:TableRow>
             </asp:Table>
             <hr />
-            <asp:GridView ID="grdInventorySearched" runat="server" AutoGenerateColumns="False" OnRowCommand="grdInventorySearched_RowCommand" AllowPaging="true" PageSize="25" OnPageIndexChanging="grdInventorySearched_PageIndexChanging" >
+            <asp:GridView ID="grdInventorySearched" runat="server" AutoGenerateColumns="False" OnRowCommand="grdInventorySearched_RowCommand" AllowPaging="true" PageSize="50" OnPageIndexChanging="grdInventorySearched_PageIndexChanging" >
                 <Columns>
                     <asp:TemplateField HeaderText="View Item">
                         <ItemTemplate>

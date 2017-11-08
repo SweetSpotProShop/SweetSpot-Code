@@ -377,7 +377,7 @@ namespace SweetShop
                     }
                 }
             }
-            cmd.CommandText = cmd.CommandText + ";";
+            cmd.CommandText = cmd.CommandText + " order by sku desc;";
             SqlDataReader reader = cmd.ExecuteReader();
 
             while (reader.Read())
@@ -517,7 +517,7 @@ namespace SweetShop
                     }
                 }
             }
-            cmd.CommandText = cmd.CommandText + ";";
+            cmd.CommandText = cmd.CommandText + " order by sku desc;";
             SqlDataReader reader = cmd.ExecuteReader();
 
             while (reader.Read())

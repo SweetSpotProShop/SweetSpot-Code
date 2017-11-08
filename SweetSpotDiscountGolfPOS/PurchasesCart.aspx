@@ -95,6 +95,19 @@
                                     <asp:TextBox ID="txtPhoneNumber" runat="server" placeholder="Phone Number" ToolTip="Phone Number"></asp:TextBox>
                                 </FooterTemplate>
                             </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Email Address">
+                                <ItemTemplate>
+                                    <asp:Label runat="server" Text='<%#Eval("email") %>'></asp:Label>
+                                </ItemTemplate>
+                                <FooterTemplate>
+                                    <div>
+                                        <asp:TextBox ID="txtEmail" runat="server" placeholder="Email" ToolTip="Email"></asp:TextBox>
+                                    </div>     
+                                    <div>
+                                        <asp:CheckBox ID="chkMarketingEnrollment" runat="server" Text="Marketing Enrollment"/>
+                                    </div>                                    
+                                </FooterTemplate>
+                            </asp:TemplateField>
                         </Columns>
                     </asp:GridView>
                 </div>
