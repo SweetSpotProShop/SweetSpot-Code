@@ -23,6 +23,16 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "InventoryHomePage";
             try
             {
+                //if (Session["headers"] != null)
+                //{
+                //    string[] headers = (string[])Session["headers"];
+                //    (grdInventorySearched.HeaderRow.FindControl("btnSKU") as Button).Text = headers[0];
+                //    (grdInventorySearched.HeaderRow.FindControl("btnDescription") as Button).Text = headers[1];
+                //    (grdInventorySearched.HeaderRow.FindControl("btnStore") as Button).Text = headers[2];
+                //    (grdInventorySearched.HeaderRow.FindControl("btnQuantity") as Button).Text = headers[3];
+                //    (grdInventorySearched.HeaderRow.FindControl("btnPrice") as Button).Text = headers[4];
+                //    (grdInventorySearched.HeaderRow.FindControl("btnCost") as Button).Text = headers[5];
+                //}
                 cu = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
@@ -61,6 +71,8 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnInventorySearch_Click";
             try
             {
+                string[] headers = { "SKU", "Description ▼", "Store ▼", "Quantity ▼", "Price ▼", "Cost ▼" };
+                Session["headers"] = headers;
                 ItemDataUtilities idu = new ItemDataUtilities();
                 string skuString;
                 int skuInt;
@@ -226,6 +238,268 @@ namespace SweetSpotDiscountGolfPOS
             grdInventorySearched.DataSource = list;
             grdInventorySearched.DataBind();
             
+        }
+        //Sorting Skus
+        protected void lbtnSKU_Click(object sender, EventArgs e)
+        {
+            //Grabbing the list
+            searched = (List<Items>)Session["listItems"];
+            Button sku = grdInventorySearched.HeaderRow.FindControl("btnSKU") as Button;
+            string sort = sku.Text;
+            string[] headers = Session["headers"] as string[];
+            switch(sort)
+            {
+                case "SKU":
+                    headers[0] = "SKU ▲";
+                    //Ascending Order
+                    searched.Sort(delegate (Items x, Items y) {
+                        return x.sku.CompareTo(y.sku);
+                    });
+                    break;
+                case "SKU ▼":
+                    headers[0] = "SKU ▲";
+                    //Ascending Order
+                    searched.Sort(delegate (Items x, Items y) {
+                        return x.sku.CompareTo(y.sku);
+                    });
+                    break;
+                case "SKU ▲":
+                    headers[0] = "SKU ▼";
+                    //Descending Order
+                    searched.Sort(delegate (Items x, Items y) {
+                        return y.sku.CompareTo(x.sku);
+                    });
+                    break;
+            }
+            headers[1] = "Description";
+            headers[2] = "Store";
+            headers[3] = "Quantity";
+            headers[4] = "Price";
+            headers[5] = "Cost";
+            Session["headers"] = headers;
+            //Populating/Sorting the gridview
+            populateGridview(searched);
+            updateButtonText(headers);
+        }
+
+        protected void btnDescription_Click(object sender, EventArgs e)
+        {
+            //Grabbing the list
+            searched = (List<Items>)Session["listItems"];
+            Button desc = grdInventorySearched.HeaderRow.FindControl("btnDescription") as Button;
+            string sort = desc.Text;
+            string[] headers = Session["headers"] as string[];
+            switch (sort)
+            {
+                case "Description":
+                    headers[1] = "Description ▲";
+                    //Ascending Order
+                    searched.Sort(delegate (Items x, Items y) {
+                        return x.description.CompareTo(y.description);
+                    });
+                    break;
+                case "Description ▼":
+                    headers[1] = "Description ▲";
+                    //Ascending Order
+                    searched.Sort(delegate (Items x, Items y) {
+                        return x.description.CompareTo(y.description);
+                    });
+                    break;
+                case "Description ▲":
+                    headers[1] = "Description ▼";
+                    //Descending Order
+                    searched.Sort(delegate (Items x, Items y) {
+                        return y.description.CompareTo(x.description);
+                    });
+                    break;
+            }
+            headers[0] = "SKU";
+            headers[2] = "Store";
+            headers[3] = "Quantity";
+            headers[4] = "Price";
+            headers[5] = "Cost";
+            Session["headers"] = headers;
+            //Populating/Sorting the gridview
+            populateGridview(searched);
+            updateButtonText(headers);
+        }
+
+        protected void btnStore_Click(object sender, EventArgs e)
+        {
+            //Grabbing the list
+            searched = (List<Items>)Session["listItems"];
+            Button store = grdInventorySearched.HeaderRow.FindControl("btnStore") as Button;
+            string sort = store.Text;
+            string[] headers = Session["headers"] as string[];
+            switch (sort)
+            {
+                case "Store":
+                    headers[2] = "Store ▲";
+                    //Ascending Order
+                    searched.Sort(delegate (Items x, Items y) {
+                        return x.location.CompareTo(y.location);
+                    });
+                    break;
+                case "Store ▼":
+                    headers[2] = "Store ▲";
+                    //Ascending Order
+                    searched.Sort(delegate (Items x, Items y) {
+                        return x.location.CompareTo(y.location);
+                    });
+                    break;
+                case "Store ▲":
+                    headers[2] = "Store ▼";
+                    //Descending Order
+                    searched.Sort(delegate (Items x, Items y) {
+                        return y.location.CompareTo(x.location);
+                    });
+                    break;
+            }
+            headers[0] = "SKU";
+            headers[1] = "Description";
+            headers[3] = "Quantity";
+            headers[4] = "Price";
+            headers[5] = "Cost";
+            Session["headers"] = headers;
+            //Populating/Sorting the gridview
+            populateGridview(searched);
+            updateButtonText(headers);
+        }
+
+        protected void btnQuantity_Click(object sender, EventArgs e)
+        {
+            //Grabbing the list
+            searched = (List<Items>)Session["listItems"];
+            Button quantity = grdInventorySearched.HeaderRow.FindControl("btnQuantity") as Button;
+            string sort = quantity.Text;
+            string[] headers = Session["headers"] as string[];
+            switch (sort)
+            {
+                case "Quantity":
+                    headers[3] = "Quantity ▲";
+                    //Ascending Order
+                    searched.Sort(delegate (Items x, Items y) {
+                        return x.quantity.CompareTo(y.quantity);
+                    });
+                    break;
+                case "Quantity ▼":
+                    headers[3] = "Quantity ▲";
+                    //Ascending Order
+                    searched.Sort(delegate (Items x, Items y) {
+                        return x.quantity.CompareTo(y.quantity);
+                    });
+                    break;
+                case "Quantity ▲":
+                    headers[3] = "Quantity ▼";
+                    //Descending Order
+                    searched.Sort(delegate (Items x, Items y) {
+                        return y.quantity.CompareTo(x.quantity);
+                    });
+                    break;
+            }
+            headers[0] = "SKU";
+            headers[1] = "Description";
+            headers[2] = "Store";
+            headers[4] = "Price";
+            headers[5] = "Cost";
+            Session["headers"] = headers;
+            //Populating/Sorting the gridview
+            populateGridview(searched);
+            updateButtonText(headers);
+        }
+
+        protected void btnPrice_Click(object sender, EventArgs e)
+        {
+            //Grabbing the list
+            searched = (List<Items>)Session["listItems"];
+            Button price = grdInventorySearched.HeaderRow.FindControl("btnPrice") as Button;
+            string sort = price.Text;
+            string[] headers = Session["headers"] as string[];
+            switch (sort)
+            {
+                case "Price":
+                    headers[4] = "Price ▲";
+                    //Ascending Order
+                    searched.Sort(delegate (Items x, Items y) {
+                        return x.price.CompareTo(y.price);
+                    });
+                    break;
+                case "Price ▼":
+                    headers[4] = "Price ▲";
+                    //Ascending Order
+                    searched.Sort(delegate (Items x, Items y) {
+                        return x.price.CompareTo(y.price);
+                    });
+                    break;
+                case "Price ▲":
+                    headers[4] = "Price ▼";
+                    //Descending Order
+                    searched.Sort(delegate (Items x, Items y) {
+                        return y.price.CompareTo(x.price);
+                    });
+                    break;
+            }
+            headers[0] = "SKU";
+            headers[1] = "Description";
+            headers[2] = "Store";
+            headers[3] = "Quantity";
+            headers[5] = "Cost";
+            Session["headers"] = headers;
+            //Populating/Sorting the gridview
+            populateGridview(searched);
+            updateButtonText(headers);
+        }
+
+        protected void btnCost_Click(object sender, EventArgs e)
+        {
+            //Grabbing the list
+            searched = (List<Items>)Session["listItems"];
+            Button cost = grdInventorySearched.HeaderRow.FindControl("btnCost") as Button;
+            string sort = cost.Text;
+            string[] headers = Session["headers"] as string[];
+            switch (sort)
+            {
+                case "Cost":
+                    headers[5] = "Cost ▲";
+                    //Ascending Order
+                    searched.Sort(delegate (Items x, Items y) {
+                        return x.cost.CompareTo(y.cost);
+                    });
+                    break;
+                case "Cost ▼":
+                    headers[5] = "Cost ▲";
+                    //Ascending Order
+                    searched.Sort(delegate (Items x, Items y) {
+                        return x.cost.CompareTo(y.cost);
+                    });
+                    break;
+                case "Cost ▲":
+                    headers[5] = "Cost ▼";
+                    //Descending Order
+                    searched.Sort(delegate (Items x, Items y) {
+                        return y.cost.CompareTo(x.cost);
+                    });
+                    break;
+            }
+            headers[0] = "SKU";
+            headers[1] = "Description";
+            headers[2] = "Store";
+            headers[3] = "Quantity";
+            headers[4] = "Price";
+            Session["headers"] = headers;
+            //Populating/Sorting the gridview
+            populateGridview(searched);
+            updateButtonText(headers);
+        }
+
+        protected void updateButtonText(string[] headers)
+        {
+            (grdInventorySearched.HeaderRow.FindControl("btnSKU") as Button).Text = headers[0];
+            (grdInventorySearched.HeaderRow.FindControl("btnDescription") as Button).Text = headers[1];
+            (grdInventorySearched.HeaderRow.FindControl("btnStore") as Button).Text = headers[2];
+            (grdInventorySearched.HeaderRow.FindControl("btnQuantity") as Button).Text = headers[3];
+            (grdInventorySearched.HeaderRow.FindControl("btnPrice") as Button).Text = headers[4];
+            (grdInventorySearched.HeaderRow.FindControl("btnCost") as Button).Text = headers[5];
         }
     }
 }
