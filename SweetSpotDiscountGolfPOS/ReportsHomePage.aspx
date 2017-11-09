@@ -96,10 +96,24 @@
                             <asp:Button ID="btnDiscountReport" runat="server" Text="Discount Report" Width="200px" OnClick="btnDiscountReport_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
-
+                            <asp:Button ID="btnSalesByDateReport" runat="server" Text="Sales By Date Report" Width="200px" OnClick="btnSalesByDate_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Button ID="btnMostSold" runat="server" Text="Top Selling Items Report" Width="200px" Onclick="btnMostSold_Click" />
+                        </asp:TableCell>
+                    </asp:TableRow>
+                    <asp:TableRow>
+                        <asp:TableCell>
+                            <asp:Button ID="btnPaymentsByDateReport" runat="server" Text="Payments By Date" Width="200px" Onclick="btnPaymentsByDateReport_Click" />
+                        </asp:TableCell>
+                        <asp:TableCell>
+                            
+                        </asp:TableCell>
+                        <asp:TableCell>
+                            
+                        </asp:TableCell>
+                        <asp:TableCell>
+                            
                         </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>

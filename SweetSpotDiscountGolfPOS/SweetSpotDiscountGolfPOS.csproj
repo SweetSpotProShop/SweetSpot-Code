@@ -113,6 +113,8 @@
     <Content Include="ReportsDiscounts.aspx" />
     <Content Include="ReportsCashOut.aspx" />
     <Content Include="ReportsHomePage.aspx" />
+    <Content Include="ReportsPaymentType.aspx" />
+    <Content Include="ReportsSales.aspx" />
     <Content Include="ReportsItemsSold.aspx" />
     <Content Include="ReportsMostSold.aspx" />
     <Content Include="ReportsTaxes.aspx" />
@@ -274,6 +276,20 @@
     </Compile>
     <Compile Include="ReportsHomePage.aspx.designer.cs">
       <DependentUpon>ReportsHomePage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ReportsPaymentType.aspx.cs">
+      <DependentUpon>ReportsPaymentType.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ReportsPaymentType.aspx.designer.cs">
+      <DependentUpon>ReportsPaymentType.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ReportsSales.aspx.cs">
+      <DependentUpon>ReportsSales.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ReportsSales.aspx.designer.cs">
+      <DependentUpon>ReportsSales.aspx</DependentUpon>
     </Compile>
     <Compile Include="ReportsItemsSold.aspx.cs">
       <DependentUpon>ReportsItemsSold.aspx</DependentUpon>

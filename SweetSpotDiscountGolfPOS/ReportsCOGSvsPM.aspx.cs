@@ -37,7 +37,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "Page_Load";
-            Session["currPage"] = "ReportsHomePage";
+            Session["currPage"] = "ReportsCOGSvsPM";
             try
             {
                 cu = (CurrentUser)Session["currentUser"];

@@ -157,7 +157,6 @@ namespace SweetSpotDiscountGolfPOS
                     int indicator = r.verifyCashoutCanBeProcessed(repInfo);
                     //Check to see if there are sales first
                     if (indicator == 0)
-
                     {
                         Session["reportInfo"] = repInfo;
                         //Changes to the Reports Cash Out page
@@ -373,6 +372,78 @@ namespace SweetSpotDiscountGolfPOS
                 string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
                 er.logError(ex, employeeID, currPage, method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+                //Server.Transfer(prevPage, false);
+            }
+        }
+        protected void btnSalesByDate_Click(object sendr, EventArgs e)
+        {
+            //Collects current method and page for error tracking
+            string method = "btnSalesByDate_Click";
+            try
+            {
+                //Stores report dates into Session
+                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                int loc = Convert.ToInt32(ddlLocation.SelectedValue);
+                Object[] repInfo = new Object[] { dtm, loc };
+                int indicator = r.verifySalesHaveBeenMade(repInfo);
+                //Check to see if there are sales first
+                if (indicator == 0)
+                {
+                    Session["reportInfo"] = repInfo;
+                    Server.Transfer("ReportsSales.aspx", false);
+                }
+                else if (indicator == 1)
+                {
+                    MessageBox.ShowMessage("No Sales have been processed for selected dates.", this);
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                er.logError(ex, cu.empID, Convert.ToString(Session["currPage"]), method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+                //Server.Transfer(prevPage, false);
+            }
+        }
+        protected void btnPaymentsByDateReport_Click(object sendr, EventArgs e)
+        {
+            //Collects current method and page for error tracking
+            string method = "btnPaymentsByDateReport_Click";
+            try
+            {
+                //Stores report dates into Session
+                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                int loc = Convert.ToInt32(ddlLocation.SelectedValue);
+                Object[] repInfo = new Object[] { dtm, loc };
+                int indicator = r.verifySalesHaveBeenMade(repInfo);
+                //Check to see if there are sales first
+                if (indicator == 0)
+                {
+                    Session["reportInfo"] = repInfo;
+                    Server.Transfer("ReportsPaymentType.aspx", false);
+                }
+                else if (indicator == 1)
+                {
+                    MessageBox.ShowMessage("No Sales have been processed for selected dates.", this);
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                er.logError(ex, cu.empID, Convert.ToString(Session["currPage"]), method, this);
                 //string prevPage = Convert.ToString(Session["prevPage"]);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
