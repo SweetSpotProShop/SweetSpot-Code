@@ -544,6 +544,69 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return pm;
         }
 
+        //******************Sales by Date Report*******************************************************
+        public int verifySalesHaveBeenMade(Object[] repInfo)
+        {
+            int indicator = 0;
+            if (!transactionsAvailable(repInfo))
+            {
+                indicator = 1;
+            }
+            return indicator;
+        }
+        public System.Data.DataTable returnSalesForSelectedDate(Object[] repInfo)
+        {
+            System.Data.DataTable transactions = new System.Data.DataTable();
+            DateTime[] dtm = (DateTime[])repInfo[0];
+            int loc = Convert.ToInt32(repInfo[1]);
+
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "Select invoiceDate, sum(subTotal) as totalSales from tbl_invoice "
+                        + "where invoiceDate between @startDate and @endDate "
+                        + "and locationID = @locationID group by invoiceDate";
+            cmd.Parameters.AddWithValue("@startDate", dtm[0]);
+            cmd.Parameters.AddWithValue("@endDate", dtm[1]);
+            cmd.Parameters.AddWithValue("@locationID", loc);
+            cmd.Connection = con;
+            SqlDataAdapter sda = new SqlDataAdapter(cmd);
+            //Stores data into data table
+            sda.Fill(transactions);
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            return transactions;
+        }
+
+        //******************Sales by Payment Type By Date Report***************************************
+        public System.Data.DataTable returnSalesByPaymentTypeForSelectedDate(Object[] repInfo)
+        {
+            System.Data.DataTable payments = new System.Data.DataTable();
+            DateTime[] dtm = (DateTime[])repInfo[0];
+            int loc = Convert.ToInt32(repInfo[1]);
+
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "SELECT invoiceDate, isnull([Cash],0) as Cash, isnull([Debit],0) as Debit, isnull([Gift Card],0) as GiftCard, "
+                            + "isnull([MasterCard],0) as Mastercard, isnull([Visa],0) as Visa "
+                            + "FROM(SELECT i.invoiceDate, m.mopType, sum(amountPaid) as totalPaid "
+                            + "FROM tbl_invoiceMOP m join tbl_invoice i on m.invoiceNum = i.invoiceNum and m.invoiceSubNum = i.invoiceSubNum "
+                            + "WHERE i.invoiceDate between @startDate and @endDate and i.locationID = @locationID "
+                            + "GROUP BY i.invoiceDate, m.mopType) ps "
+                            + "PIVOT(sum(totalPaid) FOR mopType IN([Cash], [Debit], [Gift Card], [MasterCard], [Visa])) as pvt";
+            cmd.Parameters.AddWithValue("@startDate", dtm[0]);
+            cmd.Parameters.AddWithValue("@endDate", dtm[1]);
+            cmd.Parameters.AddWithValue("@locationID", loc);
+            cmd.Connection = con;
+            SqlDataAdapter sda = new SqlDataAdapter(cmd);
+            //Stores data into data table
+            sda.Fill(payments);
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            return payments;
+        }
+
         //********************IMPORTING***************************************************************
         //This method is the giant import method
         public void importItems(FileUpload fup)
