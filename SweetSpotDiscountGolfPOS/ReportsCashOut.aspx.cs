@@ -292,7 +292,9 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Sets date and time
-                string date = DateTime.Now.ToString("yyyy-MM-dd");
+                Object[] repInfo = (Object[])Session["reportInfo"];
+                DateTime[] reportDates = (DateTime[])repInfo[0];
+                string date = reportDates[0].ToString();
                 string time = DateTime.Now.ToString("HH:mm:ss");
                 //Grabs cashouts from stored sessions
                 Cashout s = (Cashout)Session["saleCashout"];
