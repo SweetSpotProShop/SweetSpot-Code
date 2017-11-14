@@ -1,8 +1,10 @@
-﻿using SweetShop;
+﻿using OfficeOpenXml;
+using SweetShop;
 using SweetSpotDiscountGolfPOS.ClassLibrary;
 using SweetSpotProShop;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Web;
@@ -26,6 +28,8 @@ namespace SweetSpotDiscountGolfPOS
         double tPrice;
         //double tDiscount;
         double tProfit;
+
+        List<Items> items = new List<Items>();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -59,7 +63,7 @@ namespace SweetSpotDiscountGolfPOS
                         lblDates.Text = "Items sold on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
                     }
 
-                    List<Items> items = new List<Items>();
+                    
                     //Binding the gridview
                     items = r.returnItemsSold(startDate, endDate, locationID);
                     //Checking if there are any values
@@ -169,6 +173,74 @@ namespace SweetSpotDiscountGolfPOS
                 Session["TranType"] = tran;
                 //Changes page to display a printable invoice
                 Server.Transfer("PrintableInvoice.aspx", false);
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log employee number
+                int employeeID = cu.empID;
+                //Log current page
+                string currPage = Convert.ToString(Session["currPage"]);
+                //Log all info into error table
+                er.logError(ex, employeeID, currPage, method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+                //Server.Transfer(prevPage, false);
+            }
+        }
+        protected void btnDownload_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnDownload_Click";
+            try
+            {
+                //Sets path and file name to download report to
+                string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                string pathDownload = (pathUser + "\\Downloads\\");
+                Object[] passing = (Object[])Session["reportInfo"];
+                string loc = l.locationName(Convert.ToInt32(passing[1]));
+                string fileName = "Items Sold Report - " + loc + ".xlsx";
+                FileInfo newFile = new FileInfo(pathDownload + fileName);
+                using (ExcelPackage xlPackage = new ExcelPackage(newFile))
+                {
+                    //Creates a seperate sheet for each data table
+                    ExcelWorksheet itemsSoldExport = xlPackage.Workbook.Worksheets.Add("Items Sold");
+                    // write to sheet   
+                    itemsSoldExport.Cells[1, 1].Value = lblDates.Text;
+                    itemsSoldExport.Cells[2, 1].Value = "Invoice Number";
+                    itemsSoldExport.Cells[2, 2].Value = "SKU";
+                    itemsSoldExport.Cells[2, 3].Value = "Item Cost";
+                    itemsSoldExport.Cells[2, 4].Value = "Item Price";
+                    itemsSoldExport.Cells[2, 5].Value = "Item Discount";
+                    itemsSoldExport.Cells[2, 6].Value = "Item Profit";
+                    int recordIndex = 3;
+                    foreach (Items i in items)
+                    {
+                        itemsSoldExport.Cells[recordIndex, 1].Value = i.invoice;
+                        itemsSoldExport.Cells[recordIndex, 2].Value = i.sku;
+                        itemsSoldExport.Cells[recordIndex, 3].Value = i.cost;
+                        itemsSoldExport.Cells[recordIndex, 4].Value = i.price;
+                        if (i.percent)
+                        {
+                            itemsSoldExport.Cells[recordIndex, 5].Value = i.discount + "%";
+                        }
+                        else
+                        {
+                            itemsSoldExport.Cells[recordIndex, 5].Value = "$" + i.discount;
+                        }
+                        itemsSoldExport.Cells[recordIndex, 6].Value = i.difference;
+                        recordIndex++;
+                    }
+                    Response.Clear();
+                    Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
+                    Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    Response.BinaryWrite(xlPackage.GetAsByteArray());
+                    Response.End();
+                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
