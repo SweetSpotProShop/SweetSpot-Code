@@ -1,8 +1,13 @@
-﻿using SweetShop;
+﻿using OfficeOpenXml;
+using SweetShop;
 using SweetSpotDiscountGolfPOS.ClassLibrary;
 using SweetSpotProShop;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Web;
@@ -21,6 +26,8 @@ namespace SweetSpotDiscountGolfPOS
         double totalPurchAmount = 0;
         int totalPurchases = 0;
         int totalCheques = 0;
+
+        List<Purchases> purch = new List<Purchases>();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -44,9 +51,9 @@ namespace SweetSpotDiscountGolfPOS
                 DateTime endDate = reportDates[1];
                 int locationID = (int)repInfo[1];
                 //Builds string to display in label
-                lblPurchasesMadeDate.Text = "Purchases Made Between: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);                
+                lblPurchasesMadeDate.Text = "Purchases Made Between: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
                 //Creating a cashout list and calling a method that grabs all mops and amounts paid
-                List<Purchases> purch = reports.returnPurchasesDuringDates(startDate, endDate, locationID);
+                purch = reports.returnPurchasesDuringDates(startDate, endDate, locationID);
                 grdPurchasesMade.DataSource = purch;
                 grdPurchasesMade.DataBind();
                 foreach (GridViewRow row in grdPurchasesMade.Rows)
@@ -143,6 +150,87 @@ namespace SweetSpotDiscountGolfPOS
 
                 //Changes to the Reports Cash Out page
                 Server.Transfer("PrintableReceipt.aspx", false);
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log employee number
+                int employeeID = cu.empID;
+                //Log current page
+                string currPage = Convert.ToString(Session["currPage"]);
+                //Log all info into error table
+                er.logError(ex, employeeID, currPage, method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+                //Server.Transfer(prevPage, false);
+            }
+        }
+        protected void btnDownload_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnDownload_Click";
+            try
+            {
+                ////Gathering the start and end dates
+                //Object[] passing = (Object[])Session["reportInfo"];
+                //DateTime[] reportDates = (DateTime[])passing[0];
+                //DateTime startDate = reportDates[0];
+                //DateTime endDate = reportDates[1];
+                //int locationID = (int)passing[1];
+                ////Sets up database connection
+                //string connectionString = ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString;
+                //SqlConnection sqlCon = new SqlConnection(connectionString);
+                ////Selects everything form the invoice table
+                //DataTable cogsInvoices = new DataTable();
+                //using (var cmd = new SqlCommand("getInvoiceForCOGS", sqlCon)) //Calling the SP   
+                //using (var da = new SqlDataAdapter(cmd))
+                //{
+                //    cmd.Parameters.AddWithValue("@startDate", startDate);
+                //    cmd.Parameters.AddWithValue("@endDate", endDate);
+                //    cmd.Parameters.AddWithValue("@locationID", locationID);
+                //    //Executing the SP
+                //    cmd.CommandType = CommandType.StoredProcedure;
+                //    da.Fill(cogsInvoices);
+                //}
+                //DataColumnCollection headers = cogsInvoices.Columns;
+                //Sets path and file name to download report to
+                string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                string pathDownload = (pathUser + "\\Downloads\\");
+                FileInfo newFile = new FileInfo(pathDownload + "Purchases Report.xlsx");
+                using (ExcelPackage xlPackage = new ExcelPackage(newFile))
+                {
+                    //Creates a seperate sheet for each data table
+                    ExcelWorksheet purchasesExport = xlPackage.Workbook.Worksheets.Add("Purchases");
+                    // write to sheet     
+
+                    //cogsExport.Cells["A1"].LoadFromDataTable(cogsInvoices, true);
+                    //xlPackage.Save();
+                    purchasesExport.Cells[1, 1].Value = "Receipt Number";
+                    purchasesExport.Cells[1, 2].Value = "Receipt Date";
+                    purchasesExport.Cells[1, 3].Value = "Purchase Method";
+                    purchasesExport.Cells[1, 4].Value = "Cheque Number";
+                    purchasesExport.Cells[1, 5].Value = "Purchase Amount";
+                    int recordIndex = 2;
+                    foreach (Purchases p in purch)
+                    {
+
+                        purchasesExport.Cells[recordIndex, 1].Value = p.receiptNumber;
+                        purchasesExport.Cells[recordIndex, 2].Value = p.receiptDate.ToString("d");
+                        purchasesExport.Cells[recordIndex, 3].Value = p.mopDescription;
+                        purchasesExport.Cells[recordIndex, 4].Value = p.chequeNumber;
+                        purchasesExport.Cells[recordIndex, 5].Value = p.amountPaid;
+                        recordIndex++;
+                    }
+                    Response.Clear();
+                    Response.AddHeader("content-disposition", "attachment; filename=Purchases Report.xlsx");
+                    Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    Response.BinaryWrite(xlPackage.GetAsByteArray());
+                    Response.End();
+                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
