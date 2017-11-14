@@ -175,46 +175,25 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnDownload_Click";
             try
             {
-                ////Gathering the start and end dates
-                //Object[] passing = (Object[])Session["reportInfo"];
-                //DateTime[] reportDates = (DateTime[])passing[0];
-                //DateTime startDate = reportDates[0];
-                //DateTime endDate = reportDates[1];
-                //int locationID = (int)passing[1];
-                ////Sets up database connection
-                //string connectionString = ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString;
-                //SqlConnection sqlCon = new SqlConnection(connectionString);
-                ////Selects everything form the invoice table
-                //DataTable cogsInvoices = new DataTable();
-                //using (var cmd = new SqlCommand("getInvoiceForCOGS", sqlCon)) //Calling the SP   
-                //using (var da = new SqlDataAdapter(cmd))
-                //{
-                //    cmd.Parameters.AddWithValue("@startDate", startDate);
-                //    cmd.Parameters.AddWithValue("@endDate", endDate);
-                //    cmd.Parameters.AddWithValue("@locationID", locationID);
-                //    //Executing the SP
-                //    cmd.CommandType = CommandType.StoredProcedure;
-                //    da.Fill(cogsInvoices);
-                //}
-                //DataColumnCollection headers = cogsInvoices.Columns;
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
-                FileInfo newFile = new FileInfo(pathDownload + "Purchases Report.xlsx");
+                Object[] passing = (Object[])Session["reportInfo"];
+                string loc = l.locationName(Convert.ToInt32(passing[1]));
+                string fileName = "Purchases Report - " + loc + ".xlsx";
+                FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
                     //Creates a seperate sheet for each data table
                     ExcelWorksheet purchasesExport = xlPackage.Workbook.Worksheets.Add("Purchases");
-                    // write to sheet     
-
-                    //cogsExport.Cells["A1"].LoadFromDataTable(cogsInvoices, true);
-                    //xlPackage.Save();
-                    purchasesExport.Cells[1, 1].Value = "Receipt Number";
-                    purchasesExport.Cells[1, 2].Value = "Receipt Date";
-                    purchasesExport.Cells[1, 3].Value = "Purchase Method";
-                    purchasesExport.Cells[1, 4].Value = "Cheque Number";
-                    purchasesExport.Cells[1, 5].Value = "Purchase Amount";
-                    int recordIndex = 2;
+                    // write to sheet   
+                    purchasesExport.Cells[1, 1].Value = lblPurchasesMadeDate.Text;
+                    purchasesExport.Cells[2, 1].Value = "Receipt Number";
+                    purchasesExport.Cells[2, 2].Value = "Receipt Date";
+                    purchasesExport.Cells[2, 3].Value = "Purchase Method";
+                    purchasesExport.Cells[2, 4].Value = "Cheque Number";
+                    purchasesExport.Cells[2, 5].Value = "Purchase Amount";
+                    int recordIndex = 3;
                     foreach (Purchases p in purch)
                     {
 
@@ -226,7 +205,7 @@ namespace SweetSpotDiscountGolfPOS
                         recordIndex++;
                     }
                     Response.Clear();
-                    Response.AddHeader("content-disposition", "attachment; filename=Purchases Report.xlsx");
+                    Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
                     Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                     Response.BinaryWrite(xlPackage.GetAsByteArray());
                     Response.End();
