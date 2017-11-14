@@ -249,21 +249,21 @@ namespace SweetSpotDiscountGolfPOS
                     cogsExport.Cells["A1"].LoadFromDataTable(cogsInvoices, true);
                     xlPackage.Save();
 
-                    //Export main invoice
-                    for (int i = 1; i < cogsInvoices.Rows.Count; i++)
-                    {
-                        for (int j = 1; j < cogsInvoices.Columns.Count + 1; j++)
-                        {
-                            if (i == 1)
-                            {
-                                cogsExport.Cells[i, j].Value = headers[j - 1].ToString();
-                            }
-                            else
-                            {
-                                cogsExport.Cells[i, j].Value = cogsInvoices.Rows[i - 1][j - 1];
-                            }
-                        }
-                    }
+                    ////Export main invoice
+                    //for (int i = 1; i < cogsInvoices.Rows.Count; i++)
+                    //{
+                    //    for (int j = 1; j < cogsInvoices.Columns.Count + 1; j++)
+                    //    {
+                    //        if (i == 1)
+                    //        {
+                    //            cogsExport.Cells[i, j].Value = headers[j - 1].ToString();
+                    //        }
+                    //        else
+                    //        {
+                    //            cogsExport.Cells[i, j].Value = cogsInvoices.Rows[i - 1][j - 1];
+                    //        }
+                    //    }
+                    //}
                     Response.Clear();
                     Response.AddHeader("content-disposition", "attachment; filename=COGS.xlsx");
                     Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
