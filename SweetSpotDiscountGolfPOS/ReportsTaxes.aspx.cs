@@ -1,8 +1,10 @@
-﻿using SweetShop;
+﻿using OfficeOpenXml;
+using SweetShop;
 using SweetSpotDiscountGolfPOS.ClassLibrary;
 using SweetSpotProShop;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Web;
@@ -24,6 +26,10 @@ namespace SweetSpotDiscountGolfPOS
         double retPST;
         double ovrGST;
         double ovrPST;
+
+        List<TaxReport> collected = new List<TaxReport>();
+        List<TaxReport> returned = new List<TaxReport>();
+        List<TaxReport> overall = new List<TaxReport>();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -50,9 +56,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Creating a cashout list and calling a method that grabs all mops and amounts paid
                 tr = reports.returnTaxReportDetails(startDate, endDate);
 
-                List<TaxReport> collected = new List<TaxReport>();
-                List<TaxReport> returned = new List<TaxReport>();
-                List<TaxReport> overall = new List<TaxReport>();
+                //List<TaxReport> collected = new List<TaxReport>();
+                //List<TaxReport> returned = new List<TaxReport>();
+                //List<TaxReport> overall = new List<TaxReport>();
                 foreach (var item in tr)
                 {
                     if(item.locationID == Convert.ToInt32(passing[1]))
@@ -166,6 +172,91 @@ namespace SweetSpotDiscountGolfPOS
             //Current method does nothing
             try
             { }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log employee number
+                int employeeID = cu.empID;
+                //Log current page
+                string currPage = Convert.ToString(Session["currPage"]);
+                //Log all info into error table
+                er.logError(ex, employeeID, currPage, method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+                //Server.Transfer(prevPage, false);
+            }
+        }
+        protected void btnDownload_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnDownload_Click";
+            try
+            {                
+                string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                string pathDownload = (pathUser + "\\Downloads\\");
+                Object[] passing = (Object[])Session["reportInfo"];
+                string loc = l.locationName(Convert.ToInt32(passing[1]));
+                string fileName = "Taxes Report - " + loc + ".xlsx";
+                FileInfo newFile = new FileInfo(pathDownload + fileName);
+                using (ExcelPackage xlPackage = new ExcelPackage(newFile))
+                {
+                    //Creates a seperate sheet for each data table
+                    ExcelWorksheet salesTax = xlPackage.Workbook.Worksheets.Add("Sales");
+                    ExcelWorksheet returnsTax = xlPackage.Workbook.Worksheets.Add("Returns");
+                    ExcelWorksheet allTax = xlPackage.Workbook.Worksheets.Add("All Transactions");
+                    //Writing       
+                    salesTax.Cells[1, 1].Value = lblTaxDate.Text; returnsTax.Cells[1, 1].Value = lblTaxDate.Text; allTax.Cells[1, 1].Value = lblTaxDate.Text;
+                    salesTax.Cells[2, 1].Value = "Sales"; returnsTax.Cells[2, 1].Value = "Returns"; allTax.Cells[2,1].Value = "All Transactions";
+                    salesTax.Cells[3, 1].Value = "Date"; salesTax.Cells[3, 2].Value = "GST"; salesTax.Cells[3, 3].Value = "PST";
+                    returnsTax.Cells[3, 1].Value = "Date"; returnsTax.Cells[3, 2].Value = "GST"; returnsTax.Cells[3, 3].Value = "PST";
+                    allTax.Cells[3, 1].Value = "Date"; allTax.Cells[3, 2].Value = "GST"; allTax.Cells[3, 3].Value = "PST";
+                    int recordIndexSales = 4;
+                    if (collected.Count > 0)
+                    {
+                        foreach (TaxReport trCollected in collected)
+                        {
+
+                            salesTax.Cells[recordIndexSales, 1].Value = trCollected.dtmInvoiceDate.ToString("d");
+                            salesTax.Cells[recordIndexSales, 2].Value = trCollected.govTax;
+                            salesTax.Cells[recordIndexSales, 3].Value = trCollected.provTax;
+                            recordIndexSales++;
+                        }
+                    }
+                    int recordIndexReturns = 4;
+                    if (returned.Count > 0)
+                    {
+                        foreach (TaxReport trReturned in returned)
+                        {
+
+                            returnsTax.Cells[recordIndexReturns, 1].Value = trReturned.dtmInvoiceDate.ToString("d");
+                            returnsTax.Cells[recordIndexReturns, 2].Value = trReturned.govTax;
+                            returnsTax.Cells[recordIndexReturns, 3].Value = trReturned.provTax;
+                            recordIndexReturns++;
+                        }
+                    }
+                    int recordIndexOverall = 4;
+                    if (overall.Count > 0)
+                    {
+                        foreach (TaxReport trOverall in overall)
+                        {
+
+                            allTax.Cells[recordIndexOverall, 1].Value = trOverall.dtmInvoiceDate.ToString("d");
+                            allTax.Cells[recordIndexOverall, 2].Value = trOverall.govTax;
+                            allTax.Cells[recordIndexOverall, 3].Value = trOverall.provTax;
+                            recordIndexOverall++;
+                        }
+                    }
+                    Response.Clear();
+                    Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
+                    Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    Response.BinaryWrite(xlPackage.GetAsByteArray());
+                    Response.End();
+                }
+            }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)

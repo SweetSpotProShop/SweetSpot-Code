@@ -80,6 +80,7 @@
         <hr />
     </div>
     <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px"  OnClientClick="CallPrint('Taxes');" />
+    <asp:Button class="noPrint" ID="btnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="btnDownload_Click" />
     <script>
         function printReport(printable) {
             window.print();
