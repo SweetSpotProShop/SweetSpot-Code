@@ -45,8 +45,7 @@ namespace SweetSpotDiscountGolfPOS
                     //Go back to Login to log in
                     Server.Transfer("LoginPage.aspx", false);
                 }
-                if (!IsPostBack)
-                {
+                
                     //Gathering the start and end dates
                     Object[] passing = (Object[])Session["reportInfo"];
                     DateTime[] reportDates = (DateTime[])passing[0];
@@ -83,7 +82,7 @@ namespace SweetSpotDiscountGolfPOS
                             lblDates.Text = "There are no items sold for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
                         }
                     }
-                }
+                
 
             }
             //Exception catch
