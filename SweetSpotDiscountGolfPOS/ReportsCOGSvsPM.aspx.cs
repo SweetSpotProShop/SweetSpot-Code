@@ -239,21 +239,21 @@ namespace SweetSpotDiscountGolfPOS
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
-                FileInfo newFile = new FileInfo(pathDownload + "COGS.xlsx");
+                string loc = l.locationName(locationID);
+                string fileName = "COGS and PM Report - " + loc + ".xlsx";
+                FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
                     //Creates a seperate sheet for each data table
                     ExcelWorksheet cogsExport = xlPackage.Workbook.Worksheets.Add("COGS");
                     // write to sheet     
-
-                    //cogsExport.Cells["A1"].LoadFromDataTable(cogsInvoices, true);
-                    //xlPackage.Save();
-                    cogsExport.Cells[1, 1].Value = "Invoice Number";
-                    cogsExport.Cells[1, 2].Value = "Total Cost";
-                    cogsExport.Cells[1, 3].Value = "Total Price";
-                    cogsExport.Cells[1, 4].Value = "Total Discount";
-                    cogsExport.Cells[1, 5].Value = "Total Profit";
-                    int recordIndex = 2;
+                    cogsExport.Cells[1, 1].Value = lblDates.Text;
+                    cogsExport.Cells[2, 1].Value = "Invoice Number";
+                    cogsExport.Cells[2, 2].Value = "Total Cost";
+                    cogsExport.Cells[2, 3].Value = "Total Price";
+                    cogsExport.Cells[2, 4].Value = "Total Discount";
+                    cogsExport.Cells[2, 5].Value = "Total Profit";
+                    int recordIndex = 3;
                     foreach(DataRow row in cogsInvoices.Rows)
                     {
                         
@@ -290,7 +290,7 @@ namespace SweetSpotDiscountGolfPOS
                     //    }
                     //}
                     Response.Clear();
-                    Response.AddHeader("content-disposition", "attachment; filename=COGS.xlsx");
+                    Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
                     Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                     Response.BinaryWrite(xlPackage.GetAsByteArray());
                     Response.End();
