@@ -246,8 +246,33 @@ namespace SweetSpotDiscountGolfPOS
                     ExcelWorksheet cogsExport = xlPackage.Workbook.Worksheets.Add("COGS");
                     // write to sheet     
 
-                    cogsExport.Cells["A1"].LoadFromDataTable(cogsInvoices, true);
-                    xlPackage.Save();
+                    //cogsExport.Cells["A1"].LoadFromDataTable(cogsInvoices, true);
+                    //xlPackage.Save();
+                    cogsExport.Cells[1, 1].Value = "Invoice Number";
+                    cogsExport.Cells[1, 2].Value = "Total Cost";
+                    cogsExport.Cells[1, 3].Value = "Total Price";
+                    cogsExport.Cells[1, 4].Value = "Total Discount";
+                    cogsExport.Cells[1, 5].Value = "Total Profit";
+                    int recordIndex = 2;
+                    foreach(DataRow row in cogsInvoices.Rows)
+                    {
+                        
+                        cogsExport.Cells[recordIndex, 1].Value = row["invoice"];
+                        cogsExport.Cells[recordIndex, 2].Value = row["totalCost"];
+                        cogsExport.Cells[recordIndex, 3].Value = row["totalPrice"];
+                        if (Convert.ToBoolean(row["percentage"]) == true)
+                        {
+                            cogsExport.Cells[recordIndex, 4].Value = row["totalDiscount"] + "%";
+                        }
+                        else
+                        {
+                            cogsExport.Cells[recordIndex, 4].Value = "$" + row["totalDiscount"];
+                        }
+                        cogsExport.Cells[recordIndex, 4].Style.Numberformat.Format = "0.0";
+
+                        cogsExport.Cells[recordIndex, 5].Value = row["totalProfit"];
+                        recordIndex++;
+                    }
 
                     ////Export main invoice
                     //for (int i = 1; i < cogsInvoices.Rows.Count; i++)
