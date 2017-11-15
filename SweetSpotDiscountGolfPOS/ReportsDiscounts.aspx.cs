@@ -144,7 +144,7 @@ namespace SweetSpotDiscountGolfPOS
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
                     //Creates a seperate sheet for each data table
-                    ExcelWorksheet discountsExport = xlPackage.Workbook.Worksheets.Add("Items Sold");
+                    ExcelWorksheet discountsExport = xlPackage.Workbook.Worksheets.Add("Discounts");
                     // write to sheet   
                     discountsExport.Cells[1, 1].Value = lblReportDate.Text;
                     discountsExport.Cells[2, 1].Value = "Invoice Number";

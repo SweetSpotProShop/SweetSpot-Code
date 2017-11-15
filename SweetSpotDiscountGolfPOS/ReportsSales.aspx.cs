@@ -103,17 +103,17 @@ namespace SweetSpotDiscountGolfPOS
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
                     //Creates a seperate sheet for each data table
-                    ExcelWorksheet purchasesExport = xlPackage.Workbook.Worksheets.Add("Purchases");
+                    ExcelWorksheet salesExport = xlPackage.Workbook.Worksheets.Add("Sales");
                     // write to sheet   
-                    purchasesExport.Cells[1, 1].Value = lblDates.Text;
-                    purchasesExport.Cells[2, 1].Value = "Date";
-                    purchasesExport.Cells[2, 2].Value = "Sales Dollars";
+                    salesExport.Cells[1, 1].Value = lblDates.Text;
+                    salesExport.Cells[2, 1].Value = "Date";
+                    salesExport.Cells[2, 2].Value = "Sales Dollars";
                     int recordIndex = 3;
                     foreach (DataRow row in dt.Rows)
                     {
                         DateTime d = (DateTime)row[0];
-                        purchasesExport.Cells[recordIndex, 1].Value = d.ToString("d");
-                        purchasesExport.Cells[recordIndex, 2].Value = row[1].ToString();
+                        salesExport.Cells[recordIndex, 1].Value = d.ToString("d");
+                        salesExport.Cells[recordIndex, 2].Value = row[1].ToString();
                         recordIndex++;
                     }
                     Response.Clear();
