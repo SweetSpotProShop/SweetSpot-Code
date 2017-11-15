@@ -1,8 +1,10 @@
-﻿using SweetShop;
+﻿using OfficeOpenXml;
+using SweetShop;
 using SweetSpotDiscountGolfPOS.ClassLibrary;
 using SweetSpotProShop;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Web;
@@ -22,6 +24,11 @@ namespace SweetSpotDiscountGolfPOS
         CurrentUser cu = new CurrentUser();
         DateTime startDate;
         DateTime endDate;
+
+        List<Items> items = new List<Items>();
+        List<Items> models = new List<Items>();
+        List<Items> brands = new List<Items>();
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -36,53 +43,52 @@ namespace SweetSpotDiscountGolfPOS
                     //Go back to Login to log in
                     Server.Transfer("LoginPage.aspx", false);
                 }
-                if (!IsPostBack)
+
+                //Gathering the start and end dates
+                Object[] passing = (Object[])Session["reportInfo"];
+                DateTime[] reportDates = (DateTime[])passing[0];
+                DateTime startDate = reportDates[0];
+                DateTime endDate = reportDates[1];
+                int locationID = (int)passing[1];
+                //Builds string to display in label
+                if (startDate == endDate)
                 {
-                    //Gathering the start and end dates
-                    Object[] passing = (Object[])Session["reportInfo"];
-                    DateTime[] reportDates = (DateTime[])passing[0];
-                    DateTime startDate = reportDates[0];
-                    DateTime endDate = reportDates[1];
-                    int locationID = (int)passing[1];
-                    //Builds string to display in label
+                    lblDates.Text = "Items sold for: " + startDate.ToString("d") + " for " + l.locationName(locationID);
+                }
+                else
+                {
+                    lblDates.Text = "Items sold for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
+                }
+
+                //List<Items> items = new List<Items>();
+                //List<Items> models = new List<Items>();
+                //List<Items> brands = new List<Items>();
+                //Binding the gridview
+                items = r.mostSoldItemsReport(startDate, endDate, locationID);
+                brands = r.mostSoldBrandsReport(startDate, endDate, locationID);
+                models = r.mostSoldModelsReport(startDate, endDate, locationID);
+                //Checking if there are any values
+                if (items.Count > 0 && brands.Count > 0 && models.Count > 0)
+                {
+                    grdItems.DataSource = items;
+                    grdItems.DataBind();
+                    grdBrands.DataSource = brands;
+                    grdBrands.DataBind();
+                    grdModels.DataSource = models;
+                    grdModels.DataBind();
+                }
+                else
+                {
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "Items sold for: " + startDate.ToString("d") + " for " + l.locationName(locationID); 
+                        lblDates.Text = "There is no data for: " + startDate.ToString("d") + " for " + l.locationName(locationID);
                     }
                     else
                     {
-                        lblDates.Text = "Items sold for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID); 
-                    }
-
-                    List<Items> items = new List<Items>();
-                    List<Items> models = new List<Items>();
-                    List<Items> brands = new List<Items>();
-                    //Binding the gridview
-                    items = r.mostSoldItemsReport(startDate, endDate, locationID);
-                    brands = r.mostSoldBrandsReport(startDate, endDate, locationID);
-                    models = r.mostSoldModelsReport(startDate, endDate, locationID);
-                    //Checking if there are any values
-                    if (items.Count > 0 && brands.Count > 0 && models.Count > 0)
-                    {
-                        grdItems.DataSource = items;
-                        grdItems.DataBind();
-                        grdBrands.DataSource = brands;
-                        grdBrands.DataBind();
-                        grdModels.DataSource = models;
-                        grdModels.DataBind();
-                    }
-                    else
-                    {
-                        if (startDate == endDate)
-                        {
-                            lblDates.Text = "There is no data for: " + startDate.ToString("d") + " for " + l.locationName(locationID); 
-                        }
-                        else
-                        {
-                            lblDates.Text = "There is no data for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID); 
-                        }
+                        lblDates.Text = "There is no data for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
                     }
                 }
+
 
             }
             //Exception catch
@@ -98,15 +104,85 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator", this);
                 //Server.Transfer(prevPage, false);
             }
-
-
-
-
-
-
-
-
-
+        }
+        protected void btnDownload_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnDownload_Click";
+            try
+            {
+                string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                string pathDownload = (pathUser + "\\Downloads\\");
+                Object[] passing = (Object[])Session["reportInfo"];
+                string loc = l.locationName(Convert.ToInt32(passing[1]));
+                string fileName = "Top Selling Report - " + loc + ".xlsx";
+                FileInfo newFile = new FileInfo(pathDownload + fileName);
+                using (ExcelPackage xlPackage = new ExcelPackage(newFile))
+                {
+                    //Creates a seperate sheet for each data table
+                    ExcelWorksheet itemsPage = xlPackage.Workbook.Worksheets.Add("Items");
+                    ExcelWorksheet modelsPage = xlPackage.Workbook.Worksheets.Add("Models");
+                    ExcelWorksheet brandsPage = xlPackage.Workbook.Worksheets.Add("Brands");
+                    //Writing       
+                    itemsPage.Cells[1, 1].Value = lblDates.Text; modelsPage.Cells[1, 1].Value = lblDates.Text; brandsPage.Cells[1, 1].Value = lblDates.Text;
+                    itemsPage.Cells[2, 1].Value = "Items"; modelsPage.Cells[2, 1].Value = "Models"; brandsPage.Cells[2, 1].Value = "Brands";
+                    itemsPage.Cells[3, 1].Value = "SKU"; itemsPage.Cells[3, 2].Value = "Amount Sold";
+                    modelsPage.Cells[3, 1].Value = "Model"; modelsPage.Cells[3, 2].Value = "Times Sold";
+                    brandsPage.Cells[3, 1].Value = "Brand"; brandsPage.Cells[3, 2].Value = "Times Sold"; 
+                    int recordIndexItems = 4;
+                    if (items.Count > 0)
+                    {
+                        foreach (Items i in items)
+                        {
+                            itemsPage.Cells[recordIndexItems, 1].Value = i.sku;
+                            itemsPage.Cells[recordIndexItems, 2].Value = i.amountSold;
+                            recordIndexItems++;
+                        }
+                    }
+                    int recordIndexModels = 4;
+                    if (models.Count > 0)
+                    {
+                        foreach (Items m in models)
+                        {
+                            modelsPage.Cells[recordIndexModels, 1].Value = m.description;
+                            modelsPage.Cells[recordIndexModels, 2].Value = m.amountSold;
+                            recordIndexModels++;
+                        }
+                    }
+                    int recordIndexBrands = 4;
+                    if (brands.Count > 0)
+                    {
+                        foreach (Items b in brands)
+                        {
+                            brandsPage.Cells[recordIndexBrands, 1].Value = b.description;
+                            brandsPage.Cells[recordIndexBrands, 2].Value = b.amountSold;
+                            recordIndexBrands++;
+                        }
+                    }
+                    Response.Clear();
+                    Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
+                    Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    Response.BinaryWrite(xlPackage.GetAsByteArray());
+                    Response.End();
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log employee number
+                int employeeID = cu.empID;
+                //Log current page
+                string currPage = Convert.ToString(Session["currPage"]);
+                //Log all info into error table
+                er.logError(ex, employeeID, currPage, method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+                //Server.Transfer(prevPage, false);
+            }
         }
     }
 }
