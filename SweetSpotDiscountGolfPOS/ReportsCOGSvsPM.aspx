@@ -48,16 +48,16 @@
                         <asp:Label ID="lblTotal" runat="server" Text="Totals:"></asp:Label>
                     </FooterTemplate>
                 </asp:TemplateField>
-                <asp:TemplateField HeaderText="Total Cost" HeaderStyle-Width="20%">
-                    <ItemTemplate>
-                        <asp:Label ID="lblTotalCost" runat="server" Text='<%#Eval("totalCost","{0:C}") %>'></asp:Label>
-                    </ItemTemplate>
-                </asp:TemplateField>
                 <asp:TemplateField HeaderText="Total Price" HeaderStyle-Width="20%">
                     <ItemTemplate>
                         <asp:Label ID="lblTotalPrice" runat="server" Text='<%#Eval("balanceDue","{0:C}") %>'></asp:Label>
                     </ItemTemplate>
                 </asp:TemplateField>
+                <asp:TemplateField HeaderText="Total Cost" HeaderStyle-Width="20%">
+                    <ItemTemplate>
+                        <asp:Label ID="lblTotalCost" runat="server" Text='<%#Eval("totalCost","{0:C}") %>'></asp:Label>
+                    </ItemTemplate>
+                </asp:TemplateField>                
                 <asp:TemplateField HeaderText="Total Discount" HeaderStyle-Width="20%">
                     <ItemTemplate>
                         <asp:Label ID="lblTotalDiscount" runat="server" Text='<%#Eval("discountAmount") %>'></asp:Label>
@@ -68,9 +68,9 @@
                         <asp:Label ID="lblPercentage" runat="server" Text='<%#Eval("percentage") %>'></asp:Label>
                     </ItemTemplate>
                 </asp:TemplateField>
-                <asp:TemplateField HeaderText="Total Profit" HeaderStyle-Width="20%">
+                <asp:TemplateField HeaderText="Profit Margin" HeaderStyle-Width="20%">
                     <ItemTemplate>
-                        <asp:Label ID="lblTotalProfit" runat="server" Text='<%#Eval("totalProfit","{0:C}") %>'></asp:Label>
+                        <asp:Label ID="lblTotalProfit" runat="server" Text='<%#string.Concat(Eval("totalProfit","{0:f2}"), "%") %>'></asp:Label>
                     </ItemTemplate>
                 </asp:TemplateField>
             </Columns>

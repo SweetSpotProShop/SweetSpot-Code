@@ -436,16 +436,37 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             List<Invoice> inv = new List<Invoice>();
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
+            //cmd.CommandText = "select " +
+            //                    "Concat(tbl_invoiceItem.invoiceNum, '-', tbl_invoiceItem.invoiceSubNum) as 'invoice', " +
+            //                    "SUM(tbl_invoiceItem.itemCost) as 'totalCost', SUM(tbl_invoiceItem.itemDiscount) as 'totalDiscount', " +
+            //                    "tbl_invoiceItem.percentage, SUM(tbl_invoiceItem.itemPrice) as 'totalPrice',  " +
+            //                    "CASE WHEN percentage = 1 then sum(((tbl_invoiceItem.itemPrice - (tbl_invoiceItem.itemPrice * tbl_invoiceItem.itemDiscount) / 100)) - tbl_invoiceItem.itemCost) " +
+            //                    "ELSE sum((tbl_invoiceItem.itemPrice - tbl_invoiceItem.itemDiscount) - tbl_invoiceItem.itemCost) " +
+            //                    "END as 'totalProfit' from tbl_invoiceItem inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum " +
+            //                    "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns) " +
+            //                    "and tbl_invoice.locationID = @locationID and tbl_invoice.invoiceDate between @startDate and @endDate " +
+            //                    "group by tbl_invoiceItem.invoiceNum,  tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.percentage order by tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum";
             cmd.CommandText = "select " +
                                 "Concat(tbl_invoiceItem.invoiceNum, '-', tbl_invoiceItem.invoiceSubNum) as 'invoice', " +
-                                "SUM(tbl_invoiceItem.itemCost) as 'totalCost', SUM(tbl_invoiceItem.itemDiscount) as 'totalDiscount', " +
-                                "tbl_invoiceItem.percentage, SUM(tbl_invoiceItem.itemPrice) as 'totalPrice',  " +
-                                "CASE WHEN percentage = 1 then sum(((tbl_invoiceItem.itemPrice - (tbl_invoiceItem.itemPrice * tbl_invoiceItem.itemDiscount) / 100)) - tbl_invoiceItem.itemCost) " +
-                                "ELSE sum((tbl_invoiceItem.itemPrice - tbl_invoiceItem.itemDiscount) - tbl_invoiceItem.itemCost) " +
-                                "END as 'totalProfit' from tbl_invoiceItem inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum " +
+                                "SUM(tbl_invoiceItem.itemPrice) as 'totalPrice',  " +
+                                "SUM(tbl_invoiceItem.itemCost) as 'totalCost', " +
+                                "SUM(tbl_invoiceItem.itemDiscount) as 'totalDiscount', " +
+                                "tbl_invoiceItem.percentage, " +
+                                "CASE " +
+                                "    WHEN percentage = 1 and SUM(tbl_invoiceItem.itemPrice) <> 0 then " +
+                                "        sum(((tbl_invoiceItem.itemPrice - (tbl_invoiceItem.itemPrice * tbl_invoiceItem.itemDiscount) / 100)) - tbl_invoiceItem.itemCost) / SUM(tbl_invoiceItem.itemPrice) * 100 " +
+                                "    WHEN percentage = 0 and SUM(tbl_invoiceItem.itemPrice) <> 0 then " +
+                                "        sum((tbl_invoiceItem.itemPrice - tbl_invoiceItem.itemDiscount) - tbl_invoiceItem.itemCost) / SUM(tbl_invoiceItem.itemPrice) * 100 " +
+                                "    WHEN percentage = 1 and SUM(tbl_invoiceItem.itemPrice) = 0 then " +
+                                "        sum(((tbl_invoice.subTotal - (tbl_invoice.subTotal * tbl_invoiceItem.itemDiscount) / 100)) - tbl_invoiceItem.itemCost) " +
+                                "    WHEN percentage = 0 and SUM(tbl_invoiceItem.itemPrice) = 0 then " +
+                                "        sum((tbl_invoice.subTotal - tbl_invoiceItem.itemDiscount) - tbl_invoiceItem.itemCost) " +
+                                "END as 'totalProfit' " +
+                                "from tbl_invoiceItem inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum " +
                                 "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns) " +
                                 "and tbl_invoice.locationID = @locationID and tbl_invoice.invoiceDate between @startDate and @endDate " +
-                                "group by tbl_invoiceItem.invoiceNum,  tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.percentage order by tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum";
+                                "group by tbl_invoiceItem.invoiceNum,  tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.percentage, tbl_invoice.subTotal " +
+                                "order by tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum "; 
             cmd.Parameters.AddWithValue("@startDate", startDate);
             cmd.Parameters.AddWithValue("@endDate", endDate);
             cmd.Parameters.AddWithValue("@locationID", locationID);

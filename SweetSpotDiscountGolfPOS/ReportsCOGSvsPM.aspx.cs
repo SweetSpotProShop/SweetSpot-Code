@@ -33,6 +33,8 @@ namespace SweetSpotDiscountGolfPOS
         //double tDiscount;
         double tProfit;
 
+        List<Invoice> inv = new List<Invoice>();
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -47,60 +49,57 @@ namespace SweetSpotDiscountGolfPOS
                     //Go back to Login to log in
                     Server.Transfer("LoginPage.aspx", false);
                 }
-                if (!IsPostBack)
+
+                //Gathering the start and end dates
+                Object[] passing = (Object[])Session["reportInfo"];
+                DateTime[] reportDates = (DateTime[])passing[0];
+                startDate = reportDates[0];
+                endDate = reportDates[1];
+                locationID = (int)passing[1];
+                //Builds string to display in label
+                if (startDate == endDate)
                 {
-                    //Gathering the start and end dates
-                    Object[] passing = (Object[])Session["reportInfo"];
-                    DateTime[] reportDates = (DateTime[])passing[0];
-                    startDate = reportDates[0];
-                    endDate = reportDates[1];
-                    locationID = (int)passing[1];
-                    //Builds string to display in label
+                    lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("d") + " for " + l.locationName(locationID);
+                }
+                else
+                {
+                    lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
+                }                
+                //Binding the gridview
+                inv = r.returnInvoicesForCOGS(startDate, endDate, locationID);
+                //Checking if there are any values
+                if (inv.Count > 0)
+                {
+                    grdInvoiceSelection.DataSource = inv;
+                    grdInvoiceSelection.DataBind();
+                    //Displaying the total cost
+                    //lblTotalCostDisplay.Text = r.returnCOGSCost(startDate, endDate, locationID).ToString("C");
+                    //Displaying the total price/sold at
+                    //lblSoldDisplay.Text = r.returnCOGSPrice(startDate, endDate, locationID).ToString("C");
+                    //Displaying the profit margin
+                    //lblProfitMarginDisplay.Text = r.returnCOGSProfitMargin(startDate, endDate, locationID).ToString("C");
+                }
+                else
+                {
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("d") + " for " + l.locationName(locationID);
+                        lblDates.Text = "There are no invoices for: " + startDate.ToString("d");
                     }
                     else
                     {
-                        lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
+                        lblDates.Text = "There are no invoices for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
                     }
+                    grdInvoiceSelection.Visible = false;
+                    //lblTotalCostDisplay.Visible = false;
+                    //lblSoldDisplay.Visible = false;
+                    //lblProfitMarginDisplay.Visible = false;
+                    //lblItemsSold.Visible = false;
+                    //lblCost.Visible = false;
+                    //lblPM.Visible = false;
+                    //lblProfitMargin.Visible = false;
 
-                    List<Invoice> inv = new List<Invoice>();
-                    //Binding the gridview
-                    inv = r.returnInvoicesForCOGS(startDate, endDate, locationID);
-                    //Checking if there are any values
-                    if(inv.Count > 0)
-                    {
-                        grdInvoiceSelection.DataSource = inv;
-                        grdInvoiceSelection.DataBind();
-                        //Displaying the total cost
-                        //lblTotalCostDisplay.Text = r.returnCOGSCost(startDate, endDate, locationID).ToString("C");
-                        //Displaying the total price/sold at
-                        //lblSoldDisplay.Text = r.returnCOGSPrice(startDate, endDate, locationID).ToString("C");
-                        //Displaying the profit margin
-                        //lblProfitMarginDisplay.Text = r.returnCOGSProfitMargin(startDate, endDate, locationID).ToString("C");
-                    }
-                    else
-                    {
-                        if (startDate == endDate)
-                        {
-                            lblDates.Text = "There are no invoices for: " + startDate.ToString("d");
-                        }
-                        else
-                        {
-                            lblDates.Text = "There are no invoices for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
-                        }
-                        grdInvoiceSelection.Visible = false;
-                        //lblTotalCostDisplay.Visible = false;
-                        //lblSoldDisplay.Visible = false;
-                        //lblProfitMarginDisplay.Visible = false;
-                        //lblItemsSold.Visible = false;
-                        //lblCost.Visible = false;
-                        //lblPM.Visible = false;
-                        //lblProfitMargin.Visible = false;
-                        
-                    }
                 }
+
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -201,11 +200,12 @@ namespace SweetSpotDiscountGolfPOS
                 tPrice += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "balanceDue"));
                 tProfit += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "totalProfit"));
             }
-            else if(e.Row.RowType == DataControlRowType.Footer)
+            else if (e.Row.RowType == DataControlRowType.Footer)
             {
-                e.Row.Cells[1].Text = String.Format("{0:C}", tCost);
-                e.Row.Cells[2].Text = String.Format("{0:C}", tPrice);
-                e.Row.Cells[5].Text = String.Format("{0:C}", tProfit);
+                e.Row.Cells[1].Text = String.Format("{0:C}", tPrice);
+                e.Row.Cells[2].Text = String.Format("{0:C}", tCost);
+                //Maybe calculate the average profit margin
+                // e.Row.Cells[5].Text = String.Format("{0:C}", tProfit);
             }
         }
         protected void btnDownload_Click(object sender, EventArgs e)
@@ -213,29 +213,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method for error tracking
             string method = "btnDownload_Click";
             try
-            {
-                //Gathering the start and end dates
-                Object[] passing = (Object[])Session["reportInfo"];
-                DateTime[] reportDates = (DateTime[])passing[0];
-                startDate = reportDates[0];
-                endDate = reportDates[1];
-                locationID = (int)passing[1];
-                //Sets up database connection
-                string connectionString = ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString;
-                SqlConnection sqlCon = new SqlConnection(connectionString);
-                //Selects everything form the invoice table
-                DataTable cogsInvoices = new DataTable();
-                using (var cmd = new SqlCommand("getInvoiceForCOGS", sqlCon)) //Calling the SP   
-                using (var da = new SqlDataAdapter(cmd))
-                {
-                    cmd.Parameters.AddWithValue("@startDate", startDate);
-                    cmd.Parameters.AddWithValue("@endDate", endDate);
-                    cmd.Parameters.AddWithValue("@locationID", locationID);
-                    //Executing the SP
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    da.Fill(cogsInvoices);
-                }
-                DataColumnCollection headers = cogsInvoices.Columns;
+            {                
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
@@ -252,25 +230,25 @@ namespace SweetSpotDiscountGolfPOS
                     cogsExport.Cells[2, 2].Value = "Total Cost";
                     cogsExport.Cells[2, 3].Value = "Total Price";
                     cogsExport.Cells[2, 4].Value = "Total Discount";
-                    cogsExport.Cells[2, 5].Value = "Total Profit";
+                    cogsExport.Cells[2, 5].Value = "Profit Margin";
                     int recordIndex = 3;
-                    foreach(DataRow row in cogsInvoices.Rows)
+                    foreach (Invoice i in inv)
                     {
-                        
-                        cogsExport.Cells[recordIndex, 1].Value = row["invoice"];
-                        cogsExport.Cells[recordIndex, 2].Value = row["totalCost"];
-                        cogsExport.Cells[recordIndex, 3].Value = row["totalPrice"];
-                        if (Convert.ToBoolean(row["percentage"]) == true)
+
+                        cogsExport.Cells[recordIndex, 1].Value = i.invoice;
+                        cogsExport.Cells[recordIndex, 2].Value = i.totalCost;
+                        cogsExport.Cells[recordIndex, 3].Value = i.balanceDue;
+                        if (i.percentage == true)
                         {
-                            cogsExport.Cells[recordIndex, 4].Value = row["totalDiscount"] + "%";
+                            cogsExport.Cells[recordIndex, 4].Value = i.discountAmount + "%";
                         }
                         else
                         {
-                            cogsExport.Cells[recordIndex, 4].Value = "$" + row["totalDiscount"];
+                            cogsExport.Cells[recordIndex, 4].Value = "$" + i.discountAmount;
                         }
                         cogsExport.Cells[recordIndex, 4].Style.Numberformat.Format = "0.0";
 
-                        cogsExport.Cells[recordIndex, 5].Value = row["totalProfit"];
+                        cogsExport.Cells[recordIndex, 5].Value = i.totalProfit + "%";
                         recordIndex++;
                     }
 
@@ -315,5 +293,5 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
     }
-    
+
 }
