@@ -234,7 +234,6 @@ namespace SweetSpotDiscountGolfPOS
                     int recordIndex = 3;
                     foreach (Invoice i in inv)
                     {
-
                         cogsExport.Cells[recordIndex, 1].Value = i.invoice;
                         cogsExport.Cells[recordIndex, 2].Value = i.totalCost;
                         cogsExport.Cells[recordIndex, 3].Value = i.balanceDue;

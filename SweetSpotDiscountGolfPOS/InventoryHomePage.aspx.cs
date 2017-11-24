@@ -1,8 +1,10 @@
-﻿using SweetShop;
+﻿using OfficeOpenXml;
+using SweetShop;
 using SweetSpotDiscountGolfPOS.ClassLibrary;
 using SweetSpotProShop;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Web;
@@ -16,6 +18,7 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting er = new ErrorReporting();
         CurrentUser cu = new CurrentUser();
         List<Items> searched = new List<Items>();
+        List<Items> i;
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -98,7 +101,7 @@ namespace SweetSpotDiscountGolfPOS
                         //If search is text 
                         skuString = txtSearch.Text;
                         // this looks for the item in the database
-                        List<Items> i = idu.getItemByID(Convert.ToInt32(skuInt));
+                        i = idu.getItemByID(Convert.ToInt32(skuInt));
                         itemType = idu.typeName(i.ElementAt(0).typeID);
                         //if adding new item
                         if (i != null && i.Count >= 1)
@@ -281,7 +284,6 @@ namespace SweetSpotDiscountGolfPOS
             populateGridview(searched);
             updateButtonText(headers);
         }
-
         protected void btnDescription_Click(object sender, EventArgs e)
         {
             //Grabbing the list
@@ -323,7 +325,6 @@ namespace SweetSpotDiscountGolfPOS
             populateGridview(searched);
             updateButtonText(headers);
         }
-
         protected void btnStore_Click(object sender, EventArgs e)
         {
             //Grabbing the list
@@ -365,7 +366,6 @@ namespace SweetSpotDiscountGolfPOS
             populateGridview(searched);
             updateButtonText(headers);
         }
-
         protected void btnQuantity_Click(object sender, EventArgs e)
         {
             //Grabbing the list
@@ -407,7 +407,6 @@ namespace SweetSpotDiscountGolfPOS
             populateGridview(searched);
             updateButtonText(headers);
         }
-
         protected void btnPrice_Click(object sender, EventArgs e)
         {
             //Grabbing the list
@@ -449,7 +448,6 @@ namespace SweetSpotDiscountGolfPOS
             populateGridview(searched);
             updateButtonText(headers);
         }
-
         protected void btnCost_Click(object sender, EventArgs e)
         {
             //Grabbing the list
@@ -491,7 +489,6 @@ namespace SweetSpotDiscountGolfPOS
             populateGridview(searched);
             updateButtonText(headers);
         }
-
         protected void updateButtonText(string[] headers)
         {
             (grdInventorySearched.HeaderRow.FindControl("btnSKU") as Button).Text = headers[0];
@@ -500,6 +497,67 @@ namespace SweetSpotDiscountGolfPOS
             (grdInventorySearched.HeaderRow.FindControl("btnQuantity") as Button).Text = headers[3];
             (grdInventorySearched.HeaderRow.FindControl("btnPrice") as Button).Text = headers[4];
             (grdInventorySearched.HeaderRow.FindControl("btnCost") as Button).Text = headers[5];
+        }
+        //Downloading the search
+        protected void btnDownload_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnDownload_Click";
+            try
+            {
+                //Sets path and file name to download report to
+                string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                string pathDownload = (pathUser + "\\Downloads\\");
+                string loc = cu.locationName;
+                string fileName = "Item Search - " + loc + ".xlsx";
+                FileInfo newFile = new FileInfo(pathDownload + fileName);
+                using (ExcelPackage xlPackage = new ExcelPackage(newFile))
+                {
+                    //Creates a seperate sheet for each data table
+                    ExcelWorksheet searchExport = xlPackage.Workbook.Worksheets.Add("Items");
+                    // write to sheet     
+                    searchExport.Cells[1, 1].Value = "SKU";
+                    searchExport.Cells[1, 2].Value = "Description";
+                    searchExport.Cells[1, 3].Value = "Store";
+                    searchExport.Cells[1, 4].Value = "Quantity";
+                    searchExport.Cells[1, 5].Value = "Price";
+                    searchExport.Cells[1, 5].Value = "Cost";
+                    int recordIndex = 2;
+                    foreach (Items item in searched)
+                    {
+                        searchExport.Cells[recordIndex, 1].Value = item.sku;
+                        searchExport.Cells[recordIndex, 2].Value = item.description;
+                        searchExport.Cells[recordIndex, 3].Value = item.location;
+                        searchExport.Cells[recordIndex, 4].Value = item.quantity;
+                        searchExport.Cells[recordIndex, 5].Value = "$" + item.price;
+                        searchExport.Cells[recordIndex, 6].Value = "$" + item.cost;
+                        recordIndex++;
+                    }
+                    searchExport.Cells[searchExport.Dimension.Address].AutoFitColumns();
+                    Response.Clear();
+                    Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
+                    Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    Response.BinaryWrite(xlPackage.GetAsByteArray());
+                    Response.End();
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log employee number
+                int employeeID = cu.empID;
+                //Log current page
+                string currPage = Convert.ToString(Session["currPage"]);
+                //Log all info into error table
+                er.logError(ex, employeeID, currPage, method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+                //Server.Transfer(prevPage, false);
+            }
         }
     }
 }

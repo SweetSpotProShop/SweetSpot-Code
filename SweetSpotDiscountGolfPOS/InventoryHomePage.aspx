@@ -101,6 +101,7 @@
                     No current Inventory data, please search for an Inventory Item
                 </EmptyDataTemplate>
             </asp:GridView>
+            <asp:Button class="noPrint" ID="btnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="btnDownload_Click" />
         </asp:Panel>
     </div>
 </asp:Content>
