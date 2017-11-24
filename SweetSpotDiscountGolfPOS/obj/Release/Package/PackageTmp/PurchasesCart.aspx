@@ -59,11 +59,60 @@
         <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnAddPurchase">
             <asp:Label ID="lblCustomer" runat="server" Text="Customer Name:"></asp:Label>
             <asp:Label ID="lblCustomerDisplay" runat="server" Text="" Visible="false"></asp:Label>
-            <asp:TextBox ID="txtCustomer" ReadOnly="true" runat="server"></asp:TextBox>
+            <asp:TextBox ID="txtCustomer" runat="server"></asp:TextBox>
             <asp:Button ID="btnCustomerSelect" runat="server" Text="Select Different Customer" OnClick="btnCustomerSelect_Click" CausesValidation="false" />
-
-            <br />
-            <br />
+            <div>
+                <br />
+                <div>
+                    <asp:GridView ID="grdCustomersSearched" runat="server" AutoGenerateColumns="false" ShowFooter="true" OnRowCommand="grdCustomersSearched_RowCommand" AllowPaging="True" PageSize="5" OnPageIndexChanging="grdCustomersSearched_PageIndexChanging">
+                        <Columns>
+                            <asp:TemplateField HeaderText="Switch Customer">
+                                <ItemTemplate>
+                                    <asp:LinkButton ID="lbtnSwitchCustomer" CommandName="SwitchCustomer" CommandArgument='<%#Eval("CustomerId") %>' Text="Switch Customer" runat="server">Switch Customer</asp:LinkButton>
+                                </ItemTemplate>
+                                <FooterTemplate>
+                                    <asp:Button ID="btnAddCustomer" runat="server" Text="Add Customer" OnClick="btnAddCustomer_Click" />
+                                </FooterTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Customer Name">
+                                <ItemTemplate>
+                                    <asp:Label runat="server" Text='<%#Eval("firstName") + " " + Eval("lastName") %>'></asp:Label>
+                                </ItemTemplate>
+                                <FooterTemplate>
+                                    <div>
+                                        <asp:TextBox ID="txtFirstName" runat="server" placeholder="First Name" ToolTip="First Name"></asp:TextBox>
+                                    </div>
+                                    <div>
+                                        <asp:TextBox ID="txtLastName" runat="server" placeholder="Last Name" ToolTip="Last Name"></asp:TextBox>
+                                    </div>
+                                </FooterTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Phone Number">
+                                <ItemTemplate>
+                                    <asp:Label runat="server" Text='<%#Eval("primaryPhoneNumber") %>'></asp:Label>
+                                </ItemTemplate>
+                                <FooterTemplate>
+                                    <asp:TextBox ID="txtPhoneNumber" runat="server" placeholder="Phone Number" ToolTip="Phone Number"></asp:TextBox>
+                                </FooterTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Email Address">
+                                <ItemTemplate>
+                                    <asp:Label runat="server" Text='<%#Eval("email") %>'></asp:Label>
+                                </ItemTemplate>
+                                <FooterTemplate>
+                                    <div>
+                                        <asp:TextBox ID="txtEmail" runat="server" placeholder="Email" ToolTip="Email"></asp:TextBox>
+                                    </div>     
+                                    <div>
+                                        <asp:CheckBox ID="chkMarketingEnrollment" runat="server" Text="Marketing Enrollment"/>
+                                    </div>                                    
+                                </FooterTemplate>
+                            </asp:TemplateField>
+                        </Columns>
+                    </asp:GridView>
+                </div>
+                <br />
+            </div>
             <div style="text-align: right">
                 <asp:Label ID="lblReceiptNumber" runat="server" Text="Receipt No:"></asp:Label>
                 <asp:Label ID="lblReceiptNumberDisplay" runat="server"></asp:Label>
@@ -73,7 +122,7 @@
                 <hr />
             </div>
             <h3>Purchases</h3>
-            <asp:Button ID="btnAddPurchase" runat="server" Text="Add Purchase" OnClick="btnAddPurchase_Click"/>
+            <asp:Button ID="btnAddPurchase" runat="server" Text="Add Purchase" OnClick="btnAddPurchase_Click" />
             <hr />
             <asp:GridView ID="grdPurchasedItems" runat="server" AutoGenerateColumns="false" Style="margin-right: 0px" OnRowEditing="OnRowEditing" OnRowUpdating="OnRowUpdating" OnRowCancelingEdit="ORowCanceling">
                 <Columns>
@@ -87,7 +136,7 @@
                         </EditItemTemplate>
                     </asp:TemplateField>
                     <asp:BoundField DataField="sku" ReadOnly="true" HeaderStyle-Width="20%" HeaderText="SKU" />
-                    <asp:BoundField DataField="description" HeaderStyle-Width="20%" HeaderText="Description" />                    
+                    <asp:BoundField DataField="description" HeaderStyle-Width="20%" HeaderText="Description" />
                     <asp:BoundField DataField="cost" HeaderStyle-Width="20%" HeaderText="Cost" DataFormatString="{0:C}" />
                 </Columns>
             </asp:GridView>

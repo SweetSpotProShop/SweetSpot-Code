@@ -40,7 +40,7 @@
                             <asp:Label ID="lblCost" runat="server" Text="Cost:  $"></asp:Label>
                         </asp:TableCell>
                         <asp:TableCell Width="25%">
-                            <asp:TextBox ID="txtCost" runat="server" Visible="true"></asp:TextBox>
+                            <asp:TextBox ID="txtCost" runat="server" Visible="true" Text="0"></asp:TextBox>
                             <asp:RequiredFieldValidator ID="rfvCost"
                                 runat="server" ControlToValidate="txtCost"
                                 ErrorMessage="Cost Required"
@@ -64,7 +64,7 @@
                             <asp:Label ID="lblPrice" runat="server" Text="Price:  $"></asp:Label>
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtPrice" runat="server" Visible="true"></asp:TextBox>
+                            <asp:TextBox ID="txtPrice" runat="server" Visible="true" Text="0"></asp:TextBox>
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>

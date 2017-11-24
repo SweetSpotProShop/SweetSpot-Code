@@ -26,7 +26,7 @@
                     <asp:LinkButton ID="lbtnInvoiceNumber" runat="server" Text='<%#Eval("invoiceNum") + "-" + Eval("invoiceSub") %>' OnClick="lbtnInvoiceNumber_Click"></asp:LinkButton>
                 </ItemTemplate>
                  <FooterTemplate>
-                    <asp:Label ID="lblTotals" runat="server" Text="Totals" />
+                    <asp:Label ID="lblTotals" runat="server" Text="Totals:" />
                 </FooterTemplate>
             </asp:TemplateField>
             <asp:BoundField DataField="customerID" ReadOnly="true" HeaderText="Customer" />
