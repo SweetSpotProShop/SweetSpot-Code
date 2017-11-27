@@ -19,6 +19,7 @@ namespace SweetSpotDiscountGolfPOS
         CurrentUser cu = new CurrentUser();
         List<Items> searched = new List<Items>();
         List<Items> i;
+        
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -505,11 +506,12 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnDownload_Click";
             try
             {
+                searched = Session["listItems"] as List<Items>;
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
                 string loc = cu.locationName;
-                string fileName = "Item Search - " + loc + ".xlsx";
+                string fileName = "Item Search - " + txtSearch.Text + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
@@ -521,7 +523,7 @@ namespace SweetSpotDiscountGolfPOS
                     searchExport.Cells[1, 3].Value = "Store";
                     searchExport.Cells[1, 4].Value = "Quantity";
                     searchExport.Cells[1, 5].Value = "Price";
-                    searchExport.Cells[1, 5].Value = "Cost";
+                    searchExport.Cells[1, 6].Value = "Cost";
                     int recordIndex = 2;
                     foreach (Items item in searched)
                     {
@@ -529,8 +531,8 @@ namespace SweetSpotDiscountGolfPOS
                         searchExport.Cells[recordIndex, 2].Value = item.description;
                         searchExport.Cells[recordIndex, 3].Value = item.location;
                         searchExport.Cells[recordIndex, 4].Value = item.quantity;
-                        searchExport.Cells[recordIndex, 5].Value = "$" + item.price;
-                        searchExport.Cells[recordIndex, 6].Value = "$" + item.cost;
+                        searchExport.Cells[recordIndex, 5].Value = item.price;
+                        searchExport.Cells[recordIndex, 6].Value = item.cost;
                         recordIndex++;
                     }
                     searchExport.Cells[searchExport.Dimension.Address].AutoFitColumns();
