@@ -95,7 +95,15 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         //If number search through skus for any that match
                         skuString = txtSearch.Text;
-                        searched = ssm.GetItemfromSearch(txtSearch.Text, itemType);
+                        if (chkIncludeZero.Checked)
+                        {
+                            searched = ssm.GetItemfromSearch(txtSearch.Text, itemType, true);
+                        }
+                        else
+                        {
+                            searched = ssm.GetItemfromSearch(txtSearch.Text, itemType, false);
+                        }
+                        
                     }
                     else
                     {

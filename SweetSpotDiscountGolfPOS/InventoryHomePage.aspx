@@ -39,6 +39,11 @@
                         <asp:Button ID="btnMakePurchase" runat="server" Width="150" Text="Make Purchase" OnClick="btnMakePurchase_Click" />
                     </asp:TableCell>
                 </asp:TableRow>
+                <asp:TableRow>
+                    <asp:TableCell ColumnSpan="5">
+                        <asp:CheckBox ID="chkIncludeZero" runat="server" Text="Include zero quantity items"/>
+                    </asp:TableCell>
+                </asp:TableRow>
             </asp:Table>
             <hr />
             <asp:GridView ID="grdInventorySearched" runat="server" AutoGenerateColumns="False" OnRowCommand="grdInventorySearched_RowCommand" AllowPaging="true" PageSize="50" OnPageIndexChanging="grdInventorySearched_PageIndexChanging" >
