@@ -498,6 +498,7 @@ namespace SweetSpotDiscountGolfPOS
                 btnAddItem.Visible = false;
                 btnCancel.Visible = true;
                 btnBackToSearch.Visible = false;
+                btnCreateSimilar.Visible = false;
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -657,7 +658,7 @@ namespace SweetSpotDiscountGolfPOS
                 btnCancel.Visible = false;
                 btnAddItem.Visible = false;
                 btnBackToSearch.Visible = true;
-
+                btnCreateSimilar.Visible = true;
                 Server.Transfer(Request.RawUrl, false);
             }
             //Exception catch
@@ -743,6 +744,99 @@ namespace SweetSpotDiscountGolfPOS
             {
                 //changes the item type, causes post back
                 Session["itemType"] = ddlType.SelectedIndex;
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log employee number
+                int employeeID = cu.empID;
+                //Log current page
+                string currPage = Convert.ToString(Session["currPage"]);
+                //Log all info into error table
+                er.logError(ex, employeeID, currPage, method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+                //Server.Transfer(prevPage, false);
+            }
+        }
+        protected void btnCreateSimilar_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnCreateSimilar_Click";
+            try
+            {
+                //Retrieves the type of item that is getting added
+                int skuNum;
+                string type = lblTypeDisplay.Text;
+                Session["itemType"] = type;
+                if (lblTypeDisplay.Text == "Clubs")
+                {
+                    //Transfers all info into Club class
+                    c.sku = idu.maxSku(1);
+                    c.cost = Convert.ToDouble(lblCostDisplay.Text);
+                    c.brandID = Convert.ToInt32(idu.brandName(lblBrandDisplay.Text).ToString());
+                    c.price = Convert.ToDouble(lblPriceDisplay.Text);
+                    c.quantity = Convert.ToInt32(lblQuantityDisplay.Text);
+                    c.itemlocation = Convert.ToInt32(lm.locationID(lblLocationDisplay.Text).ToString());
+                    c.clubType = lblClubTypeDisplay.Text;
+                    c.modelID = Convert.ToInt32(idu.modelName(lblModelDisplay.Text).ToString());
+                    c.shaft = lblShaftDisplay.Text;
+                    c.numberOfClubs = lblNumberofClubsDisplay.Text;
+                    c.clubSpec = lblClubSpecDisplay.Text;
+                    c.shaftSpec = lblShaftSpecDisplay.Text;
+                    c.shaftFlex = lblShaftFlexDisplay.Text;
+                    c.dexterity = lblDexterityDisplay.Text;
+                    c.used = chkUsed.Checked;
+                    c.comments = lblCommentsDisplay.Text;
+                    c.typeID = 1;
+                    //stores club as an object
+                    o = c as Object;
+                }
+                else if (lblTypeDisplay.Text == "Accessories")
+                {
+                    //Transfers all info into Accessory class
+                    a.sku = idu.maxSku(2);
+                    a.brandID = Convert.ToInt32(idu.brandName(lblBrandDisplay.Text).ToString());
+                    a.cost = Convert.ToDouble(lblCostDisplay.Text);
+                    a.price = Convert.ToDouble(lblPriceDisplay.Text);
+                    a.quantity = Convert.ToInt32(lblQuantityDisplay.Text);
+                    a.locID = Convert.ToInt32(lm.locationID(lblLocationDisplay.Text).ToString());
+                    a.typeID = 2;
+                    a.size = lblClubTypeDisplay.Text;
+                    a.colour = lblShaftDisplay.Text;
+                    a.accessoryType = lblNumberofClubsDisplay.Text;
+                    a.comments = lblCommentsDisplay.Text;
+                    //stores accessory as an object
+                    o = a as Object;
+                }
+                else if (lblTypeDisplay.Text == "Clothing")
+                {
+                    //Transfers all info into Clothing class
+                    cl.sku = idu.maxSku(3);
+                    cl.brandID = Convert.ToInt32(idu.brandName(lblBrandDisplay.Text).ToString());
+                    cl.cost = Convert.ToDouble(lblCostDisplay.Text);
+                    cl.price = Convert.ToDouble(lblPriceDisplay.Text);
+                    cl.quantity = Convert.ToInt32(lblQuantityDisplay.Text);
+                    cl.locID = Convert.ToInt32(lm.locationID(lblLocationDisplay.Text).ToString());
+                    cl.typeID = 3;
+                    cl.size = lblClubTypeDisplay.Text;
+                    cl.colour = lblShaftDisplay.Text;
+                    cl.gender = lblClubSpecDisplay.Text;
+                    cl.style = lblShaftFlexDisplay.Text;
+                    cl.comments = lblCommentsDisplay.Text;
+                    //stores clothing as an object
+                    o = cl as Object;
+                }
+                //adds item into the inventory
+                skuNum = ssm.addItem(o);
+                //store sku into Session
+                Session["key"] = skuNum;
+                //Refreshes current page
+                Server.Transfer(Request.RawUrl, false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

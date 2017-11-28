@@ -50,8 +50,10 @@ namespace SweetShop
                 }
                 //Declares space for connection string and new command
                 SqlConnection con = new SqlConnection(connectionString);
-                SqlCommand cmd = new SqlCommand();
-                cmd.Connection = con;
+                SqlCommand cmd = new SqlCommand
+                {
+                    Connection = con
+                };
                 con.Open();
 
                 for (int i = 0; i < numFields; i++)
@@ -106,9 +108,11 @@ namespace SweetShop
             {
                 //Declares space for connection string and new command
                 SqlConnection con = new SqlConnection(connectionString);
-                SqlCommand cmd = new SqlCommand();
-                cmd.Connection = con;
-                cmd.CommandText = "Select * From tbl_customers Where custID = @custNum";
+                SqlCommand cmd = new SqlCommand
+                {
+                    Connection = con,
+                    CommandText = "Select * From tbl_customers Where custID = @custNum"
+                };
                 cmd.Parameters.AddWithValue("custNum", custNum);
                 con.Open();
                 SqlDataReader reader = cmd.ExecuteReader();
@@ -1174,7 +1178,7 @@ namespace SweetShop
             cmd.CommandText = "UPDATE tbl_clubs SET brandID = @brandID, modelID = @modelID, clubType = @clubType, shaft = @shaft,"
                 + " numberOfClubs = @numberOfClubs, premium = @premium, cost = @cost, price = @price, quantity = @quantity,"
                 + " clubSpec = @clubSpec, shaftSpec = @shaftSpec, shaftFlex = @shaftFlex, dexterity = @dexterity,"
-                + " locationID = @locationID, comments = @comments WHERE sku = @sku";
+                + " locationID = @locationID, used = @used, comments = @comments WHERE sku = @sku";
             cmd.Parameters.AddWithValue("@sku", c.sku);
             cmd.Parameters.AddWithValue("@brandID", c.brandID);
             cmd.Parameters.AddWithValue("@modelID", c.modelID);
@@ -1191,6 +1195,7 @@ namespace SweetShop
             cmd.Parameters.AddWithValue("@shaftSpec", c.shaftSpec);
             cmd.Parameters.AddWithValue("@shaftFlex", c.shaftFlex);
             cmd.Parameters.AddWithValue("@dexterity", c.dexterity);
+            cmd.Parameters.AddWithValue("@used", c.used);
             //Declare and open connection
             cmd.Connection = con;
             con.Open();

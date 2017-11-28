@@ -131,17 +131,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         //Insert the cashout into the database
         public void insertCashout(Cashout cas, int empID, int locID)
         {
-            int processed = 0;
-            int finalized = 0;
-            if (cas.processed)
-            {
-                processed = 1;
-            }
-            if (cas.finalized)
-            {
-                finalized = 1;
-            }
-
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             cmd.CommandText = "Insert into tbl_cashout values( " +
