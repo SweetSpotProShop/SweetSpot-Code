@@ -59,11 +59,11 @@ namespace SweetShop
                     if (i == 0)
                     {
                         //cmd.CommandText = "Select * From tbl_customers Where (firstName + ' ' + lastName) Like '%@searchField1%' or (primaryPhoneINT + ' ' + secondaryPhoneINT) like '%@searchField2%' order by firstName asc";
-                        cmd.CommandText = "Select * From tbl_customers Where Concat(firstName,lastName) Like '%" + strText[i] + "%' or Concat(primaryPhoneINT,secondaryPhoneINT) like '%" + strText[i] + "%'";
+                        cmd.CommandText = "Select * From tbl_customers Where Concat(firstName,lastName) Like '%" + strText[i] + "%' or Concat(primaryPhoneINT,secondaryPhoneINT) like '%" + strText[i] + "%' or email like '%" + strText[i] + "%'";
                     }
                     else
                     {
-                        cmd.CommandText = cmd.CommandText + " Intersect (Select * From tbl_customers Where Concat(firstName,lastName) Like '%" + strText[i] + "%' or Concat(primaryPhoneINT,secondaryPhoneINT) like '%" + strText[i] + "%')";
+                        cmd.CommandText = cmd.CommandText + " Intersect (Select * From tbl_customers Where Concat(firstName,lastName) Like '%" + strText[i] + "%' or Concat(primaryPhoneINT,secondaryPhoneINT) like '%" + strText[i] + "%' or email like '%" + strText[i] + "%')";
                     }
                 }
                 cmd.CommandText = cmd.CommandText + "  order by firstName asc;";
