@@ -98,15 +98,6 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator", this);
                 //Server.Transfer(prevPage, false);
             }
-
-
-
-
-
-
-
-
-
         }
     }
 }

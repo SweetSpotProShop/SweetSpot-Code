@@ -1458,6 +1458,7 @@ namespace SweetShop
                     Convert.ToDouble(reader["provincialTax"]), Convert.ToDouble(reader["balanceDue"]), Convert.ToInt32(reader["transactionType"]), reader["comments"].ToString());
             }
             con.Close();
+            //This can be removed since the deleted invoice table doesn't hold anything.
             con.Open();
             cmd.CommandText = "SELECT invoiceNum, invoiceSubNum, invoiceDate, Cast(invoiceTime as DATETIME) as invoiceTime, custID, empID, locationID, subTotal, discountAmount, "
                 + "tradeinAmount, governmentTax, provincialTax, balanceDue, transactionType, comments FROM tbl_deletedInvoice "
