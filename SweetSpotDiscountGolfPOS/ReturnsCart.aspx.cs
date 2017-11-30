@@ -69,10 +69,10 @@ namespace SweetSpotDiscountGolfPOS
                             foreach (var item in temp)
                             {
                                 //Checks each item to make sure it is not a trade in
-                                //if (item.typeID != 0)
-                                //{
+                                if (item.typeID != 0)
+                                {
                                     itemsInCart.Add(item);
-                                //}
+                                }
                             }
                         }
                         //populates current customer info
