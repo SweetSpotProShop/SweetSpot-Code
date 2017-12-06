@@ -805,6 +805,7 @@ namespace SweetSpotDiscountGolfPOS
                     a.price = Convert.ToDouble(lblPriceDisplay.Text);
                     a.quantity = Convert.ToInt32(lblQuantityDisplay.Text);
                     a.locID = Convert.ToInt32(lm.locationID(lblLocationDisplay.Text).ToString());
+                    a.modelID = Convert.ToInt32(idu.modelName(lblModelDisplay.Text).ToString());
                     a.typeID = 2;
                     a.size = lblClubTypeDisplay.Text;
                     a.colour = lblShaftDisplay.Text;
