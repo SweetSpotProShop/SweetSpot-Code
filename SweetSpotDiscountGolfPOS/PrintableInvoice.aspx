@@ -77,8 +77,6 @@
         </div>
         <br />
         <div id="finalInvoice" class="yesPrint">
-            <asp:Label ID="lbldeletedMessage" runat="server" Text="This invoice was deleted for the following reason: " Visible="false" BackColor="Red" />
-            <asp:Label ID="lbldeletedMessageDisplay" runat="server" Visible="false" />
             <asp:Table ID="tblPartiesInvolved" runat="server" Width="100%">
                 <asp:TableRow>
                     <asp:TableCell CssClass="leftSide">
@@ -129,11 +127,6 @@
                             <asp:Label ID="description" Text='<%#Eval("description")%>' runat="server"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Quantity">
-                        <ItemTemplate>
-                            <asp:Label ID="quantity" Text='<%#Eval("quantity")%>' runat="server"></asp:Label>
-                        </ItemTemplate>
-                    </asp:TemplateField>
                     <asp:TemplateField HeaderText="Retail Price">
                         <ItemTemplate>
                             <asp:Label ID="retail" Text='<%# (Convert.ToInt32(Session["TranType"])  == 1 || Convert.ToInt32(Session["TranType"])  == 3) ? Eval("price","{0:C}") : (Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("price")))-Convert.ToDouble(Eval("discount"))).ToString("C") : ((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("discount")) / 100) * Convert.ToDouble(Eval("price"))))).ToString("C")) %>' runat="server"></asp:Label>
@@ -144,9 +137,19 @@
                             <asp:Label ID="discount" Text='<%# (Convert.ToInt32(Session["TranType"])  == 1 || Convert.ToInt32(Session["TranType"])  == 3) ? Convert.ToBoolean(Eval("percentage")) == false ? (Eval("discount","{0:C}")).ToString() : ((Convert.ToDouble(Eval("discount")) / 100) * Convert.ToDouble(Eval("price"))).ToString("C") : (Convert.ToBoolean(Eval("percentage")) == false ? (((Convert.ToDouble(Eval("price")))-(Convert.ToDouble(Eval("discount")))) - Convert.ToDouble(Eval("returnAmount"))).ToString("C") : (((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("discount")) / 100) * Convert.ToDouble(Eval("price"))))) - Convert.ToDouble(Eval("returnAmount"))).ToString("C")) %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Quantity">
+                        <ItemTemplate>
+                            <asp:Label ID="quantity" Text='<%#Eval("quantity")%>' runat="server"></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Sale Price">
+                        <ItemTemplate>
+                            <asp:Label ID="salePrice" Text='<%# (Convert.ToInt32(Session["TranType"])  == 1 || Convert.ToInt32(Session["TranType"])  == 3) ? (Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("price")))-(Convert.ToDouble(Eval("discount")))).ToString("C") : ((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("discount")) / 100) * Convert.ToDouble(Eval("price"))))).ToString("C")) : Eval("returnAmount","{0:C}") %>' runat="server"></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:TemplateField HeaderText="Extended Price">
                         <ItemTemplate>
-                            <asp:Label ID="extended" Text='<%# (Convert.ToInt32(Session["TranType"])  == 1 || Convert.ToInt32(Session["TranType"])  == 3) ? (Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("price")))-(Convert.ToDouble(Eval("discount")))).ToString("C") : ((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("discount")) / 100) * Convert.ToDouble(Eval("price"))))).ToString("C")) : Eval("returnAmount","{0:C}") %>' runat="server" />
+                            <asp:Label ID="extended" Text='<%# (Convert.ToInt32(Session["TranType"])  == 1 || Convert.ToInt32(Session["TranType"])  == 3) ? (Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("price"))-Convert.ToDouble(Eval("discount")))*Convert.ToDouble(Eval("quantity"))).ToString("C") : ((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("discount")) / 100) * Convert.ToDouble(Eval("price"))))*Convert.ToDouble(Eval("quantity"))).ToString("C")) : Eval("returnAmount","{0:C}") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -223,22 +226,22 @@
                 </asp:GridView>
             </p>
             <br />
-            </div>
         </div>
-            <div class="noPrint">
-                <%--added a cssclass here for testing--%>
-                <asp:Button ID="btnPrint" CssClass="noPrint" runat="server" Text="Print" Width="100px" OnClientClick="CallPrint('print', 'disclaimer');" />
-                <br />
-                <asp:Button ID="btnHome" runat="server" Text="Home" Width="100px" OnClick="btnHome_Click" />
-                <br />
-                <%--<p><b>PLEASE NOTE: </b>All used equipment is sold as is and it is understood that its' condition</p>
+    </div>
+    <div class="noPrint">
+        <%--added a cssclass here for testing--%>
+        <asp:Button ID="btnPrint" CssClass="noPrint" runat="server" Text="Print" Width="100px" OnClientClick="CallPrint('print', 'disclaimer');" />
+        <br />
+        <asp:Button ID="btnHome" runat="server" Text="Home" Width="100px" OnClick="btnHome_Click" />
+        <br />
+        <%--<p><b>PLEASE NOTE: </b>All used equipment is sold as is and it is understood that its' condition</p>
                 <p>and usability may reflect prior use. The Sweet Spot Discount Golf assumes no responsibility</p>
                 <p>beyond the point of sale. <b>ALL SALES FINAL</b> Thank you for shopping at the Sweet Spot.</p>--%>
-            </div>
-        <div id="disclaimer"> 
-            <p><b>PLEASE NOTE: </b>All used equipment is sold as is and it is understood that its' condition</p>
-            <p>and usability may reflect prior use. The Sweet Spot Discount Golf assumes no responsibility</p>
-            <p>beyond the point of sale. <b>ALL SALES FINAL</b> Thank you for shopping at the Sweet Spot.</p>
-        </div>
-    
+    </div>
+    <div id="disclaimer">
+        <p><b>PLEASE NOTE: </b>All used equipment is sold as is and it is understood that its' condition</p>
+        <p>and usability may reflect prior use. The Sweet Spot Discount Golf assumes no responsibility</p>
+        <p>beyond the point of sale. <b>ALL SALES FINAL</b> Thank you for shopping at the Sweet Spot.</p>
+    </div>
+
 </asp:Content>
