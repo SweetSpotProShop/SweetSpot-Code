@@ -234,7 +234,6 @@ namespace SweetSpotDiscountGolfPOS
                     int recordIndex = 3;
                     foreach (Invoice i in inv)
                     {
-
                         cogsExport.Cells[recordIndex, 1].Value = i.invoice;
                         cogsExport.Cells[recordIndex, 2].Value = i.totalCost;
                         cogsExport.Cells[recordIndex, 3].Value = i.balanceDue;
@@ -250,23 +249,8 @@ namespace SweetSpotDiscountGolfPOS
 
                         cogsExport.Cells[recordIndex, 5].Value = i.totalProfit + "%";
                         recordIndex++;
-                    }
-
-                    ////Export main invoice
-                    //for (int i = 1; i < cogsInvoices.Rows.Count; i++)
-                    //{
-                    //    for (int j = 1; j < cogsInvoices.Columns.Count + 1; j++)
-                    //    {
-                    //        if (i == 1)
-                    //        {
-                    //            cogsExport.Cells[i, j].Value = headers[j - 1].ToString();
-                    //        }
-                    //        else
-                    //        {
-                    //            cogsExport.Cells[i, j].Value = cogsInvoices.Rows[i - 1][j - 1];
-                    //        }
-                    //    }
-                    //}
+                    }                 
+                    
                     Response.Clear();
                     Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
                     Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";

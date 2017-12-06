@@ -59,11 +59,11 @@ namespace SweetShop
                     if (i == 0)
                     {
                         //cmd.CommandText = "Select * From tbl_customers Where (firstName + ' ' + lastName) Like '%@searchField1%' or (primaryPhoneINT + ' ' + secondaryPhoneINT) like '%@searchField2%' order by firstName asc";
-                        cmd.CommandText = "Select * From tbl_customers Where Concat(firstName,lastName) Like '%" + strText[i] + "%' or Concat(primaryPhoneINT,secondaryPhoneINT) like '%" + strText[i] + "%'";
+                        cmd.CommandText = "Select * From tbl_customers Where Concat(firstName,lastName) Like '%" + strText[i] + "%' or Concat(primaryPhoneINT,secondaryPhoneINT) like '%" + strText[i] + "%' or email like '%" + strText[i] + "%'";
                     }
                     else
                     {
-                        cmd.CommandText = cmd.CommandText + " Intersect (Select * From tbl_customers Where Concat(firstName,lastName) Like '%" + strText[i] + "%' or Concat(primaryPhoneINT,secondaryPhoneINT) like '%" + strText[i] + "%')";
+                        cmd.CommandText = cmd.CommandText + " Intersect (Select * From tbl_customers Where Concat(firstName,lastName) Like '%" + strText[i] + "%' or Concat(primaryPhoneINT,secondaryPhoneINT) like '%" + strText[i] + "%' or email like '%" + strText[i] + "%')";
                     }
                 }
                 cmd.CommandText = cmd.CommandText + "  order by firstName asc;";
@@ -436,7 +436,7 @@ namespace SweetShop
         }
         //Robust search through inventory Nathan and Tyler created
         //Same as above method with the exception of not having string loc
-        public List<Items> GetItemfromSearch(string itemSearched, string itemType)
+        public List<Items> GetItemfromSearch(string itemSearched, string itemType, bool includeZero)
         {
             ArrayList strText = new ArrayList();
             int numFields = itemSearched.Split(' ').Length;
@@ -469,35 +469,60 @@ namespace SweetShop
                 {
                     if (i == 0)
                     {
-                        cmd.CommandText = "Select * from tbl_" + itemType + " where sku like '%" + strText[i] + "%' or "
-                                        + " modelID in (Select modelID from tbl_model where modelName like '%" + strText[i] + "%') or "
-                                        + " brandID in (Select brandID from tbl_brand where brandName like '%" + strText[i] + "%') or "
-                                        + " concat(clubType, clubSpec, shaftSpec, shaftFlex, dexterity) like '%" + strText[i] + "%'";
-                    }
-                    else
-                    {
-                        cmd.CommandText = cmd.CommandText + " Intersect (Select * from tbl_" + itemType + " where sku like '%" + strText[i] + "%' or "
+                        cmd.CommandText = "Select * from tbl_" + itemType + " where (sku like '%" + strText[i] + "%' or "
                                         + " modelID in (Select modelID from tbl_model where modelName like '%" + strText[i] + "%') or "
                                         + " brandID in (Select brandID from tbl_brand where brandName like '%" + strText[i] + "%') or "
                                         + " concat(clubType, clubSpec, shaftSpec, shaftFlex, dexterity) like '%" + strText[i] + "%')";
+                        if (!includeZero)
+                        {
+                            cmd.CommandText = cmd.CommandText + " and quantity > 0";
+                        }
                     }
+                    else
+                    {
+                        cmd.CommandText = cmd.CommandText + " Intersect (Select * from tbl_" + itemType + " where (sku like '%" + strText[i] + "%' or "
+                                        + " modelID in (Select modelID from tbl_model where modelName like '%" + strText[i] + "%') or "
+                                        + " brandID in (Select brandID from tbl_brand where brandName like '%" + strText[i] + "%') or "
+                                        + " concat(clubType, clubSpec, shaftSpec, shaftFlex, dexterity) like '%" + strText[i] + "%')";
+                        if (!includeZero)
+                        {
+                            cmd.CommandText = cmd.CommandText + " and quantity > 0)";
+                        }
+                        else
+                        {
+                            cmd.CommandText = cmd.CommandText + ")";
+                        }
+                    }
+                    
                 }
                 // if type is accessories perform this search
                 else if (itemType == "Accessories")
                 {
                     if (i == 0)
                     {
-                        cmd.CommandText = "Select * from tbl_" + itemType + " where sku like '%" + strText[i] + "%' or "
-                                    + " modelID in (Select modelID from tbl_model where modelName like '%" + strText[i] + "%') or "
-                                    + " brandID in (Select brandID from tbl_brand where brandName like '%" + strText[i] + "%') or "
-                                    + " concat(size, colour, accessoryType, comments) like '%" + strText[i] + "%'";
-                    }
-                    else
-                    {
-                        cmd.CommandText = cmd.CommandText + "Intersect (Select * from tbl_" + itemType + " where sku like '%" + strText[i] + "%' or "
+                        cmd.CommandText = "Select * from tbl_" + itemType + " where (sku like '%" + strText[i] + "%' or "
                                     + " modelID in (Select modelID from tbl_model where modelName like '%" + strText[i] + "%') or "
                                     + " brandID in (Select brandID from tbl_brand where brandName like '%" + strText[i] + "%') or "
                                     + " concat(size, colour, accessoryType, comments) like '%" + strText[i] + "%')";
+                        if (!includeZero)
+                        {
+                            cmd.CommandText = cmd.CommandText + " and quantity > 0";
+                        }
+                    }
+                    else
+                    {
+                        cmd.CommandText = cmd.CommandText + "Intersect (Select * from tbl_" + itemType + " where (sku like '%" + strText[i] + "%' or "
+                                    + " modelID in (Select modelID from tbl_model where modelName like '%" + strText[i] + "%') or "
+                                    + " brandID in (Select brandID from tbl_brand where brandName like '%" + strText[i] + "%') or "
+                                    + " concat(size, colour, accessoryType, comments) like '%" + strText[i] + "%')";
+                        if (!includeZero)
+                        {
+                            cmd.CommandText = cmd.CommandText + " and quantity > 0)";
+                        }
+                        else
+                        {
+                            cmd.CommandText = cmd.CommandText + ")";
+                        }
                     }
                 }
                 //if type is clothing perform this search
@@ -505,19 +530,35 @@ namespace SweetShop
                 {
                     if (i == 0)
                     {
-                        cmd.CommandText = "Select * from tbl_" + itemType + " where sku like '%" + strText[i] + "%' or "
+                        cmd.CommandText = "Select * from tbl_" + itemType + " where (sku like '%" + strText[i] + "%' or "
                                     + " brandID in (Select brandID from tbl_brand where brandName like '%" + strText[i] + "%') or "
-                                    + " concat(size, colour, gender, style, comments) like '%" + strText[i] + "%'";
+                                    + " concat(size, colour, gender, style, comments) like '%" + strText[i] + "%')";
+                        if (!includeZero)
+                        {
+                            cmd.CommandText = cmd.CommandText + " and quantity > 0";
+                        }
                     }
                     else
                     {
-                        cmd.CommandText = cmd.CommandText + "Intersect (Select * from tbl_" + itemType + " where sku like '%" + strText[i] + "%' or "
+                        cmd.CommandText = cmd.CommandText + "Intersect (Select * from tbl_" + itemType + " where (sku like '%" + strText[i] + "%' or "
                                     + " brandID in (Select brandID from tbl_brand where brandName like '%" + strText[i] + "%') or "
                                     + " concat(size, colour, gender, style, comments) like '%" + strText[i] + "%')";
+                        if (!includeZero)
+                        {
+                            cmd.CommandText = cmd.CommandText + " and quantity > 0)";
+                        }
+                        else
+                        {
+                            cmd.CommandText = cmd.CommandText + ")";
+                        }
                     }
                 }
             }
+
             cmd.CommandText = cmd.CommandText + " order by sku desc;";
+
+
+
             SqlDataReader reader = cmd.ExecuteReader();
 
             while (reader.Read())
