@@ -154,7 +154,6 @@ namespace SweetSpotDiscountGolfPOS
                 //Server.Transfer(prevPage, false);
             }
         }
-
         protected void grdCustomersSearched_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             grdCustomersSearched.PageIndex = e.NewPageIndex;
