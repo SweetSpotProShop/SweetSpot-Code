@@ -107,7 +107,7 @@
                             <asp:Button ID="btnPaymentsByDateReport" runat="server" Text="Payments By Date" Width="200px" Onclick="btnPaymentsByDateReport_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            
+                            <asp:Button ID="btnTradeInsByDateReport" runat="server" Text="Trade Ins By Date" Width="200px" Onclick="btnTradeInsByDateReport_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
                             

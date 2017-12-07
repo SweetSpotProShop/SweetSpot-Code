@@ -114,6 +114,7 @@
     <Content Include="ReportsCashOut.aspx" />
     <Content Include="ReportsHomePage.aspx" />
     <Content Include="ReportsPaymentType.aspx" />
+    <Content Include="ReportsTradeIns.aspx" />
     <Content Include="ReportsSales.aspx" />
     <Content Include="ReportsItemsSold.aspx" />
     <Content Include="ReportsMostSold.aspx" />
@@ -283,6 +284,13 @@
     </Compile>
     <Compile Include="ReportsPaymentType.aspx.designer.cs">
       <DependentUpon>ReportsPaymentType.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ReportsTradeIns.aspx.cs">
+      <DependentUpon>ReportsTradeIns.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ReportsTradeIns.aspx.designer.cs">
+      <DependentUpon>ReportsTradeIns.aspx</DependentUpon>
     </Compile>
     <Compile Include="ReportsSales.aspx.cs">
       <DependentUpon>ReportsSales.aspx</DependentUpon>
