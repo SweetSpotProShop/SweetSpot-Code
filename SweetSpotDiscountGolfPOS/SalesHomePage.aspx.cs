@@ -190,7 +190,17 @@ namespace SweetSpotDiscountGolfPOS
                 DateTime dtmEndDate = calEndDate.SelectedDate;
                 if (txtInvoiceNum.Text != "")
                 {
+                    //include if statement to check if text box has number or text value
+                    //when text is found do search through invoices by sku description
+                    //There is already a procedure to search through skus by description
+                    //we can then use that to look through invoices to return each invoice
+                        //with that sku
+                    //will need to use a select distinct to prvent the same invoice
+                        //from showing up multiple times
+                    //when number is found follow through with below procedure
                     //Searches through invoices using invoice number
+
+                    //Why are we doing this call then going through if sttaement to replace it?
                     fullInvoices = ssm.getInvoice(Convert.ToInt32(txtInvoiceNum.Text));
                     if (!fullInvoices.Any())
                     {
