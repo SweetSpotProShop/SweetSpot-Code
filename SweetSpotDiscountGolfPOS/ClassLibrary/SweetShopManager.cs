@@ -248,7 +248,7 @@ namespace SweetShop
 
         /*******Item Utilities************************************************************************************/
         //Returns a list of items from a search
-        public List<Items> returnSearchFromAllThreeItemSets(string searchedText, string loc)
+        public List<Items> returnSearchFromAllThreeItemSets(string searchedText)
         {
             //Different lists for the items
             List<Items> searchClubs = new List<Items>();
@@ -256,9 +256,9 @@ namespace SweetShop
             List<Items> searchAccessories = new List<Items>();
             List<Items> searchedItems = new List<Items>();
             //Gets all items that match the searched text
-            searchClubs = GetItemfromSearch(searchedText, "Clubs", loc);
-            searchClothing = GetItemfromSearch(searchedText, "Accessories", loc);
-            searchAccessories = GetItemfromSearch(searchedText, "Clothing", loc);
+            searchClubs = GetItemfromSearch(searchedText, "Clubs");
+            searchClothing = GetItemfromSearch(searchedText, "Accessories");
+            searchAccessories = GetItemfromSearch(searchedText, "Clothing");
             //Looping through the clubs
             foreach (var item in searchClubs)
             {
@@ -281,11 +281,11 @@ namespace SweetShop
             return searchedItems;
         }
         //Robust search through inventory Nathan and Tyler created for specific location
-        public List<Items> GetItemfromSearch(string itemSearched, string itemType, string loc)
+        public List<Items> GetItemfromSearch(string itemSearched, string itemType)
         {
             //Array used to store the search elements
             ArrayList strText = new ArrayList();
-            int intLocation = lm.locationIDfromCity(loc);
+            //int intLocation = lm.locationIDfromCity(loc);
             int numFields = itemSearched.Split(' ').Length;
 
             //If there is more than one search element

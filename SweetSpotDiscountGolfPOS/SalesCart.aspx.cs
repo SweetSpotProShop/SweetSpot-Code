@@ -356,14 +356,14 @@ namespace SweetSpotDiscountGolfPOS
                 //Checks to see if some number or text has been entered into the search field
                 if (!txtSearch.Text.Equals("") && !txtSearch.Text.Equals(null))
                 {
-                    //If something was entered then check to see if it is words
+                    //If something was entered then check to see if it is text
                     if (!int.TryParse(txtSearch.Text, out skuInt))
                     {
                         //If it is then pass into string
                         skuString = txtSearch.Text;
                         //use string and location to call query
-                        //Query will return list of items that match the word(s)
-                        invoiceItems = ssm.returnSearchFromAllThreeItemSets(skuString, loc);
+                        //Query will return list of items that match the text
+                        invoiceItems = ssm.returnSearchFromAllThreeItemSets(skuString);
                     }
                     else
                     {

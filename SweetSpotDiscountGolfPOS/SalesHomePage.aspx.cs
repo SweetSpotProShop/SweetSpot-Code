@@ -188,23 +188,40 @@ namespace SweetSpotDiscountGolfPOS
                 //Retrieves dates from Calendar
                 DateTime dtmStartDate = calStartDate.SelectedDate;
                 DateTime dtmEndDate = calEndDate.SelectedDate;
+                List<Items> items = new List<Items>();
+                int skuInt = 0;
                 if (txtInvoiceNum.Text != "")
                 {
                     //include if statement to check if text box has number or text value
                     //when text is found do search through invoices by sku description
                     //There is already a procedure to search through skus by description
                     //we can then use that to look through invoices to return each invoice
-                        //with that sku
+                    //with that sku
                     //will need to use a select distinct to prvent the same invoice
-                        //from showing up multiple times
+                    //from showing up multiple times
                     //when number is found follow through with below procedure
                     //Searches through invoices using invoice number
 
-                    //Why are we doing this call then going through if sttaement to replace it?
-                    fullInvoices = ssm.getInvoice(Convert.ToInt32(txtInvoiceNum.Text));
+                    if (!int.TryParse(txtInvoiceNum.Text, out skuInt))
+                    {
+                        items = ssm.returnSearchFromAllThreeItemSets(txtInvoiceNum.Text);
+                    }
+
+                    //This search is by invoice number
+                    fullInvoices = ssm.getInvoice(skuInt);
+                    //If its empty then complete a second search by sku because the int enetered
+                    //wasn't an invoice number.
                     if (!fullInvoices.Any())
                     {
-                        fullInvoices = ssm.getInvoiceFromSku(Convert.ToInt32(txtInvoiceNum.Text), Convert.ToInt32(ddlLocation.SelectedValue));
+                        items.Add(new SweetShop.Items(skuInt, 0));
+                        foreach(Items i in items)
+                        {
+                            List<Invoice> tempInvoice = ssm.getInvoiceFromSku(i.sku, Convert.ToInt32(ddlLocation.SelectedValue));
+                            foreach(Invoice tI in tempInvoice)
+                            {
+                                fullInvoices.Add(tI);
+                            }
+                        }
                     }
                 }
                 else
