@@ -106,7 +106,7 @@ namespace SweetShop
             transactionType = TT;
             comments = C;
         }
-        public Invoice(int num, int subNum, DateTime d, string c, string e, double da)
+        public Invoice(int num, int subNum, DateTime d, string c, string e, double da, double bd)
         {
             invoiceNum = num;
             invoiceSub = subNum;
@@ -114,6 +114,7 @@ namespace SweetShop
             customerName = c;
             employeeName = e;
             discountAmount = da;
+            balanceDue = bd;
         }
        
     }

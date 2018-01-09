@@ -26,6 +26,7 @@ namespace SweetSpotDiscountGolfPOS
         ItemDataUtilities idu = new ItemDataUtilities();
         CurrentUser cu = new CurrentUser();
         double tDiscount;
+        double tBalance;
 
         List<Invoice> discounts = new List<Invoice>();
 
@@ -104,10 +105,12 @@ namespace SweetSpotDiscountGolfPOS
                 if (e.Row.RowType == DataControlRowType.DataRow)
                 {
                     tDiscount += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "discountAmount"));
+                    tBalance += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "balanceDue"));
                 }
                 else if (e.Row.RowType == DataControlRowType.Footer)
                 {
                     e.Row.Cells[3].Text = String.Format("{0:C}", tDiscount);
+                    e.Row.Cells[4].Text = String.Format("{0:C}", tBalance);
                 }
             }
             //Exception catch

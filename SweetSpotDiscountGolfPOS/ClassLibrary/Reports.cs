@@ -2069,7 +2069,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             cmd.CommandText = "select invoiceNum, invoiceSubNum, invoiceDate, " +
                 " (select Concat(firstName, ' ', lastName) from tbl_customers where custID = tbl_invoice.custID) as 'customerName', " +
                 " (select Concat(firstName, ' ', lastName) from tbl_employee where empID = tbl_invoice.empID) as 'employeeName', " +
-                " discountAmount" +
+                " discountAmount, balanceDue " +
                 " from tbl_invoice where discountAmount <> 0 and invoiceDate between @startDate and @endDate;";
             cmd.Parameters.AddWithValue("@startDate", startDate);
             cmd.Parameters.AddWithValue("@endDate", endDate);
@@ -2080,7 +2080,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             {
                 returns.Add(new Invoice(Convert.ToInt32(reader["invoiceNum"]), Convert.ToInt32(reader["invoiceSubNum"]),
                 Convert.ToDateTime(reader["invoiceDate"]), reader["customerName"].ToString(),
-                 reader["employeeName"].ToString(), Convert.ToDouble(reader["discountAmount"])));
+                 reader["employeeName"].ToString(), Convert.ToDouble(reader["discountAmount"]), Convert.ToDouble(reader["balanceDue"])));
             }
             con.Close();
             return returns;
