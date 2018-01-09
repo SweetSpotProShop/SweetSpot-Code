@@ -236,6 +236,32 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             con.Close();
             return bolCAD;
         }
+        public bool tradeinsHaveBeenProcessed(Object[] repInfo)
+        {
+            bool bolTI = false;
+            DateTime[] dtm = (DateTime[])repInfo[0];
+            int loc = Convert.ToInt32(repInfo[1]);
+
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "Select count(invoiceNum) from tbl_invoice "
+                        + "where invoiceDate between @startDate and @endDate "
+                        + "and locationID = @locationID and tradeInAmount < 0";
+            cmd.Parameters.AddWithValue("@startDate", dtm[0]);
+            cmd.Parameters.AddWithValue("@endDate", dtm[1]);
+            cmd.Parameters.AddWithValue("@locationID", loc);
+            cmd.Connection = con;
+            con.Open();
+            cmd.ExecuteNonQuery();
+            int invoicePresent = (int)cmd.ExecuteScalar();
+            if (invoicePresent > 0)
+            {
+                bolTI = true;
+            }
+            //Closing
+            con.Close();
+            return bolTI;
+        }
 
         //******************PURCHASES REPORTING*******************************************************
         public List<Purchases> returnPurchasesDuringDates(DateTime startDate, DateTime endDate, int locationID)
@@ -573,6 +599,40 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             cmd.CommandText = "Select invoiceDate, sum(subTotal) as totalSales from tbl_invoice "
+                        + "where invoiceDate between @startDate and @endDate "
+                        + "and locationID = @locationID group by invoiceDate";
+            cmd.Parameters.AddWithValue("@startDate", dtm[0]);
+            cmd.Parameters.AddWithValue("@endDate", dtm[1]);
+            cmd.Parameters.AddWithValue("@locationID", loc);
+            cmd.Connection = con;
+            SqlDataAdapter sda = new SqlDataAdapter(cmd);
+            //Stores data into data table
+            sda.Fill(transactions);
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            return transactions;
+        }
+
+        //******************Trade Ins by Date Report*******************************************************
+        public int verifyTradeInsHaveBeenMade(Object[] repInfo)
+        {
+            int indicator = 0;
+            if (!tradeinsHaveBeenProcessed(repInfo))
+            {
+                indicator = 1;
+            }
+            return indicator;
+        }
+        public System.Data.DataTable returnTradeInsForSelectedDate(Object[] repInfo)
+        {
+            System.Data.DataTable transactions = new System.Data.DataTable();
+            DateTime[] dtm = (DateTime[])repInfo[0];
+            int loc = Convert.ToInt32(repInfo[1]);
+
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "Select invoiceDate, sum(tradeInAmount) as totalTradeIns from tbl_invoice "
                         + "where invoiceDate between @startDate and @endDate "
                         + "and locationID = @locationID group by invoiceDate";
             cmd.Parameters.AddWithValue("@startDate", dtm[0]);

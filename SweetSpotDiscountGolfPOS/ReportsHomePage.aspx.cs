@@ -452,6 +452,42 @@ namespace SweetSpotDiscountGolfPOS
                 //Server.Transfer(prevPage, false);
             }
         }
+        protected void btnTradeInsByDateReport_Click(object sendr, EventArgs e)
+        {
+            //Collects current method and page for error tracking
+            string method = "btnTradeInsByDateReport_Click";
+            try
+            {
+                //Stores report dates into Session
+                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                int loc = Convert.ToInt32(ddlLocation.SelectedValue);
+                Object[] repInfo = new Object[] { dtm, loc };
+                int indicator = r.verifyTradeInsHaveBeenMade(repInfo);
+                //Check to see if there are sales first
+                if (indicator == 0)
+                {
+                    Session["reportInfo"] = repInfo;
+                    Server.Transfer("ReportsTradeIns.aspx", false);
+                }
+                else if (indicator == 1)
+                {
+                    MessageBox.ShowMessage("No Trade Ins have been processed for selected dates.", this);
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                er.logError(ex, cu.empID, Convert.ToString(Session["currPage"]), method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+                //Server.Transfer(prevPage, false);
+            }
+        }
         protected void btnTesting_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
