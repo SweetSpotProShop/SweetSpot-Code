@@ -171,6 +171,9 @@
                         <asp:Button ID="btnBackToSearch" runat="server" Text="Exit Item" OnClick="btnBackToSearch_Click" Visible="true" />
                         <asp:Button ID="btnCancel" runat="server" Text="Cancel" OnClick="btnCancel_Click" Visible="false" />
                     </asp:TableCell>
+                    <asp:TableCell>
+                        <asp:Button ID="btnCreateSimilar" runat="server" Text="Create Similar" OnClick="btnCreateSimilar_Click" Visible="true" />
+                    </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
         </asp:Panel>

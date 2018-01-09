@@ -18,6 +18,9 @@
                     <asp:TableCell>
                         <asp:Label ID="lblSearch" runat="server" Text="Enter Search Text"></asp:Label>
                     </asp:TableCell>
+                    <asp:TableCell>
+                        <asp:CheckBox ID="chkIncludeZero" runat="server" Text="Return Zero Quantity" TextAlign="Left"/>
+                    </asp:TableCell>
                 </asp:TableRow>
                 
                 <asp:TableRow>
@@ -101,6 +104,8 @@
                     No current Inventory data, please search for an Inventory Item
                 </EmptyDataTemplate>
             </asp:GridView>
+            <hr />
+            <asp:Button class="noPrint" ID="btnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="btnDownload_Click" />
         </asp:Panel>
     </div>
 </asp:Content>
