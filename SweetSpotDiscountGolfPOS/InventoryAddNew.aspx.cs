@@ -322,6 +322,7 @@ namespace SweetSpotDiscountGolfPOS
                     //Transfers all info into Accessory class
                     a.sku = idu.maxSku(2);
                     a.brandID = Convert.ToInt32(ddlBrand.SelectedValue);
+                    a.modelID = Convert.ToInt32(ddlModel.SelectedValue);
                     a.cost = Convert.ToDouble(txtCost.Text);
                     a.price = Convert.ToDouble(txtPrice.Text);
                     a.quantity = Convert.ToInt32(txtQuantity.Text);
