@@ -1474,7 +1474,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 }
                 ssm.addCustomer(cu);
             }
-
         }
         //This method is an updated import item method that runs cleaner and should produce less errors
         public System.Data.DataTable uploadItems(FileUpload fup)
@@ -1559,7 +1558,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 itemType.ToString(),
                                 //***************MODEL Name***************        
                                 (string)(worksheet.Cells[i, 6].Value.ToNullSafeString()), //gender for clothing
-                                                                                          //***************COST***************
+                                //***************COST***************
                                 Convert.ToDouble(worksheet.Cells[i, 12].Value),
                                 //***************PRICE***************
                                 Convert.ToDouble(worksheet.Cells[i, 15].Value),
@@ -1571,7 +1570,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 Convert.ToDouble(worksheet.Cells[i, 11].Value),
                                 //***************CLUB TYPE***************
                                 (string)(worksheet.Cells[i, 7].Value.ToNullSafeString()), //style for clothing
-                                                                                          //***************SHAFT***************
+                                //***************SHAFT***************
                                 "",
                                 //***************NUMBER OF CLUBS***************
                                 "",
@@ -1617,7 +1616,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 Convert.ToDouble(worksheet.Cells[i, 11].Value),
                                 //***************CLUB TYPE***************
                                 (string)(worksheet.Cells[i, 7].Value.ToNullSafeString()), //accessoryType
-                                                                                          //***************SHAFT***************
+                                //***************SHAFT***************
                                 "",
                                 //***************NUMBER OF CLUBS***************
                                 "",
