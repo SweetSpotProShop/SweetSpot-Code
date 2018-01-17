@@ -64,9 +64,9 @@ namespace SweetSpotDiscountGolfPOS
                 List<Items> models = new List<Items>();
                 List<Items> brands = new List<Items>();
                 //Binding the gridview
-                items = r.mostSoldItemsReport(startDate, endDate, locationID);
-                brands = r.mostSoldBrandsReport(startDate, endDate, locationID);
-                models = r.mostSoldModelsReport(startDate, endDate, locationID);
+                items = r.mostSoldItemsReport1(startDate, endDate, locationID);
+                brands = r.mostSoldBrandsReport1(startDate, endDate, locationID);
+                models = r.mostSoldModelsReport1(startDate, endDate, locationID);
                 //Checking if there are any values
                 if (items.Count > 0 && brands.Count > 0 && models.Count > 0)
                 {

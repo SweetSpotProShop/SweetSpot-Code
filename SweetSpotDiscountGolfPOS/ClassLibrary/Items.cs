@@ -30,7 +30,7 @@ namespace SweetShop
         public double discount { get; set; }
         public bool percent { get; set; }
         public double difference { get; set; }
-        //public int amountSold { get; set; }
+        public int amountSold { get; set; }
 
         public Items() { }
         public Items(int Sku, string Description, string Location, int Quantity, double Price, double Cost)
@@ -71,15 +71,15 @@ namespace SweetShop
             percent = perc;
             difference = d;
         }
-        //public Items(int s, int a)
-        //{
-        //    sku = s;
-        //    amountSold = a;
-        //}
-        //public Items(string d, int a)
-        //{
-        //    description = d;
-        //    amountSold = a;
-        //}
+        public Items(int s, int a)
+        {
+            sku = s;
+            amountSold = a;
+        }
+        public Items(string d, int a)
+        {
+            description = d;
+            amountSold = a;
+        }
     }
 }
