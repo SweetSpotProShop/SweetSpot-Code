@@ -308,7 +308,7 @@ namespace SweetSpotDiscountGolfPOS
                     r.receiptDebit, r.receiptMasterCard, r.receiptVisa, r.receiptGST, r.receiptPST, r.receiptSubTotal, r.overShort,
                     finalized, processed, Double.Parse(lblPreTaxDisplay.Text, System.Globalization.NumberStyles.Currency), cu.locationID, cu.empID);
                 //Processes as done
-                reports.insertCashout(cas, cu.empID, cu.locationID);
+                reports.insertCashout(cas);
                 //Empties current cashout sessions
                 Session["saleCashout"] = null;
                 Session["receiptCashout"] = null;

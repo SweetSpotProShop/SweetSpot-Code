@@ -46,6 +46,11 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
 
         public Cashout() { } //These could be cleaned up after the cashout process get cleaned up
+        public Cashout(string m, double a)
+        {
+            mop = m;
+            amount = a;
+        }
         public Cashout(DateTime CDate, DateTime CTime, double SalesTradeIn, double SalesGiftCard, 
             double SalesCash, double SalesDebit, double SalesMasterCard, double SalesVisa, 
             double ReceiptsTradeIn, double ReceiptsGiftCard, double ReceiptsCash, double ReceiptsDebit, 

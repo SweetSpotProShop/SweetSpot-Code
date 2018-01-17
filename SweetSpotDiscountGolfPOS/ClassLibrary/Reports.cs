@@ -165,7 +165,32 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
 
 
-
+        public List<Cashout> cashoutAmounts(DateTime startDate, DateTime endDate, int locationID)
+        {
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "Select tbl_invoiceMOP.mopType, tbl_invoiceMOP.amountPaid " +
+                "from tbl_invoiceMOP " +
+                "INNER JOIN tbl_invoice ON tbl_invoiceMOP.invoiceNum = tbl_invoice.invoiceNum AND tbl_invoiceMOP.invoiceSubNum = tbl_invoice.invoiceSubNum " +
+                "where tbl_invoice.invoiceDate between @startDate and @endDate and tbl_invoice.locationID = @locationID;";
+            cmd.Parameters.AddWithValue("@startDate", startDate);
+            cmd.Parameters.AddWithValue("@endDate", endDate);
+            cmd.Parameters.AddWithValue("@locationID", locationID);
+            cmd.Connection = con;
+            con.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                Cashout cs = new Cashout(
+                    Convert.ToString(reader["mopType"]),
+                    Convert.ToDouble(reader["amountPaid"]));
+                //Adding the mops to the list of type cashout
+                cashout.Add(cs);
+            }
+            con.Close();
+            //Returns the list of type cashout
+            return cashout;
+        }
         //Used to get the subTotal, government tax, and provincial tax from the invoices based on a location ID and dates
         public Cashout getRemainingCashout(DateTime startDate, DateTime endDate, int locationID)
         {
