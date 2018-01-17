@@ -2021,10 +2021,10 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
 
         //******************ITEMS SOLD REPORTING*******************************************************
-        public System.Data.DataTable returnItemsSold(DateTime startDate, DateTime endDate, int locationID)
+        public List<Items> returnItemsSold(DateTime startDate, DateTime endDate, int locationID)
         {
             //This method returns the invoice numbers, sku, itemCost, and itemPrice 
-            System.Data.DataTable items = new System.Data.DataTable();
+            List<Items> items = new List<Items>();
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             cmd.CommandText = "select CONCAT(tbl_invoiceItem.invoiceNum, '-', tbl_invoiceItem.invoiceSubNum) AS invoice, tbl_invoiceItem.sku, tbl_invoiceItem.itemCost, tbl_invoiceItem.itemPrice, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage, "

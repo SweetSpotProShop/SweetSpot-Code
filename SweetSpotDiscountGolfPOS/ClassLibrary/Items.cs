@@ -26,10 +26,10 @@ namespace SweetShop
         //public string clubType { get; set; }
         //public string shaft { get; set; }
         //public string numberOfClubs { get; set; }
-        //public string invoice { get; set; }
-        //public double discount { get; set; }
-        //public bool percent { get; set; }
-        //public double difference { get; set; }
+        public string invoice { get; set; }
+        public double discount { get; set; }
+        public bool percent { get; set; }
+        public double difference { get; set; }
         //public int amountSold { get; set; }
 
         public Items() { }
@@ -61,16 +61,16 @@ namespace SweetShop
         //    typeID = t;
         //    location = l;
         //}
-        //public Items(int num, int subNum, int s, double c, double p, double disc, bool perc, double d)
-        //{
-        //    invoice = num.ToString() + "-" + subNum.ToString();
-        //    sku = s;
-        //    cost = c;
-        //    price = p;
-        //    discount = disc;
-        //    percent = perc;
-        //    difference = d;
-        //}
+        public Items(int num, int subNum, int s, double c, double p, double disc, bool perc, double d)
+        {
+            invoice = num.ToString() + "-" + subNum.ToString();
+            sku = s;
+            cost = c;
+            price = p;
+            discount = disc;
+            percent = perc;
+            difference = d;
+        }
         //public Items(int s, int a)
         //{
         //    sku = s;
