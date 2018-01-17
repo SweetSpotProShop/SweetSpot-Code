@@ -33,7 +33,7 @@ namespace SweetSpotDiscountGolfPOS
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
-                    Server.Transfer("LoginPage.aspx", false);
+                    Response.Redirect("LoginPage.aspx", false);
                 }
             }
             //Exception catch
@@ -51,7 +51,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
         //Searches invoices and displays them 
@@ -95,12 +95,12 @@ namespace SweetSpotDiscountGolfPOS
                 foreach (var i in fullInvoices)
                 {
                     //Sets customer and employee class for the last invoice
-                    Customer c = ssm.GetCustomerbyCustomerNumber(i.customerID);
-                    Employee emp = em.getEmployeeByID(i.employeeID);
+                    //Customer c = ssm.GetCustomerbyCustomerNumber(i.customerID);
+                    //Employee emp = em.getEmployeeByID(i.employeeID);
                     //Uses the classes to set customer name and employee name of each invoice
-                    Invoice iv = new Invoice(i.invoiceNum, i.invoiceSub, i.invoiceDate, c.firstName + " " + c.lastName, i.balanceDue, lm.locationName(i.locationID), emp.firstName + " " + emp.lastName);
+                    //Invoice iv = new Invoice(i.invoiceNum, i.invoiceSub, i.invoiceDate, c.firstName + " " + c.lastName, i.balanceDue, lm.locationName(i.locationID), emp.firstName + " " + emp.lastName);
                     //Adds each invoice to invoice list
-                    viewInvoices.Add(iv);
+                    //viewInvoices.Add(iv);
                 }
                 //Binds invoice list to the grid view
                 grdInvoiceSelection.DataSource = viewInvoices;
@@ -130,7 +130,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
         protected void grdInvoiceSelection_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -157,12 +157,12 @@ namespace SweetSpotDiscountGolfPOS
                         if (inv.invoiceNum == invNum && inv.invoiceSub == invSNum)
                         {
                             //Sets customer class based on the found invoice customer number
-                            Customer c = ssm.GetCustomerbyCustomerNumber(inv.customerID);
+                            //Customer c = ssm.GetCustomerbyCustomerNumber(inv.customerID);
                             //Sets invoice and customer name
                             returnInvoice = inv;
-                            returnInvoice.customerName = c.firstName + " " + c.lastName;
+                            //returnInvoice.customerName = c.firstName + " " + c.lastName;
                             //Sets the Customer key id
-                            Session["key"] = inv.customerID;
+                            //Session["key"] = inv.customerID;
                             //Sets the session to the single invoice
                             Session["searchReturnInvoices"] = returnInvoice;
                         }
@@ -170,7 +170,7 @@ namespace SweetSpotDiscountGolfPOS
                     //Sets transaction type to return
                     Session["TranType"] = 2;
                     //Changes to Returns cart
-                    Server.Transfer("ReturnsCart.aspx", false);
+                    Response.Redirect("ReturnsCart.aspx", false);
                 }
             }
             //Exception catch
@@ -188,7 +188,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
     }

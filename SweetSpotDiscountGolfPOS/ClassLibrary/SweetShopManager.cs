@@ -19,12 +19,13 @@ namespace SweetShop
     public class SweetShopManager
     {
         private string connectionString;
+        CustomerManager CM = new CustomerManager();
+        EmployeeManager EM = new EmployeeManager();
         ItemDataUtilities idu = new ItemDataUtilities();
         LocationManager lm = new LocationManager();
 
         public SweetShopManager()
         {
-
             connectionString = ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString;
         }
 
@@ -60,7 +61,6 @@ namespace SweetShop
                 {
                     if (i == 0)
                     {
-                        //cmd.CommandText = "Select * From tbl_customers Where (firstName + ' ' + lastName) Like '%@searchField1%' or (primaryPhoneINT + ' ' + secondaryPhoneINT) like '%@searchField2%' order by firstName asc";
                         cmd.CommandText = "Select * From tbl_customers Where Concat(firstName,lastName) Like '%" + strText[i] + "%' or Concat(primaryPhoneINT,secondaryPhoneINT) like '%" + strText[i] + "%' or email like '%" + strText[i] + "%'";
                     }
                     else
@@ -68,28 +68,28 @@ namespace SweetShop
                         cmd.CommandText = cmd.CommandText + " Intersect (Select * From tbl_customers Where Concat(firstName,lastName) Like '%" + strText[i] + "%' or Concat(primaryPhoneINT,secondaryPhoneINT) like '%" + strText[i] + "%' or email like '%" + strText[i] + "%')";
                     }
                 }
-                cmd.CommandText = cmd.CommandText + "  order by firstName asc;";
+                cmd.CommandText = cmd.CommandText + " order by firstName asc;";
                 SqlDataReader reader = cmd.ExecuteReader();
                 //New List for Customer
                 List<Customer> customer = new List<Customer>();
                 //Begin reading
                 while (reader.Read())
                 {
-                    Customer c = new Customer(Convert.ToInt32(reader["custID"]),
-                        reader["firstName"].ToString(),
-                        reader["lastName"].ToString(),
-                        reader["primaryAddress"].ToString(),
-                        reader["secondaryAddress"].ToString(),
-                        reader["primaryPhoneINT"].ToString(),
-                        reader["secondaryPhoneINT"].ToString(),
-                        Convert.ToBoolean(reader["marketingEmail"]),
-                        reader["email"].ToString(),
-                        reader["city"].ToString(),
-                        Convert.ToInt32(reader["provStateID"]),
-                        Convert.ToInt32(reader["country"]),
-                        reader["postZip"].ToString());
+                    //Customer c = new Customer(Convert.ToInt32(reader["custID"]),
+                    //    reader["firstName"].ToString(),
+                    //    reader["lastName"].ToString(),
+                    //    reader["primaryAddress"].ToString(),
+                    //    reader["secondaryAddress"].ToString(),
+                    //    reader["primaryPhoneINT"].ToString(),
+                    //    reader["secondaryPhoneINT"].ToString(),
+                    //    Convert.ToBoolean(reader["marketingEmail"]),
+                    //    reader["email"].ToString(),
+                    //    reader["city"].ToString(),
+                    //    Convert.ToInt32(reader["provStateID"]),
+                    //    Convert.ToInt32(reader["country"]),
+                    //    reader["postZip"].ToString());
                     //Adds the customer
-                    customer.Add(c);
+                    //customer.Add(c);
                 }
                 con.Close();
                 //Returns the customer(s)
@@ -128,12 +128,12 @@ namespace SweetShop
                         reader["secondaryAddress"].ToString(),
                         reader["primaryPhoneINT"].ToString(),
                         reader["secondaryPhoneINT"].ToString(),
-                        Convert.ToBoolean(reader["marketingEmail"]),
                         reader["email"].ToString(),
                         reader["city"].ToString(),
                         Convert.ToInt32(reader["provStateID"]),
                         Convert.ToInt32(reader["country"]),
-                        reader["postZip"].ToString());
+                        reader["postZip"].ToString(),
+                        Convert.ToBoolean(reader["marketingEmail"]));
                     //Sets the customer
                     customer = c;
                 }
@@ -146,39 +146,6 @@ namespace SweetShop
                 Console.WriteLine(e.ToString());
                 return null;
             }
-        }
-        //Add Customer Nathan and Tyler created. Returns customer ID
-        public int addCustomer(Customer c)
-        {
-            //New command
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "Insert Into tbl_customers (firstName, lastName, primaryAddress,"
-                + " secondaryAddress, primaryPhoneINT, secondaryPhoneINT, billingAddress, marketingEmail, email,"
-                + " city, provStateID, country, postZip) Values (@FirstName, @LastName, @primaryAddress,"
-                + " @secondaryAddress, @primaryPhoneNumber, @secondaryPhoneNumber, @billingAddress, @marketingEmail,"
-                + " @Email, @City, @Province, @Country, @PostalCode)";
-            cmd.Parameters.AddWithValue("FirstName", c.firstName);
-            cmd.Parameters.AddWithValue("LastName", c.lastName);
-            cmd.Parameters.AddWithValue("primaryAddress", c.primaryAddress);
-            cmd.Parameters.AddWithValue("secondaryAddress", c.secondaryAddress);
-            cmd.Parameters.AddWithValue("marketingEmail", c.emailList);
-            cmd.Parameters.AddWithValue("City", c.city);
-            cmd.Parameters.AddWithValue("billingAddress", "");
-            cmd.Parameters.AddWithValue("PostalCode", c.postalCode);
-            cmd.Parameters.AddWithValue("Province", c.province);
-            cmd.Parameters.AddWithValue("Country", c.country);
-            cmd.Parameters.AddWithValue("primaryPhoneNumber", c.primaryPhoneNumber);
-            cmd.Parameters.AddWithValue("secondaryPhoneNumber", c.secondaryPhoneNumber);
-            cmd.Parameters.AddWithValue("Email", c.email);
-            //Declare and open connection
-            cmd.Connection = con;
-            con.Open();
-            //Execute Insert
-            cmd.ExecuteNonQuery();
-            con.Close();
-            //Returns customer ID
-            return returnCustomerNumber(c);
         }
         //Nathan and Tyler created. Returns customer ID
         public int returnCustomerNumber(Customer c)
@@ -248,13 +215,13 @@ namespace SweetShop
 
         /*******Item Utilities************************************************************************************/
         //Returns a list of items from a search
-        public List<Items> returnSearchFromAllThreeItemSets(string searchedText, string loc)
+        public List<Cart> returnSearchFromAllThreeItemSets(string searchedText, string loc)
         {
             //Different lists for the items
-            List<Items> searchClubs = new List<Items>();
-            List<Items> searchClothing = new List<Items>();
-            List<Items> searchAccessories = new List<Items>();
-            List<Items> searchedItems = new List<Items>();
+            List<Cart> searchClubs = new List<Cart>();
+            List<Cart> searchClothing = new List<Cart>();
+            List<Cart> searchAccessories = new List<Cart>();
+            List<Cart> searchedItems = new List<Cart>();
             //Gets all items that match the searched text
             searchClubs = GetItemfromSearch(searchedText, "Clubs", loc);
             searchClothing = GetItemfromSearch(searchedText, "Accessories", loc);
@@ -281,11 +248,11 @@ namespace SweetShop
             return searchedItems;
         }
         //Robust search through inventory Nathan and Tyler created for specific location
-        public List<Items> GetItemfromSearch(string itemSearched, string itemType, string loc)
+        public List<Cart> GetItemfromSearch(string itemSearched, string itemType, string loc)
         {
             //Array used to store the search elements
             ArrayList strText = new ArrayList();
-            int intLocation = lm.locationIDfromCity(loc);
+            //int intLocation = lm.locationIDfromCity(loc);
             int numFields = itemSearched.Split(' ').Length;
 
             //If there is more than one search element
@@ -310,7 +277,7 @@ namespace SweetShop
 
             //Item List
 
-            List<Items> item = new List<Items>();
+            List<Cart> item = new List<Cart>();
             //Open Database Connection
             cmd.Connection = con;
             con.Open();
@@ -394,7 +361,7 @@ namespace SweetShop
                 //if brand is not null return brand description
                 if (reader["brandID"] != null)
                 {
-                    brand = idu.brandType(Convert.ToInt32(reader["brandID"]));
+                    brand = idu.ReturnBrandNameFromBrandID(Convert.ToInt32(reader["brandID"]));
                 }
                 //if search type is clubs enter here for model and description builder
                 if (itemType == "Clubs")
@@ -402,7 +369,7 @@ namespace SweetShop
                     //if model is not null return model description
                     if (reader["modelID"] != null)
                     {
-                        model = idu.modelType(Convert.ToInt32(reader["modelID"]));
+                        model = idu.ReturnModelNameFromModelID(Convert.ToInt32(reader["modelID"]));
                     }
                     //create string for a club description
                     description = brand + " " + model + " " + reader["clubSpec"].ToString() + " " + reader["clubType"].ToString() + " "
@@ -414,7 +381,7 @@ namespace SweetShop
                     //if model is not null return model description
                     if (reader["modelID"] != null)
                     {
-                        model = idu.modelType(Convert.ToInt32(reader["modelID"]));
+                        model = idu.ReturnModelNameFromModelID(Convert.ToInt32(reader["modelID"]));
                     }
                     description = brand + " " + model + " " + reader["accessoryType"] + " "
                         + reader["size"].ToString() + " " + reader["colour"].ToString() + " "
@@ -427,11 +394,11 @@ namespace SweetShop
                     + reader["gender"].ToString() + " " + reader["style"].ToString() + " " + reader["comments"].ToString();
                 }
                 //enter all returned items into item list for display
-                Items j = new Items(Convert.ToInt32(reader["sku"]),
+                Cart j = new Cart(Convert.ToInt32(reader["sku"]),
                     description,
                     Convert.ToInt32(reader["quantity"]),
                     Convert.ToDouble(reader["price"]),
-                    Convert.ToDouble(reader["cost"]));
+                    Convert.ToDouble(reader["cost"]),0,false,0,false,Convert.ToInt32(reader["typeID"]),Convert.ToInt32(reader["locationID"]));
                 item.Add(j);
             }
             con.Close();
@@ -440,7 +407,7 @@ namespace SweetShop
         }
         //Robust search through inventory Nathan and Tyler created
         //Same as above method with the exception of not having string loc
-        public List<Items> GetItemfromSearch(string itemSearched, string itemType, bool includeZero)
+        public DataTable GetItemfromSearch(string itemSearched, string itemType, bool includeZero)
         {
             ArrayList strText = new ArrayList();
             int numFields = itemSearched.Split(' ').Length;
@@ -462,8 +429,8 @@ namespace SweetShop
             SqlCommand cmd = new SqlCommand();
             //If type is clubs perform this search
 
-            //Item List
-            List<Items> item = new List<Items>();
+            //DataTable to hold the results
+            DataTable item = new DataTable();
             //Open Database Connection
             cmd.Connection = con;
             con.Open();
@@ -575,7 +542,7 @@ namespace SweetShop
                 //if brand is not null return brand description
                 if (reader["brandID"] != null)
                 {
-                    brand = idu.brandType(Convert.ToInt32(reader["brandID"]));
+                    brand = idu.ReturnBrandNameFromBrandID(Convert.ToInt32(reader["brandID"]));
                 }
                 //if search type is clubs enter here for model and description builder
                 if (itemType == "Clubs")
@@ -583,7 +550,7 @@ namespace SweetShop
                     //if model is not null return model description
                     if (reader["modelID"] != null)
                     {
-                        model = idu.modelType(Convert.ToInt32(reader["modelID"]));
+                        model = idu.ReturnModelNameFromModelID(Convert.ToInt32(reader["modelID"]));
                     }
                     //create string for a club description
                     description = brand + " " + model + " " + reader["clubSpec"].ToString() + " " + reader["clubType"].ToString() +
@@ -595,7 +562,7 @@ namespace SweetShop
                     //if model is not null return model description
                     if (reader["modelID"] != null)
                     {
-                        model = idu.modelType(Convert.ToInt32(reader["modelID"]));
+                        model = idu.ReturnModelNameFromModelID(Convert.ToInt32(reader["modelID"]));
                     }
                     description = brand + " " + model + " " + reader["accessoryType"].ToString()
                         + " " + reader["size"].ToString() + " " + reader["colour"].ToString()
@@ -608,13 +575,14 @@ namespace SweetShop
                     + reader["gender"].ToString() + " " + reader["style"].ToString() + " " + reader["comments"].ToString();
                 }
                 //enter all returned items into item list for display
-                Items j = new Items(Convert.ToInt32(reader["sku"]),
-                    description,
-                    Convert.ToInt32(reader["quantity"]),
-                    Convert.ToDouble(reader["price"]),
-                    Convert.ToDouble(reader["cost"]),
-                    lm.locationName(Convert.ToInt32(reader["locationID"])));
-                item.Add(j);
+                //Cart j = new Cart(Convert.ToInt32(reader["sku"]),
+                //    description,
+                //    Convert.ToInt32(reader["quantity"]),
+                //    Convert.ToDouble(reader["price"]),
+                //    Convert.ToDouble(reader["cost"]), 0, false, 0, false,
+                //    Convert.ToInt32(reader["itemType"]),
+                //    lm.locationName(Convert.ToInt32(reader["locationID"])));
+                
             }
             con.Close();
             return item;
@@ -1397,20 +1365,20 @@ namespace SweetShop
                 //Club
                 if (type == 1)
                 {
-                    desc = idu.brandType(Convert.ToInt32(reader["brandID"])).ToString() + " " + idu.modelType(Convert.ToInt32(reader["modelID"])).ToString() + " "
+                    desc = idu.ReturnBrandNameFromBrandID(Convert.ToInt32(reader["brandID"])).ToString() + " " + idu.ReturnModelNameFromModelID(Convert.ToInt32(reader["modelID"])).ToString() + " "
                         + reader["clubSpec"].ToString() + " " + reader["clubType"].ToString() + " "
                         + reader["shaftSpec"].ToString() + " " + reader["shaftFlex"].ToString() + " " + reader["dexterity"].ToString();
                 }
                 //Accessory
                 else if (type == 2)
                 {
-                    desc = idu.brandType(Convert.ToInt32(reader["brandID"])).ToString() + idu.modelType(Convert.ToInt32(reader["modelID"])).ToString()
+                    desc = idu.ReturnBrandNameFromBrandID(Convert.ToInt32(reader["brandID"])).ToString() + idu.ReturnModelNameFromModelID(Convert.ToInt32(reader["modelID"])).ToString()
                         + " " + reader["accessoryType"] + " " + reader["size"].ToString() + " " + reader["colour"].ToString();
                 }
                 //Clothing
                 else if (type == 3)
                 {
-                    desc = idu.brandType(Convert.ToInt32(reader["brandID"])).ToString() + " " + reader["size"].ToString() + " " + reader["colour"].ToString() + " "
+                    desc = idu.ReturnBrandNameFromBrandID(Convert.ToInt32(reader["brandID"])).ToString() + " " + reader["size"].ToString() + " " + reader["colour"].ToString() + " "
                         + reader["gender"].ToString() + " " + reader["style"].ToString();
                 }
             }
@@ -1434,56 +1402,23 @@ namespace SweetShop
             List<Invoice> i = new List<Invoice>();
             while (reader.Read())
             {
-                i.Add(new Invoice(Convert.ToInt32(reader["invoiceNum"]), Convert.ToInt32(reader["invoiceSubNum"]), Convert.ToDateTime(reader["invoiceDate"]),
-                    Convert.ToDateTime(reader["invoiceTime"]), Convert.ToInt32(reader["custID"]), Convert.ToInt32(reader["empID"]), Convert.ToInt32(reader["locationID"]),
-                    Convert.ToDouble(reader["subTotal"]), Convert.ToDouble(reader["discountAmount"]), Convert.ToDouble(reader["tradeinAmount"]), Convert.ToDouble(reader["governmentTax"]),
-                    Convert.ToDouble(reader["provincialTax"]), Convert.ToDouble(reader["balanceDue"]), Convert.ToInt32(reader["transactionType"]), reader["comments"].ToString()));
+                //i.Add(new Invoice(Convert.ToInt32(reader["invoiceNum"]), Convert.ToInt32(reader["invoiceSubNum"]), Convert.ToDateTime(reader["invoiceDate"]),
+                //    Convert.ToDateTime(reader["invoiceTime"]), Convert.ToInt32(reader["custID"]), Convert.ToInt32(reader["empID"]), Convert.ToInt32(reader["locationID"]),
+                //    Convert.ToDouble(reader["subTotal"]), Convert.ToDouble(reader["discountAmount"]), Convert.ToDouble(reader["tradeinAmount"]), Convert.ToDouble(reader["governmentTax"]),
+                //    Convert.ToDouble(reader["provincialTax"]), Convert.ToDouble(reader["balanceDue"]), Convert.ToInt32(reader["transactionType"]), reader["comments"].ToString()));
             }
             con.Close();
             //Returns the invoice
             return i;
         }
-        //Nathan built for home page sales display
-        public List<Invoice> getInvoiceBySaleDate(DateTime givenDate, int locationID)
-        {
-            //Gets a list of all invoices based on date and location. Stores in a list
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "SELECT invoiceNum, invoiceSubNum, custID, empID, subTotal, discountAmount, "
-                + "tradeinAmount, governmentTax, provincialTax, balanceDue FROM tbl_invoice "
-                + "WHERE invoiceDate = @givenDate AND locationID = @locationID  ;";
-            cmd.Parameters.AddWithValue("givenDate", givenDate);
-            cmd.Parameters.AddWithValue("locationID", locationID);
-            cmd.Connection = con;
-            con.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            List<Invoice> i = new List<Invoice>();
-            while (reader.Read())
-            {
-                Invoice inv = new Invoice();
-                inv.invoiceNum = Convert.ToInt32(reader["invoiceNum"]);
-                inv.invoiceSub = Convert.ToInt32(reader["invoiceSubNum"]);
-                inv.customerID = Convert.ToInt32(reader["custID"]);
-                inv.employeeID = Convert.ToInt32(reader["empID"]);
-                inv.subTotal = Convert.ToDouble(reader["subTotal"]);
-                inv.discountAmount = Convert.ToDouble(reader["discountAmount"]);
-                inv.tradeinAmount = Convert.ToDouble(reader["tradeinAmount"]);
-                inv.governmentTax = Convert.ToDouble(reader["governmentTax"]);
-                inv.provincialTax = Convert.ToDouble(reader["provincialTax"]);
-                inv.balanceDue = Convert.ToDouble(reader["balanceDue"]);
-
-                i.Add(inv);
-            }
-            con.Close();
-            //Returns a list of invoices
-            return i;
-        }
         public Invoice getSingleInvoice(int invoiceID, int invoiceSub)
         {
             SqlConnection con = new SqlConnection(connectionString);
+            InvoiceItemsManager IIM = new InvoiceItemsManager();
+            InvoiceMOPsManager IMM = new InvoiceMOPsManager();
             SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "SELECT invoiceNum, invoiceSubNum, invoiceDate, Cast(invoiceTime as DATETIME) as invoiceTime, custID, empID, locationID, subTotal, discountAmount, "
-                + "tradeinAmount, governmentTax, provincialTax, balanceDue, transactionType, comments FROM tbl_invoice "
+            cmd.CommandText = "SELECT invoiceNum, invoiceSubNum, invoiceDate, Cast(invoiceTime as DATETIME) as invoiceTime, custID, empID, locationID, subTotal, shippingAmount, "
+                + "discountAmount, tradeinAmount, governmentTax, provincialTax, balanceDue, transactionType, comments FROM tbl_invoice "
                 + "WHERE invoiceNum = @invoiceNum and invoiceSubNum = @invoiceSubNum";
             cmd.Parameters.AddWithValue("invoiceNum", invoiceID);
             cmd.Parameters.AddWithValue("invoiceSubNum", invoiceSub);
@@ -1494,27 +1429,30 @@ namespace SweetShop
             while (reader.Read())
             {
                 i = new Invoice(Convert.ToInt32(reader["invoiceNum"]), Convert.ToInt32(reader["invoiceSubNum"]), Convert.ToDateTime(reader["invoiceDate"]),
-                    Convert.ToDateTime(reader["invoiceTime"]), Convert.ToInt32(reader["custID"]), Convert.ToInt32(reader["empID"]), Convert.ToInt32(reader["locationID"]),
-                    Convert.ToDouble(reader["subTotal"]), Convert.ToDouble(reader["discountAmount"]), Convert.ToDouble(reader["tradeinAmount"]), Convert.ToDouble(reader["governmentTax"]),
-                    Convert.ToDouble(reader["provincialTax"]), Convert.ToDouble(reader["balanceDue"]), Convert.ToInt32(reader["transactionType"]), reader["comments"].ToString());
+                    Convert.ToDateTime(reader["invoiceTime"]), CM.ReturnCustomer(Convert.ToInt32(reader["custID"]))[0], EM.ReturnEmployee(Convert.ToInt32(reader["empID"]))[0], 
+                    lm.ReturnLocation(Convert.ToInt32(reader["locationID"]))[0], Convert.ToDouble(reader["subTotal"]), Convert.ToInt32(reader["shippingAmount"]),
+                    Convert.ToDouble(reader["discountAmount"]), Convert.ToDouble(reader["tradeinAmount"]), Convert.ToDouble(reader["governmentTax"]), 
+                    Convert.ToDouble(reader["provincialTax"]), Convert.ToDouble(reader["balanceDue"]), IIM.ReturnInvoiceItems(reader["invoiceNum"].ToString() + "-" + reader["invoiceSubNum"].ToString()),
+                    IMM.ReturnInvoiceMOPs(reader["invoiceNum"].ToString() + "-" + reader["invoiceSubNum"].ToString()), Convert.ToInt32(reader["transactionType"]),
+                    reader["comments"].ToString());
             }
             con.Close();
             //This can be removed since the deleted invoice table doesn't hold anything.
-            con.Open();
-            cmd.CommandText = "SELECT invoiceNum, invoiceSubNum, invoiceDate, Cast(invoiceTime as DATETIME) as invoiceTime, custID, empID, locationID, subTotal, discountAmount, "
-                + "tradeinAmount, governmentTax, provincialTax, balanceDue, transactionType, comments FROM tbl_deletedInvoice "
-                + "WHERE invoiceNum = @invoiceNumb and invoiceSubNum = @invoiceSubNumb";
-            cmd.Parameters.AddWithValue("invoiceNumb", invoiceID);
-            cmd.Parameters.AddWithValue("invoiceSubNumb", invoiceSub);
-            SqlDataReader readerDel = cmd.ExecuteReader();
-            while (readerDel.Read())
-            {
-                i = new Invoice(Convert.ToInt32(readerDel["invoiceNum"]), Convert.ToInt32(readerDel["invoiceSubNum"]), Convert.ToDateTime(readerDel["invoiceDate"]),
-                    Convert.ToDateTime(readerDel["invoiceTime"]), Convert.ToInt32(readerDel["custID"]), Convert.ToInt32(readerDel["empID"]), Convert.ToInt32(readerDel["locationID"]),
-                    Convert.ToDouble(readerDel["subTotal"]), Convert.ToDouble(readerDel["discountAmount"]), Convert.ToDouble(readerDel["tradeinAmount"]), Convert.ToDouble(readerDel["governmentTax"]),
-                    Convert.ToDouble(readerDel["provincialTax"]), Convert.ToDouble(readerDel["balanceDue"]), Convert.ToInt32(readerDel["transactionType"]), readerDel["comments"].ToString());
-            }
-            con.Close();
+            //con.Open();
+            //cmd.CommandText = "SELECT invoiceNum, invoiceSubNum, invoiceDate, Cast(invoiceTime as DATETIME) as invoiceTime, custID, empID, locationID, subTotal, discountAmount, "
+            //    + "tradeinAmount, governmentTax, provincialTax, balanceDue, transactionType, comments FROM tbl_deletedInvoice "
+            //    + "WHERE invoiceNum = @invoiceNumb and invoiceSubNum = @invoiceSubNumb";
+            //cmd.Parameters.AddWithValue("invoiceNumb", invoiceID);
+            //cmd.Parameters.AddWithValue("invoiceSubNumb", invoiceSub);
+            //SqlDataReader readerDel = cmd.ExecuteReader();
+            //while (readerDel.Read())
+            //{
+            //    i = new Invoice(Convert.ToInt32(readerDel["invoiceNum"]), Convert.ToInt32(readerDel["invoiceSubNum"]), Convert.ToDateTime(readerDel["invoiceDate"]),
+            //        Convert.ToDateTime(readerDel["invoiceTime"]), Convert.ToInt32(readerDel["custID"]), Convert.ToInt32(readerDel["empID"]), Convert.ToInt32(readerDel["locationID"]),
+            //        Convert.ToDouble(readerDel["subTotal"]), Convert.ToDouble(readerDel["discountAmount"]), Convert.ToDouble(readerDel["tradeinAmount"]), Convert.ToDouble(readerDel["governmentTax"]),
+            //        Convert.ToDouble(readerDel["provincialTax"]), Convert.ToDouble(readerDel["balanceDue"]), Convert.ToInt32(readerDel["transactionType"]), readerDel["comments"].ToString());
+            //}
+            //con.Close();
             //Returns the invoice
             return i;
         }
@@ -1574,9 +1512,9 @@ namespace SweetShop
                 inv.invoiceSub = Convert.ToInt32(reader["invoiceSubNum"]);
                 inv.invoiceDate = Convert.ToDateTime(reader["invoiceDate"]);
                 inv.invoiceTime = Convert.ToDateTime(reader["invoiceTime"]);
-                inv.customerID = Convert.ToInt32(reader["custID"]);
-                inv.employeeID = Convert.ToInt32(reader["empID"]);
-                inv.locationID = Convert.ToInt32(reader["locationID"]);
+                //inv.customerID = Convert.ToInt32(reader["custID"]);
+                //inv.employeeID = Convert.ToInt32(reader["empID"]);
+                //inv.locationID = Convert.ToInt32(reader["locationID"]);
                 inv.subTotal = Convert.ToDouble(reader["subTotal"]);
                 inv.discountAmount = Convert.ToDouble(reader["discountAmount"]);
                 inv.tradeinAmount = Convert.ToDouble(reader["tradeinAmount"]);
@@ -1617,17 +1555,18 @@ namespace SweetShop
                 if (intType == 1)
                     bolTrade = isTradein(Convert.ToInt32(reader["sku"]));
 
-                cartItem = new Cart(Convert.ToInt32(reader["sku"]),
-                getDescription(Convert.ToInt32(reader["sku"]), intType),
-                Convert.ToInt32(reader["itemQuantity"]),
-                Convert.ToDouble(reader["itemPrice"]),
-                Convert.ToDouble(reader["itemCost"]),
-                Convert.ToDouble(reader["itemDiscount"]),
-                Convert.ToBoolean(reader["percentage"]),
-                bolTrade,
-                intType);
+                //cartItem = new Cart(Convert.ToInt32(reader["sku"]),
+                //getDescription(Convert.ToInt32(reader["sku"]), intType),
+                //Convert.ToInt32(reader["itemQuantity"]),
+                //Convert.ToDouble(reader["itemPrice"]),
+                //Convert.ToDouble(reader["itemCost"]),
+                //Convert.ToDouble(reader["itemDiscount"]),
+                //Convert.ToBoolean(reader["percentage"]),
+                //0,
+                //bolTrade,
+                //intType);
                 //Adding the item to the returnItem list
-                retItems.Add(cartItem);
+                //retItems.Add(cartItem);
             }
             reader.Close();
             List<Cart> remaingItemsAvailForRet = new List<Cart>();
@@ -1646,10 +1585,10 @@ namespace SweetShop
             reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                cartItem = new Cart(Convert.ToInt32(reader["sku"]), "", Convert.ToInt32(reader["itemQuantity"]),
-                0, 0, 0, false, false, 0);
+                //cartItem = new Cart(Convert.ToInt32(reader["sku"]), "", Convert.ToInt32(reader["itemQuantity"]),
+                //0, 0, 0, false, 0, false, 0);
                 //These are the items that can still be returned
-                remaingItemsAvailForRet.Add(cartItem);
+                //remaingItemsAvailForRet.Add(cartItem);
             }
             //Looping through the original items in the invoice
             List<Cart> finalItems = new List<Cart>();
@@ -1666,9 +1605,9 @@ namespace SweetShop
 
                         if (arCart.quantity > 0)
                         {
-                            cartItem = new Cart(rCart.sku, rCart.description, arCart.quantity,
-                                    rCart.price, rCart.cost, rCart.discount, rCart.percentage, rCart.tradeIn, rCart.typeID);
-                            finalItems.Add(cartItem);
+                            //cartItem = new Cart(rCart.sku, rCart.description, arCart.quantity,
+                            //        rCart.price, rCart.cost, rCart.discount, rCart.percentage, 0, rCart.tradeIn, rCart.typeID);
+                            //finalItems.Add(cartItem);
                         }
                     }
                 }
@@ -1701,9 +1640,9 @@ namespace SweetShop
                 inv.invoiceNum = Convert.ToInt32(reader["invoiceNum"]);
                 inv.invoiceSub = Convert.ToInt32(reader["invoiceSubNum"]);
                 inv.invoiceDate = Convert.ToDateTime(reader["invoiceDate"]);
-                inv.customerID = Convert.ToInt32(reader["custID"]);
-                inv.employeeID = Convert.ToInt32(reader["empID"]);
-                inv.locationID = Convert.ToInt32(reader["locationID"]);
+                //inv.customerID = Convert.ToInt32(reader["custID"]);
+                //inv.employeeID = Convert.ToInt32(reader["empID"]);
+                //inv.locationID = Convert.ToInt32(reader["locationID"]);
                 inv.subTotal = Convert.ToDouble(reader["subTotal"]);
                 inv.discountAmount = Convert.ToDouble(reader["discountAmount"]);
                 inv.tradeinAmount = Convert.ToDouble(reader["tradeinAmount"]);
@@ -1732,10 +1671,10 @@ namespace SweetShop
             while (reader.Read())
             {
                 int sku = Convert.ToInt32(reader["sku"]);
-                items.Add(new Cart(sku, getDescription(sku, getItemType(sku)),
-                    Convert.ToInt32(reader["itemQuantity"]), Convert.ToDouble(reader["itemPrice"]),
-                    Convert.ToDouble(reader["itemCost"]), Convert.ToDouble(reader["itemDiscount"]),
-                    Convert.ToBoolean(reader["percentage"]), Convert.ToDouble(reader["itemRefund"])));
+                //items.Add(new Cart(sku, getDescription(sku, getItemType(sku)),
+                //    Convert.ToInt32(reader["itemQuantity"]), Convert.ToDouble(reader["itemPrice"]),
+                //    Convert.ToDouble(reader["itemCost"]), Convert.ToDouble(reader["itemDiscount"]),
+                //    Convert.ToBoolean(reader["percentage"]), Convert.ToDouble(reader["itemRefund"]), false, 0));
             }
             conn.Close();
             //Returns list of the items
@@ -1790,9 +1729,9 @@ namespace SweetShop
             return ckm;
         }
         //Get Methods of Payment
-        public List<Checkout> invoice_getMOP(int invoiceNum, int invoiceSubNum, string table)
+        public List<Mops> invoice_getMOP(int invoiceNum, int invoiceSubNum, string table)
         {
-            List<Checkout> mops = new List<Checkout>();
+            List<Mops> mops = new List<Mops>();
             SqlConnection conn = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = conn;
@@ -1804,33 +1743,33 @@ namespace SweetShop
             while (reader.Read())
             {
 
-                mops.Add(new Checkout(reader["mopType"].ToString(), Convert.ToDouble(reader["amountPaid"])));
+                mops.Add(new Mops(reader["mopType"].ToString(), Convert.ToDouble(reader["amountPaid"])));
             }
             conn.Close();
             //Returns the methods of payment
             return mops;
         }
         //Gets Location id from invoice
-        public string invoice_getLocation(int invoiceNum, int invoiceSubNum, string table)
-        {
-            int locID = 0;
-            SqlConnection conn = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = conn;
-            cmd.CommandText = "Select locationID FROM " + table + " Where invoiceNum = @invoiceNum and invoiceSubNum = @invoiceSubNum";
-            cmd.Parameters.AddWithValue("invoiceNum", invoiceNum);
-            cmd.Parameters.AddWithValue("invoiceSubNum", invoiceSubNum);
-            conn.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                locID = Convert.ToInt32(reader["locationID"]);
-            }
-            conn.Close();
-            string loc = lm.locationCity(locID);
-            //Returns the location 
-            return loc;
-        }
+        //public string invoice_getLocation(int invoiceNum, int invoiceSubNum, string table)
+        //{
+        //    int locID = 0;
+        //    SqlConnection conn = new SqlConnection(connectionString);
+        //    SqlCommand cmd = new SqlCommand();
+        //    cmd.Connection = conn;
+        //    cmd.CommandText = "Select locationID FROM " + table + " Where invoiceNum = @invoiceNum and invoiceSubNum = @invoiceSubNum";
+        //    cmd.Parameters.AddWithValue("invoiceNum", invoiceNum);
+        //    cmd.Parameters.AddWithValue("invoiceSubNum", invoiceSubNum);
+        //    conn.Open();
+        //    SqlDataReader reader = cmd.ExecuteReader();
+        //    while (reader.Read())
+        //    {
+        //        locID = Convert.ToInt32(reader["locationID"]);
+        //    }
+        //    conn.Close();
+        //    string loc = lm.locationCity(locID);
+        //    //Returns the location 
+        //    return loc;
+        //}
         //Gets the reason why the invoice was deleted
         public string deletedInvoice_getReason(int invoiceNum, int invoiceSubNum)
         {
@@ -1872,10 +1811,10 @@ namespace SweetShop
             List<Invoice> i = new List<Invoice>();
             while (reader.Read())
             {
-                i.Add(new Invoice(Convert.ToInt32(reader["invoiceNum"]), Convert.ToInt32(reader["invoiceSubNum"]), Convert.ToDateTime(reader["invoiceDate"]),
-                    Convert.ToDateTime(reader["invoiceTime"]), Convert.ToInt32(reader["custID"]), Convert.ToInt32(reader["empID"]), Convert.ToInt32(reader["locationID"]),
-                    Convert.ToDouble(reader["subTotal"]), Convert.ToDouble(reader["discountAmount"]), Convert.ToDouble(reader["tradeinAmount"]), Convert.ToDouble(reader["governmentTax"]),
-                    Convert.ToDouble(reader["provincialTax"]), Convert.ToDouble(reader["balanceDue"]), Convert.ToInt32(reader["transactionType"]), reader["comments"].ToString()));
+                //i.Add(new Invoice(Convert.ToInt32(reader["invoiceNum"]), Convert.ToInt32(reader["invoiceSubNum"]), Convert.ToDateTime(reader["invoiceDate"]),
+                //    Convert.ToDateTime(reader["invoiceTime"]), Convert.ToInt32(reader["custID"]), Convert.ToInt32(reader["empID"]), Convert.ToInt32(reader["locationID"]),
+                //    Convert.ToDouble(reader["subTotal"]), Convert.ToDouble(reader["discountAmount"]), Convert.ToDouble(reader["tradeinAmount"]), Convert.ToDouble(reader["governmentTax"]),
+                //    Convert.ToDouble(reader["provincialTax"]), Convert.ToDouble(reader["balanceDue"]), Convert.ToInt32(reader["transactionType"]), reader["comments"].ToString()));
             }
             con.Close();
             //Returns the invoice
@@ -1896,10 +1835,10 @@ namespace SweetShop
             List<Invoice> i = new List<Invoice>();
             while (reader.Read())
             {
-                i.Add(new Invoice(Convert.ToInt32(reader["invoiceNum"]), Convert.ToInt32(reader["invoiceSubNum"]), Convert.ToDateTime(reader["invoiceDate"]),
-                    Convert.ToDateTime(reader["invoiceTime"]), Convert.ToInt32(reader["custID"]), Convert.ToInt32(reader["empID"]), Convert.ToInt32(reader["locationID"]),
-                    Convert.ToDouble(reader["subTotal"]), Convert.ToDouble(reader["discountAmount"]), Convert.ToDouble(reader["tradeinAmount"]), Convert.ToDouble(reader["governmentTax"]),
-                    Convert.ToDouble(reader["provincialTax"]), Convert.ToDouble(reader["balanceDue"]), Convert.ToInt32(reader["transactionType"]), reader["comments"].ToString()));
+                //i.Add(new Invoice(Convert.ToInt32(reader["invoiceNum"]), Convert.ToInt32(reader["invoiceSubNum"]), Convert.ToDateTime(reader["invoiceDate"]),
+                //    Convert.ToDateTime(reader["invoiceTime"]), Convert.ToInt32(reader["custID"]), Convert.ToInt32(reader["empID"]), Convert.ToInt32(reader["locationID"]),
+                //    Convert.ToDouble(reader["subTotal"]), Convert.ToDouble(reader["discountAmount"]), Convert.ToDouble(reader["tradeinAmount"]), Convert.ToDouble(reader["governmentTax"]),
+                //    Convert.ToDouble(reader["provincialTax"]), Convert.ToDouble(reader["balanceDue"]), Convert.ToInt32(reader["transactionType"]), reader["comments"].ToString()));
             }
             con.Close();
             //Returns the invoice
@@ -1923,9 +1862,9 @@ namespace SweetShop
                 r.invoiceNum = Convert.ToInt32(reader["receiptNumber"]);
                 r.invoiceDate = Convert.ToDateTime(reader["receiptDate"]);
                 r.invoiceTime = Convert.ToDateTime(reader["receiptTime"]);
-                r.customerID = Convert.ToInt32(reader["custID"]);
-                r.employeeID = Convert.ToInt32(reader["empID"]);
-                r.locationID = Convert.ToInt32(reader["locationID"]);
+                //r.customerID = Convert.ToInt32(reader["custID"]);
+                //r.employeeID = Convert.ToInt32(reader["empID"]);
+                //r.locationID = Convert.ToInt32(reader["locationID"]);
                 r.balanceDue = Convert.ToDouble(reader["receiptTotal"]);
                 r.transactionType = Convert.ToInt32(reader["transactionType"]);
                 r.comments = reader["comments"].ToString();
@@ -1942,8 +1881,8 @@ namespace SweetShop
             List<Cart> i = new List<Cart>();
             while (reader2.Read())
             {
-                i.Add(new Cart(Convert.ToInt32(reader2["sku"]), Convert.ToString(reader2["description"]),
-                    Convert.ToInt32(reader2["itemQuantity"]), 0, Convert.ToDouble(reader2["itemCost"]), 0, false, 0));
+                //i.Add(new Cart(Convert.ToInt32(reader2["sku"]), Convert.ToString(reader2["description"]),
+                //    Convert.ToInt32(reader2["itemQuantity"]), 0, Convert.ToDouble(reader2["itemCost"]), 0, false, 0, false, 0));
             }
             con.Close();
 
@@ -1954,10 +1893,10 @@ namespace SweetShop
             cmd3.Connection = con;
             con.Open();
             SqlDataReader reader3 = cmd3.ExecuteReader();
-            List<Checkout> m = new List<Checkout>();
+            List<Mops> m = new List<Mops>();
             while (reader3.Read())
             {
-                m.Add(new Checkout(idu.returnMOPIntasName(Convert.ToInt32(reader3["mopType"])), Convert.ToDouble(reader3["amountPaid"]),
+                m.Add(new Mops(idu.returnMOPIntasName(Convert.ToInt32(reader3["mopType"])), Convert.ToDouble(reader3["amountPaid"]),
                     Convert.ToInt32(reader3["chequeNum"])));
             }
             con.Close();
@@ -2011,103 +1950,7 @@ namespace SweetShop
             cmd.ExecuteNonQuery();
             con.Close();
         }
-        //************************************Inventory Sales Utilities********************************************/
-        //Returns the total discount of the cart
-        public double returnDiscount(List<Cart> itemsSold)
-        {
-            double singleDiscoount = 0;
-            double totalDiscount = 0;
-            foreach (var cart in itemsSold)
-            {
-                //If it is a percent discount compared to a dollar amount
-                if (cart.percentage)
-                {
-                    singleDiscoount = cart.quantity * (cart.price * (cart.discount / 100));
-                }
-                else
-                {
-                    singleDiscoount = cart.quantity * cart.discount;
-                }
-                totalDiscount += singleDiscoount;
-            }
-            //Returns the total discount rounded to 2 decimal places
-            return Math.Round(totalDiscount, 2);
-        }
-        //Returns the total trade in amount of the cart
-        public double returnTradeInAmount(List<Cart> itemsSold)
-        {
-            double singleTradeInAmount = 0;
-            double totalTradeinAmount = 0;
-            ItemDataUtilities idu = new ItemDataUtilities();
-            int[] range = idu.tradeInSkuRange(0);
-            foreach (var cart in itemsSold)
-            {
-                if (cart.sku <= range[1] && cart.sku >= range[0])
-                {
-                    singleTradeInAmount = cart.quantity * cart.price;
-                    totalTradeinAmount += singleTradeInAmount;
-                }
-            }
-            //Returns the total trade in amount of the cart
-            return totalTradeinAmount;
-        }
-        //Returns the total subtotal of the cart
-        public double returnSubtotalAmount(List<Cart> itemsSold)
-        {
-            double totalSubtotalAmount = 0;
-            double totalDiscountAmount = returnDiscount(itemsSold);
-            double totalTradeInAmount = returnTradeInAmount(itemsSold);
-            double totalTotalAmount = returnTotalAmount(itemsSold);
-
-            totalSubtotalAmount = totalSubtotalAmount + totalTotalAmount;
-            totalSubtotalAmount = totalSubtotalAmount - totalDiscountAmount;
-            totalSubtotalAmount = totalSubtotalAmount - (totalTradeInAmount * (-1));
-            //Returns the total subtotal amount of the cart
-            return totalSubtotalAmount;
-        }
-        //Returns the total refund subtotal of the cart
-        public double returnRefundSubtotalAmount(List<Cart> itemsSold)
-        {
-            double singleRefundSubtotalAmount = 0;
-            double totalRefundSubtotalAmount = 0;
-            foreach (var cart in itemsSold)
-            {
-                singleRefundSubtotalAmount = cart.quantity * cart.returnAmount;
-                totalRefundSubtotalAmount += singleRefundSubtotalAmount;
-            }
-            //Returns the total refund subtotal of the cart
-            return totalRefundSubtotalAmount;
-        }
-        //Returns the total amount of the cart
-        public double returnTotalAmount(List<Cart> itemsSold)
-        {
-            ItemDataUtilities idu = new ItemDataUtilities();
-            int[] range = idu.tradeInSkuRange(0);
-            double singleTotalAmount = 0;
-            double totalTotalAmount = 0;
-            foreach (var cart in itemsSold)
-            {
-                if (cart.sku >= range[1] || cart.sku <= range[0])
-                {
-                    singleTotalAmount = cart.quantity * cart.price;
-                    totalTotalAmount += singleTotalAmount;
-                }
-            }
-            //Returns the total amount of the cart
-            return totalTotalAmount;
-        }
-        public double returnPurchaseAmount(List<Cart> itemsSold)
-        {
-            double singlePurchaseAmount = 0;
-            double totalPurchaseAmount = 0;
-            foreach (var cart in itemsSold)
-            {
-                singlePurchaseAmount = cart.quantity * cart.cost;
-                totalPurchaseAmount += singlePurchaseAmount;
-            }
-            //Returns the total amount of the cart
-            return totalPurchaseAmount * -1;
-        }
+         
         //Transfering the trade in item to the clubs table
         //Not being used 12.9.17
         public void transferTradeInStart(List<Cart> Clubs)

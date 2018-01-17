@@ -12,23 +12,41 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public int invoiceNum { get; set; }
         public int invoiceSubNum { get; set; }
         public int sku { get; set; }
+        public string itemDescription { get; set; }
         public int itemQuantity { get; set; }
         public double itemCost { get; set; }
         public double itemPrice { get; set; }
         public double itemDiscount { get; set; }
+        public double itemRefund { get; set; }
         public bool percentage { get; set; }
 
         public InvoiceItems(){}
-        public InvoiceItems(int inn, int isn, int s, int iq, double ic, double ip, double id, bool p)
+        public InvoiceItems(int InvoiceNum, int InvoiceSubNum, int Sku, int ItemQuantity, double ItemCost, double ItemPrice, 
+            double ItemDiscount, double ItemRefund, bool Percentage)
         {
-            invoiceNum = inn;
-            invoiceSubNum = isn;
-            sku = s;
-            itemQuantity = iq;
-            itemCost = ic;
-            itemPrice = ip;
-            itemDiscount = id;
-            percentage = p;
+            invoiceNum = InvoiceNum;
+            invoiceSubNum = InvoiceSubNum;
+            sku = Sku;
+            itemQuantity = ItemQuantity;
+            itemCost = ItemCost;
+            itemPrice = ItemPrice;
+            itemDiscount = ItemDiscount;
+            itemRefund = ItemRefund;
+            percentage = Percentage;
+        }
+        public InvoiceItems(int InvoiceNum, int InvoiceSubNum, int Sku, string ItemDescription, int ItemQuantity, double ItemCost, 
+            double ItemPrice, double ItemDiscount, double ItemRefund, bool Percentage)
+        {
+            invoiceNum = InvoiceNum;
+            invoiceSubNum = InvoiceSubNum;
+            sku = Sku;
+            itemDescription = ItemDescription;
+            itemQuantity = ItemQuantity;
+            itemCost = ItemCost;
+            itemPrice = ItemPrice;
+            itemDiscount = ItemDiscount;
+            itemRefund = ItemRefund;
+            percentage = Percentage;
         }
     }
 }

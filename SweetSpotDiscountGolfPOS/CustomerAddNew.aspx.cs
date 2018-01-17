@@ -14,12 +14,11 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class CustomerAddNew : System.Web.UI.Page
     {
-        ErrorReporting er = new ErrorReporting();
-        SweetShopManager ssm = new SweetShopManager();
-        LocationManager lm = new LocationManager();
-        CurrentUser cu;
-        EmployeeManager em = new EmployeeManager();
-        DataTable dt = new DataTable();
+        ErrorReporting ER = new ErrorReporting();
+        LocationManager LM = new LocationManager();
+        CustomerManager CM = new CustomerManager();
+        EmployeeManager EM = new EmployeeManager();
+        CurrentUser CU;
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -27,124 +26,104 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "CustomerAddNew.aspx";
             try
             {
-                cu = (CurrentUser)Session["currentUser"];
+                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
-                    Server.Transfer("LoginPage.aspx", false);
+                    Response.Redirect("LoginPage.aspx", false);
                 }
                 //Checks for a Customer Key
-                if (Session["key"] != null)
+                if (Convert.ToInt32(Request.QueryString["cust"].ToString()) != -10)
                 {
                     if (!IsPostBack)
                     {
                         //Create customer class and fill page with all info based in the customer number 
-                        //from the key
-                        int custNum = Convert.ToInt32(Session["key"].ToString());
-                        Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
+                        List<Customer> customer = CM.ReturnCustomerWithInvoiceList(Convert.ToInt32(Request.QueryString["cust"].ToString()));
 
-                        lblFirstNameDisplay.Text = c.firstName.ToString();
-                        lblLastNameDisplay.Text = c.lastName.ToString();
-                        lblPrimaryAddressDisplay.Text = c.primaryAddress.ToString();
-                        //lblBillingAddressDisplay.Text = c.emailList.ToString();
-                        lblSecondaryAddressDisplay.Text = c.secondaryAddress.ToString();
-                        lblPrimaryPhoneNumberDisplay.Text = c.primaryPhoneNumber.ToString();
-                        lblSecondaryPhoneNumberDisplay.Text = c.secondaryPhoneNumber.ToString();
-                        lblEmailDisplay.Text = c.email.ToString();
-                        lblCityDisplay.Text = c.city.ToString();
-                        lblProvinceDisplay.Text = lm.provinceName(c.province);
-                        lblCountryDisplay.Text = lm.countryName(c.country);
+                        txtFirstName.Text = customer[0].firstName.ToString();
+                        txtLastName.Text = customer[0].lastName.ToString();
+                        txtPrimaryAddress.Text = customer[0].primaryAddress.ToString();
+                        txtSecondaryAddress.Text = customer[0].secondaryAddress.ToString();
+                        txtPrimaryPhoneNumber.Text = customer[0].primaryPhoneNumber.ToString();
+                        txtSecondaryPhoneNumber.Text = customer[0].secondaryPhoneNumber.ToString();
+                        txtEmail.Text = customer[0].email.ToString();
+                        txtCity.Text = customer[0].city.ToString();
+                        ddlProvince.SelectedValue = customer[0].province.ToString();
+                        ddlCountry.SelectedValue = customer[0].country.ToString();
 
-                        ddlCountry.SelectedValue = c.country.ToString();
-                        dt = em.returnProvinceDropDown(c.country);
+                        ddlCountry.DataSource = LM.ReturnCountryDropDown();
+                        ddlCountry.DataTextField = "countryDesc";
+                        ddlCountry.DataValueField = "countryID";
+                        ddlCountry.DataBind();
+                        ddlCountry.SelectedValue = customer[0].country.ToString();
+                        ddlProvince.DataSource = LM.ReturnProvinceDropDown(customer[0].country);
                         ddlProvince.DataTextField = "provName";
                         ddlProvince.DataValueField = "provStateID";
-                        ddlProvince.DataSource = dt;
+                        ddlProvince.SelectedValue = customer[0].province.ToString();
                         ddlProvince.DataBind();
 
-                        lblPostalCodeDisplay.Text = c.postalCode.ToString();
-                        if (c.emailList == true) { chkEmailList.Checked = true; }
-                        else { chkEmailList.Checked = false; }
-                    }
-                    //Customer invoices
-                    List<Invoice> fullInvoices;
-                    //Searches through invoices using customer name and date
-                    fullInvoices = ssm.getInvoiceFromCustID(Convert.ToInt32(Session["key"].ToString()));
+                        txtPostalCode.Text = customer[0].postalCode.ToString();
+                        chkEmailList.Checked = customer[0].emailList;
 
-                    List<Invoice> viewInvoices = new List<Invoice>();
-                    //Loops through each invoice
-                    foreach (var i in fullInvoices)
-                    {
-                        //Sets customer and employee class for the last invoice
-                        Customer c = ssm.GetCustomerbyCustomerNumber(i.customerID);
-                        Employee emp = em.getEmployeeByID(i.employeeID);
-                        //Uses the classes to set customer name and employee name of each invoice
-                        Invoice iv = new Invoice(i.invoiceNum, i.invoiceSub, i.invoiceDate, c.firstName + " " + c.lastName, i.discountAmount, i.tradeinAmount, i.subTotal, i.governmentTax, i.provincialTax, i.balanceDue, emp.firstName + " " + emp.lastName);
-                        //Adds each invoice to invoice list
-                        viewInvoices.Add(iv);
-                    }
-                    //Binds invoice list to the grid view
-                    grdInvoiceSelection.DataSource = viewInvoices;
-                    grdInvoiceSelection.DataBind();
-                    //Center the mop grid view
-                    foreach (GridViewRow row in grdInvoiceSelection.Rows)
-                    {
-                        foreach (TableCell cell in row.Cells)
-                        {
-                            cell.Attributes.CssStyle["text-align"] = "center";
-                        }
+                        //Binds invoice list to the grid view
+                        grdInvoiceSelection.DataSource = customer[0].invoices;
+                        grdInvoiceSelection.DataBind();
+
                     }
                 }
                 else
                 {
+                    //no cust number
                     if (!IsPostBack)
                     {
-                        dt = em.returnProvinceDropDown(0);
+                        ddlCountry.DataSource = LM.ReturnCountryDropDown();
+                        ddlCountry.DataTextField = "countryDesc";
+                        ddlCountry.DataValueField = "countryID";
+                        ddlCountry.DataBind();
+                        ddlCountry.SelectedValue = 0.ToString();
+
                         ddlProvince.DataTextField = "provName";
                         ddlProvince.DataValueField = "provStateID";
-                        ddlProvince.DataSource = dt;
+                        ddlProvince.DataSource = LM.ReturnProvinceDropDown(0);
                         ddlProvince.DataBind();
                     }
                     //Displays text boxes instead of label for customer creation info
-                    txtFirstName.Visible = true;
-                    lblFirstNameDisplay.Visible = false;
+                    txtFirstName.Enabled = true;
+                    //lblFirstNameDisplay.Visible = false;
 
-                    txtLastName.Visible = true;
-                    lblLastNameDisplay.Visible = false;
+                    txtLastName.Enabled = true;
+                    //lblLastNameDisplay.Visible = false;
 
-                    txtPrimaryAddress.Visible = true;
-                    lblPrimaryAddressDisplay.Visible = false;
+                    txtPrimaryAddress.Enabled = true;
+                    //lblPrimaryAddressDisplay.Visible = false;
 
-                    //txtBillingAddress.Visible = true;
-                    //lblBillingAddressDisplay.Visible = false;
+                    txtSecondaryAddress.Enabled = true;
+                    //lblSecondaryAddressDisplay.Visible = false;
 
-                    txtSecondaryAddress.Visible = true;
-                    lblSecondaryAddressDisplay.Visible = false;
+                    txtPrimaryPhoneNumber.Enabled = true;
+                    //lblPrimaryPhoneNumberDisplay.Visible = false;
 
-                    txtPrimaryPhoneNumber.Visible = true;
-                    lblPrimaryPhoneNumberDisplay.Visible = false;
+                    txtSecondaryPhoneNumber.Enabled = true;
+                    //lblSecondaryPhoneNumberDisplay.Visible = false;
 
-                    txtSecondaryPhoneNumber.Visible = true;
-                    lblSecondaryPhoneNumberDisplay.Visible = false;
+                    txtEmail.Enabled = true;
+                    //lblEmailDisplay.Visible = false;
 
-                    txtEmail.Visible = true;
-                    lblEmailDisplay.Visible = false;
+                    txtCity.Enabled = true;
+                    //lblCityDisplay.Visible = false;
 
-                    txtCity.Visible = true;
-                    lblCityDisplay.Visible = false;
+                    ddlProvince.Enabled = true;
+                    //lblProvinceDisplay.Visible = false;
 
-                    ddlProvince.Visible = true;
-                    lblProvinceDisplay.Visible = false;
-
-                    ddlCountry.Visible = true;
-                    lblCountryDisplay.Visible = false;
+                    ddlCountry.Enabled = true;
+                    //lblCountryDisplay.Visible = false;
 
                     chkEmailList.Enabled = true;
 
-                    txtPostalCode.Visible = true;
-                    lblPostalCodeDisplay.Visible = false;
-                    
+                    txtPostalCode.Enabled = true;
+                    //lblPostalCodeDisplay.Visible = false;
+
                     //hides and displays the proper buttons for access
                     btnSaveCustomer.Visible = false;
                     btnAddCustomer.Visible = true;
@@ -159,18 +138,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnAddCustomer_Click(object sender, EventArgs e)
@@ -187,34 +160,27 @@ namespace SweetSpotDiscountGolfPOS
                 c.secondaryAddress = txtSecondaryAddress.Text;
                 c.primaryPhoneNumber = txtPrimaryPhoneNumber.Text;
                 c.secondaryPhoneNumber = txtSecondaryPhoneNumber.Text;
-                if (chkEmailList.Checked) { c.emailList = true; }
-                else { c.emailList = false; }
+                c.emailList = chkEmailList.Checked;
                 c.email = txtEmail.Text;
                 c.city = txtCity.Text;
                 c.province = Convert.ToInt32(ddlProvince.SelectedValue);
                 c.country = Convert.ToInt32(ddlCountry.SelectedValue);
                 c.postalCode = txtPostalCode.Text;
 
-                //Process the add and saves the customer into the key.
-                Session["key"] = ssm.addCustomer(c);
-                Server.Transfer(Request.RawUrl, false);
+                var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                nameValues.Set("cust", CM.addCustomer(c).ToString());
+                Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnEditCustomer_Click(object sender, EventArgs e)
@@ -224,54 +190,48 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //transfers data from label into textbox for editing
-                txtFirstName.Text = lblFirstNameDisplay.Text;
-                txtFirstName.Visible = true;
-                lblFirstNameDisplay.Visible = false;
+                //txtFirstName.Text = lblFirstNameDisplay.Text;
+                txtFirstName.Enabled = true;
+                //lblFirstNameDisplay.Visible = false;
 
-                txtLastName.Text = lblLastNameDisplay.Text;
-                txtLastName.Visible = true;
-                lblLastNameDisplay.Visible = false;
+                //txtLastName.Text = lblLastNameDisplay.Text;
+                txtLastName.Enabled = true;
+                //lblLastNameDisplay.Visible = false;
 
-                txtPrimaryAddress.Text = lblPrimaryAddressDisplay.Text;
-                txtPrimaryAddress.Visible = true;
-                lblPrimaryAddressDisplay.Visible = false;
+                //txtPrimaryAddress.Text = lblPrimaryAddressDisplay.Text;
+                txtPrimaryAddress.Enabled = true;
+                //lblPrimaryAddressDisplay.Visible = false;
 
-                //txtBillingAddress.Text = lblBillingAddressDisplay.Text;
-                //txtBillingAddress.Visible = true;
-                //lblBillingAddressDisplay.Visible = false;
+                //txtSecondaryAddress.Text = lblSecondaryAddressDisplay.Text;
+                txtSecondaryAddress.Enabled = true;
+                //lblSecondaryAddressDisplay.Visible = false;
 
-                txtSecondaryAddress.Text = lblSecondaryAddressDisplay.Text;
-                txtSecondaryAddress.Visible = true;
-                lblSecondaryAddressDisplay.Visible = false;
+                //txtPrimaryPhoneNumber.Text = lblPrimaryPhoneNumberDisplay.Text;
+                txtPrimaryPhoneNumber.Enabled = true;
+                //lblPrimaryPhoneNumberDisplay.Visible = false;
 
-                txtPrimaryPhoneNumber.Text = lblPrimaryPhoneNumberDisplay.Text;
-                txtPrimaryPhoneNumber.Visible = true;
-                lblPrimaryPhoneNumberDisplay.Visible = false;
+                //txtSecondaryPhoneNumber.Text = lblSecondaryPhoneNumberDisplay.Text;
+                txtSecondaryPhoneNumber.Enabled = true;
+                //lblSecondaryPhoneNumberDisplay.Visible = false;
 
-                txtSecondaryPhoneNumber.Text = lblSecondaryPhoneNumberDisplay.Text;
-                txtSecondaryPhoneNumber.Visible = true;
-                lblSecondaryPhoneNumberDisplay.Visible = false;
-
-                txtEmail.Text = lblEmailDisplay.Text;
-                txtEmail.Visible = true;
-                lblEmailDisplay.Visible = false;
+                //txtEmail.Text = lblEmailDisplay.Text;
+                txtEmail.Enabled = true;
+                //lblEmailDisplay.Visible = false;
                 chkEmailList.Enabled = true;
 
-                txtCity.Text = lblCityDisplay.Text;
-                txtCity.Visible = true;
-                lblCityDisplay.Visible = false;
+                //txtCity.Text = lblCityDisplay.Text;
+                txtCity.Enabled = true;
+                //lblCityDisplay.Visible = false;
 
-                //transfers data from label into dropdown for editing
-                ddlCountry.SelectedValue = (lm.countryID(lblCountryDisplay.Text)).ToString();
-                ddlCountry.Visible = true;
-                lblCountryDisplay.Visible = false;
-                ddlProvince.SelectedValue = (lm.pronvinceID(lblProvinceDisplay.Text)).ToString();
-                ddlProvince.Visible = true;
-                lblProvinceDisplay.Visible = false;
+                ddlCountry.Enabled = true;
+                //lblCountryDisplay.Visible = false;
 
-                txtPostalCode.Text = lblPostalCodeDisplay.Text;
-                txtPostalCode.Visible = true;
-                lblPostalCodeDisplay.Visible = false;
+                ddlProvince.Enabled = true;
+                //lblProvinceDisplay.Visible = false;
+
+                //txtPostalCode.Text = lblPostalCodeDisplay.Text;
+                txtPostalCode.Enabled = true;
+                //lblPostalCodeDisplay.Visible = false;
                 //hides and displays the proper buttons for access
                 btnSaveCustomer.Visible = true;
                 pnlDefaultButton.DefaultButton = "btnSaveCustomer";
@@ -285,18 +245,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnSaveCustomer_Click(object sender, EventArgs e)
@@ -307,48 +261,45 @@ namespace SweetSpotDiscountGolfPOS
             {
                 //Collects customer data to add to database
                 Customer c = new Customer();
-                c.customerId = (int)(Convert.ToInt32(Session["key"].ToString()));
+                c.customerId = Convert.ToInt32(Request.QueryString["cust"].ToString());
                 c.firstName = txtFirstName.Text;
                 c.lastName = txtLastName.Text;
                 c.primaryAddress = txtPrimaryAddress.Text;
                 c.secondaryAddress = txtSecondaryAddress.Text;
                 c.primaryPhoneNumber = txtPrimaryPhoneNumber.Text;
                 c.secondaryPhoneNumber = txtSecondaryPhoneNumber.Text;
-                if (chkEmailList.Checked) { c.emailList = true; }
-                else { c.emailList = false; }
+                c.emailList = chkEmailList.Checked;
                 c.email = txtEmail.Text;
                 c.city = txtCity.Text;
                 c.province = Convert.ToInt32(ddlProvince.SelectedValue);
                 c.country = Convert.ToInt32(ddlCountry.SelectedValue);
                 c.postalCode = txtPostalCode.Text;
                 //updates the customer info in tables
-                ssm.updateCustomer(c);
+                CM.updateCustomer(c);
                 //changes all text boxes and dropdowns to labels
-                txtFirstName.Visible = false;
-                lblFirstNameDisplay.Visible = true;
-                txtLastName.Visible = false;
-                lblLastNameDisplay.Visible = true;
-                txtPrimaryAddress.Visible = false;
-                lblPrimaryAddressDisplay.Visible = true;
-                //txtBillingAddress.Visible = false;
-                //lblBillingAddressDisplay.Visible = true;
-                txtSecondaryAddress.Visible = false;
-                lblSecondaryAddressDisplay.Visible = true;
-                txtPrimaryPhoneNumber.Visible = false;
-                lblPrimaryPhoneNumberDisplay.Visible = true;
-                txtSecondaryPhoneNumber.Visible = false;
-                lblSecondaryPhoneNumberDisplay.Visible = true;
-                txtEmail.Visible = false;
-                lblEmailDisplay.Visible = true;
+                txtFirstName.Enabled = false;
+                //lblFirstNameDisplay.Visible = true;
+                txtLastName.Enabled = false;
+                //lblLastNameDisplay.Visible = true;
+                txtPrimaryAddress.Enabled = false;
+                //lblPrimaryAddressDisplay.Visible = true;
+                txtSecondaryAddress.Enabled = false;
+                //lblSecondaryAddressDisplay.Visible = true;
+                txtPrimaryPhoneNumber.Enabled = false;
+                //lblPrimaryPhoneNumberDisplay.Visible = true;
+                txtSecondaryPhoneNumber.Enabled = false;
+                //lblSecondaryPhoneNumberDisplay.Visible = true;
+                txtEmail.Enabled = false;
+                //lblEmailDisplay.Visible = true;
                 chkEmailList.Enabled = false;
-                txtCity.Visible = false;
-                lblCityDisplay.Visible = true;
-                ddlProvince.Visible = false;
-                lblProvinceDisplay.Visible = true;
-                ddlCountry.Visible = false;
-                lblCountryDisplay.Visible = true;
-                txtPostalCode.Visible = false;
-                lblPostalCodeDisplay.Visible = true;
+                txtCity.Enabled = false;
+                //lblCityDisplay.Visible = true;
+                ddlProvince.Enabled = false;
+                //lblProvinceDisplay.Visible = true;
+                ddlCountry.Enabled = false;
+                //lblCountryDisplay.Visible = true;
+                txtPostalCode.Enabled = false;
+                //lblPostalCodeDisplay.Visible = true;
                 //hides and displays the proper buttons for access
                 btnSaveCustomer.Visible = false;
                 btnEditCustomer.Visible = true;
@@ -363,24 +314,18 @@ namespace SweetSpotDiscountGolfPOS
                 btnAddCustomer.Visible = false;
                 btnBackToSearch.Visible = true;
                 //reloads current page
-                Server.Transfer(Request.RawUrl, false);
+                Response.Redirect(Request.RawUrl, false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnCancel_Click(object sender, EventArgs e)
@@ -390,55 +335,40 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //no chnages saved and moves to customer home page
-                Server.Transfer(Request.RawUrl, false);
+                Response.Redirect(Request.RawUrl, false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnStartSale_Click(object sender, EventArgs e)
         {
+            //****Still need this updated with new process****
             //Collects current method and page for error tracking
             string method = "btnStartSale_Click";
             try
             {
-                //Null items in cart as this is a new sale
-                Session["ItemsInCart"] = null;
-                //Sets transaction type as sale
-                Session["TranType"] = 1;
                 //opens the sales cart page
-                Server.Transfer("SalesCart.aspx", false);
+                Response.Redirect("SalesCart.aspx?cust=" + Request.QueryString["cust"].ToString(), false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnBackToSearch_Click(object sender, EventArgs e)
@@ -447,27 +377,19 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnBackToSearch_Click";
             try
             {
-                //removes key that was set so no customer is currently selected
-                Session["key"] = null;
                 //opens the Customer home page
-                Server.Transfer("CustomerHomePage.aspx", false);
+                Response.Redirect("CustomerHomePage.aspx", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void grdInvoiceSelection_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -479,49 +401,19 @@ namespace SweetSpotDiscountGolfPOS
                 //Sets the string of the command argument(invoice number
                 string strInvoice = Convert.ToString(e.CommandArgument);
                 //Splits the invoice string into numbers
-                int invNum = Convert.ToInt32(strInvoice.Split('-')[0]);
-                int invSNum = Convert.ToInt32(strInvoice.Split('-')[1]);
                 //Checks that the command name is return invoice
-                if (e.CommandName == "returnInvoice")
-                {
-                    //determines the table to use for queries
-                    string table = "";
-                    int tran = 3;
-                    if (invSNum > 1)
-                    {
-                        table = "Returns";
-                        tran = 4;
-                    }
-                    //Stores required info into Sessions
-                    Invoice rInvoice = ssm.getSingleInvoice(invNum, invSNum);
-                    Session["key"] = rInvoice.customerID;
-                    Session["Invoice"] = strInvoice;
-                    Session["useInvoice"] = true;
-                    Session["strDate"] = rInvoice.invoiceDate;
-                    Session["ItemsInCart"] = ssm.invoice_getItems(invNum, invSNum, "tbl_invoiceItem" + table);
-                    Session["CheckOutTotals"] = ssm.invoice_getCheckoutTotals(invNum, invSNum, "tbl_invoice");
-                    Session["MethodsOfPayment"] = ssm.invoice_getMOP(invNum, invSNum, "tbl_invoiceMOP");
-                    Session["TranType"] = tran;
-                    //Changes to printable invoice page
-                    Server.Transfer("PrintableInvoice.aspx", false);
-                }
+                Response.Redirect("PrintableInvoice.aspx?inv=" + strInvoice, false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void ddlCountry_SelectedIndexChanged(object sender, EventArgs e)
@@ -530,30 +422,21 @@ namespace SweetSpotDiscountGolfPOS
             string method = "ddlCountry_SelectedIndexChanged";
             try
             {
-                dt = em.returnProvinceDropDown(Convert.ToInt32(ddlCountry.SelectedValue));
-
                 ddlProvince.DataTextField = "provName";
                 ddlProvince.DataValueField = "provStateID";
-
-                ddlProvince.DataSource = dt;
+                ddlProvince.DataSource = LM.ReturnProvinceDropDown(Convert.ToInt32(ddlCountry.SelectedValue));
                 ddlProvince.DataBind();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
     }

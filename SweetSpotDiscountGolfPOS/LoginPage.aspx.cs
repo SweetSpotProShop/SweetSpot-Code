@@ -93,8 +93,8 @@ namespace SweetSpotDiscountGolfPOS
                 Session["currentUser"] = new CurrentUser(Convert.ToInt32(dt.Rows[0].ItemArray[0]),
                     Convert.ToInt32(dt.Rows[0].ItemArray[1]), Convert.ToInt32(dt.Rows[0].ItemArray[2]), 
                     Convert.ToString(dt.Rows[0].ItemArray[3]), Convert.ToInt32(dt.Rows[0].ItemArray[4]));
-                Server.Transfer("HomePage.aspx", false);
-                Session.RemoveAll();
+                Response.Redirect("HomePage.aspx", false);
+                //Session.RemoveAll();
             }
             else
             {

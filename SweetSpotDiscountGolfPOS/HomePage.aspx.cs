@@ -16,12 +16,10 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class HomePage : System.Web.UI.Page
     {
-        ErrorReporting er = new ErrorReporting();
-        SweetShopManager ssm = new SweetShopManager();
-        LocationManager lm = new LocationManager();
-        ItemDataUtilities idu = new ItemDataUtilities();
-        List<Invoice> invoiceList = new List<Invoice>();
-        CurrentUser cu;
+        ErrorReporting ER = new ErrorReporting();
+        Reports R = new Reports();
+        LocationManager LM = new LocationManager();
+        CurrentUser CU;
         int totalSales = 0;
         double totalDiscounts = 0;
         double totalTradeIns = 0;
@@ -29,6 +27,7 @@ namespace SweetSpotDiscountGolfPOS
         double totalGST = 0;
         double totalPST = 0;
         double totalBalancePaid = 0;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -37,30 +36,23 @@ namespace SweetSpotDiscountGolfPOS
             //Session["prevPage"] = "HomePage.aspx";
             try
             {
-                cu = (CurrentUser)Session["currentUser"];
+                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
-                    Server.Transfer("LoginPage.aspx", false);
+                    Response.Redirect("LoginPage.aspx", false);
                 }
                 if (!this.IsPostBack)
                 {
-                    //Sets sql connection and executes location command
-                    SqlConnection con = new SqlConnection(WebConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString);
-                    SqlCommand cmd = new SqlCommand("SELECT city FROM tbl_location ", con);
-                    //Checks current location and populates drop down
-                    cmd.CommandType = CommandType.Text;
-                    cmd.Connection = con;
-                    con.Open();
-                    ddlLocation.DataSource = cmd.ExecuteReader();
-                    ddlLocation.DataTextField = "City";
+                    ddlLocation.DataSource = LM.ReturnLocationDropDown();
+                    ddlLocation.DataTextField = "locationName";
+                    ddlLocation.DataValueField = "locationID";
                     ddlLocation.DataBind();
-                    ddlLocation.SelectedValue = cu.locationName;
-                    con.Close();
+                    ddlLocation.SelectedValue = CU.locationID.ToString();
                 }
                 //Checks user for admin status
-                if (cu.jobID == 0)
+                if (CU.jobID == 0)
                 {
                     lbluser.Text = "You have Admin Access";
                     lbluser.Visible = true;
@@ -68,91 +60,27 @@ namespace SweetSpotDiscountGolfPOS
                 else/* if (Session["Loc"] != null)*/
                 {
                     //If no admin status shows location as label instead of drop down
-                    lblLocation.Text = cu.locationName;
-                    lblLocation.Visible = true;
-                    ddlLocation.Visible = false;
+                    //lblLocation.Text = CU.locationName;
+                    //lblLocation.Visible = true;
+                    //ddlLocation.Visible = false;
+                    ddlLocation.Enabled = false;
                 }
                 //populate gridview with todays sales
-                int locationID = lm.locationIDfromCity(ddlLocation.SelectedValue);
-                invoiceList = ssm.getInvoiceBySaleDate(DateTime.Today, locationID);
-                grdSameDaySales.DataSource = invoiceList;
+                grdSameDaySales.DataSource = R.getInvoiceBySaleDate(DateTime.Today, DateTime.Today, Convert.ToInt32(ddlLocation.SelectedValue));
                 grdSameDaySales.DataBind();
-                foreach (GridViewRow row in grdSameDaySales.Rows)
-                {
-                    foreach(TableCell cell in row.Cells)
-                    {
-                        cell.Attributes.CssStyle["text-align"] = "center";
-                    }
-                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
-        //Currently used for Removing the row
-        //protected void OnRowDeleting(object sender, GridViewDeleteEventArgs e)
-        //{
-        //    //Collects current method for error tracking
-        //    string method = "OnRowDeleting";
-        //    try
-        //    {
-        //        string deleteReason = hidden.Value;
-        //        //if (deleteReason.Equals("Code:CancelDelete"))
-        //        //{
-
-        //        //}
-        //        //else
-        //        //Checks fo the reason why invoice is being deleted
-        //        if (!deleteReason.Equals("Code:CancelDelete") && !deleteReason.Equals(""))
-        //        {
-        //            //Gathers selected invoice number
-        //            int index = e.RowIndex;
-        //            Label lblInvoice = (Label)grdSameDaySales.Rows[index].FindControl("lblInvoiceNumber");
-        //            string invoice = lblInvoice.Text;
-        //            char[] splitchar = { '-' };
-        //            string[] invoiceSplit = invoice.Split(splitchar);
-        //            int invoiceNum = Convert.ToInt32(invoiceSplit[0]);
-        //            int invoiceSubNum = Convert.ToInt32(invoiceSplit[1]);
-        //            string deletionReason = deleteReason;
-        //            //calls deletion method
-        //            idu.deleteInvoice(invoiceNum, invoiceSubNum, deletionReason);
-        //            MessageBox.ShowMessage("Invoice " + invoice + " has been deleted", this);
-        //            //Refreshes current  page
-        //            Server.Transfer(Request.RawUrl);
-        //        }
-        //    }
-        //    //Exception catch
-        //    catch (ThreadAbortException tae) { }
-        //    catch (Exception ex)
-        //    {
-        //        //Log employee number
-        //        int employeeID = cu.empID;
-        //        //Log current page
-        //        string currPage = Convert.ToString(Session["currPage"]);
-        //        //Log all info into error table
-        //        er.logError(ex, employeeID, currPage, method, this);
-        //        //string prevPage = Convert.ToString(Session["prevPage"]);
-        //        //Display message box
-        //        MessageBox.ShowMessage("An Error has occured and been logged. "
-        //            + "If you continue to receive this message please contact "
-        //            + "your system administrator", this);
-        //        //Server.Transfer(prevPage, false);
-        //    }
-        //}
         protected void lbtnInvoiceNumber_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -162,49 +90,19 @@ namespace SweetSpotDiscountGolfPOS
                 //Text of the linkbutton
                 LinkButton btn = sender as LinkButton;
                 string invoice = btn.Text;
-                //Parsing into invoiceNum and invoiceSubNum
-                char[] splitchar = { '-' };
-                string[] invoiceSplit = invoice.Split(splitchar);
-                int invNum = Convert.ToInt32(invoiceSplit[0]);
-                int invSNum = Convert.ToInt32(invoiceSplit[1]);                
-                //determines the table to use for queries
-                string table = "";
-                int tran = 3;
-                if (invSNum > 1)
-                {
-                    table = "Returns";
-                    tran = 4;
-                }
-                //Stores required info into Sessions
-                Invoice rInvoice = ssm.getSingleInvoice(invNum, invSNum);
-                //Session["key"] = rInvoice.customerID;
-                //Session["Invoice"] = invoice;
-                Session["actualInvoiceInfo"] = rInvoice;
-                Session["useInvoice"] = true;
-                //Session["strDate"] = rInvoice.invoiceDate;
-                Session["ItemsInCart"] = ssm.invoice_getItems(invNum, invSNum, "tbl_invoiceItem" + table);
-                Session["CheckOutTotals"] = ssm.invoice_getCheckoutTotals(invNum, invSNum, "tbl_invoice");
-                Session["MethodsOfPayment"] = ssm.invoice_getMOP(invNum, invSNum, "tbl_invoiceMOP");
-                Session["TranType"] = tran;
                 //Changes page to display a printable invoice
-                Server.Transfer("PrintableInvoice.aspx", false);
+                Response.Redirect("PrintableInvoice.aspx?inv=" + invoice, false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void grdSameDaySales_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -239,18 +137,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
     }

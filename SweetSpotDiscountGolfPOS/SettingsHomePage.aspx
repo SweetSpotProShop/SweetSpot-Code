@@ -12,7 +12,7 @@
             <h2>Employee Management</h2>
             <hr />
             <%--Enter search text to find matching Employees information--%>
-            <asp:TextBox ID="txtSearch" runat="server"></asp:TextBox>
+            <asp:TextBox ID="txtSearch" runat="server" />
             <hr />
             <asp:Button ID="btnEmployeeSearch" runat="server" Width="150" Text="Employee Search" OnClick="btnEmployeeSearch_Click" />
             <div class="divider" />
@@ -22,32 +22,32 @@
                 <Columns>
                     <asp:TemplateField HeaderText="View Profile">
                         <ItemTemplate>
-                            <asp:LinkButton ID="lbtnViewEmployee" CommandName="ViewProfile" CommandArgument='<%#Eval("employeeID") %>' Text="View Profile" runat="server">View Profile</asp:LinkButton>
+                            <asp:LinkButton ID="lbtnViewEmployee" CommandName="ViewProfile" CommandArgument='<%#Eval("employeeID") %>' Text="View Profile" runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Employee Number">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("employeeID") %>' ID="key"></asp:Label>
+                            <asp:Label runat="server" Text='<%#Eval("employeeID") %>' ID="key" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Employee Name">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("firstName") + " " + Eval("lastName") %>'></asp:Label>
+                            <asp:Label runat="server" Text='<%#Eval("firstName") + " " + Eval("lastName") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Employee Address">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("primaryAddress") %>'></asp:Label>
+                            <asp:Label runat="server" Text='<%#Eval("primaryAddress") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Phone Number">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("primaryContactNumber") %>'></asp:Label>
+                            <asp:Label runat="server" Text='<%#Eval("primaryContactNumber") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="City">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("city") %>'></asp:Label>
+                            <asp:Label runat="server" Text='<%#Eval("city") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -74,50 +74,50 @@
                 <asp:Table runat="server">
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:Label ID="lblProvince" runat="server" Text="Province:"></asp:Label>
+                            <asp:Label ID="lblProvince" runat="server" Text="Province:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:DropDownList ID="ddlProvince" runat="server" AutoPostBack="true" DataSourceID="SqlDSProvince" DataTextField="provName" DataValueField="provStateID" ></asp:DropDownList>
-                        </asp:TableCell>
-                    </asp:TableRow>
-                    <asp:TableRow>
-                        <asp:TableCell>
-                            <asp:Label ID="lblTax" runat="server" Text="Tax:"></asp:Label>
-                        </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:DropDownList ID="ddlTax" runat="server" AutoPostBack="true" DataSourceID="sqlDSTax" DataTextField="taxName" DataValueField="taxID" OnPreRender="ddlTax_SelectedIndexChanged"></asp:DropDownList>
-                        </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Label ID="lblCurrentDate" runat="server" Text="" Visible="false"></asp:Label>
+                            <asp:DropDownList ID="ddlProvince" runat="server" AutoPostBack="true" DataSourceID="SqlDSProvince" DataTextField="provName" DataValueField="provStateID" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:Label ID="lblCurrent" runat="server" Text="Current Rate:"></asp:Label>
+                            <asp:Label ID="lblTax" runat="server" Text="Tax:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label ID="lblNewRate" runat="server" Text="New Rate:"></asp:Label>
+                            <asp:DropDownList ID="ddlTax" runat="server" AutoPostBack="true" DataSourceID="sqlDSTax" DataTextField="taxName" DataValueField="taxID" OnPreRender="ddlTax_SelectedIndexChanged" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label ID="lblAsOfDate" runat="server" Text="As of:"></asp:Label>
-                        </asp:TableCell>
-                    </asp:TableRow>
-                    <asp:TableRow>
-                        <asp:TableCell>
-                            <asp:Label ID="lblCurrentDisplay" runat="server" Text=""></asp:Label>
-                        </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:TextBox ID="txtNewRate" runat="server"></asp:TextBox>
-                        </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:TextBox ID="txtDate" runat="server" Text="" ></asp:TextBox>
+                            <asp:Label ID="lblCurrentDate" runat="server" Text="" Visible="false" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell>
+                            <asp:Label ID="lblCurrent" runat="server" Text="Current Rate:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Button ID="btnSaveTheTax" Text="Set New Tax Rate" runat="server" OnClick="btnSaveTheTax_Click"></asp:Button>
+                            <asp:Label ID="lblNewRate" runat="server" Text="New Rate:" />
+                        </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:Label ID="lblAsOfDate" runat="server" Text="As of:" />
+                        </asp:TableCell>
+                    </asp:TableRow>
+                    <asp:TableRow>
+                        <asp:TableCell>
+                            <asp:Label ID="lblCurrentDisplay" runat="server" Text="" />
+                        </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:TextBox ID="txtNewRate" runat="server" />
+                        </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:TextBox ID="txtDate" runat="server" Text="" />
+                        </asp:TableCell>
+                    </asp:TableRow>
+                    <asp:TableRow>
+                        <asp:TableCell>
+                        </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:Button ID="btnSaveTheTax" Text="Set New Tax Rate" runat="server" OnClick="btnSaveTheTax_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
                         </asp:TableCell>
@@ -132,29 +132,24 @@
                 <asp:Table runat="server" GridLines="Both" BorderStyle="Solid" BorderWidth="1px" BorderColor="Black">
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:Label ID="lblproduct" runat="server" Text="Import Items"></asp:Label>
+                            <asp:Label ID="lblproduct" runat="server" Text="Import Items" />
                             <div>
                                 <asp:FileUpload ID="fupItemSheet" runat="server" />
-
                             </div>
                             <asp:Button ID="btnLoadItems" runat="server" Width="150" Text="Import Items" OnClick="btnLoadItems_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label ID="lblLoadCustomers" runat="server" Text="Import Customers"></asp:Label>
+                            <asp:Label ID="lblLoadCustomers" runat="server" Text="Import Customers" />
                             <div>
                                 <asp:FileUpload ID="fupCustomers" runat="server" />
-
                             </div>
-                            <asp:Button ID="btnImportCustomers" runat="server" Width="150" Text="Import Customers" onclick="btnImportCustomers_Click"/>
+                            <asp:Button ID="btnImportCustomers" runat="server" Width="150" Text="Import Customers" onclick="btnImportCustomers_Click" />
                         </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>
-
             </div>
-
             <%--<asp:Button ID="btnLoadCustomers" runat="server" Width="150" Text="Load Customers" OnClick="btnLoadCustomers_Click" />
             <asp:Button ID="btnLoadEmployees" runat="server" Width="150" Text="Load Employees" OnClick="btnLoadEmployee_Click" />--%>
-
             <br />
             <hr />
             <h2>Export Items To Excel</h2>

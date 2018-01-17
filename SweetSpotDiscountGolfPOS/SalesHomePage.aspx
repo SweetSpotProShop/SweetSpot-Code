@@ -25,7 +25,6 @@
             <%--<div class="divider" />--%>
             <hr />
             <h2>Invoice Search</h2>
-            <asp:SqlDataSource ID="SqlDSLocation" runat="server" ConnectionString="<%$ ConnectionStrings:SweetSpotDevConnectionString %>" SelectCommand="SELECT [locationID], [locationName] FROM [tbl_location]"></asp:SqlDataSource>
             <br />
             Search by using the Calendar dates or the text box for a specific invoice
             <br />
@@ -34,7 +33,7 @@
                     <asp:TableCell>
                         <asp:Label ID="lblSelectLocation" runat="server" Text="Select Location:" />
                     </asp:TableCell><asp:TableCell>
-                        <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="True" DataSourceID="SqlDSLocation" DataTextField="locationName" DataValueField="locationID"></asp:DropDownList>
+                        <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="True" />
                     </asp:TableCell><asp:TableCell>
                         <asp:Label ID="lblInvoiceNum" runat="server" Text="Enter Invoice Number or SKU:" />
                     </asp:TableCell><asp:TableCell>
@@ -48,9 +47,10 @@
             <asp:Table ID="tblInvoiceSearch" runat="server" Width="100%">
                 <asp:TableRow>
                     <asp:TableCell Width="50%">
-                        <asp:Label runat="server" Text="Start Date:"></asp:Label>
-                    </asp:TableCell><asp:TableCell Width="50%">
-                        <asp:Label runat="server" Text="End Date:"></asp:Label>
+                        <asp:Label runat="server" Text="Start Date:" />
+                    </asp:TableCell>
+                    <asp:TableCell Width="50%">
+                        <asp:Label runat="server" Text="End Date:" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -65,7 +65,8 @@
                             <TodayDayStyle BackColor="#CCCCCC" ForeColor="Black" />
                             <WeekendDayStyle BackColor="#FFFFCC" />
                         </asp:Calendar>
-                    </asp:TableCell><asp:TableCell>
+                    </asp:TableCell>
+                    <asp:TableCell>
                         <asp:Calendar ID="calEndDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest" Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="182px" Width="200px" OnSelectionChanged="calEnd_SelectionChanged">
                             <DayHeaderStyle BackColor="#5FD367" Font-Bold="True" Font-Size="7pt" />
                             <NextPrevStyle VerticalAlign="Bottom" />
@@ -81,56 +82,56 @@
             </asp:Table>
             <hr />
             <div>
-                <asp:GridView ID="grdInvoiceSelection" runat="server" AutoGenerateColumns="false" Width="100%" OnRowCommand="grdInvoiceSelection_RowCommand">
+                <asp:GridView ID="grdInvoiceSelection" runat="server" AutoGenerateColumns="false" Width="100%" OnRowCommand="grdInvoiceSelection_RowCommand" RowStyle-HorizontalAlign="Center" >
                     <Columns>
                         <asp:TemplateField HeaderText=" View Invoice">
                             <ItemTemplate>
-                                <asp:LinkButton ID="lkbInvoiceNum" runat="server" CommandName="returnInvoice" CommandArgument='<%#Eval("invoiceNum") + "-" + Eval("invoiceSub")%>' Text='<%#Eval("invoiceNum") + "-" + Eval("invoiceSub") %>'></asp:LinkButton>
+                                <asp:LinkButton ID="lkbInvoiceNum" runat="server" CommandName="returnInvoice" CommandArgument='<%#Eval("invoiceNum") + "-" + Eval("invoiceSub")%>' Text='<%#Eval("invoiceNum") + "-" + Eval("invoiceSub") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Invoice Date">
                             <ItemTemplate>
-                                <asp:Label ID="lblInvoiceDate" runat="server" Text='<%#Eval("invoiceDate","{0: MM/dd/yy}") %>'></asp:Label>
+                                <asp:Label ID="lblInvoiceDate" runat="server" Text='<%#Eval("invoiceDate","{0: MM/dd/yy}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Customer Name">
                             <ItemTemplate>
-                                <asp:Label ID="lblCustomerName" runat="server" Text='<%#Eval("customerName") %>'></asp:Label>
+                                <asp:Label ID="lblCustomerName" runat="server" Text='<%#Eval("customer.firstName") + " " + ("customer.lastName") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Discount">
                             <ItemTemplate>
-                                <asp:Label ID="lblDiscountAmount" runat="server" Text='<%#Eval("discountAmount","{0:C}") %>'></asp:Label>
+                                <asp:Label ID="lblDiscountAmount" runat="server" Text='<%#Eval("discountAmount","{0:C}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Trade In">
                             <ItemTemplate>
-                                <asp:Label ID="lblTradeInAmount" runat="server" Text='<%#Eval("tradeinAmount","{0:C}") %>'></asp:Label>
+                                <asp:Label ID="lblTradeInAmount" runat="server" Text='<%#Eval("tradeinAmount","{0:C}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Subtotal">
                             <ItemTemplate>
-                                <asp:Label ID="lblSubtotal" runat="server" Text='<%#Eval("subTotal","{0:C}") %>'></asp:Label>
+                                <asp:Label ID="lblSubtotal" runat="server" Text='<%#Eval("subTotal","{0:C}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="GST">
                             <ItemTemplate>
-                                <asp:Label ID="lblGSTAmount" runat="server" Text='<%#Eval("governmentTax","{0:C}") %>'></asp:Label>
+                                <asp:Label ID="lblGSTAmount" runat="server" Text='<%#Eval("governmentTax","{0:C}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="PST">
                             <ItemTemplate>
-                                <asp:Label ID="lblPSTAmount" runat="server" Text='<%#Eval("provincialTax","{0:C}") %>'></asp:Label>
+                                <asp:Label ID="lblPSTAmount" runat="server" Text='<%#Eval("provincialTax","{0:C}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Total">
                             <ItemTemplate>
-                                <asp:Label ID="lblAmountPaid" runat="server" Text='<%#Eval("balanceDue","{0:C}") %>'></asp:Label>
+                                <asp:Label ID="lblAmountPaid" runat="server" Text='<%#Eval("balanceDue","{0:C}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name">
                             <ItemTemplate>
-                                <asp:Label ID="lblEmployeeName" runat="server" Text='<%#Eval("employeeName") %>'></asp:Label>
+                                <asp:Label ID="lblEmployeeName" runat="server" Text='<%#Eval("employee.firstName") + " " + Eval("employee.lastName") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>

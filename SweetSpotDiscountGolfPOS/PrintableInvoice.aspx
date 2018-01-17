@@ -115,41 +115,41 @@
             </asp:Table>
             <hr />
 
-            <asp:GridView ID="grdItemsSoldList" runat="server" CellPadding="4" Width="70%" AutoGenerateColumns="False">
+            <asp:GridView ID="grdItemsSoldList" runat="server" CellPadding="4" Width="70%" AutoGenerateColumns="False" RowStyle-HorizontalAlign="Center" >
                 <Columns>
                     <asp:TemplateField HeaderText="SKU #">
                         <ItemTemplate>
-                            <asp:Label ID="sku" Text='<%#Eval("SKU")%>' runat="server"></asp:Label>
+                            <asp:Label ID="sku" Text='<%#Eval("sku")%>' runat="server"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Description">
                         <ItemTemplate>
-                            <asp:Label ID="description" Text='<%#Eval("description")%>' runat="server"></asp:Label>
+                            <asp:Label ID="itemDescription" Text='<%#Eval("itemDescription")%>' runat="server"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Retail Price">
                         <ItemTemplate>
-                            <asp:Label ID="retail" Text='<%# (Convert.ToInt32(Session["TranType"])  == 1 || Convert.ToInt32(Session["TranType"])  == 3) ? Eval("price","{0:C}") : (Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("price")))-Convert.ToDouble(Eval("discount"))).ToString("C") : ((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("discount")) / 100) * Convert.ToDouble(Eval("price"))))).ToString("C")) %>' runat="server"></asp:Label>
+                            <asp:Label ID="itemPrice" Text='<%# Eval("itemPrice","{0:C}") %>' runat="server"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Discounts/Bonus Applied">
                         <ItemTemplate>
-                            <asp:Label ID="discount" Text='<%# (Convert.ToInt32(Session["TranType"])  == 1 || Convert.ToInt32(Session["TranType"])  == 3) ? Convert.ToBoolean(Eval("percentage")) == false ? (Eval("discount","{0:C}")).ToString() : ((Convert.ToDouble(Eval("discount")) / 100) * Convert.ToDouble(Eval("price"))).ToString("C") : (Convert.ToBoolean(Eval("percentage")) == false ? (((Convert.ToDouble(Eval("price")))-(Convert.ToDouble(Eval("discount")))) - Convert.ToDouble(Eval("returnAmount"))).ToString("C") : (((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("discount")) / 100) * Convert.ToDouble(Eval("price"))))) - Convert.ToDouble(Eval("returnAmount"))).ToString("C")) %>' runat="server" />
+                            <asp:Label ID="discount" Text='<%# Convert.ToBoolean(Eval("percentage")) == false ? (Eval("itemDiscount","{0:C}")).ToString() : ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("itemPrice"))).ToString("C") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Quantity">
                         <ItemTemplate>
-                            <asp:Label ID="quantity" Text='<%#Eval("quantity")%>' runat="server"></asp:Label>
+                            <asp:Label ID="itemQuantity" Text='<%#Eval("itemQuantity")%>' runat="server"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Sale Price">
                         <ItemTemplate>
-                            <asp:Label ID="salePrice" Text='<%# (Convert.ToInt32(Session["TranType"])  == 1 || Convert.ToInt32(Session["TranType"])  == 3) ? (Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("price")))-(Convert.ToDouble(Eval("discount")))).ToString("C") : ((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("discount")) / 100) * Convert.ToDouble(Eval("price"))))).ToString("C")) : Eval("returnAmount","{0:C}") %>' runat="server"></asp:Label>
+                            <asp:Label ID="salePrice" Text='<%# Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("itemPrice")))-(Convert.ToDouble(Eval("itemDiscount")))).ToString("C") : ((Convert.ToDouble(Eval("itemPrice")) - ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("itemPrice"))))).ToString("C") %>' runat="server"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Extended Price">
                         <ItemTemplate>
-                            <asp:Label ID="extended" Text='<%# (Convert.ToInt32(Session["TranType"])  == 1 || Convert.ToInt32(Session["TranType"])  == 3) ? (Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("price"))-Convert.ToDouble(Eval("discount")))*Convert.ToDouble(Eval("quantity"))).ToString("C") : ((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("discount")) / 100) * Convert.ToDouble(Eval("price"))))*Convert.ToDouble(Eval("quantity"))).ToString("C")) : Eval("returnAmount","{0:C}") %>' runat="server" />
+                            <asp:Label ID="extended" Text='<%# Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("itemPrice"))-Convert.ToDouble(Eval("itemDiscount")))*Convert.ToDouble(Eval("itemQuantity"))).ToString("C") : ((Convert.ToDouble(Eval("itemPrice")) - ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("itemPrice"))))*Convert.ToDouble(Eval("itemQuantity"))).ToString("C") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -165,7 +165,7 @@
                         <asp:Label ID="lblDiscounts" runat="server" Text="Discounts:"></asp:Label>
                     </asp:TableCell>
                     <asp:TableCell CssClass="leftSecond">
-                        <asp:Label ID="lblDiscountsDisplay" runat="server" Text=""></asp:Label>
+                        <asp:Label ID="lblDiscountsDisplay" runat="server" Text="" DataFormatString="{0:C}" ></asp:Label>
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightFirst">
                         <asp:Label ID="lblBlank" runat="server" Text=""></asp:Label>
@@ -179,13 +179,13 @@
                         <asp:Label ID="lblTradeIns" runat="server" Text="Trade-Ins:"></asp:Label>
                     </asp:TableCell>
                     <asp:TableCell CssClass="leftSecond">
-                        <asp:Label ID="lblTradeInsDisplay" runat="server" Text=""></asp:Label>
+                        <asp:Label ID="lblTradeInsDisplay" runat="server" Text="" DataFormatString="{0:C}"></asp:Label>
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightFirst">
                         <asp:Label ID="lblGST" runat="server" Text="GST:"></asp:Label>
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSecond">
-                        <asp:Label ID="lblGSTDisplay" runat="server" Text=""></asp:Label>
+                        <asp:Label ID="lblGSTDisplay" runat="server" Text="" DataFormatString="{0:C}"></asp:Label>
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -193,13 +193,13 @@
                         <asp:Label ID="lblShipping" runat="server" Text="Shipping:"></asp:Label>
                     </asp:TableCell>
                     <asp:TableCell CssClass="leftSecond">
-                        <asp:Label ID="lblShippingDisplay" runat="server" Text=""></asp:Label>
+                        <asp:Label ID="lblShippingDisplay" runat="server" Text="" DataFormatString="{0:C}"></asp:Label>
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightFirst">
                         <asp:Label ID="lblPST" runat="server" Text="PST:"></asp:Label>
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSecond">
-                        <asp:Label ID="lblPSTDisplay" runat="server" Text=""></asp:Label>
+                        <asp:Label ID="lblPSTDisplay" runat="server" Text="" DataFormatString="{0:C}"></asp:Label>
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -207,20 +207,20 @@
                         <asp:Label ID="lblSubtotal" runat="server" Text="Subtotal:"></asp:Label>
                     </asp:TableCell>
                     <asp:TableCell CssClass="leftSecond">
-                        <asp:Label ID="lblSubtotalDisplay" runat="server" Text=""></asp:Label>
+                        <asp:Label ID="lblSubtotalDisplay" runat="server" Text="" DataFormatString="{0:C}"></asp:Label>
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightFirst">
                         <asp:Label ID="lblTotalPaid" runat="server" Text="Total Paid:"></asp:Label>
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSecond">
-                        <asp:Label ID="lblTotalPaidDisplay" runat="server" Text=""></asp:Label>
+                        <asp:Label ID="lblTotalPaidDisplay" runat="server" Text="" DataFormatString="{0:C}"></asp:Label>
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
             <p>
-                <asp:GridView ID="grdMOPS" runat="server" CellPadding="4" Width="70%" AutoGenerateColumns="false">
+                <asp:GridView ID="grdMOPS" runat="server" CellPadding="4" Width="70%" AutoGenerateColumns="false" RowStyle-HorizontalAlign="Center" >
                     <Columns>
-                        <asp:BoundField DataField="methodOfPayment" ReadOnly="true" HeaderText="Payment Type" />
+                        <asp:BoundField DataField="mopType" ReadOnly="true" HeaderText="Payment Type" />
                         <asp:BoundField DataField="amountPaid" ReadOnly="true" HeaderText="Amount Paid" DataFormatString="{0:C}" />
                     </Columns>
                 </asp:GridView>

@@ -17,7 +17,7 @@
             <%--<div class="divider" />--%>
             <asp:Button ID="btnAddNewCustomer" runat="server" Width="150" Text="Add New Customer" OnClick="btnAddNewCustomer_Click" />
             <hr />
-            <asp:GridView ID="grdCustomersSearched" runat="server" AutoGenerateColumns="false" OnRowCommand="grdCustomersSearched_RowCommand" AllowPaging="True" PageSize="25" OnPageIndexChanging="grdCustomersSearched_PageIndexChanging" >
+            <asp:GridView ID="grdCustomersSearched" runat="server" AutoGenerateColumns="false" OnRowCommand="grdCustomersSearched_RowCommand" AllowPaging="True" PageSize="25" OnPageIndexChanging="grdCustomersSearched_PageIndexChanging" RowStyle-HorizontalAlign="Center" >
                 <Columns>
                     <asp:TemplateField HeaderText="Sale">
                         <ItemTemplate>

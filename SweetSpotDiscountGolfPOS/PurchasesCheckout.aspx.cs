@@ -16,7 +16,7 @@ namespace SweetSpotDiscountGolfPOS
     {
         ErrorReporting er = new ErrorReporting();
         SweetShopManager ssm = new SweetShopManager();
-        List<Checkout> mopList = new List<Checkout>();
+        List<Mops> mopList = new List<Mops>();
         List<Cart> itemsInCart = new List<Cart>();
         ItemDataUtilities idu = new ItemDataUtilities();
         CheckoutManager ckm = new CheckoutManager();
@@ -46,23 +46,23 @@ namespace SweetSpotDiscountGolfPOS
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
-                    Server.Transfer("LoginPage.aspx", false);
+                    Response.Redirect("LoginPage.aspx", false);
                 }
                 if (!Page.IsPostBack)
                 {
                     //Retrieves items in the cart from Session
                     List<Cart> cart = (List<Cart>)Session["ItemsInCart"];
-                    CalculationManager cm = new CalculationManager();
+                    SalesCalculationManager cm = new SalesCalculationManager();
                     //Retrieves date from session
                     DateTime recDate = Convert.ToDateTime(Session["strDate"]);
                     //Creates checkout manager based on current items in cart
-                    ckm.dblTotal = ssm.returnPurchaseAmount(cart);
+                    ckm.dblTotal = cm.returnPurchaseAmount(cart);
                     ckm.dblRemainingBalance = ckm.dblTotal;
                     //Checks if there are any stored methods of payment
                     if (Session["MethodsofPayment"] != null)
                     {
                         //Retrieve Mops from session
-                        mopList = (List<Checkout>)Session["MethodsofPayment"];
+                        mopList = (List<Mops>)Session["MethodsofPayment"];
                         //Loops through each mop
                         foreach (var mop in mopList)
                         {
@@ -101,7 +101,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
         //Cash
@@ -141,7 +141,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
         //Cheque
@@ -181,7 +181,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
         //Debit
@@ -221,7 +221,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
         //Gift Card
@@ -261,7 +261,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
         //Populating gridview with MOPs
@@ -276,7 +276,7 @@ namespace SweetSpotDiscountGolfPOS
                 if (Session["MethodsofPayment"] != null)
                 {
                     //Retrieves current mops from Session
-                    mopList = (List<Checkout>)Session["MethodsofPayment"];
+                    mopList = (List<Mops>)Session["MethodsofPayment"];
                     //Loops through each mop
                     foreach (var mop in mopList)
                     {
@@ -286,7 +286,7 @@ namespace SweetSpotDiscountGolfPOS
                     }
                 }
                 //Sets a temp checkout with the new Mop
-                Checkout tempCK = new Checkout(methodOfPayment, amountPaid, gridID + 1, chequeNumber);
+                Mops tempCK = new Mops(methodOfPayment, amountPaid, gridID + 1, chequeNumber);
                 //Retrieves totals for check out from Session
                 ckm = (CheckoutManager)Session["CheckOutTotals"];
                 //Adds new mop to the current mop list
@@ -332,7 +332,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
         protected void OnRowDeleting(object sender, GridViewDeleteEventArgs e)
@@ -349,7 +349,7 @@ namespace SweetSpotDiscountGolfPOS
                 int mopRemovingID = Convert.ToInt32(((Label)gvCurrentMOPs.Rows[index].Cells[3].FindControl("lblTableID")).Text);
                 double paidAmount = double.Parse(gvCurrentMOPs.Rows[index].Cells[2].Text, NumberStyles.Currency);
                 //Retrieves Mop list from Session
-                List<Checkout> tempMopList = (List<Checkout>)Session["MethodsofPayment"];
+                List<Mops> tempMopList = (List<Mops>)Session["MethodsofPayment"];
                 //Loops through each mop in list
                 foreach (var mop in tempMopList)
                 {
@@ -395,7 +395,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
         //Other functionality
@@ -420,7 +420,7 @@ namespace SweetSpotDiscountGolfPOS
                 Session["TranType"] = null;
                 Session["strDate"] = null;
                 //Changes to the Home page
-                Server.Transfer("HomePage.aspx", false);
+                Response.Redirect("HomePage.aspx", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -437,7 +437,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
         protected void btnReturnToPurchaseCart_Click(object sender, EventArgs e)
@@ -448,7 +448,7 @@ namespace SweetSpotDiscountGolfPOS
             {
                 //Sets session to true
                 //Changes to Sales Cart page
-                Server.Transfer("PurchasesCart.aspx", false);
+                Response.Redirect("PurchasesCart.aspx", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -465,7 +465,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
         protected void btnFinalizePurchase_Click(object sender, EventArgs e)
@@ -502,7 +502,7 @@ namespace SweetSpotDiscountGolfPOS
                     //CheckoutTotals
                     ckm = (CheckoutManager)Session["CheckOutTotals"];
                     //MOP
-                    mopList = (List<Checkout>)Session["MethodsofPayment"];
+                    mopList = (List<Mops>)Session["MethodsofPayment"];
 
                     //Stores all the Sales data to the database
                     idu.mainPurchaseInvoice(ckm, cart, mopList, c, emp, tranType, (Session["Invoice"]).ToString(), txtComments.Text, cu);
@@ -512,7 +512,7 @@ namespace SweetSpotDiscountGolfPOS
                     Session["ShippingAmount"] = null;
                     Session["searchReturnInvoices"] = null;
                     //Changes page to printable invoice
-                    Server.Transfer("PrintableReceipt.aspx", false);
+                    Response.Redirect("PrintableReceipt.aspx", false);
                 }
             }
             //Exception catch
@@ -530,7 +530,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
     }

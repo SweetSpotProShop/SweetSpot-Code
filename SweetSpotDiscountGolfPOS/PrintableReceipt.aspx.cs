@@ -16,7 +16,7 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting er = new ErrorReporting();
         SweetShopManager ssm = new SweetShopManager();
         LocationManager lm = new LocationManager();
-        List<Checkout> mopList = new List<Checkout>();
+        List<Mops> mopList = new List<Mops>();
         List<Cart> cart = new List<Cart>();
         CheckoutManager ckm = new CheckoutManager();
         CurrentUser cu;
@@ -34,7 +34,7 @@ namespace SweetSpotDiscountGolfPOS
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
-                    Server.Transfer("LoginPage.aspx", false);
+                    Response.Redirect("LoginPage.aspx", false);
                 }
                 //get current customer from customer number session
                 int custNum = (Convert.ToInt32(Session["key"].ToString()));
@@ -43,7 +43,7 @@ namespace SweetSpotDiscountGolfPOS
                 //display information on receipt
                 lblCustomerName.Text = c.firstName.ToString() + " " + c.lastName.ToString();
                 lblStreetAddress.Text = c.primaryAddress.ToString();
-                lblPostalAddress.Text = c.city.ToString() + ", " + lm.provinceName(c.province) + " " + c.postalCode.ToString();
+                //lblPostalAddress.Text = c.city.ToString() + ", " + lm.provinceName(c.province) + " " + c.postalCode.ToString();
                 lblPhone.Text = c.primaryPhoneNumber.ToString();
                 lblinvoiceNum.Text = Convert.ToString(Session["Invoice"]);
                 lblDate.Text = Convert.ToDateTime(Session["strDate"]).ToString("yyyy-MM-dd");
@@ -53,21 +53,21 @@ namespace SweetSpotDiscountGolfPOS
                 int ln = 0;
                 //Determins the session to get the cart items from
                 if (tranType == 5) { cart = (List<Cart>)Session["ItemsInCart"]; ln = cu.locationID; }
-                else if(tranType == 6){ cart = (List<Cart>)Session["ItemsInCart"]; ln = lm.returnlocationIDFromReceiptNumber(Convert.ToInt32(Session["Invoice"])); }
+                //else if(tranType == 6){ cart = (List<Cart>)Session["ItemsInCart"]; ln = lm.returnlocationIDFromReceiptNumber(Convert.ToInt32(Session["Invoice"])); }
                 //Use current location to display on invoice
-                l = lm.returnLocationForReceiptFromID(ln);
+                //l = lm.returnLocationForReceiptFromID(ln);
 
                 //Display the location information
-                lblSweetShopName.Text = l.location.ToString();
+                //lblSweetShopName.Text = l.location.ToString();
                 lblSweetShopStreetAddress.Text = l.address.ToString();
-                lblSweetShopPostalAddress.Text = l.city.ToString() + ", " + lm.provinceName(l.provID) + " " + l.postal.ToString();
-                lblSweetShopPhone.Text = l.phone.ToString();
+                //lblSweetShopPostalAddress.Text = l.city.ToString() + ", " + lm.provinceName(l.provID) + " " + l.postal.ToString();
+                //lblSweetShopPhone.Text = l.phone.ToString();
 
 
                 //Gathers stored totals
                 ckm = (CheckoutManager)Session["CheckOutTotals"];
                 //Gathers stored payment methods
-                mopList = (List<Checkout>)Session["MethodsofPayment"];
+                mopList = (List<Mops>)Session["MethodsofPayment"];
                 //Displays subtotal
                 lblSubtotalDisplay.Text = "$ " + ckm.dblTotal.ToString("#0.00");
                 //Loops through each payment method and totlas them
@@ -116,7 +116,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
         protected void btnHome_Click(object sender, EventArgs e)
@@ -136,7 +136,7 @@ namespace SweetSpotDiscountGolfPOS
                 Session["MethodsofPayment"] = null;
                 Session["strDate"] = null;
                 //Change to the Home Page
-                Server.Transfer("HomePage.aspx", false);
+                Response.Redirect("HomePage.aspx", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -153,7 +153,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
     }
