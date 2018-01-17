@@ -2039,10 +2039,15 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             cmd.Parameters.AddWithValue("@locationID", locationID);
             cmd.Connection = con;
             con.Open();
-            SqlDataAdapter sda = new SqlDataAdapter(cmd);
-            //Stores data into data table
-            sda.Fill(items);
-            cmd.ExecuteNonQuery();
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                items.Add(new Items(Convert.ToInt32(reader["invoiceNum"]),
+                    Convert.ToInt32(reader["invoiceSubNum"]), Convert.ToInt32(reader["sku"]),
+                    Convert.ToDouble(reader["itemCost"]), Convert.ToDouble(reader["itemPrice"]),
+                    Convert.ToDouble(reader["itemDiscount"]), Convert.ToBoolean(reader["percentage"]),
+                    Convert.ToDouble(reader["math"])));
+            }
             con.Close();
             return items;
         }
