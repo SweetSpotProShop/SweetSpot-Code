@@ -1444,13 +1444,13 @@ namespace SweetShop
             return i;
         }
         //Nathan built for home page sales display
-        public List<Invoice> getInvoiceBySaleDate(DateTime givenDate, int locationID)
+        public DataTable getInvoiceBySaleDate(DateTime givenDate, int locationID)
         {
             //Gets a list of all invoices based on date and location. Stores in a list
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "SELECT invoiceNum, invoiceSubNum, custID, empID, subTotal, discountAmount, "
-                + "tradeinAmount, governmentTax, provincialTax, balanceDue FROM tbl_invoice "
+            cmd.CommandText = "SELECT tbl_invoice.invoiceNum, tbl_invoice.invoiceSubNum, custID, empID, subTotal, discountAmount, "
+                + "tradeinAmount, governmentTax, provincialTax, balanceDue, mopType, amountPaid FROM tbl_invoice inner join tbl_invoiceMOP on tbl_invoice.invoiceNum = tbl_invoiceMOP.invoiceNum "
                 + "WHERE invoiceDate = @givenDate AND locationID = @locationID  ;";
             cmd.Parameters.AddWithValue("givenDate", givenDate);
             cmd.Parameters.AddWithValue("locationID", locationID);
@@ -1458,25 +1458,54 @@ namespace SweetShop
             con.Open();
             SqlDataReader reader = cmd.ExecuteReader();
             List<Invoice> i = new List<Invoice>();
+
+            DataTable invoices = new DataTable();
+            invoices.Columns.Add("invoiceNum", typeof(int));
+            invoices.Columns.Add("invoiceSubNum", typeof(int));
+            invoices.Columns.Add("custID", typeof(int));
+            invoices.Columns.Add("empID", typeof(int));
+            invoices.Columns.Add("subTotal", typeof(double));
+            invoices.Columns.Add("discountAmount", typeof(double));
+            invoices.Columns.Add("tradeinAmount", typeof(double));
+            invoices.Columns.Add("governmentTax", typeof(double));
+            invoices.Columns.Add("provincialTax", typeof(double));
+            invoices.Columns.Add("balanceDue", typeof(double));
+            invoices.Columns.Add("mopType", typeof(string));
+            invoices.Columns.Add("amountPaid", typeof(double));
+
             while (reader.Read())
             {
-                Invoice inv = new Invoice();
-                inv.invoiceNum = Convert.ToInt32(reader["invoiceNum"]);
-                inv.invoiceSub = Convert.ToInt32(reader["invoiceSubNum"]);
-                inv.customerID = Convert.ToInt32(reader["custID"]);
-                inv.employeeID = Convert.ToInt32(reader["empID"]);
-                inv.subTotal = Convert.ToDouble(reader["subTotal"]);
-                inv.discountAmount = Convert.ToDouble(reader["discountAmount"]);
-                inv.tradeinAmount = Convert.ToDouble(reader["tradeinAmount"]);
-                inv.governmentTax = Convert.ToDouble(reader["governmentTax"]);
-                inv.provincialTax = Convert.ToDouble(reader["provincialTax"]);
-                inv.balanceDue = Convert.ToDouble(reader["balanceDue"]);
+                invoices.Rows.Add(
+                    Convert.ToInt32(reader["invoiceNum"]),
+                    Convert.ToInt32(reader["invoiceSubNum"]),
+                    Convert.ToInt32(reader["custID"]),
+                    Convert.ToInt32(reader["empID"]),
+                    Convert.ToDouble(reader["subTotal"]),
+                    Convert.ToDouble(reader["discountAmount"]),
+                    Convert.ToDouble(reader["tradeinAmount"]),
+                    Convert.ToDouble(reader["governmentTax"]),
+                    Convert.ToDouble(reader["provincialTax"]),
+                    Convert.ToDouble(reader["balanceDue"]),
+                    Convert.ToString(reader["mopType"]),
+                    Convert.ToDouble(reader["amountPaid"]));
+                
+                //Invoice inv = new Invoice();
+                //inv.invoiceNum = Convert.ToInt32(reader["invoiceNum"]);
+                //inv.invoiceSub = Convert.ToInt32(reader["invoiceSubNum"]);
+                //inv.customerID = Convert.ToInt32(reader["custID"]);
+                //inv.employeeID = Convert.ToInt32(reader["empID"]);
+                //inv.subTotal = Convert.ToDouble(reader["subTotal"]);
+                //inv.discountAmount = Convert.ToDouble(reader["discountAmount"]);
+                //inv.tradeinAmount = Convert.ToDouble(reader["tradeinAmount"]);
+                //inv.governmentTax = Convert.ToDouble(reader["governmentTax"]);
+                //inv.provincialTax = Convert.ToDouble(reader["provincialTax"]);
+                //inv.balanceDue = Convert.ToDouble(reader["balanceDue"]);
 
-                i.Add(inv);
+                //i.Add(inv);
             }
             con.Close();
             //Returns a list of invoices
-            return i;
+            return invoices;
         }
         public Invoice getSingleInvoice(int invoiceID, int invoiceSub)
         {

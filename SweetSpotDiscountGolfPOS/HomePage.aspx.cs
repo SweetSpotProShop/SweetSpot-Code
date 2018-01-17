@@ -29,6 +29,10 @@ namespace SweetSpotDiscountGolfPOS
         double totalGST = 0;
         double totalPST = 0;
         double totalBalancePaid = 0;
+        double totalMOPAmount = 0;
+        string oldInvoice = string.Empty;
+        string newInvoice = string.Empty;
+        int row = 0;
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -74,12 +78,14 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 //populate gridview with todays sales
                 int locationID = lm.locationIDfromCity(ddlLocation.SelectedValue);
-                invoiceList = ssm.getInvoiceBySaleDate(DateTime.Today, locationID);
-                grdSameDaySales.DataSource = invoiceList;
+
+                //invoiceList = ssm.getInvoiceBySaleDate(DateTime.Today, locationID);
+                DataTable invoices = ssm.getInvoiceBySaleDate(DateTime.Today, locationID);
+                grdSameDaySales.DataSource = invoices;
                 grdSameDaySales.DataBind();
                 foreach (GridViewRow row in grdSameDaySales.Rows)
                 {
-                    foreach(TableCell cell in row.Cells)
+                    foreach (TableCell cell in row.Cells)
                     {
                         cell.Attributes.CssStyle["text-align"] = "center";
                     }
@@ -166,7 +172,7 @@ namespace SweetSpotDiscountGolfPOS
                 char[] splitchar = { '-' };
                 string[] invoiceSplit = invoice.Split(splitchar);
                 int invNum = Convert.ToInt32(invoiceSplit[0]);
-                int invSNum = Convert.ToInt32(invoiceSplit[1]);                
+                int invSNum = Convert.ToInt32(invoiceSplit[1]);
                 //determines the table to use for queries
                 string table = "";
                 int tran = 3;
@@ -209,32 +215,74 @@ namespace SweetSpotDiscountGolfPOS
         }
         protected void grdSameDaySales_RowDataBound(object sender, GridViewRowEventArgs e)
         {
+
+            //Problems with looping 
+
+
+
             //Collects current method for error tracking
             string method = "grdSameDaySales_RowDataBound";
             //Current method does nothing
             try
             {
+                LinkButton lb = new LinkButton();
+                if (grdSameDaySales.Rows.Count > 0)
+                {
+                    lb = (LinkButton)grdSameDaySales.Rows[row].FindControl("lbtnInvoiceNumber");
+                
+                if (lb != null)
+                {
+                    oldInvoice = lb.Text;
+                    if (oldInvoice == newInvoice)
+                    {
+                        //Setting the contents of the cells to be blank and to remove them                        
+                        for (int l = 1; l < 9; l++)
+                        {
+                            grdSameDaySales.Rows[row].Cells[l].Visible = false;
+                            grdSameDaySales.Rows[row].Cells[l].Text = "";
+                        }
+                        grdSameDaySales.Rows[row].Cells[0].Text = "";
+                        grdSameDaySales.Rows[row].Cells[0].ColumnSpan = 9;
+                    }
+                    else if (oldInvoice != newInvoice)
+                    {
+                        //This is where the totals at the bottom are calculated
+                        if (e.Row.RowType == DataControlRowType.DataRow)
+                        {
+                            //This triggers when the row is not the footer(Not the end)
+                            //Need to determine if the cell is empty
+                            totalSales += 1;
+                            totalDiscounts += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "discountAmount"));
+                            totalTradeIns += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "tradeinAmount"));
+                            totalSubtotals += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "subTotal"));
+                            totalGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "governmentTax"));
+                            totalPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "provincialTax"));
+                            totalBalancePaid += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "balanceDue"));                            
+                        }                        
+                        newInvoice = oldInvoice;
+                    }
+                }
+                //This is separate because every line will have a MOP on it
                 if (e.Row.RowType == DataControlRowType.DataRow)
                 {
-                    totalSales += 1;
-                    totalDiscounts += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "discountAmount"));
-                    totalTradeIns += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "tradeinAmount"));
-                    totalSubtotals += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "subTotal"));
-                    totalGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "governmentTax"));
-                    totalPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "provincialTax"));
-                    totalBalancePaid += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "balanceDue"));
+                    totalMOPAmount += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "amountPaid"));
                 }
                 else if (e.Row.RowType == DataControlRowType.Footer)
                 {
+                    //Triggers when the row is the footer(End)
                     e.Row.Cells[1].Text = totalSales.ToString();
-                    e.Row.Cells[2].Text = String.Format("{0:C}", totalDiscounts);
-                    e.Row.Cells[3].Text = String.Format("{0:C}", totalTradeIns);
-                    e.Row.Cells[4].Text = String.Format("{0:C}", totalSubtotals);
-                    e.Row.Cells[5].Text = String.Format("{0:C}", totalGST);
-                    e.Row.Cells[6].Text = String.Format("{0:C}", totalPST);
-                    e.Row.Cells[7].Text = String.Format("{0:C}", totalBalancePaid);
+                    e.Row.Cells[3].Text = String.Format("{0:C}", totalDiscounts);
+                    e.Row.Cells[4].Text = String.Format("{0:C}", totalTradeIns);
+                    e.Row.Cells[5].Text = String.Format("{0:C}", totalSubtotals);
+                    e.Row.Cells[6].Text = String.Format("{0:C}", totalGST);
+                    e.Row.Cells[7].Text = String.Format("{0:C}", totalPST);
+                    e.Row.Cells[8].Text = String.Format("{0:C}", totalBalancePaid);
+                    e.Row.Cells[10].Text = String.Format("{0:C}", totalMOPAmount);
                 }
+                    row++;
             }
+            }
+
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
