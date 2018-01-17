@@ -476,6 +476,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return models;
         }
 
+
+
+
         //******************COGS and PM REPORTING*******************************************************
         public List<Invoice> returnInvoicesForCOGS(DateTime startDate, DateTime endDate, int locationID)
         {

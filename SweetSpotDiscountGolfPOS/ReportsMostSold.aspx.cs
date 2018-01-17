@@ -60,9 +60,9 @@ namespace SweetSpotDiscountGolfPOS
                     lblDates.Text = "Items sold for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
                 }
 
-                //List<Items> items = new List<Items>();
-                //List<Items> models = new List<Items>();
-                //List<Items> brands = new List<Items>();
+                List<Items> items = new List<Items>();
+                List<Items> models = new List<Items>();
+                List<Items> brands = new List<Items>();
                 //Binding the gridview
                 items = r.mostSoldItemsReport(startDate, endDate, locationID);
                 brands = r.mostSoldBrandsReport(startDate, endDate, locationID);

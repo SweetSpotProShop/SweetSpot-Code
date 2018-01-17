@@ -80,18 +80,75 @@ namespace SweetShop
         }
 
 
-        //For i in discounts for Reports Discounts Download
-        public Invoice(int I, int S, DateTime D, DateTime T, string CID, string EID,
-            Location LID, double ST, double SA, double DA, double TA, double G, double P,
-            double BD, List<InvoiceItems> SoldItems, List<InvoiceMOPs> UsedMops, int TT, string C)
+        //Old collection code
+        public string invoice { get; set; }
+        public double totalCost { get; set; }
+        public bool percentage { get; set; }
+        public double totalProfit { get; set; }
+        public string locationName { get; set; }
+        public int customerID { get; set; }
+        public int employeeID { get; set; }
+        public int locationID { get; set; }
+        public Invoice(string I, double tc, double td, bool p, double tp, double tpf)
+        {
+            invoice = I;
+            totalCost = tc;
+            discountAmount = td;
+            percentage = p;
+            balanceDue = tp;
+            totalProfit = tpf;
+        }
+        public Invoice(int I, int S, DateTime D, string CN, double BD, string LN, string EN)
+        {
+            invoiceNum = I;
+            invoiceSub = S;
+            invoiceDate = D;
+            customerName = CN;
+            balanceDue = BD;
+            locationName = LN;
+            employeeName = EN;
+        }
+        public Invoice(int I, int S, DateTime D, string CN, double DA, double TA, double ST, double G, double P, double BD, string EN)
+        {
+            invoiceNum = I;
+            invoiceSub = S;
+            invoiceDate = D;
+            customerName = CN;
+            discountAmount = DA;
+            tradeinAmount = TA;
+            subTotal = ST;
+            governmentTax = G;
+            provincialTax = P;
+            balanceDue = BD;
+            employeeName = EN;
+        }
+        public Invoice(int I, int S, DateTime D, DateTime T, int CID, int EID, int LID, double ST, double DA, double TA, double G, double P, double BD, int TT, string C)
         {
             invoiceNum = I;
             invoiceSub = S;
             invoiceDate = D;
             invoiceTime = T;
-            customerName = CID;
-            employeeName = EID;
-            location = LID;
+            customerID = CID;
+            employeeID = EID;
+            locationID = LID;
+            subTotal = ST;
+            discountAmount = DA;
+            tradeinAmount = TA;
+            governmentTax = G;
+            provincialTax = P;
+            balanceDue = BD;
+            transactionType = TT;
+            comments = C;
+        }
+        public Invoice(int I, int S, DateTime D, DateTime T, int CID, int EID, int LID, double ST, double SA, double DA, double TA, double G, double P, double BD, int TT, string C)
+        {
+            invoiceNum = I;
+            invoiceSub = S;
+            invoiceDate = D;
+            invoiceTime = T;
+            customerID = CID;
+            employeeID = EID;
+            locationID = LID;
             subTotal = ST;
             shippingAmount = SA;
             discountAmount = DA;
@@ -99,10 +156,17 @@ namespace SweetShop
             governmentTax = G;
             provincialTax = P;
             balanceDue = BD;
-            soldItems = SoldItems;
-            usedMops = UsedMops;
             transactionType = TT;
             comments = C;
+        }
+        public Invoice(int num, int subNum, DateTime d, string c, string e, double da)
+        {
+            invoiceNum = num;
+            invoiceSub = subNum;
+            invoiceDate = d;
+            customerName = c;
+            employeeName = e;
+            discountAmount = da;
         }
     }
 }
