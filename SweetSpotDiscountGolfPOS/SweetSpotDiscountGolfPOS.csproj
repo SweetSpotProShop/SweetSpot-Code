@@ -133,6 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClassLibrary\Accessories.cs" />
+    <Compile Include="ClassLibrary\Checkout.cs" />
     <Compile Include="ClassLibrary\CustomerManager.cs" />
     <Compile Include="ClassLibrary\InvoiceItemsManager.cs" />
     <Compile Include="ClassLibrary\InvoiceMOPsManager.cs" />
