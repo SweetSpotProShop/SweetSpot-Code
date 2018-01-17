@@ -198,27 +198,32 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         //    //Returns country ID
         //    return countryID;
         //}
+        private string connectionString;
+        public LocationManager()
+        {
+            connectionString = ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString;
+        }
         ////Location name based on location ID
-        //public string locationName(int locationID)
-        //{
-        //    SqlConnection conn = new SqlConnection(connectionString);
-        //    SqlCommand cmd = new SqlCommand();
+        public string locationName(int locationID)
+        {
+            SqlConnection conn = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
 
-        //    cmd.Connection = conn;
-        //    cmd.CommandText = "Select locationName from tbl_location where locationID = " + locationID;
+            cmd.Connection = conn;
+            cmd.CommandText = "Select locationName from tbl_location where locationID = " + locationID;
 
-        //    conn.Open();
-        //    SqlDataReader reader = cmd.ExecuteReader();
-        //    string locationN = null;
-        //    while (reader.Read())
-        //    {
-        //        string name = reader["locationName"].ToString();
-        //        locationN = name;
-        //    }
-        //    conn.Close();
-        //    //Returns location name
-        //    return locationN;
-        //}
+            conn.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            string locationN = null;
+            while (reader.Read())
+            {
+                string name = reader["locationName"].ToString();
+                locationN = name;
+            }
+            conn.Close();
+            //Returns location name
+            return locationN;
+        }
         ////Location ID based on location name
         //public int locationID(string locationName)
         //{
