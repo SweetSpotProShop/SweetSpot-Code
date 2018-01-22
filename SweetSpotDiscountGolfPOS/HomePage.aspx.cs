@@ -32,7 +32,7 @@ namespace SweetSpotDiscountGolfPOS
         double totalMOPAmount = 0;
         string oldInvoice = string.Empty;
         string newInvoice = string.Empty;
-        int row = 0;
+        int currentRow = 0;
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -90,6 +90,7 @@ namespace SweetSpotDiscountGolfPOS
                         cell.Attributes.CssStyle["text-align"] = "center";
                     }
                 }
+                MergeRows(grdSameDaySales);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -217,32 +218,26 @@ namespace SweetSpotDiscountGolfPOS
         {
 
             //Problems with looping 
-
-
-
             //Collects current method for error tracking
             string method = "grdSameDaySales_RowDataBound";
             //Current method does nothing
             try
             {
-                LinkButton lb = new LinkButton();
-                if (grdSameDaySales.Rows.Count > 0)
-                {
-                    lb = (LinkButton)grdSameDaySales.Rows[row].FindControl("lbtnInvoiceNumber");
-                
+                LinkButton lb = (LinkButton)e.Row.FindControl("lbtnInvoiceNumber");
                 if (lb != null)
                 {
                     oldInvoice = lb.Text;
                     if (oldInvoice == newInvoice)
                     {
                         //Setting the contents of the cells to be blank and to remove them                        
-                        for (int l = 1; l < 9; l++)
+                        for (int l = 2; l < 9; l++)
                         {
-                            grdSameDaySales.Rows[row].Cells[l].Visible = false;
-                            grdSameDaySales.Rows[row].Cells[l].Text = "";
+                            e.Row.Cells[l].Visible = false;
+                            e.Row.Cells[l].Text = "";
                         }
-                        grdSameDaySales.Rows[row].Cells[0].Text = "";
-                        grdSameDaySales.Rows[row].Cells[0].ColumnSpan = 9;
+                        e.Row.Cells[0].Text = "";
+                        e.Row.Cells[1].Text = "";
+                        e.Row.Cells[1].ColumnSpan = 8;
                     }
                     else if (oldInvoice != newInvoice)
                     {
@@ -257,8 +252,8 @@ namespace SweetSpotDiscountGolfPOS
                             totalSubtotals += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "subTotal"));
                             totalGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "governmentTax"));
                             totalPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "provincialTax"));
-                            totalBalancePaid += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "balanceDue"));                            
-                        }                        
+                            totalBalancePaid += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "balanceDue"));
+                        }
                         newInvoice = oldInvoice;
                     }
                 }
@@ -279,8 +274,7 @@ namespace SweetSpotDiscountGolfPOS
                     e.Row.Cells[8].Text = String.Format("{0:C}", totalBalancePaid);
                     e.Row.Cells[10].Text = String.Format("{0:C}", totalMOPAmount);
                 }
-                    row++;
-            }
+                currentRow++;
             }
 
             //Exception catch
@@ -299,6 +293,44 @@ namespace SweetSpotDiscountGolfPOS
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
                 //Server.Transfer(prevPage, false);
+            }
+        }
+
+        protected static void MergeRows(GridView gridView)
+        {
+            for (int rowIndex = gridView.Rows.Count - 2; rowIndex >= 0; rowIndex--)
+            {
+                GridViewRow row = gridView.Rows[rowIndex];
+                GridViewRow previousRow = gridView.Rows[rowIndex + 1];
+
+                string rowText = row.Cells[1].Text;
+                string previousRowText = previousRow.Cells[1].Text;
+                string rowInvoice;
+                string prevRowInvoice;
+                LinkButton lbtnRow = (LinkButton)row.FindControl("lbtnInvoiceNumber");
+                LinkButton lbtnPrevRow = (LinkButton)previousRow.FindControl("lbtnInvoiceNumber");
+                if (lbtnRow != null)
+                    rowInvoice = lbtnRow.Text;
+                else
+                    rowInvoice = "";
+                if (lbtnPrevRow != null)
+                    prevRowInvoice = lbtnPrevRow.Text;
+                else
+                    prevRowInvoice = "";
+                if (rowText.Equals(previousRowText) && !rowText.IsNumeric() && !previousRowText.IsNumeric())
+                {
+                    row.Cells[1].RowSpan = previousRow.Cells[1].RowSpan < 2
+                                     ? 2 // merge the first two cells
+                                     : previousRow.Cells[1].RowSpan + 1; //any subsequent merging
+                    previousRow.Cells[1].Visible = false;
+                }
+                if (rowInvoice.Equals(prevRowInvoice) || prevRowInvoice.Equals(""))
+                {
+                    row.Cells[0].RowSpan = previousRow.Cells[0].RowSpan < 2
+                                     ? 2 // merge the first two cells
+                                     : previousRow.Cells[0].RowSpan + 1; //any subsequent merging
+                    previousRow.Cells[0].Visible = false;
+                }
             }
         }
     }

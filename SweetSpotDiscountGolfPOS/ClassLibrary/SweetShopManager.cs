@@ -1451,7 +1451,7 @@ namespace SweetShop
             SqlCommand cmd = new SqlCommand();
             cmd.CommandText = "SELECT tbl_invoice.invoiceNum, tbl_invoice.invoiceSubNum, custID, empID, subTotal, discountAmount, "
                 + "tradeinAmount, governmentTax, provincialTax, balanceDue, mopType, amountPaid FROM tbl_invoice inner join tbl_invoiceMOP on tbl_invoice.invoiceNum = tbl_invoiceMOP.invoiceNum "
-                + "WHERE invoiceDate = @givenDate AND locationID = @locationID  ;";
+                + "and tbl_invoiceMOP.invoiceSubNum = tbl_invoice.invoiceSubNum  WHERE invoiceDate = @givenDate AND locationID = @locationID  ;";
             cmd.Parameters.AddWithValue("givenDate", givenDate);
             cmd.Parameters.AddWithValue("locationID", locationID);
             cmd.Connection = con;

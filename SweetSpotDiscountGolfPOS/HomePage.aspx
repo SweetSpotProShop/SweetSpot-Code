@@ -30,11 +30,7 @@
                 </FooterTemplate>
             </asp:TemplateField>
             <asp:BoundField DataField="custID" ReadOnly="true" HeaderText="Customer" />
-            <asp:TemplateField HeaderText="Employee">
-                    <asp:ItemTemplate>
-                        <asp:Label ID="lblEmployee" runat="server" Text='<%#Eval("empID")%>'></asp:Label>
-                    </asp:ItemTemplate>
-                </asp:TemplateField>
+            <asp:BoundField DataField="empID" ReadOnly="true" HeaderText="Employee" />
             <asp:BoundField DataField="discountAmount" ReadOnly="true" HeaderText="Discount" DataFormatString="{0:C}" />
             <asp:BoundField DataField="tradeinAmount" ReadOnly="true" HeaderText="Trade In" DataFormatString="{0:C}" />
             <asp:BoundField DataField="subTotal" ReadOnly="true" HeaderText="Subtotal" DataFormatString="{0:C}" />
