@@ -110,7 +110,7 @@
                             <asp:Button ID="btnTradeInsByDateReport" runat="server" Text="Trade Ins By Date" Width="200px" Onclick="btnTradeInsByDateReport_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            
+                            <asp:Button ID="btnExtensiveInvoice" runat="server" Text="Extensive Invoice" Width="200px" Onclick="btnExtensiveInvoice_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
                             
