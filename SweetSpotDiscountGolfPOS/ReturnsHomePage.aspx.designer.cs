@@ -31,22 +31,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Table tblInvoiceSearch;
         
         /// <summary>
-        /// rdbSearchByCustomer control.
+        /// calSearchDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RadioButton rdbSearchByCustomer;
-        
-        /// <summary>
-        /// rdbSearchByInvoiceNumber control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.RadioButton rdbSearchByInvoiceNumber;
+        protected global::System.Web.UI.WebControls.Calendar calSearchDate;
         
         /// <summary>
         /// lblInvoiceSearch control.
@@ -65,24 +56,6 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtInvoiceSearch;
-        
-        /// <summary>
-        /// lblSearchDate control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblSearchDate;
-        
-        /// <summary>
-        /// txtSearchDate control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtSearchDate;
         
         /// <summary>
         /// btnSearch control.

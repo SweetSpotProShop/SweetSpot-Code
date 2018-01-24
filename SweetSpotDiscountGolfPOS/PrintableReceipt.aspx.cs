@@ -13,13 +13,14 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class PrintableReceipt : System.Web.UI.Page
     {
-        ErrorReporting er = new ErrorReporting();
+        ErrorReporting ER = new ErrorReporting();
+        CurrentUser CU;
+
         SweetShopManager ssm = new SweetShopManager();
         LocationManager lm = new LocationManager();
         List<Mops> mopList = new List<Mops>();
         List<Cart> cart = new List<Cart>();
         CheckoutManager ckm = new CheckoutManager();
-        CurrentUser cu;
         int tranType;
         double dblAmountPaid;
         protected void Page_Load(object sender, EventArgs e)
@@ -29,7 +30,7 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "PrintableReceipt.aspx";
             try
             {
-                cu = (CurrentUser)Session["currentUser"];
+                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
@@ -49,10 +50,11 @@ namespace SweetSpotDiscountGolfPOS
                 lblDate.Text = Convert.ToDateTime(Session["strDate"]).ToString("yyyy-MM-dd");
                 Location l = new Location();
                 //Gather transaction type from Session
-                tranType = Convert.ToInt32(Session["TranType"]);
+                
                 int ln = 0;
                 //Determins the session to get the cart items from
-                if (tranType == 5) { cart = (List<Cart>)Session["ItemsInCart"]; ln = cu.locationID; }
+                cart = (List<Cart>)Session["ItemsInCart"];
+                ln = CU.locationID;
                 //else if(tranType == 6){ cart = (List<Cart>)Session["ItemsInCart"]; ln = lm.returnlocationIDFromReceiptNumber(Convert.ToInt32(Session["Invoice"])); }
                 //Use current location to display on invoice
                 //l = lm.returnLocationForReceiptFromID(ln);
@@ -62,8 +64,7 @@ namespace SweetSpotDiscountGolfPOS
                 lblSweetShopStreetAddress.Text = l.address.ToString();
                 //lblSweetShopPostalAddress.Text = l.city.ToString() + ", " + lm.provinceName(l.provID) + " " + l.postal.ToString();
                 //lblSweetShopPhone.Text = l.phone.ToString();
-
-
+                
                 //Gathers stored totals
                 ckm = (CheckoutManager)Session["CheckOutTotals"];
                 //Gathers stored payment methods
@@ -80,43 +81,22 @@ namespace SweetSpotDiscountGolfPOS
                 grdItemsBoughtList.DataSource = cart;
                 grdItemsBoughtList.DataBind();
 
-                foreach (GridViewRow row in grdItemsBoughtList.Rows)
-                {
-                    foreach (TableCell cell in row.Cells)
-                    {
-                        cell.Attributes.CssStyle["text-align"] = "center";
-                    }
-                }
-
                 //Displays the total amount ppaid
                 lblTotalPaidDisplay.Text = "$ " + dblAmountPaid.ToString("#0.00");
                 //Binds the payment methods to a gridview
                 grdMOPS.DataSource = mopList;
                 grdMOPS.DataBind();
-                foreach (GridViewRow row in grdMOPS.Rows)
-                {
-                    foreach (TableCell cell in row.Cells)
-                    {
-                        cell.Attributes.CssStyle["text-align"] = "center";
-                    }
-                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Response.Redirect(prevPage, false);
             }
         }
         protected void btnHome_Click(object sender, EventArgs e)
@@ -142,18 +122,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Response.Redirect(prevPage, false);
             }
         }
     }

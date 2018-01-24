@@ -18,13 +18,14 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsCOGSvsPM : System.Web.UI.Page
     {
-        ErrorReporting er = new ErrorReporting();
+        ErrorReporting ER = new ErrorReporting();
+        CurrentUser CU = new CurrentUser();
+
         SweetShopManager ssm = new SweetShopManager();
         Reports r = new Reports();
         ItemDataUtilities idu = new ItemDataUtilities();
         LocationManager l = new LocationManager();
         CustomMessageBox cmb = new CustomMessageBox();
-        CurrentUser cu = new CurrentUser();
         DateTime startDate;
         DateTime endDate;
         int locationID;
@@ -32,7 +33,6 @@ namespace SweetSpotDiscountGolfPOS
         double tPrice;
         //double tDiscount;
         double tProfit;
-
         List<Invoice> inv = new List<Invoice>();
 
         protected void Page_Load(object sender, EventArgs e)
@@ -42,7 +42,7 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "ReportsCOGSvsPM";
             try
             {
-                cu = (CurrentUser)Session["currentUser"];
+                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
@@ -97,22 +97,18 @@ namespace SweetSpotDiscountGolfPOS
                     //lblCost.Visible = false;
                     //lblPM.Visible = false;
                     //lblProfitMargin.Visible = false;
-
                 }
-
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                er.logError(ex, cu.empID, Convert.ToString(Session["currPage"]), method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void lbtnInvoiceNumber_Click(object sender, EventArgs e)
@@ -149,24 +145,19 @@ namespace SweetSpotDiscountGolfPOS
                 Session["MethodsOfPayment"] = ssm.invoice_getMOP(invNum, invSNum, "tbl_invoiceMOP");
                 Session["TranType"] = tran;
                 //Changes page to display a printable invoice
-                Server.Transfer("PrintableInvoice.aspx", false);
+
+                Server.Transfer("PrintableInvoice.aspx?inv=" + invNum + "-" + invSNum, false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void grdInvoiceSelection_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -262,20 +253,13 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
     }
-
 }

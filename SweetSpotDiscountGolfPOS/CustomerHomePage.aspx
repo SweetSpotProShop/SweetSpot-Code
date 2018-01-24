@@ -50,6 +50,11 @@
                             <asp:Label runat="server" Text='<%#Eval("primaryPhoneNumber") %>'></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Email Address">
+                        <ItemTemplate>
+                            <asp:Label runat="server" Text='<%#Eval("email") %>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:TemplateField HeaderText="City">
                         <ItemTemplate>
                             <asp:Label runat="server" Text='<%#Eval("city") %>'></asp:Label>

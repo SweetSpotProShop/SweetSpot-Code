@@ -52,9 +52,14 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string sqlCmd = "SELECT II.invoiceNum, II.invoiceSubNum, II.sku, (SELECT B.brandName + ' ' + M.modelName "
                 + "+ ' ' + C.clubSpec + ' ' + C.clubType + ' ' + C.shaftSpec + ' ' + C.shaftFlex + ' ' + C.dexterity AS "
                 + "itemDescription FROM tbl_clubs C JOIN tbl_brand B ON C.brandID = B.brandID JOIN tbl_model M ON "
-                + "C.modelID = M.modelID WHERE sku = II.sku) as itemDescription, II.itemQuantity, II.itemCost, II.itemPrice, "
+                + "C.modelID = M.modelID WHERE sku = II.sku) AS itemDescription, II.itemQuantity, II.itemCost, II.itemPrice, "
                 + "II.itemDiscount, II.itemRefund, II.percentage FROM tbl_invoiceItem II WHERE II.invoiceNum = @invoiceNum "
-                + "AND II.invoiceSubNum = @invoiceSubNum";
+                + "AND II.invoiceSubNum = @invoiceSubNum UNION SELECT IR.invoiceNum, IR.invoiceSubNum, IR.sku, (SELECT "
+                + "B.brandName + ' ' + M.modelName + ' ' + C.clubSpec + ' ' + C.clubType + ' ' + C.shaftSpec + ' ' + "
+                + "C.shaftFlex + ' ' + C.dexterity AS itemDescription FROM tbl_clubs C JOIN tbl_brand B ON C.brandID = "
+                + "B.brandID JOIN tbl_model M ON C.modelID = M.modelID WHERE sku = IR.sku) AS itemDescription, IR.itemQuantity, "
+                + "IR.itemCost, IR.itemPrice, IR.itemDiscount, IR.itemRefund, IR.percentage FROM tbl_invoiceItemReturns IR "
+                + "WHERE IR.invoiceNum = @invoiceNum AND IR.invoiceSubNum = @invoiceSubNum";
 
             Object[][] parms =
             {

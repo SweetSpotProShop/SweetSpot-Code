@@ -55,10 +55,10 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <asp:Label ID="lblPurchaseAmount" runat="server" Text="Purchase Amount:" Width="163px"></asp:Label>
+                                    <asp:Label ID="lblPurchaseAmount" runat="server" Text="Purchase Amount:" Width="163px" />
                                 </td>
                                 <td>
-                                    <asp:TextBox ID="txtPurchaseAmount" runat="server" Width="159px"></asp:TextBox>
+                                    <asp:TextBox ID="txtPurchaseAmount" runat="server" Width="159px" />
                                 </td>
                             </tr>
                         </table>
@@ -67,7 +67,7 @@
                         <asp:Table ID="tblTotals" runat="server">
                             <asp:TableRow>
                                 <asp:TableCell>
-                                    <asp:Label ID="lblChequeNumber" runat="server" Text="Enter Cheque Number:"></asp:Label>
+                                    <asp:Label ID="lblChequeNumber" runat="server" Text="Enter Cheque Number:" />
                                 </asp:TableCell>
                                 <asp:TableCell>
                                     <asp:TextBox ID="txtChequeNumber" runat="server" Text="0000" />
@@ -75,10 +75,10 @@
                             </asp:TableRow>
                             <asp:TableRow>
                                 <asp:TableCell>
-                                    <asp:Label ID="lblTotalPurchase" runat="server" Text="Total Purchases:"></asp:Label>
+                                    <asp:Label ID="lblTotalPurchase" runat="server" Text="Total Purchases:" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:Label ID="lblTotalPurchaseAmount" runat="server" Text=""></asp:Label>
+                                    <asp:Label ID="lblTotalPurchaseAmount" runat="server" Text="" />
                                 </asp:TableCell>
                             </asp:TableRow>
                         </asp:Table>
@@ -108,11 +108,11 @@
                 <tr>
                     <td colspan="2">
                         <hr />
-                        <asp:Label ID="lblRemainingPurchaseDue" runat="server" Text="Remaining Purchase Due"></asp:Label>
+                        <asp:Label ID="lblRemainingPurchaseDue" runat="server" Text="Remaining Purchase Due" />
                     </td>
                     <td colspan="2">
                         <hr />
-                        <asp:Label ID="lblRemainingPurchaseDueDisplay" runat="server" Text=""></asp:Label>
+                        <asp:Label ID="lblRemainingPurchaseDueDisplay" runat="server" Text="" />
                     </td>
                 </tr>
                 <tr>
@@ -130,7 +130,7 @@
             <p>
                 Comments:
                <br />
-                <asp:TextBox ID="txtComments" runat="server" TextMode="MultiLine"></asp:TextBox>
+                <asp:TextBox ID="txtComments" runat="server" TextMode="MultiLine" />
             </p>
         </asp:Panel>
     </div>

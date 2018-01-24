@@ -15,12 +15,10 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReturnsHomePage : System.Web.UI.Page
     {
-        ErrorReporting er = new ErrorReporting();
-        SweetShopManager ssm = new SweetShopManager();
-        LocationManager lm = new LocationManager();
-        EmployeeManager em = new EmployeeManager();
-        CurrentUser cu;
-        
+        ErrorReporting ER = new ErrorReporting();
+        CurrentUser CU;
+        InvoiceManager IM = new InvoiceManager();
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -28,30 +26,25 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "SalesHomePage.aspx";
             try
             {
-                cu = (CurrentUser)Session["currentUser"];
+                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Response.Redirect("LoginPage.aspx", false);
                 }
+                calSearchDate.SelectedDate = DateTime.Today;
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Response.Redirect(prevPage, false);
             }
         }
         //Searches invoices and displays them 
@@ -62,75 +55,19 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnSearch_Click";
             try
             {
-                //Sets the search by invoice or customer
-                bool bolSearchInvoice = rdbSearchByInvoiceNumber.Checked;
-                //Sets the searched string
-                string strSearch = txtInvoiceSearch.Text;
-                List<Invoice> fullInvoices = new List<Invoice>();
-                Nullable<DateTime> dtmSearch;
-                //Checks to see if date is empty
-                if (txtSearchDate.Text == "")
-                {
-                    //sets a null
-                    dtmSearch = null;
-                }
-                else
-                {
-                    //Retrieves date from text box
-                    dtmSearch = DateTime.ParseExact(txtSearchDate.Text, "M/dd/yy", null);
-                }
-                //Checks how the user wants to search
-                if (bolSearchInvoice)
-                {
-                    //Searches through invoices using invoice number
-                    fullInvoices = ssm.getInvoice(Convert.ToInt32(strSearch));
-                }
-                else
-                {
-                    //Searches through invoices using customer name and date
-                    fullInvoices = ssm.multiTypeSearchInvoices(strSearch, dtmSearch);
-                }
-                List<Invoice> viewInvoices = new List<Invoice>();
-                //Loops through each invoice
-                foreach (var i in fullInvoices)
-                {
-                    //Sets customer and employee class for the last invoice
-                    //Customer c = ssm.GetCustomerbyCustomerNumber(i.customerID);
-                    //Employee emp = em.getEmployeeByID(i.employeeID);
-                    //Uses the classes to set customer name and employee name of each invoice
-                    //Invoice iv = new Invoice(i.invoiceNum, i.invoiceSub, i.invoiceDate, c.firstName + " " + c.lastName, i.balanceDue, lm.locationName(i.locationID), emp.firstName + " " + emp.lastName);
-                    //Adds each invoice to invoice list
-                    //viewInvoices.Add(iv);
-                }
-                //Binds invoice list to the grid view
-                grdInvoiceSelection.DataSource = viewInvoices;
+                grdInvoiceSelection.DataSource = IM.ReturnInvoicesBasedOnSearchForReturns(txtInvoiceSearch.Text, calSearchDate.SelectedDate);
                 grdInvoiceSelection.DataBind();
-                foreach (GridViewRow row in grdInvoiceSelection.Rows)
-                {
-                    foreach (TableCell cell in row.Cells)
-                    {
-                        cell.Attributes.CssStyle["text-align"] = "center";
-                    }
-                }
-                //Stores invoices in session
-                Session["searchReturnInvoices"] = fullInvoices;
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Response.Redirect(prevPage, false);
             }
         }
         protected void grdInvoiceSelection_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -177,18 +114,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Response.Redirect(prevPage, false);
             }
         }
     }

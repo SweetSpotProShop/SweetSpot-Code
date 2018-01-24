@@ -21,6 +21,7 @@ namespace SweetShop
         private string connectionString;
         CustomerManager CM = new CustomerManager();
         EmployeeManager EM = new EmployeeManager();
+
         ItemDataUtilities idu = new ItemDataUtilities();
         LocationManager lm = new LocationManager();
 
@@ -1385,6 +1386,7 @@ namespace SweetShop
             //Returns the description
             return desc;
         }
+
         /*******Invoice Utilities************************************************************************************/
         //Get Invoice by invoiceID and return the invoice object
         public List<Invoice> getInvoice(int invoiceID)
@@ -1862,9 +1864,9 @@ namespace SweetShop
                 r.invoiceNum = Convert.ToInt32(reader["receiptNumber"]);
                 r.invoiceDate = Convert.ToDateTime(reader["receiptDate"]);
                 r.invoiceTime = Convert.ToDateTime(reader["receiptTime"]);
-                //r.customerID = Convert.ToInt32(reader["custID"]);
-                //r.employeeID = Convert.ToInt32(reader["empID"]);
-                //r.locationID = Convert.ToInt32(reader["locationID"]);
+                r.customerID = Convert.ToInt32(reader["custID"]);
+                r.employeeID = Convert.ToInt32(reader["empID"]);
+                r.locationID = Convert.ToInt32(reader["locationID"]);
                 r.balanceDue = Convert.ToDouble(reader["receiptTotal"]);
                 r.transactionType = Convert.ToInt32(reader["transactionType"]);
                 r.comments = reader["comments"].ToString();
@@ -1881,8 +1883,8 @@ namespace SweetShop
             List<Cart> i = new List<Cart>();
             while (reader2.Read())
             {
-                //i.Add(new Cart(Convert.ToInt32(reader2["sku"]), Convert.ToString(reader2["description"]),
-                //    Convert.ToInt32(reader2["itemQuantity"]), 0, Convert.ToDouble(reader2["itemCost"]), 0, false, 0, false, 0));
+                i.Add(new Cart(Convert.ToInt32(reader2["sku"]), Convert.ToString(reader2["description"]),
+                    Convert.ToInt32(reader2["itemQuantity"]), 0, Convert.ToDouble(reader2["itemCost"]), 0, false, 0, false, 0, 1));
             }
             con.Close();
 
@@ -1905,6 +1907,7 @@ namespace SweetShop
             //Returns the object holding invoice, items, and mop
             return o;
         }
+
         /*******Tax Utilities************************************************************************************/
         public List<Tax> getTaxes(int provStateID, DateTime recDate)
         {

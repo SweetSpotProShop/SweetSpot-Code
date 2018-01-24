@@ -57,9 +57,9 @@
 <asp:Content ID="PurchasesPageContent" ContentPlaceHolderID="IndividualPageContent" runat="server">
     <div id="Cart">
         <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnAddPurchase">
-            <asp:Label ID="lblCustomer" runat="server" Text="Customer Name:"></asp:Label>
-            <asp:Label ID="lblCustomerDisplay" runat="server" Text="" Visible="false"></asp:Label>
-            <asp:TextBox ID="txtCustomer" runat="server"></asp:TextBox>
+            <asp:Label ID="lblCustomer" runat="server" Text="Customer Name:" />
+            <asp:Label ID="lblCustomerDisplay" runat="server" Text="" Visible="false" />
+            <asp:TextBox ID="txtCustomer" runat="server" />
             <asp:Button ID="btnCustomerSelect" runat="server" Text="Select Different Customer" OnClick="btnCustomerSelect_Click" CausesValidation="false" />
             <div>
                 <br />
@@ -76,32 +76,32 @@
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Customer Name">
                                 <ItemTemplate>
-                                    <asp:Label runat="server" Text='<%#Eval("firstName") + " " + Eval("lastName") %>'></asp:Label>
+                                    <asp:Label runat="server" Text='<%#Eval("firstName") + " " + Eval("lastName") %>' />
                                 </ItemTemplate>
                                 <FooterTemplate>
                                     <div>
-                                        <asp:TextBox ID="txtFirstName" runat="server" placeholder="First Name" ToolTip="First Name"></asp:TextBox>
+                                        <asp:TextBox ID="txtFirstName" runat="server" placeholder="First Name" ToolTip="First Name" />
                                     </div>
                                     <div>
-                                        <asp:TextBox ID="txtLastName" runat="server" placeholder="Last Name" ToolTip="Last Name"></asp:TextBox>
+                                        <asp:TextBox ID="txtLastName" runat="server" placeholder="Last Name" ToolTip="Last Name" />
                                     </div>
                                 </FooterTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Phone Number">
                                 <ItemTemplate>
-                                    <asp:Label runat="server" Text='<%#Eval("primaryPhoneNumber") %>'></asp:Label>
+                                    <asp:Label runat="server" Text='<%#Eval("primaryPhoneNumber") %>' />
                                 </ItemTemplate>
                                 <FooterTemplate>
-                                    <asp:TextBox ID="txtPhoneNumber" runat="server" placeholder="Phone Number" ToolTip="Phone Number"></asp:TextBox>
+                                    <asp:TextBox ID="txtPhoneNumber" runat="server" placeholder="Phone Number" ToolTip="Phone Number" />
                                 </FooterTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Email Address">
                                 <ItemTemplate>
-                                    <asp:Label runat="server" Text='<%#Eval("email") %>'></asp:Label>
+                                    <asp:Label runat="server" Text='<%#Eval("email") %>' />
                                 </ItemTemplate>
                                 <FooterTemplate>
                                     <div>
-                                        <asp:TextBox ID="txtEmail" runat="server" placeholder="Email" ToolTip="Email"></asp:TextBox>
+                                        <asp:TextBox ID="txtEmail" runat="server" placeholder="Email" ToolTip="Email" />
                                     </div>     
                                     <div>
                                         <asp:CheckBox ID="chkMarketingEnrollment" runat="server" Text="Marketing Enrollment"/>
@@ -114,11 +114,11 @@
                 <br />
             </div>
             <div style="text-align: right">
-                <asp:Label ID="lblReceiptNumber" runat="server" Text="Receipt No:"></asp:Label>
-                <asp:Label ID="lblReceiptNumberDisplay" runat="server"></asp:Label>
+                <asp:Label ID="lblReceiptNumber" runat="server" Text="Receipt No:" />
+                <asp:Label ID="lblReceiptNumberDisplay" runat="server" />
                 <br />
-                <asp:Label ID="lblDate" runat="server" Text="Date:"></asp:Label>
-                <asp:Label ID="lblDateDisplay" runat="server" Text=""></asp:Label>
+                <asp:Label ID="lblDate" runat="server" Text="Date:" />
+                <asp:Label ID="lblDateDisplay" runat="server" Text="" />
                 <hr />
             </div>
             <h3>Purchases</h3>
@@ -141,8 +141,8 @@
                 </Columns>
             </asp:GridView>
             <hr />
-            <asp:Label ID="lblPurchaseAmount" runat="server" Text="Purchase Amount:"></asp:Label>
-            <asp:Label ID="lblPurchaseAmountDisplay" runat="server" Text=""></asp:Label>
+            <asp:Label ID="lblPurchaseAmount" runat="server" Text="Purchase Amount:" />
+            <asp:Label ID="lblPurchaseAmountDisplay" runat="server" Text="" />
             <hr />
             <asp:Button ID="btnCancelPurchase" runat="server" Text="Cancel Purchase" OnClick="btnCancelPurchase_Click" CausesValidation="false" />
             <asp:Button ID="btnProceedToPayOut" runat="server" Text="Proceed to Pay Out" OnClick="btnProceedToPayOut_Click" CausesValidation="false" />

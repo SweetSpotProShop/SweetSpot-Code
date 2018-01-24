@@ -14,12 +14,10 @@ namespace SweetSpotDiscountGolfPOS
     public partial class PrintableInvoice : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
+        CurrentUser CU;
+
         LocationManager LM = new LocationManager();
-        InvoiceItemsManager IIM = new InvoiceItemsManager();
-        InvoiceMOPsManager IMM = new InvoiceMOPsManager();
         InvoiceManager IM = new InvoiceManager();
-        CustomerManager CM = new CustomerManager();
-        CurrentUser cu;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -28,7 +26,7 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "PrintableInvoice.aspx";
             try
             {
-                cu = (CurrentUser)Session["currentUser"];
+                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
@@ -103,18 +101,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                ER.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Response.Redirect(prevPage, false);
             }
         }
         protected void btnHome_Click(object sender, EventArgs e)
@@ -140,18 +132,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                ER.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Response.Redirect(prevPage, false);
             }
         }
     }

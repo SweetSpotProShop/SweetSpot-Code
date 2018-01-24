@@ -97,7 +97,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log employee number
                 int employeeID = cu.empID;
                 //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
+                string currPage = Convert.ToString(Session["currPage"]) + "-V2 Test";
                 //Log all info into error table
                 er.logError(ex, employeeID, currPage, method, this);
                 //string prevPage = Convert.ToString(Session["prevPage"]);
@@ -148,7 +148,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log employee number
                 int employeeID = cu.empID;
                 //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
+                string currPage = Convert.ToString(Session["currPage"]) + "-V2 Test";
                 //Log all info into error table
                 er.logError(ex, employeeID, currPage, method, this);
                 //string prevPage = Convert.ToString(Session["prevPage"]);
@@ -175,7 +175,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log employee number
                 int employeeID = cu.empID;
                 //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
+                string currPage = Convert.ToString(Session["currPage"]) + "-V2 Test";
                 //Log all info into error table
                 er.logError(ex, employeeID, currPage, method, this);
                 //string prevPage = Convert.ToString(Session["prevPage"]);
@@ -328,7 +328,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log employee number
                 int employeeID = cu.empID;
                 //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
+                string currPage = Convert.ToString(Session["currPage"]) + "-V2 Test";
                 //Log all info into error table
                 er.logError(ex, employeeID, currPage, method, this);
                 //string prevPage = Convert.ToString(Session["prevPage"]);
@@ -477,7 +477,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log employee number
                 int employeeID = cu.empID;
                 //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
+                string currPage = Convert.ToString(Session["currPage"]) + "-V2 Test";
                 //Log all info into error table
                 er.logError(ex, employeeID, currPage, method, this);
                 //string prevPage = Convert.ToString(Session["prevPage"]);

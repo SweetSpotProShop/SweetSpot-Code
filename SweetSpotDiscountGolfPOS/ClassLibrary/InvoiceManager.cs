@@ -42,7 +42,22 @@ namespace SweetSpotDiscountGolfPOS
             }).ToList();
             return i;
         }
-
+        private List<Invoice> ConvertFromDataTableToInvoiceForReturns(DataTable dt)
+        {
+            CustomerManager CM = new CustomerManager();
+            LocationManager LM = new LocationManager();
+            List<Invoice> i = dt.AsEnumerable().Select(row =>
+            new Invoice
+            {
+                invoiceNum = row.Field<int>("invoiceNum"),
+                invoiceSub = row.Field<int>("invoiceSubNum"),
+                invoiceDate = row.Field<DateTime>("invoiceDate"),
+                customer = CM.ReturnCustomer(row.Field<int>("custID"))[0],
+                location = LM.ReturnLocation(row.Field<int>("locationID"))[0],
+                balanceDue = row.Field<double>("balanceDue")
+            }).ToList();
+            return i;
+        }
         private List<Invoice> ConvertFromDataTableInvoiceListByCustomer(DataTable dt)
         {
             EmployeeManager EM = new EmployeeManager();
@@ -69,13 +84,14 @@ namespace SweetSpotDiscountGolfPOS
             return i;
         }
 
+
         //Returns list of invoice based on an invoice string
         public List<Invoice> ReturnInvoice(string invoice)
         {
-            string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, Cast(invoiceTime as DATETIME) as invoiceTime, "
+            string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, CAST(invoiceTime AS DATETIME) AS invoiceTime, "
                 + "custID, empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, governmentTax, "
                 + "provincialTax, balanceDue, transactionType, comments FROM tbl_invoice WHERE invoiceNum = @invoiceNum "
-                + "and invoiceSubNum = @invoiceSubNum";
+                + "AND invoiceSubNum = @invoiceSubNum";
 
             Object[][] parms =
             {
@@ -86,11 +102,10 @@ namespace SweetSpotDiscountGolfPOS
             List<Invoice> i = ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd, parms));
             return i;
         }
-
         //Returns list of invoice based on an invoice string
         public List<Invoice> ReturnInvoiceByCustomers(int custNum)
         {
-            string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, Cast(invoiceTime as DATETIME) as invoiceTime, "
+            string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, CAST(invoiceTime AS DATETIME) AS invoiceTime, "
                 + "custID, empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, governmentTax, "
                 + "provincialTax, balanceDue, transactionType, comments FROM tbl_invoice WHERE custID = @custID";
 
@@ -102,28 +117,45 @@ namespace SweetSpotDiscountGolfPOS
             List<Invoice> i = ConvertFromDataTableInvoiceListByCustomer(dbc.returnDataTableData(sqlCmd, parms));
             return i;
         }
-
         //Returns list of invoices based on search criteria and date range
         public List<Invoice> ReturnInvoicesBasedOnSearchCriteria(DateTime stDate, DateTime endDate, string searchTxt)
         {
             InvoiceItemsManager IIM = new InvoiceItemsManager();
             ArrayList strText = new ArrayList();
-            for (int i = 0; i < searchTxt.Split(' ').Length; i++)
-            {
-                strText.Add(searchTxt.Split(' ')[i]);
-            }
-            string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, Cast(invoiceTime as DATETIME) as invoiceTime, "
+
+            string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, CAST(invoiceTime AS DATETIME) AS invoiceTime, "
                 + "custID, empID, locationID, subTotal, discountAmount, tradeinAmount, governmentTax, provincialTax, "
-                + "balanceDue, transactionType, comments FROM tbl_invoice WHERE invoiceNum IN (SELECT DISTINCT "
-                + "invoiceNum FROM tbl_invoiceItem WHERE sku IN (";
-                
-            sqlCmd += IIM.ReturnStringSearchForAccessories(strText);
-            sqlCmd += " UNION ";
-            sqlCmd += IIM.ReturnStringSearchForClothing(strText);
-            sqlCmd += " UNION ";
-            sqlCmd += IIM.ReturnStringSearchForClubs(strText);
-            sqlCmd += ")) AND invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "'";
+                + "balanceDue, transactionType, comments FROM tbl_invoice WHERE ";
+
+            if (searchTxt != "") {
+                for (int i = 0; i < searchTxt.Split(' ').Length; i++)
+                {
+                    strText.Add(searchTxt.Split(' ')[i]);
+                }
+                sqlCmd += " invoiceNum IN (SELECT DISTINCT invoiceNum FROM tbl_invoiceItem WHERE "
+                    + "CAST(invoiceNum AS VARCHAR) LIKE '%" + searchTxt + "%' OR sku IN (";
+                sqlCmd += IIM.ReturnStringSearchForAccessories(strText);
+                sqlCmd += " UNION ";
+                sqlCmd += IIM.ReturnStringSearchForClothing(strText);
+                sqlCmd += " UNION ";
+                sqlCmd += IIM.ReturnStringSearchForClubs(strText) + ")) OR ";
+            }
+
+            sqlCmd += "invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "'";
             return ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd));
+        }
+        public List<Invoice> ReturnInvoicesBasedOnSearchForReturns(string txtSearch, DateTime selectedDate)
+        {
+            string sqlCmd = "SELECT I.invoiceNum, I.invoiceSubNum, I.invoiceDate, C.custID, C.firstName, "
+                + "C.lastName, I.locationID, I.balanceDue FROM tbl_invoice I JOIN tbl_customers C ON "
+                + "I.custID = C.custID WHERE CAST(I.invoiceNum AS VARCHAR) LIKE '%" + txtSearch + "%' OR "
+                + "CONCAT(C.firstName, C.lastName, C.primaryPhoneINT) LIKE '%" + txtSearch + "%' OR "
+                + "I.invoiceDate = @selectedDate ORDER BY I.invoiceNum DESC";
+            Object[][] parms =
+            {
+                 new object[] { "@selectedDate", selectedDate }
+            };
+            return ConvertFromDataTableToInvoiceForReturns(dbc.returnDataTableData(sqlCmd, parms));
         }
     }
 }

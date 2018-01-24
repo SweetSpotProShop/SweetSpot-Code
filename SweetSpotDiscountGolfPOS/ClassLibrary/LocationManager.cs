@@ -329,27 +329,24 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         //    return cityName;
         //}
         ////G
-        //public int getProvIDFromLocationID(int locID)
-        //{
-        //    SqlConnection conn = new SqlConnection(connectionString);
-        //    SqlCommand cmd = new SqlCommand();
-
-        //    cmd.Connection = conn;
-        //    cmd.CommandText = "Select provStateID from tbl_location where locationID = @locID";
-        //    cmd.Parameters.AddWithValue("locID", locID);
-
-        //    conn.Open();
-        //    SqlDataReader reader = cmd.ExecuteReader();
-        //    int prov = 0;
-        //    while (reader.Read())
-        //    {
-        //        int n = Convert.ToInt32(reader["provStateID"]);
-        //        prov = n;
-        //    }
-        //    conn.Close();
-        //    //REturns location ID
-        //    return prov;
-        //}
+        public int getProvIDFromLocationID(int locID)
+        {
+            string sqlCmd = "Select provStateID from tbl_location where locationID = @locID";
+            object[][] parms =
+            {
+                new object[] { "@locID", locID }
+            };
+            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms);
+        }
+        public int getCountryIDFromProvID(int provID)
+        {
+            string sqlCmd = "Select countryID from tbl_provState where provStateID = @provID";
+            object[][] parms =
+            {
+                new object[] { "@provID", provID }
+            };
+            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms);
+        }
         ////Get location ID from "Destination"
         //public int getLocationIDFromDestination(string dest)
         //{
