@@ -175,7 +175,6 @@
     <Compile Include="CustomerHomePage.aspx.designer.cs">
       <DependentUpon>CustomerHomePage.aspx</DependentUpon>
     </Compile>
-    <Compile Include="ClassLibrary\CustomExtensions.cs" />
     <Compile Include="EmployeeAddNew.aspx.cs">
       <DependentUpon>EmployeeAddNew.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
