@@ -78,5 +78,19 @@ namespace SweetSpotDiscountGolfPOS
                 //Server.Transfer(prevPage, false);
             }
         }
+
+        protected void grdInvoices_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            // check row type
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+
+                if (Convert.ToInt32(DataBinder.Eval(e.Row.DataItem, "chequeNumber")) > 0)
+                {
+                    
+                }
+              
+            }
+        }
     }
 }
