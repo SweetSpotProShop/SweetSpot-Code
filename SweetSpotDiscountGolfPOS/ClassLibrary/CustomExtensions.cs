@@ -12,6 +12,15 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return (obj ?? string.Empty).ToString();
         }
 
+        public static bool isNumber(this string val)
+        {
+            Double result;
+            return double.TryParse(val, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.CurrentCulture, out result);
+        }
+
+        
+        
+
 
     }
 }

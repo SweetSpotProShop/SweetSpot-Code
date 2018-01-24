@@ -112,6 +112,7 @@
     <Content Include="ReportsCOGSvsPM.aspx" />
     <Content Include="ReportsDiscounts.aspx" />
     <Content Include="ReportsCashOut.aspx" />
+    <Content Include="ReportsExtensiveInvoice.aspx" />
     <Content Include="ReportsHomePage.aspx" />
     <Content Include="ReportsPaymentType.aspx" />
     <Content Include="ReportsTradeIns.aspx" />
@@ -174,6 +175,7 @@
     <Compile Include="CustomerHomePage.aspx.designer.cs">
       <DependentUpon>CustomerHomePage.aspx</DependentUpon>
     </Compile>
+    <Compile Include="ClassLibrary\CustomExtensions.cs" />
     <Compile Include="EmployeeAddNew.aspx.cs">
       <DependentUpon>EmployeeAddNew.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -271,6 +273,13 @@
     </Compile>
     <Compile Include="ReportsCashOut.aspx.designer.cs">
       <DependentUpon>ReportsCashOut.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ReportsExtensiveInvoice.aspx.cs">
+      <DependentUpon>ReportsExtensiveInvoice.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ReportsExtensiveInvoice.aspx.designer.cs">
+      <DependentUpon>ReportsExtensiveInvoice.aspx</DependentUpon>
     </Compile>
     <Compile Include="ReportsHomePage.aspx.cs">
       <DependentUpon>ReportsHomePage.aspx</DependentUpon>

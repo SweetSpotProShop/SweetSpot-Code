@@ -481,7 +481,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns) " +
                                 "and tbl_invoice.locationID = @locationID and tbl_invoice.invoiceDate between @startDate and @endDate " +
                                 "group by tbl_invoiceItem.invoiceNum,  tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.percentage, tbl_invoice.subTotal " +
-                                "order by tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum "; 
+                                "order by tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum ";
             cmd.Parameters.AddWithValue("@startDate", startDate);
             cmd.Parameters.AddWithValue("@endDate", endDate);
             cmd.Parameters.AddWithValue("@locationID", locationID);
@@ -1907,6 +1907,134 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return skusWithErrors;
         }
 
+        //******************COGS and PM REPORTING*******************************************************
+        public System.Data.DataTable returnExtensiveInvoices(DateTime startDate, DateTime endDate, int locationID)
+        {
+            //This method returns a collection of relevant data to be used in the forming of an extensive invoice
+            System.Data.DataTable invoices = new System.Data.DataTable();
+            SqlConnection con = new SqlConnection(connectionString);            
+            string command = "select                                                                                                                                    " +
+                                "Concat(tbl_invoice.invoiceNum, '-', tbl_invoice.invoiceSubNum) as 'Invoice',                                                           " +
+                                "tbl_invoice.shippingAmount,                                                                                                            " +
+                                //"--Discount                                                                                                                             " +
+                                "case                                                                                                                                   " +
+                                "    when Exists(select tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum from tbl_invoiceItem where                            " +
+                                "            tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                    " +
+                                "            tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                            " +
+                                "                Cast((select sum(                                                                                                      " +
+                                "				 case                                                                                                                   " +
+                                "                    when percentage = 1 and itemDiscount <> 0 then                                                                     " +
+                                "                        (itemPrice * (itemDiscount / 100))                                                                             " +
+                                "                    when percentage = 0 and itemDiscount <> 0 then                                                                     " +
+                                "                        itemDiscount                                                                                                   " +
+                                "					else                                                                                                                " +
+                                "                        0                                                                                                              " +
+                                "                end)                                                                                                                   " +
+                                "                from tbl_invoiceItem                                                                                                   " +
+                                "                where tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                          " +
+                                "                tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                                 " +
+                                "    when Exists(select tbl_invoiceItemReturns.invoiceNum, tbl_invoiceItemReturns.invoiceSubNum from tbl_invoiceItemReturns where       " +
+                                "            tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                             " +
+                                "            tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                     " +
+                                "                Cast((select sum(                                                                                                      " +
+                                "				 case                                                                                                                   " +
+                                "                    when percentage = 1 and itemDiscount <> 0 then                                                                     " +
+                                "                        (itemPrice * (itemDiscount / 100))                                                                             " +
+                                "                    when percentage = 0 and itemDiscount <> 0 then                                                                     " +
+                                "                        itemDiscount                                                                                                   " +
+                                "					else                                                                                                                " +
+                                "                        0                                                                                                              " +
+                                "                end)                                                                                                                   " +
+                                "                from tbl_invoiceItemReturns                                                                                            " +
+                                "                where tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                   " +
+                                "                tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                          " +
+                                "	else                                                                                                                                " +
+                                "        'No items found'                                                                                                               " +
+                                "end as 'Total Discount',                                                                                                               " +
+                                "tbl_invoice.subTotal as 'Pre-Tax',                                                                                                     " +
+                                "tbl_invoice.governmentTax,                                                                                                             " +
+                                "tbl_invoice.provincialTax,                                                                                                             " +
+                                "tbl_invoice.balanceDue as 'Post-Tax',                                                                                                  " +
+                                //"--COGS                                                                                                                                 " +
+                                "case                                                                                                                                   " +
+                                "    when Exists(select tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum from tbl_invoiceItem where                            " +
+                                "            tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                    " +
+                                "            tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                            " +
+                                "            Cast((select sum(itemCost) from tbl_invoiceItem where                                                                      " +
+                                "                tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                " +
+                                "                tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                                 " +
+                                "    when Exists(select tbl_invoiceItemReturns.invoiceNum, tbl_invoiceItemReturns.invoiceSubNum from tbl_invoiceItemReturns where       " +
+                                "            tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                             " +
+                                "            tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                     " +
+                                "            Cast((select sum(itemCost) from tbl_invoiceItemReturns where                                                               " +
+                                "                tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                         " +
+                                "                tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                          " +
+                                "	else                                                                                                                                " +
+                                "        'No items found'                                                                                                               " +
+                                "end as 'COGS',                                                                                                                         " +
+                                //"--Revenue Earned                                                                                                                       " +
+                                "case                                                                                                                                   " +
+                                "    when Exists(select tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum from tbl_invoiceItem where                            " +
+                                "            tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                    " +
+                                "            tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                            " +
+                                "                Cast(tbl_invoice.balanceDue - (select sum(itemCost) from tbl_invoiceItem where                                         " +
+                                "                tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                " +
+                                "              tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                                   " +
+                                "    when Exists(select tbl_invoiceItemReturns.invoiceNum, tbl_invoiceItemReturns.invoiceSubNum from tbl_invoiceItemReturns where       " +
+                                "            tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                             " +
+                                "            tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                     " +
+                                "                Cast(tbl_invoice.balanceDue - (select sum(itemCost) from tbl_invoiceItemReturns where                                  " +
+                                "                tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                         " +
+                                "                tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                          " +
+                                "	else                                                                                                                                " +
+                                "        'No items found'                                                                                                               " +
+                                "end as 'Revenue Earned',                                                                                                               " +
+                                //"--Profit Margin                                                                                                                        " +
+                                "case                                                                                                                                   " +
+                                "    when Exists(select tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum from tbl_invoiceItem where                            " +
+                                "            tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                    " +
+                                "            tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                            " +
+                                "				case                                                                                                                    " +
+                                "                   when tbl_invoice.subTotal <> 0 then                                                                                 " +
+                                "                        CAST(ROUND((((tbl_invoice.balanceDue - (select sum(itemCost) from tbl_invoiceItem where                        " +
+                                "                                                                 tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and               " +
+                                "                                                                 tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum))           " +
+                                "                                                                 / tbl_invoice.balanceDue) *100),2) as varchar)                        " +
+                                "                    when tbl_invoice.balanceDue = 0 then                                                                               " +
+                                "                        'N/A'                                                                                                          " +
+                                "                end                                                                                                                    " +
+                                "    when Exists(select tbl_invoiceItemReturns.invoiceNum, tbl_invoiceItemReturns.invoiceSubNum from tbl_invoiceItemReturns where       " +
+                                "            tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                             " +
+                                "            tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                     " +
+                                "				case                                                                                                                    " +
+                                "                    when tbl_invoice.subTotal <> 0 then                                                                                " +
+                                "                        CAST(ROUND((((tbl_invoice.balanceDue - (select sum(itemCost) from tbl_invoiceItemReturns where                 " +
+                                "                                                                 tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and        " +
+                                "                                                                 tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum))    " +
+                                "                        / tbl_invoice.balanceDue) *100),2) as varchar)                                                                 " +
+                                "                    when tbl_invoice.balanceDue = 0 then                                                                               " +
+                                "                        'N/A'                                                                                                          " +
+                                "                end                                                                                                                    " +
+                                "	else                                                                                                                                " +
+                                "        'No items found'                                                                                                               " +
+                                "end as 'Profit Margin',                                                                                                                " +
+                                "(Select Concat(firstname, ' ', lastName) from tbl_customers where tbl_customers.custID = tbl_invoice.custID) as 'Customer Name',       " +
+                                "(Select Concat(firstname, ' ', lastName) from tbl_employee where tbl_employee.empID = tbl_invoice.empID) as 'Employee Name',           " +
+                                "(Select locationName from tbl_location where tbl_location.locationID = tbl_invoice.locationID) as 'Location',                          " +
+                                "tbl_invoice.invoiceDate                                                                                                                " +
+                                "from tbl_invoice                                                                                                                       " +
+                                "where tbl_invoice.invoiceDate between @startDate and @endDate and tbl_invoice.locationID = @locationID;                                " ;
+            using (var cmd = new SqlCommand(command, con))
+            using (var da = new SqlDataAdapter(cmd))
+            {                
+                cmd.Parameters.AddWithValue("@startDate", startDate);
+                cmd.Parameters.AddWithValue("@endDate", endDate);
+                cmd.Parameters.AddWithValue("@locationID", locationID);
+                da.Fill(invoices);
+            }          
+
+            return invoices;
+        }
 
         //********************EXPORTING***************************************************************
         //Export clubs table to excel file in users Downloads folder        
