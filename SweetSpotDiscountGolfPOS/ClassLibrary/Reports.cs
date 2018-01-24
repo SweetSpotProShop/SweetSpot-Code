@@ -1592,7 +1592,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "(Select Concat(firstname, ' ', lastName) from tbl_employee where tbl_employee.empID = tbl_invoice.empID) as 'Employee Name',           " +
                                 "(Select locationName from tbl_location where tbl_location.locationID = tbl_invoice.locationID) as 'Location',                          " +
                                 "tbl_invoice.invoiceDate                                                                                                                " +
-                                "from tbl_invoice                                                                                                                       ";
+                                "from tbl_invoice                                                                                                                       " +
+                                "where tbl_invoice.invoiceDate between @startDate and @endDate and tbl_invoice.locationID = @locationID;                                " ;
             using (var cmd = new SqlCommand(command, con))
             using (var da = new SqlDataAdapter(cmd))
             {                
