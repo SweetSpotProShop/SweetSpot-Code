@@ -23,24 +23,22 @@
         <Columns>
             <asp:TemplateField HeaderText="Invoice Number">
                 <ItemTemplate>
-                    <asp:LinkButton ID="lbtnInvoiceNumber" runat="server" Text='<%#Eval("invoiceNum") + "-" + Eval("invoiceSub") %>' OnClick="lbtnInvoiceNumber_Click"></asp:LinkButton>
+                    <asp:LinkButton ID="lbtnInvoiceNumber" runat="server" Text='<%#Eval("invoiceNum") + "-" + Eval("invoiceSubNum") %>' OnClick="lbtnInvoiceNumber_Click"></asp:LinkButton>
                 </ItemTemplate>
                  <FooterTemplate>
                     <asp:Label ID="lblTotals" runat="server" Text="Totals:" />
                 </FooterTemplate>
             </asp:TemplateField>
-            <asp:BoundField DataField="customerID" ReadOnly="true" HeaderText="Customer" />
-            <%--<asp:TemplateField HeaderText="Employee">
-                    <asp:ItemTemplate>
-                        <asp:Label ID="lblEmployee" runat="server" Text='<%#Eval("employeeID")%>'></asp:Label>
-                    </asp:ItemTemplate>
-                </asp:TemplateField>--%>
+            <asp:BoundField DataField="custID" ReadOnly="true" HeaderText="Customer" />
+            <asp:BoundField DataField="empID" ReadOnly="true" HeaderText="Employee" />
             <asp:BoundField DataField="discountAmount" ReadOnly="true" HeaderText="Discount" DataFormatString="{0:C}" />
             <asp:BoundField DataField="tradeinAmount" ReadOnly="true" HeaderText="Trade In" DataFormatString="{0:C}" />
             <asp:BoundField DataField="subTotal" ReadOnly="true" HeaderText="Subtotal" DataFormatString="{0:C}" />
             <asp:BoundField DataField="governmentTax" ReadOnly="true" HeaderText="Government Tax" DataFormatString="{0:C}" />
             <asp:BoundField DataField="provincialTax" ReadOnly="true" HeaderText="Provincial Tax" DataFormatString="{0:C}" />
             <asp:BoundField DataField="balanceDue" ReadOnly="true" HeaderText="Balance Paid" DataFormatString="{0:C}" />
+            <asp:BoundField DataField="mopType" ReadOnly="true" HeaderText="MOP Type" />
+            <asp:BoundField DataField="amountPaid" ReadOnly="true" HeaderText="MOP Amount" DataFormatString="{0:C}" />
             <%--<asp:TemplateField HeaderText="Delete Invoice">
                 <ItemTemplate>
                     <%--<asp:LinkButton Text="Delete" runat="server" CommandName="Delete" OnClientClick="return confirm('Are you sure you want to delete?');" CausesValidation="false" />
