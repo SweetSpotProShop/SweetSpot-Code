@@ -85,10 +85,15 @@ namespace SweetSpotDiscountGolfPOS
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
 
-                if (Convert.ToInt32(DataBinder.Eval(e.Row.DataItem, "chequeNumber")) > 0)
+                if (!e.Row.Cells[9].Text.All(char.IsDigit))
                 {
-                    
+                    e.Row.Cells[9].Text = e.Row.Cells[9].Text + "%";
                 }
+                   
+
+
+
+                
               
             }
         }
