@@ -1439,22 +1439,6 @@ namespace SweetShop
                     reader["comments"].ToString());
             }
             con.Close();
-            //This can be removed since the deleted invoice table doesn't hold anything.
-            //con.Open();
-            //cmd.CommandText = "SELECT invoiceNum, invoiceSubNum, invoiceDate, Cast(invoiceTime as DATETIME) as invoiceTime, custID, empID, locationID, subTotal, discountAmount, "
-            //    + "tradeinAmount, governmentTax, provincialTax, balanceDue, transactionType, comments FROM tbl_deletedInvoice "
-            //    + "WHERE invoiceNum = @invoiceNumb and invoiceSubNum = @invoiceSubNumb";
-            //cmd.Parameters.AddWithValue("invoiceNumb", invoiceID);
-            //cmd.Parameters.AddWithValue("invoiceSubNumb", invoiceSub);
-            //SqlDataReader readerDel = cmd.ExecuteReader();
-            //while (readerDel.Read())
-            //{
-            //    i = new Invoice(Convert.ToInt32(readerDel["invoiceNum"]), Convert.ToInt32(readerDel["invoiceSubNum"]), Convert.ToDateTime(readerDel["invoiceDate"]),
-            //        Convert.ToDateTime(readerDel["invoiceTime"]), Convert.ToInt32(readerDel["custID"]), Convert.ToInt32(readerDel["empID"]), Convert.ToInt32(readerDel["locationID"]),
-            //        Convert.ToDouble(readerDel["subTotal"]), Convert.ToDouble(readerDel["discountAmount"]), Convert.ToDouble(readerDel["tradeinAmount"]), Convert.ToDouble(readerDel["governmentTax"]),
-            //        Convert.ToDouble(readerDel["provincialTax"]), Convert.ToDouble(readerDel["balanceDue"]), Convert.ToInt32(readerDel["transactionType"]), readerDel["comments"].ToString());
-            //}
-            //con.Close();
             //Returns the invoice
             return i;
         }
