@@ -62,39 +62,25 @@ namespace SweetSpotDiscountGolfPOS
                     lblSubtotalDisplay.Text = invoices[0].subTotal.ToString("#0.00");
                     lblTotalPaidDisplay.Text = invoices[0].balanceDue.ToString("#0.00");
 
-                    //if (invoices[0].invoiceSub > 1)
-                    //{
+                    if (invoices[0].invoiceSub > 1)
+                    {
                     //    //Changes headers if the invoice is return
-                    //    grdItemsSoldList.Columns[2].HeaderText = "Sold At";
-                    //    grdItemsSoldList.Columns[3].HeaderText = "Non Refundable";
-                    //    grdItemsSoldList.Columns[5].HeaderText = "Returned At";
+                        grdItemsSoldList.Columns[2].HeaderText = "Sold At";
+                        grdItemsSoldList.Columns[3].HeaderText = "Non Refundable";
+                        grdItemsSoldList.Columns[5].HeaderText = "Returned At";
                     //    grdItemsSoldList.itemPrice.Text = "(Convert.ToBoolean(Eval('percentage')) == false ? ((Convert.ToDouble(Eval('price'))) - Convert.ToDouble(Eval('discount'))).ToString('C') : ((Convert.ToDouble(Eval('price')) - ((Convert.ToDouble(Eval('discount')) / 100) * Convert.ToDouble(Eval('price'))))).ToString('C'))";
                     //    grdItemsSoldList.discount.Text = "(Convert.ToBoolean(Eval('percentage')) == false ? (((Convert.ToDouble(Eval('price')))-(Convert.ToDouble(Eval('discount')))) - Convert.ToDouble(Eval('returnAmount'))).ToString('C') : (((Convert.ToDouble(Eval('price')) - ((Convert.ToDouble(Eval('discount')) / 100) * Convert.ToDouble(Eval('price'))))) - Convert.ToDouble(Eval('returnAmount'))).ToString('C'))";
                     //    grdItemsSoldList.salePrice.Text = "Eval('returnAmount', '{0:C}')";
                     //    grdItemsSoldList.extended.Text = "Eval('returnAmount', '{0:C}')";
-                    //}
+                    }
                     //Binds the cart to the grid view
                     grdItemsSoldList.DataSource = invoices[0].soldItems;
                     grdItemsSoldList.DataBind();
-                    //foreach (GridViewRow row in grdItemsSoldList.Rows)
-                    //{
-                    //    foreach (TableCell cell in row.Cells)
-                    //    {
-                    //        cell.Attributes.CssStyle["text-align"] = "center";
-                    //    }
-                    //}
+                    
                     //Displays the total amount ppaid
-
                     //Binds the payment methods to a gridview
                     grdMOPS.DataSource = invoices[0].usedMops;
                     grdMOPS.DataBind();
-                    //foreach (GridViewRow row in grdMOPS.Rows)
-                    //{
-                    //    foreach (TableCell cell in row.Cells)
-                    //    {
-                    //        cell.Attributes.CssStyle["text-align"] = "center";
-                    //    }
-                    //}
                 }
             }
             //Exception catch
