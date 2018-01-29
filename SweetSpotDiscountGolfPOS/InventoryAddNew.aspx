@@ -12,17 +12,9 @@
             <%--Textboxes and Labels for user to enter inventory info--%>
             <h2>New Inventory Item</h2>
 
-
-            <asp:SqlDataSource ID="sqlItemType" runat="server" ConnectionString="<%$ ConnectionStrings:SweetSpotDevConnectionString %>" SelectCommand="SELECT [typeID], [typeDescription] FROM [tbl_itemType] ORDER BY [typeDescription]"></asp:SqlDataSource>
-            <asp:SqlDataSource ID="sqlBrand" runat="server" ConnectionString="<%$ ConnectionStrings:SweetSpotDevConnectionString %>" SelectCommand="SELECT [brandID], [brandName] FROM [tbl_brand] ORDER BY [brandName]"></asp:SqlDataSource>
-            <asp:SqlDataSource ID="SqlModel" runat="server" ConnectionString="<%$ ConnectionStrings:SweetSpotDevConnectionString %>" SelectCommand="SELECT [modelID], [modelName] FROM [tbl_model] ORDER BY [modelName]"></asp:SqlDataSource>
-            <asp:SqlDataSource ID="sqlLocation" runat="server" ConnectionString="<%$ ConnectionStrings:SweetSpotDevConnectionString %>" SelectCommand="SELECT [locationID], [locationName] FROM [tbl_location] ORDER BY [locationName]"></asp:SqlDataSource>            
-            <asp:SqlDataSource ID="sqlClubType" runat="server" ConnectionString="<%$ ConnectionStrings:SweetSpotDevConnectionString %>" SelectCommand="SELECT [typeID], [typeName] FROM [tbl_clubType] ORDER BY [typeName]"></asp:SqlDataSource>
-            <br />
-            <br />
             <br />
             <h3>
-                <asp:DropDownList ID="ddlType" runat="server" AutoPostBack="True" DataSourceID="sqlItemType" DataTextField="typeDescription" DataValueField="typeID" Enabled="false" />
+                <asp:DropDownList ID="ddlType" runat="server" AutoPostBack="True" Enabled="false" />
                 <%--<asp:Label ID="lblTypeDisplay" runat="server" Visible="true" />--%>
             </h3>
             <asp:Table ID="Table1" runat="server" Width="100%">
@@ -37,7 +29,7 @@
                         <asp:Label ID="lblCost" runat="server" Text="Cost:  $" />
                     </asp:TableCell>
                     <asp:TableCell Width="25%">
-                        <asp:TextBox ID="txtCost" runat="server" Enabled="false" />
+                        <asp:TextBox ID="txtCost" runat="server" Enabled="false" Text="0" />
                         <%--<asp:Label ID="lblCostDisplay" runat="server" Text="" Visible="true" />--%>
                     </asp:TableCell>
                 </asp:TableRow>
@@ -46,14 +38,14 @@
                         <asp:Label ID="lblBrand" runat="server" Text="Brand Name:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlBrand" runat="server" AutoPostBack="True" DataSourceID="sqlBrand" DataTextField="brandName" DataValueField="brandID" Enabled="false" />
+                        <asp:DropDownList ID="ddlBrand" runat="server" AutoPostBack="True" Enabled="false" />
                         <%--<asp:Label ID="lblBrandDisplay" runat="server" Text="" Visible="true" />--%>
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblPrice" runat="server" Text="Price:  $" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtPrice" runat="server" Enabled="false" />
+                        <asp:TextBox ID="txtPrice" runat="server" Enabled="false" Text="0" />
                         <%--<asp:Label ID="lblPriceDisplay" runat="server" Text="" Visible="true" />--%>
                     </asp:TableCell>
                 </asp:TableRow>
@@ -62,14 +54,14 @@
                         <asp:Label ID="lblQuantity" runat="server" Text="Quantity:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtQuantity" runat="server" Enabled="false" />
+                        <asp:TextBox ID="txtQuantity" runat="server" Enabled="false" Text="0" />
                         <%--<asp:Label ID="lblQuantityDisplay" runat="server" Text="" Visible="true" />--%>
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblLocation" runat="server" Text="Location:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="True" DataSourceID="sqlLocation" DataTextField="locationName" DataValueField="locationID" Enabled="false" />
+                        <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="True" Enabled="false" />
                         <%--<asp:Label ID="lblLocationDisplay" runat="server" Text="" Visible="true" />--%>
                     </asp:TableCell>
                 </asp:TableRow>
@@ -89,7 +81,7 @@
                         <asp:Label ID="lblModel" runat="server" Text="Model:" Visible="true" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlModel" runat="server" AutoPostBack="True" DataSourceID="sqlModel" DataTextField="modelName" DataValueField="modelID" Enabled="false" />
+                        <asp:DropDownList ID="ddlModel" runat="server" AutoPostBack="True" Enabled="false" />
                         <%--<asp:Label ID="lblModelDisplay" runat="server" Text="" Visible="true" />--%>
                     </asp:TableCell>
                 </asp:TableRow>

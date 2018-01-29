@@ -27,8 +27,9 @@ namespace SweetSpotDiscountGolfPOS
         EmployeeManager EM = new EmployeeManager();
         Reports R = new Reports();
         TaxManager TM = new TaxManager();
+        LocationManager LM = new LocationManager();
 
-        SweetShopManager ssm = new SweetShopManager();
+        //SweetShopManager ssm = new SweetShopManager();
         internal static readonly Page aspx;
         public int counter;
         public int total;
@@ -60,9 +61,19 @@ namespace SweetSpotDiscountGolfPOS
                     if (CU.jobID != 0)
                     {
                         btnAddNewEmployee.Enabled = false;
-                        //btnLoadCustomers.Enabled = false;
-                        //btnLoadEmployees.Enabled = false;
                         btnLoadItems.Enabled = false;
+                    }
+                    if (!IsPostBack)
+                    {
+                        ddlProvince.DataSource = LM.ReturnProvinceDropDown(0);
+                        ddlProvince.DataTextField = "provName";
+                        ddlProvince.DataValueField = "provStateID";
+                        ddlProvince.DataBind();
+                        ddlProvince.SelectedValue = "1";
+                        ddlTax.DataSource = TM.ReturnTaxListBasedOnDateAndProvinceForUpdate(1,Convert.ToDateTime(lblCurrentDate.Text));
+                        ddlTax.DataTextField = "taxName";
+                        ddlTax.DataValueField = "taxID";
+                        ddlTax.DataBind();
                     }
                 }
             }
@@ -484,7 +495,25 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator", this);
             }
         }
-
+        protected void ddlProvince_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string method = "ddlProvince_SelectedIndexChanged";
+            try
+            {
+                ddlTax.DataSource= TM.ReturnTaxListBasedOnDateAndProvinceForUpdate(Convert.ToInt32(ddlProvince.SelectedValue), Convert.ToDateTime(lblCurrentDate.Text));
+                ddlTax.DataBind();
+            }
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2 Test", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+            }
+        }
         protected void ddlTax_SelectedIndexChanged(object sender, EventArgs e)
         {
             string method = "ddlTax_SelectedIndexChanged";

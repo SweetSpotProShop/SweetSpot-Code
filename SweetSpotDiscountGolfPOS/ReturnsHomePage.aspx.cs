@@ -19,6 +19,8 @@ namespace SweetSpotDiscountGolfPOS
         CurrentUser CU;
         InvoiceManager IM = new InvoiceManager();
 
+        SweetShopManager ssm = new SweetShopManager();
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -33,7 +35,7 @@ namespace SweetSpotDiscountGolfPOS
                     //Go back to Login to log in
                     Response.Redirect("LoginPage.aspx", false);
                 }
-                calSearchDate.SelectedDate = DateTime.Today;
+                if (!IsPostBack) { calSearchDate.SelectedDate = DateTime.Today; }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -76,34 +78,15 @@ namespace SweetSpotDiscountGolfPOS
             string method = "grdInvoiceSelection_RowCommand";
             try
             {
-                //Sets the string of the command argument(invoice number
-                string strInvoice = Convert.ToString(e.CommandArgument);
-                //Splits the invoice string into numbers
-                int invNum = Convert.ToInt32(strInvoice.Split('-')[0]);
-                int invSNum = Convert.ToInt32(strInvoice.Split('-')[1]);
                 //Checks that the command name is return invoice
                 if (e.CommandName == "returnInvoice")
                 {
                     //Retrieves all the invoices that were searched
-                    List<Invoice> combData = (List<Invoice>)Session["searchReturnInvoices"];
-                    Invoice returnInvoice = new Invoice();
-                    //Loops through each invoice
-                    foreach (var inv in combData)
-                    {
-                        //Checks to match the selected invoice number with the searched invoice
-                        if (inv.invoiceNum == invNum && inv.invoiceSub == invSNum)
-                        {
-                            //Sets customer class based on the found invoice customer number
-                            //Customer c = ssm.GetCustomerbyCustomerNumber(inv.customerID);
-                            //Sets invoice and customer name
-                            returnInvoice = inv;
-                            //returnInvoice.customerName = c.firstName + " " + c.lastName;
-                            //Sets the Customer key id
-                            //Session["key"] = inv.customerID;
-                            //Sets the session to the single invoice
-                            Session["searchReturnInvoices"] = returnInvoice;
-                        }
-                    }
+                    List<Invoice> returnInvoice = IM.ReturnInvoice(Convert.ToString(e.CommandArgument));
+                    //Sets the Customer key id
+                    Session["key"] = returnInvoice[0].customer.customerId;
+                    //Sets the session to the single invoice
+                    Session["searchReturnInvoices"] = returnInvoice[0];
                     //Sets transaction type to return
                     Session["TranType"] = 2;
                     //Changes to Returns cart
@@ -117,6 +100,20 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2 Test", method, this);
                 //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+            }
+        }
+
+        protected void calSearchDate_SelectionChanged(object sender, EventArgs e)
+        {
+            string method = "calSearchDate_SelectionChanged";
+            try { }
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2 Test", method, this);
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);

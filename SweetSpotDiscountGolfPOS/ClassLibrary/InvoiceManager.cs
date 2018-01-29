@@ -118,14 +118,14 @@ namespace SweetSpotDiscountGolfPOS
             return i;
         }
         //Returns list of invoices based on search criteria and date range
-        public List<Invoice> ReturnInvoicesBasedOnSearchCriteria(DateTime stDate, DateTime endDate, string searchTxt)
+        public List<Invoice> ReturnInvoicesBasedOnSearchCriteria(DateTime stDate, DateTime endDate, string searchTxt, int locationID)
         {
             InvoiceItemsManager IIM = new InvoiceItemsManager();
             ArrayList strText = new ArrayList();
 
             string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, CAST(invoiceTime AS DATETIME) AS invoiceTime, "
                 + "custID, empID, locationID, subTotal, discountAmount, tradeinAmount, governmentTax, provincialTax, "
-                + "balanceDue, transactionType, comments FROM tbl_invoice WHERE ";
+                + "balanceDue, transactionType, comments FROM tbl_invoice WHERE (";
 
             if (searchTxt != "") {
                 for (int i = 0; i < searchTxt.Split(' ').Length; i++)
@@ -141,16 +141,24 @@ namespace SweetSpotDiscountGolfPOS
                 sqlCmd += IIM.ReturnStringSearchForClubs(strText) + ")) OR ";
             }
 
-            sqlCmd += "invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "'";
-            return ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd));
+            sqlCmd += "invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "') AND locationID = @locationID";
+            object[][] parms =
+            {
+                new object[] { "locationID", locationID }
+            };
+            return ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd, parms));
         }
         public List<Invoice> ReturnInvoicesBasedOnSearchForReturns(string txtSearch, DateTime selectedDate)
         {
             string sqlCmd = "SELECT I.invoiceNum, I.invoiceSubNum, I.invoiceDate, C.custID, C.firstName, "
                 + "C.lastName, I.locationID, I.balanceDue FROM tbl_invoice I JOIN tbl_customers C ON "
-                + "I.custID = C.custID WHERE CAST(I.invoiceNum AS VARCHAR) LIKE '%" + txtSearch + "%' OR "
-                + "CONCAT(C.firstName, C.lastName, C.primaryPhoneINT) LIKE '%" + txtSearch + "%' OR "
-                + "I.invoiceDate = @selectedDate ORDER BY I.invoiceNum DESC";
+                + "I.custID = C.custID WHERE I.invoiceDate = @selectedDate ";
+
+            if (txtSearch != "") {
+                sqlCmd += "OR CAST(I.invoiceNum AS VARCHAR) LIKE '%" + txtSearch + "%' OR "
+                + "CONCAT(C.firstName, C.lastName, C.primaryPhoneINT) LIKE '%" + txtSearch + "%' ";
+            }
+            sqlCmd += "ORDER BY I.invoiceNum DESC";
             Object[][] parms =
             {
                  new object[] { "@selectedDate", selectedDate }

@@ -12,7 +12,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
     {
         DatabaseCalls dbc = new DatabaseCalls();
 
-
         private List<Customer> ConvertFromDataTableToCustomer(DataTable dt)
         {
             List<Customer> customer = dt.AsEnumerable().Select(row =>

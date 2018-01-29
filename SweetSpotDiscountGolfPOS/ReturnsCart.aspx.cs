@@ -77,7 +77,7 @@ namespace SweetSpotDiscountGolfPOS
                             }
                         }
                         //populates current customer info
-                        //lblCustomerDisplay.Text = rInvoice.customerName.ToString();
+                        lblCustomerDisplay.Text = rInvoice.customer.firstName.ToString() + " " + rInvoice.customer.lastName.ToString();
                         lblInvoiceNumberDisplay.Text = cu.locationName + "-" + rInvoice.invoiceNum.ToString() + "-" + idu.getNextInvoiceSubNum(rInvoice.invoiceNum).ToString();
                         Session["Invoice"] = lblInvoiceNumberDisplay.Text;
                         lblDateDisplay.Text = DateTime.Today.ToString("yyyy-MM-dd");
@@ -246,7 +246,7 @@ namespace SweetSpotDiscountGolfPOS
                                 {
                                     //When skus match increase the quantity for that sku
                                     //in the marked for return cart
-                                    //returnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity + 1, retCart.price, retCart.cost, retCart.discount, retCart.percentage, retCart.returnAmount, retCart.tradeIn, retCart.typeID);
+                                    returnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity + 1, retCart.price, retCart.cost, retCart.discount, retCart.percentage, retCart.returnAmount, retCart.tradeIn, retCart.typeID);
                                     //Add that item back into stock so that it could be sold again
                                     idu.removeQTYfromInventoryWithSKU(returnedItem.sku, returnedItem.typeID, inStockQTY + 1);
                                     //Trigger that the selected sku has now been added to marked return cart
@@ -256,7 +256,7 @@ namespace SweetSpotDiscountGolfPOS
                                 {
                                     //If the sku doesn't match then item we checked against
                                     //needs to be added back into the cart
-                                    //returnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity, retCart.price, retCart.cost, retCart.discount, retCart.percentage, retCart.returnAmount, retCart.tradeIn, retCart.typeID);
+                                    returnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity, retCart.price, retCart.cost, retCart.discount, retCart.percentage, retCart.returnAmount, retCart.tradeIn, retCart.typeID);
                                 }
                                 //This completes the add of the item from the if statement
                                 returnedCart.Add(returnedItem);
@@ -270,7 +270,7 @@ namespace SweetSpotDiscountGolfPOS
                                 //on the sku
                                 if (cart.percentage) { multi = 1; } else { multi = -1; }
                                 //Adds sku in the cart of items marked for return
-                                //returnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.discount, cart.percentage, -1 * returnAmount, cart.tradeIn, cart.typeID);
+                                returnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.discount, cart.percentage, -1 * returnAmount, cart.tradeIn, cart.typeID);
                                 //Adds the new quantity back into stock
                                 idu.removeQTYfromInventoryWithSKU(returnedItem.sku, returnedItem.typeID, inStockQTY + 1);
                                 returnedCart.Add(returnedItem);
@@ -284,7 +284,7 @@ namespace SweetSpotDiscountGolfPOS
                             //on the sku
                             if (cart.percentage) { multi = 1; } else { multi = -1; }
                             //Adds sku in the cart of items marked for return
-                            //returnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.discount, cart.percentage, -1 * returnAmount, cart.tradeIn, cart.typeID);
+                            returnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.discount, cart.percentage, -1 * returnAmount, cart.tradeIn, cart.typeID);
                             //Adds the new quantity back into stock
                             idu.removeQTYfromInventoryWithSKU(returnedItem.sku, returnedItem.typeID, inStockQTY + 1);
                             returnedCart.Add(returnedItem);
@@ -395,7 +395,7 @@ namespace SweetSpotDiscountGolfPOS
                                 {
                                     //When skus match increase the quantity for that sku
                                     //in the returnable items cart
-                                    //cancelReturnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity + 1, retCart.price, retCart.cost, retCart.discount, retCart.percentage, 0, retCart.tradeIn, retCart.typeID);
+                                    cancelReturnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity + 1, retCart.price, retCart.cost, retCart.discount, retCart.percentage, 0, retCart.tradeIn, retCart.typeID);
                                     //Remove that item from stock so that it can not be sold again
                                     idu.removeQTYfromInventoryWithSKU(cancelReturnedItem.sku, cancelReturnedItem.typeID, inStockQTY - 1);
                                     //Trigger that the selected sku has now been added into the returnable items cart
@@ -405,7 +405,7 @@ namespace SweetSpotDiscountGolfPOS
                                 {
                                     //If the sku doesn't match then item we checked against
                                     //needs to be added back into the marked for return cart
-                                    //cancelReturnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity, retCart.price, retCart.cost, retCart.discount, retCart.percentage, 0, retCart.tradeIn, retCart.typeID);
+                                    cancelReturnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity, retCart.price, retCart.cost, retCart.discount, retCart.percentage, 0, retCart.tradeIn, retCart.typeID);
                                 }
                                 //This completes the add of the item from the if statement
                                 itemsInCart.Add(cancelReturnedItem);
@@ -419,7 +419,7 @@ namespace SweetSpotDiscountGolfPOS
                                 //on the sku
                                 if (cart.percentage) { multi = 1; } else { multi = -1; }
                                 //Adds sku in the returnable items cart
-                                //cancelReturnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.discount, cart.percentage, 0, cart.tradeIn, cart.typeID);
+                                cancelReturnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.discount, cart.percentage, 0, cart.tradeIn, cart.typeID);
                                 //Removes the new quantity from stock
                                 idu.removeQTYfromInventoryWithSKU(cancelReturnedItem.sku, cancelReturnedItem.typeID, inStockQTY - 1);
                                 itemsInCart.Add(cancelReturnedItem);
@@ -433,7 +433,7 @@ namespace SweetSpotDiscountGolfPOS
                             //on the sku
                             if (cart.percentage) { multi = 1; } else { multi = -1; }
                             //Adds sku in the returnable items cart
-                            //cancelReturnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.discount, cart.percentage, 0, cart.tradeIn, cart.typeID);
+                            cancelReturnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.discount, cart.percentage, 0, cart.tradeIn, cart.typeID);
                             //Removes the new quantity from stock
                             idu.removeQTYfromInventoryWithSKU(cancelReturnedItem.sku, cancelReturnedItem.typeID, inStockQTY - 1);
                             itemsInCart.Add(cancelReturnedItem);

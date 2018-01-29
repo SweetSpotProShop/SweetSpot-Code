@@ -16,8 +16,9 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU = new CurrentUser();
         ItemDataUtilities IDU = new ItemDataUtilities();
+        ItemsManager IM = new ItemsManager();
         LocationManager LM = new LocationManager();
-        //Next adjust DropDownLists
+        
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -44,6 +45,22 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         //Grabs a list of objects that match the sku in query string. There should only ever be 1 that is returned
                         List<Object> o = IDU.ReturnListOfObjectsFromThreeTables(Convert.ToInt32(Request.QueryString["sku"].ToString()));
+                        ddlBrand.DataSource = IM.ReturnDropDownForBrand();
+                        ddlBrand.DataTextField = "brandName";
+                        ddlBrand.DataValueField = "brandID";
+                        ddlBrand.DataBind();
+                        ddlLocation.DataSource = LM.ReturnLocationDropDownAll();
+                        ddlLocation.DataTextField = "locationName";
+                        ddlLocation.DataValueField = "locationID";
+                        ddlLocation.DataBind();
+                        ddlType.DataSource = IM.ReturnDropDownForItemType();
+                        ddlType.DataTextField = "typeDescription";
+                        ddlType.DataValueField = "typeID";
+                        ddlType.DataBind();
+                        ddlModel.DataSource = IM.ReturnDropDownForModel();
+                        ddlModel.DataTextField = "modelName";
+                        ddlModel.DataValueField = "modelID";
+                        ddlModel.DataBind();
                         if (o[0] is Clubs)
                         {
                             //When a club, pass class and populate DropDowns and TextBoxes
@@ -88,7 +105,7 @@ namespace SweetSpotDiscountGolfPOS
                             lblShaft.Text = "Colour:";
                             txtShaft.Text = a.colour.ToString();
                             txtComments.Text = a.comments.ToString();
-                            
+
                             lblClubSpec.Visible = false;
                             txtClubSpec.Visible = false;
                             lblShaftSpec.Visible = false;
@@ -131,8 +148,8 @@ namespace SweetSpotDiscountGolfPOS
                             txtDexterity.Visible = false;
                             chkUsed.Visible = false;
                         }
+                        btnCreateSimilar.Visible = true;
                     }
-                    btnCreateSimilar.Visible = true;
                 }
                 else
                 {
@@ -151,6 +168,22 @@ namespace SweetSpotDiscountGolfPOS
                     btnCreateSimilar.Visible = false;
                     if (!IsPostBack)
                     {
+                        ddlBrand.DataSource = IM.ReturnDropDownForBrand();
+                        ddlBrand.DataTextField = "brandName";
+                        ddlBrand.DataValueField = "brandID";
+                        ddlBrand.DataBind();
+                        ddlLocation.DataSource = LM.ReturnLocationDropDownAll();
+                        ddlLocation.DataTextField = "locationName";
+                        ddlLocation.DataValueField = "locationID";
+                        ddlLocation.DataBind();
+                        ddlType.DataSource = IM.ReturnDropDownForItemType();
+                        ddlType.DataTextField = "typeDescription";
+                        ddlType.DataValueField = "typeID";
+                        ddlType.DataBind();
+                        ddlModel.DataSource = IM.ReturnDropDownForModel();
+                        ddlModel.DataTextField = "modelName";
+                        ddlModel.DataValueField = "modelID";
+                        ddlModel.DataBind();
                         ddlLocation.SelectedValue = CU.locationID.ToString();
                         ddlType.SelectedValue = "1";
                         ddlModel.Enabled = true;
@@ -368,7 +401,7 @@ namespace SweetSpotDiscountGolfPOS
                     //stores clothing as an object
                     o = cl as Object;
                 }
-                
+
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("sku", IDU.AddNewItemToDatabase(o).ToString());
                 //Refreshes current page

@@ -10,6 +10,7 @@ namespace SweetSpotDiscountGolfPOS
     public class DatabaseCalls
     {
         string connectionString;
+
         public DatabaseCalls()
         {
             connectionString = ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString;

@@ -154,13 +154,13 @@ namespace SweetSpotDiscountGolfPOS
                 //Response.Redirect(prevPage, false);
             }
         }
-        //protected void btnSearchCustomers_Click(object sender, EventArgs e)
-        //{
-        //    grdCustomersSearched.Visible = true;
-        //    c = ssm.GetCustomerfromSearch(txtCustomer.Text);
-        //    grdCustomersSearched.DataSource = c;
-        //    grdCustomersSearched.DataBind();
-        //}
+        protected void btnSearchCustomers_Click(object sender, EventArgs e)
+        {
+            grdCustomersSearched.Visible = true;
+            c = ssm.GetCustomerfromSearch(txtCustomer.Text);
+            grdCustomersSearched.DataSource = c;
+            grdCustomersSearched.DataBind();
+        }
         protected void btnAddCustomer_Click(object sender, EventArgs e)
         {
             //Get info from textboxes
@@ -475,8 +475,8 @@ namespace SweetSpotDiscountGolfPOS
                 string quantity = ((TextBox)grdCartItems.Rows[index].Cells[3].Controls[0]).Text;
                 string desc = grdCartItems.Rows[index].Cells[4].Text;
                 //creates a temp item with the new updates
-                //tempItemInCart = new Cart(Convert.ToInt32(sku), desc, Convert.ToInt32(quantity), sPrice, sCost,
-                //    Convert.ToDouble(discountOnItem), radioButtonSelected, 0, tradeInItemInCart, Convert.ToInt32(itemType));
+                tempItemInCart = new Cart(Convert.ToInt32(sku), desc, Convert.ToInt32(quantity), sPrice, sCost,
+                    Convert.ToDouble(discountOnItem), radioButtonSelected, 0, tradeInItemInCart, Convert.ToInt32(itemType), cu.locationID);
 
                 //Sets current items in cart from stored session into duplicate cart 
                 List<Cart> duplicateCart = (List<Cart>)Session["ItemsInCart"];

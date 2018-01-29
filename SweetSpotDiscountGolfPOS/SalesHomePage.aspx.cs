@@ -18,7 +18,7 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting ER = new ErrorReporting();
         InvoiceManager IM = new InvoiceManager();
         LocationManager LM = new LocationManager();
-        //EmployeeManager EM = new EmployeeManager();
+        
         CurrentUser CU;
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -150,7 +150,7 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Binds invoice list to the grid view
-                grdInvoiceSelection.DataSource = IM.ReturnInvoicesBasedOnSearchCriteria(calStartDate.SelectedDate, calEndDate.SelectedDate, txtInvoiceNum.Text);
+                grdInvoiceSelection.DataSource = IM.ReturnInvoicesBasedOnSearchCriteria(calStartDate.SelectedDate, calEndDate.SelectedDate, txtInvoiceNum.Text, Convert.ToInt32(ddlLocation.SelectedValue));
                 grdInvoiceSelection.DataBind();
             }
             //Exception catch

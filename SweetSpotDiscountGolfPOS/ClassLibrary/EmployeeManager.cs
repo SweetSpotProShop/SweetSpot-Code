@@ -48,6 +48,20 @@ namespace SweetShop
             }).ToList();
             return employee;
         }
+        private List<CurrentUser> ConvertFromDataTableToCurrentUser(DataTable dt)
+        {
+            List<CurrentUser> currentUser = dt.AsEnumerable().Select(row =>
+            new CurrentUser
+            {
+                empID = row.Field<int>("empID"),
+                jobID = row.Field<int>("jobID"),
+                locationID = row.Field<int>("locationID"),
+                locationName = row.Field<string>("city"),
+                password = row.Field<int>("password")
+            }).ToList();
+            return currentUser;
+        }
+
         //Returns list of custoemrs based on an customer ID
         public List<Employee> ReturnEmployee(int emp)
         {
@@ -156,16 +170,15 @@ namespace SweetShop
         }
         public List<Employee> ReturnEmployeeIDFromEmployeeStats(object[][] parms)
         {
-            string sqlCmd = "SELECT employeeID, firstName, lastName, "
-                + "jobID, locationID, email, primaryContactINT, "
-                + "secondaryContactINT, primaryAddress, secondaryAddress, "
-                + "city, provStateID, countryID, postZip FROM tbl_employee "
-                + "WHERE firstName = @firstName, lastName = @lastName, jobID "
-                + "= @jobID, locationID = @locationID, email = @email, "
-                + "primaryContactINT = @primaryContactINT, secondaryContactINT "
-                + "= @secondaryContactINT, primaryAddress = @primaryAddress, "
-                + "secondaryAddress = @secondaryAddress, city = @city, "
-                + "provStateID = @provStateID, countryID = @countryID, "
+            string sqlCmd = "SELECT empID, firstName, lastName, jobID, locationID, "
+                + "email, primaryContactINT, secondaryContactINT, primaryAddress, "
+                + "secondaryAddress, city, provStateID, countryID, postZip "
+                + "FROM tbl_employee WHERE firstName = @firstName AND lastName = @lastName "
+                + "AND jobID = @jobID AND locationID = @locationID AND email = @email AND "
+                + "primaryContactINT = @primaryContactINT AND secondaryContactINT "
+                + "= @secondaryContactINT AND primaryAddress = @primaryAddress AND "
+                + "secondaryAddress = @secondaryAddress AND city = @city AND "
+                + "provStateID = @provStateID AND countryID = @countryID AND "
                 + "postZip = @postZip";
             return ConvertFromDataTableToEmployee(dbc.returnDataTableData(sqlCmd, parms));
         }
@@ -212,6 +225,17 @@ namespace SweetShop
             }
             
             return bolAdded;
+        }
+        public List<CurrentUser> ReturnCurrentUserFromPassword(string password)
+        {
+            string sqlCmd = "SELECT E.empID, E.jobID, E.locationID, L.city, U.password "
+                + "FROM tbl_employee E JOIN tbl_location L ON E.locationID = L.locationID "
+                + "JOIN tbl_userInfo U ON E.empID = U.empID WHERE U.password = @password";
+            object[][] parms =
+            {
+                new object[] { "@password", password }
+            };
+            return ConvertFromDataTableToCurrentUser(dbc.returnDataTableData(sqlCmd, parms));
         }
 
 

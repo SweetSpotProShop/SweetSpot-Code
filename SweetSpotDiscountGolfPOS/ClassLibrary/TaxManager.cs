@@ -24,20 +24,24 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
         public List<Tax> ReturnTaxListBasedOnDate(DateTime selectedDate, int provinceID)
         {
-            string sqlCmd = "SELECT tr.taxRate, tr.taxID FROM tbl_taxRate tr "
-                + "INNER JOIN (SELECT taxID, MAX(taxDate) AS MTD FROM tbl_taxRate "
-                + "WHERE taxDate <= @selectedDate AND provStateID = @provinceID "
-                + "GROUP BY taxID) td ON tr.taxID = td.taxID and tr.taxDate = "
-                + "td.MTD where provStateID = @provinceID";
-            Object[][] parms =
-            {
-                new object[] { "@selectedDate", selectedDate },
-                new object[] { "@provinceID", provinceID }
-            };
-
-            List<Tax> tax = ConvertFromDataTableToTax(dbc.returnDataTableData(sqlCmd, parms));
+            List<Tax> tax = ConvertFromDataTableToTax(ReturnTaxListBasedOnDateAndProvinceForUpdate(provinceID, selectedDate));
             return tax;
         }
+        public DataTable ReturnTaxListBasedOnDateAndProvinceForUpdate (int prov, DateTime currentDate)
+        {
+            string sqlCmd = "SELECT TR.taxID, TR.taxRate, TT.taxName FROM tbl_taxRate AS TR "
+                + "INNER JOIN tbl_taxType TT ON TR.taxID = TT.taxID INNER JOIN(SELECT taxID, "
+                + "MAX(taxDate) AS MTD FROM tbl_taxRate WHERE (taxDate <= @currentDate) AND "
+                + "(provStateID = @prov) GROUP BY taxID) AS TD ON TR.taxID = TD.taxID AND "
+                + "TR.taxDate = TD.MTD WHERE (TR.provStateID = @prov)";
+            object[][] parms =
+            {
+                new object[] { "@currentDate", currentDate },
+                new object[] { "@prov", prov }
+            };
+            return dbc.returnDataTableData(sqlCmd, parms);
+        }
+
         public void InsertNewTaxRate(int provinceID, int taxID, DateTime selectedDate, double taxRate)
         {
             string sqlCmd = "INSERT INTO tbl_taxRate VALUES(@provID, "

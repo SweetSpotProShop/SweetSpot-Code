@@ -74,7 +74,7 @@ namespace SweetSpotDiscountGolfPOS
                     else
                     {
                         //Retrieve taxes based on current location
-                        //t = ssm.getTaxes(lm.getProvIDFromLocationID(cu.locationID), recDate);
+                        t = ssm.getTaxes(lm.getProvIDFromLocationID(CU.locationID), recDate);
                         //Set shipping amount to 0
                         dblShippingAmount = 0;
                     }
@@ -643,7 +643,6 @@ namespace SweetSpotDiscountGolfPOS
                     ckm = (CheckoutManager)Session["CheckOutTotals"];
                     //MOP
                     mopList = (List<Mops>)Session["MethodsofPayment"];
-
 
                     //CheckoutManager ckm, List<Cart> cart, List<Checkout> mops, Customer c, Employee e, int transactionType, string invoiceNumber, string comments)
                     idu.mainInvoice(ckm, cart, mopList, c, emp, tranType, (Session["Invoice"]).ToString(), txtComments.Text, CU);

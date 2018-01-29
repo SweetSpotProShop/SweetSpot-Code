@@ -85,7 +85,7 @@ namespace SweetSpotDiscountGolfPOS
                     else
                     {
                         //Query returns taxes based on current location
-                        //t = ssm.getTaxes(lm.getProvIDFromLocationID(cu.locationID), recDate);
+                        t = ssm.getTaxes(lm.getProvIDFromLocationID(CU.locationID), recDate);
                         //Sets shipping amouunt to 0
                         lblShipping.Visible = false;
                         lblShippingAmount.Visible = false;

@@ -14,7 +14,7 @@
             <asp:Table ID="tblInvoiceSearch" runat="server" >
                 <asp:TableRow>
                     <asp:TableCell RowSpan="3" Width="20%">
-                        <asp:Calendar ID="calSearchDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest" Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="184px" Width="200px" >
+                        <asp:Calendar ID="calSearchDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest" Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="184px" Width="200px" OnSelectionChanged="calSearchDate_SelectionChanged" >
                             <DayHeaderStyle BackColor="#5FD367" Font-Bold="True" Font-Size="7pt" />
                             <NextPrevStyle VerticalAlign="Bottom" />
                             <OtherMonthDayStyle ForeColor="#808080" />

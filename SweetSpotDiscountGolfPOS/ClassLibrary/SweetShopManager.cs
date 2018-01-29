@@ -76,21 +76,21 @@ namespace SweetShop
                 //Begin reading
                 while (reader.Read())
                 {
-                    //Customer c = new Customer(Convert.ToInt32(reader["custID"]),
-                    //    reader["firstName"].ToString(),
-                    //    reader["lastName"].ToString(),
-                    //    reader["primaryAddress"].ToString(),
-                    //    reader["secondaryAddress"].ToString(),
-                    //    reader["primaryPhoneINT"].ToString(),
-                    //    reader["secondaryPhoneINT"].ToString(),
-                    //    Convert.ToBoolean(reader["marketingEmail"]),
-                    //    reader["email"].ToString(),
-                    //    reader["city"].ToString(),
-                    //    Convert.ToInt32(reader["provStateID"]),
-                    //    Convert.ToInt32(reader["country"]),
-                    //    reader["postZip"].ToString());
+                    Customer c = new Customer(Convert.ToInt32(reader["custID"]),
+                        reader["firstName"].ToString(),
+                        reader["lastName"].ToString(),
+                        reader["primaryAddress"].ToString(),
+                        reader["secondaryAddress"].ToString(),
+                        reader["primaryPhoneINT"].ToString(),
+                        reader["secondaryPhoneINT"].ToString(),
+                        reader["email"].ToString(),
+                        reader["city"].ToString(),
+                        Convert.ToInt32(reader["provStateID"]),
+                        Convert.ToInt32(reader["country"]),
+                        reader["postZip"].ToString(),
+                        Convert.ToBoolean(reader["marketingEmail"]));
                     //Adds the customer
-                    //customer.Add(c);
+                    customer.Add(c);
                 }
                 con.Close();
                 //Returns the customer(s)
@@ -1557,18 +1557,18 @@ namespace SweetShop
                 if (intType == 1)
                     bolTrade = isTradein(Convert.ToInt32(reader["sku"]));
 
-                //cartItem = new Cart(Convert.ToInt32(reader["sku"]),
-                //getDescription(Convert.ToInt32(reader["sku"]), intType),
-                //Convert.ToInt32(reader["itemQuantity"]),
-                //Convert.ToDouble(reader["itemPrice"]),
-                //Convert.ToDouble(reader["itemCost"]),
-                //Convert.ToDouble(reader["itemDiscount"]),
-                //Convert.ToBoolean(reader["percentage"]),
-                //0,
-                //bolTrade,
-                //intType);
+                cartItem = new Cart(Convert.ToInt32(reader["sku"]),
+                getDescription(Convert.ToInt32(reader["sku"]), intType),
+                Convert.ToInt32(reader["itemQuantity"]),
+                Convert.ToDouble(reader["itemPrice"]),
+                Convert.ToDouble(reader["itemCost"]),
+                Convert.ToDouble(reader["itemDiscount"]),
+                Convert.ToBoolean(reader["percentage"]),
+                0,
+                bolTrade,
+                intType);
                 //Adding the item to the returnItem list
-                //retItems.Add(cartItem);
+                retItems.Add(cartItem);
             }
             reader.Close();
             List<Cart> remaingItemsAvailForRet = new List<Cart>();
@@ -1587,10 +1587,10 @@ namespace SweetShop
             reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                //cartItem = new Cart(Convert.ToInt32(reader["sku"]), "", Convert.ToInt32(reader["itemQuantity"]),
-                //0, 0, 0, false, 0, false, 0);
+                cartItem = new Cart(Convert.ToInt32(reader["sku"]), "", Convert.ToInt32(reader["itemQuantity"]),
+                0, 0, 0, false, 0, false, 0);
                 //These are the items that can still be returned
-                //remaingItemsAvailForRet.Add(cartItem);
+                remaingItemsAvailForRet.Add(cartItem);
             }
             //Looping through the original items in the invoice
             List<Cart> finalItems = new List<Cart>();
@@ -1604,12 +1604,11 @@ namespace SweetShop
                     if (rCart.sku == arCart.sku)
                     {
                         bolAlreadyRet = true;
-
                         if (arCart.quantity > 0)
                         {
-                            //cartItem = new Cart(rCart.sku, rCart.description, arCart.quantity,
-                            //        rCart.price, rCart.cost, rCart.discount, rCart.percentage, 0, rCart.tradeIn, rCart.typeID);
-                            //finalItems.Add(cartItem);
+                            cartItem = new Cart(rCart.sku, rCart.description, arCart.quantity,
+                                    rCart.price, rCart.cost, rCart.discount, rCart.percentage, 0, rCart.tradeIn, rCart.typeID);
+                            finalItems.Add(cartItem);
                         }
                     }
                 }

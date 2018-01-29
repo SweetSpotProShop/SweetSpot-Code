@@ -51,18 +51,18 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 {
                     sqlCmd = "SELECT A.sku, (SELECT B.brandName + ' ' + M.modelName + ' ' + AC.size + ' ' + AC.colour + ' ' + AC.comments AS itemDescription FROM tbl_accessories AC JOIN tbl_brand B ON AC.brandID = B.brandID JOIN tbl_model M ON AC.modelID = M.modelID WHERE AC.sku = A.sku) AS itemDescription, "
                             + "(SELECT L.locationName FROM tbl_accessories AC JOIN tbl_location L ON AC.locationID = L.locationID WHERE AC.sku = A.sku) AS locationName, "
-                            + "A.quantity, A.price, A.cost FROM tbl_accessories A WHERE ((CAST(sku AS VARCHAR) LIKE '%" + array[i] + "%'"
-                            + "OR brandID IN(SELECT brandID FROM tbl_brand WHERE brandName LIKE '%" + array[i] + "%')"
-                            + "OR modelID IN(SELECT modelID FROM tbl_model WHERE modelName LIKE '%" + array[i] + "%')"
+                            + "A.quantity, A.price, A.cost FROM tbl_accessories A WHERE ((CAST(sku AS VARCHAR) LIKE '%" + array[i] + "%' "
+                            + "OR brandID IN(SELECT brandID FROM tbl_brand WHERE brandName LIKE '%" + array[i] + "%') "
+                            + "OR modelID IN(SELECT modelID FROM tbl_model WHERE modelName LIKE '%" + array[i] + "%') "
                             + "OR CONCAT(size, colour, accessoryType, comments) LIKE '%" + array[i] + "%')) AND A.quantity > " + quantity + " ";
                 }
                 else
                 {
                     sqlCmd += "INTERSECT(SELECT A.sku, (SELECT B.brandName + ' ' + M.modelName + ' ' + AC.size + ' ' + AC.colour + ' ' + AC.comments AS itemDescription FROM tbl_accessories AC JOIN tbl_brand B ON AC.brandID = B.brandID JOIN tbl_model M ON AC.modelID = M.modelID WHERE AC.sku = A.sku) AS itemDescription, "
                             + "(SELECT L.locationName FROM tbl_accessories AC JOIN tbl_location L ON AC.locationID = L.locationID WHERE AC.sku = A.sku) AS locationName, "
-                            + "A.quantity, A.price, A.cost FROM tbl_accessories A WHERE ((CAST(sku AS VARCHAR) LIKE '%" + array[i] + "%'"
-                            + "OR brandID IN(SELECT brandID FROM tbl_brand WHERE brandName LIKE '%" + array[i] + "%')"
-                            + "OR modelID IN(SELECT modelID FROM tbl_model WHERE modelName LIKE '%" + array[i] + "%')"
+                            + "A.quantity, A.price, A.cost FROM tbl_accessories A WHERE ((CAST(sku AS VARCHAR) LIKE '%" + array[i] + "%' "
+                            + "OR brandID IN(SELECT brandID FROM tbl_brand WHERE brandName LIKE '%" + array[i] + "%') "
+                            + "OR modelID IN(SELECT modelID FROM tbl_model WHERE modelName LIKE '%" + array[i] + "%') "
                             + "OR CONCAT(size, colour, accessoryType, comments) LIKE '%" + array[i] + "%')) AND A.quantity > " + quantity + ") ";
                 }
             }
@@ -110,9 +110,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         + "FROM tbl_clubs CLU JOIN tbl_brand B ON CLU.brandID = B.brandID JOIN tbl_model M ON CLU.modelID = "
                         + "M.modelID  WHERE CLU.sku = C.sku) AS itemDescription, (SELECT L.locationName FROM tbl_clubs "
                         + "CLU JOIN tbl_location L ON CLU.locationID = L.locationID WHERE CLU.sku = C.sku) AS locationName, "
-                        + "C.quantity,	C.price, C.cost FROM tbl_clubs C WHERE ((CAST(sku AS VARCHAR) LIKE '%" + array[i] + "%'"
-                        + "OR brandID IN(SELECT brandID FROM tbl_brand WHERE brandName LIKE '%" + array[i] + "%')"
-                        + "OR modelID IN(SELECT modelID FROM tbl_model WHERE modelName LIKE '%" + array[i] + "%')"
+                        + "C.quantity,	C.price, C.cost FROM tbl_clubs C WHERE ((CAST(sku AS VARCHAR) LIKE '%" + array[i] + "%' "
+                        + "OR brandID IN(SELECT brandID FROM tbl_brand WHERE brandName LIKE '%" + array[i] + "%') "
+                        + "OR modelID IN(SELECT modelID FROM tbl_model WHERE modelName LIKE '%" + array[i] + "%') "
                         + "OR CONCAT(clubSpec, clubType, shaftSpec, shaftFlex, dexterity) LIKE '%" + array[i] + "%')) AND C.quantity > " + quantity + " ";
                 }
                 else
@@ -122,9 +122,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         + "FROM tbl_clubs CLU JOIN tbl_brand B ON CLU.brandID = B.brandID JOIN tbl_model M ON CLU.modelID = "
                         + "M.modelID  WHERE CLU.sku = C.sku) AS itemDescription, (SELECT L.locationName FROM tbl_clubs "
                         + "CLU JOIN tbl_location L ON CLU.locationID = L.locationID WHERE CLU.sku = C.sku) AS locationName, "
-                        + "C.quantity,	C.price, C.cost FROM tbl_clubs C WHERE ((CAST(sku AS VARCHAR) LIKE '%" + array[i] + "%'"
-                        + "OR brandID IN(SELECT brandID FROM tbl_brand WHERE brandName LIKE '%" + array[i] + "%')"
-                        + "OR modelID IN(SELECT modelID FROM tbl_model WHERE modelName LIKE '%" + array[i] + "%')"
+                        + "C.quantity,	C.price, C.cost FROM tbl_clubs C WHERE ((CAST(sku AS VARCHAR) LIKE '%" + array[i] + "%' "
+                        + "OR brandID IN(SELECT brandID FROM tbl_brand WHERE brandName LIKE '%" + array[i] + "%') "
+                        + "OR modelID IN(SELECT modelID FROM tbl_model WHERE modelName LIKE '%" + array[i] + "%') "
                         + "OR CONCAT(clubSpec, clubType, shaftSpec, shaftFlex, dexterity) LIKE '%" + array[i] + "%')) AND C.quantity > " + quantity + ") ";
                 }
             }
@@ -140,6 +140,27 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             string sqlCmd = ReturnItemsFromSearchString(searchText, quantity);
             return ConvertFromDataTableToItems(dbc.returnDataTableData(sqlCmd));
+        }
+        public DataTable ReturnDropDownForBrand()
+        {
+            string sqlCmd = "SELECT brandID, brandName FROM "
+                + "tbl_brand ORDER BY brandName";
+            object[][] parms = { };
+            return dbc.returnDataTableData(sqlCmd, parms);
+        }
+        public DataTable ReturnDropDownForModel()
+        {
+            string sqlCmd = "SELECT modelID, modelName FROM "
+                + "tbl_model ORDER BY modelName";
+            object[][] parms = { };
+            return dbc.returnDataTableData(sqlCmd, parms);
+        }
+        public DataTable ReturnDropDownForItemType()
+        {
+            string sqlCmd = "SELECT typeID, typeDescription FROM "
+                + "tbl_itemType ORDER BY typeDescription";
+            object[][] parms = { };
+            return dbc.returnDataTableData(sqlCmd, parms);
         }
     }
 }

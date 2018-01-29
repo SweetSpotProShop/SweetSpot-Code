@@ -22,6 +22,15 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Panel pnlDefaultButton;
         
         /// <summary>
+        /// tblEmployee control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Table tblEmployee;
+        
+        /// <summary>
         /// txtSearch control.
         /// </summary>
         /// <remarks>
@@ -56,24 +65,6 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView grdEmployeesSearched;
-        
-        /// <summary>
-        /// SqlDSProvince control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.SqlDataSource SqlDSProvince;
-        
-        /// <summary>
-        /// SqlDSTax control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.SqlDataSource SqlDSTax;
         
         /// <summary>
         /// lblProvince control.

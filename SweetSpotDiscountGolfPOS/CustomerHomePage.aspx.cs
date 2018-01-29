@@ -102,6 +102,11 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (e.CommandName == "StartSale")
                 {
+                    Session["ItemsInCart"] = null;
+                    //Sets transaction type to sale
+                    Session["TranType"] = 1;
+                    //Sets customer id to guest cust
+                    Session["key"] = Convert.ToInt32(e.CommandArgument.ToString());
                     //Open the Sales Cart page
                     Response.Redirect("SalesCart.aspx?cust=" + e.CommandArgument.ToString(), false);
                 }

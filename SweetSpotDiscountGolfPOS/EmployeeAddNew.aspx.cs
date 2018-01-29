@@ -212,7 +212,7 @@ namespace SweetSpotDiscountGolfPOS
             {
                 //Collects employee data to add to database
                 Employee em = new Employee();
-                em.employeeID = Convert.ToInt32(Session["key"].ToString());
+                em.employeeID = Convert.ToInt32(Convert.ToInt32(Request.QueryString["emp"].ToString()));
                 em.firstName = txtFirstName.Text;
                 em.lastName = txtLastName.Text;
                 em.jobID = Convert.ToInt32(ddlJob.SelectedValue);

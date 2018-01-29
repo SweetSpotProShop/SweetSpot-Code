@@ -432,7 +432,6 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     //Gathering needed information for the invoice
                     List<Cart> cart = (List<Cart>)Session["ItemsInCart"];
-
                     //Customer
                     int custNum = Convert.ToInt32(Session["key"]);
                     Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
@@ -440,14 +439,14 @@ namespace SweetSpotDiscountGolfPOS
                     //******Need to get the employee somehow
                     EmployeeManager em = new EmployeeManager();
                     //int empNum = idu.returnEmployeeIDfromPassword(Convert.ToInt32(Session["id"]));
-                    Employee emp = em.getEmployeeByID(cu.empID);
+                    Employee emp = em.getEmployeeByID(CU.empID);
                     //CheckoutTotals
                     ckm = (CheckoutManager)Session["CheckOutTotals"];
                     //MOP
                     mopList = (List<Mops>)Session["MethodsofPayment"];
 
                     //Stores all the Sales data to the database
-                    idu.mainPurchaseInvoice(ckm, cart, mopList, c, emp, tranType, (Session["Invoice"]).ToString(), txtComments.Text, cu);
+                    idu.mainPurchaseInvoice(ckm, cart, mopList, c, emp, tranType, (Session["Invoice"]).ToString(), txtComments.Text, CU);
 
                     //Nullifies all related sessions
                     Session["shipping"] = null;

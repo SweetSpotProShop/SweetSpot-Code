@@ -101,6 +101,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             object[][] parms = { };
             return dbc.returnDataTableData(sqlCmd, parms);
         }
+        public DataTable ReturnLocationDropDownAll()
+        {
+            string sqlCmd = "SELECT locationID, locationName FROM tbl_location";
+            object[][] parms = { };
+            return dbc.returnDataTableData(sqlCmd, parms);
+        }
         public DataTable ReturnProvinceDropDown(int countryID)
         {
             string sqlCmd = "SELECT provStateID, provName FROM tbl_provSTate WHERE countryID = @countryID";

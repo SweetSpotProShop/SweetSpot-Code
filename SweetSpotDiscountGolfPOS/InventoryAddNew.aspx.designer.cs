@@ -22,51 +22,6 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Panel pnlDefaultButton;
         
         /// <summary>
-        /// sqlItemType control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.SqlDataSource sqlItemType;
-        
-        /// <summary>
-        /// sqlBrand control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.SqlDataSource sqlBrand;
-        
-        /// <summary>
-        /// SqlModel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.SqlDataSource SqlModel;
-        
-        /// <summary>
-        /// sqlLocation control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.SqlDataSource sqlLocation;
-        
-        /// <summary>
-        /// sqlClubType control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.SqlDataSource sqlClubType;
-        
-        /// <summary>
         /// ddlType control.
         /// </summary>
         /// <remarks>
