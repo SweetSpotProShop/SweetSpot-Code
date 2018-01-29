@@ -124,17 +124,17 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Description">
                         <ItemTemplate>
-                            <asp:Label ID="itemDescription" Text='<%#Eval("itemDescription")%>' runat="server"></asp:Label>
+                            <asp:Label ID="itemDescription" Text='<%# Eval("itemDescription")%>' runat="server"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Retail Price">
                         <ItemTemplate>
-                            <asp:Label ID="itemPrice" Text='<%# Eval("itemPrice","{0:C}") %>' runat="server"></asp:Label>
+                            <asp:Label ID="itemPrice" Text='<%# Convert.ToInt32(Request.QueryString["inv"].Split(Convert.ToChar("-"))[1]) == 1 ? Eval("itemPrice","{0:C}") : (Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("itemPrice"))) - Convert.ToDouble(Eval("itemDiscount"))).ToString("C") : ((Convert.ToDouble(Eval("itemPrice")) - ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("itemPrice"))))).ToString("C")) %>' runat="server"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Discounts/Bonus Applied">
                         <ItemTemplate>
-                            <asp:Label ID="discount" Text='<%# Convert.ToBoolean(Eval("percentage")) == false ? (Eval("itemDiscount","{0:C}")).ToString() : ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("itemPrice"))).ToString("C") %>' runat="server" />
+                            <asp:Label ID="discount" Text='<%# Convert.ToInt32(Request.QueryString["inv"].Split(Convert.ToChar("-"))[1]) == 1 ? Convert.ToBoolean(Eval("percentage")) == false ? (Eval("itemDiscount","{0:C}")).ToString() : ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("itemPrice"))).ToString("C") : (Convert.ToBoolean(Eval("percentage")) == false ? (((Convert.ToDouble(Eval("itemPrice")))-(Convert.ToDouble(Eval("itemDiscount")))) - Convert.ToDouble(Eval("itemRefund"))).ToString("C") : (((Convert.ToDouble(Eval("itemPrice")) - ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("itemPrice"))))) - Convert.ToDouble(Eval("itemRefund"))).ToString("C")) %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Quantity">
@@ -144,12 +144,12 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Sale Price">
                         <ItemTemplate>
-                            <asp:Label ID="salePrice" Text='<%# Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("itemPrice")))-(Convert.ToDouble(Eval("itemDiscount")))).ToString("C") : ((Convert.ToDouble(Eval("itemPrice")) - ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("itemPrice"))))).ToString("C") %>' runat="server"></asp:Label>
+                            <asp:Label ID="salePrice" Text='<%# Convert.ToInt32(Request.QueryString["inv"].Split(Convert.ToChar("-"))[1]) == 1 ? Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("itemPrice")))-(Convert.ToDouble(Eval("itemDiscount")))).ToString("C") : ((Convert.ToDouble(Eval("itemPrice")) - ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("itemPrice"))))).ToString("C") : Eval("itemRefund", "{0:C}") %>' runat="server"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Extended Price">
                         <ItemTemplate>
-                            <asp:Label ID="extended" Text='<%# Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("itemPrice"))-Convert.ToDouble(Eval("itemDiscount")))*Convert.ToDouble(Eval("itemQuantity"))).ToString("C") : ((Convert.ToDouble(Eval("itemPrice")) - ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("itemPrice"))))*Convert.ToDouble(Eval("itemQuantity"))).ToString("C") %>' runat="server" />
+                            <asp:Label ID="extended" Text='<%# Convert.ToInt32(Request.QueryString["inv"].Split(Convert.ToChar("-"))[1]) == 1 ? Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("itemPrice"))-Convert.ToDouble(Eval("itemDiscount")))*Convert.ToDouble(Eval("itemQuantity"))).ToString("C") : ((Convert.ToDouble(Eval("itemPrice")) - ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("itemPrice"))))*Convert.ToDouble(Eval("itemQuantity"))).ToString("C") : (Convert.ToDouble(Eval("itemRefund")) * Convert.ToDouble(Eval("itemQuantity"))).ToString("C") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
