@@ -2149,7 +2149,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             List<Items> items = new List<Items>();
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "select CONCAT(tbl_invoiceItem.invoiceNum, '-', tbl_invoiceItem.invoiceSubNum) AS invoice, tbl_invoiceItem.sku, tbl_invoiceItem.itemCost, tbl_invoiceItem.itemPrice, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage, "
+            cmd.CommandText = "select tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.sku, tbl_invoiceItem.itemCost, tbl_invoiceItem.itemPrice, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage, "
                 + "CASE WHEN tbl_invoiceItem.percentage = 1 then sum(((tbl_invoiceItem.itemPrice -(tbl_invoiceItem.itemPrice * tbl_invoiceItem.itemDiscount) / 100)) -tbl_invoiceItem.itemCost) "
                 + "ELSE sum((tbl_invoiceItem.itemPrice -tbl_invoiceItem.itemDiscount) -tbl_invoiceItem.itemCost) "
                 + "END AS 'profit' from tbl_invoiceItem inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum "
@@ -2168,7 +2168,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                     Convert.ToInt32(reader["invoiceSubNum"]), Convert.ToInt32(reader["sku"]),
                     Convert.ToDouble(reader["itemCost"]), Convert.ToDouble(reader["itemPrice"]),
                     Convert.ToDouble(reader["itemDiscount"]), Convert.ToBoolean(reader["percentage"]),
-                    Convert.ToDouble(reader["math"])));
+                    Convert.ToDouble(reader["profit"])));
             }
             con.Close();
             return items;
@@ -2193,9 +2193,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                //returns.Add(new Invoice(Convert.ToInt32(reader["invoiceNum"]), Convert.ToInt32(reader["invoiceSubNum"]),
-                //Convert.ToDateTime(reader["invoiceDate"]), reader["customerName"].ToString(),
-                // reader["employeeName"].ToString(), Convert.ToDouble(reader["discountAmount"])));
+                returns.Add(new Invoice(Convert.ToInt32(reader["invoiceNum"]), Convert.ToInt32(reader["invoiceSubNum"]),
+                Convert.ToDateTime(reader["invoiceDate"]), reader["customerName"].ToString(),
+                 reader["employeeName"].ToString(), Convert.ToDouble(reader["discountAmount"])));
             }
             con.Close();
             return returns;
