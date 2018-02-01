@@ -196,7 +196,7 @@ namespace SweetSpotDiscountGolfPOS
                 e.Row.Cells[1].Text = String.Format("{0:C}", tPrice);
                 e.Row.Cells[2].Text = String.Format("{0:C}", tCost);
                 //Maybe calculate the average profit margin
-                 e.Row.Cells[5].Text = String.Format("{0:C}", tProfit);
+                //e.Row.Cells[5].Text = String.Format("{0:C}", tProfit);
             }
         }
         protected void btnDownload_Click(object sender, EventArgs e)
