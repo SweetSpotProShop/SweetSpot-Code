@@ -635,11 +635,11 @@ namespace SweetSpotProShop
             while (readerAcc.Read())
             {
 
-                //i = new Cart(Convert.ToInt32(readerAcc["sku"]), brandType(Convert.ToInt32(readerAcc["brandID"])) + " "
-                //    + modelType(Convert.ToInt32(readerAcc["modelID"])) + " " + readerAcc["accessoryType"].ToString() 
-                //    + " " + readerAcc["size"].ToString() + " " + readerAcc["colour"].ToString() + " " + readerAcc["comments"].ToString(),
-                //    Convert.ToInt32(readerAcc["quantity"]), Convert.ToDouble(readerAcc["price"]),
-                //    Convert.ToDouble(readerAcc["cost"]),0,false,0,false,Convert.ToInt32(readerAcc["typeID"]));
+                i = new Cart(Convert.ToInt32(readerAcc["sku"]), ReturnBrandNameFromBrandID(Convert.ToInt32(readerAcc["brandID"])) + " "
+                    + ReturnModelNameFromModelID(Convert.ToInt32(readerAcc["modelID"])) + " " + readerAcc["accessoryType"].ToString() 
+                    + " " + readerAcc["size"].ToString() + " " + readerAcc["colour"].ToString() + " " + readerAcc["comments"].ToString(),
+                    Convert.ToInt32(readerAcc["quantity"]), Convert.ToDouble(readerAcc["price"]),
+                    Convert.ToDouble(readerAcc["cost"]),0,false,0,false,Convert.ToInt32(readerAcc["typeID"]));
 
             }
             if (!readerAcc.HasRows)
@@ -652,14 +652,13 @@ namespace SweetSpotProShop
                 SqlDataReader readerClubs = cmd.ExecuteReader();
                 while (readerClubs.Read())
                 {
-                    //i = new Cart(Convert.ToInt32(readerClubs["sku"]),
-                    //    brandType(Convert.ToInt32(readerClubs["brandID"]))
-                    //    + " " + modelType(Convert.ToInt32(readerClubs["modelID"])) + " " + readerClubs["clubSpec"].ToString()
-                    //    + " " + readerClubs["clubType"].ToString() + " " + readerClubs["shaftSpec"].ToString() + " "
-                    //    + readerClubs["shaftFlex"].ToString() + " " + readerClubs["dexterity"].ToString(),
-
-                    //    Convert.ToInt32(readerClubs["quantity"]), Convert.ToDouble(readerClubs["price"]),
-                    //    Convert.ToDouble(readerClubs["cost"]),0,false,0,false,Convert.ToInt32(readerClubs["typeID"]));
+                    i = new Cart(Convert.ToInt32(readerClubs["sku"]),
+                        ReturnBrandNameFromBrandID(Convert.ToInt32(readerClubs["brandID"]))
+                        + " " + ReturnModelNameFromModelID(Convert.ToInt32(readerClubs["modelID"])) + " " + readerClubs["clubSpec"].ToString()
+                        + " " + readerClubs["clubType"].ToString() + " " + readerClubs["shaftSpec"].ToString() + " "
+                        + readerClubs["shaftFlex"].ToString() + " " + readerClubs["dexterity"].ToString(),
+                        Convert.ToInt32(readerClubs["quantity"]), Convert.ToDouble(readerClubs["price"]),
+                        Convert.ToDouble(readerClubs["cost"]),0,false,0,false,Convert.ToInt32(readerClubs["typeID"]));
 
                 }
                 if (!readerClubs.HasRows)
@@ -671,14 +670,14 @@ namespace SweetSpotProShop
                     SqlDataReader readerClothing = cmd.ExecuteReader();
                     while (readerClothing.Read())
                     {
-                        //i = new Cart(Convert.ToInt32(readerClothing["sku"]),
+                        i = new Cart(Convert.ToInt32(readerClothing["sku"]),
                         //Start of description
-                        //    brandType(Convert.ToInt32(readerClothing["brandID"]))
-                        //    + " " + readerClothing["size"].ToString() + " " + readerClothing["colour"].ToString()
-                        //    + " " + readerClothing["gender"].ToString() + " " + readerClothing["style"].ToString()
-                        //    + " " + readerClothing["comments"].ToString(), //End of description
-                        //    Convert.ToInt32(readerClothing["quantity"]), Convert.ToDouble(readerClothing["price"]),
-                        //    Convert.ToDouble(readerClothing["cost"]), 0, false, 0, false, Convert.ToInt32(readerClothing["typeID"]));
+                            ReturnBrandNameFromBrandID(Convert.ToInt32(readerClothing["brandID"]))
+                            + " " + readerClothing["size"].ToString() + " " + readerClothing["colour"].ToString()
+                            + " " + readerClothing["gender"].ToString() + " " + readerClothing["style"].ToString()
+                            + " " + readerClothing["comments"].ToString(), //End of description
+                            Convert.ToInt32(readerClothing["quantity"]), Convert.ToDouble(readerClothing["price"]),
+                            Convert.ToDouble(readerClothing["cost"]), 0, false, 0, false, Convert.ToInt32(readerClothing["typeID"]));
                     }
                 }
             }

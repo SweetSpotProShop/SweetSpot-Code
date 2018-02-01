@@ -68,10 +68,6 @@ namespace SweetSpotDiscountGolfPOS
                         grdItemsSoldList.Columns[2].HeaderText = "Sold At";
                         grdItemsSoldList.Columns[3].HeaderText = "Non Refundable";
                         grdItemsSoldList.Columns[5].HeaderText = "Returned At";
-                        //    grdItemsSoldList.itemPrice.Text = "(Convert.ToBoolean(Eval('percentage')) == false ? ((Convert.ToDouble(Eval('price'))) - Convert.ToDouble(Eval('discount'))).ToString('C') : ((Convert.ToDouble(Eval('price')) - ((Convert.ToDouble(Eval('discount')) / 100) * Convert.ToDouble(Eval('price'))))).ToString('C'))";
-                        //    grdItemsSoldList.discount.Text = "(Convert.ToBoolean(Eval('percentage')) == false ? (((Convert.ToDouble(Eval('price')))-(Convert.ToDouble(Eval('discount')))) - Convert.ToDouble(Eval('returnAmount'))).ToString('C') : (((Convert.ToDouble(Eval('price')) - ((Convert.ToDouble(Eval('discount')) / 100) * Convert.ToDouble(Eval('price'))))) - Convert.ToDouble(Eval('returnAmount'))).ToString('C'))";
-                        //    grdItemsSoldList.salePrice.Text = "Eval('returnAmount', '{0:C}')";
-                        //    grdItemsSoldList.extended.Text = "(Convert.ToDouble(Eval('returnAmount')) * Convert.ToDouble(Eval('returnAmount'))).ToString('C')";
                     }
                     //Binds the cart to the grid view
                     grdItemsSoldList.DataSource = invoices[0].soldItems;

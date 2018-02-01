@@ -28,6 +28,7 @@ namespace SweetSpotDiscountGolfPOS
                 times++;
             }
             cmd.Connection = con;
+
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             da.Fill(dt);
             //Returns a datatable

@@ -644,9 +644,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                //inv.Add(new Invoice(reader["invoice"].ToString(), Convert.ToDouble(reader["totalCost"]),
-                //    Convert.ToDouble(reader["totalDiscount"]), Convert.ToBoolean(reader["percentage"]),
-                //    Convert.ToDouble(reader["totalPrice"]), Convert.ToDouble(reader["totalProfit"])));
+                inv.Add(new Invoice(reader["invoice"].ToString(), Convert.ToDouble(reader["totalCost"]),
+                    Convert.ToDouble(reader["totalDiscount"]), Convert.ToBoolean(reader["percentage"]),
+                    Convert.ToDouble(reader["totalPrice"]), Convert.ToDouble(reader["totalProfit"])));
             }
             con.Close();
             return inv;

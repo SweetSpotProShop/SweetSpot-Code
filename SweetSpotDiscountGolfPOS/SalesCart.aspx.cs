@@ -275,7 +275,6 @@ namespace SweetSpotDiscountGolfPOS
                         {
                             //Add item to the list
                             invoiceItems = i;
-                            //invoiceItems.Add(i.ElementAt(0));
                         }
                     }
                 }
