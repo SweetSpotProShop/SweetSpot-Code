@@ -83,7 +83,7 @@
                             <asp:Label ID="lblTax" runat="server" Text="Tax:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:DropDownList ID="ddlTax" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlTax_SelectedIndexChanged" />
+                            <asp:DropDownList ID="ddlTax" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlTax_SelectedIndexChanged" OnPreRender="ddlTax_SelectedIndexChanged" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label ID="lblCurrentDate" runat="server" Text="" Visible="false" />
