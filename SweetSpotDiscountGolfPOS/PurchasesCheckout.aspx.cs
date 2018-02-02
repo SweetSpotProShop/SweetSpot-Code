@@ -438,7 +438,6 @@ namespace SweetSpotDiscountGolfPOS
                     //Employee
                     //******Need to get the employee somehow
                     EmployeeManager em = new EmployeeManager();
-                    //int empNum = idu.returnEmployeeIDfromPassword(Convert.ToInt32(Session["id"]));
                     Employee emp = em.getEmployeeByID(CU.empID);
                     //CheckoutTotals
                     ckm = (CheckoutManager)Session["CheckOutTotals"];
@@ -447,7 +446,6 @@ namespace SweetSpotDiscountGolfPOS
 
                     //Stores all the Sales data to the database
                     idu.mainPurchaseInvoice(ckm, cart, mopList, c, emp, tranType, (Session["Invoice"]).ToString(), txtComments.Text, CU);
-
                     //Nullifies all related sessions
                     Session["shipping"] = null;
                     Session["ShippingAmount"] = null;

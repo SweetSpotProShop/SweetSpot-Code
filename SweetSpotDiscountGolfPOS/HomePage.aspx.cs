@@ -33,7 +33,6 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "HomePage.aspx";
-            //Session["prevPage"] = "HomePage.aspx";
             try
             {
                 CU = (CurrentUser)Session["currentUser"];
@@ -57,12 +56,9 @@ namespace SweetSpotDiscountGolfPOS
                     lbluser.Text = "You have Admin Access";
                     lbluser.Visible = true;
                 }
-                else/* if (Session["Loc"] != null)*/
+                else
                 {
                     //If no admin status shows location as label instead of drop down
-                    //lblLocation.Text = CU.locationName;
-                    //lblLocation.Visible = true;
-                    //ddlLocation.Visible = false;
                     ddlLocation.Enabled = false;
                 }
                 //populate gridview with todays sales

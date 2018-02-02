@@ -83,7 +83,6 @@ namespace SweetSpotDiscountGolfPOS
                             txtDexterity.Text = c.dexterity.ToString();
                             chkUsed.Checked = c.used;
                             txtComments.Text = c.comments.ToString();
-
                         }
                         else if (o[0] is Accessories)
                         {
@@ -115,7 +114,6 @@ namespace SweetSpotDiscountGolfPOS
                             lblDexterity.Visible = false;
                             txtDexterity.Visible = false;
                             chkUsed.Visible = false;
-
                         }
                         else if (o[0] is Clothing)
                         {
@@ -233,7 +231,6 @@ namespace SweetSpotDiscountGolfPOS
 
                             chkUsed.Visible = true;
                             chkUsed.Enabled = true;
-
                         }
                         //Accessories
                         else if (Convert.ToInt32(ddlType.SelectedValue) == 2)

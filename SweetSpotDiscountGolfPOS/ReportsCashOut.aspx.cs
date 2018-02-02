@@ -79,14 +79,9 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     lblCashoutDate.Text = "Cashout on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
                 }
-                //Gathers current employe based on Session id
-                //EmployeeManager em = new EmployeeManager();
-                //int empNum = idu.returnEmployeeIDfromPassword(Convert.ToInt32(Session["id"]));
-                //Employee emp = em.getEmployeeByID(empNum);
                 //Creating a cashout list and calling a method that grabs all mops and amounts paid
                 List<Cashout> lc = reports.cashoutAmounts(startDate, endDate, locationID);
                 Cashout rc = reports.getRemainingCashout(startDate, endDate, locationID);
-                //int counter = 0;
                 //Looping through the list and adding up the totals
                 foreach (Cashout ch in lc)
                 {
@@ -113,7 +108,6 @@ namespace SweetSpotDiscountGolfPOS
                     cashoutTotal += ch.amount;
                 }
                 //Gathers total amount of trade ins done through date range
-                //tradeinTotal = -1 * reports.getTradeInsCashout(startDate, endDate, locationID);
 
                 //Calculates a subtotal, gst, and pst
                 subtotalTotal = rc.saleSubTotal;
@@ -122,7 +116,6 @@ namespace SweetSpotDiscountGolfPOS
                 tradeinTotal = rc.saleTradeIn * (-1);
                 shippingTotal = rc.shippingAmount;
                 cashoutTotal += tradeinTotal;
-                //tradeinTotal = tradeinTotal * -1;
 
                 Cashout cas = new Cashout(tradeinTotal, giftCertTotal, cashTotal,
                     debitTotal, mcTotal, visaTotal, gstTotal, pstTotal, subtotalTotal);

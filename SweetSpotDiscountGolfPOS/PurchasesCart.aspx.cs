@@ -72,7 +72,6 @@ namespace SweetSpotDiscountGolfPOS
                     grdPurchasedItems.DataSource = Session["ItemsInCart"];
                     grdPurchasedItems.DataBind();
                     lblPurchaseAmountDisplay.Text = "$ " + scm.returnPurchaseAmount(itemsInCart).ToString();
-
                 }
                 //Store date in a session
                 Session["strDate"] = lblDateDisplay.Text;
@@ -99,7 +98,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     btnCustomerSelect.Text = "Change Customer";
                     grdCustomersSearched.Visible = false;
-                    int custNum = (int)(Convert.ToInt32(Session["key"].ToString()));
+                    int custNum = (Convert.ToInt32(Session["key"].ToString()));
                     Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
                     //Set name in text box
                     txtCustomer.Text = c.firstName + " " + c.lastName;

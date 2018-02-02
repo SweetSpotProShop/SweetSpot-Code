@@ -55,10 +55,7 @@ namespace SweetSpotDiscountGolfPOS
                 lblTaxDate.Text = "Taxes Through: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(Convert.ToInt32(passing[1]));
                 //Creating a cashout list and calling a method that grabs all mops and amounts paid
                 tr = reports.returnTaxReportDetails(startDate, endDate);
-
-                //List<TaxReport> collected = new List<TaxReport>();
-                //List<TaxReport> returned = new List<TaxReport>();
-                //List<TaxReport> overall = new List<TaxReport>();
+                
                 foreach (var item in tr)
                 {
                     if(item.locationID == Convert.ToInt32(passing[1]))

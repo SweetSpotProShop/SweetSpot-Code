@@ -43,8 +43,6 @@ namespace SweetSpotDiscountGolfPOS
                     //Sets the calendar and text boxes start and end dates
                     calStartDate.SelectedDate = DateTime.Today;
                     calEndDate.SelectedDate = DateTime.Today;
-                    //txtStartDate.Text = DateTime.Today.ToShortDateString();
-                    //txtEndDate.Text = DateTime.Today.ToShortDateString();
                     ddlLocation.DataSource = LM.ReturnLocationDropDown();
                     ddlLocation.DataTextField = "locationName";
                     ddlLocation.DataValueField = "locationID";
@@ -58,12 +56,8 @@ namespace SweetSpotDiscountGolfPOS
                     lblReport.Text = "You are not authorized to view reports";
                     lblReport.Visible = true;
                     lblReport.ForeColor = System.Drawing.Color.Red;
-                    //calStart.Visible = false;
-                    //calEnd.Visible = false;
                     //Disables buttons
                     btnRunReport.Visible = false;
-                    //txtEndDate.Visible = false;
-                    //txtStartDate.Visible = false;
                     pnlDefaultButton.Visible = false;
                 }
             }
@@ -83,11 +77,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "calStart_SelectionChanged";
-            try
-            {
-                //Resets date in text box to match the calendar
-                //txtStartDate.Text = calStartDate.SelectedDate.ToShortDateString();
-            }
+            try { }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
@@ -104,11 +94,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "calEnd_SelectionChanged";
-            try
-            {
-                //Resets date in text box to match the calendar
-                //txtEndDate.Text = calEndDate.SelectedDate.ToShortDateString();
-            }
+            try { }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)

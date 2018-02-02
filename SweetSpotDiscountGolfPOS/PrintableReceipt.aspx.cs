@@ -15,9 +15,9 @@ namespace SweetSpotDiscountGolfPOS
     {
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU;
+        LocationManager LM = new LocationManager();
 
         SweetShopManager ssm = new SweetShopManager();
-        LocationManager lm = new LocationManager();
         List<Mops> mopList = new List<Mops>();
         List<Cart> cart = new List<Cart>();
         CheckoutManager ckm = new CheckoutManager();
@@ -44,26 +44,21 @@ namespace SweetSpotDiscountGolfPOS
                 //display information on receipt
                 lblCustomerName.Text = c.firstName.ToString() + " " + c.lastName.ToString();
                 lblStreetAddress.Text = c.primaryAddress.ToString();
-                //lblPostalAddress.Text = c.city.ToString() + ", " + lm.provinceName(c.province) + " " + c.postalCode.ToString();
+                lblPostalAddress.Text = c.city.ToString() + ", " + LM.ReturnProvinceName(c.province) + " " + c.postalCode.ToString();
                 lblPhone.Text = c.primaryPhoneNumber.ToString();
                 lblinvoiceNum.Text = Convert.ToString(Session["Invoice"]);
                 lblDate.Text = Convert.ToDateTime(Session["strDate"]).ToString("yyyy-MM-dd");
-                Location l = new Location();
                 //Gather transaction type from Session
-                
-                int ln = 0;
                 //Determins the session to get the cart items from
                 cart = (List<Cart>)Session["ItemsInCart"];
-                ln = CU.locationID;
-                //else if(tranType == 6){ cart = (List<Cart>)Session["ItemsInCart"]; ln = lm.returnlocationIDFromReceiptNumber(Convert.ToInt32(Session["Invoice"])); }
                 //Use current location to display on invoice
-                //l = lm.returnLocationForReceiptFromID(ln);
+                List<Location> l = LM.ReturnLocation(CU.locationID);
 
                 //Display the location information
-                //lblSweetShopName.Text = l.location.ToString();
-                lblSweetShopStreetAddress.Text = l.address.ToString();
-                //lblSweetShopPostalAddress.Text = l.city.ToString() + ", " + lm.provinceName(l.provID) + " " + l.postal.ToString();
-                //lblSweetShopPhone.Text = l.phone.ToString();
+                lblSweetShopName.Text = l[0].locationName.ToString();
+                lblSweetShopStreetAddress.Text = l[0].address.ToString();
+                lblSweetShopPostalAddress.Text = l[0].city.ToString() + ", " + LM.ReturnProvinceName(l[0].provID) + " " + l[0].postal.ToString();
+                lblSweetShopPhone.Text = l[0].primaryPhone.ToString();
                 
                 //Gathers stored totals
                 ckm = (CheckoutManager)Session["CheckOutTotals"];

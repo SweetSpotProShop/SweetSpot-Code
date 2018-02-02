@@ -190,15 +190,7 @@ namespace SweetSpotDiscountGolfPOS
                         tran = 4;
                     }
                     //Stores required info into Sessions
-                    //Invoice rInvoice = ssm.getSingleInvoice(invNum, invSNum);
-                    //Session["key"] = rInvoice.customerID;
-                    //Session["Invoice"] = strInvoice;
-                    //Session["actualInvoiceInfo"] = rInvoice;
                     Session["useInvoice"] = true;
-                    //Session["strDate"] = rInvoice.invoiceDate;
-                    //Session["ItemsInCart"] = ssm.invoice_getItems(invNum, invSNum, "tbl_invoiceItem" + table);
-                    //Session["CheckOutTotals"] = ssm.invoice_getCheckoutTotals(invNum, invSNum, "tbl_invoice");
-                    //Session["MethodsOfPayment"] = ssm.invoice_getMOP(invNum, invSNum, "tbl_invoiceMOP");
                     Session["TranType"] = tran;
                     //Changes to printable invoice page
                     Response.Redirect("PrintableInvoice.aspx?inv=" + invNum + "-" + invSNum, false);

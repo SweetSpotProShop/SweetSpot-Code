@@ -16,6 +16,8 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class SalesCart : System.Web.UI.Page
     {
+        CustomerManager CM = new CustomerManager();
+
         public string skuString;
         public int skuInt;
         public int invNum;
@@ -31,7 +33,7 @@ namespace SweetSpotDiscountGolfPOS
         Object o = new Object();
         CurrentUser cu;
         List<Customer> c;
-        SalesCalculationManager cm = new SalesCalculationManager();
+        SalesCalculationManager scm = new SalesCalculationManager();
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -83,7 +85,7 @@ namespace SweetSpotDiscountGolfPOS
                             //If there are bind to data grid and get a subtotal of the items
                             grdCartItems.DataSource = Session["ItemsInCart"];
                             grdCartItems.DataBind();
-                            lblSubtotalDisplay.Text = "$ " + cm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"], cu.locationID).ToString();
+                            lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"], cu.locationID).ToString();
                         }
                     }
                 }
@@ -108,7 +110,6 @@ namespace SweetSpotDiscountGolfPOS
                 //Response.Redirect(prevPage, false);
             }
         }
-
         protected void btnCustomerSelect_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -175,13 +176,12 @@ namespace SweetSpotDiscountGolfPOS
                 enrolled = true;
             }
             //Using current user's info
-            //int provStateID = lm.getProvIDFromLocationID(cu.locationID);
-            //int countryID = lm.countryIDFromProvince(provStateID);
+            int provStateID = lm.getProvIDFromLocationID(cu.locationID);
+            int countryID = lm.getCountryIDFromProvID(provStateID);
             //Creating a customer
-            //Customer c = new Customer(0, fName.Text, lName.Text, "", "", phoneNumber.Text, "", enrolled, email.Text, "", provStateID, countryID, "");
+            Customer c = new Customer(0, fName.Text, lName.Text, "", "", phoneNumber.Text, "", email.Text, "", provStateID, countryID, "", enrolled);
             //Set the session key to customer ID
-            //string key = ssm.addCustomer(c).ToString();
-            //Session["key"] = key;
+            Session["key"] = CM.addCustomer(c).ToString();
             //Hide stuff
             grdCustomersSearched.Visible = false;
             //Set name in text box
@@ -239,8 +239,6 @@ namespace SweetSpotDiscountGolfPOS
                 //Response.Redirect(prevPage, false);
             }
         }
-
-
         protected void btnInventorySearch_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -342,7 +340,7 @@ namespace SweetSpotDiscountGolfPOS
                 grdCartItems.DataSource = itemsInCart;
                 grdCartItems.DataBind();
                 //Calculate new subtotal
-                lblSubtotalDisplay.Text = "$ " + cm.returnSubtotalAmount(itemsInCart, cu.locationID).ToString("#0.00");
+                lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount(itemsInCart, cu.locationID).ToString("#0.00");
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -381,7 +379,7 @@ namespace SweetSpotDiscountGolfPOS
                 grdCartItems.EditIndex = index;
                 grdCartItems.DataBind();
                 //Recalculates subtotal
-                lblSubtotalDisplay.Text = "$ " + cm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"], cu.locationID).ToString("#0.00");
+                lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"], cu.locationID).ToString("#0.00");
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -415,7 +413,7 @@ namespace SweetSpotDiscountGolfPOS
                 grdCartItems.DataSource = Session["ItemsInCart"];
                 grdCartItems.DataBind();
                 //Recalcluate subtotal
-                lblSubtotalDisplay.Text = "$ " + cm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"], cu.locationID).ToString("#0.00");
+                lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"], cu.locationID).ToString("#0.00");
                 //Nulls the quantity session
                 Session["originalQTY"] = null;
             }
@@ -456,18 +454,7 @@ namespace SweetSpotDiscountGolfPOS
                 double sCost = double.Parse(cost.Text, NumberStyles.Currency);
                 bool radioButtonSelected = false;
                 CheckBox chkPerecent = (CheckBox)grdCartItems.Rows[index].Cells[6].FindControl("ckbPercentageEdit");
-
                 radioButtonSelected = chkPerecent.Checked;
-
-                //if (chkPerecent.Checked)
-                //{
-                //    radioButtonSelected = true;
-                //}
-                //else
-                //{
-                //    radioButtonSelected = false;
-                //}
-
                 bool tradeInItemInCart = ((CheckBox)grdCartItems.Rows[index].Cells[7].FindControl("chkTradeIn")).Checked;
                 string itemType = ((Label)grdCartItems.Rows[index].Cells[8].FindControl("lblTypeID")).Text;
                 string sku = grdCartItems.Rows[index].Cells[2].Text;
@@ -529,7 +516,7 @@ namespace SweetSpotDiscountGolfPOS
                 grdCartItems.DataSource = itemsInCart;
                 grdCartItems.DataBind();
                 //Recalculates the new subtotal
-                lblSubtotalDisplay.Text = "$ " + cm.returnSubtotalAmount(itemsInCart, cu.locationID).ToString("#0.00");
+                lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount(itemsInCart, cu.locationID).ToString("#0.00");
                 //Nullifies the quantity session
                 Session["originalQTY"] = null;
             }
@@ -700,11 +687,6 @@ namespace SweetSpotDiscountGolfPOS
                         }
                     }
 
-                    //int locationID = Convert.ToInt32(lblLocationID.Text);
-                    //int locationID = cu.locationID;
-                    ////Finding the min and max range for trade ins
-                    //int[] range = idu.tradeInSkuRange(locationID);
-
                     //If the itemKey is between or equal to the ranges, do trade in
                     if (itemKey == 100000)
                     {
@@ -770,7 +752,7 @@ namespace SweetSpotDiscountGolfPOS
                 grdInventorySearched.DataSource = nullGrid;
                 grdInventorySearched.DataBind();
                 //Recalculate the new subtotal
-                lblSubtotalDisplay.Text = "$ " + cm.returnSubtotalAmount(itemsInCart, cu.locationID).ToString("#.00");
+                lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount(itemsInCart, cu.locationID).ToString("#.00");
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

@@ -61,43 +61,11 @@ namespace SweetSpotDiscountGolfPOS
             {
                 string[] headers = { "SKU", "Description ▼", "Store ▼", "Quantity ▼", "Price ▼", "Cost ▼" };
                 ViewState["headers"] = headers;
-                //ItemDataUtilities IDU = new ItemDataUtilities();
-                //string skuString;
-                //int skuInt;
-                //if (txtSearch.Text != "")
-                //{
-                //If text has been entered to search use it to dislpay relevent items
-                //determines if the searched text is a sku number
-                //if (!int.TryParse(txtSearch.Text, out skuInt))
-                //{
-                //If number search through skus for any that match
-                //skuString = txtSearch.Text;
 
-                
                 searched = IM.ReturnInvoiceItemsFromSearchStringAndQuantity(txtSearch.Text, chkIncludeZero.Checked);
                 ViewState["listItems"] = searched;
                 populateGridview(searched);
                 grdInventorySearched.PageIndex = 0;
-
-                //}
-                //else
-                //{
-                //If search is text 
-                //skuString = txtSearch.Text;
-                // this looks for the item in the database
-                //i = idu.getItemByID(Convert.ToInt32(skuInt));
-                //itemType = idu.typeName(i.ElementAt(0).typeID);
-                //if adding new item
-                //if (i != null && i.Count >= 1)
-                //{
-                //    searched.Add(i.ElementAt(0));
-                //}
-                //}
-                //Sets item type
-                //Session["itemType"] = itemType;
-                //populateGridview(searched);
-
-                //}
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -141,7 +109,7 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
 
-        //Stiill Needs Work
+        //Still Needs Work
         protected void btnMakePurchase_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking

@@ -69,7 +69,6 @@ namespace SweetSpotDiscountGolfPOS
                         //Binds invoice list to the grid view
                         grdInvoiceSelection.DataSource = customer[0].invoices;
                         grdInvoiceSelection.DataBind();
-
                     }
                 }
                 else
@@ -90,40 +89,17 @@ namespace SweetSpotDiscountGolfPOS
                     }
                     //Displays text boxes instead of label for customer creation info
                     txtFirstName.Enabled = true;
-                    //lblFirstNameDisplay.Visible = false;
-
                     txtLastName.Enabled = true;
-                    //lblLastNameDisplay.Visible = false;
-
                     txtPrimaryAddress.Enabled = true;
-                    //lblPrimaryAddressDisplay.Visible = false;
-
                     txtSecondaryAddress.Enabled = true;
-                    //lblSecondaryAddressDisplay.Visible = false;
-
                     txtPrimaryPhoneNumber.Enabled = true;
-                    //lblPrimaryPhoneNumberDisplay.Visible = false;
-
                     txtSecondaryPhoneNumber.Enabled = true;
-                    //lblSecondaryPhoneNumberDisplay.Visible = false;
-
                     txtEmail.Enabled = true;
-                    //lblEmailDisplay.Visible = false;
-
                     txtCity.Enabled = true;
-                    //lblCityDisplay.Visible = false;
-
                     ddlProvince.Enabled = true;
-                    //lblProvinceDisplay.Visible = false;
-
                     ddlCountry.Enabled = true;
-                    //lblCountryDisplay.Visible = false;
-
                     chkEmailList.Enabled = true;
-
                     txtPostalCode.Enabled = true;
-                    //lblPostalCodeDisplay.Visible = false;
-
                     //hides and displays the proper buttons for access
                     btnSaveCustomer.Visible = false;
                     btnAddCustomer.Visible = true;
@@ -190,48 +166,18 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //transfers data from label into textbox for editing
-                //txtFirstName.Text = lblFirstNameDisplay.Text;
                 txtFirstName.Enabled = true;
-                //lblFirstNameDisplay.Visible = false;
-
-                //txtLastName.Text = lblLastNameDisplay.Text;
                 txtLastName.Enabled = true;
-                //lblLastNameDisplay.Visible = false;
-
-                //txtPrimaryAddress.Text = lblPrimaryAddressDisplay.Text;
                 txtPrimaryAddress.Enabled = true;
-                //lblPrimaryAddressDisplay.Visible = false;
-
-                //txtSecondaryAddress.Text = lblSecondaryAddressDisplay.Text;
                 txtSecondaryAddress.Enabled = true;
-                //lblSecondaryAddressDisplay.Visible = false;
-
-                //txtPrimaryPhoneNumber.Text = lblPrimaryPhoneNumberDisplay.Text;
                 txtPrimaryPhoneNumber.Enabled = true;
-                //lblPrimaryPhoneNumberDisplay.Visible = false;
-
-                //txtSecondaryPhoneNumber.Text = lblSecondaryPhoneNumberDisplay.Text;
                 txtSecondaryPhoneNumber.Enabled = true;
-                //lblSecondaryPhoneNumberDisplay.Visible = false;
-
-                //txtEmail.Text = lblEmailDisplay.Text;
                 txtEmail.Enabled = true;
-                //lblEmailDisplay.Visible = false;
                 chkEmailList.Enabled = true;
-
-                //txtCity.Text = lblCityDisplay.Text;
                 txtCity.Enabled = true;
-                //lblCityDisplay.Visible = false;
-
                 ddlCountry.Enabled = true;
-                //lblCountryDisplay.Visible = false;
-
                 ddlProvince.Enabled = true;
-                //lblProvinceDisplay.Visible = false;
-
-                //txtPostalCode.Text = lblPostalCodeDisplay.Text;
                 txtPostalCode.Enabled = true;
-                //lblPostalCodeDisplay.Visible = false;
                 //hides and displays the proper buttons for access
                 btnSaveCustomer.Visible = true;
                 pnlDefaultButton.DefaultButton = "btnSaveCustomer";
@@ -278,28 +224,17 @@ namespace SweetSpotDiscountGolfPOS
                 CM.updateCustomer(c);
                 //changes all text boxes and dropdowns to labels
                 txtFirstName.Enabled = false;
-                //lblFirstNameDisplay.Visible = true;
                 txtLastName.Enabled = false;
-                //lblLastNameDisplay.Visible = true;
                 txtPrimaryAddress.Enabled = false;
-                //lblPrimaryAddressDisplay.Visible = true;
                 txtSecondaryAddress.Enabled = false;
-                //lblSecondaryAddressDisplay.Visible = true;
                 txtPrimaryPhoneNumber.Enabled = false;
-                //lblPrimaryPhoneNumberDisplay.Visible = true;
                 txtSecondaryPhoneNumber.Enabled = false;
-                //lblSecondaryPhoneNumberDisplay.Visible = true;
                 txtEmail.Enabled = false;
-                //lblEmailDisplay.Visible = true;
                 chkEmailList.Enabled = false;
                 txtCity.Enabled = false;
-                //lblCityDisplay.Visible = true;
                 ddlProvince.Enabled = false;
-                //lblProvinceDisplay.Visible = true;
                 ddlCountry.Enabled = false;
-                //lblCountryDisplay.Visible = true;
                 txtPostalCode.Enabled = false;
-                //lblPostalCodeDisplay.Visible = true;
                 //hides and displays the proper buttons for access
                 btnSaveCustomer.Visible = false;
                 btnEditCustomer.Visible = true;

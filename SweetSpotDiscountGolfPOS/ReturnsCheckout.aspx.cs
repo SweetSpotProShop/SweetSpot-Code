@@ -636,8 +636,6 @@ namespace SweetSpotDiscountGolfPOS
                     Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
                     //Employee
                     EmployeeManager em = new EmployeeManager();
-                    //int empNum = idu.returnEmployeeIDfromPassword(Convert.ToInt32(Session["id"]));
-
                     Employee emp = em.getEmployeeByID(CU.empID);
                     //CheckoutTotals
                     ckm = (CheckoutManager)Session["CheckOutTotals"];

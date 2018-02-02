@@ -18,8 +18,6 @@ namespace SweetSpotDiscountGolfPOS
         CurrentUser CU = new CurrentUser();
         EmployeeManager EM = new EmployeeManager();
         LocationManager LM = new LocationManager();
-
-        //DataTable dt = new DataTable();
         
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -358,7 +356,6 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator", this);
             }
         }
-
         protected void ddlCountry_SelectedIndexChanged(object sender, EventArgs e)
         {
             //Collects current method for error tracking

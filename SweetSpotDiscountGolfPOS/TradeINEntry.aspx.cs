@@ -35,7 +35,6 @@ namespace SweetSpotDiscountGolfPOS
                     storeLocation = cu.locationID;
                     lblSKUDisplay.Text = (idu.reserveTradeInSKu(storeLocation)).ToString();
                     tradeInSku = Convert.ToInt32(lblSKUDisplay.Text);
-                    //lblSKUDisplay.Text = idu.tradeInSku(storeLocation).ToString();
                 }
             }
             catch (ThreadAbortException tae) { }
