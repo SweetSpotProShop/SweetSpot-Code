@@ -1370,6 +1370,5 @@ namespace SweetSpotProShop
             //Returns the new largest sku
             return maxSku;
         }
-        
     }
 }
