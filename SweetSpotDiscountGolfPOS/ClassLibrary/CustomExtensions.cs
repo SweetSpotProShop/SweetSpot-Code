@@ -17,10 +17,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             Double result;
             return double.TryParse(val, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.CurrentCulture, out result);
         }
+<<<<<<< HEAD
 
         
         
 
 
+=======
+>>>>>>> V2.7.5-Updating-The-Item-Import
     }
 }
