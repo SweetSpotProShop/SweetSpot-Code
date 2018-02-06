@@ -143,6 +143,7 @@
     <Compile Include="ClassLibrary\Clubs.cs" />
     <Compile Include="ClassLibrary\CurrentUser.cs" />
     <Compile Include="ClassLibrary\Customer.cs" />
+    <Compile Include="ClassLibrary\CustomExtensions.cs" />
     <Compile Include="ClassLibrary\CustomMessageBox.cs" />
     <Compile Include="ClassLibrary\Employee.cs" />
     <Compile Include="ClassLibrary\EmployeeManager.cs" />
