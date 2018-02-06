@@ -199,7 +199,7 @@ namespace SweetSpotDiscountGolfPOS
                         for (int i = 2; i <= rowCnt; i++) //Starts on 2 because excel starts at 1, and line 1 is headers
                         {
                             //Array of the cells that will need to be checked
-                            int[] cells = { 3, 10, 11, 12, 13, 14, 15 };
+                            int[] cells = { 3, 5, 6, 10, 11, 12, 13, 14, 15, 22 };
                             foreach (int column in cells)
                             {
                                 //If there is no value in the column, proceed
@@ -224,11 +224,62 @@ namespace SweetSpotDiscountGolfPOS
                         else
                         {
                             //Calls method to import the requested file
-                            r.importItems(fupItemSheet);
+                            DataTable errors = new DataTable();
+                            errors.Columns.Add("sku");
+                            errors.Columns.Add("brandError");
+                            errors.Columns.Add("modelError");
+                            errors.Columns.Add("identifierError");
+                            errors = r.uploadItems(fupItemSheet);
+                            if (errors.Rows.Count != 0)
+                            {
+                                foreach (DataRow row in errors.Rows)
+                                {
+                                    for (int i = 2; i <= rowCnt; i++)
+                                    {
+                                        //Column 3 should be the skus
+
+                                        if ((worksheet.Cells[i, 3].Value).ToString().Equals(row[0].ToString()))
+                                        {
+                                            worksheet.Cells[i, 3].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                            worksheet.Cells[i, 3].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                            //If the brand caused an error
+                                            if (Convert.ToInt32(row[1]) == 1)
+                                            {
+                                                worksheet.Cells[i, 5].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                                worksheet.Cells[i, 5].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                                            }
+                                            //If the model caused an error
+                                            if (Convert.ToInt32(row[2]) == 1)
+                                            {
+                                                worksheet.Cells[i, 6].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                                worksheet.Cells[i, 6].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                                            }
+                                            //If the secondary identifier(Destination) caused an error
+                                            if (Convert.ToInt32(row[3]) == 1)
+                                            {
+                                                worksheet.Cells[i, 22].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                                worksheet.Cells[i, 22].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                worksheet.Cells[1, 26].Value = "Errors Found. The skus that are highlighted in red have an issue with either their brand or model. This could be a spelling mistake or the brand and/or model are not in the database.";
+                                //MessageBox.ShowMessage("Errors Found. The skus that are highlighted in red have an issue with either their brand or model. This could be a spelling mistake or the brand and/or model are not in the database.", this);
+                                string fileName = fupItemSheet.FileName + "_ErrorsFound";
+                                //Sets the attributes and writes file
+                                Response.Clear();
+                                Response.AddHeader("content-disposition", "attachment; filename=" + fileName + ".xlsx");
+                                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                                Response.BinaryWrite(xlPackage.GetAsByteArray());
+                                Response.End();
+                            }
+                            else
+                            {
+                                MessageBox.ShowMessage("Importing Complete", this);
+                            }
                         }
                     }
-                    //Show that it is done
-                    MessageBox.ShowMessage("Importing Complete", this);
                 }
             }
             //Exception catch
