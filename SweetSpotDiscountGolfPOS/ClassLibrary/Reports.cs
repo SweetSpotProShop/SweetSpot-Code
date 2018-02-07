@@ -2006,13 +2006,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "    when Exists(select tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum from tbl_invoiceItem where                            " +
                                 "            tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                    " +
                                 "            tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                            " +
-                                "            Cast((select sum(itemCost) from tbl_invoiceItem where                                                                      " +
+                                "            Cast((select sum(itemCost * itemQuantity) from tbl_invoiceItem where                                                                      " +
                                 "                tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                " +
                                 "                tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                                 " +
                                 "    when Exists(select tbl_invoiceItemReturns.invoiceNum, tbl_invoiceItemReturns.invoiceSubNum from tbl_invoiceItemReturns where       " +
                                 "            tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                             " +
                                 "            tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                     " +
-                                "            Cast((select sum(itemCost) from tbl_invoiceItemReturns where                                                               " +
+                                "            Cast((select sum(itemCost * itemQuantity) from tbl_invoiceItemReturns where                                                               " +
                                 "                tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                         " +
                                 "                tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                          " +
                                 "	else                                                                                                                                " +
@@ -2023,13 +2023,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "    when Exists(select tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum from tbl_invoiceItem where                            " +
                                 "            tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                    " +
                                 "            tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                            " +
-                                "                Cast(tbl_invoice.balanceDue - (select sum(itemCost) from tbl_invoiceItem where                                         " +
+                                "                Cast(tbl_invoice.balanceDue - (select sum(itemCost * itemQuantity) from tbl_invoiceItem where                                         " +
                                 "                tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                " +
                                 "              tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                                   " +
                                 "    when Exists(select tbl_invoiceItemReturns.invoiceNum, tbl_invoiceItemReturns.invoiceSubNum from tbl_invoiceItemReturns where       " +
                                 "            tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                             " +
                                 "            tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                     " +
-                                "                Cast(tbl_invoice.balanceDue - (select sum(itemCost) from tbl_invoiceItemReturns where                                  " +
+                                "                Cast(tbl_invoice.balanceDue + (select sum(itemCost * itemQuantity) from tbl_invoiceItemReturns where                                  " +
                                 "                tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                         " +
                                 "                tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                          " +
                                 "	else                                                                                                                                " +
@@ -2042,7 +2042,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "            tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                            " +
                                 "				case                                                                                                                    " +
                                 "                   when tbl_invoice.subTotal <> 0 then                                                                                 " +
-                                "                        CAST(ROUND((((tbl_invoice.balanceDue - (select sum(itemCost) from tbl_invoiceItem where                        " +
+                                "                        CAST(ROUND((((tbl_invoice.balanceDue - (select sum(itemCost * itemQuantity) from tbl_invoiceItem where                        " +
                                 "                                                                 tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and               " +
                                 "                                                                 tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum))           " +
                                 "                                                                 / tbl_invoice.balanceDue) *100),2) as varchar)                        " +
@@ -2054,7 +2054,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "            tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                     " +
                                 "				case                                                                                                                    " +
                                 "                    when tbl_invoice.subTotal <> 0 then                                                                                " +
-                                "                        CAST(ROUND((((tbl_invoice.balanceDue - (select sum(itemCost) from tbl_invoiceItemReturns where                 " +
+                                "                        CAST(ROUND((((tbl_invoice.balanceDue + (select sum(itemCost * itemQuantity) from tbl_invoiceItemReturns where      " +
                                 "                                                                 tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and        " +
                                 "                                                                 tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum))    " +
                                 "                        / tbl_invoice.balanceDue) *100),2) as varchar)                                                                 " +
@@ -2066,7 +2066,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "end as 'Profit Margin',                                                                                                                " +
                                 "(Select Concat(firstname, ' ', lastName) from tbl_customers where tbl_customers.custID = tbl_invoice.custID) as 'Customer Name',       " +
                                 "(Select Concat(firstname, ' ', lastName) from tbl_employee where tbl_employee.empID = tbl_invoice.empID) as 'Employee Name',           " +
-                                "(Select locationName from tbl_location where tbl_location.locationID = tbl_invoice.locationID) as 'Location',                          " +
                                 "tbl_invoice.invoiceDate                                                                                                                " +
                                 "from tbl_invoice                                                                                                                       " +
                                 "where tbl_invoice.invoiceDate between @startDate and @endDate and tbl_invoice.locationID = @locationID;                                " ;
