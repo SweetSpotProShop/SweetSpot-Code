@@ -105,21 +105,7 @@
                         <ItemTemplate>
                             <asp:Label ID="lblDate" runat="server" Text='<%#Eval("invoiceDate")%>'></asp:Label>
                         </ItemTemplate>
-                    </asp:TemplateField>
-
-                    <%--<asp:BoundField HeaderText="Invoice"  DataField="Invoice" />
-                    <asp:BoundField HeaderText="Shipping"  DataField="shippingAmount"  />
-                    <asp:BoundField HeaderText="Total Discount"  DataField="Total Discount"  />
-                    <asp:BoundField HeaderText="Pre-Tax"  DataField="Pre-Tax"  />
-                    <asp:BoundField HeaderText="Government Tax"  DataField="governmentTax"  />
-                    <asp:BoundField HeaderText="Provincial Tax"  DataField="provincialTax"  />
-                    <asp:BoundField HeaderText="Post-Tax"  DataField="Post-Tax"  />
-                    <asp:BoundField HeaderText="COGS"  DataField="COGS"  />
-                    <asp:BoundField HeaderText="Revenue Earned"  DataField="Revenue Earned"  />
-                    <asp:BoundField HeaderText="Profit Margin"  DataField="Profit Margin" />
-                    <asp:BoundField HeaderText="Customer"  DataField="Customer Name" />
-                    <asp:BoundField HeaderText="Employee"  DataField="Employee Name" />
-                    <asp:BoundField HeaderText="Date"  DataField="invoiceDate" />--%>
+                    </asp:TemplateField>                
                 </Columns>
             </asp:GridView>
         </div>
