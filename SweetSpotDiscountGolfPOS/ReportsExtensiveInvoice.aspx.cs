@@ -29,6 +29,17 @@ namespace SweetSpotDiscountGolfPOS
 
         DataTable invoices;
 
+        double shipping;
+        double discount;
+        double preTax;
+        double govTax;
+        double proTax;
+        double postTax;
+        double cogs;
+        double revenue;
+        double margin;
+        int marginCounter;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -85,58 +96,104 @@ namespace SweetSpotDiscountGolfPOS
 
         protected void grdInvoices_RowDataBound(object sender, GridViewRowEventArgs e)
         {
+            Label lblShipping = (Label)e.Row.FindControl("lblShipping");
+            Label lblDiscount = (Label)e.Row.FindControl("lblDiscount");
+            Label lblPreTax = (Label)e.Row.FindControl("lblPreTax");
+            Label lblGovTax = (Label)e.Row.FindControl("lblGovernmentTax");
+            Label lblProvTax = (Label)e.Row.FindControl("lblProvincialTax");
+            Label lblPostTax = (Label)e.Row.FindControl("lblPostTax");
+            Label lblCOGS = (Label)e.Row.FindControl("lblCOGS");
+            Label lblRevenue = (Label)e.Row.FindControl("lblRevenue");
+            Label lblProfitMargin = (Label)e.Row.FindControl("lblProfitMargin");
+            Label lblDate = (Label)e.Row.FindControl("lblDate");
             // check row type
             if (e.Row.RowType == DataControlRowType.DataRow)
-            {
+            {               
                 //Shipping
-                if (e.Row.Cells[1].Text.isNumber())
+                if (lblShipping.Text.isNumber())
                 {
-                    e.Row.Cells[1].Text = "$" + e.Row.Cells[1].Text;
+                    shipping += Convert.ToDouble(lblShipping.Text);
+                    lblShipping.Text = "$" + lblShipping.Text;                    
                 }
                 //Discount
-                if (e.Row.Cells[2].Text.isNumber())
+                if (lblDiscount.Text.isNumber())
                 {
-                    e.Row.Cells[2].Text = "$" + e.Row.Cells[2].Text;
+                    discount += Convert.ToDouble(lblDiscount.Text);
+                    lblDiscount.Text = "$" + lblDiscount.Text;                    
                 }
                 //Pre-Tax
-                if(e.Row.Cells[3].Text.isNumber())
+                if(lblPreTax.Text.isNumber())
                 {
-                    e.Row.Cells[3].Text = "$" + e.Row.Cells[3].Text;
+                    preTax += Convert.ToDouble(lblPreTax.Text);
+                    lblPreTax.Text = "$" + lblPreTax.Text;                    
                 }
                 //Gov Tax
-                if(e.Row.Cells[4].Text.isNumber())
+                if(lblGovTax.Text.isNumber())
                 {
-                    e.Row.Cells[4].Text = "$" + e.Row.Cells[4].Text;    
+                    govTax += Convert.ToDouble(lblGovTax.Text);
+                    lblGovTax.Text = "$" + lblGovTax.Text;                    
                 }
                 //Prov Tax
-                if(e.Row.Cells[5].Text.isNumber())
+                if(lblProvTax.Text.isNumber())
                 {
-                    e.Row.Cells[5].Text = "$" + e.Row.Cells[5].Text;
+                    proTax += Convert.ToDouble(lblProvTax.Text);
+                    lblProvTax.Text = "$" + lblProvTax.Text;                    
                 }
                 //Post-Tax
-                if (e.Row.Cells[6].Text.isNumber())
+                if (lblPostTax.Text.isNumber())
                 {
-                    e.Row.Cells[6].Text = "$" + e.Row.Cells[6].Text;
+                    postTax += Convert.ToDouble(lblPostTax.Text);
+                    lblPostTax.Text = "$" + lblPostTax.Text;
                 }
                 //COGS
-                if (e.Row.Cells[7].Text.isNumber())
+                if (lblCOGS.Text.isNumber())
                 {
-                    e.Row.Cells[7].Text = "$" + e.Row.Cells[7].Text;
+                    cogs += Convert.ToDouble(lblCOGS.Text);
+                    lblCOGS.Text = "$" + lblCOGS.Text;
                 }
                 //Revenue
-                if (e.Row.Cells[8].Text.isNumber())
+                if (lblRevenue.Text.isNumber())
                 {
-                    e.Row.Cells[8].Text = "$" + e.Row.Cells[8].Text;
+                    revenue += Convert.ToDouble(lblRevenue.Text);
+                    lblRevenue.Text = "$" + lblRevenue.Text;
                 }
                 //Profit Margin
-                if (e.Row.Cells[9].Text.isNumber())
+                if (lblProfitMargin.Text.isNumber())
                 {
-                    e.Row.Cells[9].Text = e.Row.Cells[9].Text + "%";
+                    margin += Convert.ToDouble(lblProfitMargin.Text);
+                    marginCounter++;
+                    lblProfitMargin.Text = lblProfitMargin.Text + "%";
                 }
                 //Removing the time from the date
-                DateTime invoiceDate = Convert.ToDateTime(e.Row.Cells[13].Text);
-                e.Row.Cells[13].Text = invoiceDate.ToString("dd-MM-yyyy");             
+                string date = lblDate.Text;
+                DateTime invoiceDate = Convert.ToDateTime(date);
+                lblDate.Text = invoiceDate.ToString("dd-MM-yyyy");             
             }
+            else if (e.Row.RowType == DataControlRowType.Footer)
+            {
+                Label lblShippingTotal = (Label)e.Row.FindControl("lblShippingTotal");
+                Label lblDiscountTotal = (Label)e.Row.FindControl("lblDiscountTotal");
+                Label lblPreTaxTotal = (Label)e.Row.FindControl("lblPreTaxTotal");
+                Label lblGovTaxTotal = (Label)e.Row.FindControl("lblGovernmentTaxTotal");
+                Label lblProvTaxTotal = (Label)e.Row.FindControl("lblProvincialTaxTotal");
+                Label lblPostTaxTotal = (Label)e.Row.FindControl("lblPostTaxTotal");
+                Label lblCOGSTotal = (Label)e.Row.FindControl("lblCOGSTotal");
+                Label lblRevenueTotal = (Label)e.Row.FindControl("lblRevenueTotal");
+                Label lblProfitMarginTotal = (Label)e.Row.FindControl("lblProfitMarginTotal");
+
+                lblShippingTotal.Text = String.Format("{0:C}", shipping);
+                lblDiscountTotal.Text = String.Format("{0:C}", discount);
+                lblPreTaxTotal.Text = String.Format("{0:C}", preTax);
+                lblGovTaxTotal.Text = String.Format("{0:C}", govTax);
+                lblProvTaxTotal.Text = String.Format("{0:C}", proTax);
+                lblPostTaxTotal.Text = String.Format("{0:C}", postTax);
+                lblCOGSTotal.Text = String.Format("{0:C}", cogs);
+                lblRevenueTotal.Text = String.Format("{0:C}", revenue);
+                double profitMarginAverage = (margin / marginCounter);
+                lblProfitMarginTotal.Text = profitMarginAverage.ToString("#.##") + "%";
+            }
+
+
         }
 
         protected void btnDownload_Click(object sender, EventArgs e)
@@ -170,8 +227,7 @@ namespace SweetSpotDiscountGolfPOS
                     invoicesExport.Cells[2, 10].Value = "Profit Margin";
                     invoicesExport.Cells[2, 11].Value = "Customer";
                     invoicesExport.Cells[2, 12].Value = "Employee";
-                    invoicesExport.Cells[2, 13].Value = "Location";
-                    invoicesExport.Cells[2, 14].Value = "Date";
+                    invoicesExport.Cells[2, 13].Value = "Date";
                     int recordIndex = 3;
                     foreach (DataRow row in invoices.Rows)
                     {
@@ -188,11 +244,23 @@ namespace SweetSpotDiscountGolfPOS
                         invoicesExport.Cells[recordIndex, 10].Value = row[9].ToString();
                         invoicesExport.Cells[recordIndex, 11].Value = row[10].ToString();
                         invoicesExport.Cells[recordIndex, 12].Value = row[11].ToString();
-                        invoicesExport.Cells[recordIndex, 13].Value = row[12].ToString();
-                        DateTime date = Convert.ToDateTime(row[13]);
-                        invoicesExport.Cells[recordIndex, 14].Value = date.ToString("dd-MM-yyyy");
+                        DateTime date = Convert.ToDateTime(row[12]);
+                        invoicesExport.Cells[recordIndex, 13].Value = date.ToString("dd-MM-yyyy");
                         recordIndex++;
                     }
+                    //Totals
+                    invoicesExport.Cells[recordIndex + 1, 1].Value = "Totals:";
+                    invoicesExport.Cells[recordIndex + 1, 2].Value = shipping.ToString();
+                    invoicesExport.Cells[recordIndex + 1, 3].Value = discount.ToString();
+                    invoicesExport.Cells[recordIndex + 1, 4].Value = preTax.ToString();
+                    invoicesExport.Cells[recordIndex + 1, 5].Value = govTax.ToString();
+                    invoicesExport.Cells[recordIndex + 1, 6].Value = proTax.ToString();
+                    invoicesExport.Cells[recordIndex + 1, 7].Value = postTax.ToString();
+                    invoicesExport.Cells[recordIndex + 1, 8].Value = cogs.ToString();
+                    invoicesExport.Cells[recordIndex + 1, 9].Value = revenue.ToString();
+
+                    invoicesExport.Cells[recordIndex + 1, 10].Value = (margin / marginCounter).ToString();
+
                     Response.Clear();
                     Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
                     Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -217,34 +285,61 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator", this);
                 //Server.Transfer(prevPage, false);
             }
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        protected void lbtnInvoiceNumber_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "lbtnInvoiceNumber_Click";
+            try
+            {
+                //Text of the linkbutton
+                LinkButton btn = sender as LinkButton;
+                string invoice = btn.Text;
+                //Parsing into invoiceNum and invoiceSubNum
+                char[] splitchar = { '-' };
+                string[] invoiceSplit = invoice.Split(splitchar);
+                int invNum = Convert.ToInt32(invoiceSplit[0]);
+                int invSNum = Convert.ToInt32(invoiceSplit[1]);
+                //determines the table to use for queries
+                string table = "";
+                int tran = 3;
+                if (invSNum > 1)
+                {
+                    table = "Returns";
+                    tran = 4;
+                }
+                //Stores required info into Sessions
+                Invoice rInvoice = ssm.getSingleInvoice(invNum, invSNum);
+                //Session["key"] = rInvoice.customerID;
+                //Session["Invoice"] = invoice;
+                Session["actualInvoiceInfo"] = rInvoice;
+                Session["useInvoice"] = true;
+                //Session["strDate"] = rInvoice.invoiceDate;
+                Session["ItemsInCart"] = ssm.invoice_getItems(invNum, invSNum, "tbl_invoiceItem" + table);
+                Session["CheckOutTotals"] = ssm.invoice_getCheckoutTotals(invNum, invSNum, "tbl_invoice");
+                Session["MethodsOfPayment"] = ssm.invoice_getMOP(invNum, invSNum, "tbl_invoiceMOP");
+                Session["TranType"] = tran;
+                //Changes page to display a printable invoice
+                Server.Transfer("PrintableInvoice.aspx", false);
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log employee number
+                int employeeID = cu.empID;
+                //Log current page
+                string currPage = Convert.ToString(Session["currPage"]);
+                //Log all info into error table
+                er.logError(ex, employeeID, currPage, method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+                //Server.Transfer(prevPage, false);
+            }
         }
     }
 }

@@ -9,9 +9,105 @@
         </div>
         <hr />
         <div>
-            <asp:GridView ID="grdInvoices" runat="server"  AutoGenerateColumns="false" ShowFooter="false" OnRowDataBound="grdInvoices_RowDataBound">
+            <asp:GridView ID="grdInvoices" runat="server"  AutoGenerateColumns="false" ShowFooter="true" OnRowDataBound="grdInvoices_RowDataBound">
                 <Columns>
-                    <asp:BoundField HeaderText="Invoice"  DataField="Invoice" />
+                    <asp:TemplateField HeaderText="Invoice">
+                        <ItemTemplate>
+                            <asp:LinkButton ID="lbtnInvoiceNumber" runat="server" Text='<%#Eval("Invoice")%>' OnClick="lbtnInvoiceNumber_Click"></asp:LinkButton>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                            <asp:Label ID="lblTotals" runat="server" Text="Totals:"></asp:Label>
+                        </FooterTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText ="Shipping">
+                        <ItemTemplate>
+                            <asp:Label ID="lblShipping" runat="server" Text='<%#Eval("shippingAmount", "{0:C}")%>'></asp:Label>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                            <asp:Label ID="lblShippingTotal" runat="server"></asp:Label>
+                        </FooterTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText ="Discount">
+                        <ItemTemplate>
+                            <asp:Label ID="lblDiscount" runat="server" Text='<%#Eval("Total Discount", "{0:C}")%>'></asp:Label>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                            <asp:Label ID="lblDiscountTotal" runat="server"></asp:Label>
+                        </FooterTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText ="Pre-Tax">
+                        <ItemTemplate>
+                            <asp:Label ID="lblPreTax" runat="server" Text='<%#Eval("Pre-Tax")%>'></asp:Label>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                            <asp:Label ID="lblPreTaxTotal" runat="server"></asp:Label>
+                        </FooterTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText ="Government Tax">
+                        <ItemTemplate>
+                            <asp:Label ID="lblGovernmentTax" runat="server" Text='<%#Eval("governmentTax")%>'></asp:Label>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                            <asp:Label ID="lblGovernmentTaxTotal" runat="server"></asp:Label>
+                        </FooterTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText ="Provincial Tax">
+                        <ItemTemplate>
+                            <asp:Label ID="lblProvincialTax" runat="server" Text='<%#Eval("provincialTax")%>'></asp:Label>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                            <asp:Label ID="lblProvincialTaxTotal" runat="server"></asp:Label>
+                        </FooterTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText ="Post-Tax">
+                        <ItemTemplate>
+                            <asp:Label ID="lblPostTax" runat="server" Text='<%#Eval("Post-Tax")%>'></asp:Label>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                            <asp:Label ID="lblPostTaxTotal" runat="server"></asp:Label>
+                        </FooterTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText ="COGS">
+                        <ItemTemplate>
+                            <asp:Label ID="lblCOGS" runat="server" Text='<%#Eval("COGS")%>'></asp:Label>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                            <asp:Label ID="lblCOGSTotal" runat="server"></asp:Label>
+                        </FooterTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText ="Revenue Earned">
+                        <ItemTemplate>
+                            <asp:Label ID="lblRevenue" runat="server" Text='<%#Eval("Revenue Earned")%>'></asp:Label>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                            <asp:Label ID="lblRevenueTotal" runat="server"></asp:Label>
+                        </FooterTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText ="Profit Margin">
+                        <ItemTemplate>
+                            <asp:Label ID="lblProfitMargin" runat="server" Text='<%#Eval("Profit Margin")%>'></asp:Label>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                            <asp:Label ID="lblProfitMarginTotal" runat="server"></asp:Label>
+                        </FooterTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText ="Customer Name">
+                        <ItemTemplate>
+                            <asp:Label ID="lblCustomer" runat="server" Text='<%#Eval("Customer Name")%>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText ="Employee Name">
+                        <ItemTemplate>
+                            <asp:Label ID="lblEmployee" runat="server" Text='<%#Eval("Employee Name")%>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText ="Date">
+                        <ItemTemplate>
+                            <asp:Label ID="lblDate" runat="server" Text='<%#Eval("invoiceDate")%>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+
+                    <%--<asp:BoundField HeaderText="Invoice"  DataField="Invoice" />
                     <asp:BoundField HeaderText="Shipping"  DataField="shippingAmount"  />
                     <asp:BoundField HeaderText="Total Discount"  DataField="Total Discount"  />
                     <asp:BoundField HeaderText="Pre-Tax"  DataField="Pre-Tax"  />
@@ -23,8 +119,7 @@
                     <asp:BoundField HeaderText="Profit Margin"  DataField="Profit Margin" />
                     <asp:BoundField HeaderText="Customer"  DataField="Customer Name" />
                     <asp:BoundField HeaderText="Employee"  DataField="Employee Name" />
-                    <asp:BoundField HeaderText="Location"  DataField="Location" />
-                    <asp:BoundField HeaderText="Date"  DataField="invoiceDate" />
+                    <asp:BoundField HeaderText="Date"  DataField="invoiceDate" />--%>
                 </Columns>
             </asp:GridView>
         </div>
@@ -69,4 +164,3 @@
 
 
 </asp:Content>
-
