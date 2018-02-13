@@ -219,7 +219,8 @@ namespace SweetSpotDiscountGolfPOS
                         }
                         cogsExport.Cells[recordIndex, 4].Style.Numberformat.Format = "0.0";
 
-                        cogsExport.Cells[recordIndex, 5].Value = i.totalProfit + "%";
+
+                        cogsExport.Cells[recordIndex, 5].Value = i.totalProfit.ToString("#.##") + "%";
                         recordIndex++;
                     }                 
                     

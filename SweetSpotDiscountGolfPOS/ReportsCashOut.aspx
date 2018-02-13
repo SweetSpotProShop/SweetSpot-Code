@@ -136,26 +136,68 @@
                     <asp:TableRow>
                         <asp:TableCell>
                             <asp:TextBox ID="txtTradeIn" runat="server" Width="80"></asp:TextBox>
+                            <asp:RegularExpressionValidator ID="revTradeIn"
+                                ControlToValidate="txtTradeIn"
+                                ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
+                                Display="Static"
+                                EnableClientScript="true"
+                                ErrorMessage="Requires a number"
+                                runat="server" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:TextBox ID="txtGiftCard" runat="server" Width="80"></asp:TextBox>
+                            <asp:RegularExpressionValidator ID="revGiftCard"
+                                ControlToValidate="txtGiftCard"
+                                ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
+                                Display="Static"
+                                EnableClientScript="true"
+                                ErrorMessage="Requires a number"
+                                runat="server" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:TextBox ID="txtCash" runat="server" Width="80"></asp:TextBox>
+                            <asp:RegularExpressionValidator ID="revCash"
+                                ControlToValidate="txtCash"
+                                ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
+                                Display="Static"
+                                EnableClientScript="true"
+                                ErrorMessage="Requires a number"
+                                runat="server" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:TextBox ID="txtDebit" runat="server" Width="80"></asp:TextBox>
+                            <asp:RegularExpressionValidator ID="revDebit"
+                                ControlToValidate="txtDebit"
+                                ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
+                                Display="Static"
+                                EnableClientScript="true"
+                                ErrorMessage="Requires a number"
+                                runat="server" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:TextBox ID="txtMasterCard" runat="server" Width="80"></asp:TextBox>
+                            <asp:RegularExpressionValidator ID="revMasterCard"
+                                ControlToValidate="txtMasterCard"
+                                ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
+                                Display="Static"
+                                EnableClientScript="true"
+                                ErrorMessage="Requires a number"
+                                runat="server" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:TextBox ID="txtVisa" runat="server" Width="80"></asp:TextBox>
+                            <asp:RegularExpressionValidator ID="revVisa"
+                                ControlToValidate="txtVisa"
+                                ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
+                                Display="Static"
+                                EnableClientScript="true"
+                                ErrorMessage="Requires a number"
+                                runat="server" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:Button ID="btnCalculate" runat="server" Text="Calculate" Width="100px" OnClick="btnCalculate_Click" />
+                            <asp:Button ID="btnCalculate" runat="server" Text="Calculate" Width="100px" OnClick="btnCalculate_Click" CausesValidation="True"/>
                         </asp:TableCell>
                         <asp:TableCell ColumnSpan="5">
                             <asp:Button ID="btnClear" runat="server" Width="90px" Text="Clear" OnClick="btnClear_Click" />
