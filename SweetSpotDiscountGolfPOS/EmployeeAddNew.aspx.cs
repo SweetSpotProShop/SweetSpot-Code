@@ -81,7 +81,6 @@ namespace SweetSpotDiscountGolfPOS
                         txtFirstName.Enabled = true;
                         txtLastName.Enabled = true;
                         ddlJob.Enabled = true;
-                        ddlJob.SelectedValue = "1";
                         ddlLocation.Enabled = true;
 
                         txtEmail.Enabled = true;

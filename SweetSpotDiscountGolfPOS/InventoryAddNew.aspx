@@ -30,6 +30,13 @@
                     </asp:TableCell>
                     <asp:TableCell Width="25%">
                         <asp:TextBox ID="txtCost" runat="server" Enabled="false" Text="0" />
+                        <asp:RegularExpressionValidator ID="revCost"
+                                ControlToValidate="txtCost"
+                                ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
+                                Display="Static"
+                                EnableClientScript="true"
+                                ErrorMessage="Requires a number"
+                                runat="server" />
                         <%--<asp:Label ID="lblCostDisplay" runat="server" Text="" Visible="true" />--%>
                     </asp:TableCell>
                 </asp:TableRow>
@@ -46,6 +53,13 @@
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:TextBox ID="txtPrice" runat="server" Enabled="false" Text="0" />
+                        <asp:RegularExpressionValidator ID="revPrice"
+                                ControlToValidate="txtPrice"
+                                ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
+                                Display="Static"
+                                EnableClientScript="true"
+                                ErrorMessage="Requires a number"
+                                runat="server" />
                         <%--<asp:Label ID="lblPriceDisplay" runat="server" Text="" Visible="true" />--%>
                     </asp:TableCell>
                 </asp:TableRow>
@@ -55,6 +69,13 @@
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:TextBox ID="txtQuantity" runat="server" Enabled="false" Text="0" />
+                        <asp:RegularExpressionValidator ID="revQuantity"
+                                ControlToValidate="txtQuantity"
+                                ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
+                                Display="Static"
+                                EnableClientScript="true"
+                                ErrorMessage="Requires a number"
+                                runat="server" />
                         <%--<asp:Label ID="lblQuantityDisplay" runat="server" Text="" Visible="true" />--%>
                     </asp:TableCell>
                     <asp:TableCell>
@@ -161,7 +182,7 @@
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Button ID="btnBackToSearch" runat="server" Text="Exit Item" OnClick="btnBackToSearch_Click" Visible="true" />
-                        <asp:Button ID="btnCancel" runat="server" Text="Cancel" OnClick="btnCancel_Click" Visible="false" />
+                        <asp:Button ID="btnCancel" runat="server" Text="Cancel" OnClick="btnCancel_Click" Visible="false" CausesValidation="false"/>
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Button ID="btnCreateSimilar" runat="server" Text="Create Similar" OnClick="btnCreateSimilar_Click" Visible="true" />
