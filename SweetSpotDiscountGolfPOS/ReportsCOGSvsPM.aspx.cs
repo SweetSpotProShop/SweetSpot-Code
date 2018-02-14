@@ -18,13 +18,14 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsCOGSvsPM : System.Web.UI.Page
     {
-        ErrorReporting er = new ErrorReporting();
+        ErrorReporting ER = new ErrorReporting();
+        CurrentUser CU = new CurrentUser();
+
         SweetShopManager ssm = new SweetShopManager();
         Reports r = new Reports();
         ItemDataUtilities idu = new ItemDataUtilities();
         LocationManager l = new LocationManager();
         CustomMessageBox cmb = new CustomMessageBox();
-        CurrentUser cu = new CurrentUser();
         DateTime startDate;
         DateTime endDate;
         int locationID;
@@ -32,7 +33,6 @@ namespace SweetSpotDiscountGolfPOS
         double tPrice;
         //double tDiscount;
         double tProfit;
-
         List<Invoice> inv = new List<Invoice>();
 
         protected void Page_Load(object sender, EventArgs e)
@@ -42,7 +42,7 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "ReportsCOGSvsPM";
             try
             {
-                cu = (CurrentUser)Session["currentUser"];
+                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
@@ -72,12 +72,6 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     grdInvoiceSelection.DataSource = inv;
                     grdInvoiceSelection.DataBind();
-                    //Displaying the total cost
-                    //lblTotalCostDisplay.Text = r.returnCOGSCost(startDate, endDate, locationID).ToString("C");
-                    //Displaying the total price/sold at
-                    //lblSoldDisplay.Text = r.returnCOGSPrice(startDate, endDate, locationID).ToString("C");
-                    //Displaying the profit margin
-                    //lblProfitMarginDisplay.Text = r.returnCOGSProfitMargin(startDate, endDate, locationID).ToString("C");
                 }
                 else
                 {
@@ -90,29 +84,18 @@ namespace SweetSpotDiscountGolfPOS
                         lblDates.Text = "There are no invoices for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
                     }
                     grdInvoiceSelection.Visible = false;
-                    //lblTotalCostDisplay.Visible = false;
-                    //lblSoldDisplay.Visible = false;
-                    //lblProfitMarginDisplay.Visible = false;
-                    //lblItemsSold.Visible = false;
-                    //lblCost.Visible = false;
-                    //lblPM.Visible = false;
-                    //lblProfitMargin.Visible = false;
-
                 }
-
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                er.logError(ex, cu.empID, Convert.ToString(Session["currPage"]), method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void lbtnInvoiceNumber_Click(object sender, EventArgs e)
@@ -139,34 +122,25 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 //Stores required info into Sessions
                 Invoice rInvoice = ssm.getSingleInvoice(invNum, invSNum);
-                //Session["key"] = rInvoice.customerID;
-                //Session["Invoice"] = invoice;
                 Session["actualInvoiceInfo"] = rInvoice;
                 Session["useInvoice"] = true;
-                //Session["strDate"] = rInvoice.invoiceDate;
                 Session["ItemsInCart"] = ssm.invoice_getItems(invNum, invSNum, "tbl_invoiceItem" + table);
                 Session["CheckOutTotals"] = ssm.invoice_getCheckoutTotals(invNum, invSNum, "tbl_invoice");
                 Session["MethodsOfPayment"] = ssm.invoice_getMOP(invNum, invSNum, "tbl_invoiceMOP");
                 Session["TranType"] = tran;
                 //Changes page to display a printable invoice
-                Server.Transfer("PrintableInvoice.aspx", false);
+                Server.Transfer("PrintableInvoice.aspx?inv=" + invNum + "-" + invSNum, false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void grdInvoiceSelection_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -204,8 +178,6 @@ namespace SweetSpotDiscountGolfPOS
             {
                 e.Row.Cells[1].Text = String.Format("{0:C}", tPrice);
                 e.Row.Cells[2].Text = String.Format("{0:C}", tCost);
-                //Maybe calculate the average profit margin
-                // e.Row.Cells[5].Text = String.Format("{0:C}", tProfit);
             }
         }
         protected void btnDownload_Click(object sender, EventArgs e)
@@ -247,7 +219,8 @@ namespace SweetSpotDiscountGolfPOS
                         }
                         cogsExport.Cells[recordIndex, 4].Style.Numberformat.Format = "0.0";
 
-                        cogsExport.Cells[recordIndex, 5].Value = i.totalProfit + "%";
+
+                        cogsExport.Cells[recordIndex, 5].Value = i.totalProfit.ToString("#.##") + "%";
                         recordIndex++;
                     }                 
                     
@@ -262,20 +235,13 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
     }
-
 }

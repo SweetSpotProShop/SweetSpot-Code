@@ -15,19 +15,22 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReturnsCart : System.Web.UI.Page
     {
+        ErrorReporting ER = new ErrorReporting();
+        CurrentUser CU;
+
         public string skuString;
         public int skuInt;
         public int invNum;
-        ErrorReporting er = new ErrorReporting();
         SweetShopManager ssm = new SweetShopManager();
         ItemDataUtilities idu = new ItemDataUtilities();
-        List<Items> invoiceItems = new List<Items>();
+        List<Cart> invoiceItems = new List<Cart>();
         List<Cart> itemsInCart = new List<Cart>();
         List<Cart> returnedCart = new List<Cart>();
         List<Cart> temp = new List<Cart>();
         LocationManager lm = new LocationManager();
         Object o = new Object();
-        CurrentUser cu;
+        SalesCalculationManager cm = new SalesCalculationManager();
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -35,12 +38,12 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "ReturnsCart.aspx";
             try
             {
-                cu = (CurrentUser)Session["currentUser"];
+                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
-                    Server.Transfer("LoginPage.aspx", false);
+                    Response.Redirect("LoginPage.aspx", false);
                 }
                 if (!Page.IsPostBack)
                 {
@@ -60,7 +63,7 @@ namespace SweetSpotDiscountGolfPOS
                             grdReturningItems.DataSource = returnedCart;
                             grdReturningItems.DataBind();
                             //displays subtotal based on the returned cart
-                            lblReturnSubtotalDisplay.Text = "$ " + ssm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
+                            lblReturnSubtotalDisplay.Text = "$ " + cm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
                         }
                         else
                         {
@@ -76,8 +79,8 @@ namespace SweetSpotDiscountGolfPOS
                             }
                         }
                         //populates current customer info
-                        lblCustomerDisplay.Text = rInvoice.customerName.ToString();
-                        lblInvoiceNumberDisplay.Text = cu.locationName + "-" + rInvoice.invoiceNum.ToString() + "-" + idu.getNextInvoiceSubNum(rInvoice.invoiceNum).ToString();
+                        lblCustomerDisplay.Text = rInvoice.customer.firstName.ToString() + " " + rInvoice.customer.lastName.ToString();
+                        lblInvoiceNumberDisplay.Text = CU.locationName + "-" + rInvoice.invoiceNum.ToString() + "-" + idu.getNextInvoiceSubNum(rInvoice.invoiceNum).ToString();
                         Session["Invoice"] = lblInvoiceNumberDisplay.Text;
                         lblDateDisplay.Text = DateTime.Today.ToString("yyyy-MM-dd");
                         Session["ItemsInCart"] = itemsInCart;
@@ -93,18 +96,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnCancelReturn_Click(object sender, EventArgs e)
@@ -138,24 +135,18 @@ namespace SweetSpotDiscountGolfPOS
                 Session["TranType"] = null;
                 Session["ShippingAmount"] = null;
                 Session["strDate"] = null;
-                Server.Transfer("HomePage.aspx", false);
+                Response.Redirect("HomePage.aspx", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnProceedToReturnCheckout_Click(object sender, EventArgs e)
@@ -165,24 +156,18 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Changes page to the returns checkout page
-                Server.Transfer("ReturnsCheckout.aspx", false);
+                Response.Redirect("ReturnsCheckout.aspx", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void grdInvoicedItems_RowDeleting(object sender, GridViewDeleteEventArgs e)
@@ -318,24 +303,18 @@ namespace SweetSpotDiscountGolfPOS
                 grdReturningItems.DataSource = returnedCart;
                 grdReturningItems.DataBind();
                 //recalculate the return total
-                lblReturnSubtotalDisplay.Text = "$ " + ssm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
+                lblReturnSubtotalDisplay.Text = "$ " + cm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void grdReturningItems_RowDeleting(object sender, GridViewDeleteEventArgs e)
@@ -394,7 +373,7 @@ namespace SweetSpotDiscountGolfPOS
                                 {
                                     //When skus match increase the quantity for that sku
                                     //in the returnable items cart
-                                    cancelReturnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity + 1, retCart.price, retCart.cost, retCart.discount, retCart.percentage, retCart.tradeIn, retCart.typeID);
+                                    cancelReturnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity + 1, retCart.price, retCart.cost, retCart.discount, retCart.percentage, 0, retCart.tradeIn, retCart.typeID);
                                     //Remove that item from stock so that it can not be sold again
                                     idu.removeQTYfromInventoryWithSKU(cancelReturnedItem.sku, cancelReturnedItem.typeID, inStockQTY - 1);
                                     //Trigger that the selected sku has now been added into the returnable items cart
@@ -404,7 +383,7 @@ namespace SweetSpotDiscountGolfPOS
                                 {
                                     //If the sku doesn't match then item we checked against
                                     //needs to be added back into the marked for return cart
-                                    cancelReturnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity, retCart.price, retCart.cost, retCart.discount, retCart.percentage, retCart.tradeIn, retCart.typeID);
+                                    cancelReturnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity, retCart.price, retCart.cost, retCart.discount, retCart.percentage, 0, retCart.tradeIn, retCart.typeID);
                                 }
                                 //This completes the add of the item from the if statement
                                 itemsInCart.Add(cancelReturnedItem);
@@ -418,7 +397,7 @@ namespace SweetSpotDiscountGolfPOS
                                 //on the sku
                                 if (cart.percentage) { multi = 1; } else { multi = -1; }
                                 //Adds sku in the returnable items cart
-                                cancelReturnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.discount, cart.percentage, cart.tradeIn, cart.typeID);
+                                cancelReturnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.discount, cart.percentage, 0, cart.tradeIn, cart.typeID);
                                 //Removes the new quantity from stock
                                 idu.removeQTYfromInventoryWithSKU(cancelReturnedItem.sku, cancelReturnedItem.typeID, inStockQTY - 1);
                                 itemsInCart.Add(cancelReturnedItem);
@@ -432,7 +411,7 @@ namespace SweetSpotDiscountGolfPOS
                             //on the sku
                             if (cart.percentage) { multi = 1; } else { multi = -1; }
                             //Adds sku in the returnable items cart
-                            cancelReturnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.discount, cart.percentage, cart.tradeIn, cart.typeID);
+                            cancelReturnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.discount, cart.percentage, 0, cart.tradeIn, cart.typeID);
                             //Removes the new quantity from stock
                             idu.removeQTYfromInventoryWithSKU(cancelReturnedItem.sku, cancelReturnedItem.typeID, inStockQTY - 1);
                             itemsInCart.Add(cancelReturnedItem);
@@ -467,24 +446,18 @@ namespace SweetSpotDiscountGolfPOS
                 grdInvoicedItems.DataSource = itemsInCart;
                 grdInvoicedItems.DataBind();
                 //recalculate the return total
-                lblReturnSubtotalDisplay.Text = "$ " + ssm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
+                lblReturnSubtotalDisplay.Text = "$ " + cm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
     }

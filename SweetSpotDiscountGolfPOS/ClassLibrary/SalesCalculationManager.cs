@@ -11,11 +11,11 @@ using System.Web;
 namespace SweetSpotDiscountGolfPOS.ClassLibrary
 {
     //The calculation manager class is a hub where calculations are stored to clean up the codebehind on the webpages
-    public class CalculationManager
+    public class SalesCalculationManager
     {
         ItemDataUtilities idu = new ItemDataUtilities();
 
-        //This method returns the total discounts applied in the cart as a total
+        //This method returns the total discounts applied in the cart as a total **Checked and Verified
         public double returnDiscount(List<Cart> itemsSold)
         {
             double singleDiscoount = 0;
@@ -39,7 +39,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //Returns the total discount as a double going to two decimal places
             return Math.Round(totalDiscount, 2);
         }
-
         //This method returns the total trade in amount for the cart
         public double returnTradeInAmount(List<Cart> itemsSold, int loc)
         {
@@ -62,7 +61,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //Returns the total trade in amount for the cart
             return totalTradeinAmount;
         }
-
         //This method returns the total subtotal amount for the cart
         public double returnSubtotalAmount(List<Cart> itemsSold, int loc)
         {
@@ -80,7 +78,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //Returns the subtotal value of the cart
             return totalSubtotalAmount;
         }
-
         //This method returns the total total amount of the cart
         public double returnTotalAmount(List<Cart> itemsSold, int loc)
         {
@@ -101,8 +98,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //Returns the total amount value of the cart
             return totalTotalAmount;
         }
-
-        //This method returns the total refund subtotal amount
+        //This method returns the total refund subtotal amount **Checked and Verified
         public double returnRefundTotalAmount(List<Cart> itemsSold)
         {
             double singleRefundSubtotalAmount = 0;
@@ -116,46 +112,38 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //Returns the total refund subtotal amount
             return totalRefundSubtotalAmount;
         }
-
-        //This method returns the gst amount of the cart based on subtotal
-        public double returnGSTAmount(double rate, double subtotal)
+        //This method returns the tax amount of the cart based on subtotal **Checked and Verified
+        public double returnTaxAmount(double rate, double subtotal)
         {
-            double GSTAmount = 0;
-            GSTAmount = Math.Round((rate * subtotal), 2);
+            double TaxAmount = 0;
+            TaxAmount = Math.Round((rate * subtotal), 2);
             //Returns the gst amount 
-            return GSTAmount;
+            return TaxAmount;
         }
-
-        //This method returns the pst amount of the cart based on subtotal
-        public double returnPSTAmount(double rate, double subtotal)
+        public double returnPurchaseAmount(List<Cart> itemsSold)
         {
-            double PSTAmount = 0;
-            PSTAmount = Math.Round((rate * subtotal), 2);
-            //Returns the pst amount
-            return PSTAmount;
+            double singlePurchaseAmount = 0;
+            double totalPurchaseAmount = 0;
+            foreach (var cart in itemsSold)
+            {
+                singlePurchaseAmount = cart.quantity * cart.cost;
+                totalPurchaseAmount += singlePurchaseAmount;
+            }
+            //Returns the total amount of the cart
+            return totalPurchaseAmount * -1;
         }
-
-        //This method returns the locationID based on a string location name
-        public int returnLocationID(int lID)
+        public double returnRefundSubtotalAmount(List<Cart> itemsSold)
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString;
-            int locID = 0;
-            DataTable table = new DataTable();
-            SqlConnection con = new SqlConnection(connectionString);
-            using (var cmd = new SqlCommand("getprovStateIDFromCity", con))
-            using (var da = new SqlDataAdapter(cmd))
+            double singleRefundSubtotalAmount = 0;
+            double totalRefundSubtotalAmount = 0;
+
+            foreach(var cart in itemsSold)
             {
-                cmd.Parameters.AddWithValue("@cityName", lID);
-                cmd.CommandType = CommandType.StoredProcedure;
-                da.Fill(table);
+                singleRefundSubtotalAmount = cart.quantity * cart.returnAmount;
+                totalRefundSubtotalAmount += singleRefundSubtotalAmount;
             }
-            foreach (DataRow row in table.Rows)
-            {
-                locID = Convert.ToInt32(row["provStateID"]);
-            }
-            //Returns the locationID
-            return locID;
+            //Returns the total refund subtotal of the cart
+            return totalRefundSubtotalAmount;
         }
-        
     }
 }

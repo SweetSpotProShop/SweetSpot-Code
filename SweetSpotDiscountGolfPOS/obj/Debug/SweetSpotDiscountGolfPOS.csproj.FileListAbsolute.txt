@@ -599,4 +599,3 @@ C:\Users\Voltron\Desktop\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\Sweet
 C:\Users\Voltron\Desktop\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.csproj.CoreCompileInputs.cache
 C:\Users\Voltron\Desktop\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.dll
 C:\Users\Voltron\Desktop\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.pdb
-C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.csprojResolveAssemblyReference.cache

@@ -11,13 +11,21 @@
             <h2>Customer Information</h2>
             <hr />
             <%--Enter search text to find matching customer information--%>
-            <asp:TextBox ID="txtSearch" runat="server"></asp:TextBox>
+            <asp:Table ID="tblCustomerRow" runat="server">
+                <asp:TableRow>
+                    <asp:TableCell>
+                        <asp:TextBox ID="txtSearch" runat="server"></asp:TextBox>
+                    </asp:TableCell>
+                    <asp:TableCell>
+                        <asp:Button ID="btnCustomerSearch" runat="server" Width="150" Text="Customer Search" OnClick="btnCustomerSearch_Click" />
+                    </asp:TableCell>
+                    <asp:TableCell>
+                        <asp:Button ID="btnAddNewCustomer" runat="server" Width="150" Text="Add New Customer" OnClick="btnAddNewCustomer_Click" />
+                    </asp:TableCell>
+                </asp:TableRow>
+            </asp:Table>
             <hr />
-            <asp:Button ID="btnCustomerSearch" runat="server" Width="150" Text="Customer Search" OnClick="btnCustomerSearch_Click" />
-            <%--<div class="divider" />--%>
-            <asp:Button ID="btnAddNewCustomer" runat="server" Width="150" Text="Add New Customer" OnClick="btnAddNewCustomer_Click" />
-            <hr />
-            <asp:GridView ID="grdCustomersSearched" runat="server" AutoGenerateColumns="false" OnRowCommand="grdCustomersSearched_RowCommand" AllowPaging="True" PageSize="25" OnPageIndexChanging="grdCustomersSearched_PageIndexChanging" >
+            <asp:GridView ID="grdCustomersSearched" runat="server" AutoGenerateColumns="false" OnRowCommand="grdCustomersSearched_RowCommand" AllowPaging="True" PageSize="25" OnPageIndexChanging="grdCustomersSearched_PageIndexChanging" RowStyle-HorizontalAlign="Center">
                 <Columns>
                     <asp:TemplateField HeaderText="Sale">
                         <ItemTemplate>

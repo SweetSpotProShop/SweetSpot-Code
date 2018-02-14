@@ -35,14 +35,13 @@ namespace SweetSpotDiscountGolfPOS
                     storeLocation = cu.locationID;
                     lblSKUDisplay.Text = (idu.reserveTradeInSKu(storeLocation)).ToString();
                     tradeInSku = Convert.ToInt32(lblSKUDisplay.Text);
-                    //lblSKUDisplay.Text = idu.tradeInSku(storeLocation).ToString();
                 }
             }
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 int employeeID = cu.empID;
-                string currPage = Convert.ToString(Session["currPage"]);
+                string currPage = Convert.ToString(Session["currPage"]) + "-V2.1 Test";
                 er.logError(ex, employeeID, currPage, method, this);
                 //string prevPage = Convert.ToString(Session["prevPage"]);
                 MessageBox.ShowMessage("An Error has occured and been logged. "
@@ -63,7 +62,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 int employeeID = cu.empID;
-                string currPage = Convert.ToString(Session["currPage"]);
+                string currPage = Convert.ToString(Session["currPage"]) + "-V2.1 Test";
                 er.logError(ex, employeeID, currPage, method, this);
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
@@ -121,7 +120,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 int employeeID = cu.empID;
-                string currPage = Convert.ToString(Session["currPage"]);
+                string currPage = Convert.ToString(Session["currPage"]) + "-V2.1 Test";
                 er.logError(ex, employeeID, currPage, method, this);
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "

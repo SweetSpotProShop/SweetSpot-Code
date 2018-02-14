@@ -21,12 +21,13 @@ namespace SweetShop
         public int province { get; set; }
         public int country { get; set; }
         public string postalCode { get; set; }
+        public List<Invoice> invoices { get; set; }
         public bool emailList { get; set; }
 
         public Customer() { }
         public Customer(int CustomerID, string FirstName, string LastName, string pAddress,
-           string sAddress, string pPhoneNumber, string sPhoneNumber, bool eList, string Email,
-           string City, int Province, int Country, string PostalCode)
+           string sAddress, string pPhoneNumber, string sPhoneNumber, string Email,
+           string City, int Province, int Country, string PostalCode, bool eList)
         {
             customerId = CustomerID;
             firstName = FirstName;
@@ -41,6 +42,26 @@ namespace SweetShop
             province = Province;
             country = Country;
             postalCode = PostalCode;
+        }
+
+        public Customer(int CustomerID, string FirstName, string LastName, string pAddress,
+           string sAddress, string pPhoneNumber, string sPhoneNumber, string Email,
+           string City, int Province, int Country, string PostalCode, List<Invoice> Invoices, bool eList)
+        {
+            customerId = CustomerID;
+            firstName = FirstName;
+            lastName = LastName;
+            primaryAddress = pAddress;
+            secondaryAddress = sAddress;
+            primaryPhoneNumber = pPhoneNumber;
+            secondaryPhoneNumber = sPhoneNumber;
+            emailList = eList;
+            email = Email;
+            city = City;
+            province = Province;
+            country = Country;
+            postalCode = PostalCode;
+            invoices = Invoices;
         }
     }
 }

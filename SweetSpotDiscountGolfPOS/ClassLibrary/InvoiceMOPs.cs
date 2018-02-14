@@ -16,13 +16,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public double amountPaid { get; set; }
 
         public InvoiceMOPs() { }
-        public InvoiceMOPs(int i, int inn, int isn, string mp, double ap)
+        public InvoiceMOPs(int ID, int InvoiceNum, int InvoiceSubNum, string MopType, double AmountPaid)
         {
-            id = i;
-            invoiceNum = inn;
-            invoiceSubNum = isn;
-            mopType = mp;
-            amountPaid = ap;
+            id = ID;
+            invoiceNum = InvoiceNum;
+            invoiceSubNum = InvoiceSubNum;
+            mopType = MopType;
+            amountPaid = AmountPaid;
         }
     }
 }

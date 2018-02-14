@@ -13,9 +13,9 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class CustomerHomePage : System.Web.UI.Page
     {
-        ErrorReporting er = new ErrorReporting();
-        CurrentUser cu;
-        List<Customer> c;
+        ErrorReporting ER = new ErrorReporting();
+        CurrentUser CU;
+        CustomerManager CM = new CustomerManager();
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -23,30 +23,24 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "CustomerHomePage";
             try
             {
-                cu = (CurrentUser)Session["currentUser"];
+                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
-                    Server.Transfer("LoginPage.aspx", false);
+                    Response.Redirect("LoginPage.aspx", false);
                 }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnCustomerSearch_Click(object sender, EventArgs e)
@@ -57,29 +51,21 @@ namespace SweetSpotDiscountGolfPOS
             {
                 //Looks through database and returns a list of customers
                 //based on the search criteria entered
-                SweetShopManager ssm = new SweetShopManager();
-                 c = ssm.GetCustomerfromSearch(txtSearch.Text);
                 //Binds the results to the gridview
                 grdCustomersSearched.Visible = true;
-                grdCustomersSearched.DataSource = c;
+                grdCustomersSearched.DataSource = CM.ReturnCustomerBasedOnText(txtSearch.Text);
                 grdCustomersSearched.DataBind();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnAddNewCustomer_Click(object sender, EventArgs e)
@@ -89,24 +75,18 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Opens the page to add a new customer
-                Server.Transfer("CustomerAddNew.aspx", false);
+                Response.Redirect("CustomerAddNew.aspx?cust=-10", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void grdCustomersSearched_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -115,57 +95,59 @@ namespace SweetSpotDiscountGolfPOS
             string method = "grdCustomersSearched_RowCommand";
             try
             {
-                //grabs the command argument for the command pressed 
-                string key = e.CommandArgument.ToString();
                 if (e.CommandName == "ViewProfile")
                 {
-                    //if command argument is view profile 
-                    Session["key"] = key;
-                    //then set key and open Add New Customer page
-                    Server.Transfer("CustomerAddNew.aspx", false);
+                    //open Add New Customer page
+                    Response.Redirect("CustomerAddNew.aspx?cust=" + e.CommandArgument.ToString(), false);
                 }
                 else if (e.CommandName == "StartSale")
                 {
-                    //Null items in cart as this is a new sale
                     Session["ItemsInCart"] = null;
-                    //Set transaction type to sale
+                    //Sets transaction type to sale
                     Session["TranType"] = 1;
-                    //Set key to the customer number
-                    Session["key"] = key;
+                    //Sets customer id to guest cust
+                    Session["key"] = Convert.ToInt32(e.CommandArgument.ToString());
                     //Open the Sales Cart page
-                    Server.Transfer("SalesCart.aspx");
+                    Response.Redirect("SalesCart.aspx?cust=" + e.CommandArgument.ToString(), false);
                 }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void grdCustomersSearched_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
-            grdCustomersSearched.PageIndex = e.NewPageIndex;
-            //Looks through database and returns a list of customers
-            //based on the search criteria entered
-            SweetShopManager ssm = new SweetShopManager();
-            c = ssm.GetCustomerfromSearch(txtSearch.Text);
-            //Binds the results to the gridview
-            grdCustomersSearched.Visible = true;
-            grdCustomersSearched.DataSource = c;
-            grdCustomersSearched.DataBind();
+            //Collects current method and page for error tracking
+            string method = "grdCustomersSearched_PageIndexChanging";
+            try
+            {
+                grdCustomersSearched.PageIndex = e.NewPageIndex;
+                //Looks through database and returns a list of customers
+                //based on the search criteria entered
+                //Binds the results to the gridview
+                grdCustomersSearched.Visible = true;
+                grdCustomersSearched.DataSource = CM.ReturnCustomerBasedOnText(txtSearch.Text);
+                grdCustomersSearched.DataBind();
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                                + "If you continue to receive this message please contact "
+                                + "your system administrator", this);
+            }
         }
-        
     }
 }

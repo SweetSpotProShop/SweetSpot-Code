@@ -1,4 +1,5 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="ReportsMostSold.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.ReportsMSI" %>
+
 <asp:Content ID="ReportsPageContent" ContentPlaceHolderID="IndividualPageContent" runat="server">
     <script>
         function CallPrint(strid) {
@@ -16,76 +17,81 @@
             return false;
         }
     </script>
-    <h2>Top Selling Items Report</h2>
-    <hr />
-    <div>
-        <asp:Label ID="lblDates" runat="server" Text="lblDates" font-bold="true"></asp:Label>
-    </div>
-    <hr />
-    <h3>Most Sold Items</h3>
-    <div>
-        <asp:GridView ID="grdItems" runat="server" AutoGenerateColumns="false" RowStyle-HorizontalAlign="Center">
-            <Columns>
-                <asp:TemplateField HeaderText="SKU" ControlStyle-Width="300px">
-                    <ItemTemplate>
-                        <asp:Label ID="lblSku" runat="server" Text='<%#Eval("sku")%>'></asp:Label>
-                    </ItemTemplate>
-                </asp:TemplateField>
-                <asp:TemplateField HeaderText="Amount Sold" ControlStyle-Width="300px">
-                    <ItemTemplate>
-                        <asp:Label ID="lblAmountSold" runat="server" Text='<%#Eval("amountSold")%>'></asp:Label>
-                    </ItemTemplate>
-                </asp:TemplateField>
+    <div id="print">
+
+
+        <h2>Top Selling Items Report</h2>
+        <hr />
+        <div>
+            <asp:Label ID="lblDates" runat="server" Text="lblDates" Font-Bold="true"></asp:Label>
+        </div>
+        <hr />
+        <h3>Most Sold Items</h3>
+        <div>
+            <asp:GridView ID="grdItems" runat="server" AutoGenerateColumns="false" RowStyle-HorizontalAlign="Center">
+                <Columns>
+                    <asp:TemplateField HeaderText="SKU" ControlStyle-Width="300px">
+                        <ItemTemplate>
+                            <asp:Label ID="lblSku" runat="server" Text='<%#Eval("sku")%>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Amount Sold" ControlStyle-Width="300px">
+                        <ItemTemplate>
+                            <asp:Label ID="lblAmountSold" runat="server" Text='<%#Eval("amountSold")%>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
                 </Columns>
             </asp:GridView>
-    </div>
-    <hr />
-    <h3>Most Sold Brands</h3>
-    <div>
-        <asp:GridView ID="grdBrands" runat="server" AutoGenerateColumns="false" RowStyle-HorizontalAlign="Center">
-            <Columns>
-                <asp:TemplateField HeaderText="Brand" ControlStyle-Width="300px">
-                    <ItemTemplate>
-                        <asp:Label ID="lblBrand" runat="server" Text='<%#Eval("description")%>'></asp:Label>
-                    </ItemTemplate>
-                </asp:TemplateField>
-                <asp:TemplateField HeaderText="Times Sold" ControlStyle-Width="300px">
-                    <ItemTemplate>
-                        <asp:Label ID="lblTimesSold" runat="server" Text='<%#Eval("amountSold")%>'></asp:Label>
-                    </ItemTemplate>
-                </asp:TemplateField>
+        </div>
+        <hr />
+        <h3>Most Sold Brands</h3>
+        <div>
+            <asp:GridView ID="grdBrands" runat="server" AutoGenerateColumns="false" RowStyle-HorizontalAlign="Center">
+                <Columns>
+                    <asp:TemplateField HeaderText="Brand" ControlStyle-Width="300px">
+                        <ItemTemplate>
+                            <asp:Label ID="lblBrand" runat="server" Text='<%#Eval("description")%>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Times Sold" ControlStyle-Width="300px">
+                        <ItemTemplate>
+                            <asp:Label ID="lblTimesSold" runat="server" Text='<%#Eval("amountSold")%>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
                 </Columns>
             </asp:GridView>
-    </div>
-     <hr />
-    <h3>Most Sold Models</h3>
-    <div>
-        <asp:GridView ID="grdModels" runat="server" AutoGenerateColumns="false"  RowStyle-HorizontalAlign="Center">
-            <Columns>
-                <asp:TemplateField HeaderText="Model" ControlStyle-Width="300px">
-                    <ItemTemplate>
-                        <asp:Label ID="lblModel" runat="server" Text='<%#Eval("description")%>'></asp:Label>
-                    </ItemTemplate>
-                </asp:TemplateField>
-                <asp:TemplateField HeaderText="Times Sold" ControlStyle-Width="300px">
-                    <ItemTemplate>
-                        <asp:Label ID="lblTimesSold" runat="server" Text='<%#Eval("amountSold")%>'></asp:Label>
-                    </ItemTemplate>
-                </asp:TemplateField>
+        </div>
+        <hr />
+        <h3>Most Sold Models</h3>
+        <div>
+            <asp:GridView ID="grdModels" runat="server" AutoGenerateColumns="false" RowStyle-HorizontalAlign="Center">
+                <Columns>
+                    <asp:TemplateField HeaderText="Model" ControlStyle-Width="300px">
+                        <ItemTemplate>
+                            <asp:Label ID="lblModel" runat="server" Text='<%#Eval("description")%>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Times Sold" ControlStyle-Width="300px">
+                        <ItemTemplate>
+                            <asp:Label ID="lblTimesSold" runat="server" Text='<%#Eval("amountSold")%>'></asp:Label>
+                        </ItemTemplate>
+                    </asp:TemplateField>
                 </Columns>
             </asp:GridView>
-    </div>
-    <br />
-    <hr />
-    <asp:Table runat="server">
-        <asp:TableRow>
-            <asp:TableCell>
-                <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('print');" />
-            </asp:TableCell>
-            <asp:TableCell>
-                <asp:Button class="noPrint" ID="btnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="btnDownload_Click" />
-            </asp:TableCell>
-        </asp:TableRow>
-    </asp:Table>
+        </div>
+        <br />
+        <hr />
+        </div>
+        <asp:Table runat="server">
+            <asp:TableRow>
+                <asp:TableCell>
+                    <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('print');" />
+                </asp:TableCell>
+                <asp:TableCell>
+                    <asp:Button class="noPrint" ID="btnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="btnDownload_Click" />
+                </asp:TableCell>
+            </asp:TableRow>
+        </asp:Table>
+    
 </asp:Content>
 

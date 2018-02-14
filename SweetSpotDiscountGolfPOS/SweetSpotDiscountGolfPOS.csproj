@@ -135,10 +135,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClassLibrary\Accessories.cs" />
-    <Compile Include="ClassLibrary\CalculationManager.cs" />
+    <Compile Include="ClassLibrary\Checkout.cs" />
+    <Compile Include="ClassLibrary\CustomerManager.cs" />
+    <Compile Include="ClassLibrary\InvoiceItemsManager.cs" />
+    <Compile Include="ClassLibrary\InvoiceMOPsManager.cs" />
+    <Compile Include="ClassLibrary\ItemsManager.cs" />
+    <Compile Include="ClassLibrary\MopsManager.cs" />
+    <Compile Include="ClassLibrary\SalesCalculationManager.cs" />
     <Compile Include="ClassLibrary\Cart.cs" />
     <Compile Include="ClassLibrary\Cashout.cs" />
-    <Compile Include="ClassLibrary\Checkout.cs" />
+    <Compile Include="ClassLibrary\Mops.cs" />
     <Compile Include="ClassLibrary\CheckoutManager.cs" />
     <Compile Include="ClassLibrary\Clothing.cs" />
     <Compile Include="ClassLibrary\Clubs.cs" />
@@ -160,6 +166,7 @@
     <Compile Include="ClassLibrary\Reports.cs" />
     <Compile Include="ClassLibrary\SweetShopManager.cs" />
     <Compile Include="ClassLibrary\Tax.cs" />
+    <Compile Include="ClassLibrary\TaxManager.cs" />
     <Compile Include="ClassLibrary\TaxReport.cs" />
     <Compile Include="CustomerAddNew.aspx.cs">
       <DependentUpon>CustomerAddNew.aspx</DependentUpon>
@@ -175,6 +182,7 @@
     <Compile Include="CustomerHomePage.aspx.designer.cs">
       <DependentUpon>CustomerHomePage.aspx</DependentUpon>
     </Compile>
+    <Compile Include="ClassLibrary\DatabaseCalls.cs" />
     <Compile Include="EmployeeAddNew.aspx.cs">
       <DependentUpon>EmployeeAddNew.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -203,6 +211,7 @@
     <Compile Include="InventoryHomePage.aspx.designer.cs">
       <DependentUpon>InventoryHomePage.aspx</DependentUpon>
     </Compile>
+    <Compile Include="ClassLibrary\InvoiceManager.cs" />
     <Compile Include="LoginPage.aspx.cs">
       <DependentUpon>LoginPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

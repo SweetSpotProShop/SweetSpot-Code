@@ -22,12 +22,15 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class SettingsHomePage : System.Web.UI.Page
     {
-        ErrorReporting er = new ErrorReporting();
-        SweetShopManager ssm = new SweetShopManager();
-        EmployeeManager em = new EmployeeManager();
-        Reports r = new Reports();
+        ErrorReporting ER = new ErrorReporting();
+        CurrentUser CU = new CurrentUser();
+        EmployeeManager EM = new EmployeeManager();
+        Reports R = new Reports();
+        TaxManager TM = new TaxManager();
+        LocationManager LM = new LocationManager();
+
+        //SweetShopManager ssm = new SweetShopManager();
         internal static readonly Page aspx;
-        CurrentUser cu = new CurrentUser();
         public int counter;
         public int total;
         public Label lblP;
@@ -40,43 +43,50 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "SettingsHomePage.aspx";
             try
             {
-                cu = (CurrentUser)Session["currentUser"];
+                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
-                    Server.Transfer("LoginPage.aspx", false);
+                    Response.Redirect("LoginPage.aspx", false);
                 }
-                lblCurrentDate.Text = DateTime.Today.ToString("yyyy-MM-dd");
-                if (txtDate.Text == "")
+                else
                 {
-                    txtDate.Text = DateTime.Today.ToString("yyyy-MM-dd");
+                    lblCurrentDate.Text = DateTime.Today.ToString("yyyy-MM-dd");
+                    if (txtDate.Text == "")
+                    {
+                        txtDate.Text = DateTime.Today.ToString("yyyy-MM-dd");
+                    }
+                    //Checks if the user is an Admin
+                    if (CU.jobID != 0)
+                    {
+                        btnAddNewEmployee.Enabled = false;
+                        btnLoadItems.Enabled = false;
+                    }
+                    if (!IsPostBack)
+                    {
+                        ddlProvince.DataSource = LM.ReturnProvinceDropDown(0);
+                        ddlProvince.DataTextField = "provName";
+                        ddlProvince.DataValueField = "provStateID";
+                        ddlProvince.DataBind();
+                        ddlProvince.SelectedValue = "1";
+                        ddlTax.DataSource = TM.ReturnTaxListBasedOnDateAndProvinceForUpdate(1,Convert.ToDateTime(lblCurrentDate.Text));
+                        ddlTax.DataTextField = "taxName";
+                        ddlTax.DataValueField = "taxID";
+                        ddlTax.DataBind();
+                    }
                 }
-                //Checks if the user is an Admin
-                //if (cu.jobID != 0)
-                //{
-                //    btnAddNewEmployee.Enabled = false;
-                //    btnLoadCustomers.Enabled = false;
-                //    btnLoadEmployees.Enabled = false;
-                //    btnLoadItems.Enabled = false;
-                //}
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnAddNewEmployee_Click(object sender, EventArgs e)
@@ -86,24 +96,18 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Change to Employee add new page
-                Server.Transfer("EmployeeAddNew.aspx", false);
+                Response.Redirect("EmployeeAddNew.aspx?emp=-10", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void grdEmployeesSearched_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -112,33 +116,23 @@ namespace SweetSpotDiscountGolfPOS
             string method = "grdEmployeesSearched_RowCommand";
             try
             {
-                //Gets string from the command argument
-                string key = e.CommandArgument.ToString();
                 //Checks if the string is view profile
                 if (e.CommandName == "ViewProfile")
                 {
-                    //Sets the employee id into a session
-                    Session["key"] = key;
                     //Changes page to Employee Add New
-                    Server.Transfer("EmployeeAddNew.aspx", false);
+                    Response.Redirect("EmployeeAddNew.aspx?emp=" + e.CommandArgument.ToString(), false);
                 }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnEmployeeSearch_Click(object sender, EventArgs e)
@@ -147,31 +141,22 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnEmployeeSearch_Click";
             try
             {
-                //Queries database and returns a list of emplyees that match the search criteria
-                List<Employee> emp = em.GetEmployeefromSearch(txtSearch.Text);
                 grdEmployeesSearched.Visible = true;
                 //Binds the employee list to grid view
-                grdEmployeesSearched.DataSource = emp;
+                grdEmployeesSearched.DataSource = EM.ReturnEmployeeBasedOnText(txtSearch.Text);
                 grdEmployeesSearched.DataBind();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
-
         }
         //Importing
         protected void btnLoadItems_Click(object sender, EventArgs e)
@@ -229,7 +214,7 @@ namespace SweetSpotDiscountGolfPOS
                             errors.Columns.Add("brandError");
                             errors.Columns.Add("modelError");
                             errors.Columns.Add("identifierError");
-                            errors = r.uploadItems(fupItemSheet);
+                            errors = R.uploadItems(fupItemSheet);
                             if (errors.Rows.Count != 0)
                             {
                                 foreach (DataRow row in errors.Rows)
@@ -263,7 +248,6 @@ namespace SweetSpotDiscountGolfPOS
                                         }
                                     }
                                 }
-
                                 worksheet.Cells[1, 26].Value = "Errors Found. The skus that are highlighted in red have an issue with either their brand or model. This could be a spelling mistake or the brand and/or model are not in the database.";
                                 //MessageBox.ShowMessage("Errors Found. The skus that are highlighted in red have an issue with either their brand or model. This could be a spelling mistake or the brand and/or model are not in the database.", this);
                                 string fileName = fupItemSheet.FileName + "_ErrorsFound";
@@ -278,6 +262,7 @@ namespace SweetSpotDiscountGolfPOS
                             {
                                 MessageBox.ShowMessage("Importing Complete", this);
                             }
+                           
                         }
                     }
                 }
@@ -286,18 +271,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnImportCustomers_Click(object sender, EventArgs e)
@@ -310,7 +289,7 @@ namespace SweetSpotDiscountGolfPOS
                 if (fupCustomers.HasFile)
                 {
                     //Calls method to import the requested file
-                    r.importCustomers(fupCustomers);
+                    R.importCustomers(fupCustomers);
                 }
                 //Show that it is done
                 MessageBox.ShowMessage("Importing Complete", this);
@@ -319,18 +298,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         //Exporting
@@ -350,7 +323,7 @@ namespace SweetSpotDiscountGolfPOS
                     //Add page to the work book called inventory
                     ExcelWorksheet worksheet = xlPackage.Workbook.Worksheets.Add("Inventory");
                     // write to sheet
-                    DataTable exportTable = r.exportAllItems();
+                    DataTable exportTable = R.exportAllItems();
                     //Setting data collection as datatable
                     DataColumnCollection dcCollection = exportTable.Columns;
                     //Loops through each row in the datatable
@@ -381,18 +354,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnExportClubs_Click(object sender, EventArgs e)
@@ -402,7 +369,7 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Calls method to export clubs
-                r.exportClubs();
+                R.exportClubs();
                 //Displays message
                 MessageBox.ShowMessage("Export Complete", this);
             }
@@ -410,18 +377,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnExportClothing_Click(object sender, EventArgs e)
@@ -431,7 +392,7 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Calls method to export all clothing
-                r.exportClothing();
+                R.exportClothing();
                 //Displays message
                 MessageBox.ShowMessage("Export Complete", this);
             }
@@ -439,18 +400,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnExportAccessories_Click(object sender, EventArgs e)
@@ -460,7 +415,7 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Calls method to export all accessories
-                r.exportAccessories();
+                R.exportAccessories();
                 //Displays message
                 MessageBox.ShowMessage("Export Complete", this);
             }
@@ -468,18 +423,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnExportInvoices_Click(object sender, EventArgs e)
@@ -589,32 +538,42 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
-
+        protected void ddlProvince_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string method = "ddlProvince_SelectedIndexChanged";
+            try
+            {
+                ddlTax.DataSource= TM.ReturnTaxListBasedOnDateAndProvinceForUpdate(Convert.ToInt32(ddlProvince.SelectedValue), Convert.ToDateTime(lblCurrentDate.Text));
+                ddlTax.DataBind();
+            }
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+            }
+        }
         protected void ddlTax_SelectedIndexChanged(object sender, EventArgs e)
         {
             string method = "ddlTax_SelectedIndexChanged";
             try
             {
-                string sel = ddlTax.SelectedItem.ToString();
-                List<Tax> t = new List<Tax>();
-                t = ssm.getTaxes(Convert.ToInt32(ddlProvince.SelectedValue), Convert.ToDateTime(lblCurrentDate.Text));
+                List<Tax> t = TM.ReturnTaxListBasedOnDate(Convert.ToDateTime(lblCurrentDate.Text), Convert.ToInt32(ddlProvince.SelectedValue));
                 foreach (var tax in t)
                 {
-                    if (tax.taxName == sel)
+                    if (tax.taxID == Convert.ToInt32(ddlTax.SelectedValue))
                     {
                         lblCurrentDisplay.Text = tax.taxRate.ToString("#0.00");
                     }
@@ -624,18 +583,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnSaveTheTax_Click(object sender, EventArgs e)
@@ -643,32 +596,20 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnSaveTheTax_Click";
             try
             {
-                int psID = Convert.ToInt32(ddlProvince.SelectedValue);
-                int tID = Convert.ToInt32(ddlTax.SelectedValue);
-                DateTime tDate = Convert.ToDateTime(txtDate.Text);
-                double tRate = Convert.ToDouble(txtNewRate.Text);
-
-                ssm.updateNewTaxRate(psID, tDate, tID, tRate);
+                TM.InsertNewTaxRate(Convert.ToInt32(ddlProvince.SelectedValue), Convert.ToInt32(ddlTax.SelectedValue), Convert.ToDateTime(txtDate.Text), Convert.ToDouble(txtNewRate.Text));
                 txtDate.Text = "";
                 txtNewRate.Text = "";
-
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
 
@@ -731,18 +672,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
     }

@@ -16,13 +16,15 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class SalesCart : System.Web.UI.Page
     {
+        CustomerManager CM = new CustomerManager();
+
         public string skuString;
         public int skuInt;
         public int invNum;
         ErrorReporting er = new ErrorReporting();
         SweetShopManager ssm = new SweetShopManager();
         ItemDataUtilities idu = new ItemDataUtilities();
-        List<Items> invoiceItems = new List<Items>();
+        List<Cart> invoiceItems = new List<Cart>();
         List<Cart> itemsInCart = new List<Cart>();
         List<Cart> returnedCart = new List<Cart>();
         List<Cart> temp = new List<Cart>();
@@ -31,6 +33,7 @@ namespace SweetSpotDiscountGolfPOS
         Object o = new Object();
         CurrentUser cu;
         List<Customer> c;
+        SalesCalculationManager scm = new SalesCalculationManager();
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -43,7 +46,7 @@ namespace SweetSpotDiscountGolfPOS
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
-                    Server.Transfer("LoginPage.aspx", false);
+                    Response.Redirect("LoginPage.aspx", false);
                 }
                 lblInvalidQty.Visible = false;
                 if (!Page.IsPostBack)
@@ -82,59 +85,9 @@ namespace SweetSpotDiscountGolfPOS
                             //If there are bind to data grid and get a subtotal of the items
                             grdCartItems.DataSource = Session["ItemsInCart"];
                             grdCartItems.DataBind();
-                            lblSubtotalDisplay.Text = "$ " + ssm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"]).ToString();
+                            lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"], cu.locationID).ToString();
                         }
                     }
-                    //This will no longer be used as there is a seperate page for returns
-                    //else if (tranType == 2)
-                    //{
-                    //    btnJumpToInventory.Visible = false;
-                    //    Invoice rInvoice = (Invoice)Session["searchReturnInvoices"];
-                    //    if (Session["returnedCart"] != null)
-                    //    {
-                    //        itemsInCart = (List<Cart>)Session["ItemsInCart"];
-                    //        returnedCart = (List<Cart>)Session["returnedCart"];
-                    //        grdReturningItems.DataSource = returnedCart;
-                    //        grdReturningItems.DataBind();
-                    //        lblSubtotalDisplay.Text = "$ " + ssm.returnSubtotalAmount(returnedCart).ToString("#0.00");
-                    //    }
-                    //    else
-                    //    {
-                    //        temp = ssm.returningItems(rInvoice.invoiceNum, rInvoice.invoiceSub);
-                    //        foreach (var item in temp)
-                    //        {
-                    //            if (item.typeID != 0)
-                    //            {
-                    //                itemsInCart.Add(item);
-                    //            }
-                    //        }
-                    //    }
-                    //    lblCustomerDisplay.Visible = true;
-                    //    lblCustomerDisplay.Text = rInvoice.customerName.ToString();
-                    //    txtCustomer.Visible = false;
-                    //    btnCustomerSelect.Visible = false;
-                    //    RadioButton1.Visible = false;
-                    //    RadioButton2.Visible = false;
-                    //    lblShipping.Visible = false;
-                    //    txtShippingAmount.Visible = false;
-                    //    lblInvoiceNumberDisplay.Text = Convert.ToString(Session["Loc"]) + "-" + rInvoice.invoiceNum.ToString() + "-" + idu.getNextInvoiceSubNum(rInvoice.invoiceNum).ToString();
-                    //    Session["Invoice"] = lblInvoiceNumberDisplay.Text;
-                    //    lblDateDisplay.Text = rInvoice.invoiceDate.ToString();
-                    //    txtSearch.Visible = false;
-                    //    btnInventorySearch.Visible = false;
-                    //    grdInventorySearched.Visible = false;
-                    //    grdCartItems.Visible = false;
-                    //    grdInvoicedItems.Visible = true;
-                    //    grdReturningItems.Visible = true;
-
-                    //    lblSubtotal.Text = "Return Total:";
-                    //    btnCancelSale.Text = "Cancel Return";
-                    //    btnProceedToCheckout.Text = "Reimburse Customer";
-                    //    Session["ItemsInCart"] = itemsInCart;
-                    //    grdInvoicedItems.DataSource = itemsInCart;
-                    //    grdInvoicedItems.DataBind();
-
-                    //}
                 }
                 //Store date in a session
                 Session["strDate"] = lblDateDisplay.Text;
@@ -154,63 +107,9 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
-
-
-
-
-        //protected void btnCustomerSelect_Click(object sender, EventArgs e)
-        //{
-        //    //Collects current method for error tracking
-        //    string method = "btnCustomerSelect_Click";
-        //    try
-        //    {
-        //        //Check if there are items in the cart
-        //        if (Session["ItemsInCart"] != null)
-        //        {
-        //            //If there are pass the session into variable for use
-        //            itemsInCart = (List<Cart>)Session["ItemsInCart"];
-        //        }
-        //        //loops through each item in th cart
-        //        foreach (var cart in itemsInCart)
-        //        {
-        //            //Queries the remaining quantity in stock
-        //            int remainingQTY = idu.getquantity(cart.sku, cart.typeID);
-        //            //Updates the quantity add the cart quantity back into stock
-        //            idu.updateQuantity(cart.sku, cart.typeID, (remainingQTY + cart.quantity));
-        //        }
-
-        //        lblInvalidQty.Visible = false;
-        //        //Nullifies are relative sessions
-        //        Session["key"] = null;
-        //        Session["shipping"] = null;
-        //        Session["ItemsInCart"] = null;
-        //        Session["CheckOutTotals"] = null;
-        //        Session["MethodsofPayment"] = null;
-        //        //Changes page to Customer Home page to select a customer
-        //        Server.Transfer("CustomerHomePage.aspx", false);
-        //    }
-        //    //Exception catch
-        //    catch (ThreadAbortException tae) { }
-        //    catch (Exception ex)
-        //    {
-        //        //Log employee number
-        //        int employeeID = cu.empID;
-        //        //Log current page
-        //        string currPage = Convert.ToString(Session["currPage"]);
-        //        //Log all info into error table
-        //        er.logError(ex, employeeID, currPage, method, this);
-        //        //string prevPage = Convert.ToString(Session["prevPage"]);
-        //        //Display message box
-        //        MessageBox.ShowMessage("An Error has occured and been logged. "
-        //            + "If you continue to receive this message please contact "
-        //            + "your system administrator", this);
-        //        //Server.Transfer(prevPage, false);
-        //    }
-        //}
-
         protected void btnCustomerSelect_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -253,16 +152,16 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
-        //protected void btnSearchCustomers_Click(object sender, EventArgs e)
-        //{
-        //    grdCustomersSearched.Visible = true;
-        //    c = ssm.GetCustomerfromSearch(txtCustomer.Text);
-        //    grdCustomersSearched.DataSource = c;
-        //    grdCustomersSearched.DataBind();
-        //}
+        protected void btnSearchCustomers_Click(object sender, EventArgs e)
+        {
+            grdCustomersSearched.Visible = true;
+            c = ssm.GetCustomerfromSearch(txtCustomer.Text);
+            grdCustomersSearched.DataSource = c;
+            grdCustomersSearched.DataBind();
+        }
         protected void btnAddCustomer_Click(object sender, EventArgs e)
         {
             //Get info from textboxes
@@ -278,12 +177,11 @@ namespace SweetSpotDiscountGolfPOS
             }
             //Using current user's info
             int provStateID = lm.getProvIDFromLocationID(cu.locationID);
-            int countryID = lm.countryIDFromProvince(provStateID);
+            int countryID = lm.getCountryIDFromProvID(provStateID);
             //Creating a customer
-            Customer c = new Customer(0, fName.Text, lName.Text, "", "", phoneNumber.Text, "", enrolled, email.Text, "", provStateID, countryID, "");
+            Customer c = new Customer(0, fName.Text, lName.Text, "", "", phoneNumber.Text, "", email.Text, "", provStateID, countryID, "", enrolled);
             //Set the session key to customer ID
-            string key = ssm.addCustomer(c).ToString();
-            Session["key"] = key;
+            Session["key"] = CM.addCustomer(c).ToString();
             //Hide stuff
             grdCustomersSearched.Visible = false;
             //Set name in text box
@@ -338,11 +236,9 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
-
-
         protected void btnInventorySearch_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -363,21 +259,20 @@ namespace SweetSpotDiscountGolfPOS
                         skuString = txtSearch.Text;
                         //use string and location to call query
                         //Query will return list of items that match the text
-                        invoiceItems = ssm.returnSearchFromAllThreeItemSets(skuString);
+                        invoiceItems = ssm.returnSearchFromAllThreeItemSets(skuString, loc);
                     }
                     else
                     {
                         //Text entered is a number
                         skuString = txtSearch.Text;
                         //this looks for the sku and returns all items that match sku
-                        List<Items> i = idu.getItemByID(Convert.ToInt32(skuInt), loc);
+                        List<Cart> i = idu.getItemByID(Convert.ToInt32(skuInt), loc);
 
                         //Checks to see if at least one item was returned
                         if (i != null && i.Count >= 1)
                         {
                             //Add item to the list
                             invoiceItems = i;
-                            //invoiceItems.Add(i.ElementAt(0));
                         }
                     }
                 }
@@ -402,7 +297,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
         //Currently used for Removing the row
@@ -445,7 +340,7 @@ namespace SweetSpotDiscountGolfPOS
                 grdCartItems.DataSource = itemsInCart;
                 grdCartItems.DataBind();
                 //Calculate new subtotal
-                lblSubtotalDisplay.Text = "$ " + ssm.returnSubtotalAmount(itemsInCart).ToString("#0.00");
+                lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount(itemsInCart, cu.locationID).ToString("#0.00");
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -462,7 +357,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
         //Currently used for Editing the row
@@ -484,7 +379,7 @@ namespace SweetSpotDiscountGolfPOS
                 grdCartItems.EditIndex = index;
                 grdCartItems.DataBind();
                 //Recalculates subtotal
-                lblSubtotalDisplay.Text = "$ " + ssm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"]).ToString("#0.00");
+                lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"], cu.locationID).ToString("#0.00");
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -501,7 +396,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
         //Currently used for cancelling the edit
@@ -518,7 +413,7 @@ namespace SweetSpotDiscountGolfPOS
                 grdCartItems.DataSource = Session["ItemsInCart"];
                 grdCartItems.DataBind();
                 //Recalcluate subtotal
-                lblSubtotalDisplay.Text = "$ " + ssm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"]).ToString("#0.00");
+                lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"], cu.locationID).ToString("#0.00");
                 //Nulls the quantity session
                 Session["originalQTY"] = null;
             }
@@ -537,7 +432,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
         //Currently used for updating the row
@@ -559,18 +454,7 @@ namespace SweetSpotDiscountGolfPOS
                 double sCost = double.Parse(cost.Text, NumberStyles.Currency);
                 bool radioButtonSelected = false;
                 CheckBox chkPerecent = (CheckBox)grdCartItems.Rows[index].Cells[6].FindControl("ckbPercentageEdit");
-
                 radioButtonSelected = chkPerecent.Checked;
-
-                //if (chkPerecent.Checked)
-                //{
-                //    radioButtonSelected = true;
-                //}
-                //else
-                //{
-                //    radioButtonSelected = false;
-                //}
-
                 bool tradeInItemInCart = ((CheckBox)grdCartItems.Rows[index].Cells[7].FindControl("chkTradeIn")).Checked;
                 string itemType = ((Label)grdCartItems.Rows[index].Cells[8].FindControl("lblTypeID")).Text;
                 string sku = grdCartItems.Rows[index].Cells[2].Text;
@@ -578,7 +462,7 @@ namespace SweetSpotDiscountGolfPOS
                 string desc = grdCartItems.Rows[index].Cells[4].Text;
                 //creates a temp item with the new updates
                 tempItemInCart = new Cart(Convert.ToInt32(sku), desc, Convert.ToInt32(quantity), sPrice, sCost,
-                    Convert.ToDouble(discountOnItem), radioButtonSelected, tradeInItemInCart, Convert.ToInt32(itemType));
+                    Convert.ToDouble(discountOnItem), radioButtonSelected, 0, tradeInItemInCart, Convert.ToInt32(itemType), cu.locationID);
 
                 //Sets current items in cart from stored session into duplicate cart 
                 List<Cart> duplicateCart = (List<Cart>)Session["ItemsInCart"];
@@ -632,7 +516,7 @@ namespace SweetSpotDiscountGolfPOS
                 grdCartItems.DataSource = itemsInCart;
                 grdCartItems.DataBind();
                 //Recalculates the new subtotal
-                lblSubtotalDisplay.Text = "$ " + ssm.returnSubtotalAmount(itemsInCart).ToString("#0.00");
+                lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount(itemsInCart, cu.locationID).ToString("#0.00");
                 //Nullifies the quantity session
                 Session["originalQTY"] = null;
             }
@@ -651,7 +535,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
         protected void btnCancelSale_Click(object sender, EventArgs e)
@@ -695,7 +579,7 @@ namespace SweetSpotDiscountGolfPOS
                 Session["ShippingAmount"] = null;
                 Session["strDate"] = null;
                 //Change to Home Page
-                Server.Transfer("HomePage.aspx", false);
+                Response.Redirect("HomePage.aspx", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -712,7 +596,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
         protected void btnProceedToCheckout_Click(object sender, EventArgs e)
@@ -736,7 +620,7 @@ namespace SweetSpotDiscountGolfPOS
                     Session["ShippingAmount"] = txtShippingAmount.Text;
                 }
                 //Changes to Sales Checkout page
-                Server.Transfer("SalesCheckout.aspx", false);
+                Response.Redirect("SalesCheckout.aspx", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -753,7 +637,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
         protected void grdInventorySearched_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -802,11 +686,6 @@ namespace SweetSpotDiscountGolfPOS
                             bolAdded = true;
                         }
                     }
-
-                    //int locationID = Convert.ToInt32(lblLocationID.Text);
-                    //int locationID = cu.locationID;
-                    ////Finding the min and max range for trade ins
-                    //int[] range = idu.tradeInSkuRange(locationID);
 
                     //If the itemKey is between or equal to the ranges, do trade in
                     if (itemKey == 100000)
@@ -868,12 +747,12 @@ namespace SweetSpotDiscountGolfPOS
                 grdCartItems.DataSource = itemsInCart;
                 grdCartItems.DataBind();
                 //Set an empty variable to bind to the searched items grid view so it is empty
-                List<Items> nullGrid = new List<Items>();
+                List<Cart> nullGrid = new List<Cart>();
                 nullGrid = null;
                 grdInventorySearched.DataSource = nullGrid;
                 grdInventorySearched.DataBind();
                 //Recalculate the new subtotal
-                lblSubtotalDisplay.Text = "$ " + ssm.returnSubtotalAmount(itemsInCart).ToString("#.00");
+                lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount(itemsInCart, cu.locationID).ToString("#.00");
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -890,7 +769,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
         protected void btnJumpToInventory_Click(object sender, EventArgs e)
@@ -918,7 +797,7 @@ namespace SweetSpotDiscountGolfPOS
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
+                //Response.Redirect(prevPage, false);
             }
         }
     }

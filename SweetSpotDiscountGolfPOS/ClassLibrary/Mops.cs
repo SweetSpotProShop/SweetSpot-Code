@@ -5,26 +5,27 @@ using System.Web;
 
 namespace SweetSpotDiscountGolfPOS.ClassLibrary
 {
-    public class Checkout
+    //The checkout class is used for payment information for sales, return, and purchases.
+    public class Mops
     {
         public string methodOfPayment { get; set; }
         public double amountPaid { get; set; }
         public int tableID { get; set; }
         public int chequeNum { get; set; }
 
-        public Checkout() { }
-        public Checkout(string m, double a)
+        public Mops() { }
+        public Mops(string m, double a)
         {
             methodOfPayment = m;
             amountPaid = a;
         }
-        public Checkout(string m, double a, int i)
+        public Mops(string m, double a, int i)
         {
             methodOfPayment = m;
             amountPaid = a;
             tableID = i;
         }
-        public Checkout(string m, double a, int i, int c)
+        public Mops(string m, double a, int i, int c)
         {
             methodOfPayment = m;
             amountPaid = a;

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using SweetSpotDiscountGolfPOS;
+using SweetSpotDiscountGolfPOS.ClassLibrary;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -14,15 +17,232 @@ namespace SweetShop
     class EmployeeManager
     {
 
-        String connectionString;
+        private string connectionString;
         public EmployeeManager()
         {
-
             connectionString = ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString;
         }
 
-        //Retrieves Customer from search parameters Nathan and Tyler created
-        public List<Employee> GetEmployeefromSearch(String searchField)
+        LocationManager LM = new LocationManager();
+        DatabaseCalls dbc = new DatabaseCalls();
+        private List<Employee> ConvertFromDataTableToEmployee(DataTable dt)
+        {
+            List<Employee> employee = dt.AsEnumerable().Select(row =>
+            new Employee
+            {
+                employeeID = row.Field<int>("empID"),
+                firstName = row.Field<string>("firstName"),
+                lastName = row.Field<string>("lastName"),
+                jobID = row.Field<int>("jobID"),
+                location = LM.ReturnLocation(row.Field<int>("locationID"))[0],
+                emailAddress = row.Field<string>("email"),
+                primaryContactNumber = row.Field<string>("primaryContactINT"),
+                secondaryContactNumber = row.Field<string>("secondaryContactINT"),
+                primaryAddress = row.Field<string>("primaryAddress"),
+                secondaryAddress = row.Field<string>("secondaryAddress"),
+                city = row.Field<string>("city"),
+                provState = row.Field<int>("provStateID"),
+                country = row.Field<int>("countryID"),
+                postZip = row.Field<string>("postZip")
+
+            }).ToList();
+            return employee;
+        }
+        private List<CurrentUser> ConvertFromDataTableToCurrentUser(DataTable dt)
+        {
+            List<CurrentUser> currentUser = dt.AsEnumerable().Select(row =>
+            new CurrentUser
+            {
+                empID = row.Field<int>("empID"),
+                jobID = row.Field<int>("jobID"),
+                locationID = row.Field<int>("locationID"),
+                locationName = row.Field<string>("city"),
+                password = row.Field<int>("password")
+            }).ToList();
+            return currentUser;
+        }
+
+        //Returns list of custoemrs based on an customer ID
+        public List<Employee> ReturnEmployee(int emp)
+        {
+            string sqlCmd = "SELECT empID, firstName, lastName, jobID, locationID, email, "
+                + "primaryContactINT, secondaryContactINT, primaryAddress, secondaryAddress, "
+                + "city, provStateID, countryID, postZip "
+                + "FROM tbl_employee WHERE empID = @empID";
+
+            Object[][] parms =
+            {
+                 new object[] { "@empID", emp },
+            };
+
+            List<Employee> employee = ConvertFromDataTableToEmployee(dbc.returnDataTableData(sqlCmd, parms));
+            return employee;
+        }
+        //Returns list of custoemrs based on an search text
+        public List<Employee> ReturnEmployeeBasedOnText(string searchText)
+        {
+            ArrayList strText = new ArrayList();
+            string sqlCmd = "";
+            for (int i = 0; i < searchText.Split(' ').Length; i++)
+            {
+                strText.Add(searchText.Split(' ')[i]);
+                if (i == 0)
+                {
+                    sqlCmd = "SELECT empID, firstName, lastName, jobID, locationID, email, primaryContactINT, "
+                        + "secondaryContactINT, primaryAddress, secondaryAddress, city, provStateID, countryID, "
+                        + "postZip FROM tbl_employee WHERE CAST(empID AS VARCHAR) LIKE '%" + strText[i]
+                        + "%' OR CONCAT(firstName, lastName) LIKE '%" + strText[i]
+                        + "%' OR CONCAT(primaryContactINT, secondaryContactINT) LIKE '%" + strText[i]
+                        + "%' OR email LIKE '%" + strText[i] + "%'";
+                }
+                else
+                {
+                    sqlCmd += " INTERSECT (SELECT empID, firstName, lastName, jobID, locationID, email, primaryContactINT, "
+                        + "secondaryContactINT, primaryAddress, secondaryAddress, city, provStateID, countryID, postZip "
+                        + "FROM tbl_employee WHERE CAST(empID AS VARCHAR) LIKE '%" + strText[i]
+                        + "%' OR CONCAT(firstName, lastName) LIKE '%" + strText[i]
+                        + "%' OR CONCAT(primaryContactINT, secondaryContactINT) LIKE '%" + strText[i]
+                        + "%' OR email LIKE '%" + strText[i] + "%')";
+                }
+            }
+            sqlCmd += " order by firstName asc";
+            List<Employee> employee = ConvertFromDataTableToEmployee(dbc.returnDataTableData(sqlCmd));
+            return employee;
+        }
+        public int AddEmployee(Employee em)
+        {
+            string sqlCmd = "INSERT INTO tbl_employee (firstName, lastName, jobID, locationID, "
+                + "email, primaryContactINT, secondaryContactINT, primaryAddress, secondaryAddress, "
+                + "city, provStateID, countryID, postZip) VALUES (@firstName, @lastName, @jobID, "
+                + "@locationID, @email, @primaryContactINT, @secondaryContactINT, @primaryAddress, "
+                + "@secondaryAddress, @city, @provStateID, @countryID, @postZip)";
+
+            Object[][] parms =
+            {
+                new object[] { "@firstName", em.firstName },
+                new object[] { "@lastName", em.lastName },
+                new object[] { "@jobID", em.jobID },
+                new object[] { "@locationID", em.location.locationID },
+                new object[] { "@email", em.emailAddress },
+                new object[] { "@primaryContactINT", em.primaryContactNumber },
+                new object[] { "@secondaryContactINT", em.secondaryContactNumber },
+                new object[] { "@primaryAddress", em.primaryAddress },
+                new object[] { "@secondaryAddress", em.secondaryAddress },
+                new object[] { "@city", em.city },
+                new object[] { "@provStateID", em.provState },
+                new object[] { "@countryID", em.country },
+                new object[] { "@postZip", em.postZip }
+            };
+            dbc.executeInsertQuery(sqlCmd, parms);
+            List<Employee> employee = ReturnEmployeeIDFromEmployeeStats(parms);
+            return employee[0].employeeID;
+        }
+        //Update Employee Nathan and Tyler Created
+        public int UpdateEmployee(Employee em)
+        {
+            string sqlCmd = "UPDATE tbl_employee SET firstName = @firstName, "
+                + "lastName = @lastName, jobID = @jobID, locationID = @locationID, "
+                + "email = @email, primaryContactINT = @primaryContactINT, "
+                + "secondaryContactINT = @secondaryContactINT, primaryAddress = @primaryAddress, "
+                + "secondaryAddress = @secondaryAddress, city = @city, "
+                + "provStateID = @provStateID, countryID = @countryID, "
+                + "postZip = @postZip WHERE empID = @empID";
+
+            Object[][] parms =
+            {
+                new object[] { "@empID", em.employeeID },
+                new object[] { "@firstName", em.firstName },
+                new object[] { "@lastName", em.lastName },
+                new object[] { "@jobID", em.jobID },
+                new object[] { "@locationID", em.location.locationID },
+                new object[] { "@email", em.emailAddress },
+                new object[] { "@primaryContactINT", em.primaryContactNumber },
+                new object[] { "@secondaryContactINT", em.secondaryContactNumber },
+                new object[] { "@primaryAddress", em.primaryAddress },
+                new object[] { "@secondaryAddress", em.secondaryAddress },
+                new object[] { "@city", em.city },
+                new object[] { "@provStateID", em.provState },
+                new object[] { "@countryID", em.country },
+                new object[] { "@postZip", em.postZip }
+            };
+            dbc.executeInsertQuery(sqlCmd, parms);
+            return em.employeeID;
+        }
+        public List<Employee> ReturnEmployeeIDFromEmployeeStats(object[][] parms)
+        {
+            string sqlCmd = "SELECT empID, firstName, lastName, jobID, locationID, "
+                + "email, primaryContactINT, secondaryContactINT, primaryAddress, "
+                + "secondaryAddress, city, provStateID, countryID, postZip "
+                + "FROM tbl_employee WHERE firstName = @firstName AND lastName = @lastName "
+                + "AND jobID = @jobID AND locationID = @locationID AND email = @email AND "
+                + "primaryContactINT = @primaryContactINT AND secondaryContactINT "
+                + "= @secondaryContactINT AND primaryAddress = @primaryAddress AND "
+                + "secondaryAddress = @secondaryAddress AND city = @city AND "
+                + "provStateID = @provStateID AND countryID = @countryID AND "
+                + "postZip = @postZip";
+            return ConvertFromDataTableToEmployee(dbc.returnDataTableData(sqlCmd, parms));
+        }
+        //Save new password into user_info
+        public bool saveNewPassword(int empID, int pWord)
+        {
+            bool bolAdded = false;
+            //First check if the password is in use by another user.
+            string sqlCmd = "Select empID from tbl_userInfo where password = @pWord";
+            Object[][] parms =
+            {
+                new object[] { "@pWord", pWord }
+            };
+            
+            //Checks to see if the password is already in use
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) < 0)
+            {
+                
+                //When password not in use check if the employee is already in the user info table
+                sqlCmd = "Select empID from tbl_userInfo where empID = @empID";
+                Object[][] parms1 = 
+                {
+                    new object [] { "@empID", empID }
+                };
+
+                if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms1) > -10)
+                {
+                    //Employee is in the userInfo table update password
+                    sqlCmd = "Update tbl_userInfo SET password = @pWord Where empID = @empID";
+                }
+                else
+                {
+                    //Employee is not in the table add user and password
+                    sqlCmd = "Insert Into tbl_userInfo values(@empID, @pWord)";
+                }
+                Object[][] parms2 =
+                {
+                    new object[] { "@empID", empID },
+                    new object[] { "@pWord", pWord }
+                };
+
+                dbc.executeInsertQuery(sqlCmd, parms2);
+                bolAdded = true;
+            }
+            
+            return bolAdded;
+        }
+        public List<CurrentUser> ReturnCurrentUserFromPassword(string password)
+        {
+            string sqlCmd = "SELECT E.empID, E.jobID, E.locationID, L.city, U.password "
+                + "FROM tbl_employee E JOIN tbl_location L ON E.locationID = L.locationID "
+                + "JOIN tbl_userInfo U ON E.empID = U.empID WHERE U.password = @password";
+            object[][] parms =
+            {
+                new object[] { "@password", password }
+            };
+            return ConvertFromDataTableToCurrentUser(dbc.returnDataTableData(sqlCmd, parms));
+        }
+
+
+
+
+        //Retrieves Employee from search parameters Nathan and Tyler created
+        public List<Employee> GetEmployeefromSearch(string searchField)
         {
             try
             {
@@ -30,35 +250,35 @@ namespace SweetShop
                 List<Employee> employee = new List<Employee>();
                 //Creating a table to store the results
                 DataTable table = new DataTable();
-                SqlConnection con = new SqlConnection(connectionString);
-                using (var cmd = new SqlCommand("getEmployeeFromSearch", con)) //Calling the SP
-                using (var da = new SqlDataAdapter(cmd))
+                //SqlConnection con = new SqlConnection(connectionString);
+                //using (var cmd = new SqlCommand("getEmployeeFromSearch", con)) //Calling the SP
+                //using (var da = new SqlDataAdapter(cmd))
                 {
                     //Adding the parameter
-                    cmd.Parameters.AddWithValue("@searchField", searchField);
+                    //cmd.Parameters.AddWithValue("@searchField", searchField);
                     //Executing the SP
-                    cmd.CommandType = CommandType.StoredProcedure;
+                    //cmd.CommandType = CommandType.StoredProcedure;
                     //Filling the table with what is found
-                    da.Fill(table);
+                    //da.Fill(table);
                 }
                 //Looping through the table and creating employees from the rows
                 foreach (DataRow row in table.Rows)
                 {
-                    Employee emp = new Employee(Convert.ToInt32(row["empID"]),
-                        row["firstName"].ToString(),
-                        row["lastName"].ToString(),
-                        Convert.ToInt32(row["jobID"]),
-                        Convert.ToInt32(row["locationID"]),
-                        row["email"].ToString(),
-                        row["primaryContactINT"].ToString(),
-                        row["secondaryContactINT"].ToString(),
-                        row["primaryAddress"].ToString(),
-                        row["secondaryAddress"].ToString(),
-                        row["city"].ToString(),
-                        Convert.ToInt32(row["provStateID"]),
-                        Convert.ToInt32(row["countryID"]),
-                        row["postZip"].ToString());
-                    employee.Add(emp);
+                    //Employee emp = new Employee(Convert.ToInt32(row["empID"]),
+                    //    row["firstName"].ToString(),
+                    //    row["lastName"].ToString(),
+                    //    Convert.ToInt32(row["jobID"]),
+                    //    Convert.ToInt32(row["locationID"]),
+                    //    row["email"].ToString(),
+                    //    row["primaryContactINT"].ToString(),
+                    //    row["secondaryContactINT"].ToString(),
+                    //    row["primaryAddress"].ToString(),
+                    //    row["secondaryAddress"].ToString(),
+                    //    row["city"].ToString(),
+                    //    Convert.ToInt32(row["provStateID"]),
+                    //    Convert.ToInt32(row["countryID"]),
+                    //    row["postZip"].ToString());
+                    //employee.Add(emp);
                 }
                 //Returns a full employee
                 return employee;
@@ -69,7 +289,6 @@ namespace SweetShop
                 return null;
             }
         }
-
         //This method returns an employee based on a given employee ID
         public Employee getEmployeeByID(int empID)
         {
@@ -97,7 +316,7 @@ namespace SweetShop
                         row["firstName"].ToString(),
                         row["lastName"].ToString(),
                         Convert.ToInt32(row["jobID"]),
-                        Convert.ToInt32(row["locationID"]),
+                        LM.ReturnLocation(Convert.ToInt32(row["locationID"]))[0],
                         row["email"].ToString(),
                         row["primaryContactINT"].ToString(),
                         row["secondaryContactINT"].ToString(),
@@ -118,105 +337,6 @@ namespace SweetShop
                 return null;
             }
         }
-
-        //Returns employeeID after adding employee to table created by Nathan
-        public int addEmployee(Employee em)
-        {
-            SqlConnection con = new SqlConnection(connectionString);
-            using (var cmd = new SqlCommand("insertEmployee", con)) //Calling the SP      
-            {
-                //Adding the parameter
-                cmd.Parameters.AddWithValue("@firstName", em.firstName);
-                cmd.Parameters.AddWithValue("@lastName", em.lastName);
-                cmd.Parameters.AddWithValue("@jobID", em.jobID);
-                cmd.Parameters.AddWithValue("@locationID", em.locationID);
-                cmd.Parameters.AddWithValue("@email", em.emailAddress);
-                cmd.Parameters.AddWithValue("@primaryContactINT", em.primaryContactNumber);
-                cmd.Parameters.AddWithValue("@secondaryContactINT", em.secondaryContactNumber);
-                cmd.Parameters.AddWithValue("@primaryAddress", em.primaryAddress);
-                cmd.Parameters.AddWithValue("@secondaryAddress", em.secondaryAddress);
-                cmd.Parameters.AddWithValue("@city", em.city);
-                cmd.Parameters.AddWithValue("@province", em.provState);
-                cmd.Parameters.AddWithValue("@country", em.country);
-                cmd.Parameters.AddWithValue("@postalCode", em.postZip);
-                //Executing the SP
-                cmd.CommandType = CommandType.StoredProcedure;
-                con.Open();
-                cmd.ExecuteNonQuery();
-                con.Close();
-            }
-
-            //Returns the employee ID of the newly created employee
-            return returnEmployeeNumber(em);
-        }
-
-        //Returns employeeID created by Nathan
-        public int returnEmployeeNumber(Employee em)
-        {
-
-            //Variable to store the employee ID
-            int empID = 0;
-            //Creating a table to store the results
-            DataTable table = new DataTable();
-            SqlConnection con = new SqlConnection(connectionString);
-            using (var cmd = new SqlCommand("getEmployeeID", con)) //Calling the SP   
-            using (var da = new SqlDataAdapter(cmd))
-            {
-                //Adding the parameter
-                cmd.Parameters.AddWithValue("@firstName", em.firstName);
-                cmd.Parameters.AddWithValue("@lastName", em.lastName);
-                cmd.Parameters.AddWithValue("@jobID", em.jobID);
-                cmd.Parameters.AddWithValue("@locationID", em.locationID);
-                cmd.Parameters.AddWithValue("@email", em.emailAddress);
-                cmd.Parameters.AddWithValue("@primaryContactINT", em.primaryContactNumber);
-                cmd.Parameters.AddWithValue("@secondaryContactINT", em.secondaryContactNumber);
-                cmd.Parameters.AddWithValue("@primaryAddress", em.primaryAddress);
-                cmd.Parameters.AddWithValue("@secondaryAddress", em.secondaryAddress);
-                cmd.Parameters.AddWithValue("@city", em.city);
-                cmd.Parameters.AddWithValue("@province", em.provState);
-                cmd.Parameters.AddWithValue("@country", em.country);
-                cmd.Parameters.AddWithValue("@postalCode", em.postZip);
-                //Executing the SP
-                cmd.CommandType = CommandType.StoredProcedure;
-                da.Fill(table);
-            }
-            foreach (DataRow row in table.Rows)
-            {
-                empID = Convert.ToInt32(row["empID"]);
-            }
-            //Returns the employee ID 
-            return empID;
-        }
-
-        //Update Employee Nathan and Tyler Created
-        public void updateEmployee(Employee em)
-        {
-            SqlConnection con = new SqlConnection(connectionString);
-            using (var cmd = new SqlCommand("updateEmployee", con)) //Calling the SP      
-            {
-                //Adding the parameter
-                cmd.Parameters.AddWithValue("@employeeID", em.employeeID);
-                cmd.Parameters.AddWithValue("@firstName", em.firstName);
-                cmd.Parameters.AddWithValue("@lastName", em.lastName);
-                cmd.Parameters.AddWithValue("@jobID", em.jobID);
-                cmd.Parameters.AddWithValue("@locationID", em.locationID);
-                cmd.Parameters.AddWithValue("@email", em.emailAddress);
-                cmd.Parameters.AddWithValue("@primaryContactINT", em.primaryContactNumber);
-                cmd.Parameters.AddWithValue("@secondaryContactINT", em.secondaryContactNumber);
-                cmd.Parameters.AddWithValue("@primaryAddress", em.primaryAddress);
-                cmd.Parameters.AddWithValue("@secondaryAddress", em.secondaryAddress);
-                cmd.Parameters.AddWithValue("@city", em.city);
-                cmd.Parameters.AddWithValue("@province", em.provState);
-                cmd.Parameters.AddWithValue("@country", em.country);
-                cmd.Parameters.AddWithValue("@postalCode", em.postZip);
-                //Executing the SP
-                cmd.CommandType = CommandType.StoredProcedure;
-                con.Open();
-                cmd.ExecuteNonQuery();
-                con.Close();
-            }
-        }
-
         //This method returns the jobID of a given job
         public int jobType(string jobName)
         {
@@ -225,7 +345,7 @@ namespace SweetShop
             int job = 0;
             //Creating a table to store the results
             DataTable table = new DataTable();
-            SqlConnection con = new SqlConnection(connectionString);
+            SqlConnection con = new SqlConnection("");// connectionString);
             using (var cmd = new SqlCommand("getJobID", con)) //Calling the SP   
             using (var da = new SqlDataAdapter(cmd))
             {
@@ -242,7 +362,6 @@ namespace SweetShop
             //Returns the job ID
             return job;
         }
-
         //Returns the job name when given a job ID
         public string jobName(int jobNum)
         {
@@ -250,7 +369,7 @@ namespace SweetShop
             string job = "";
             //Creating a table to store the results
             DataTable table = new DataTable();
-            SqlConnection con = new SqlConnection(connectionString);
+            SqlConnection con = new SqlConnection("");// connectionString);
             using (var cmd = new SqlCommand("getJobName", con)) //Calling the SP   
             using (var da = new SqlDataAdapter(cmd))
             {
@@ -267,66 +386,6 @@ namespace SweetShop
             //Returns the job name
             return job;
         }
-        //Save new password into user_info
-        public bool saveNewPassword(int empID, int pWord)
-        {
-            bool bolAdded = false;
-            //First check if the password is in use by another user.
-            SqlConnection conn = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = conn;
-            cmd.CommandText = "Select empID from tbl_userInfo where password = @pWord";
-            cmd.Parameters.AddWithValue("pWord", pWord);
-            conn.Open();
-            SqlDataReader pWordUsedReader = cmd.ExecuteReader();
-            //Checks to see if the password is already in use
-            if (!pWordUsedReader.HasRows)
-            {
-                conn.Close();
-                //When password not in use check if the employee is already in the user info table
-                SqlCommand cmd2 = new SqlCommand();
-                cmd2.Connection = conn;
-                cmd2.CommandText = "Select empID from tbl_userInfo where empID = @empID";
-                cmd2.Parameters.AddWithValue("empID", empID);
-                conn.Open();
-                SqlDataReader empInTableReader = cmd2.ExecuteReader();
-
-                SqlCommand cmdEmpPass = new SqlCommand();
-                cmdEmpPass.Connection = conn;
-                if (empInTableReader.HasRows)
-                {
-                    //Employee is in the userInfo table update password
-                    cmdEmpPass.CommandText = "Update tbl_userInfo SET password = @pWord Where empID = @empID";
-                }
-                else
-                {
-                    //Employee is not in the table add user and password
-                    cmdEmpPass.CommandText = "Insert Into tbl_userInfo values(@empID, @pWord)";
-                }
-                cmdEmpPass.Parameters.AddWithValue("empID", empID);
-                cmdEmpPass.Parameters.AddWithValue("pWord", pWord);
-                conn.Close();
-                conn.Open();
-                cmdEmpPass.ExecuteNonQuery();
-                bolAdded = true;
-            }
-            conn.Close();
-            return bolAdded;
-        }
-
-        public DataTable returnProvinceDropDown(int countryID)
-        {
-            DataTable dt = new DataTable();
-            SqlConnection conn = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = conn;
-            cmd.CommandText = "SELECT provStateID, provName FROM tbl_provState WHERE countryID = @countryID ORDER BY provName";
-            cmd.Parameters.AddWithValue("countryID", countryID);
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            da.Fill(dt);
-            return dt;
-        }
-
         public int returnEmployeeIDFromPassword(int empPassword)
         {
             int empID = 0;
@@ -366,6 +425,5 @@ namespace SweetShop
             }
             return bolValid;
         }
-
     }
 }

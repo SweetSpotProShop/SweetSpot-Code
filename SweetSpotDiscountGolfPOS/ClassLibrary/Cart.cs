@@ -19,8 +19,25 @@ namespace SweetShop
         public bool tradeIn { get; set; }
         public int typeID { get; set; }
         public double returnAmount { get; set; }
+        public int locationID { get; set; }
 
         public Cart() { }
+        public Cart(int s, string de, int q, double pr, double c, double d, bool p, double retA, bool t, int id, int l)
+        {
+            sku = s;
+            description = de;
+            quantity = q;
+            price = pr;
+            cost = c;
+            discount = d;
+            percentage = p;
+            returnAmount = retA;
+            tradeIn = t;
+            typeID = id;
+            locationID = l;
+        }
+
+        //old cart
         public Cart(int s, string de, int q, double pr, double c, double d, bool p, double retA, bool t, int id)
         {
             sku = s;
@@ -33,29 +50,6 @@ namespace SweetShop
             returnAmount = retA;
             tradeIn = t;
             typeID = id;
-        }
-        public Cart(int s, string de, int q, double pr, double c, double d, bool p, bool t, int id)
-        {
-            sku = s;
-            description = de;
-            quantity = q;
-            price = pr;
-            cost = c;
-            discount = d;
-            percentage = p;
-            tradeIn = t;
-            typeID = id;
-        }
-        public Cart(int s, string de, int q, double pr, double c, double d, bool p, double retA)
-        {
-            sku = s;
-            description = de;
-            quantity = q;
-            price = pr;
-            cost = c;
-            discount = d;
-            percentage = p;
-            returnAmount = retA;
         }
     }
 }

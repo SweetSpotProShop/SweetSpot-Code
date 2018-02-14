@@ -15,11 +15,11 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class InventoryHomePage : System.Web.UI.Page
     {
-        ErrorReporting er = new ErrorReporting();
-        CurrentUser cu = new CurrentUser();
+        ErrorReporting ER = new ErrorReporting();
+        CurrentUser CU = new CurrentUser();
+        ItemsManager IM = new ItemsManager();
         List<Items> searched = new List<Items>();
-        List<Items> i;
-        
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -27,25 +27,15 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "InventoryHomePage";
             try
             {
-                //if (Session["headers"] != null)
-                //{
-                //    string[] headers = (string[])Session["headers"];
-                //    (grdInventorySearched.HeaderRow.FindControl("btnSKU") as Button).Text = headers[0];
-                //    (grdInventorySearched.HeaderRow.FindControl("btnDescription") as Button).Text = headers[1];
-                //    (grdInventorySearched.HeaderRow.FindControl("btnStore") as Button).Text = headers[2];
-                //    (grdInventorySearched.HeaderRow.FindControl("btnQuantity") as Button).Text = headers[3];
-                //    (grdInventorySearched.HeaderRow.FindControl("btnPrice") as Button).Text = headers[4];
-                //    (grdInventorySearched.HeaderRow.FindControl("btnCost") as Button).Text = headers[5];
-                //}
-                cu = (CurrentUser)Session["currentUser"];
+                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
-                    Server.Transfer("LoginPage.aspx", false);
+                    Response.Redirect("LoginPage.aspx", false);
                 }
 
-                if (cu.jobID != 0)
+                if (CU.jobID != 0)
                 {
                     //If user is not an admin then disable the add new item button
                     btnAddNewInventory.Enabled = false;
@@ -55,18 +45,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnInventorySearch_Click(object sender, EventArgs e)
@@ -76,53 +60,12 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 string[] headers = { "SKU", "Description ▼", "Store ▼", "Quantity ▼", "Price ▼", "Cost ▼" };
-                Session["headers"] = headers;
-                ItemDataUtilities idu = new ItemDataUtilities();
-                string skuString;
-                int skuInt;
-                if (txtSearch.Text == "")
-                {
+                ViewState["headers"] = headers;
 
-                }
-                else
-                {
-                    //If text has been entered to search use it to dislpay relevent items
-                    //string loc = Convert.ToString(Session["Loc"]);
-                    SweetShopManager ssm = new SweetShopManager();
-                    string itemType = ddlInventoryType.SelectedItem.ToString();
-                    //determines if the searched text is a sku number
-                    if (!int.TryParse(txtSearch.Text, out skuInt))
-                    {
-                        //If number search through skus for any that match
-                        skuString = txtSearch.Text;
-                        if (chkIncludeZero.Checked)
-                        {
-                            searched = ssm.GetItemfromSearch(txtSearch.Text, itemType, true);
-                        }
-                        else
-                        {
-                            searched = ssm.GetItemfromSearch(txtSearch.Text, itemType, false);
-                        }
-                        
-                    }
-                    else
-                    {
-                        //If search is text 
-                        skuString = txtSearch.Text;
-                        // this looks for the item in the database
-                        i = idu.getItemByID(Convert.ToInt32(skuInt));
-                        itemType = idu.typeName(i.ElementAt(0).typeID);
-                        //if adding new item
-                        if (i != null && i.Count >= 1)
-                        {
-                            searched.Add(i.ElementAt(0));
-                        }
-                    }
-                    //Sets item type
-                    Session["itemType"] = itemType;
-                    populateGridview(searched);
-                    Session["listItems"] = searched;
-                }
+                searched = IM.ReturnInvoiceItemsFromSearchStringAndQuantity(txtSearch.Text, chkIncludeZero.Checked);
+                ViewState["listItems"] = searched;
+                populateGridview(searched);
+                grdInventorySearched.PageIndex = 0;
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -135,18 +78,12 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    //Log employee number
-                    int employeeID = cu.empID;
-                    //Log current page
-                    string currPage = Convert.ToString(Session["currPage"]);
                     //Log all info into error table
-                    er.logError(ex, employeeID, currPage, method, this);
-                    //string prevPage = Convert.ToString(Session["prevPage"]);
+                    ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                     //Display message box
                     MessageBox.ShowMessage("An Error has occured and been logged. "
                         + "If you continue to receive this message please contact "
                         + "your system administrator", this);
-                    //Server.Transfer(prevPage, false);
                 }
             }
         }           
@@ -156,99 +93,75 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnAddNewInventory_Click";
             try
             {
-                Session["listItems"] = null;
                 //Changes page to the inventory add new page
-                Server.Transfer("InventoryAddNew.aspx", false);
+                Response.Redirect("InventoryAddNew.aspx?sku=-10", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
+
+        //Still Needs Work
         protected void btnMakePurchase_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "btnMakePurchase_Click";
             try
             {
-                //Sets transaction type to sale
-                Session["TranType"] = 5;
                 //Sets customer id to guest cust
                 Session["key"] = 1;
-                Session["listItems"] = null;
                 //Changes page to Sales Cart
-                Server.Transfer("PurchasesCart.aspx", false);
+                Response.Redirect("PurchasesCart.aspx", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
+
         protected void grdInventorySearched_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method for error tracking
             string method = "err_grdInventorySearched_RowCommand";
             try
             {
-                //Stores sku number of selected item
-                string itemKey = e.CommandArgument.ToString();
                 if (e.CommandName == "viewItem")
                 {
-                    //If the command selected is viewItem, store item type 
-                    Session["key"] = itemKey;
-                    Session["listItems"] = null;
                     //Change to Inventory Add new page to display selected item
-                    Server.Transfer("InventoryAddNew.aspx");
+                    Response.Redirect("InventoryAddNew.aspx?sku=" + e.CommandArgument.ToString());
                 }               
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void grdInventorySearched_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             grdInventorySearched.PageIndex = e.NewPageIndex;
-            searched = (List<Items>)Session["listItems"];
+            searched = (List<Items>)ViewState["listItems"];
             populateGridview(searched);
         }
         protected void populateGridview(List<Items> list)
@@ -263,10 +176,10 @@ namespace SweetSpotDiscountGolfPOS
         protected void lbtnSKU_Click(object sender, EventArgs e)
         {
             //Grabbing the list
-            searched = (List<Items>)Session["listItems"];
+            searched = (List<Items>)ViewState["listItems"];
             Button sku = grdInventorySearched.HeaderRow.FindControl("btnSKU") as Button;
             string sort = sku.Text;
-            string[] headers = Session["headers"] as string[];
+            string[] headers = ViewState["headers"] as string[];
             switch(sort)
             {
                 case "SKU":
@@ -296,7 +209,7 @@ namespace SweetSpotDiscountGolfPOS
             headers[3] = "Quantity";
             headers[4] = "Price";
             headers[5] = "Cost";
-            Session["headers"] = headers;
+            ViewState["headers"] = headers;
             //Populating/Sorting the gridview
             populateGridview(searched);
             updateButtonText(headers);
@@ -304,10 +217,10 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnDescription_Click(object sender, EventArgs e)
         {
             //Grabbing the list
-            searched = (List<Items>)Session["listItems"];
+            searched = (List<Items>)ViewState["listItems"];
             Button desc = grdInventorySearched.HeaderRow.FindControl("btnDescription") as Button;
             string sort = desc.Text;
-            string[] headers = Session["headers"] as string[];
+            string[] headers = ViewState["headers"] as string[];
             switch (sort)
             {
                 case "Description":
@@ -337,7 +250,7 @@ namespace SweetSpotDiscountGolfPOS
             headers[3] = "Quantity";
             headers[4] = "Price";
             headers[5] = "Cost";
-            Session["headers"] = headers;
+            ViewState["headers"] = headers;
             //Populating/Sorting the gridview
             populateGridview(searched);
             updateButtonText(headers);
@@ -345,10 +258,10 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnStore_Click(object sender, EventArgs e)
         {
             //Grabbing the list
-            searched = (List<Items>)Session["listItems"];
+            searched = (List<Items>)ViewState["listItems"];
             Button store = grdInventorySearched.HeaderRow.FindControl("btnStore") as Button;
             string sort = store.Text;
-            string[] headers = Session["headers"] as string[];
+            string[] headers = ViewState["headers"] as string[];
             switch (sort)
             {
                 case "Store":
@@ -378,7 +291,7 @@ namespace SweetSpotDiscountGolfPOS
             headers[3] = "Quantity";
             headers[4] = "Price";
             headers[5] = "Cost";
-            Session["headers"] = headers;
+            ViewState["headers"] = headers;
             //Populating/Sorting the gridview
             populateGridview(searched);
             updateButtonText(headers);
@@ -386,10 +299,10 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnQuantity_Click(object sender, EventArgs e)
         {
             //Grabbing the list
-            searched = (List<Items>)Session["listItems"];
+            searched = (List<Items>)ViewState["listItems"];
             Button quantity = grdInventorySearched.HeaderRow.FindControl("btnQuantity") as Button;
             string sort = quantity.Text;
-            string[] headers = Session["headers"] as string[];
+            string[] headers = ViewState["headers"] as string[];
             switch (sort)
             {
                 case "Quantity":
@@ -419,7 +332,7 @@ namespace SweetSpotDiscountGolfPOS
             headers[2] = "Store";
             headers[4] = "Price";
             headers[5] = "Cost";
-            Session["headers"] = headers;
+            ViewState["headers"] = headers;
             //Populating/Sorting the gridview
             populateGridview(searched);
             updateButtonText(headers);
@@ -427,10 +340,10 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnPrice_Click(object sender, EventArgs e)
         {
             //Grabbing the list
-            searched = (List<Items>)Session["listItems"];
+            searched = (List<Items>)ViewState["listItems"];
             Button price = grdInventorySearched.HeaderRow.FindControl("btnPrice") as Button;
             string sort = price.Text;
-            string[] headers = Session["headers"] as string[];
+            string[] headers = ViewState["headers"] as string[];
             switch (sort)
             {
                 case "Price":
@@ -460,7 +373,7 @@ namespace SweetSpotDiscountGolfPOS
             headers[2] = "Store";
             headers[3] = "Quantity";
             headers[5] = "Cost";
-            Session["headers"] = headers;
+            ViewState["headers"] = headers;
             //Populating/Sorting the gridview
             populateGridview(searched);
             updateButtonText(headers);
@@ -468,10 +381,10 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnCost_Click(object sender, EventArgs e)
         {
             //Grabbing the list
-            searched = (List<Items>)Session["listItems"];
+            searched = (List<Items>)ViewState["listItems"];
             Button cost = grdInventorySearched.HeaderRow.FindControl("btnCost") as Button;
             string sort = cost.Text;
-            string[] headers = Session["headers"] as string[];
+            string[] headers = ViewState["headers"] as string[];
             switch (sort)
             {
                 case "Cost":
@@ -501,7 +414,7 @@ namespace SweetSpotDiscountGolfPOS
             headers[2] = "Store";
             headers[3] = "Quantity";
             headers[4] = "Price";
-            Session["headers"] = headers;
+            ViewState["headers"] = headers;
             //Populating/Sorting the gridview
             populateGridview(searched);
             updateButtonText(headers);
@@ -522,11 +435,11 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnDownload_Click";
             try
             {
-                searched = Session["listItems"] as List<Items>;
+                searched = ViewState["listItems"] as List<Items>;
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
-                string loc = cu.locationName;
+                string loc = CU.locationName;
                 string fileName = "Item Search - " + txtSearch.Text + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
@@ -563,18 +476,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
-                //Server.Transfer(prevPage, false);
             }
         }
     }

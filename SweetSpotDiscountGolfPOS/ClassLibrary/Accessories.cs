@@ -10,18 +10,18 @@ namespace SweetShop
     public class Accessories
     {        
         public int sku { get; set; }
-        public int brandID { get; set; }
         public string size { get; set; }
         public string colour { get; set; }
         public double price { get; set; }
         public double cost { get; set; }
+        public int brandID { get; set; }
+        public int modelID { get; set; }
+        public string accessoryType { get; set; }
         public int quantity { get; set; }
         public int typeID { get; set; }
         public int locID { get; set; }
         public string comments { get; set; }
-        public int modelID { get; set; }
-        public string accessoryType { get; set; }
-
+        
         public Accessories() { }
     }
 }

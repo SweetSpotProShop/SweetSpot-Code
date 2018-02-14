@@ -13,10 +13,7 @@
             <asp:Table runat="server">
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:Label ID="lblInventoryType" runat="server" Text="Inventory Type"></asp:Label>
-                    </asp:TableCell>
-                    <asp:TableCell>
-                        <asp:Label ID="lblSearch" runat="server" Text="Enter Search Text"></asp:Label>
+                        <asp:Label ID="lblSearch" runat="server" Text="Enter Search Text" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:CheckBox ID="chkIncludeZero" runat="server" Text="Return Zero Quantity" TextAlign="Left"/>
@@ -25,12 +22,8 @@
                 
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlInventoryType" runat="server" Width="150" DataSourceID="sqlInventoryTypes" DataTextField="typeDescription" DataValueField="typeID"></asp:DropDownList>
-                        <asp:SqlDataSource ID="sqlInventoryTypes" runat="server" ConnectionString="<%$ ConnectionStrings:SweetSpotDevConnectionString %>" SelectCommand="SELECT [typeID], [typeDescription] FROM [tbl_itemType]"></asp:SqlDataSource>
-                    </asp:TableCell>
-                    <asp:TableCell>
                         <%--Enter search text to find matching Inventory information--%>
-                        <asp:TextBox ID="txtSearch" runat="server"></asp:TextBox>
+                        <asp:TextBox ID="txtSearch" runat="server" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Button ID="btnInventorySearch" runat="server" Width="150" Text="Inventory Search" OnClick="btnInventorySearch_Click" />
@@ -53,50 +46,50 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="SKU">
                         <HeaderTemplate>
-                            <asp:Button ID="btnSKU" runat="server" OnClick="lbtnSKU_Click" Width="100px" Text="SKU"></asp:Button>
+                            <asp:Button ID="btnSKU" runat="server" OnClick="lbtnSKU_Click" Width="100px" Text="SKU" />
                         </HeaderTemplate>
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("sku")%>'></asp:Label>
+                            <asp:Label runat="server" Text='<%#Eval("sku")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Description">
                         <HeaderTemplate>
-                            <asp:Button ID="btnDescription" runat="server" OnClick="btnDescription_Click" Width="100px" Text="Description"></asp:Button>
+                            <asp:Button ID="btnDescription" runat="server" OnClick="btnDescription_Click" Width="100px" Text="Description" />
                         </HeaderTemplate>
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("description")%>'></asp:Label>
+                            <asp:Label runat="server" Text='<%#Eval("description")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Store">
                         <HeaderTemplate>
-                            <asp:Button ID="btnStore" runat="server" OnClick="btnStore_Click" Width="100px" Text="Store"></asp:Button>
+                            <asp:Button ID="btnStore" runat="server" OnClick="btnStore_Click" Width="100px" Text="Store" />
                         </HeaderTemplate>
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("location")%>'></asp:Label>
+                            <asp:Label runat="server" Text='<%#Eval("location")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Quantity">
                         <HeaderTemplate>
-                            <asp:Button ID="btnQuantity" runat="server" OnClick="btnQuantity_Click" Width="100px" Text="Quantity"></asp:Button>
+                            <asp:Button ID="btnQuantity" runat="server" OnClick="btnQuantity_Click" Width="100px" Text="Quantity" />
                         </HeaderTemplate>
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("quantity")%>'></asp:Label>
+                            <asp:Label runat="server" Text='<%#Eval("quantity")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Price">
                         <HeaderTemplate>
-                            <asp:Button ID="btnPrice" runat="server" OnClick="btnPrice_Click" Width="100px" Text="Price"></asp:Button>
+                            <asp:Button ID="btnPrice" runat="server" OnClick="btnPrice_Click" Width="100px" Text="Price" />
                         </HeaderTemplate>
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("price","{0:C}")%>'></asp:Label>
+                            <asp:Label runat="server" Text='<%#Eval("price","{0:C}")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Cost">
                         <HeaderTemplate>
-                            <asp:Button ID="btnCost" runat="server" OnClick="btnCost_Click" Width="100px" Text="Cost"></asp:Button>
+                            <asp:Button ID="btnCost" runat="server" OnClick="btnCost_Click" Width="100px" Text="Cost" />
                         </HeaderTemplate>
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("cost","{0:C}")%>'></asp:Label>
+                            <asp:Label runat="server" Text='<%#Eval("cost","{0:C}")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>

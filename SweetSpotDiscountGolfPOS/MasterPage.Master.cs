@@ -16,7 +16,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnLogout_Click(object sender, EventArgs e)
         {
             Session["currentUser"] = null;
-            Server.Transfer("LoginPage.aspx", false);
+            Response.Redirect("LoginPage.aspx", false);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SweetSpotDiscountGolfPOS.ClassLibrary;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ namespace SweetShop
         public string firstName { get; set; }
         public string lastName { get; set; }
         public int jobID { get; set; }
-        public int locationID { get; set; }
+        public Location location { get; set; }
         public string emailAddress { get; set; }
         public string primaryContactNumber { get; set; }
         public string secondaryContactNumber { get; set; }
@@ -25,24 +26,24 @@ namespace SweetShop
         public string postZip { get; set; }
         
         public Employee() { }
-        public Employee(int ID, string first, string last, int job, int location, string email,
-            string pcNumber, string scNumber, string pAddress, string sAddress, string cty, int pState,
-            int cntry, string pZip)
+        public Employee(int ID, string First, string Last, int Job, Location Location, string Email,
+            string PCNumber, string SCNumber, string PAddress, string SAddress, string City, int PState,
+            int Country, string PZip)
         {
             employeeID = ID;
-            firstName = first;
-            lastName = last;
-            jobID = job;
-            locationID = location;
-            emailAddress = email;
-            primaryContactNumber = pcNumber;
-            secondaryContactNumber = scNumber;
-            primaryAddress = pAddress;
-            secondaryAddress = sAddress;
-            city = cty;
-            provState = pState;
-            country = cntry;
-            postZip = pZip;
+            firstName = First;
+            lastName = Last;
+            jobID = Job;
+            location = Location;
+            emailAddress = Email;
+            primaryContactNumber = PCNumber;
+            secondaryContactNumber = SCNumber;
+            primaryAddress = PAddress;
+            secondaryAddress = SAddress;
+            city = City;
+            provState = PState;
+            country = Country;
+            postZip = PZip;
         }
     }
 }
