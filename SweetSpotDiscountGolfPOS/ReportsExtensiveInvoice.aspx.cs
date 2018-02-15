@@ -321,7 +321,7 @@ namespace SweetSpotDiscountGolfPOS
                 Session["MethodsOfPayment"] = ssm.invoice_getMOP(invNum, invSNum, "tbl_invoiceMOP");
                 Session["TranType"] = tran;
                 //Changes page to display a printable invoice
-                Server.Transfer("PrintableInvoice.aspx", false);
+                Response.Redirect("PrintableInvoice.aspx?inv=" + invoice, false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
