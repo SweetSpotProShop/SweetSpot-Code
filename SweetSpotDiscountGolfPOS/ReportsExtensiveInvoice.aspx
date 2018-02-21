@@ -21,7 +21,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText ="Shipping">
                         <ItemTemplate>
-                            <asp:Label ID="lblShipping" runat="server" Text='<%#Eval("shippingAmount", "{0:C}")%>'></asp:Label>
+                            <asp:Label ID="lblShipping" runat="server" Text='<%#Eval("shippingAmount")%>'></asp:Label>
                         </ItemTemplate>
                         <FooterTemplate>
                             <asp:Label ID="lblShippingTotal" runat="server"></asp:Label>
@@ -29,7 +29,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText ="Discount">
                         <ItemTemplate>
-                            <asp:Label ID="lblDiscount" runat="server" Text='<%#Eval("Total Discount", "{0:C}")%>'></asp:Label>
+                            <asp:Label ID="lblDiscount" runat="server" Text='<%#Eval("Total Discount")%>'></asp:Label>
                         </ItemTemplate>
                         <FooterTemplate>
                             <asp:Label ID="lblDiscountTotal" runat="server"></asp:Label>

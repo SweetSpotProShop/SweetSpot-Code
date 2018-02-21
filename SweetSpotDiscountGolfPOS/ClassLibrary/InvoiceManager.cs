@@ -165,5 +165,75 @@ namespace SweetSpotDiscountGolfPOS
             };
             return ConvertFromDataTableToInvoiceForReturns(dbc.returnDataTableData(sqlCmd, parms));
         }
+
+
+
+
+        //Returns list of invoices based on search criteria and date range
+        public List<Invoice> ReturnInvoicesBasedOnSearchCriteriaV2(DateTime stDate, DateTime endDate, string searchTxt, int locationID)
+        {
+            InvoiceItemsManager IIM = new InvoiceItemsManager();
+            ArrayList strText = new ArrayList();
+
+            string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, CAST(invoiceTime AS DATETIME) AS invoiceTime, "
+                + "custID, empID, locationID, subTotal, discountAmount, tradeinAmount, governmentTax, provincialTax, "
+                + "balanceDue, transactionType, comments FROM tbl_invoice WHERE ";
+
+            if (searchTxt != "" && stDate == endDate)
+            {
+                for (int i = 0; i < searchTxt.Split(' ').Length; i++)
+                {
+                    strText.Add(searchTxt.Split(' ')[i]);
+                }
+                sqlCmd += "( invoiceNum IN (SELECT DISTINCT invoiceNum FROM tbl_invoiceItem WHERE "
+                    + "CAST(invoiceNum AS VARCHAR) LIKE '%" + searchTxt + "%' OR sku IN (";
+                sqlCmd += IIM.ReturnStringSearchForAccessories(strText);
+                sqlCmd += " UNION ";
+                sqlCmd += IIM.ReturnStringSearchForClothing(strText);
+                sqlCmd += " UNION ";
+                sqlCmd += IIM.ReturnStringSearchForClubs(strText) + ")))";
+            }            
+            else if(searchTxt != "" && stDate != endDate)
+            {
+                for (int i = 0; i < searchTxt.Split(' ').Length; i++)
+                {
+                    strText.Add(searchTxt.Split(' ')[i]);
+                }
+                sqlCmd += "( invoiceNum IN (SELECT DISTINCT invoiceNum FROM tbl_invoiceItem WHERE "
+                    + "CAST(invoiceNum AS VARCHAR) LIKE '%" + searchTxt + "%' OR sku IN (";
+                sqlCmd += IIM.ReturnStringSearchForAccessories(strText);
+                sqlCmd += " UNION ";
+                sqlCmd += IIM.ReturnStringSearchForClothing(strText);
+                sqlCmd += " UNION ";
+                sqlCmd += IIM.ReturnStringSearchForClubs(strText) + "))) ";
+                sqlCmd += "OR invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "' AND locationID = @locationID";
+            }
+            else if (searchTxt == "" && stDate != endDate)
+            {
+                sqlCmd += "invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "' AND locationID = @locationID";
+            }
+            else if (searchTxt == "" && stDate == endDate)
+            {
+                sqlCmd += "invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "' AND locationID = @locationID";
+            }
+
+
+
+            object[][] parms =
+            {
+                new object[] { "locationID", locationID }
+            };
+            return ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd, parms));
+        }
+
+
+
+
+
+
+
+
+
+
     }
 }

@@ -150,7 +150,7 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Binds invoice list to the grid view
-                grdInvoiceSelection.DataSource = IM.ReturnInvoicesBasedOnSearchCriteria(calStartDate.SelectedDate, calEndDate.SelectedDate, txtInvoiceNum.Text, Convert.ToInt32(ddlLocation.SelectedValue));
+                grdInvoiceSelection.DataSource = IM.ReturnInvoicesBasedOnSearchCriteriaV2(calStartDate.SelectedDate, calEndDate.SelectedDate, txtInvoiceNum.Text, Convert.ToInt32(ddlLocation.SelectedValue));
                 grdInvoiceSelection.DataBind();
             }
             //Exception catch

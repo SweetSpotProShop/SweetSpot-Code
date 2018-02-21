@@ -192,8 +192,6 @@ namespace SweetSpotDiscountGolfPOS
                 double profitMarginAverage = (margin / marginCounter);
                 lblProfitMarginTotal.Text = profitMarginAverage.ToString("#.##") + "%";
             }
-
-
         }
 
         protected void btnDownload_Click(object sender, EventArgs e)
