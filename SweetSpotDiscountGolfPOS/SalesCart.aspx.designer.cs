@@ -103,6 +103,15 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.TextBox txtShippingAmount;
         
         /// <summary>
+        /// lblShippingWarning control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblShippingWarning;
+        
+        /// <summary>
         /// btnJumpToInventory control.
         /// </summary>
         /// <remarks>

@@ -46,6 +46,13 @@
                                 ErrorMessage="Cost Required"
                                 ForeColor="Red">
                             </asp:RequiredFieldValidator>
+                            <asp:RegularExpressionValidator ID="revCost"
+                                ControlToValidate="txtCost"
+                                ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
+                                Display="Static"
+                                EnableClientScript="true"
+                                ErrorMessage="Requires a number"
+                                runat="server" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
@@ -61,10 +68,17 @@
                             </asp:RequiredFieldValidator>
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label ID="lblPrice" runat="server" Text="Price:  $"></asp:Label>
+                            <asp:Label ID="lblPrice" runat="server" Text="Price:  $"></asp:Label>                            
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:TextBox ID="txtPrice" runat="server" Visible="true" Text="0"></asp:TextBox>
+                            <asp:RegularExpressionValidator ID="revPrice"
+                                ControlToValidate="txtPrice"
+                                ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
+                                Display="Static"
+                                EnableClientScript="true"
+                                ErrorMessage="Requires a number"
+                                runat="server" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
@@ -78,6 +92,13 @@
                                 ErrorMessage="Quantity Required"
                                 ForeColor="Red">
                             </asp:RequiredFieldValidator>
+                            <asp:RegularExpressionValidator ID="revQuantity"
+                                ControlToValidate="txtQuantity"
+                                ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
+                                Display="Static"
+                                EnableClientScript="true"
+                                ErrorMessage="Requires a number"
+                                runat="server" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>

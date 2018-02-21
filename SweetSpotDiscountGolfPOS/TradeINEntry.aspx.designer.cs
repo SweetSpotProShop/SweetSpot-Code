@@ -112,6 +112,15 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvCost;
         
         /// <summary>
+        /// revCost control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator revCost;
+        
+        /// <summary>
         /// lblBrand control.
         /// </summary>
         /// <remarks>
@@ -157,6 +166,15 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.TextBox txtPrice;
         
         /// <summary>
+        /// revPrice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator revPrice;
+        
+        /// <summary>
         /// lblQuantity control.
         /// </summary>
         /// <remarks>
@@ -182,6 +200,15 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvQuantity;
+        
+        /// <summary>
+        /// revQuantity control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator revQuantity;
         
         /// <summary>
         /// lblClubType control.

@@ -28,6 +28,7 @@ namespace SweetSpotDiscountGolfPOS
         Reports R = new Reports();
         TaxManager TM = new TaxManager();
         LocationManager LM = new LocationManager();
+        DatabaseCalls dbc = new DatabaseCalls();
 
         //SweetShopManager ssm = new SweetShopManager();
         internal static readonly Page aspx;
@@ -70,7 +71,7 @@ namespace SweetSpotDiscountGolfPOS
                         ddlProvince.DataValueField = "provStateID";
                         ddlProvince.DataBind();
                         ddlProvince.SelectedValue = "1";
-                        ddlTax.DataSource = TM.ReturnTaxListBasedOnDateAndProvinceForUpdate(1,Convert.ToDateTime(lblCurrentDate.Text));
+                        ddlTax.DataSource = TM.ReturnTaxListBasedOnDateAndProvinceForUpdate(1, Convert.ToDateTime(lblCurrentDate.Text));
                         ddlTax.DataTextField = "taxName";
                         ddlTax.DataValueField = "taxID";
                         ddlTax.DataBind();
@@ -262,7 +263,7 @@ namespace SweetSpotDiscountGolfPOS
                             {
                                 MessageBox.ShowMessage("Importing Complete", this);
                             }
-                           
+
                         }
                     }
                 }
@@ -316,39 +317,10 @@ namespace SweetSpotDiscountGolfPOS
                 //Sets path and file name to save the export to 
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
+                string filename = "AllItems - " + DateTime.Now.ToString("dd.MM.yyyy") + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + "TotalInventory.xlsx");
                 //With the craeted file do all intenal code
-                using (ExcelPackage xlPackage = new ExcelPackage(newFile))
-                {
-                    //Add page to the work book called inventory
-                    ExcelWorksheet worksheet = xlPackage.Workbook.Worksheets.Add("Inventory");
-                    // write to sheet
-                    DataTable exportTable = R.exportAllItems();
-                    //Setting data collection as datatable
-                    DataColumnCollection dcCollection = exportTable.Columns;
-                    //Loops through each row in the datatable
-                    for (int i = 1; i < exportTable.Rows.Count + 2; i++)
-                    {
-                        //Loops through each column in the data table
-                        for (int j = 1; j < exportTable.Columns.Count + 1; j++)
-                        {
-                            //When the row equals 1 set the headers
-                            if (i == 1)
-                            {
-                                worksheet.Cells[i, j].Value = dcCollection[j - 1].ToString();
-                            }
-                            else
-                                //Set the values in the data table
-                                worksheet.Cells[i, j].Value = exportTable.Rows[i - 2][j - 1].ToString();
-                        }
-                    }
-                    //Sets the attributes and writes file
-                    Response.Clear();
-                    Response.AddHeader("content-disposition", "attachment; filename=TotalInventory.xlsx");
-                    Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                    Response.BinaryWrite(xlPackage.GetAsByteArray());
-                    Response.End();
-                }
+                R.itemExports("all", newFile, filename);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -368,21 +340,30 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnExportClubs_Click";
             try
             {
-                //Calls method to export clubs
-                R.exportClubs();
-                //Displays message
-                MessageBox.ShowMessage("Export Complete", this);
+                //Sets path and file name to save the export to 
+                string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                string pathDownload = (pathUser + "\\Downloads\\");
+                string filename = "AllClubs - " + DateTime.Now.ToString("dd.MM.yyyy") + ".xlsx";
+                FileInfo newFile = new FileInfo(pathDownload + filename);
+                //With the craeted file do all intenal code
+                R.itemExports("clubs", newFile, filename);                
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
+                //Log employee number
+                int employeeID = CU.empID;
+                //Log current page
+                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
+                ER.logError(ex, employeeID, currPage, method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
+                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnExportClothing_Click(object sender, EventArgs e)
@@ -391,21 +372,30 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnExportClothing_Click";
             try
             {
-                //Calls method to export all clothing
-                R.exportClothing();
-                //Displays message
-                MessageBox.ShowMessage("Export Complete", this);
+                //Sets path and file name to save the export to 
+                string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                string pathDownload = (pathUser + "\\Downloads\\");
+                string filename = "AllClothing - " + DateTime.Now.ToString("dd.MM.yyyy") + ".xlsx";
+                FileInfo newFile = new FileInfo(pathDownload + filename);
+                //With the created file do all intenal code
+                R.itemExports("clothing", newFile, filename);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
+                //Log employee number
+                int employeeID = CU.empID;
+                //Log current page
+                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
+                ER.logError(ex, employeeID, currPage, method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
+                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnExportAccessories_Click(object sender, EventArgs e)
@@ -414,21 +404,31 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnExportAccessories_Click";
             try
             {
-                //Calls method to export all accessories
-                R.exportAccessories();
-                //Displays message
-                MessageBox.ShowMessage("Export Complete", this);
+                //Sets path and file name to save the export to 
+                string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                string pathDownload = (pathUser + "\\Downloads\\");
+                string filename = "AllAccessories - " + DateTime.Now.ToString("dd.MM.yyyy") + ".xlsx";
+                FileInfo newFile = new FileInfo(pathDownload + filename);
+                //With the craeted file do all intenal code
+                R.itemExports("accessories", newFile, filename);
+
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
+                //Log employee number
+                int employeeID = CU.empID;
+                //Log current page
+                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
+                ER.logError(ex, employeeID, currPage, method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
+                //Server.Transfer(prevPage, false);
             }
         }
         protected void btnExportInvoices_Click(object sender, EventArgs e)
@@ -483,7 +483,7 @@ namespace SweetSpotDiscountGolfPOS
                     // write to sheet                  
 
                     //Export main invoice
-                    for (int i = 1; i < dtim.Rows.Count; i++)
+                    for (int i = 1; i <= dtim.Rows.Count; i++)
                     {
                         for (int j = 1; j < dtim.Columns.Count + 1; j++)
                         {
@@ -498,7 +498,7 @@ namespace SweetSpotDiscountGolfPOS
                         }
                     }
                     //Export item invoice
-                    for (int i = 1; i < dtii.Rows.Count; i++)
+                    for (int i = 1; i <= dtii.Rows.Count; i++)
                     {
                         for (int j = 1; j < dtii.Columns.Count + 1; j++)
                         {
@@ -513,7 +513,7 @@ namespace SweetSpotDiscountGolfPOS
                         }
                     }
                     //Export mop invoice
-                    for (int i = 1; i < dtimo.Rows.Count; i++)
+                    for (int i = 1; i <= dtimo.Rows.Count; i++)
                     {
                         for (int j = 1; j < dtimo.Columns.Count + 1; j++)
                         {
@@ -551,7 +551,7 @@ namespace SweetSpotDiscountGolfPOS
             string method = "ddlProvince_SelectedIndexChanged";
             try
             {
-                ddlTax.DataSource= TM.ReturnTaxListBasedOnDateAndProvinceForUpdate(Convert.ToInt32(ddlProvince.SelectedValue), Convert.ToDateTime(lblCurrentDate.Text));
+                ddlTax.DataSource = TM.ReturnTaxListBasedOnDateAndProvinceForUpdate(Convert.ToInt32(ddlProvince.SelectedValue), Convert.ToDateTime(lblCurrentDate.Text));
                 ddlTax.DataBind();
             }
             catch (ThreadAbortException tae) { }

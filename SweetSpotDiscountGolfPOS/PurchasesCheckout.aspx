@@ -71,6 +71,13 @@
                                 </asp:TableCell>
                                 <asp:TableCell>
                                     <asp:TextBox ID="txtChequeNumber" runat="server" Text="0000" />
+                                    <asp:RegularExpressionValidator ID="revChequeNumber"
+                                        ControlToValidate="txtChqueNumber"
+                                        ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
+                                        Display="Static"
+                                        EnableClientScript="true"
+                                        ErrorMessage="Requires a number"
+                                        runat="server" />
                                 </asp:TableCell>
                             </asp:TableRow>
                             <asp:TableRow>

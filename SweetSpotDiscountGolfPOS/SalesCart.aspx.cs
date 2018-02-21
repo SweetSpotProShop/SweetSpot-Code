@@ -606,21 +606,44 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 lblInvalidQty.Visible = false;
-                //Checks to see if shipping was selected
+                //Validates that what is entered in the shipping amount textbox is a number
                 if (!RadioButton2.Checked)
                 {
-                    //Sets sessions based on result
                     Session["shipping"] = false;
                     Session["ShippingAmount"] = 0;
+                    Response.Redirect("SalesCheckout.aspx", false);
                 }
                 else
                 {
-                    //Sets sessions based on result
-                    Session["shipping"] = true;
-                    Session["ShippingAmount"] = txtShippingAmount.Text;
+                    if (txtShippingAmount.Text.isNumber())
+                    {
+                        Session["shipping"] = true;
+                        Session["ShippingAmount"] = txtShippingAmount.Text;
+                        Response.Redirect("SalesCheckout.aspx", false);
+                    }
+                    else
+                    {
+                        lblShippingWarning.Visible = true;
+                        lblShippingWarning.Text = "Requires a number";
+                    }
                 }
-                //Changes to Sales Checkout page
-                Response.Redirect("SalesCheckout.aspx", false);
+
+
+                ////Checks to see if shipping was selected
+                //if (!RadioButton2.Checked)
+                //{
+                //    //Sets sessions based on result
+                //    Session["shipping"] = false;
+                //    Session["ShippingAmount"] = 0;
+                //}
+                //else
+                //{
+                //    //Sets sessions based on result
+                //    Session["shipping"] = true;
+                //    Session["ShippingAmount"] = txtShippingAmount.Text;
+                //}
+                ////Changes to Sales Checkout page
+                //Response.Redirect("SalesCheckout.aspx", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

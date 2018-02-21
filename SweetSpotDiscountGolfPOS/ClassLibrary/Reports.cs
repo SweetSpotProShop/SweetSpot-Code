@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.Text;
 using OfficeOpenXml;
 using System.Windows.Forms;
+using System.Web;
 
 namespace SweetSpotDiscountGolfPOS.ClassLibrary
 {
@@ -2263,272 +2264,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
 
         //********************EXPORTING***************************************************************
-        //Export clubs table to excel file in users Downloads folder        
-        public void exportClubs()
-        {
-            SqlConnection sqlCon = new SqlConnection(connectionString);
-            sqlCon.Open();
-            SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM tbl_clubs", sqlCon);
-            System.Data.DataTable dtMainSQLData = new System.Data.DataTable();
-            da.Fill(dtMainSQLData);
-            DataColumnCollection dcCollection = dtMainSQLData.Columns;
-
-            // Export Data into EXCEL Sheet
-            Microsoft.Office.Interop.Excel.Application ExcelApp = new
-            Microsoft.Office.Interop.Excel.Application();
-            ExcelApp.Application.Workbooks.Add(Type.Missing);
-
-            for (int i = 1; i < dtMainSQLData.Rows.Count + 2; i++)
-            {
-                for (int j = 1; j < dtMainSQLData.Columns.Count + 1; j++)
-                {
-                    if (i == 1)
-                    {
-                        ExcelApp.Cells[i, j] = dcCollection[j - 1].ToString();
-                    }
-                    else
-                        ExcelApp.Cells[i, j] = dtMainSQLData.Rows[i - 2][j - 1].ToString();
-                }
-            }
-            //Get users profile, downloads folder path, and save to workstation
-            string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            string pathDownload = Path.Combine(pathUser, "Downloads");
-            ExcelApp.ActiveWorkbook.SaveCopyAs(pathDownload + "\\ClubsInventory-" + DateTime.Now.ToString("d MMM yyyy") + ".xlsx");
-            ExcelApp.ActiveWorkbook.Saved = true;
-            ExcelApp.Quit();
-        } //**Incorrect format
-          //Export clothing table to excel file in users Downloads folder
-        public void exportClothing()
-        {
-            SqlConnection sqlCon = new SqlConnection(connectionString);
-            sqlCon.Open();
-            SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM tbl_clothing", sqlCon);
-            System.Data.DataTable dtMainSQLData = new System.Data.DataTable();
-            da.Fill(dtMainSQLData);
-            DataColumnCollection dcCollection = dtMainSQLData.Columns;
-
-            // Export Data into EXCEL Sheet
-            Microsoft.Office.Interop.Excel.Application ExcelApp = new
-            Microsoft.Office.Interop.Excel.Application();
-            ExcelApp.Application.Workbooks.Add(Type.Missing);
-
-            for (int i = 1; i < dtMainSQLData.Rows.Count + 2; i++)
-            {
-                for (int j = 1; j < dtMainSQLData.Columns.Count + 1; j++)
-                {
-                    if (i == 1)
-                    {
-                        ExcelApp.Cells[i, j] = dcCollection[j - 1].ToString();
-                    }
-                    else
-                        ExcelApp.Cells[i, j] = dtMainSQLData.Rows[i - 2][j - 1].ToString();
-                }
-            }
-            //Get users profile, downloads folder path, and save to workstation
-            string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            string pathDownload = Path.Combine(pathUser, "Downloads");
-            ExcelApp.ActiveWorkbook.SaveCopyAs(pathDownload + "\\ClothingInventory-" + DateTime.Now.ToString("d MMM yyyy") + ".xlsx");
-            ExcelApp.ActiveWorkbook.Saved = true;
-            ExcelApp.Quit();
-        } //**Incorrect format
-          //Export accessories table to excel file in users Downloads folder
-        public void exportAccessories()
-        {
-            SqlConnection sqlCon = new SqlConnection(connectionString);
-            sqlCon.Open();
-            SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM tbl_accessories", sqlCon);
-            System.Data.DataTable dtMainSQLData = new System.Data.DataTable();
-            da.Fill(dtMainSQLData);
-            DataColumnCollection dcCollection = dtMainSQLData.Columns;
-
-            // Export Data into EXCEL Sheet
-            Microsoft.Office.Interop.Excel.Application ExcelApp = new
-            Microsoft.Office.Interop.Excel.Application();
-            ExcelApp.Application.Workbooks.Add(Type.Missing);
-
-            for (int i = 1; i < dtMainSQLData.Rows.Count + 2; i++)
-            {
-                for (int j = 1; j < dtMainSQLData.Columns.Count + 1; j++)
-                {
-                    if (i == 1)
-                    {
-                        ExcelApp.Cells[i, j] = dcCollection[j - 1].ToString();
-                    }
-                    else
-                        ExcelApp.Cells[i, j] = dtMainSQLData.Rows[i - 2][j - 1].ToString();
-                }
-            }
-            //Get users profile, downloads folder path, and save to workstation
-            string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            string pathDownload = Path.Combine(pathUser, "Downloads");
-            ExcelApp.ActiveWorkbook.SaveCopyAs(pathDownload + "\\AccessoriesInventory-" + DateTime.Now.ToString("d MMM yyyy") + ".xlsx");
-            ExcelApp.ActiveWorkbook.Saved = true;
-            ExcelApp.Quit();
-        } //**Incorrect format
-          //Export all items in inventory
-        public System.Data.DataTable exportAllItems()
-        {
-            //This is the table that has all of the information lined up the way Caspio needs it to be
-            exportTable = new System.Data.DataTable();
-
-            exportTable.Columns.Add("Vendor", typeof(string));
-            exportTable.Columns.Add("Store_ID", typeof(string));
-            exportTable.Columns.Add("ItemNumber", typeof(string));
-            exportTable.Columns.Add("Shipment_Date", typeof(string));
-            exportTable.Columns.Add("Brand", typeof(string));
-            exportTable.Columns.Add("Model", typeof(string));
-            exportTable.Columns.Add("Club_Type", typeof(string));
-            exportTable.Columns.Add("Shaft", typeof(string));
-            exportTable.Columns.Add("Number_of_Clubs", typeof(string));
-            exportTable.Columns.Add("Tradein_Price", typeof(double));
-            exportTable.Columns.Add("Premium", typeof(double));
-            exportTable.Columns.Add("WE PAY", typeof(double));
-            exportTable.Columns.Add("QUANTITY", typeof(int));
-            exportTable.Columns.Add("Ext'd Price", typeof(double));
-            exportTable.Columns.Add("RetailPrice", typeof(double));
-            exportTable.Columns.Add("Comments", typeof(string));
-            exportTable.Columns.Add("Image", typeof(string));
-            exportTable.Columns.Add("Club_Spec", typeof(string));
-            exportTable.Columns.Add("Shaft_Spec", typeof(string));
-            exportTable.Columns.Add("Shaft_Flex", typeof(string));
-            exportTable.Columns.Add("Dexterity", typeof(string));
-            exportTable.Columns.Add("Destination", typeof(string));
-            exportTable.Columns.Add("Received", typeof(string));
-            exportTable.Columns.Add("Paid", typeof(string));
-
-            exportAllAdd_Clubs();
-            exportAllAdd_Accessories();
-            exportAllAdd_Clothing();
-            //Returns the table
-            return exportTable;
-        }
-        //Puts the clubs in the export table
-        public void exportAllAdd_Clubs()
-        {
-            SqlConnection conn = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = conn;
-            //This query gathers all required information. No other methods needed
-            cmd.CommandText = "select tbl_clubs.sku, " +
-                                    "(select tbl_model.modelName from tbl_model where tbl_model.modelID = tbl_clubs.modelID ) as modelName , " +
-                                    "(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = tbl_clubs.brandID ) as brandName , " +
-                                    "tbl_clubs.clubType, tbl_clubs.shaft, tbl_clubs.numberOfClubs, tbl_clubs.premium, tbl_clubs.cost, tbl_clubs.price," +
-                                    "tbl_clubs.quantity, tbl_clubs.clubSpec, tbl_clubs.shaftSpec, tbl_clubs.shaftFlex, tbl_clubs.dexterity, " +
-                                    "(select tbl_itemType.typeDescription from tbl_itemType where tbl_itemType.typeID = tbl_clubs.typeID ) as itemType , " +
-                                    "(select tbl_location.locationName from tbl_location where tbl_location.locationID = tbl_clubs.locationID) as locationName, " +
-                                    "(select tbl_location.secondaryIdentifier from tbl_location where tbl_location.locationID = tbl_clubs.locationID) as locationSecondary, " +
-                                    "tbl_clubs.used, tbl_clubs.comments from tbl_clubs";
-            conn.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                exportTable.Rows.Add("",
-                    reader["locationName"].ToString(),
-                    (Convert.ToInt32(reader["sku"])).ToString(),
-                    "",
-                    reader["brandName"].ToString(),
-                    reader["modelName"].ToString(),
-                    reader["clubType"].ToString(),
-                    reader["shaft"].ToString(),
-                    reader["numberOfClubs"].ToString(),
-                    0,
-                    Convert.ToDouble(reader["premium"]),
-                    Convert.ToDouble(reader["cost"]),
-                    Convert.ToInt32(reader["quantity"]),
-                    0,
-                    Convert.ToDouble(reader["price"]),
-                    reader["comments"].ToString(),
-                    "",
-                    reader["clubSpec"].ToString(),
-                    reader["shaftSpec"].ToString(),
-                    reader["shaftFlex"].ToString(),
-                    reader["dexterity"].ToString(),
-                    reader["locationSecondary"].ToString(),
-                    "",
-                    "");
-            }
-            conn.Close();
-        }
-        //Puts the accessories in the export table
-        public void exportAllAdd_Accessories()
-        {
-            SqlConnection conn = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = conn;
-            //This query gathers all required information. No other methods needed
-            cmd.CommandText = "select tbl_accessories.sku, tbl_accessories.size, tbl_accessories.colour, tbl_accessories.price, tbl_accessories.cost, " +
-                                    "(select tbl_model.modelName from tbl_model where tbl_model.modelID = tbl_accessories.modelID ) as modelName , " +
-                                    "(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = tbl_accessories.brandID ) as brandName ," +
-                                    "tbl_accessories.accessoryType, tbl_accessories.quantity, " +
-                                    "(select tbl_itemType.typeDescription from tbl_itemType where tbl_itemType.typeID = tbl_accessories.typeID ) as itemType , " +
-                                    "(select tbl_location.locationName from tbl_location where tbl_location.locationID = tbl_accessories.locationID) as locationName, " +
-                                    "(select tbl_location.secondaryIdentifier from tbl_location where tbl_location.locationID = tbl_accessories.locationID) as locationSecondary, " +
-                                    "tbl_accessories.comments " +
-                                    "from tbl_accessories; ";
-            conn.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                exportTable.Rows.Add("",
-                    reader["locationName"].ToString(),
-                    (Convert.ToInt32(reader["sku"])).ToString(),
-                    "",
-                    reader["brandName"].ToString(),
-                    reader["modelName"].ToString(),
-                    "",
-                    "",
-                    "",
-                    0,
-                    0,
-                    Convert.ToDouble(reader["cost"]),
-                    Convert.ToInt32(reader["quantity"]),
-                    0,
-                    Convert.ToDouble(reader["price"]),
-                    "", "", "", "", "", "",
-                    reader["locationSecondary"].ToString(),
-                    "", "");
-            }
-            conn.Close();
-        }
-        //Puts the clothing in the export table
-        public void exportAllAdd_Clothing()
-        {
-            SqlConnection conn = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = conn;
-            //This query gathers all required information. No other methods needed
-            cmd.CommandText = "select tbl_clothing.sku, tbl_clothing.size, tbl_clothing.colour, tbl_clothing.gender, tbl_clothing.style, tbl_clothing.price, tbl_clothing.cost,  " +
-                                    "(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = tbl_clothing.brandID ) as brandName , " +
-                                    "tbl_clothing.quantity, " +
-                                    "(select tbl_itemType.typeDescription from tbl_itemType where tbl_itemType.typeID = tbl_clothing.typeID ) as itemType ,  " +
-                                    "(select tbl_location.locationName from tbl_location where tbl_location.locationID = tbl_clothing.locationID) as locationName,  " +
-                                    "(select tbl_location.secondaryIdentifier from tbl_location where tbl_location.locationID = tbl_clothing.locationID) as locationSecondary,  " +
-                                    "tbl_clothing.comments from tbl_clothing;";
-            conn.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                exportTable.Rows.Add("",
-                    reader["locationName"].ToString(),
-                    (Convert.ToInt32(reader["sku"])).ToString(),
-                    "",
-                    reader["brandName"].ToString(),
-                    reader["gender"].ToString(),
-                    reader["style"].ToString(),
-                    "",
-                    "",
-                    0,
-                    0,
-                    Convert.ToDouble(reader["cost"]),
-                    Convert.ToInt32(reader["quantity"]),
-                    0,
-                    Convert.ToDouble(reader["price"]),
-                    "", "", "", "", "", "",
-                    reader["locationSecondary"].ToString(),
-                    "", "");
-            }
-            conn.Close();
-        }
+          
+        
+      
         //Export ALL sales/invoices to excel
         public void exportAllSalesToExcel()
         {
@@ -2910,5 +2648,160 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             con.Close();
             return total;
         }
+
+
+
+        public void itemExports(string selection, FileInfo newFile, string fileName)
+        {
+            //This is the table that has all of the information lined up the way Caspio needs it to be
+            exportTable = new System.Data.DataTable();
+            if (selection.Equals("all"))
+            {
+                exportAllAdd_Clubs();
+                exportAllAdd_Accessories();
+                exportAllAdd_Clothing();
+            }
+            else if (selection.Equals("clubs"))
+            {
+                exportAllAdd_Clubs();
+            }
+            else if (selection.Equals("accessories"))
+            {
+                exportAllAdd_Accessories();
+            }
+            else if (selection.Equals("clothing"))
+            {
+                exportAllAdd_Clothing();
+            }
+            String[] itemExportColumns = { "Vendor", "Store_ID", "ItemNumber", "Shipment_Date", "Brand", "Model", "Club_Type", "Shaft",
+                    "Number_of_Clubs", "Tradein_Price", "Premium", "WE PAY", "QUANTITY", "Ext'd Price", "RetailPrice", "Comments",
+                    "Image", "Club_Spec", "Shaft_Spec", "Shaft_Flex", "Dexterity", "Destination", "Received", "Paid", "ItemType", "Used"};
+            using (ExcelPackage xlPackage = new ExcelPackage(newFile))
+            {
+                //Add page to the work book called inventory
+                ExcelWorksheet worksheet = xlPackage.Workbook.Worksheets.Add("Inventory");
+                worksheet.Cells[1, 1].Value = "Date Created: " + DateTime.Now.ToString("dd.M.yyyy");
+                //Sets the column headers
+                for (int i = 0; i < itemExportColumns.Count(); i++)
+                {
+                    worksheet.Cells[2, i + 1].Value = itemExportColumns[i].ToString();
+                }
+                DataColumnCollection dcCollection = exportTable.Columns;
+                int recordIndex = 3;
+                foreach (DataRow row in exportTable.Rows)
+                {
+                    worksheet.Cells[recordIndex, 1].Value = row[0].ToString();
+                    worksheet.Cells[recordIndex, 2].Value = row[1].ToString();
+                    worksheet.Cells[recordIndex, 3].Value = Convert.ToDouble(row[2].ToString());
+                    worksheet.Cells[recordIndex, 4].Value = row[3].ToString();
+                    worksheet.Cells[recordIndex, 5].Value = row[4].ToString();
+                    worksheet.Cells[recordIndex, 6].Value = row[5].ToString();
+                    worksheet.Cells[recordIndex, 7].Value = row[6].ToString();
+                    worksheet.Cells[recordIndex, 8].Value = row[7].ToString();
+                    worksheet.Cells[recordIndex, 9].Value = row[8].ToString();
+                    worksheet.Cells[recordIndex, 10].Value = Convert.ToDouble(row[9].ToString());
+                    worksheet.Cells[recordIndex, 11].Value = Convert.ToDouble(row[10].ToString());
+                    worksheet.Cells[recordIndex, 12].Value = Convert.ToDouble(row[11].ToString());
+                    worksheet.Cells[recordIndex, 13].Value = Convert.ToDouble(row[12].ToString());
+                    worksheet.Cells[recordIndex, 14].Value = Convert.ToDouble(row[13].ToString());
+                    worksheet.Cells[recordIndex, 15].Value = Convert.ToDouble(row[14].ToString());
+                    worksheet.Cells[recordIndex, 16].Value = row[15].ToString();
+                    worksheet.Cells[recordIndex, 17].Value = row[16].ToString();
+                    worksheet.Cells[recordIndex, 18].Value = row[17].ToString();
+                    worksheet.Cells[recordIndex, 19].Value = row[18].ToString();
+                    worksheet.Cells[recordIndex, 20].Value = row[19].ToString();
+                    worksheet.Cells[recordIndex, 21].Value = row[20].ToString();
+                    worksheet.Cells[recordIndex, 22].Value = row[21].ToString();
+                    worksheet.Cells[recordIndex, 23].Value = row[22].ToString();
+                    worksheet.Cells[recordIndex, 24].Value = Convert.ToDouble(row[23].ToString());
+                    worksheet.Cells[recordIndex, 25].Value = row[24].ToString();
+                    worksheet.Cells[recordIndex, 26].Value = row[25].ToString();
+                    recordIndex++;
+                }
+                HttpContext.Current.Response.Clear();
+                HttpContext.Current.Response.AddHeader("content-disposition", "attachment; filename=" + fileName);
+                HttpContext.Current.Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                HttpContext.Current.Response.BinaryWrite(xlPackage.GetAsByteArray());
+                HttpContext.Current.Response.End();                
+            }
+        }
+        //Puts the clubs in the export table
+        public void exportAllAdd_Clubs()
+        {
+            SqlConnection conn = new SqlConnection(connectionString);
+            string command = "select " +
+                                "'' as 'vendor', " +
+                                "(select tbl_location.locationName from tbl_location where tbl_location.locationID = tbl_clubs.locationID) as locationName, " +
+                                "tbl_clubs.sku, '' as 'shipmentDate', " +
+                                "(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = tbl_clubs.brandID ) as brandName ,  " +
+                                "(select tbl_model.modelName from tbl_model where tbl_model.modelID = tbl_clubs.modelID ) as modelName ,  " +
+                                "tbl_clubs.clubType, tbl_clubs.shaft, tbl_clubs.numberOfClubs,0 as 'tradeinPrice',  " +
+                                "tbl_clubs.premium, tbl_clubs.cost, tbl_clubs.quantity, 0 as 'extendedPrice', " +
+                                "tbl_clubs.price, tbl_clubs.comments,'' as 'image', tbl_clubs.clubSpec,  " +
+                                "tbl_clubs.shaftSpec, tbl_clubs.shaftFlex, tbl_clubs.dexterity, " +
+                                "(select tbl_location.secondaryIdentifier from tbl_location where tbl_location.locationID = tbl_clubs.locationID) as locationSecondary,  " +
+                                "'' as 'received', 0 as 'paid', " +
+                                "(select tbl_itemType.typeDescription from tbl_itemType where tbl_itemType.typeID = tbl_clubs.typeID ) as itemType, " +
+                                "tbl_clubs.used " +
+                                "from tbl_clubs";
+
+            using (var cmd = new SqlCommand(command, conn))
+            using (var da = new SqlDataAdapter(cmd))
+            {
+                da.Fill(exportTable);
+            }
+        }
+        //Puts the accessories in the export table
+        public void exportAllAdd_Accessories()
+        {
+            SqlConnection conn = new SqlConnection(connectionString);
+            string command = "select " +
+                                "'' as 'vendor', " +
+                                "(select tbl_location.locationName from tbl_location where tbl_location.locationID = tbl_accessories.locationID) as locationName, " +
+                                "tbl_accessories.sku, '' as 'shipmentDate', " +
+                                "(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = tbl_accessories.brandID ) as brandName , " +
+                                "(select tbl_model.modelName from tbl_model where tbl_model.modelID = tbl_accessories.modelID ) as modelName , " +
+                                "tbl_accessories.accessoryType as 'clubType', '' as 'shaft', '' as 'numberOfClubs', 0 as 'tradeinPrice', " +
+                                "0 as 'premium', tbl_accessories.cost, tbl_accessories.quantity, 0 as 'extendedPrice', " +
+                                "tbl_accessories.price, tbl_accessories.comments, '' as 'image', " +
+                                "'' as 'clubSpec', '' as 'shaftSpec', '' as 'shaftFlex', '' as 'dexterity', " +
+                                "(select tbl_location.secondaryIdentifier from tbl_location where tbl_location.locationID = tbl_accessories.locationID) as locationSecondary, " +
+                                "'' as 'received', 0 as 'paid', " +
+                                "(select tbl_itemType.typeDescription from tbl_itemType where tbl_itemType.typeID = tbl_accessories.typeID ) as itemType, " +
+                                "0 as 'used' " +
+                                "from tbl_accessories; ";
+
+            using (var cmd = new SqlCommand(command, conn))
+            using (var da = new SqlDataAdapter(cmd))
+            {
+                da.Fill(exportTable);
+            }
+        }
+        //Puts the clothing in the export table
+        public void exportAllAdd_Clothing()
+        {
+            SqlConnection conn = new SqlConnection(connectionString);
+            string command = "select " +
+                                "'' as 'vendor', " +
+                                "(select tbl_location.locationName from tbl_location where tbl_location.locationID = tbl_clothing.locationID) as locationName, " +
+                                "tbl_clothing.sku, '' as 'shipmentDate', " +
+                                "(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = tbl_clothing.brandID ) as brandName, " +
+                                "tbl_clothing.gender as 'modelName', tbl_clothing.style as 'clubType', '' as 'shaft', " +
+                                "'' as 'numberOfClubs', 0 as 'tradeinPrice', 0 as 'premium', " +
+                                "tbl_clothing.cost, tbl_clothing.quantity, 0 as 'extendedPrice', " +
+                                "tbl_clothing.price, tbl_clothing.comments, '' as 'image', " +
+                                "'' as 'clubSpec', '' as 'shaftSpec', '' as 'shaftFlex', '' as 'dexterity', " +
+                                "(select tbl_location.secondaryIdentifier from tbl_location where tbl_location.locationID = tbl_clothing.locationID) as locationSecondary,  " +
+                                "'' as 'received', 0 as 'paid', " +
+                                "(select tbl_itemType.typeDescription from tbl_itemType where tbl_itemType.typeID = tbl_clothing.typeID ) as itemType, " +
+                                "0 as 'used' " +
+                                " from tbl_clothing";
+            using (var cmd = new SqlCommand(command, conn))
+            using (var da = new SqlDataAdapter(cmd))
+            {
+                da.Fill(exportTable);
+            }
+        }
+
     }
 }

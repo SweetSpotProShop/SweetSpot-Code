@@ -119,7 +119,12 @@
             <asp:RadioButton ID="RadioButton1" runat="server" Text="In Store" Checked="True" GroupName="rgSales" />
             <asp:RadioButton ID="RadioButton2" runat="server" Text="Shipping" GroupName="rgSales" />
             <asp:Label ID="lblShipping" runat="server" Text="Shipping Amount:"></asp:Label>
-            <asp:TextBox ID="txtShippingAmount" runat="server"></asp:TextBox>
+            <asp:TextBox ID="txtShippingAmount" runat="server"></asp:TextBox>    
+
+
+            <asp:Label ID="lblShippingWarning" runat="server" Visible="false"></asp:Label>  
+            
+
             <div>
                 <asp:Button ID="btnJumpToInventory" Text="Jump to Inventory" OnClick="btnJumpToInventory_Click" runat="server" />
             </div>

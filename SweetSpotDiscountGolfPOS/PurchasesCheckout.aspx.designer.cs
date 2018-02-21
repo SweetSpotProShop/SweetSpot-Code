@@ -103,6 +103,15 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.TextBox txtChequeNumber;
         
         /// <summary>
+        /// revChequeNumber control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator revChequeNumber;
+        
+        /// <summary>
         /// lblTotalPurchase control.
         /// </summary>
         /// <remarks>
