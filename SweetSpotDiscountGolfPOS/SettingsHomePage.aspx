@@ -124,6 +124,36 @@
             </div>
             <br />
             <hr />
+            <h2>New Model and Brand</h2>
+            <hr />
+            <div>
+                <asp:Table runat="server" GridLines="Both" BorderStyle="Solid" BorderWidth="1px" BorderColor="Black">
+                    <asp:TableRow>
+                        <asp:TableCell>
+                            <asp:Label ID="lblModel" runat="server" Text="Model" />
+                            <div>
+                                <asp:TextBox ID="txtModelOne" runat="server" placeholder="Model"></asp:TextBox>
+                            </div>
+                            <div>
+                                <asp:TextBox ID="txtModelTwo" runat="server" placeholder="Confirm Model"></asp:TextBox>
+                            </div>
+                            <asp:Button ID="btnAddModel" runat="server" Width="150" Text="Add Model" OnClick="btnAddModel_Click" />
+                        </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:Label ID="lblBrand" runat="server" Text="Brand" />
+                            <div>
+                                <asp:TextBox ID="txtBrandOne" runat="server" placeholder="Brand"></asp:TextBox>
+                            </div>
+                            <div>
+                                <asp:TextBox ID="txtBrandTwo" runat="server" placeholder="Confrim Brand"></asp:TextBox>
+                            </div>
+                            <asp:Button ID="btnAddBrand" runat="server" Width="150" Text="Add Brand" OnClick="btnAddBrand_Click"/>
+                        </asp:TableCell>
+                    </asp:TableRow>
+                </asp:Table>
+            </div>
+            <br />
+            <hr />
             <h2>Import Files From Excel</h2>
             <hr />
             <div>

@@ -346,7 +346,7 @@ namespace SweetSpotDiscountGolfPOS
                 string filename = "AllClubs - " + DateTime.Now.ToString("dd.MM.yyyy") + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + filename);
                 //With the craeted file do all intenal code
-                R.itemExports("clubs", newFile, filename);                
+                R.itemExports("clubs", newFile, filename);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -666,6 +666,104 @@ namespace SweetSpotDiscountGolfPOS
                     Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                     Response.BinaryWrite(xlPackage.GetAsByteArray());
                     Response.End();
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+            }
+        }
+
+        protected void btnAddModel_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnAddModel_Click";
+            try
+            {
+                if (txtModelOne.Text != "" && txtModelTwo.Text != "")
+                {
+                    if (txtModelOne.Text.Equals(txtModelTwo.Text))
+                    {
+                        string sqlCmd = "if exists((select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName)) " +
+                                            "begin " +                                                
+                                                "print '1'; " +
+                                            "end " +
+                                        "else " +
+                                            "begin " +
+                                                "Insert into tbl_model values(@modelName) " +
+                                                "print '0'; " +
+                                             "end";                      
+                        object[][] parms =
+                        {
+                            new object[] {"@modelName", txtModelOne.Text}
+                        };
+                        dbc.executeInsertQuery(sqlCmd, parms);                        
+                    }
+                    else
+                    {
+                        MessageBox.ShowMessage("The models do not match. "
+                                + "Please retype the model name again.", this);
+                    }
+                }
+                else
+                {
+                    MessageBox.ShowMessage("Both fields require user input", this);
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occured and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator", this);
+            }
+        }
+
+        protected void btnAddBrand_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnAddBrand_Click";
+            try
+            {
+                if (txtBrandOne.Text != "" && txtBrandTwo.Text != "")
+                {
+                    if (txtBrandOne.Text.Equals(txtBrandTwo.Text))
+                    {
+                        string sqlCmd = "if exists((select top 1 tbl_brand.brandID from tbl_brand where tbl_brand.brandName = @brandName)) " +
+                                            "begin " +
+                                                "print '1'; " +
+                                            "end " +
+                                        "else " +
+                                            "begin " +
+                                                "Insert into tbl_brand values(@brandName) " +
+                                                "print '0'; " +
+                                             "end";
+                        object[][] parms =
+                        {
+                            new object[] {"@brandName", txtBrandOne.Text}
+                        };
+                        dbc.executeInsertQuery(sqlCmd, parms);
+                    }
+                    else
+                    {
+                        MessageBox.ShowMessage("The brands do not match. "
+                                + "Please retype the brand name again.", this);
+                    }
+                }
+                else
+                {
+                    MessageBox.ShowMessage("Both fields require user input", this);
                 }
             }
             //Exception catch
