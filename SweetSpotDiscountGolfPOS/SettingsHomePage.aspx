@@ -145,7 +145,7 @@
                                 <asp:TextBox ID="txtBrandOne" runat="server" placeholder="Brand"></asp:TextBox>
                             </div>
                             <div>
-                                <asp:TextBox ID="txtBrandTwo" runat="server" placeholder="Confrim Brand"></asp:TextBox>
+                                <asp:TextBox ID="txtBrandTwo" runat="server" placeholder="Confirm Brand"></asp:TextBox>
                             </div>
                             <asp:Button ID="btnAddBrand" runat="server" Width="150" Text="Add Brand" OnClick="btnAddBrand_Click"/>
                         </asp:TableCell>
