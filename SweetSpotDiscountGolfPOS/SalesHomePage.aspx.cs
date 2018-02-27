@@ -146,7 +146,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnInvoiceSearch_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnSearch_Click";
+            string method = "btnInvoiceSearch_Click";
             try
             {
                 //Binds invoice list to the grid view

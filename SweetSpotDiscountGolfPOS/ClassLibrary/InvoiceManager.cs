@@ -93,7 +93,7 @@ namespace SweetSpotDiscountGolfPOS
                 + "provincialTax, balanceDue, transactionType, comments FROM tbl_invoice WHERE invoiceNum = @invoiceNum "
                 + "AND invoiceSubNum = @invoiceSubNum";
 
-            Object[][] parms =
+            object[][] parms =
             {
                  new object[] { "@invoiceNum", Convert.ToInt32(invoice.Split('-')[0]) },
                  new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[1]) }
@@ -109,7 +109,7 @@ namespace SweetSpotDiscountGolfPOS
                 + "custID, empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, governmentTax, "
                 + "provincialTax, balanceDue, transactionType, comments FROM tbl_invoice WHERE custID = @custID";
 
-            Object[][] parms =
+            object[][] parms =
             {
                  new object[] { "@custID", custNum }
             };
@@ -148,6 +148,7 @@ namespace SweetSpotDiscountGolfPOS
             };
             return ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd, parms));
         }
+
         public List<Invoice> ReturnInvoicesBasedOnSearchForReturns(string txtSearch, DateTime selectedDate)
         {
             string sqlCmd = "SELECT I.invoiceNum, I.invoiceSubNum, I.invoiceDate, C.custID, C.firstName, "
@@ -159,7 +160,7 @@ namespace SweetSpotDiscountGolfPOS
                 + "CONCAT(C.firstName, C.lastName, C.primaryPhoneINT) LIKE '%" + txtSearch + "%' ";
             }
             sqlCmd += "ORDER BY I.invoiceNum DESC";
-            Object[][] parms =
+            object[][] parms =
             {
                  new object[] { "@selectedDate", selectedDate }
             };
@@ -167,73 +168,58 @@ namespace SweetSpotDiscountGolfPOS
         }
 
 
-
-
         //Returns list of invoices based on search criteria and date range
-        public List<Invoice> ReturnInvoicesBasedOnSearchCriteriaV2(DateTime stDate, DateTime endDate, string searchTxt, int locationID)
-        {
-            InvoiceItemsManager IIM = new InvoiceItemsManager();
-            ArrayList strText = new ArrayList();
+        //public List<Invoice> ReturnInvoicesBasedOnSearchCriteriaV2(DateTime stDate, DateTime endDate, string searchTxt, int locationID)
+        //{
+        //    InvoiceItemsManager IIM = new InvoiceItemsManager();
+        //    ArrayList strText = new ArrayList();
 
-            string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, CAST(invoiceTime AS DATETIME) AS invoiceTime, "
-                + "custID, empID, locationID, subTotal, discountAmount, tradeinAmount, governmentTax, provincialTax, "
-                + "balanceDue, transactionType, comments FROM tbl_invoice WHERE ";
+        //    string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, CAST(invoiceTime AS DATETIME) AS invoiceTime, "
+        //        + "custID, empID, locationID, subTotal, discountAmount, tradeinAmount, governmentTax, provincialTax, "
+        //        + "balanceDue, transactionType, comments FROM tbl_invoice WHERE ";
 
-            if (searchTxt != "" && stDate == endDate)
-            {
-                for (int i = 0; i < searchTxt.Split(' ').Length; i++)
-                {
-                    strText.Add(searchTxt.Split(' ')[i]);
-                }
-                sqlCmd += "( invoiceNum IN (SELECT DISTINCT invoiceNum FROM tbl_invoiceItem WHERE "
-                    + "CAST(invoiceNum AS VARCHAR) LIKE '%" + searchTxt + "%' OR sku IN (";
-                sqlCmd += IIM.ReturnStringSearchForAccessories(strText);
-                sqlCmd += " UNION ";
-                sqlCmd += IIM.ReturnStringSearchForClothing(strText);
-                sqlCmd += " UNION ";
-                sqlCmd += IIM.ReturnStringSearchForClubs(strText) + ")))";
-            }            
-            else if(searchTxt != "" && stDate != endDate)
-            {
-                for (int i = 0; i < searchTxt.Split(' ').Length; i++)
-                {
-                    strText.Add(searchTxt.Split(' ')[i]);
-                }
-                sqlCmd += "( invoiceNum IN (SELECT DISTINCT invoiceNum FROM tbl_invoiceItem WHERE "
-                    + "CAST(invoiceNum AS VARCHAR) LIKE '%" + searchTxt + "%' OR sku IN (";
-                sqlCmd += IIM.ReturnStringSearchForAccessories(strText);
-                sqlCmd += " UNION ";
-                sqlCmd += IIM.ReturnStringSearchForClothing(strText);
-                sqlCmd += " UNION ";
-                sqlCmd += IIM.ReturnStringSearchForClubs(strText) + "))) ";
-                sqlCmd += "OR invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "' AND locationID = @locationID";
-            }
-            else if (searchTxt == "" && stDate != endDate)
-            {
-                sqlCmd += "invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "' AND locationID = @locationID";
-            }
-            else if (searchTxt == "" && stDate == endDate)
-            {
-                sqlCmd += "invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "' AND locationID = @locationID";
-            }
-
-
-
-            object[][] parms =
-            {
-                new object[] { "locationID", locationID }
-            };
-            return ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd, parms));
-        }
-
-
-
-
-
-
-
-
-
-
+        //    if (searchTxt != "" && stDate == endDate)
+        //    {
+        //        for (int i = 0; i < searchTxt.Split(' ').Length; i++)
+        //        {
+        //            strText.Add(searchTxt.Split(' ')[i]);
+        //        }
+        //        sqlCmd += "( invoiceNum IN (SELECT DISTINCT invoiceNum FROM tbl_invoiceItem WHERE "
+        //            + "CAST(invoiceNum AS VARCHAR) LIKE '%" + searchTxt + "%' OR sku IN (";
+        //        sqlCmd += IIM.ReturnStringSearchForAccessories(strText);
+        //        sqlCmd += " UNION ";
+        //        sqlCmd += IIM.ReturnStringSearchForClothing(strText);
+        //        sqlCmd += " UNION ";
+        //        sqlCmd += IIM.ReturnStringSearchForClubs(strText) + ")))";
+        //    }
+        //    else if (searchTxt != "" && stDate != endDate)
+        //    {
+        //        for (int i = 0; i < searchTxt.Split(' ').Length; i++)
+        //        {
+        //            strText.Add(searchTxt.Split(' ')[i]);
+        //        }
+        //        sqlCmd += "( invoiceNum IN (SELECT DISTINCT invoiceNum FROM tbl_invoiceItem WHERE "
+        //            + "CAST(invoiceNum AS VARCHAR) LIKE '%" + searchTxt + "%' OR sku IN (";
+        //        sqlCmd += IIM.ReturnStringSearchForAccessories(strText);
+        //        sqlCmd += " UNION ";
+        //        sqlCmd += IIM.ReturnStringSearchForClothing(strText);
+        //        sqlCmd += " UNION ";
+        //        sqlCmd += IIM.ReturnStringSearchForClubs(strText) + "))) ";
+        //        sqlCmd += "OR invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "' AND locationID = @locationID";
+        //    }
+        //    else if (searchTxt == "" && stDate != endDate)
+        //    {
+        //        sqlCmd += "invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "' AND locationID = @locationID";
+        //    }
+        //    else if (searchTxt == "" && stDate == endDate)
+        //    {
+        //        sqlCmd += "invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "' AND locationID = @locationID";
+        //    }
+        //    object[][] parms =
+        //    {
+        //        new object[] { "locationID", locationID }
+        //    };
+        //    return ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd, parms));
+        //}
     }
 }
