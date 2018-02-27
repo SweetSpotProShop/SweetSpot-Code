@@ -51,7 +51,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
@@ -81,7 +81,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
@@ -102,7 +102,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
@@ -119,7 +119,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
@@ -136,7 +136,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
@@ -150,7 +150,7 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Binds invoice list to the grid view
-                grdInvoiceSelection.DataSource = IM.ReturnInvoicesBasedOnSearchCriteriaV2(calStartDate.SelectedDate, calEndDate.SelectedDate, txtInvoiceNum.Text, Convert.ToInt32(ddlLocation.SelectedValue));
+                grdInvoiceSelection.DataSource = IM.ReturnInvoicesBasedOnSearchCriteria(calStartDate.SelectedDate, calEndDate.SelectedDate, txtInvoiceNum.Text, Convert.ToInt32(ddlLocation.SelectedValue));
                 grdInvoiceSelection.DataBind();
             }
             //Exception catch
@@ -158,7 +158,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
@@ -201,7 +201,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V2.1 Test", method, this);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occured and been logged. "
                     + "If you continue to receive this message please contact "
