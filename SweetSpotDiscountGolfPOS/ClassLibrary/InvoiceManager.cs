@@ -12,6 +12,15 @@ namespace SweetSpotDiscountGolfPOS
     public class InvoiceManager
     {
         DatabaseCalls dbc = new DatabaseCalls();
+
+        private void ExecuteNonReturnCall(string sqlCmd, object[][] parms)
+        {
+            dbc.executeInsertQuery(sqlCmd, parms);
+        }
+        private int ReturnInt(string sqlCmd, object[][] parms)
+        {
+            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms);
+        }
         private List<Invoice> ConvertFromDataTableToInvoice(DataTable dt)
         {
             CustomerManager CM = new CustomerManager();
@@ -127,7 +136,8 @@ namespace SweetSpotDiscountGolfPOS
                 + "custID, empID, locationID, subTotal, discountAmount, tradeinAmount, governmentTax, provincialTax, "
                 + "balanceDue, transactionType, comments FROM tbl_invoice WHERE (";
 
-            if (searchTxt != "") {
+            if (searchTxt != "")
+            {
                 for (int i = 0; i < searchTxt.Split(' ').Length; i++)
                 {
                     strText.Add(searchTxt.Split(' ')[i]);
@@ -148,14 +158,14 @@ namespace SweetSpotDiscountGolfPOS
             };
             return ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd, parms));
         }
-
         public List<Invoice> ReturnInvoicesBasedOnSearchForReturns(string txtSearch, DateTime selectedDate)
         {
             string sqlCmd = "SELECT I.invoiceNum, I.invoiceSubNum, I.invoiceDate, C.custID, C.firstName, "
                 + "C.lastName, I.locationID, I.balanceDue FROM tbl_invoice I JOIN tbl_customers C ON "
                 + "I.custID = C.custID WHERE I.invoiceDate = @selectedDate ";
 
-            if (txtSearch != "") {
+            if (txtSearch != "")
+            {
                 sqlCmd += "OR CAST(I.invoiceNum AS VARCHAR) LIKE '%" + txtSearch + "%' OR "
                 + "CONCAT(C.firstName, C.lastName, C.primaryPhoneINT) LIKE '%" + txtSearch + "%' ";
             }
@@ -166,6 +176,55 @@ namespace SweetSpotDiscountGolfPOS
             };
             return ConvertFromDataTableToInvoiceForReturns(dbc.returnDataTableData(sqlCmd, parms));
         }
+
+        //public List<Invoice> ReturnInvoiceDuringCartTransactions(string invoice)
+        //{
+        //    string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, CAST(invoiceTime AS DATETIME) AS invoiceTime, "
+        //        + "custID, empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, governmentTax, "
+        //        + "provincialTax, balanceDue, transactionType, comments FROM tbl_currentSalesInvoice WHERE invoiceNum = @invoiceNum "
+        //        + "AND invoiceSubNum = @invoiceSubNum";
+
+        //    object[][] parms =
+        //    {
+        //         new object[] { "@invoiceNum", Convert.ToInt32(invoice.Split('-')[0]) },
+        //         new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[1]) }
+        //    };
+
+        //    List<Invoice> i = ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd, parms));
+        //    return i;
+        //}
+        public void UpdateCustomerOnInvoice(string invoice, int custID)
+        {
+            string sqlCmd = "UPDATE tbl_currentSalesItems SET custID = @custID WHERE invoiceNum = @invoiceNum AND invoiceSubNum = @invoiceSubNum";
+
+            object[][] parms =
+            {
+                new object[] { "@custID", custID },
+                new object[] { "@invoiceNum", Convert.ToInt32(invoice.Split('-')[1]) },
+                new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[2]) }
+            };
+            ExecuteNonReturnCall(sqlCmd, parms);
+        }
+        public int ReturnNextInvoiceNumber()
+        {
+            string sqlCmd = "Select invoiceNum from tbl_InvoiceNumbers";
+            object[][] parms = { };
+            int nextInvoiceNum = ReturnInt(sqlCmd, parms) + 1;
+            //Creates the invoice with the next invoice num
+            CreateInvoiceNum(nextInvoiceNum);
+            //Returns the next invoiceNum
+            return nextInvoiceNum;
+        }
+        private void CreateInvoiceNum(int invNum)
+        {
+            string sqlCmd = "update tbl_InvoiceNumbers set invoiceNum = @invNum";
+            object[][] parms =
+            {
+                new object[] { "@invNum", invNum }
+            };
+            ExecuteNonReturnCall(sqlCmd, parms);
+        }
+
 
 
         //Returns list of invoices based on search criteria and date range

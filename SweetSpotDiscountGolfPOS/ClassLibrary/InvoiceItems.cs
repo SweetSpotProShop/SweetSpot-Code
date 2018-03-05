@@ -9,17 +9,31 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
     //Used in storing the items from a sale in the database
     public class InvoiceItems
     {
+
+        //Specific to Invoice Items class
         public int invoiceNum { get; set; }
         public int invoiceSubNum { get; set; }
+        public double itemRefund { get; set; }
+
+
+        //Tied to both classes
         public int sku { get; set; }
         public string itemDescription { get; set; }
         public int itemQuantity { get; set; }
         public double itemCost { get; set; }
         public double itemPrice { get; set; }
         public double itemDiscount { get; set; }
-        public double itemRefund { get; set; }
         public bool percentage { get; set; }
 
+
+        //Specific to Items class
+        public string location { get; set; }
+        public int typeID { get; set; }
+        public bool tradeIn { get; set; }
+
+
+
+        
         public InvoiceItems(){}
         public InvoiceItems(int InvoiceNum, int InvoiceSubNum, int Sku, int ItemQuantity, double ItemCost, double ItemPrice, 
             double ItemDiscount, double ItemRefund, bool Percentage)

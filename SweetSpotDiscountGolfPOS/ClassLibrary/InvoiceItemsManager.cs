@@ -121,7 +121,15 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             return invoiceItems;
         }
-
+        public DataTable ReturnInvoiceItemsForSalesCart(int sku)
+        {
+            string sqlCmd = "SELECT ";
+            object[][] parms =
+            {
+                new object[] { "@sku", sku }
+            };
+            return dbc.returnDataTableData(sqlCmd, parms);
+        }
         //Returns string for search accessories
         public string ReturnStringSearchForAccessories(ArrayList array)
         {

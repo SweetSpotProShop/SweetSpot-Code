@@ -1271,27 +1271,14 @@ namespace SweetSpotProShop
                     nextInvoiceNum = Convert.ToInt32(reader["invoiceNum"]) + 1;
                 }
                 //Creates the invoice with the next invoice num
-                createInvoiceNum(nextInvoiceNum);
+                //createInvoiceNum(nextInvoiceNum);
             }
             conn.Close();
             //Returns the next invoiceNum
             return nextInvoiceNum;
         }
         //Create  the newly found invoice number
-        public void createInvoiceNum(int invNum)
-        {
-            //string date = DateTime.Now.ToString("yyyy-MM-dd");
-            //string time = DateTime.Now.ToString("HH:mm:ss");
-
-            SqlConnection conn = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = conn;
-            cmd.CommandText = "update tbl_InvoiceNumbers set invoiceNum = @invNum";
-            cmd.Parameters.AddWithValue("invNum", invNum);
-            conn.Open();
-            cmd.ExecuteNonQuery();
-            conn.Close();
-        }
+        
         //Returns the max invoice subNum
         public int getNextInvoiceSubNum(int invoiceNumber)
         {

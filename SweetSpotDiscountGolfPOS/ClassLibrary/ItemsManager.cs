@@ -11,6 +11,24 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
     public class ItemsManager
     {
         DatabaseCalls dbc = new DatabaseCalls();
+
+        private List<Items> ConvertFromDataTableToCartItems(DataTable dt)
+        {
+            List<Items> items = dt.AsEnumerable().Select(row =>
+            new Items
+            {
+                sku = row.Field<int>("sku"),
+                description = row.Field<string>("sku"),
+                quantity = row.Field<int>("sku"),
+                price = row.Field<double>("sku"),
+                cost = row.Field<double>("sku"),
+                discount = row.Field<double>("sku"),
+                percent = row.Field<bool>("sku"),
+                typeID = row.Field<int>("sku"),
+                tradeIn = row.Field<bool>("sku")
+            }).ToList();
+            return items;
+        }
         private List<Items> ConvertFromDataTableToItems(DataTable dt)
         {
             List<Items> items = dt.AsEnumerable().Select(row =>
@@ -141,6 +159,17 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string sqlCmd = ReturnItemsFromSearchString(searchText, quantity);
             return ConvertFromDataTableToItems(dbc.returnDataTableData(sqlCmd));
         }
+        public List<Items> ReturnInvoiceItemsFromSearchStringForSale(string searchText)
+        {
+            string sqlCmd = ReturnItemsFromSearchString(searchText, -1);
+            return ConvertFromDataTableToItems(dbc.returnDataTableData(sqlCmd));
+        }
+        //public List<Items> ReturnInvoiceItemsInCartbasedOnInvoiceNumber(string invoice)
+        //{
+        //    string sqlCmd = "";
+
+        //    object[][] parms = { };
+        //}
         public DataTable ReturnDropDownForBrand()
         {
             string sqlCmd = "SELECT brandID, brandName FROM "

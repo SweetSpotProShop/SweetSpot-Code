@@ -14,7 +14,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
     {
         private String connectionString;
         public ErrorReporting() { connectionString = ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString; }
-        //This methods intended use was to send an automatic email when an error occured.
+        //This methods intended use was to send an automatic email when an error occurred.
         //May revisit at a later point
         public void sendError(string errorMessage)
         {
@@ -53,9 +53,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             conn.Open();
             SqlDataReader reader = cmd.ExecuteReader();
             conn.Close();
-            //MessageBox.ShowMessage("An Error has occured and been logged. "
+            //MessageBox.ShowMessage("An Error has occurred and been logged. "
             //    + "If you continue to receive this message please contact "
-            //    + "your system administrator", webPage);
+            //    + "your system administrator.", webPage);
         }
     }
 }

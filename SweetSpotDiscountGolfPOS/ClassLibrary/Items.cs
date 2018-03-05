@@ -17,20 +17,16 @@ namespace SweetShop
         public int quantity { get; set; }
         public double price { get; set; }
         public double cost { get; set; }
-        
-        //public int typeID { get; set; }
-        //public string size { get; set; }
-        //public string colour { get; set; }
-        //public string gender { get; set; }
-        //public string style { get; set; }
-        //public string clubType { get; set; }
-        //public string shaft { get; set; }
-        //public string numberOfClubs { get; set; }
-        public string invoice { get; set; }
         public double discount { get; set; }
         public bool percent { get; set; }
+        public int typeID { get; set; }
+        public bool tradeIn { get; set; }
+
+
         public double difference { get; set; }
+        public string invoice { get; set; }
         public int amountSold { get; set; }
+
 
         public Items() { }
         public Items(int Sku, string Description, string Location, int Quantity, double Price, double Cost)
@@ -41,6 +37,18 @@ namespace SweetShop
             quantity = Quantity;
             price = Price;
             cost = Cost;
+        }
+        public Items(int Sku, string Description, int Quantity, double Price, double Cost, double Discount, bool Percentage, int TypeID, bool TradeIN)
+        {
+            sku = Sku;
+            description = Description;
+            quantity = Quantity;
+            price = Price;
+            cost = Cost;
+            discount = Discount;
+            percent = Percentage;
+            typeID = TypeID;
+            tradeIn = TradeIN;
         }
         //public Items(int s, string d, int q, double p, double c, string l)
         //{

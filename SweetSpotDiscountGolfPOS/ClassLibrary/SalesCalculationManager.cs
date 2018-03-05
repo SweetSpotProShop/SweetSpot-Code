@@ -13,6 +13,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
     //The calculation manager class is a hub where calculations are stored to clean up the codebehind on the webpages
     public class SalesCalculationManager
     {
+        
+
+
         ItemDataUtilities idu = new ItemDataUtilities();
 
         //This method returns the total discounts applied in the cart as a total **Checked and Verified

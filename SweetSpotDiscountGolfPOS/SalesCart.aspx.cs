@@ -16,24 +16,27 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class SalesCart : System.Web.UI.Page
     {
+        ErrorReporting ER = new ErrorReporting();
         CustomerManager CM = new CustomerManager();
+        LocationManager LM = new LocationManager();
+        InvoiceManager IM = new InvoiceManager();
+        ItemsManager ITM = new ItemsManager();
+        CurrentUser CU;
 
         public string skuString;
         public int skuInt;
         public int invNum;
-        ErrorReporting er = new ErrorReporting();
         SweetShopManager ssm = new SweetShopManager();
         ItemDataUtilities idu = new ItemDataUtilities();
         List<Cart> invoiceItems = new List<Cart>();
         List<Cart> itemsInCart = new List<Cart>();
         List<Cart> returnedCart = new List<Cart>();
         List<Cart> temp = new List<Cart>();
-        LocationManager lm = new LocationManager();
         Cart tempItemInCart;
         Object o = new Object();
-        CurrentUser cu;
         List<Customer> c;
         SalesCalculationManager scm = new SalesCalculationManager();
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -41,7 +44,7 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "SalesCart.aspx";
             try
             {
-                cu = (CurrentUser)Session["currentUser"];
+                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
@@ -51,65 +54,64 @@ namespace SweetSpotDiscountGolfPOS
                 lblInvalidQty.Visible = false;
                 if (!Page.IsPostBack)
                 {
-                    //Retrieves transaction type from session
-                    int tranType = Convert.ToInt32(Session["TranType"]);
-                    if (tranType == 1)
-                    {
-                        //if transaction type is sales then set focus on the search field
-                        txtSearch.Focus();
-                        //Checks if there is a Customer Number stored in the Session
-                        if (Session["key"] != null)
-                        {
-                            //If yes then convert number to int and call Customer class using it
-                            int custNum = (int)(Convert.ToInt32(Session["key"].ToString()));
-                            Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
-                            //Set name in text box
-                            txtCustomer.Text = c.firstName + " " + c.lastName;
-                        }
-                        //display system time in Sales Page
-                        DateTime today = DateTime.Today;
-                        lblDateDisplay.Text = today.ToString("yyyy-MM-dd");
-                        //Retrieves location from Session
-                        string loc = cu.locationName;
-                        //Get the next invoice number, sets in texyt box and stores in session
-                        if (Session["Invoice"] == null)
-                        {
-                            invNum = idu.getNextInvoiceNum();
-                            lblInvoiceNumberDisplay.Text = loc + "-" + invNum + "-1";
-                            Session["Invoice"] = lblInvoiceNumberDisplay.Text;
-                        }
-                        else { lblInvoiceNumberDisplay.Text = Session["Invoice"].ToString(); }
-                        //Checks the cart to see if there are any items in it
-                        if (Session["ItemsInCart"] != null)
-                        {
-                            //If there are bind to data grid and get a subtotal of the items
-                            grdCartItems.DataSource = Session["ItemsInCart"];
-                            grdCartItems.DataBind();
-                            lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"], cu.locationID).ToString();
-                        }
-                    }
+                    //if transaction type is sales then set focus on the search field
+                    txtSearch.Focus();
+                    //If yes then convert number to int and call Customer class using it
+                    List<Customer> c = CM.ReturnCustomer(Convert.ToInt32(Request.QueryString["cust"].ToString()));
+                    //Set name in text box
+                    txtCustomer.Text = c[0].firstName + " " + c[0].lastName;
+                    lblDateDisplay.Text = DateTime.Today.ToString("yyyy-MM-dd");
+                    lblInvoiceNumberDisplay.Text = Request.QueryString["inv"].ToString();
+
+                    //change to gather the items from table
+                    grdCartItems.DataSource = Session["ItemsInCart"];
+                    grdCartItems.DataBind();
+                    ////lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"], CU.locationID).ToString(); //With each item update update totals in database. Return this from the database
+
                 }
-                //Store date in a session
-                Session["strDate"] = lblDateDisplay.Text;
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
-                //Response.Redirect(prevPage, false);
+                    + "your system administrator.", this);
             }
         }
+
+        //protected void grdCartItems_RowDataBound(object sender, GridViewRowEventArgs e)
+        //{
+        //    string method = "grdCartItems_RowDataBound";
+        //    try
+        //    {
+        //        if (e.Row.RowType == DataControlRowType.DataRow)
+        //        {
+        //            quantity
+        //                price
+
+        //        }
+        //        else if (e.Row.RowType == DataControlRowType.Footer)
+        //        {
+
+        //        }
+        //    }
+        //    //Exception catch
+        //    catch (ThreadAbortException tae) { }
+        //    catch (Exception ex)
+        //    {
+        //        //Log all info into error table
+        //        ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
+        //        //Display message box
+        //        MessageBox.ShowMessage("An Error has occurred and been logged. "
+        //            + "If you continue to receive this message please contact "
+        //            + "your system administrator.", this);
+        //    }
+        //}
+
         protected void btnCustomerSelect_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -120,16 +122,15 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     btnCustomerSelect.Text = "Change Customer";
                     grdCustomersSearched.Visible = false;
-                    int custNum = (int)(Convert.ToInt32(Session["key"].ToString()));
-                    Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
+                    //int custNum = (Convert.ToInt32(Session["key"].ToString()));
+                    //Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
                     //Set name in text box
-                    txtCustomer.Text = c.firstName + " " + c.lastName;
+                    //txtCustomer.Text = c.firstName + " " + c.lastName;
                 }
                 else
                 {
                     grdCustomersSearched.Visible = true;
-                    c = ssm.GetCustomerfromSearch(txtCustomer.Text);
-                    grdCustomersSearched.DataSource = c;
+                    grdCustomersSearched.DataSource = CM.ReturnCustomerBasedOnText(txtCustomer.Text);
                     grdCustomersSearched.DataBind();
                     if (grdCustomersSearched.Rows.Count > 0)
                     {
@@ -141,64 +142,103 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
-                //Response.Redirect(prevPage, false);
+                    + "your system administrator.", this);
             }
         }
         protected void btnSearchCustomers_Click(object sender, EventArgs e)
         {
-            grdCustomersSearched.Visible = true;
-            c = ssm.GetCustomerfromSearch(txtCustomer.Text);
-            grdCustomersSearched.DataSource = c;
-            grdCustomersSearched.DataBind();
+            string method = "btnSearchCustomers_Click";
+            try
+            {
+                grdCustomersSearched.Visible = true;
+                grdCustomersSearched.DataSource = CM.ReturnCustomerBasedOnText(txtCustomer.Text);
+                grdCustomersSearched.DataBind();
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
         }
         protected void btnAddCustomer_Click(object sender, EventArgs e)
         {
-            //Get info from textboxes
-            TextBox fName = grdCustomersSearched.FooterRow.FindControl("txtFirstName") as TextBox;
-            TextBox lName = grdCustomersSearched.FooterRow.FindControl("txtLastName") as TextBox;
-            TextBox phoneNumber = grdCustomersSearched.FooterRow.FindControl("txtPhoneNumber") as TextBox;
-            TextBox email = grdCustomersSearched.FooterRow.FindControl("txtEmail") as TextBox;
-            CheckBox marketing = grdCustomersSearched.FooterRow.FindControl("chkMarketingEnrollment") as CheckBox;
-            bool enrolled = false;
-            if (marketing.Checked)
+            string method = "btnAddCustomer_Click";
+            try
             {
-                enrolled = true;
+                List<Location> L = LM.ReturnLocation(CU.locationID);
+                Customer c = new Customer();
+                c.firstName = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtFirstName")).Text;
+                c.lastName = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtLastName")).Text;
+                c.primaryAddress = "";
+                c.secondaryAddress = "";
+                c.primaryPhoneNumber = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtPhoneNumber")).Text;
+                c.secondaryPhoneNumber = "";
+                c.emailList = ((CheckBox)grdCustomersSearched.FooterRow.FindControl("chkMarketingEnrollment")).Checked;
+                c.email = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtEmail")).Text;
+                c.city = "";
+                c.province = L[0].provID;
+                c.country = L[0].countryID;
+                c.postalCode = "";
+                //Set name in text box
+                ////txtCustomer.Text = c.firstName + " " + c.lastName;
+                ////btnCustomerSelect.Text = "Change Customer";
+                //Hide stuff
+                ////grdCustomersSearched.Visible = false;
+                //Set the session key to customer ID
+                int custNum = CM.addCustomer(c);
+                IM.UpdateCustomerOnInvoice(Request.QueryString["inv"].ToString(), custNum);
+
+                var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                nameValues.Set("cust", custNum.ToString());
+                Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
             }
-            //Using current user's info
-            int provStateID = lm.getProvIDFromLocationID(cu.locationID);
-            int countryID = lm.getCountryIDFromProvID(provStateID);
-            //Creating a customer
-            Customer c = new Customer(0, fName.Text, lName.Text, "", "", phoneNumber.Text, "", email.Text, "", provStateID, countryID, "", enrolled);
-            //Set the session key to customer ID
-            Session["key"] = CM.addCustomer(c).ToString();
-            //Hide stuff
-            grdCustomersSearched.Visible = false;
-            //Set name in text box
-            txtCustomer.Text = fName.Text + " " + lName.Text;
-            btnCustomerSelect.Text = "Change Customer";
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
         }
         protected void grdCustomersSearched_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
-            grdCustomersSearched.PageIndex = e.NewPageIndex;
-            //Looks through database and returns a list of customers
-            //based on the search criteria entered
-            SweetShopManager ssm = new SweetShopManager();
-            c = ssm.GetCustomerfromSearch(txtCustomer.Text);
-            //Binds the results to the gridview
-            grdCustomersSearched.Visible = true;
-            grdCustomersSearched.DataSource = c;
-            grdCustomersSearched.DataBind();
+            string method = "grdCustomersSearched_PageIndexChanging";
+            try
+            {
+                grdCustomersSearched.PageIndex = e.NewPageIndex;
+                //Looks through database and returns a list of customers
+                //based on the search criteria entered
+                //Binds the results to the gridview
+                grdCustomersSearched.Visible = true;
+                grdCustomersSearched.DataSource = CM.ReturnCustomerBasedOnText(txtCustomer.Text);
+                grdCustomersSearched.DataBind();
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
         }
         protected void grdCustomersSearched_RowCommand(object sender, GridViewCommandEventArgs e)
         {
@@ -207,36 +247,34 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //grabs the command argument for the command pressed 
-                string key = e.CommandArgument.ToString();
+                //string key = e.CommandArgument.ToString();
                 if (e.CommandName == "SwitchCustomer")
                 {
                     //if command argument is SwitchCustomer, set the new key
-                    Session["key"] = key;
+                    //Session["key"] = key;
                     //Hide stuff
-                    grdCustomersSearched.Visible = false;
+                    //grdCustomersSearched.Visible = false;
                     //Get customer name
-                    Customer c = ssm.GetCustomerbyCustomerNumber(Convert.ToInt32(key));
+                    //Customer c = ssm.GetCustomerbyCustomerNumber(Convert.ToInt32(key));
                     //Set name in text box
-                    txtCustomer.Text = c.firstName + " " + c.lastName;
+                    //txtCustomer.Text = c.firstName + " " + c.lastName;
+
+                    var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                    nameValues.Set("cust", e.CommandArgument.ToString());
+                    Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
                 }
-                btnCustomerSelect.Text = "Change Customer";
+                //btnCustomerSelect.Text = "Change Customer";
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
-                //Response.Redirect(prevPage, false);
+                    + "your system administrator.", this);
             }
         }
         protected void btnInventorySearch_Click(object sender, EventArgs e)
@@ -245,39 +283,38 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnInventorySearch_Click";
             try
             {
-                cu = (CurrentUser)Session["currentUser"];
                 lblInvalidQty.Visible = false;
                 //Retrieves the location from session
-                string loc = cu.locationName;
-                //Checks to see if some number or text has been entered into the search field
-                if (!txtSearch.Text.Equals("") && !txtSearch.Text.Equals(null))
-                {
-                    //If something was entered then check to see if it is text
-                    if (!int.TryParse(txtSearch.Text, out skuInt))
-                    {
-                        //If it is then pass into string
-                        skuString = txtSearch.Text;
-                        //use string and location to call query
-                        //Query will return list of items that match the text
-                        invoiceItems = ssm.returnSearchFromAllThreeItemSets(skuString, loc);
-                    }
-                    else
-                    {
-                        //Text entered is a number
-                        skuString = txtSearch.Text;
-                        //this looks for the sku and returns all items that match sku
-                        List<Cart> i = idu.getItemByID(Convert.ToInt32(skuInt), loc);
+                //string loc = CU.locationName;
+                ////Checks to see if some number or text has been entered into the search field
+                //if (!txtSearch.Text.Equals("") && !txtSearch.Text.Equals(null))
+                //{
+                //    //If something was entered then check to see if it is text
+                //    if (!int.TryParse(txtSearch.Text, out skuInt))
+                //    {
+                //        //If it is then pass into string
+                //        skuString = txtSearch.Text;
+                //        //use string and location to call query
+                //        //Query will return list of items that match the text
+                //        invoiceItems = ssm.returnSearchFromAllThreeItemSets(skuString, loc);
+                //    }
+                //    else
+                //    {
+                //        //Text entered is a number
+                //        skuString = txtSearch.Text;
+                //        //this looks for the sku and returns all items that match sku
+                //        List<Cart> i = idu.getItemByID(Convert.ToInt32(skuInt), loc);
 
-                        //Checks to see if at least one item was returned
-                        if (i != null && i.Count >= 1)
-                        {
-                            //Add item to the list
-                            invoiceItems = i;
-                        }
-                    }
-                }
+                //        //Checks to see if at least one item was returned
+                //        if (i != null && i.Count >= 1)
+                //        {
+                //            //Add item to the list
+                //            invoiceItems = i;
+                //        }
+                //    }
+                //}
                 //Binds list to the grid view
-                grdInventorySearched.DataSource = invoiceItems;
+                grdInventorySearched.DataSource = ITM.ReturnInvoiceItemsFromSearchStringForSale(txtSearch.Text); // invoiceItems;
                 grdInventorySearched.DataBind();
                 //Clears search text box
                 txtSearch.Text = "";
@@ -286,18 +323,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
-                //Response.Redirect(prevPage, false);
+                    + "your system administrator.", this);
             }
         }
         //Currently used for Removing the row
@@ -308,56 +339,52 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 lblInvalidQty.Visible = false;
-                //Gets the index of the selected row
-                int index = e.RowIndex;
+                ////Gets the index of the selected row
+                //int index = e.RowIndex;
                 //Stores all the data for each element in the row
-                int sku = Convert.ToInt32(grdCartItems.Rows[index].Cells[2].Text);
-                int quantity = Convert.ToInt32(grdCartItems.Rows[index].Cells[3].Text);
-                int itemType = Convert.ToInt32(((Label)grdCartItems.Rows[index].Cells[8].FindControl("lblTypeID")).Text);
+                int sku = Convert.ToInt32(grdCartItems.Rows[e.RowIndex].Cells[2].Text);
+
+
+                //int quantity = Convert.ToInt32(grdCartItems.Rows[index].Cells[3].Text);
+                //int itemType = Convert.ToInt32(((Label)grdCartItems.Rows[index].Cells[8].FindControl("lblTypeID")).Text);
                 //Queries database to get the total quantity of the selected sku
-                int remainingQTY = idu.getquantity(sku, itemType);
+                //int remainingQTY = idu.getquantity(sku, itemType);
                 //Takes the items currently in the cart puts them into a duplicate
                 //variable from the session
-                List<Cart> duplicateCart = (List<Cart>)Session["ItemsInCart"];
+                //List<Cart> duplicateCart = (List<Cart>)Session["ItemsInCart"];
                 //Loops through each item in the duplicate cart
-                foreach (var cart in duplicateCart)
-                {
+                //foreach (var cart in duplicateCart)
+                //{
                     //Checks to see if sku in duplicate cart = the selected sku
-                    if (cart.sku != sku)
-                    { //when sku doesn't match add sku back into the cart
-                        itemsInCart.Add(cart);
-                    }
-                    else
-                    {//When the skus match add the quantity from cart back into stock
-                        idu.removeQTYfromInventoryWithSKU(cart.sku, cart.typeID, (remainingQTY + quantity));
-                    }
-                }
+                    //if (cart.sku != sku)
+                    //{ //when sku doesn't match add sku back into the cart
+                        //itemsInCart.Add(cart);
+                    //}
+                    //else
+                    //{//When the skus match add the quantity from cart back into stock
+            //            idu.removeQTYfromInventoryWithSKU(cart.sku, cart.typeID, (remainingQTY + quantity));
+                    //}
+                //}
                 //Remove the indexed pointer
                 grdCartItems.EditIndex = -1;
                 //Store updated cart into session
-                Session["ItemsInCart"] = itemsInCart;
+                //Session["ItemsInCart"] = itemsInCart;
                 //bind items back to grid view
                 grdCartItems.DataSource = itemsInCart;
                 grdCartItems.DataBind();
                 //Calculate new subtotal
-                lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount(itemsInCart, cu.locationID).ToString("#0.00");
+                ////lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount(itemsInCart, CU.locationID).ToString("#0.00"); //With each item update update totals in database. Return this from the database
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
-                //Response.Redirect(prevPage, false);
+                    + "your system administrator.", this);
             }
         }
         //Currently used for Editing the row
@@ -379,24 +406,18 @@ namespace SweetSpotDiscountGolfPOS
                 grdCartItems.EditIndex = index;
                 grdCartItems.DataBind();
                 //Recalculates subtotal
-                lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"], cu.locationID).ToString("#0.00");
+                lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"], CU.locationID).ToString("#0.00");
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
-                //Response.Redirect(prevPage, false);
+                    + "your system administrator.", this);
             }
         }
         //Currently used for cancelling the edit
@@ -413,7 +434,7 @@ namespace SweetSpotDiscountGolfPOS
                 grdCartItems.DataSource = Session["ItemsInCart"];
                 grdCartItems.DataBind();
                 //Recalcluate subtotal
-                lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"], cu.locationID).ToString("#0.00");
+                lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"], CU.locationID).ToString("#0.00");
                 //Nulls the quantity session
                 Session["originalQTY"] = null;
             }
@@ -421,18 +442,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
-                //Response.Redirect(prevPage, false);
+                    + "your system administrator.", this);
             }
         }
         //Currently used for updating the row
@@ -462,7 +477,7 @@ namespace SweetSpotDiscountGolfPOS
                 string desc = grdCartItems.Rows[index].Cells[4].Text;
                 //creates a temp item with the new updates
                 tempItemInCart = new Cart(Convert.ToInt32(sku), desc, Convert.ToInt32(quantity), sPrice, sCost,
-                    Convert.ToDouble(discountOnItem), radioButtonSelected, 0, tradeInItemInCart, Convert.ToInt32(itemType), cu.locationID);
+                    Convert.ToDouble(discountOnItem), radioButtonSelected, 0, tradeInItemInCart, Convert.ToInt32(itemType), CU.locationID);
 
                 //Sets current items in cart from stored session into duplicate cart 
                 List<Cart> duplicateCart = (List<Cart>)Session["ItemsInCart"];
@@ -516,7 +531,7 @@ namespace SweetSpotDiscountGolfPOS
                 grdCartItems.DataSource = itemsInCart;
                 grdCartItems.DataBind();
                 //Recalculates the new subtotal
-                lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount(itemsInCart, cu.locationID).ToString("#0.00");
+                lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount(itemsInCart, CU.locationID).ToString("#0.00");
                 //Nullifies the quantity session
                 Session["originalQTY"] = null;
             }
@@ -524,18 +539,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
-                //Response.Redirect(prevPage, false);
+                    + "your system administrator.", this);
             }
         }
         protected void btnCancelSale_Click(object sender, EventArgs e)
@@ -585,18 +594,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
-                //Response.Redirect(prevPage, false);
+                    + "your system administrator.", this);
             }
         }
         protected void btnProceedToCheckout_Click(object sender, EventArgs e)
@@ -627,8 +630,6 @@ namespace SweetSpotDiscountGolfPOS
                         lblShippingWarning.Text = "Requires a number";
                     }
                 }
-
-
                 ////Checks to see if shipping was selected
                 //if (!RadioButton2.Checked)
                 //{
@@ -649,18 +650,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
-                //Response.Redirect(prevPage, false);
+                    + "your system administrator.", this);
             }
         }
         protected void grdInventorySearched_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -670,129 +665,142 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 lblInvalidQty.Visible = false;
-                bool bolAdded = false;
-                //Checks to see if there are any items in the current cart
-                if (Session["ItemsInCart"] != null)
+
+                int index = ((GridViewRow)(((LinkButton)e.CommandSource).NamingContainer)).RowIndex;
+                int sku = Convert.ToInt32(grdInventorySearched.Rows[index].Cells[1].Text);
+                int quantity = 1;
+                string qty = ((TextBox)grdInventorySearched.Rows[index].Cells[2].FindControl("quantityToAdd")).Text;
+                if (qty != "")
                 {
-                    //If there are set the session into variable
-                    itemsInCart = (List<Cart>)Session["ItemsInCart"];
+                    quantity = Convert.ToInt32(qty);
                 }
-                //Retrieves the selected sku
-                int itemKey = Convert.ToInt32(e.CommandArgument.ToString());
-                //Checks that the selected command is to AddItem
-                if (e.CommandName == "AddItem")
+                double discount = 0;
+                string discountAmount = ((TextBox)grdInventorySearched.Rows[index].Cells[5].FindControl("txtAmountDiscount")).Text;
+                if (discountAmount != "")
                 {
-                    //Loops through each item in the cart
-                    foreach (var cart in itemsInCart)
+                    discount = Convert.ToDouble(discountAmount);
+                }
+                int currentQty = Convert.ToInt32(((Label)grdInventorySearched.Rows[index].Cells[2].FindControl("QuantityInOrder")).Text);
+                bool percentsku = ((CheckBox)grdInventorySearched.Rows[index].Cells[5].FindControl("chkDiscountPercent")).Checked;
+
+                if (quantity > currentQty)
+                {
+                    lblInvalidQty.Visible = true;
+                    lblInvalidQty.Text = "Quantity Exceeds the Remaining Inventory";
+                    lblInvalidQty.ForeColor = System.Drawing.Color.Red;
+                }
+                else
+                {
+                    //add item to table and remove the added qty from current inventory
+                    //refresh the cart grd from table
+                }
+
+
+
+
+                //Loops through each item in the cart
+                //foreach (var cart in itemsInCart)
                     {
                         //Checks to see if the cart sku matches selected sku
                         //and that the item hasn't already been added
-                        if (cart.sku == itemKey && !bolAdded)
+                //        if (cart.sku == itemKey && !bolAdded)
                         {
                             //Queries the remaining quantity in stock of the selected sku
-                            int remainingQTY = idu.getquantity(cart.sku, cart.typeID);
+                //            int remainingQTY = idu.getquantity(cart.sku, cart.typeID);
                             //Checks that the new quantity will exceed the remaing qunatity
-                            if ((cart.quantity + 1) > remainingQTY)
-                            {
+                //            if ((cart.quantity + 1) > remainingQTY)
+                //            {
                                 //Advises user that not enough qunatity to sell item
-                                lblInvalidQty.Visible = true;
-                                lblInvalidQty.Text = "Quantity Exceeds the Remaining Inventory";
-                                lblInvalidQty.ForeColor = System.Drawing.Color.Red;
-                            }
-                            else
-                            {
+                                
+                //            }
+                //            else
+                //            {
                                 //There is enough in stock to make sale
                                 //increase quantity in the cart and remove from stock
-                                cart.quantity += 1;
-                                idu.removeQTYfromInventoryWithSKU(cart.sku, cart.typeID, (remainingQTY - 1));
-                            }
-                            bolAdded = true;
+                //                cart.quantity += 1;
+                //                idu.removeQTYfromInventoryWithSKU(cart.sku, cart.typeID, (remainingQTY - 1));
+                //            }
+                //            bolAdded = true;
                         }
                     }
 
                     //If the itemKey is between or equal to the ranges, do trade in
-                    if (itemKey == 100000)
-                    {
+                    //if (itemKey == 100000)
+                    //{
                         //Trade In Sku to add in SK
-                        string redirect = "<script>window.open('TradeINEntry.aspx');</script>";
-                        Response.Write(redirect);
-                    }
+                    //    string redirect = "<script>window.open('TradeINEntry.aspx');</script>";
+                    //    Response.Write(redirect);
+                    //}
                     //Cart is empty or sku didn't match any items currently in stock
-                    else if (itemsInCart.Count == 0 || !bolAdded)
-                    {
+                    //else if (itemsInCart.Count == 0 || !bolAdded)
+                    //{
                         //Returns a club, clothing, accessories based on the selected sku
-                        Clubs c = ssm.singleItemLookUp(itemKey);
-                        Clothing cl = ssm.getClothing(itemKey);
-                        Accessories ac = ssm.getAccessory(itemKey);
-                        int itemType = 0;
+                    //    Clubs c = ssm.singleItemLookUp(itemKey);
+                    //    Clothing cl = ssm.getClothing(itemKey);
+                    //    Accessories ac = ssm.getAccessory(itemKey);
+                    //    int itemType = 0;
                         //Checks that club looked up an item
-                        if (c.sku != 0)
-                        {
+                    //    if (c.sku != 0)
+                    //    {
                             //if club has value then set type and pass to object
-                            itemType = c.typeID;
-                            o = c as Object;
-                        }
+                    //        itemType = c.typeID;
+                    //        o = c as Object;
+                    //    }
                         //Checks that clothing looked up an item
-                        else if (cl.sku != 0)
-                        {
+                    //    else if (cl.sku != 0)
+                    //    {
                             //if clothing has value then set type and pass to object
-                            itemType = cl.typeID;
-                            o = cl as Object;
-                        }
+                    //        itemType = cl.typeID;
+                    //        o = cl as Object;
+                    //    }
                         //Checks that accessory looked up an item
-                        else if (ac.sku != 0)
-                        {
+                    //    else if (ac.sku != 0)
+                    //    {
                             //if accessories has value then set type and pass to object
-                            itemType = ac.typeID;
-                            o = ac as Object;
-                        }
+                    //        itemType = ac.typeID;
+                    //        o = ac as Object;
+                    //    }
                         //Retrieves the quantity in stock of the selected item
-                        int remainingQTY = idu.getquantity(itemKey, itemType);
+                    //    int remainingQTY = idu.getquantity(itemKey, itemType);
                         //Checks to see if there is 0 of the item in stock
-                        if (1 > remainingQTY)
-                        {
+                    //    if (1 > remainingQTY)
+                    //    {
                             //Displays to user that item has no quantity
-                            MessageBox.ShowMessage("This item has 0 quantity", this);
-                            lblInvalidQty.Visible = true;
-                        }
-                        else
-                        {
+                    //        MessageBox.ShowMessage("This item has 0 quantity", this);
+                    //        lblInvalidQty.Visible = true;
+                    //    }
+                    //    else
+                    //    {
                             //Query database for item matching object and add to the current cart
-                            itemsInCart.Add(idu.addingToCart(o));
+                    //        itemsInCart.Add(idu.addingToCart(o));
                             //Remove the quantity from amount in stock
-                            idu.removeQTYfromInventoryWithSKU(itemKey, itemType, (remainingQTY - 1));
-                        }
-                    }
-                }
+                    //        idu.removeQTYfromInventoryWithSKU(itemKey, itemType, (remainingQTY - 1));
+                    //    }
+                    //}
+                
                 //Set items in cart into Session
-                Session["ItemsInCart"] = itemsInCart;
+            //    Session["ItemsInCart"] = itemsInCart;
                 //Bind items in cart to grid view
-                grdCartItems.DataSource = itemsInCart;
-                grdCartItems.DataBind();
+            //    grdCartItems.DataSource = itemsInCart;
+            //    grdCartItems.DataBind();
                 //Set an empty variable to bind to the searched items grid view so it is empty
-                List<Cart> nullGrid = new List<Cart>();
-                nullGrid = null;
-                grdInventorySearched.DataSource = nullGrid;
-                grdInventorySearched.DataBind();
+            //    List<Cart> nullGrid = new List<Cart>();
+            //    nullGrid = null;
+            //    grdInventorySearched.DataSource = nullGrid;
+            //    grdInventorySearched.DataBind();
                 //Recalculate the new subtotal
-                lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount(itemsInCart, cu.locationID).ToString("#.00");
+            //    lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount(itemsInCart, CU.locationID).ToString("#.00");
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
-                //Response.Redirect(prevPage, false);
+                    + "your system administrator.", this);
             }
         }
         protected void btnJumpToInventory_Click(object sender, EventArgs e)
@@ -809,19 +817,15 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
-                //Response.Redirect(prevPage, false);
+                    + "your system administrator.", this);
             }
         }
+
+
     }
 }

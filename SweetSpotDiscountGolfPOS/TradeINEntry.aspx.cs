@@ -41,12 +41,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 int employeeID = cu.empID;
-                string currPage = Convert.ToString(Session["currPage"]) + "-V3 Test";
+                string currPage = Convert.ToString(Session["currPage"]) + "-V3";
                 er.logError(ex, employeeID, currPage, method, this);
                 //string prevPage = Convert.ToString(Session["prevPage"]);
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         //Cancelling the trade-in item
@@ -62,11 +62,11 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 int employeeID = cu.empID;
-                string currPage = Convert.ToString(Session["currPage"]) + "-V3 Test";
+                string currPage = Convert.ToString(Session["currPage"]) + "-V3";
                 er.logError(ex, employeeID, currPage, method, this);
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         //Finalizing the trade-in item
@@ -120,11 +120,11 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 int employeeID = cu.empID;
-                string currPage = Convert.ToString(Session["currPage"]) + "-V3 Test";
+                string currPage = Convert.ToString(Session["currPage"]) + "-V3";
                 er.logError(ex, employeeID, currPage, method, this);
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
     }
