@@ -44,7 +44,6 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "SettingsHomePage.aspx";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
@@ -53,6 +52,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
+                    CU = (CurrentUser)Session["currentUser"];
                     lblCurrentDate.Text = DateTime.Today.ToString("yyyy-MM-dd");
                     if (txtDate.Text == "")
                     {

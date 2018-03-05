@@ -37,54 +37,56 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "ReportsMostSold";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Server.Transfer("LoginPage.aspx", false);
                 }
-
-                //Gathering the start and end dates
-                Object[] passing = (Object[])Session["reportInfo"];
-                DateTime[] reportDates = (DateTime[])passing[0];
-                DateTime startDate = reportDates[0];
-                DateTime endDate = reportDates[1];
-                int locationID = (int)passing[1];
-                //Builds string to display in label
-                if (startDate == endDate)
-                {
-                    lblDates.Text = "Items sold for: " + startDate.ToString("d") + " for " + l.locationName(locationID);
-                }
                 else
                 {
-                    lblDates.Text = "Items sold for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
-                }
-
-                
-                //Binding the gridview
-                items = r.mostSoldItemsReport1(startDate, endDate, locationID);
-                brands = r.mostSoldBrandsReport1(startDate, endDate, locationID);
-                models = r.mostSoldModelsReport1(startDate, endDate, locationID);
-                //Checking if there are any values
-                if (items.Count > 0 && brands.Count > 0 && models.Count > 0)
-                {
-                    grdItems.DataSource = items;
-                    grdItems.DataBind();
-                    grdBrands.DataSource = brands;
-                    grdBrands.DataBind();
-                    grdModels.DataSource = models;
-                    grdModels.DataBind();
-                }
-                else
-                {
+                    CU = (CurrentUser)Session["currentUser"];
+                    //Gathering the start and end dates
+                    Object[] passing = (Object[])Session["reportInfo"];
+                    DateTime[] reportDates = (DateTime[])passing[0];
+                    DateTime startDate = reportDates[0];
+                    DateTime endDate = reportDates[1];
+                    int locationID = (int)passing[1];
+                    //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "There is no data for: " + startDate.ToString("d") + " for " + l.locationName(locationID);
+                        lblDates.Text = "Items sold for: " + startDate.ToString("d") + " for " + l.locationName(locationID);
                     }
                     else
                     {
-                        lblDates.Text = "There is no data for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
+                        lblDates.Text = "Items sold for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
+                    }
+
+
+                    //Binding the gridview
+                    items = r.mostSoldItemsReport1(startDate, endDate, locationID);
+                    brands = r.mostSoldBrandsReport1(startDate, endDate, locationID);
+                    models = r.mostSoldModelsReport1(startDate, endDate, locationID);
+                    //Checking if there are any values
+                    if (items.Count > 0 && brands.Count > 0 && models.Count > 0)
+                    {
+                        grdItems.DataSource = items;
+                        grdItems.DataBind();
+                        grdBrands.DataSource = brands;
+                        grdBrands.DataBind();
+                        grdModels.DataSource = models;
+                        grdModels.DataBind();
+                    }
+                    else
+                    {
+                        if (startDate == endDate)
+                        {
+                            lblDates.Text = "There is no data for: " + startDate.ToString("d") + " for " + l.locationName(locationID);
+                        }
+                        else
+                        {
+                            lblDates.Text = "There is no data for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
+                        }
                     }
                 }
             }

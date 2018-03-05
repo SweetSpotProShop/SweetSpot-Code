@@ -26,88 +26,91 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "CustomerAddNew.aspx";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Response.Redirect("LoginPage.aspx", false);
                 }
-                //Checks for a Customer Key
-                if (Convert.ToInt32(Request.QueryString["cust"].ToString()) != -10)
-                {
-                    if (!IsPostBack)
-                    {
-                        //Create customer class and fill page with all info based in the customer number 
-                        List<Customer> customer = CM.ReturnCustomerWithInvoiceList(Convert.ToInt32(Request.QueryString["cust"].ToString()));
-
-                        txtFirstName.Text = customer[0].firstName.ToString();
-                        txtLastName.Text = customer[0].lastName.ToString();
-                        txtPrimaryAddress.Text = customer[0].primaryAddress.ToString();
-                        txtSecondaryAddress.Text = customer[0].secondaryAddress.ToString();
-                        txtPrimaryPhoneNumber.Text = customer[0].primaryPhoneNumber.ToString();
-                        txtSecondaryPhoneNumber.Text = customer[0].secondaryPhoneNumber.ToString();
-                        txtEmail.Text = customer[0].email.ToString();
-                        txtCity.Text = customer[0].city.ToString();
-                        ddlProvince.SelectedValue = customer[0].province.ToString();
-                        ddlCountry.SelectedValue = customer[0].country.ToString();
-
-                        ddlCountry.DataSource = LM.ReturnCountryDropDown();
-                        ddlCountry.DataTextField = "countryDesc";
-                        ddlCountry.DataValueField = "countryID";
-                        ddlCountry.DataBind();
-                        ddlCountry.SelectedValue = customer[0].country.ToString();
-                        ddlProvince.DataSource = LM.ReturnProvinceDropDown(customer[0].country);
-                        ddlProvince.DataTextField = "provName";
-                        ddlProvince.DataValueField = "provStateID";
-                        ddlProvince.SelectedValue = customer[0].province.ToString();
-                        ddlProvince.DataBind();
-
-                        txtPostalCode.Text = customer[0].postalCode.ToString();
-                        chkEmailList.Checked = customer[0].emailList;
-
-                        //Binds invoice list to the grid view
-                        grdInvoiceSelection.DataSource = customer[0].invoices;
-                        grdInvoiceSelection.DataBind();
-                    }
-                }
                 else
                 {
-                    //no cust number
-                    if (!IsPostBack)
+                    CU = (CurrentUser)Session["currentUser"];
+                    //Checks for a Customer Key
+                    if (Convert.ToInt32(Request.QueryString["cust"].ToString()) != -10)
                     {
-                        ddlCountry.DataSource = LM.ReturnCountryDropDown();
-                        ddlCountry.DataTextField = "countryDesc";
-                        ddlCountry.DataValueField = "countryID";
-                        ddlCountry.DataBind();
-                        ddlCountry.SelectedValue = 0.ToString();
+                        if (!IsPostBack)
+                        {
+                            //Create customer class and fill page with all info based in the customer number 
+                            List<Customer> customer = CM.ReturnCustomerWithInvoiceList(Convert.ToInt32(Request.QueryString["cust"].ToString()));
 
-                        ddlProvince.DataTextField = "provName";
-                        ddlProvince.DataValueField = "provStateID";
-                        ddlProvince.DataSource = LM.ReturnProvinceDropDown(0);
-                        ddlProvince.DataBind();
+                            txtFirstName.Text = customer[0].firstName.ToString();
+                            txtLastName.Text = customer[0].lastName.ToString();
+                            txtPrimaryAddress.Text = customer[0].primaryAddress.ToString();
+                            txtSecondaryAddress.Text = customer[0].secondaryAddress.ToString();
+                            txtPrimaryPhoneNumber.Text = customer[0].primaryPhoneNumber.ToString();
+                            txtSecondaryPhoneNumber.Text = customer[0].secondaryPhoneNumber.ToString();
+                            txtEmail.Text = customer[0].email.ToString();
+                            txtCity.Text = customer[0].city.ToString();
+                            ddlProvince.SelectedValue = customer[0].province.ToString();
+                            ddlCountry.SelectedValue = customer[0].country.ToString();
+
+                            ddlCountry.DataSource = LM.ReturnCountryDropDown();
+                            ddlCountry.DataTextField = "countryDesc";
+                            ddlCountry.DataValueField = "countryID";
+                            ddlCountry.DataBind();
+                            ddlCountry.SelectedValue = customer[0].country.ToString();
+                            ddlProvince.DataSource = LM.ReturnProvinceDropDown(customer[0].country);
+                            ddlProvince.DataTextField = "provName";
+                            ddlProvince.DataValueField = "provStateID";
+                            ddlProvince.SelectedValue = customer[0].province.ToString();
+                            ddlProvince.DataBind();
+
+                            txtPostalCode.Text = customer[0].postalCode.ToString();
+                            chkEmailList.Checked = customer[0].emailList;
+
+                            //Binds invoice list to the grid view
+                            grdInvoiceSelection.DataSource = customer[0].invoices;
+                            grdInvoiceSelection.DataBind();
+                        }
                     }
-                    //Displays text boxes instead of label for customer creation info
-                    txtFirstName.Enabled = true;
-                    txtLastName.Enabled = true;
-                    txtPrimaryAddress.Enabled = true;
-                    txtSecondaryAddress.Enabled = true;
-                    txtPrimaryPhoneNumber.Enabled = true;
-                    txtSecondaryPhoneNumber.Enabled = true;
-                    txtEmail.Enabled = true;
-                    txtCity.Enabled = true;
-                    ddlProvince.Enabled = true;
-                    ddlCountry.Enabled = true;
-                    chkEmailList.Enabled = true;
-                    txtPostalCode.Enabled = true;
-                    //hides and displays the proper buttons for access
-                    btnSaveCustomer.Visible = false;
-                    btnAddCustomer.Visible = true;
-                    pnlDefaultButton.DefaultButton = "btnAddCustomer";
-                    btnEditCustomer.Visible = false;
-                    btnStartSale.Visible = false;
-                    btnCancel.Visible = false;
-                    btnBackToSearch.Visible = true;
+                    else
+                    {
+                        //no cust number
+                        if (!IsPostBack)
+                        {
+                            ddlCountry.DataSource = LM.ReturnCountryDropDown();
+                            ddlCountry.DataTextField = "countryDesc";
+                            ddlCountry.DataValueField = "countryID";
+                            ddlCountry.DataBind();
+                            ddlCountry.SelectedValue = 0.ToString();
+
+                            ddlProvince.DataTextField = "provName";
+                            ddlProvince.DataValueField = "provStateID";
+                            ddlProvince.DataSource = LM.ReturnProvinceDropDown(0);
+                            ddlProvince.DataBind();
+                        }
+                        //Displays text boxes instead of label for customer creation info
+                        txtFirstName.Enabled = true;
+                        txtLastName.Enabled = true;
+                        txtPrimaryAddress.Enabled = true;
+                        txtSecondaryAddress.Enabled = true;
+                        txtPrimaryPhoneNumber.Enabled = true;
+                        txtSecondaryPhoneNumber.Enabled = true;
+                        txtEmail.Enabled = true;
+                        txtCity.Enabled = true;
+                        ddlProvince.Enabled = true;
+                        ddlCountry.Enabled = true;
+                        chkEmailList.Enabled = true;
+                        txtPostalCode.Enabled = true;
+                        //hides and displays the proper buttons for access
+                        btnSaveCustomer.Visible = false;
+                        btnAddCustomer.Visible = true;
+                        pnlDefaultButton.DefaultButton = "btnAddCustomer";
+                        btnEditCustomer.Visible = false;
+                        btnStartSale.Visible = false;
+                        btnCancel.Visible = false;
+                        btnBackToSearch.Visible = true;
+                    }
                 }
             }
             //Exception catch

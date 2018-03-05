@@ -27,23 +27,26 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "SalesHomePage.aspx";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Response.Redirect("LoginPage.aspx", false);
                 }
-                if (!IsPostBack)
+                else
                 {
-                    //Sets the calendar and text boxes start and end dates
-                    calStartDate.SelectedDate = DateTime.Today;
-                    calEndDate.SelectedDate = DateTime.Today;
-                    ddlLocation.DataSource = LM.ReturnLocationDropDown();
-                    ddlLocation.DataTextField = "locationName";
-                    ddlLocation.DataValueField = "locationID";
-                    ddlLocation.DataBind();
-                    ddlLocation.SelectedValue = CU.locationID.ToString();
+                    CU = (CurrentUser)Session["currentUser"];
+                    if (!IsPostBack)
+                    {
+                        //Sets the calendar and text boxes start and end dates
+                        calStartDate.SelectedDate = DateTime.Today;
+                        calEndDate.SelectedDate = DateTime.Today;
+                        ddlLocation.DataSource = LM.ReturnLocationDropDown();
+                        ddlLocation.DataTextField = "locationName";
+                        ddlLocation.DataValueField = "locationID";
+                        ddlLocation.DataBind();
+                        ddlLocation.SelectedValue = CU.locationID.ToString();
+                    }
                 }
             }
             //Exception catch

@@ -28,14 +28,17 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "SalesHomePage.aspx";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Response.Redirect("LoginPage.aspx", false);
                 }
-                if (!IsPostBack) { calSearchDate.SelectedDate = DateTime.Today; }
+                else
+                {
+                    CU = (CurrentUser)Session["currentUser"];
+                    if (!IsPostBack) { calSearchDate.SelectedDate = DateTime.Today; }
+                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

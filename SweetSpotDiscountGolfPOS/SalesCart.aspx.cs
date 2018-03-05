@@ -44,30 +44,33 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "SalesCart.aspx";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Response.Redirect("LoginPage.aspx", false);
                 }
-                lblInvalidQty.Visible = false;
-                if (!Page.IsPostBack)
+                else
                 {
-                    //if transaction type is sales then set focus on the search field
-                    txtSearch.Focus();
-                    //If yes then convert number to int and call Customer class using it
-                    List<Customer> c = CM.ReturnCustomer(Convert.ToInt32(Request.QueryString["cust"].ToString()));
-                    //Set name in text box
-                    txtCustomer.Text = c[0].firstName + " " + c[0].lastName;
-                    lblDateDisplay.Text = DateTime.Today.ToString("yyyy-MM-dd");
-                    lblInvoiceNumberDisplay.Text = Request.QueryString["inv"].ToString();
+                    CU = (CurrentUser)Session["currentUser"];
+                    lblInvalidQty.Visible = false;
+                    if (!Page.IsPostBack)
+                    {
+                        //if transaction type is sales then set focus on the search field
+                        txtSearch.Focus();
+                        //If yes then convert number to int and call Customer class using it
+                        List<Customer> c = CM.ReturnCustomer(Convert.ToInt32(Request.QueryString["cust"].ToString()));
+                        //Set name in text box
+                        txtCustomer.Text = c[0].firstName + " " + c[0].lastName;
+                        lblDateDisplay.Text = DateTime.Today.ToString("yyyy-MM-dd");
+                        lblInvoiceNumberDisplay.Text = Request.QueryString["inv"].ToString();
 
-                    //change to gather the items from table
-                    grdCartItems.DataSource = Session["ItemsInCart"];
-                    grdCartItems.DataBind();
-                    ////lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"], CU.locationID).ToString(); //With each item update update totals in database. Return this from the database
+                        //change to gather the items from table
+                        grdCartItems.DataSource = Session["ItemsInCart"];
+                        grdCartItems.DataBind();
+                        ////lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"], CU.locationID).ToString(); //With each item update update totals in database. Return this from the database
 
+                    }
                 }
             }
             //Exception catch

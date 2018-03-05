@@ -26,7 +26,6 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "EmployeeAddNew.aspx";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
@@ -35,6 +34,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
+                    CU = (CurrentUser)Session["currentUser"];
                     if (CU.jobID != 0)
                     {
                         //If user is not an admin then disable the edit employee button

@@ -43,144 +43,147 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "ReturnsCheckout.aspx";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Response.Redirect("LoginPage.aspx", false);
                 }
-                if (!Page.IsPostBack)
+                else
                 {
-                    List<Tax> t = new List<Tax>();
-                    List<Cart> cart = new List<Cart>();
-                    SalesCalculationManager cm = new SalesCalculationManager();
-                    //Retrieves cart from session
-                    cart = (List<Cart>)Session["returnedCart"];
-                    //Retrieves date and shipping from sessions
-                    DateTime recDate = Convert.ToDateTime(Session["strDate"]);
-                    bool bolShipping = Convert.ToBoolean(Session["shipping"]);
-                    if (bolShipping)
+                    CU = (CurrentUser)Session["currentUser"];
+                    if (!Page.IsPostBack)
                     {
-                        //When shipping is true get the customer number from Session
-                        int custNum = Convert.ToInt32(Session["key"].ToString());
-                        //create customer from class based on cust number
-                        Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
-                        //Gather taxes for the province customer lives in
-                        t = ssm.getTaxes(c.province, recDate);
-                        //Retrieve the shipping amount from session
-                        dblShippingAmount = Convert.ToDouble(Session["ShippingAmount"].ToString());
-                    }
-                    else
-                    {
-                        //Retrieve taxes based on current location
-                        t = ssm.getTaxes(lm.getProvIDFromLocationID(CU.locationID), recDate);
-                        //Set shipping amount to 0
-                        dblShippingAmount = 0;
-                    }
-                    //Retrieve the location from Session
-                    int location = CU.locationID;
-                    //Retrieve invoice from session
-                    Invoice rInvoice = (Invoice)Session["searchReturnInvoices"];
-                    //stores all checkout info in class
-                    ckm = new CheckoutManager(cm.returnRefundTotalAmount(cart), 0, 0, 0, false, false, 0, 0, 0);
-                    foreach (var T in t)
-                    {
-                        //Cycles through each tax to display the correct ones and the
-                        //amount of each one
-                        switch (T.taxName)
+                        List<Tax> t = new List<Tax>();
+                        List<Cart> cart = new List<Cart>();
+                        SalesCalculationManager cm = new SalesCalculationManager();
+                        //Retrieves cart from session
+                        cart = (List<Cart>)Session["returnedCart"];
+                        //Retrieves date and shipping from sessions
+                        DateTime recDate = Convert.ToDateTime(Session["strDate"]);
+                        bool bolShipping = Convert.ToBoolean(Session["shipping"]);
+                        if (bolShipping)
                         {
-                            case "GST":
-                                lblGovernment.Visible = true;
-                                lblGovernmentAmount.Visible = true;
-                                //Only use tax amount if it was higher than 0
-                                if (rInvoice.governmentTax > 0)
-                                {
-                                    ckm.dblGst = cm.returnTaxAmount(T.taxRate, ckm.dblSubTotal);
-                                    ckm.blGst = true;
-                                }
-                                lblGovernmentAmount.Text = "$ " + ckm.dblGst.ToString("#0.00");
-                                break;
-                            case "PST":
-                                lblProvincial.Visible = true;
-                                lblProvincialAmount.Visible = true;
-                                //Only use tax amount if it was higher than 0
-                                if (rInvoice.provincialTax > 0)
-                                {
-                                    ckm.dblPst = cm.returnTaxAmount(T.taxRate, ckm.dblSubTotal);
-                                    ckm.blPst = true;
-                                }
-                                lblProvincialAmount.Text = "$ " + pst.ToString("#0.00");
-                                break;
-                            case "HST":
-                                lblProvincial.Visible = false;
-                                lblGovernmentAmount.Visible = true;
-                                lblGovernment.Text = "HST";
-                                //Only use tax amount if it was higher than 0
-                                if (rInvoice.governmentTax > 0)
-                                {
-                                    ckm.dblGst = cm.returnTaxAmount(T.taxRate, ckm.dblSubTotal);
-                                    ckm.blGst = true;
-                                }
-                                lblGovernmentAmount.Text = "$ " + gst.ToString("#0.00");
-                                break;
-                            case "RST":
-                                lblProvincial.Visible = true;
-                                lblProvincialAmount.Visible = true;
-                                lblProvincial.Text = "RST";
-                                //Only use tax amount if it was higher than 0
-                                if (rInvoice.provincialTax > 0)
-                                {
-                                    ckm.dblPst = cm.returnTaxAmount(T.taxRate, ckm.dblSubTotal);
-                                    ckm.blPst = true;
-                                }
-                                lblProvincialAmount.Text = "$ " + pst.ToString("#0.00");
-                                break;
-                            case "QST":
-                                lblProvincial.Visible = true;
-                                lblProvincialAmount.Visible = true;
-                                lblProvincial.Text = "QST";
-                                //Only use tax amount if it was higher than 0
-                                if (rInvoice.provincialTax > 0)
-                                {
-                                    ckm.dblPst = cm.returnTaxAmount(T.taxRate, ckm.dblSubTotal);
-                                    ckm.blPst = true;
-                                }
-                                lblProvincialAmount.Text = "$ " + pst.ToString("#0.00");
-                                break;
+                            //When shipping is true get the customer number from Session
+                            int custNum = Convert.ToInt32(Session["key"].ToString());
+                            //create customer from class based on cust number
+                            Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
+                            //Gather taxes for the province customer lives in
+                            t = ssm.getTaxes(c.province, recDate);
+                            //Retrieve the shipping amount from session
+                            dblShippingAmount = Convert.ToDouble(Session["ShippingAmount"].ToString());
                         }
-                    }
-                    //Setting the balance due and remaining balance
-                    ckm.dblBalanceDue += ckm.dblGst + ckm.dblPst;
-                    ckm.dblRemainingBalance += ckm.dblGst + ckm.dblPst;
-                    //Checks the Session for any method of payments
-                    if (Session["MethodsofPayment"] != null)
-                    {
-                        //Retrieves methods of payment from session
-                        mopList = (List<Mops>)Session["MethodsofPayment"];
-                        foreach (var mop in mopList)
+                        else
                         {
-                            //creates total amount from each mop
-                            dblAmountPaid += mop.amountPaid;
+                            //Retrieve taxes based on current location
+                            t = ssm.getTaxes(lm.getProvIDFromLocationID(CU.locationID), recDate);
+                            //Set shipping amount to 0
+                            dblShippingAmount = 0;
                         }
-                        //Binds mops to grid view
-                        gvCurrentMOPs.DataSource = mopList;
-                        gvCurrentMOPs.DataBind();
-                        //Sets amount currently paid
-                        ckm.dblAmountPaid = dblAmountPaid;
-                        //Recalculate the remaining balance
-                        ckm.dblRemainingBalance = ckm.dblBalanceDue - ckm.dblAmountPaid;
-                    }
+                        //Retrieve the location from Session
+                        int location = CU.locationID;
+                        //Retrieve invoice from session
+                        Invoice rInvoice = (Invoice)Session["searchReturnInvoices"];
+                        //stores all checkout info in class
+                        ckm = new CheckoutManager(cm.returnRefundTotalAmount(cart), 0, 0, 0, false, false, 0, 0, 0);
+                        foreach (var T in t)
+                        {
+                            //Cycles through each tax to display the correct ones and the
+                            //amount of each one
+                            switch (T.taxName)
+                            {
+                                case "GST":
+                                    lblGovernment.Visible = true;
+                                    lblGovernmentAmount.Visible = true;
+                                    //Only use tax amount if it was higher than 0
+                                    if (rInvoice.governmentTax > 0)
+                                    {
+                                        ckm.dblGst = cm.returnTaxAmount(T.taxRate, ckm.dblSubTotal);
+                                        ckm.blGst = true;
+                                    }
+                                    lblGovernmentAmount.Text = "$ " + ckm.dblGst.ToString("#0.00");
+                                    break;
+                                case "PST":
+                                    lblProvincial.Visible = true;
+                                    lblProvincialAmount.Visible = true;
+                                    //Only use tax amount if it was higher than 0
+                                    if (rInvoice.provincialTax > 0)
+                                    {
+                                        ckm.dblPst = cm.returnTaxAmount(T.taxRate, ckm.dblSubTotal);
+                                        ckm.blPst = true;
+                                    }
+                                    lblProvincialAmount.Text = "$ " + pst.ToString("#0.00");
+                                    break;
+                                case "HST":
+                                    lblProvincial.Visible = false;
+                                    lblGovernmentAmount.Visible = true;
+                                    lblGovernment.Text = "HST";
+                                    //Only use tax amount if it was higher than 0
+                                    if (rInvoice.governmentTax > 0)
+                                    {
+                                        ckm.dblGst = cm.returnTaxAmount(T.taxRate, ckm.dblSubTotal);
+                                        ckm.blGst = true;
+                                    }
+                                    lblGovernmentAmount.Text = "$ " + gst.ToString("#0.00");
+                                    break;
+                                case "RST":
+                                    lblProvincial.Visible = true;
+                                    lblProvincialAmount.Visible = true;
+                                    lblProvincial.Text = "RST";
+                                    //Only use tax amount if it was higher than 0
+                                    if (rInvoice.provincialTax > 0)
+                                    {
+                                        ckm.dblPst = cm.returnTaxAmount(T.taxRate, ckm.dblSubTotal);
+                                        ckm.blPst = true;
+                                    }
+                                    lblProvincialAmount.Text = "$ " + pst.ToString("#0.00");
+                                    break;
+                                case "QST":
+                                    lblProvincial.Visible = true;
+                                    lblProvincialAmount.Visible = true;
+                                    lblProvincial.Text = "QST";
+                                    //Only use tax amount if it was higher than 0
+                                    if (rInvoice.provincialTax > 0)
+                                    {
+                                        ckm.dblPst = cm.returnTaxAmount(T.taxRate, ckm.dblSubTotal);
+                                        ckm.blPst = true;
+                                    }
+                                    lblProvincialAmount.Text = "$ " + pst.ToString("#0.00");
+                                    break;
+                            }
+                        }
+                        //Setting the balance due and remaining balance
+                        ckm.dblBalanceDue += ckm.dblGst + ckm.dblPst;
+                        ckm.dblRemainingBalance += ckm.dblGst + ckm.dblPst;
+                        //Checks the Session for any method of payments
+                        if (Session["MethodsofPayment"] != null)
+                        {
+                            //Retrieves methods of payment from session
+                            mopList = (List<Mops>)Session["MethodsofPayment"];
+                            foreach (var mop in mopList)
+                            {
+                                //creates total amount from each mop
+                                dblAmountPaid += mop.amountPaid;
+                            }
+                            //Binds mops to grid view
+                            gvCurrentMOPs.DataSource = mopList;
+                            gvCurrentMOPs.DataBind();
+                            //Sets amount currently paid
+                            ckm.dblAmountPaid = dblAmountPaid;
+                            //Recalculate the remaining balance
+                            ckm.dblRemainingBalance = ckm.dblBalanceDue - ckm.dblAmountPaid;
+                        }
 
-                    //***Assign each item to its Label.
-                    lblRefundSubTotalAmount.Text = "$ " + (ckm.dblSubTotal + ckm.dblShipping).ToString("#0.00");
-                    lblGovernmentAmount.Text = "$ " + ckm.dblGst.ToString("#0.00");
-                    lblProvincialAmount.Text = "$ " + ckm.dblPst.ToString("#0.00");
-                    lblRefundBalanceAmount.Text = "$ " + ckm.dblBalanceDue.ToString("#0.00");
-                    lblRemainingRefundDisplay.Text = "$ " + ckm.dblRemainingBalance.ToString("#0.00");
-                    //Store totals in Session
-                    Session["CheckOutTotals"] = ckm;
-                    txtAmountRefunding.Text = ckm.dblRemainingBalance.ToString("#0.00");
+                        //***Assign each item to its Label.
+                        lblRefundSubTotalAmount.Text = "$ " + (ckm.dblSubTotal + ckm.dblShipping).ToString("#0.00");
+                        lblGovernmentAmount.Text = "$ " + ckm.dblGst.ToString("#0.00");
+                        lblProvincialAmount.Text = "$ " + ckm.dblPst.ToString("#0.00");
+                        lblRefundBalanceAmount.Text = "$ " + ckm.dblBalanceDue.ToString("#0.00");
+                        lblRemainingRefundDisplay.Text = "$ " + ckm.dblRemainingBalance.ToString("#0.00");
+                        //Store totals in Session
+                        Session["CheckOutTotals"] = ckm;
+                        txtAmountRefunding.Text = ckm.dblRemainingBalance.ToString("#0.00");
+                    }
                 }
             }
             //Exception catch

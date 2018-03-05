@@ -38,44 +38,47 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "ReportsDiscounts.aspx";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Server.Transfer("LoginPage.aspx", false);
                 }
-                //Gathering the start and end dates
-                Object[] repInfo = (Object[])Session["reportInfo"];
-                DateTime[] reportDates = (DateTime[])repInfo[0];
-                startDate = reportDates[0];
-                endDate = reportDates[1];
-                int locID = Convert.ToInt32(repInfo[1]);
-                //Builds string to display in label
-                if (startDate == endDate)
-                {
-                    lblReportDate.Text = "Discount Report on: " + startDate.ToString("d") + " for " + lm.locationName(locID);
-                }
                 else
                 {
-                    lblReportDate.Text = "Discount Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + lm.locationName(locID);
-                }
-                discounts = reports.returnDiscountsBetweenDates(startDate, endDate);
-                if (discounts.Count == 0)
-                {
+                    CU = (CurrentUser)Session["currentUser"];
+                    //Gathering the start and end dates
+                    Object[] repInfo = (Object[])Session["reportInfo"];
+                    DateTime[] reportDates = (DateTime[])repInfo[0];
+                    startDate = reportDates[0];
+                    endDate = reportDates[1];
+                    int locID = Convert.ToInt32(repInfo[1]);
+                    //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblReportDate.Text = "There are no invoices with discounts on: " + startDate.ToString("d");
+                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("d") + " for " + lm.locationName(locID);
                     }
                     else
                     {
-                        lblReportDate.Text = "There are no invoices with discounts betweeen: " + startDate.ToString("d") + " to " + endDate.ToString("d");
+                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + lm.locationName(locID);
                     }
-                }
-                else
-                {
-                    grdInvoiceDisplay.DataSource = discounts;
-                    grdInvoiceDisplay.DataBind();
+                    discounts = reports.returnDiscountsBetweenDates(startDate, endDate);
+                    if (discounts.Count == 0)
+                    {
+                        if (startDate == endDate)
+                        {
+                            lblReportDate.Text = "There are no invoices with discounts on: " + startDate.ToString("d");
+                        }
+                        else
+                        {
+                            lblReportDate.Text = "There are no invoices with discounts betweeen: " + startDate.ToString("d") + " to " + endDate.ToString("d");
+                        }
+                    }
+                    else
+                    {
+                        grdInvoiceDisplay.DataSource = discounts;
+                        grdInvoiceDisplay.DataBind();
+                    }
                 }
             }
             //Exception catch
