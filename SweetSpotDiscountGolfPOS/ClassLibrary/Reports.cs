@@ -1700,6 +1700,22 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlCommand cmd = new SqlCommand();
             SqlDataReader reader;
 
+
+
+
+            cmd.CommandText = "IF OBJECT_ID('tempItemStorage', 'U') IS NOT NULL " +
+                                  "DROP TABLE tempItemStorage; " +
+                              "IF OBJECT_ID('tempErrorSkus', 'U') IS NOT NULL " +
+                                  "DROP TABLE tempErrorSkus;";
+            conTempDB.Open();
+            cmd.Connection = conTempDB;
+            reader = cmd.ExecuteReader();
+            conTempDB.Close();
+
+
+
+
+
             //***************************************************************************************************
             //Step 2: Check to see if there is any data in the uploaded file
             //***************************************************************************************************
