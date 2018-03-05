@@ -47,33 +47,36 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "ReportsExtensiveInvoice.aspx";
             try
             {
-                cu = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Server.Transfer("LoginPage.aspx", false);
                 }
-                //Gathering the start and end dates
-                Object[] repInfo = (Object[])Session["reportInfo"];
-                DateTime[] reportDates = (DateTime[])repInfo[0];
-                startDate = reportDates[0];
-                endDate = reportDates[1];
-                int locID = Convert.ToInt32(repInfo[1]);
-                //Builds string to display in label
-                if (startDate == endDate)
-                {
-                    lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " for " + lm.locationName(locID);
-                }
                 else
                 {
-                    lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + lm.locationName(locID);
-                }
-                invoices = new DataTable();
-                invoices = reports.returnExtensiveInvoices(startDate, endDate, locID);
+                    cu = (CurrentUser)Session["currentUser"];
+                    //Gathering the start and end dates
+                    Object[] repInfo = (Object[])Session["reportInfo"];
+                    DateTime[] reportDates = (DateTime[])repInfo[0];
+                    startDate = reportDates[0];
+                    endDate = reportDates[1];
+                    int locID = Convert.ToInt32(repInfo[1]);
+                    //Builds string to display in label
+                    if (startDate == endDate)
+                    {
+                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " for " + lm.locationName(locID);
+                    }
+                    else
+                    {
+                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + lm.locationName(locID);
+                    }
+                    invoices = new DataTable();
+                    invoices = reports.returnExtensiveInvoices(startDate, endDate, locID);
 
-                grdInvoices.DataSource = invoices;
-                grdInvoices.DataBind();
+                    grdInvoices.DataSource = invoices;
+                    grdInvoices.DataBind();
+                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
