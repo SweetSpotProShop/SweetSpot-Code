@@ -1934,7 +1934,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         con.Open();
                         //This query will look up the brand, model, and locationID of the item being passed in. 
                         //If all three are found, it will insert the item into the tempItemStorage table.
-                        //If not, it is added to the tempErrorSkus table
+                        //If not, it is added to the tempErrorSkus table                        
                         cmd.CommandText = "if((select top 1 tbl_brand.brandID from tbl_brand where tbl_brand.brandName = @brandName) >= 0 and " +
                                             "(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName) >= 0 and " +
                                             "(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier) >= 0) " +
@@ -1956,7 +1956,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                                  "Not Exists(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName) and " +
                                                  "(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier) >= 0) " +
                                             "Begin " +
-                                                "insert into tempErrorSkus values(@sku, 0, 1, 0) " +/////////////// insert model, and then inserrt item
+                                                "insert into tbl_model values(@ModelName); " +/////////////// insert model, and then inserrt item
+                                                "insert into tempItemStorage values( " +
+                                                    "@sku, " +
+                                                    "(select top 1 tbl_brand.brandID from tbl_brand where tbl_brand.brandName = @brandName), " +
+                                                    "(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName), " +
+                                                    "@clubType, @shaft, @numberOfClubs, @premium, @cost, @price, @quantity, @clubSpec, @shaftSpec, @shaftFlex, @dexterity, @typeID, " +
+                                                    "(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier), @comments) " +
                                             "end " +
                                         "else if ((select top 1 tbl_brand.brandID from tbl_brand where tbl_brand.brandName = @brandName) >= 0 and " +
                                                  "(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName) >= 0 and " +
@@ -1968,7 +1974,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                                  "Not Exists(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName) and " +
                                                  "(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier) >= 0) " +
                                             "Begin " +
-                                                "insert into tempErrorSkus values(@sku, 1, 1, 0) " +/////////////// insert model, and then throw error
+                                                "insert into tbl_model values(@ModelName); " +
+                                                "insert into tempErrorSkus values(@sku, 1, 0, 0) " +/////////////// insert model, and then throw error (1,1,0)
                                             "end " +
                                         "else if (Not Exists(select top 1 tbl_brand.brandID from tbl_brand where tbl_brand.brandName = @brandName) and " +
                                                  "(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName) >= 0 and " +
@@ -1980,13 +1987,15 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                                  "Not Exists(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName) and " +
                                                  "Not Exists(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier)) " +
                                             "Begin " +
-                                                "insert into tempErrorSkus values(@sku, 0, 1, 1) " +/////////////// insert model, and then throw error
+                                            "insert into tbl_model values(@ModelName); " +
+                                                "insert into tempErrorSkus values(@sku, 0, 0, 1) " +/////////////// insert model, and then throw error (0,1,1)
                                             "end " +
                                         "else if (Not Exists(select top 1 tbl_brand.brandID from tbl_brand where tbl_brand.brandName = @brandName)and " +
                                                  "Not Exists(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName)and " +
                                                  "Not Exists(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier)) " +
                                             "Begin " +
-                                                "insert into tempErrorSkus values(@sku, 1, 1, 1) " +/////////////// insert model, and then throw error
+                                            "insert into tbl_model values(@ModelName); " +
+                                                "insert into tempErrorSkus values(@sku, 1, 0, 1) " +/////////////// insert model, and then throw error (1,1,1)
                                             "end";
                         cmd.Connection = con;
                         cmd.Parameters.AddWithValue("@sku", row[0]);
