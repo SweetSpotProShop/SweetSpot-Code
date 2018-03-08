@@ -1669,7 +1669,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             System.Data.DataTable skusWithErrors = new System.Data.DataTable();
             skusWithErrors.Columns.Add("sku");
             skusWithErrors.Columns.Add("brandError");
-            skusWithErrors.Columns.Add("modelError");
             skusWithErrors.Columns.Add("identifierError");
             //This datatable can hold all items
             System.Data.DataTable listItems = new System.Data.DataTable();
@@ -1919,7 +1918,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                         "create table tempErrorSkus(" +
                                                 "sku int primary key," +
                                                 "brandError int," +
-                                                "modelError int," +
                                                 "identifierError int)";
                     cmd.Connection = conTempDB;
                     reader = cmd.ExecuteReader();
@@ -1950,13 +1948,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                                 "(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName) >= 0 and " +
                                                 "(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier) >= 0) " +
                                             "Begin " +
-                                                "insert into tempErrorSkus values(@sku, 1, 0, 0) " +
+                                                "insert into tempErrorSkus values(@sku, 1, 0) " +
                                             "end " +
                                         "else if ((select top 1 tbl_brand.brandID from tbl_brand where tbl_brand.brandName = @brandName) >= 0 and " +
                                                  "Not Exists(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName) and " +
                                                  "(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier) >= 0) " +
                                             "Begin " +
-                                                "insert into tbl_model values(@ModelName); " +/////////////// insert model, and then inserrt item
+                                                "insert into tbl_model values(@ModelName); " +/////////////// insert model, and then inserrt item (0,1,0)
                                                 "insert into tempItemStorage values( " +
                                                     "@sku, " +
                                                     "(select top 1 tbl_brand.brandID from tbl_brand where tbl_brand.brandName = @brandName), " +
@@ -1968,34 +1966,34 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                                  "(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName) >= 0 and " +
                                                  "Not Exists(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier)) " +
                                             "Begin " +
-                                                "insert into tempErrorSkus values(@sku, 0, 0, 1) " +
+                                                "insert into tempErrorSkus values(@sku, 0, 1) " +
                                             "end " +
                                         "else if (Not Exists(select top 1 tbl_brand.brandID from tbl_brand where tbl_brand.brandName = @brandName) and " +
                                                  "Not Exists(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName) and " +
                                                  "(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier) >= 0) " +
                                             "Begin " +
                                                 "insert into tbl_model values(@ModelName); " +
-                                                "insert into tempErrorSkus values(@sku, 1, 0, 0) " +/////////////// insert model, and then throw error (1,1,0)
+                                                "insert into tempErrorSkus values(@sku, 1, 0) " +/////////////// insert model, and then throw error (1,1,0)
                                             "end " +
                                         "else if (Not Exists(select top 1 tbl_brand.brandID from tbl_brand where tbl_brand.brandName = @brandName) and " +
                                                  "(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName) >= 0 and " +
                                                  "Not Exists(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier)) " +
                                             "Begin " +
-                                                "insert into tempErrorSkus values(@sku, 1, 0, 1) " +
+                                                "insert into tempErrorSkus values(@sku, 1, 1) " +
                                             "end " +
                                         "else if ((select top 1 tbl_brand.brandID from tbl_brand where tbl_brand.brandName = @brandName) >= 0 and " +
                                                  "Not Exists(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName) and " +
                                                  "Not Exists(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier)) " +
                                             "Begin " +
                                             "insert into tbl_model values(@ModelName); " +
-                                                "insert into tempErrorSkus values(@sku, 0, 0, 1) " +/////////////// insert model, and then throw error (0,1,1)
+                                                "insert into tempErrorSkus values(@sku, 0, 1) " +/////////////// insert model, and then throw error (0,1,1)
                                             "end " +
                                         "else if (Not Exists(select top 1 tbl_brand.brandID from tbl_brand where tbl_brand.brandName = @brandName)and " +
                                                  "Not Exists(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName)and " +
                                                  "Not Exists(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier)) " +
                                             "Begin " +
                                             "insert into tbl_model values(@ModelName); " +
-                                                "insert into tempErrorSkus values(@sku, 1, 0, 1) " +/////////////// insert model, and then throw error (1,1,1)
+                                                "insert into tempErrorSkus values(@sku, 1, 1) " +/////////////// insert model, and then throw error (1,1,1)
                                             "end";
                         cmd.Connection = con;
                         cmd.Parameters.AddWithValue("@sku", row[0]);
@@ -2233,7 +2231,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "                Cast(tbl_invoice.balanceDue - (select sum(itemCost * itemQuantity) from tbl_invoiceItem where                                         " +
                                 "                tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                " +
                                 "              tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                                   " +
-                                "    when Exists(select tbl_invoiceItemReturns.invoiceNum, tbl_invoiceItemReturns.invoiceSubNum from tbl_invoiceItemReturns where       " +
+                                "    when Exists(select tbl_invoiceItemReturns.invoiceNum, tbl_invoiceItemReturns.invoiceSubNum from tbl_invoiceItemReturns where       " + //TODO: Revenue Earned - Remove the tax(use pre-tax)
                                 "            tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                             " +
                                 "            tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                     " +
                                 "                Cast(tbl_invoice.balanceDue + (select sum(itemCost * itemQuantity) from tbl_invoiceItemReturns where                                  " +

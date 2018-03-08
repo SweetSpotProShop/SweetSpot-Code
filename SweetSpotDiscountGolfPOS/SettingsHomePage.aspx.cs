@@ -4,6 +4,7 @@ using SweetShop;
 using SweetSpotDiscountGolfPOS.ClassLibrary;
 using SweetSpotProShop;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
@@ -213,42 +214,55 @@ namespace SweetSpotDiscountGolfPOS
                             DataTable errors = new DataTable();
                             errors.Columns.Add("sku");
                             errors.Columns.Add("brandError");
-                            errors.Columns.Add("modelError");
                             errors.Columns.Add("identifierError");
                             errors = R.uploadItems(fupItemSheet);
                             if (errors.Rows.Count != 0)
                             {
-                                foreach (DataRow row in errors.Rows)
+                                //Loops through the errors datatable pulling the sku's from there and entering them into an array
+                                //Then loops through each row on the excel sheet and checks to compare against sku array
+                                //If it is not in there, that row is deleted
+                                int[,] errorList = new int[errors.Rows.Count, 3];
+                                ArrayList errorSkus = new ArrayList();
+                                for (int i = 0; i < errors.Rows.Count; i++)
                                 {
-                                    for (int i = 2; i <= rowCnt; i++)
+                                    errorSkus.Add(errors.Rows[i][0]); //SKUs used for row deletion
+                                    errorList[i, 0] = Convert.ToInt32(errors.Rows[i][0]); //SKU
+                                    errorList[i, 1] = Convert.ToInt32(errors.Rows[i][1]); //Brand
+                                    errorList[i, 2] = Convert.ToInt32(errors.Rows[i][2]); //Secondary Identifier
+                                }
+                                //Loop through the Excel sheet
+                                for (int i = rowCnt; i >= 2; i--)
+                                {
+                                    //Loop through the error array
+                                    for (int j = 0; j < errorList.Length/3; j++) 
                                     {
-                                        //Column 3 should be the skus
-
-                                        if ((worksheet.Cells[i, 3].Value).ToString().Equals(row[0].ToString()))
+                                        //Column 3 = SKU
+                                        if ((worksheet.Cells[i, 3].Value).ToString().Equals(errorList[j,0].ToString()))
                                         {
                                             worksheet.Cells[i, 3].Style.Fill.PatternType = ExcelFillStyle.Solid;
                                             worksheet.Cells[i, 3].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                            //If the brand caused an error
-                                            if (Convert.ToInt32(row[1]) == 1)
+                                            //If brand caused an error
+                                            if (errorList[j,1] == 1)
                                             {
                                                 worksheet.Cells[i, 5].Style.Fill.PatternType = ExcelFillStyle.Solid;
                                                 worksheet.Cells[i, 5].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
                                             }
-                                            //If the model caused an error
-                                            if (Convert.ToInt32(row[2]) == 1)
-                                            {
-                                                worksheet.Cells[i, 6].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                                worksheet.Cells[i, 6].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
-                                            }
-                                            //If the secondary identifier(Destination) caused an error
-                                            if (Convert.ToInt32(row[3]) == 1)
+                                            //If secondary identifier(Destination) caused an error
+                                            if (errorList[j,2] == 1)
                                             {
                                                 worksheet.Cells[i, 22].Style.Fill.PatternType = ExcelFillStyle.Solid;
                                                 worksheet.Cells[i, 22].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
                                             }
-                                        }
+                                            break;
+                                        }                                        
                                     }
-                                }
+                                    //Check to see if the cell's sku is in the array, if it is not, delete the row
+                                    bool isInArray = errorSkus.IndexOf((worksheet.Cells[i, 3].Value).ToString()) != -1;
+                                    if (!isInArray)
+                                    {
+                                        worksheet.DeleteRow(i);
+                                    }
+                                }                                
                                 worksheet.Cells[1, 26].Value = "Errors Found. The skus that are highlighted in red have an issue with either their brand or model. This could be a spelling mistake or the brand and/or model are not in the database.";
                                 //MessageBox.ShowMessage("Errors Found. The skus that are highlighted in red have an issue with either their brand or model. This could be a spelling mistake or the brand and/or model are not in the database.", this);
                                 string fileName = fupItemSheet.FileName + "_ErrorsFound";
@@ -692,19 +706,19 @@ namespace SweetSpotDiscountGolfPOS
                     if (txtModelOne.Text.Equals(txtModelTwo.Text))
                     {
                         string sqlCmd = "if exists((select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName)) " +
-                                            "begin " +                                                
+                                            "begin " +
                                                 "print '1'; " +
                                             "end " +
                                         "else " +
                                             "begin " +
                                                 "Insert into tbl_model values(@modelName) " +
                                                 "print '0'; " +
-                                             "end";                      
+                                             "end";
                         object[][] parms =
                         {
                             new object[] {"@modelName", txtModelOne.Text}
                         };
-                        dbc.executeInsertQuery(sqlCmd, parms);                        
+                        dbc.executeInsertQuery(sqlCmd, parms);
                     }
                     else
                     {
