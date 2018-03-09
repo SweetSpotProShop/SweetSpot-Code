@@ -96,7 +96,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@locationID", Convert.ToInt32(repInfo[1]) }
             };
 
-            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd,parms) > 0)
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
             {
                 bolTA = true;
             }
@@ -117,12 +117,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@endDate", dtm[1] },
                 new object[] { "@locationID", Convert.ToInt32(repInfo[1]) }
             };
-            
+
             if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
             {
                 bolCAD = true;
             }
-            
+
             return bolCAD;
         }
         //This method connects to the database and gets the totals for the MOPs based on location and dates
@@ -142,7 +142,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@endDate", dtm[1] },
                 new object[] { "@locationID", Convert.ToInt32(repInfo[1]) }
             };
-            
+
             //Returns the list of Mops types and totals
             return MM.ReturnMopsFromCmdAndParams(sqlCmd, parms);
         }
@@ -295,7 +295,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         //Verify Cashout
 
 
-        
+
 
         //******************PURCHASES REPORTING*******************************************************
         //Matches new Database Calls
@@ -322,16 +322,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@endDate", dtm[1] },
                 new object[] { "@locationID", Convert.ToInt32(repInfo[1]) }
             };
-            
+
             if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
             {
                 bolTA = true;
             }
-            
+
             return bolTA;
         }
 
-        
+
         public bool tradeinsHaveBeenProcessed(Object[] repInfo)
         {
             bool bolTI = false;
@@ -1759,7 +1759,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 itemType.ToString(),
                                 //***************MODEL Name***************        
                                 (string)(worksheet.Cells[i, 6].Value.ToNullSafeString()), //gender for clothing
-                                //***************COST***************
+                                                                                          //***************COST***************
                                 Convert.ToDouble(worksheet.Cells[i, 12].Value),
                                 //***************PRICE***************
                                 Convert.ToDouble(worksheet.Cells[i, 15].Value),
@@ -1771,7 +1771,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 Convert.ToDouble(worksheet.Cells[i, 11].Value),
                                 //***************CLUB TYPE***************
                                 (string)(worksheet.Cells[i, 7].Value.ToNullSafeString()), //style for clothing
-                                //***************SHAFT***************
+                                                                                          //***************SHAFT***************
                                 "",
                                 //***************NUMBER OF CLUBS***************
                                 "",
@@ -1817,7 +1817,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 Convert.ToDouble(worksheet.Cells[i, 11].Value),
                                 //***************CLUB TYPE***************
                                 (string)(worksheet.Cells[i, 7].Value.ToNullSafeString()), //accessoryType
-                                //***************SHAFT***************
+                                                                                          //***************SHAFT***************
                                 "",
                                 //***************NUMBER OF CLUBS***************
                                 "",
@@ -2030,118 +2030,102 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         da.Fill(skusWithErrors);
                     }
                     //***************************************************************************************************
-                    //Step 7: Option A: If data is found in the error table
-                    //***************************************************************************************************
-                    //If errors are found, return and display them
-                    if (skusWithErrors.Rows.Count > 0)
-                    {
-                        cmd.CommandText = "Drop table tempItemStorage; Drop table tempErrorSkus";
-                        conTempDB.Open();
-                        cmd.Connection = conTempDB;
-                        reader = cmd.ExecuteReader();
-                        conTempDB.Close();
-                        return skusWithErrors;
-                    }
-                    //***************************************************************************************************
-                    //Step 7: Option B: If no data is found in the error table
+                    //Step 7: If no data is found in the error table
                     //***************************************************************************************************
                     //Start inserting into actual tables
-                    else
+                    con.Open();
+                    cmd.CommandText = "Select * from tempItemStorage";
+                    System.Data.DataTable temp = new System.Data.DataTable();
+                    using (var dataTable = new SqlDataAdapter(cmd))
                     {
-                        con.Open();
-                        cmd.CommandText = "Select * from tempItemStorage";
-                        System.Data.DataTable temp = new System.Data.DataTable();
-                        using (var dataTable = new SqlDataAdapter(cmd))
-                        {
-                            cmd.CommandType = CommandType.Text;
-                            dataTable.Fill(temp);
-                        }
-                        con.Close();
+                        cmd.CommandType = CommandType.Text;
+                        dataTable.Fill(temp);
+                    }
+                    con.Close();
 
-                        //***************************************************************************************************
-                        //Step 8: Loop through the temp datatable and insert the rows into the database
-                        //***************************************************************************************************
+                    //***************************************************************************************************
+                    //Step 8: Loop through the temp datatable and insert the rows into the database
+                    //***************************************************************************************************
 
-                        foreach (DataRow row in temp.Rows)
-                        {
-                            //loop through just one, and it will know the itemID because we set it ealier in the process                            
+                    foreach (DataRow row in temp.Rows)
+                    {
+                        //loop through just one, and it will know the itemID because we set it ealier in the process                            
 
-                            //Set club parameters here
-                            cmd.Parameters.Clear();//Clearing the parameters. It was giving me an error(ID=1500)
-                            cmd.Parameters.AddWithValue("sku", row[0]);
-                            cmd.Parameters.AddWithValue("brandID", row[1]);
-                            cmd.Parameters.AddWithValue("modelID", row[2]);
-                            cmd.Parameters.AddWithValue("clubType", row[3]);
-                            cmd.Parameters.AddWithValue("shaft", row[4]);
-                            cmd.Parameters.AddWithValue("numberOfClubs", row[5]);
-                            cmd.Parameters.AddWithValue("premium", row[6]);
-                            cmd.Parameters.AddWithValue("cost", row[7]);
-                            cmd.Parameters.AddWithValue("price", row[8]);
-                            cmd.Parameters.AddWithValue("quantity", row[9]);
-                            cmd.Parameters.AddWithValue("clubSpec", row[10]);
-                            cmd.Parameters.AddWithValue("shaftSpec", row[11]);
-                            cmd.Parameters.AddWithValue("shaftFlex", row[12]);
-                            cmd.Parameters.AddWithValue("dexterity", row[13]);
-                            cmd.Parameters.AddWithValue("typeID", row[14]);
-                            cmd.Parameters.AddWithValue("locationID", row[15]);
-                            cmd.Parameters.AddWithValue("used", 0);
-                            cmd.Parameters.AddWithValue("comments", row[16]);
-                            cmd.Parameters.AddWithValue("size", "");
-                            cmd.Parameters.AddWithValue("colour", "");
+                        //Set club parameters here
+                        cmd.Parameters.Clear();//Clearing the parameters. It was giving me an error(ID=1500)
+                        cmd.Parameters.AddWithValue("sku", row[0]);
+                        cmd.Parameters.AddWithValue("brandID", row[1]);
+                        cmd.Parameters.AddWithValue("modelID", row[2]);
+                        cmd.Parameters.AddWithValue("clubType", row[3]);
+                        cmd.Parameters.AddWithValue("shaft", row[4]);
+                        cmd.Parameters.AddWithValue("numberOfClubs", row[5]);
+                        cmd.Parameters.AddWithValue("premium", row[6]);
+                        cmd.Parameters.AddWithValue("cost", row[7]);
+                        cmd.Parameters.AddWithValue("price", row[8]);
+                        cmd.Parameters.AddWithValue("quantity", row[9]);
+                        cmd.Parameters.AddWithValue("clubSpec", row[10]);
+                        cmd.Parameters.AddWithValue("shaftSpec", row[11]);
+                        cmd.Parameters.AddWithValue("shaftFlex", row[12]);
+                        cmd.Parameters.AddWithValue("dexterity", row[13]);
+                        cmd.Parameters.AddWithValue("typeID", row[14]);
+                        cmd.Parameters.AddWithValue("locationID", row[15]);
+                        cmd.Parameters.AddWithValue("used", 0);
+                        cmd.Parameters.AddWithValue("comments", row[16]);
+                        cmd.Parameters.AddWithValue("size", "");
+                        cmd.Parameters.AddWithValue("colour", "");
 
-                            conInsert.Open();
-                            cmd.Connection = conInsert;
-                            //This query/insert statement will first look at the typeID of the item being sent in. 
-                            //It then looks to see if the items sku is in the table already. If it is, it updates. 
-                            //If it is not, it inserts the item into the table
-                            cmd.CommandText =
-                                "if(@typeID = 1) " +
-                                    "begin " +
-                                        "if exists(select sku from tbl_clubs where sku = @sku) " +
-                                            "begin " +
-                                                "UPDATE tbl_clubs SET brandID = @brandID, modelID = @modelID, clubType = @clubType, shaft = @shaft, " +
-                                                "numberOfClubs = @numberOfClubs, premium = @premium, cost = @cost, price = @price, quantity = @quantity, " +
-                                                "clubSpec = @clubSpec, shaftSpec = @shaftSpec, shaftFlex = @shaftFlex, dexterity = @dexterity, " +
-                                                "locationID = @locationID, used = @used, comments = @comments WHERE sku = @sku " +
-                                            "end " +
-                                        "else " +
-                                            "begin " +
-                                                "Insert Into tbl_clubs (sku, brandID, modelID, clubType, shaft, numberOfClubs, " +
-                                                "premium, cost, price, quantity, clubSpec, shaftSpec, shaftFlex, dexterity, typeID, locationID, used, comments) " +
-                                                "Values (@sku, @brandID, @modelID, @clubType, @shaft, @numberOfClubs, @premium, @cost, @price, " +
-                                                "@quantity, @clubSpec, @shaftSpec, @shaftFlex, @dexterity, @typeID, @locationID, @used, @comments) " +
-                                            "end " +
-                                    "end " +
-                                "else if (@typeID = 2) " +
-                                    "begin " +
-                                        "if exists(select sku from tbl_accessories where sku = @sku) " +
-                                            "begin " +
-                                        "UPDATE tbl_accessories SET size = @size, colour = @colour, price = @price, cost = @cost, brandID = @brandID, " +
-                                        "modelID = @modelID, accessoryType = @clubType, quantity = @quantity, locationID = @locationID, comments = @comments WHERE sku = @sku " +
-                                    "end " +
-                                "else " +
-                                    "begin " +
-                                        "Insert Into tbl_accessories (sku, size, colour, price, cost, brandID, modelID, accessoryType, quantity, typeID, locationID, comments) " +
-                                        "Values (@sku, @size, @colour, @price, @cost, @brandID, @modelID, @clubType, @quantity, @typeID, @locationID, @comments) " +
-                                    "end " +
+                        conInsert.Open();
+                        cmd.Connection = conInsert;
+                        //This query/insert statement will first look at the typeID of the item being sent in. 
+                        //It then looks to see if the items sku is in the table already. If it is, it updates. 
+                        //If it is not, it inserts the item into the table
+                        cmd.CommandText =
+                            "if(@typeID = 1) " +
+                                "begin " +
+                                    "if exists(select sku from tbl_clubs where sku = @sku) " +
+                                        "begin " +
+                                            "UPDATE tbl_clubs SET brandID = @brandID, modelID = @modelID, clubType = @clubType, shaft = @shaft, " +
+                                            "numberOfClubs = @numberOfClubs, premium = @premium, cost = @cost, price = @price, quantity = @quantity, " +
+                                            "clubSpec = @clubSpec, shaftSpec = @shaftSpec, shaftFlex = @shaftFlex, dexterity = @dexterity, " +
+                                            "locationID = @locationID, used = @used, comments = @comments WHERE sku = @sku " +
+                                        "end " +
+                                    "else " +
+                                        "begin " +
+                                            "Insert Into tbl_clubs (sku, brandID, modelID, clubType, shaft, numberOfClubs, " +
+                                            "premium, cost, price, quantity, clubSpec, shaftSpec, shaftFlex, dexterity, typeID, locationID, used, comments) " +
+                                            "Values (@sku, @brandID, @modelID, @clubType, @shaft, @numberOfClubs, @premium, @cost, @price, " +
+                                            "@quantity, @clubSpec, @shaftSpec, @shaftFlex, @dexterity, @typeID, @locationID, @used, @comments) " +
+                                        "end " +
                                 "end " +
-                                "else if (@typeID = 3) " +
-                                    "begin " +
-                                        "if exists(select sku from tbl_clothing where sku = @sku) " +
-                                            "begin " +
-                                                "UPDATE tbl_clothing SET size = @size, colour = @colour, gender = @modelID, style = @clubType, " +
-                                                "price = @price, cost = @cost, brandID = @brandID, quantity = @quantity, locationID = @locationID, comments = @comments WHERE sku = @sku " +
-                                            "end " +
-                                        "else " +
-                                            "begin " +
-                                                "Insert Into tbl_clothing (sku, size, colour, gender, style, price, cost, brandID, quantity, typeID, locationID, comments) " +
-                                                "Values (@sku, @size, @colour, @modelID, @clubType, @price, @cost, @brandID, @quantity, @typeID, @locationID, @comments) " +
-                                            "end " +
-                                    "end ";
-                            reader = cmd.ExecuteReader();
-                            conInsert.Close();
+                            "else if (@typeID = 2) " +
+                                "begin " +
+                                    "if exists(select sku from tbl_accessories where sku = @sku) " +
+                                        "begin " +
+                                    "UPDATE tbl_accessories SET size = @size, colour = @colour, price = @price, cost = @cost, brandID = @brandID, " +
+                                    "modelID = @modelID, accessoryType = @clubType, quantity = @quantity, locationID = @locationID, comments = @comments WHERE sku = @sku " +
+                                "end " +
+                            "else " +
+                                "begin " +
+                                    "Insert Into tbl_accessories (sku, size, colour, price, cost, brandID, modelID, accessoryType, quantity, typeID, locationID, comments) " +
+                                    "Values (@sku, @size, @colour, @price, @cost, @brandID, @modelID, @clubType, @quantity, @typeID, @locationID, @comments) " +
+                                "end " +
+                            "end " +
+                            "else if (@typeID = 3) " +
+                                "begin " +
+                                    "if exists(select sku from tbl_clothing where sku = @sku) " +
+                                        "begin " +
+                                            "UPDATE tbl_clothing SET size = @size, colour = @colour, gender = @modelID, style = @clubType, " +
+                                            "price = @price, cost = @cost, brandID = @brandID, quantity = @quantity, locationID = @locationID, comments = @comments WHERE sku = @sku " +
+                                        "end " +
+                                    "else " +
+                                        "begin " +
+                                            "Insert Into tbl_clothing (sku, size, colour, gender, style, price, cost, brandID, quantity, typeID, locationID, comments) " +
+                                            "Values (@sku, @size, @colour, @modelID, @clubType, @price, @cost, @brandID, @quantity, @typeID, @locationID, @comments) " +
+                                        "end " +
+                                "end ";
+                        reader = cmd.ExecuteReader();
+                        conInsert.Close();
 
-                        }
                     }
                 }
             }
@@ -2163,7 +2147,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         {
             //This method returns a collection of relevant data to be used in the forming of an extensive invoice
             System.Data.DataTable invoices = new System.Data.DataTable();
-            SqlConnection con = new SqlConnection(connectionString);            
+            SqlConnection con = new SqlConnection(connectionString);
             string command = "select                                                                                                                                    " +
                                 "Concat(tbl_invoice.invoiceNum, '-', tbl_invoice.invoiceSubNum) as 'Invoice',                                                           " +
                                 "tbl_invoice.shippingAmount,                                                                                                            " +
@@ -2273,23 +2257,23 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "(Select Concat(firstname, ' ', lastName) from tbl_employee where tbl_employee.empID = tbl_invoice.empID) as 'Employee Name',           " +
                                 "tbl_invoice.invoiceDate                                                                                                                " +
                                 "from tbl_invoice                                                                                                                       " +
-                                "where tbl_invoice.invoiceDate between @startDate and @endDate and tbl_invoice.locationID = @locationID;                                " ;
+                                "where tbl_invoice.invoiceDate between @startDate and @endDate and tbl_invoice.locationID = @locationID;                                ";
             using (var cmd = new SqlCommand(command, con))
             using (var da = new SqlDataAdapter(cmd))
-            {                
+            {
                 cmd.Parameters.AddWithValue("@startDate", startDate);
                 cmd.Parameters.AddWithValue("@endDate", endDate);
                 cmd.Parameters.AddWithValue("@locationID", locationID);
                 da.Fill(invoices);
-            }          
+            }
 
             return invoices;
         }
 
         //********************EXPORTING***************************************************************
-          
-        
-      
+
+
+
         //Export ALL sales/invoices to excel
         public void exportAllSalesToExcel()
         {
@@ -2745,7 +2729,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 HttpContext.Current.Response.AddHeader("content-disposition", "attachment; filename=" + fileName);
                 HttpContext.Current.Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                 HttpContext.Current.Response.BinaryWrite(xlPackage.GetAsByteArray());
-                HttpContext.Current.Response.End();                
+                HttpContext.Current.Response.End();
             }
         }
         //Puts the clubs in the export table
