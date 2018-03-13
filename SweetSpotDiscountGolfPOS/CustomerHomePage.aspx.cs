@@ -23,13 +23,13 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "CustomerHomePage";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Response.Redirect("LoginPage.aspx", false);
                 }
+                else { CU = (CurrentUser)Session["currentUser"]; }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

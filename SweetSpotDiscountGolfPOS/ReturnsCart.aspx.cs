@@ -38,59 +38,62 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "ReturnsCart.aspx";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Response.Redirect("LoginPage.aspx", false);
                 }
-                if (!Page.IsPostBack)
+                else
                 {
-                    //Retrieves transaction type from Session
-                    int tranType = Convert.ToInt32(Session["TranType"]);
-                    if (tranType == 2)
+                    CU = (CurrentUser)Session["currentUser"];
+                    if (!Page.IsPostBack)
                     {
-                        //Retrieves Invoice from Session
-                        Invoice rInvoice = (Invoice)Session["searchReturnInvoices"];
-                        //Checks to see if the returned cart is empty
-                        if (Session["returnedCart"] != null)
+                        //Retrieves transaction type from Session
+                        int tranType = Convert.ToInt32(Session["TranType"]);
+                        if (tranType == 2)
                         {
-                            //When not empty passes in 2 sessions
-                            itemsInCart = (List<Cart>)Session["ItemsInCart"];
-                            returnedCart = (List<Cart>)Session["returnedCart"];
-                            //binds returned cart to the grid view
-                            grdReturningItems.DataSource = returnedCart;
-                            grdReturningItems.DataBind();
-                            //displays subtotal based on the returned cart
-                            lblReturnSubtotalDisplay.Text = "$ " + cm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
-                        }
-                        else
-                        {
-                            //Whjen session is empty gathers a cart from the stored invoice number
-                            temp = ssm.returningItems(rInvoice.invoiceNum, rInvoice.invoiceSub);
-                            foreach (var item in temp)
+                            //Retrieves Invoice from Session
+                            Invoice rInvoice = (Invoice)Session["searchReturnInvoices"];
+                            //Checks to see if the returned cart is empty
+                            if (Session["returnedCart"] != null)
                             {
-                                //Checks each item to make sure it is not a trade in
-                                if (item.typeID != 0)
+                                //When not empty passes in 2 sessions
+                                itemsInCart = (List<Cart>)Session["ItemsInCart"];
+                                returnedCart = (List<Cart>)Session["returnedCart"];
+                                //binds returned cart to the grid view
+                                grdReturningItems.DataSource = returnedCart;
+                                grdReturningItems.DataBind();
+                                //displays subtotal based on the returned cart
+                                lblReturnSubtotalDisplay.Text = "$ " + cm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
+                            }
+                            else
+                            {
+                                //Whjen session is empty gathers a cart from the stored invoice number
+                                temp = ssm.returningItems(rInvoice.invoiceNum, rInvoice.invoiceSub);
+                                foreach (var item in temp)
                                 {
-                                    itemsInCart.Add(item);
+                                    //Checks each item to make sure it is not a trade in
+                                    if (item.typeID != 0)
+                                    {
+                                        itemsInCart.Add(item);
+                                    }
                                 }
                             }
+                            //populates current customer info
+                            lblCustomerDisplay.Text = rInvoice.customer.firstName.ToString() + " " + rInvoice.customer.lastName.ToString();
+                            lblInvoiceNumberDisplay.Text = CU.locationName + "-" + rInvoice.invoiceNum.ToString() + "-" + idu.getNextInvoiceSubNum(rInvoice.invoiceNum).ToString();
+                            Session["Invoice"] = lblInvoiceNumberDisplay.Text;
+                            lblDateDisplay.Text = DateTime.Today.ToString("yyyy-MM-dd");
+                            Session["ItemsInCart"] = itemsInCart;
+                            //binds items in cart to gridview
+                            grdInvoicedItems.DataSource = itemsInCart;
+                            grdInvoicedItems.DataBind();
                         }
-                        //populates current customer info
-                        lblCustomerDisplay.Text = rInvoice.customer.firstName.ToString() + " " + rInvoice.customer.lastName.ToString();
-                        lblInvoiceNumberDisplay.Text = CU.locationName + "-" + rInvoice.invoiceNum.ToString() + "-" + idu.getNextInvoiceSubNum(rInvoice.invoiceNum).ToString();
-                        Session["Invoice"] = lblInvoiceNumberDisplay.Text;
-                        lblDateDisplay.Text = DateTime.Today.ToString("yyyy-MM-dd");
-                        Session["ItemsInCart"] = itemsInCart;
-                        //binds items in cart to gridview
-                        grdInvoicedItems.DataSource = itemsInCart;
-                        grdInvoicedItems.DataBind();
                     }
+                    //Sets Date session
+                    Session["strDate"] = lblDateDisplay.Text;
                 }
-                //Sets Date session
-                Session["strDate"] = lblDateDisplay.Text;
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

@@ -42,49 +42,52 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "PurchasesCheckout.aspx";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Response.Redirect("LoginPage.aspx", false);
                 }
-                if (!Page.IsPostBack)
+                else
                 {
-                    //Retrieves items in the cart from Session
-                    List<Cart> cart = (List<Cart>)Session["ItemsInCart"];
-                    SalesCalculationManager cm = new SalesCalculationManager();
-                    //Retrieves date from session
-                    DateTime recDate = Convert.ToDateTime(Session["strDate"]);
-                    //Creates checkout manager based on current items in cart
-                    ckm.dblTotal = cm.returnPurchaseAmount(cart);
-                    ckm.dblRemainingBalance = ckm.dblTotal;
-                    //Checks if there are any stored methods of payment
-                    if (Session["MethodsofPayment"] != null)
+                    CU = (CurrentUser)Session["currentUser"];
+                    if (!Page.IsPostBack)
                     {
-                        //Retrieve Mops from session
-                        mopList = (List<Mops>)Session["MethodsofPayment"];
-                        //Loops through each mop
-                        foreach (var mop in mopList)
+                        //Retrieves items in the cart from Session
+                        List<Cart> cart = (List<Cart>)Session["ItemsInCart"];
+                        SalesCalculationManager cm = new SalesCalculationManager();
+                        //Retrieves date from session
+                        DateTime recDate = Convert.ToDateTime(Session["strDate"]);
+                        //Creates checkout manager based on current items in cart
+                        ckm.dblTotal = cm.returnPurchaseAmount(cart);
+                        ckm.dblRemainingBalance = ckm.dblTotal;
+                        //Checks if there are any stored methods of payment
+                        if (Session["MethodsofPayment"] != null)
                         {
-                            //Adds amount of each mop to the amount paid total
-                            dblAmountPaid += mop.amountPaid;
+                            //Retrieve Mops from session
+                            mopList = (List<Mops>)Session["MethodsofPayment"];
+                            //Loops through each mop
+                            foreach (var mop in mopList)
+                            {
+                                //Adds amount of each mop to the amount paid total
+                                dblAmountPaid += mop.amountPaid;
+                            }
+                            //Binds mops to grid view
+                            gvCurrentMOPs.DataSource = mopList;
+                            gvCurrentMOPs.DataBind();
+                            //Update the amount paid and the remaining balance
+                            ckm.dblAmountPaid = dblAmountPaid;
+                            ckm.dblRemainingBalance = ckm.dblTotal - ckm.dblAmountPaid;
                         }
-                        //Binds mops to grid view
-                        gvCurrentMOPs.DataSource = mopList;
-                        gvCurrentMOPs.DataBind();
-                        //Update the amount paid and the remaining balance
-                        ckm.dblAmountPaid = dblAmountPaid;
-                        ckm.dblRemainingBalance = ckm.dblTotal - ckm.dblAmountPaid;
-                    }
 
-                    //***Assign each item to its Label.
-                    lblTotalPurchaseAmount.Text = "$ " + ckm.dblTotal.ToString("#0.00");
-                    lblRemainingPurchaseDueDisplay.Text = "$ " + ckm.dblRemainingBalance.ToString("#0.00");
-                    //Stores totals in the checkout manager
-                    Session["CheckOutTotals"] = ckm;
-                    //Updates the amount paying with the remaining balance
-                    txtPurchaseAmount.Text = ckm.dblRemainingBalance.ToString("#0.00");
+                        //***Assign each item to its Label.
+                        lblTotalPurchaseAmount.Text = "$ " + ckm.dblTotal.ToString("#0.00");
+                        lblRemainingPurchaseDueDisplay.Text = "$ " + ckm.dblRemainingBalance.ToString("#0.00");
+                        //Stores totals in the checkout manager
+                        Session["CheckOutTotals"] = ckm;
+                        //Updates the amount paying with the remaining balance
+                        txtPurchaseAmount.Text = ckm.dblRemainingBalance.ToString("#0.00");
+                    }
                 }
             }
             //Exception catch

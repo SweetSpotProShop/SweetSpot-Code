@@ -39,6 +39,7 @@ namespace SweetSpotDiscountGolfPOS
         double revenue;
         double margin;
         int marginCounter;
+        double tradein;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -47,33 +48,36 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "ReportsExtensiveInvoice.aspx";
             try
             {
-                cu = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Server.Transfer("LoginPage.aspx", false);
                 }
-                //Gathering the start and end dates
-                Object[] repInfo = (Object[])Session["reportInfo"];
-                DateTime[] reportDates = (DateTime[])repInfo[0];
-                startDate = reportDates[0];
-                endDate = reportDates[1];
-                int locID = Convert.ToInt32(repInfo[1]);
-                //Builds string to display in label
-                if (startDate == endDate)
-                {
-                    lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " for " + lm.locationName(locID);
-                }
                 else
                 {
-                    lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + lm.locationName(locID);
-                }
-                invoices = new DataTable();
-                invoices = reports.returnExtensiveInvoices(startDate, endDate, locID);
+                    cu = (CurrentUser)Session["currentUser"];
+                    //Gathering the start and end dates
+                    Object[] repInfo = (Object[])Session["reportInfo"];
+                    DateTime[] reportDates = (DateTime[])repInfo[0];
+                    startDate = reportDates[0];
+                    endDate = reportDates[1];
+                    int locID = Convert.ToInt32(repInfo[1]);
+                    //Builds string to display in label
+                    if (startDate == endDate)
+                    {
+                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " for " + lm.locationName(locID);
+                    }
+                    else
+                    {
+                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + lm.locationName(locID);
+                    }
+                    invoices = new DataTable();
+                    invoices = reports.returnExtensiveInvoices(startDate, endDate, locID);
 
-                grdInvoices.DataSource = invoices;
-                grdInvoices.DataBind();
+                    grdInvoices.DataSource = invoices;
+                    grdInvoices.DataBind();
+                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -97,6 +101,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void grdInvoices_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             Label lblShipping = (Label)e.Row.FindControl("lblShipping");
+            Label lblTradeIn = (Label)e.Row.FindControl("lblTradeIn");
             Label lblDiscount = (Label)e.Row.FindControl("lblDiscount");
             Label lblPreTax = (Label)e.Row.FindControl("lblPreTax");
             Label lblGovTax = (Label)e.Row.FindControl("lblGovernmentTax");
@@ -114,6 +119,12 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     shipping += Convert.ToDouble(lblShipping.Text);
                     lblShipping.Text = "$" + lblShipping.Text;                    
+                }
+                //TradeIn
+                if (lblTradeIn.Text.isNumber())
+                {
+                    tradein += Convert.ToDouble(lblTradeIn.Text);
+                    lblTradeIn.Text = "$" + lblTradeIn.Text;
                 }
                 //Discount
                 if (lblDiscount.Text.isNumber())
@@ -172,6 +183,7 @@ namespace SweetSpotDiscountGolfPOS
             else if (e.Row.RowType == DataControlRowType.Footer)
             {
                 Label lblShippingTotal = (Label)e.Row.FindControl("lblShippingTotal");
+                Label lblTradeinTotal = (Label)e.Row.FindControl("lblTradeInTotal");
                 Label lblDiscountTotal = (Label)e.Row.FindControl("lblDiscountTotal");
                 Label lblPreTaxTotal = (Label)e.Row.FindControl("lblPreTaxTotal");
                 Label lblGovTaxTotal = (Label)e.Row.FindControl("lblGovernmentTaxTotal");
@@ -182,6 +194,7 @@ namespace SweetSpotDiscountGolfPOS
                 Label lblProfitMarginTotal = (Label)e.Row.FindControl("lblProfitMarginTotal");
 
                 lblShippingTotal.Text = String.Format("{0:C}", shipping);
+                lblTradeinTotal.Text = String.Format("{0:C}", tradein);
                 lblDiscountTotal.Text = String.Format("{0:C}", discount);
                 lblPreTaxTotal.Text = String.Format("{0:C}", preTax);
                 lblGovTaxTotal.Text = String.Format("{0:C}", govTax);
@@ -210,22 +223,23 @@ namespace SweetSpotDiscountGolfPOS
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
                     //Creates a seperate sheet for each data table
-                    ExcelWorksheet invoicesExport = xlPackage.Workbook.Worksheets.Add("Invoices");
+                    ExcelWorksheet invoicesExport = xlPackage.Workbook.Worksheets.Add("Invoices"); //TODO: Update the download to include the trade in column
                     // write to sheet   
                     invoicesExport.Cells[1, 1].Value = lblDates.Text;
                     invoicesExport.Cells[2, 1].Value = "Invoice";
                     invoicesExport.Cells[2, 2].Value = "Shipping";
-                    invoicesExport.Cells[2, 3].Value = "Total Discount";
-                    invoicesExport.Cells[2, 4].Value = "Pre-Tax";
-                    invoicesExport.Cells[2, 5].Value = "Government Tax";
-                    invoicesExport.Cells[2, 6].Value = "Provincial Tax";
-                    invoicesExport.Cells[2, 7].Value = "Post-Tax";
-                    invoicesExport.Cells[2, 8].Value = "COGS";
-                    invoicesExport.Cells[2, 9].Value = "Revenue Earned";
-                    invoicesExport.Cells[2, 10].Value = "Profit Margin";
-                    invoicesExport.Cells[2, 11].Value = "Customer";
-                    invoicesExport.Cells[2, 12].Value = "Employee";
-                    invoicesExport.Cells[2, 13].Value = "Date";
+                    invoicesExport.Cells[2, 3].Value = "Trade-In Amount";
+                    invoicesExport.Cells[2, 4].Value = "Total Discount";
+                    invoicesExport.Cells[2, 5].Value = "Pre-Tax";
+                    invoicesExport.Cells[2, 6].Value = "Government Tax";
+                    invoicesExport.Cells[2, 7].Value = "Provincial Tax";
+                    invoicesExport.Cells[2, 8].Value = "Post-Tax";
+                    invoicesExport.Cells[2, 9].Value = "COGS";
+                    invoicesExport.Cells[2, 10].Value = "Revenue Earned";
+                    invoicesExport.Cells[2, 11].Value = "Profit Margin";
+                    invoicesExport.Cells[2, 12].Value = "Customer";
+                    invoicesExport.Cells[2, 13].Value = "Employee";
+                    invoicesExport.Cells[2, 14].Value = "Date";
                     int recordIndex = 3;
                     foreach (DataRow row in invoices.Rows)
                     {
@@ -242,22 +256,24 @@ namespace SweetSpotDiscountGolfPOS
                         invoicesExport.Cells[recordIndex, 10].Value = row[9].ToString();
                         invoicesExport.Cells[recordIndex, 11].Value = row[10].ToString();
                         invoicesExport.Cells[recordIndex, 12].Value = row[11].ToString();
-                        DateTime date = Convert.ToDateTime(row[12]);
-                        invoicesExport.Cells[recordIndex, 13].Value = date.ToString("dd-MM-yyyy");
+                        invoicesExport.Cells[recordIndex, 13].Value = row[12].ToString();
+                        DateTime date = Convert.ToDateTime(row[13]);
+                        invoicesExport.Cells[recordIndex, 14].Value = date.ToString("dd-MM-yyyy");
                         recordIndex++;
                     }
                     //Totals
                     invoicesExport.Cells[recordIndex + 1, 1].Value = "Totals:";
                     invoicesExport.Cells[recordIndex + 1, 2].Value = shipping.ToString();
-                    invoicesExport.Cells[recordIndex + 1, 3].Value = discount.ToString();
-                    invoicesExport.Cells[recordIndex + 1, 4].Value = preTax.ToString();
-                    invoicesExport.Cells[recordIndex + 1, 5].Value = govTax.ToString();
-                    invoicesExport.Cells[recordIndex + 1, 6].Value = proTax.ToString();
-                    invoicesExport.Cells[recordIndex + 1, 7].Value = postTax.ToString();
-                    invoicesExport.Cells[recordIndex + 1, 8].Value = cogs.ToString();
-                    invoicesExport.Cells[recordIndex + 1, 9].Value = revenue.ToString();
+                    invoicesExport.Cells[recordIndex + 1, 3].Value = tradein.ToString();
+                    invoicesExport.Cells[recordIndex + 1, 4].Value = discount.ToString();
+                    invoicesExport.Cells[recordIndex + 1, 5].Value = preTax.ToString();
+                    invoicesExport.Cells[recordIndex + 1, 6].Value = govTax.ToString();
+                    invoicesExport.Cells[recordIndex + 1, 7].Value = proTax.ToString();
+                    invoicesExport.Cells[recordIndex + 1, 8].Value = postTax.ToString();
+                    invoicesExport.Cells[recordIndex + 1, 9].Value = cogs.ToString();
+                    invoicesExport.Cells[recordIndex + 1, 10].Value = revenue.ToString();
 
-                    invoicesExport.Cells[recordIndex + 1, 10].Value = (margin / marginCounter).ToString();
+                    invoicesExport.Cells[recordIndex + 1, 11].Value = (margin / marginCounter).ToString();
 
                     Response.Clear();
                     Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
