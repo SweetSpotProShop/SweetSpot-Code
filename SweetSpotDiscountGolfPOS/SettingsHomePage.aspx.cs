@@ -160,6 +160,9 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator", this);
             }
         }
+
+      
+
         //Importing
         protected void btnLoadItems_Click(object sender, EventArgs e)
         {
@@ -276,11 +279,11 @@ namespace SweetSpotDiscountGolfPOS
                             else
                             {
                                 MessageBox.ShowMessage("Importing Complete", this);
-                            }
-
+                            }   
                         }
                     }
                 }
+                
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -293,6 +296,7 @@ namespace SweetSpotDiscountGolfPOS
                     + "If you continue to receive this message please contact "
                     + "your system administrator", this);
             }
+            imgLoadingItemImport.Visible = false;
         }
         protected void btnImportCustomers_Click(object sender, EventArgs e)
         {

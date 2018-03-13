@@ -147,7 +147,7 @@
                             <div>
                                 <asp:TextBox ID="txtBrandTwo" runat="server" placeholder="Confirm Brand"></asp:TextBox>
                             </div>
-                            <asp:Button ID="btnAddBrand" runat="server" Width="150" Text="Add Brand" OnClick="btnAddBrand_Click"/>
+                            <asp:Button ID="btnAddBrand" runat="server" Width="150" Text="Add Brand" OnClick="btnAddBrand_Click" />
                         </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>
@@ -157,6 +157,8 @@
             <h2>Import Files From Excel</h2>
             <hr />
             <div>
+
+
                 <asp:Table runat="server" GridLines="Both" BorderStyle="Solid" BorderWidth="1px" BorderColor="Black">
                     <asp:TableRow>
                         <asp:TableCell>
@@ -165,16 +167,20 @@
                                 <asp:FileUpload ID="fupItemSheet" runat="server" />
                             </div>
                             <asp:Button ID="btnLoadItems" runat="server" Width="150" Text="Import Items" OnClick="btnLoadItems_Click" />
+                            <%--The actual button--%>
+                            <asp:Image id="imgLoadingItemImport" ImageUrl="~/Images/ajax-loader.gif" visible="false"  runat="server"/>
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label ID="lblLoadCustomers" runat="server" Text="Import Customers" />
                             <div>
                                 <asp:FileUpload ID="fupCustomers" runat="server" />
                             </div>
-                            <asp:Button ID="btnImportCustomers" runat="server" Width="150" Text="Import Customers" OnClick="btnImportCustomers_Click" />
+                            <asp:Button ID="btnImportCustomers" runat="server" Width="150" Text="Import Customers" OnClientClick="showImage" OnClick="btnImportCustomers_Click" />
                         </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>
+
+
             </div>
             <%--<asp:Button ID="btnLoadCustomers" runat="server" Width="150" Text="Load Customers" OnClick="btnLoadCustomers_Click" />
             <asp:Button ID="btnLoadEmployees" runat="server" Width="150" Text="Load Employees" OnClick="btnLoadEmployee_Click" />--%>
@@ -194,6 +200,17 @@
                     var progress = <%=this.progress%>;                    
                     document.getElementById('IndividualPageContent_Label1').value = progress;
                 }
+
+                function showImage() {
+                    var img = document.getElementById('imgLoadingItemImport');
+                    img.style.visibility = 'visible';
+                }
+
+
+
+
+
+
             </script>
         </asp:Panel>
     </div>

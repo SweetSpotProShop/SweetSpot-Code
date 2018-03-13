@@ -81,6 +81,7 @@
     <Content Include="CustomerHomePage.aspx" />
     <Content Include="EmployeeAddNew.aspx" />
     <Content Include="HomePage.aspx" />
+    <Content Include="Images\ajax-loader.gif" />
     <Content Include="Images\combinedLogo.jpg" />
     <Content Include="Images\SweetSpotLogo.jpg" />
     <Content Include="InventoryAddNew.aspx" />
