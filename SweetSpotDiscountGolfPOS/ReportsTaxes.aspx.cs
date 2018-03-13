@@ -38,69 +38,67 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "ReportsTaxes.aspx";
             try
             {
+                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Server.Transfer("LoginPage.aspx", false);
                 }
-                else
+
+                //Gathering the start and end dates
+                Object[] passing = (Object[])Session["reportInfo"];
+                DateTime[] reportDates = (DateTime[])passing[0];
+                DateTime startDate = reportDates[0];
+                DateTime endDate = reportDates[1];
+                //Builds string to display in label
+                lblTaxDate.Text = "Taxes Through: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(Convert.ToInt32(passing[1]));
+                //Creating a cashout list and calling a method that grabs all mops and amounts paid
+                tr = reports.returnTaxReportDetails(startDate, endDate);
+                
+                foreach (var item in tr)
                 {
-                    CU = (CurrentUser)Session["currentUser"];
-                    //Gathering the start and end dates
-                    Object[] passing = (Object[])Session["reportInfo"];
-                    DateTime[] reportDates = (DateTime[])passing[0];
-                    DateTime startDate = reportDates[0];
-                    DateTime endDate = reportDates[1];
-                    //Builds string to display in label
-                    lblTaxDate.Text = "Taxes Through: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(Convert.ToInt32(passing[1]));
-                    //Creating a cashout list and calling a method that grabs all mops and amounts paid
-                    tr = reports.returnTaxReportDetails(startDate, endDate);
-
-                    foreach (var item in tr)
+                    if(item.locationID == Convert.ToInt32(passing[1]))
                     {
-                        if (item.locationID == Convert.ToInt32(passing[1]))
+                        if(item.transactionType == 1)
                         {
-                            if (item.transactionType == 1)
-                            {
-                                collected.Add(item);
-                            }
-                            if (item.transactionType == 2)
-                            {
-                                returned.Add(item);
-                            }
-                            overall.Add(item);
+                            collected.Add(item);
                         }
+                        if(item.transactionType == 2)
+                        {
+                            returned.Add(item);
+                        }
+                        overall.Add(item);
                     }
+                }
 
-                    grdTaxesCollected.DataSource = collected;
-                    grdTaxesCollected.DataBind();
-                    foreach (GridViewRow row in grdTaxesCollected.Rows)
+                grdTaxesCollected.DataSource = collected;
+                grdTaxesCollected.DataBind();
+                foreach (GridViewRow row in grdTaxesCollected.Rows)
+                {
+                    foreach (TableCell cell in row.Cells)
                     {
-                        foreach (TableCell cell in row.Cells)
-                        {
-                            cell.Attributes.CssStyle["text-align"] = "center";
-                        }
+                        cell.Attributes.CssStyle["text-align"] = "center";
                     }
+                }
 
-                    grdTaxesReturned.DataSource = returned;
-                    grdTaxesReturned.DataBind();
-                    foreach (GridViewRow row in grdTaxesReturned.Rows)
+                grdTaxesReturned.DataSource = returned;
+                grdTaxesReturned.DataBind();
+                foreach (GridViewRow row in grdTaxesReturned.Rows)
+                {
+                    foreach (TableCell cell in row.Cells)
                     {
-                        foreach (TableCell cell in row.Cells)
-                        {
-                            cell.Attributes.CssStyle["text-align"] = "center";
-                        }
+                        cell.Attributes.CssStyle["text-align"] = "center";
                     }
+                }
 
-                    grdTaxesOverall.DataSource = overall;
-                    grdTaxesOverall.DataBind();
-                    foreach (GridViewRow row in grdTaxesOverall.Rows)
+                grdTaxesOverall.DataSource = overall;
+                grdTaxesOverall.DataBind();
+                foreach (GridViewRow row in grdTaxesOverall.Rows)
+                {
+                    foreach (TableCell cell in row.Cells)
                     {
-                        foreach (TableCell cell in row.Cells)
-                        {
-                            cell.Attributes.CssStyle["text-align"] = "center";
-                        }
+                        cell.Attributes.CssStyle["text-align"] = "center";
                     }
                 }
             }

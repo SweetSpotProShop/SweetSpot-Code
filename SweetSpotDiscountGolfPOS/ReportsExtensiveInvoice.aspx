@@ -27,14 +27,6 @@
                             <asp:Label ID="lblShippingTotal" runat="server"></asp:Label>
                         </FooterTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText ="Trade-in Amount">
-                        <ItemTemplate>
-                            <asp:Label ID="lblTradeIn" runat="server" Text='<%#Eval("tradeinAmount")%>'></asp:Label>
-                        </ItemTemplate>
-                        <FooterTemplate>
-                            <asp:Label ID="lblTradeInTotal" runat="server"></asp:Label>
-                        </FooterTemplate>
-                    </asp:TemplateField>
                     <asp:TemplateField HeaderText ="Discount">
                         <ItemTemplate>
                             <asp:Label ID="lblDiscount" runat="server" Text='<%#Eval("Total Discount")%>'></asp:Label>

@@ -30,60 +30,57 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "PrintableReceipt.aspx";
             try
             {
+                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Response.Redirect("LoginPage.aspx", false);
                 }
-                else
+                //get current customer from customer number session
+                int custNum = (Convert.ToInt32(Session["key"].ToString()));
+                //Store in Customer class
+                Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
+                //display information on receipt
+                lblCustomerName.Text = c.firstName.ToString() + " " + c.lastName.ToString();
+                lblStreetAddress.Text = c.primaryAddress.ToString();
+                lblPostalAddress.Text = c.city.ToString() + ", " + LM.ReturnProvinceName(c.province) + " " + c.postalCode.ToString();
+                lblPhone.Text = c.primaryPhoneNumber.ToString();
+                lblinvoiceNum.Text = Convert.ToString(Session["Invoice"]);
+                lblDate.Text = Convert.ToDateTime(Session["strDate"]).ToString("yyyy-MM-dd");
+                //Gather transaction type from Session
+                //Determins the session to get the cart items from
+                cart = (List<Cart>)Session["ItemsInCart"];
+                //Use current location to display on invoice
+                List<Location> l = LM.ReturnLocation(CU.locationID);
+
+                //Display the location information
+                lblSweetShopName.Text = l[0].locationName.ToString();
+                lblSweetShopStreetAddress.Text = l[0].address.ToString();
+                lblSweetShopPostalAddress.Text = l[0].city.ToString() + ", " + LM.ReturnProvinceName(l[0].provID) + " " + l[0].postal.ToString();
+                lblSweetShopPhone.Text = l[0].primaryPhone.ToString();
+                
+                //Gathers stored totals
+                ckm = (CheckoutManager)Session["CheckOutTotals"];
+                //Gathers stored payment methods
+                mopList = (List<Mops>)Session["MethodsofPayment"];
+                //Displays subtotal
+                lblSubtotalDisplay.Text = "$ " + ckm.dblTotal.ToString("#0.00");
+                //Loops through each payment method and totlas them
+                foreach (var mop in mopList)
                 {
-                    CU = (CurrentUser)Session["currentUser"];
-                    //get current customer from customer number session
-                    int custNum = (Convert.ToInt32(Session["key"].ToString()));
-                    //Store in Customer class
-                    Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
-                    //display information on receipt
-                    lblCustomerName.Text = c.firstName.ToString() + " " + c.lastName.ToString();
-                    lblStreetAddress.Text = c.primaryAddress.ToString();
-                    lblPostalAddress.Text = c.city.ToString() + ", " + LM.ReturnProvinceName(c.province) + " " + c.postalCode.ToString();
-                    lblPhone.Text = c.primaryPhoneNumber.ToString();
-                    lblinvoiceNum.Text = Convert.ToString(Session["Invoice"]);
-                    lblDate.Text = Convert.ToDateTime(Session["strDate"]).ToString("yyyy-MM-dd");
-                    //Gather transaction type from Session
-                    //Determins the session to get the cart items from
-                    cart = (List<Cart>)Session["ItemsInCart"];
-                    //Use current location to display on invoice
-                    List<Location> l = LM.ReturnLocation(CU.locationID);
-
-                    //Display the location information
-                    lblSweetShopName.Text = l[0].locationName.ToString();
-                    lblSweetShopStreetAddress.Text = l[0].address.ToString();
-                    lblSweetShopPostalAddress.Text = l[0].city.ToString() + ", " + LM.ReturnProvinceName(l[0].provID) + " " + l[0].postal.ToString();
-                    lblSweetShopPhone.Text = l[0].primaryPhone.ToString();
-
-                    //Gathers stored totals
-                    ckm = (CheckoutManager)Session["CheckOutTotals"];
-                    //Gathers stored payment methods
-                    mopList = (List<Mops>)Session["MethodsofPayment"];
-                    //Displays subtotal
-                    lblSubtotalDisplay.Text = "$ " + ckm.dblTotal.ToString("#0.00");
-                    //Loops through each payment method and totlas them
-                    foreach (var mop in mopList)
-                    {
-                        dblAmountPaid += mop.amountPaid;
-                    }
-
-                    //Binds the cart to the grid view
-                    grdItemsBoughtList.DataSource = cart;
-                    grdItemsBoughtList.DataBind();
-
-                    //Displays the total amount ppaid
-                    lblTotalPaidDisplay.Text = "$ " + dblAmountPaid.ToString("#0.00");
-                    //Binds the payment methods to a gridview
-                    grdMOPS.DataSource = mopList;
-                    grdMOPS.DataBind();
+                    dblAmountPaid += mop.amountPaid;
                 }
+
+                //Binds the cart to the grid view
+                grdItemsBoughtList.DataSource = cart;
+                grdItemsBoughtList.DataBind();
+
+                //Displays the total amount ppaid
+                lblTotalPaidDisplay.Text = "$ " + dblAmountPaid.ToString("#0.00");
+                //Binds the payment methods to a gridview
+                grdMOPS.DataSource = mopList;
+                grdMOPS.DataBind();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

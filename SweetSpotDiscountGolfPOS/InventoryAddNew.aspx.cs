@@ -26,296 +26,293 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "InventoryAddNew.aspx";
             try
             {
+                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Response.Redirect("LoginPage.aspx", false);
                 }
+                if (CU.jobID != 0)
+                {
+                    //If user is not an admin then disable the edit item button
+                    btnEditItem.Enabled = false;
+                }
+                //Check to see if an item was selected
+                if (Convert.ToInt32(Request.QueryString["sku"].ToString()) != -10)
+                {
+                    if (!IsPostBack)
+                    {
+                        //Grabs a list of objects that match the sku in query string. There should only ever be 1 that is returned
+                        List<Object> o = IDU.ReturnListOfObjectsFromThreeTables(Convert.ToInt32(Request.QueryString["sku"].ToString()));
+                        ddlBrand.DataSource = IM.ReturnDropDownForBrand();
+                        ddlBrand.DataTextField = "brandName";
+                        ddlBrand.DataValueField = "brandID";
+                        ddlBrand.DataBind();
+                        ddlLocation.DataSource = LM.ReturnLocationDropDownAll();
+                        ddlLocation.DataTextField = "locationName";
+                        ddlLocation.DataValueField = "locationID";
+                        ddlLocation.DataBind();
+                        ddlType.DataSource = IM.ReturnDropDownForItemType();
+                        ddlType.DataTextField = "typeDescription";
+                        ddlType.DataValueField = "typeID";
+                        ddlType.DataBind();
+                        ddlModel.DataSource = IM.ReturnDropDownForModel();
+                        ddlModel.DataTextField = "modelName";
+                        ddlModel.DataValueField = "modelID";
+                        ddlModel.DataBind();
+                        if (o[0] is Clubs)
+                        {
+                            //When a club, pass class and populate DropDowns and TextBoxes
+                            Clubs c = o[0] as Clubs;
+                            ddlType.SelectedValue = c.typeID.ToString();
+                            lblSKUDisplay.Text = c.sku.ToString();
+                            txtCost.Text = c.cost.ToString();
+                            ddlBrand.SelectedValue = c.brandID.ToString();
+                            txtPrice.Text = c.price.ToString();
+                            txtQuantity.Text = c.quantity.ToString();
+                            ddlLocation.SelectedValue = c.itemlocation.ToString();
+
+                            txtClubType.Text = c.clubType.ToString();
+                            ddlModel.SelectedValue = c.modelID.ToString();
+                            txtShaft.Text = c.shaft.ToString();
+                            txtNumberofClubs.Text = c.numberOfClubs.ToString();
+                            txtClubSpec.Text = c.clubSpec.ToString();
+                            txtShaftSpec.Text = c.shaftSpec.ToString();
+                            txtShaftFlex.Text = c.shaftFlex.ToString();
+                            txtDexterity.Text = c.dexterity.ToString();
+                            chkUsed.Checked = c.used;
+                            txtComments.Text = c.comments.ToString();
+                        }
+                        else if (o[0] is Accessories)
+                        {
+                            //When accessories, pass class and populate DropDowns and TextBoxes
+                            Accessories a = o[0] as Accessories;
+                            ddlType.SelectedValue = a.typeID.ToString();
+                            lblSKUDisplay.Text = a.sku.ToString();
+                            txtCost.Text = a.cost.ToString();
+                            ddlBrand.SelectedValue = a.brandID.ToString();
+                            txtPrice.Text = a.price.ToString();
+                            txtQuantity.Text = a.quantity.ToString();
+                            ddlLocation.SelectedValue = a.locID.ToString();
+                            lblNumberofClubs.Text = "Accessory Type:";
+                            txtNumberofClubs.Text = a.accessoryType.ToString();
+
+                            lblClubType.Text = "Size:";
+                            txtClubType.Text = a.size.ToString();
+                            ddlModel.SelectedValue = a.modelID.ToString();
+                            lblShaft.Text = "Colour:";
+                            txtShaft.Text = a.colour.ToString();
+                            txtComments.Text = a.comments.ToString();
+
+                            lblClubSpec.Visible = false;
+                            txtClubSpec.Visible = false;
+                            lblShaftSpec.Visible = false;
+                            txtShaftSpec.Visible = false;
+                            lblShaftFlex.Visible = false;
+                            txtShaftFlex.Visible = false;
+                            lblDexterity.Visible = false;
+                            txtDexterity.Visible = false;
+                            chkUsed.Visible = false;
+                        }
+                        else if (o[0] is Clothing)
+                        {
+                            //When clothing, pass class and populate DropDowns and TextBoxes
+                            Clothing cl = o[0] as Clothing;
+                            ddlType.SelectedValue = cl.typeID.ToString();
+                            lblSKUDisplay.Text = cl.sku.ToString();
+                            txtCost.Text = cl.cost.ToString();
+                            ddlBrand.SelectedValue = cl.brandID.ToString();
+                            txtPrice.Text = cl.price.ToString();
+                            txtQuantity.Text = cl.quantity.ToString();
+                            ddlLocation.SelectedValue = cl.locID.ToString();
+                            txtComments.Text = cl.comments.ToString();
+
+                            lblClubType.Text = "Size:";
+                            txtClubType.Text = cl.size.ToString();
+                            lblModel.Visible = false;
+                            ddlModel.Visible = false;
+                            lblShaft.Text = "Colour:";
+                            txtShaft.Text = cl.colour.ToString();
+                            lblNumberofClubs.Visible = false;
+                            txtNumberofClubs.Visible = false;
+                            lblClubSpec.Text = "Gender:";
+                            txtClubSpec.Text = cl.gender.ToString();
+                            lblShaftFlex.Text = "Style:";
+                            txtShaftFlex.Text = cl.style.ToString();
+                            lblShaftSpec.Visible = false;
+                            txtShaftSpec.Visible = false;
+                            lblDexterity.Visible = false;
+                            txtDexterity.Visible = false;
+                            chkUsed.Visible = false;
+                        }
+                        btnCreateSimilar.Visible = true;
+                    }
+                }
                 else
                 {
-                    CU = (CurrentUser)Session["currentUser"];
-                    if (CU.jobID != 0)
+                    //When no item was selected display drop downs and text boxes
+                    ddlType.Enabled = true;
+                    txtCost.Enabled = true;
+                    ddlBrand.Enabled = true;
+                    txtPrice.Enabled = true;
+                    txtQuantity.Enabled = true;
+                    ddlLocation.Enabled = true;
+
+                    txtClubType.Enabled = true;
+                    txtShaft.Enabled = true;
+                    txtComments.Enabled = true;
+
+                    btnCreateSimilar.Visible = false;
+                    if (!IsPostBack)
                     {
-                        //If user is not an admin then disable the edit item button
-                        btnEditItem.Enabled = false;
-                    }
-                    //Check to see if an item was selected
-                    if (Convert.ToInt32(Request.QueryString["sku"].ToString()) != -10)
-                    {
-                        if (!IsPostBack)
-                        {
-                            //Grabs a list of objects that match the sku in query string. There should only ever be 1 that is returned
-                            List<Object> o = IDU.ReturnListOfObjectsFromThreeTables(Convert.ToInt32(Request.QueryString["sku"].ToString()));
-                            ddlBrand.DataSource = IM.ReturnDropDownForBrand();
-                            ddlBrand.DataTextField = "brandName";
-                            ddlBrand.DataValueField = "brandID";
-                            ddlBrand.DataBind();
-                            ddlLocation.DataSource = LM.ReturnLocationDropDownAll();
-                            ddlLocation.DataTextField = "locationName";
-                            ddlLocation.DataValueField = "locationID";
-                            ddlLocation.DataBind();
-                            ddlType.DataSource = IM.ReturnDropDownForItemType();
-                            ddlType.DataTextField = "typeDescription";
-                            ddlType.DataValueField = "typeID";
-                            ddlType.DataBind();
-                            ddlModel.DataSource = IM.ReturnDropDownForModel();
-                            ddlModel.DataTextField = "modelName";
-                            ddlModel.DataValueField = "modelID";
-                            ddlModel.DataBind();
-                            if (o[0] is Clubs)
-                            {
-                                //When a club, pass class and populate DropDowns and TextBoxes
-                                Clubs c = o[0] as Clubs;
-                                ddlType.SelectedValue = c.typeID.ToString();
-                                lblSKUDisplay.Text = c.sku.ToString();
-                                txtCost.Text = c.cost.ToString();
-                                ddlBrand.SelectedValue = c.brandID.ToString();
-                                txtPrice.Text = c.price.ToString();
-                                txtQuantity.Text = c.quantity.ToString();
-                                ddlLocation.SelectedValue = c.itemlocation.ToString();
-
-                                txtClubType.Text = c.clubType.ToString();
-                                ddlModel.SelectedValue = c.modelID.ToString();
-                                txtShaft.Text = c.shaft.ToString();
-                                txtNumberofClubs.Text = c.numberOfClubs.ToString();
-                                txtClubSpec.Text = c.clubSpec.ToString();
-                                txtShaftSpec.Text = c.shaftSpec.ToString();
-                                txtShaftFlex.Text = c.shaftFlex.ToString();
-                                txtDexterity.Text = c.dexterity.ToString();
-                                chkUsed.Checked = c.used;
-                                txtComments.Text = c.comments.ToString();
-                            }
-                            else if (o[0] is Accessories)
-                            {
-                                //When accessories, pass class and populate DropDowns and TextBoxes
-                                Accessories a = o[0] as Accessories;
-                                ddlType.SelectedValue = a.typeID.ToString();
-                                lblSKUDisplay.Text = a.sku.ToString();
-                                txtCost.Text = a.cost.ToString();
-                                ddlBrand.SelectedValue = a.brandID.ToString();
-                                txtPrice.Text = a.price.ToString();
-                                txtQuantity.Text = a.quantity.ToString();
-                                ddlLocation.SelectedValue = a.locID.ToString();
-                                lblNumberofClubs.Text = "Accessory Type:";
-                                txtNumberofClubs.Text = a.accessoryType.ToString();
-
-                                lblClubType.Text = "Size:";
-                                txtClubType.Text = a.size.ToString();
-                                ddlModel.SelectedValue = a.modelID.ToString();
-                                lblShaft.Text = "Colour:";
-                                txtShaft.Text = a.colour.ToString();
-                                txtComments.Text = a.comments.ToString();
-
-                                lblClubSpec.Visible = false;
-                                txtClubSpec.Visible = false;
-                                lblShaftSpec.Visible = false;
-                                txtShaftSpec.Visible = false;
-                                lblShaftFlex.Visible = false;
-                                txtShaftFlex.Visible = false;
-                                lblDexterity.Visible = false;
-                                txtDexterity.Visible = false;
-                                chkUsed.Visible = false;
-                            }
-                            else if (o[0] is Clothing)
-                            {
-                                //When clothing, pass class and populate DropDowns and TextBoxes
-                                Clothing cl = o[0] as Clothing;
-                                ddlType.SelectedValue = cl.typeID.ToString();
-                                lblSKUDisplay.Text = cl.sku.ToString();
-                                txtCost.Text = cl.cost.ToString();
-                                ddlBrand.SelectedValue = cl.brandID.ToString();
-                                txtPrice.Text = cl.price.ToString();
-                                txtQuantity.Text = cl.quantity.ToString();
-                                ddlLocation.SelectedValue = cl.locID.ToString();
-                                txtComments.Text = cl.comments.ToString();
-
-                                lblClubType.Text = "Size:";
-                                txtClubType.Text = cl.size.ToString();
-                                lblModel.Visible = false;
-                                ddlModel.Visible = false;
-                                lblShaft.Text = "Colour:";
-                                txtShaft.Text = cl.colour.ToString();
-                                lblNumberofClubs.Visible = false;
-                                txtNumberofClubs.Visible = false;
-                                lblClubSpec.Text = "Gender:";
-                                txtClubSpec.Text = cl.gender.ToString();
-                                lblShaftFlex.Text = "Style:";
-                                txtShaftFlex.Text = cl.style.ToString();
-                                lblShaftSpec.Visible = false;
-                                txtShaftSpec.Visible = false;
-                                lblDexterity.Visible = false;
-                                txtDexterity.Visible = false;
-                                chkUsed.Visible = false;
-                            }
-                            btnCreateSimilar.Visible = true;
-                        }
+                        ddlBrand.DataSource = IM.ReturnDropDownForBrand();
+                        ddlBrand.DataTextField = "brandName";
+                        ddlBrand.DataValueField = "brandID";
+                        ddlBrand.DataBind();
+                        ddlLocation.DataSource = LM.ReturnLocationDropDownAll();
+                        ddlLocation.DataTextField = "locationName";
+                        ddlLocation.DataValueField = "locationID";
+                        ddlLocation.DataBind();
+                        ddlType.DataSource = IM.ReturnDropDownForItemType();
+                        ddlType.DataTextField = "typeDescription";
+                        ddlType.DataValueField = "typeID";
+                        ddlType.DataBind();
+                        ddlModel.DataSource = IM.ReturnDropDownForModel();
+                        ddlModel.DataTextField = "modelName";
+                        ddlModel.DataValueField = "modelID";
+                        ddlModel.DataBind();
+                        ddlLocation.SelectedValue = CU.locationID.ToString();
+                        ddlType.SelectedValue = "1";
+                        ddlModel.Enabled = true;
+                        txtNumberofClubs.Enabled = true;
+                        txtClubSpec.Enabled = true;
+                        txtShaftSpec.Enabled = true;
+                        txtShaftFlex.Enabled = true;
+                        txtDexterity.Enabled = true;
+                        chkUsed.Enabled = true;
                     }
                     else
                     {
-                        //When no item was selected display drop downs and text boxes
-                        ddlType.Enabled = true;
-                        txtCost.Enabled = true;
-                        ddlBrand.Enabled = true;
-                        txtPrice.Enabled = true;
-                        txtQuantity.Enabled = true;
-                        ddlLocation.Enabled = true;
-
-                        txtClubType.Enabled = true;
-                        txtShaft.Enabled = true;
-                        txtComments.Enabled = true;
-
-                        btnCreateSimilar.Visible = false;
-                        if (!IsPostBack)
+                        //Clubs
+                        if (Convert.ToInt32(ddlType.SelectedValue) == 1)
                         {
-                            ddlBrand.DataSource = IM.ReturnDropDownForBrand();
-                            ddlBrand.DataTextField = "brandName";
-                            ddlBrand.DataValueField = "brandID";
-                            ddlBrand.DataBind();
-                            ddlLocation.DataSource = LM.ReturnLocationDropDownAll();
-                            ddlLocation.DataTextField = "locationName";
-                            ddlLocation.DataValueField = "locationID";
-                            ddlLocation.DataBind();
-                            ddlType.DataSource = IM.ReturnDropDownForItemType();
-                            ddlType.DataTextField = "typeDescription";
-                            ddlType.DataValueField = "typeID";
-                            ddlType.DataBind();
-                            ddlModel.DataSource = IM.ReturnDropDownForModel();
-                            ddlModel.DataTextField = "modelName";
-                            ddlModel.DataValueField = "modelID";
-                            ddlModel.DataBind();
-                            ddlLocation.SelectedValue = CU.locationID.ToString();
-                            ddlType.SelectedValue = "1";
+                            //adjust labels displaying for clubs
+                            lblClubType.Text = "Club Type:";
+
+                            lblModel.Visible = true;
+                            ddlModel.Visible = true;
                             ddlModel.Enabled = true;
+
+                            lblShaft.Text = "Shaft:";
+
+                            lblNumberofClubs.Text = "Number of Clubs:";
+                            lblNumberofClubs.Visible = true;
+                            txtNumberofClubs.Visible = true;
                             txtNumberofClubs.Enabled = true;
+
+                            lblClubSpec.Text = "Club Spec:";
+                            lblClubSpec.Visible = true;
+                            txtClubSpec.Visible = true;
                             txtClubSpec.Enabled = true;
+
+                            lblShaftSpec.Visible = true;
+                            txtShaftSpec.Visible = true;
                             txtShaftSpec.Enabled = true;
+
+                            lblShaftFlex.Text = "Shaft Flex:";
+                            lblShaftFlex.Visible = true;
+                            txtShaftFlex.Visible = true;
                             txtShaftFlex.Enabled = true;
+
+                            lblDexterity.Visible = true;
+                            txtDexterity.Visible = true;
                             txtDexterity.Enabled = true;
+
+                            chkUsed.Visible = true;
                             chkUsed.Enabled = true;
                         }
-                        else
+                        //Accessories
+                        else if (Convert.ToInt32(ddlType.SelectedValue) == 2)
                         {
-                            //Clubs
-                            if (Convert.ToInt32(ddlType.SelectedValue) == 1)
-                            {
-                                //adjust labels displaying for clubs
-                                lblClubType.Text = "Club Type:";
+                            //adjust labels displaying for accessories
+                            lblClubType.Text = "Size:";
 
-                                lblModel.Visible = true;
-                                ddlModel.Visible = true;
-                                ddlModel.Enabled = true;
+                            lblModel.Visible = true;
+                            ddlModel.Visible = true;
+                            ddlModel.Enabled = true;
 
-                                lblShaft.Text = "Shaft:";
+                            lblShaft.Text = "Colour:";
 
-                                lblNumberofClubs.Text = "Number of Clubs:";
-                                lblNumberofClubs.Visible = true;
-                                txtNumberofClubs.Visible = true;
-                                txtNumberofClubs.Enabled = true;
+                            lblNumberofClubs.Text = "Accessory Type:";
+                            lblNumberofClubs.Visible = true;
+                            txtNumberofClubs.Visible = true;
+                            txtNumberofClubs.Enabled = true;
 
-                                lblClubSpec.Text = "Club Spec:";
-                                lblClubSpec.Visible = true;
-                                txtClubSpec.Visible = true;
-                                txtClubSpec.Enabled = true;
+                            lblClubSpec.Visible = false;
+                            txtClubSpec.Visible = false;
+                            txtClubSpec.Enabled = false;
 
-                                lblShaftSpec.Visible = true;
-                                txtShaftSpec.Visible = true;
-                                txtShaftSpec.Enabled = true;
+                            lblShaftSpec.Visible = false;
+                            txtShaftSpec.Visible = false;
+                            txtShaftSpec.Enabled = false;
 
-                                lblShaftFlex.Text = "Shaft Flex:";
-                                lblShaftFlex.Visible = true;
-                                txtShaftFlex.Visible = true;
-                                txtShaftFlex.Enabled = true;
+                            lblShaftFlex.Visible = false;
+                            txtShaftFlex.Visible = false;
+                            txtShaftFlex.Enabled = false;
 
-                                lblDexterity.Visible = true;
-                                txtDexterity.Visible = true;
-                                txtDexterity.Enabled = true;
+                            lblDexterity.Visible = false;
+                            txtDexterity.Visible = false;
+                            txtDexterity.Enabled = false;
 
-                                chkUsed.Visible = true;
-                                chkUsed.Enabled = true;
-                            }
-                            //Accessories
-                            else if (Convert.ToInt32(ddlType.SelectedValue) == 2)
-                            {
-                                //adjust labels displaying for accessories
-                                lblClubType.Text = "Size:";
-
-                                lblModel.Visible = true;
-                                ddlModel.Visible = true;
-                                ddlModel.Enabled = true;
-
-                                lblShaft.Text = "Colour:";
-
-                                lblNumberofClubs.Text = "Accessory Type:";
-                                lblNumberofClubs.Visible = true;
-                                txtNumberofClubs.Visible = true;
-                                txtNumberofClubs.Enabled = true;
-
-                                lblClubSpec.Visible = false;
-                                txtClubSpec.Visible = false;
-                                txtClubSpec.Enabled = false;
-
-                                lblShaftSpec.Visible = false;
-                                txtShaftSpec.Visible = false;
-                                txtShaftSpec.Enabled = false;
-
-                                lblShaftFlex.Visible = false;
-                                txtShaftFlex.Visible = false;
-                                txtShaftFlex.Enabled = false;
-
-                                lblDexterity.Visible = false;
-                                txtDexterity.Visible = false;
-                                txtDexterity.Enabled = false;
-
-                                chkUsed.Visible = false;
-                                chkUsed.Enabled = false;
-                            }
-                            //Clothing
-                            else if (Convert.ToInt32(ddlType.SelectedValue) == 3)
-                            {
-                                //adjust labels displaying for clubs
-                                lblClubType.Text = "Size:";
-
-                                lblModel.Visible = false;
-                                ddlModel.Visible = false;
-                                ddlModel.Enabled = false;
-
-                                lblShaft.Text = "Colour:";
-
-                                lblNumberofClubs.Visible = false;
-                                txtNumberofClubs.Visible = false;
-                                txtNumberofClubs.Enabled = false;
-
-                                lblClubSpec.Text = "Gender:";
-                                lblClubSpec.Visible = true;
-                                txtClubSpec.Visible = true;
-                                txtClubSpec.Enabled = true;
-
-                                lblShaftSpec.Visible = false;
-                                txtShaftSpec.Visible = false;
-                                txtShaftSpec.Enabled = false;
-
-                                lblShaftFlex.Text = "Style:";
-                                lblShaftFlex.Visible = true;
-                                txtShaftFlex.Visible = true;
-                                txtShaftFlex.Enabled = true;
-
-                                lblDexterity.Visible = false;
-                                txtDexterity.Visible = false;
-                                txtDexterity.Enabled = false;
-
-                                chkUsed.Visible = false;
-                                chkUsed.Enabled = false;
-                            }
+                            chkUsed.Visible = false;
+                            chkUsed.Enabled = false;
                         }
-                        //hides and displays the proper buttons for access
-                        btnSaveItem.Visible = false;
-                        btnAddItem.Visible = true;
-                        pnlDefaultButton.DefaultButton = "btnAddItem";
-                        btnEditItem.Visible = false;
-                        btnCancel.Visible = false;
-                        btnBackToSearch.Visible = true;
+                        //Clothing
+                        else if (Convert.ToInt32(ddlType.SelectedValue) == 3)
+                        {
+                            //adjust labels displaying for clubs
+                            lblClubType.Text = "Size:";
+
+                            lblModel.Visible = false;
+                            ddlModel.Visible = false;
+                            ddlModel.Enabled = false;
+
+                            lblShaft.Text = "Colour:";
+
+                            lblNumberofClubs.Visible = false;
+                            txtNumberofClubs.Visible = false;
+                            txtNumberofClubs.Enabled = false;
+
+                            lblClubSpec.Text = "Gender:";
+                            lblClubSpec.Visible = true;
+                            txtClubSpec.Visible = true;
+                            txtClubSpec.Enabled = true;
+
+                            lblShaftSpec.Visible = false;
+                            txtShaftSpec.Visible = false;
+                            txtShaftSpec.Enabled = false;
+
+                            lblShaftFlex.Text = "Style:";
+                            lblShaftFlex.Visible = true;
+                            txtShaftFlex.Visible = true;
+                            txtShaftFlex.Enabled = true;
+
+                            lblDexterity.Visible = false;
+                            txtDexterity.Visible = false;
+                            txtDexterity.Enabled = false;
+
+                            chkUsed.Visible = false;
+                            chkUsed.Enabled = false;
+                        }
                     }
+                    //hides and displays the proper buttons for access
+                    btnSaveItem.Visible = false;
+                    btnAddItem.Visible = true;
+                    pnlDefaultButton.DefaultButton = "btnAddItem";
+                    btnEditItem.Visible = false;
+                    btnCancel.Visible = false;
+                    btnBackToSearch.Visible = true;
                 }
             }
             //Exception catch

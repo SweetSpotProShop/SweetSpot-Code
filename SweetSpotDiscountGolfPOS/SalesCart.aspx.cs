@@ -41,59 +41,56 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "SalesCart.aspx";
             try
             {
+                cu = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Response.Redirect("LoginPage.aspx", false);
                 }
-                else
+                lblInvalidQty.Visible = false;
+                if (!Page.IsPostBack)
                 {
-                    cu = (CurrentUser)Session["currentUser"];
-                    lblInvalidQty.Visible = false;
-                    if (!Page.IsPostBack)
+                    //Retrieves transaction type from session
+                    int tranType = Convert.ToInt32(Session["TranType"]);
+                    if (tranType == 1)
                     {
-                        //Retrieves transaction type from session
-                        int tranType = Convert.ToInt32(Session["TranType"]);
-                        if (tranType == 1)
+                        //if transaction type is sales then set focus on the search field
+                        txtSearch.Focus();
+                        //Checks if there is a Customer Number stored in the Session
+                        if (Session["key"] != null)
                         {
-                            //if transaction type is sales then set focus on the search field
-                            txtSearch.Focus();
-                            //Checks if there is a Customer Number stored in the Session
-                            if (Session["key"] != null)
-                            {
-                                //If yes then convert number to int and call Customer class using it
-                                int custNum = (int)(Convert.ToInt32(Session["key"].ToString()));
-                                Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
-                                //Set name in text box
-                                txtCustomer.Text = c.firstName + " " + c.lastName;
-                            }
-                            //display system time in Sales Page
-                            DateTime today = DateTime.Today;
-                            lblDateDisplay.Text = today.ToString("yyyy-MM-dd");
-                            //Retrieves location from Session
-                            string loc = cu.locationName;
-                            //Get the next invoice number, sets in texyt box and stores in session
-                            if (Session["Invoice"] == null)
-                            {
-                                invNum = idu.getNextInvoiceNum();
-                                lblInvoiceNumberDisplay.Text = loc + "-" + invNum + "-1";
-                                Session["Invoice"] = lblInvoiceNumberDisplay.Text;
-                            }
-                            else { lblInvoiceNumberDisplay.Text = Session["Invoice"].ToString(); }
-                            //Checks the cart to see if there are any items in it
-                            if (Session["ItemsInCart"] != null)
-                            {
-                                //If there are bind to data grid and get a subtotal of the items
-                                grdCartItems.DataSource = Session["ItemsInCart"];
-                                grdCartItems.DataBind();
-                                lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"], cu.locationID).ToString();
-                            }
+                            //If yes then convert number to int and call Customer class using it
+                            int custNum = (int)(Convert.ToInt32(Session["key"].ToString()));
+                            Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
+                            //Set name in text box
+                            txtCustomer.Text = c.firstName + " " + c.lastName;
+                        }
+                        //display system time in Sales Page
+                        DateTime today = DateTime.Today;
+                        lblDateDisplay.Text = today.ToString("yyyy-MM-dd");
+                        //Retrieves location from Session
+                        string loc = cu.locationName;
+                        //Get the next invoice number, sets in texyt box and stores in session
+                        if (Session["Invoice"] == null)
+                        {
+                            invNum = idu.getNextInvoiceNum();
+                            lblInvoiceNumberDisplay.Text = loc + "-" + invNum + "-1";
+                            Session["Invoice"] = lblInvoiceNumberDisplay.Text;
+                        }
+                        else { lblInvoiceNumberDisplay.Text = Session["Invoice"].ToString(); }
+                        //Checks the cart to see if there are any items in it
+                        if (Session["ItemsInCart"] != null)
+                        {
+                            //If there are bind to data grid and get a subtotal of the items
+                            grdCartItems.DataSource = Session["ItemsInCart"];
+                            grdCartItems.DataBind();
+                            lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount((List<Cart>)Session["ItemsInCart"], cu.locationID).ToString();
                         }
                     }
-                    //Store date in a session
-                    Session["strDate"] = lblDateDisplay.Text;
                 }
+                //Store date in a session
+                Session["strDate"] = lblDateDisplay.Text;
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

@@ -36,33 +36,31 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "ReportsPurchasesMade.aspx";
             try
             {
+                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Server.Transfer("LoginPage.aspx", false);
                 }
-                else
+
+                //Gathering the start and end dates
+                Object[] repInfo = (Object[])Session["reportInfo"];
+                DateTime[] reportDates = (DateTime[])repInfo[0];
+                DateTime startDate = reportDates[0];
+                DateTime endDate = reportDates[1];
+                int locationID = (int)repInfo[1];
+                //Builds string to display in label
+                lblPurchasesMadeDate.Text = "Purchases Made Between: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
+                //Creating a cashout list and calling a method that grabs all mops and amounts paid
+                purch = reports.returnPurchasesDuringDates(startDate, endDate, locationID);
+                grdPurchasesMade.DataSource = purch;
+                grdPurchasesMade.DataBind();
+                foreach (GridViewRow row in grdPurchasesMade.Rows)
                 {
-                    CU = (CurrentUser)Session["currentUser"];
-                    //Gathering the start and end dates
-                    Object[] repInfo = (Object[])Session["reportInfo"];
-                    DateTime[] reportDates = (DateTime[])repInfo[0];
-                    DateTime startDate = reportDates[0];
-                    DateTime endDate = reportDates[1];
-                    int locationID = (int)repInfo[1];
-                    //Builds string to display in label
-                    lblPurchasesMadeDate.Text = "Purchases Made Between: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
-                    //Creating a cashout list and calling a method that grabs all mops and amounts paid
-                    purch = reports.returnPurchasesDuringDates(startDate, endDate, locationID);
-                    grdPurchasesMade.DataSource = purch;
-                    grdPurchasesMade.DataBind();
-                    foreach (GridViewRow row in grdPurchasesMade.Rows)
+                    foreach (TableCell cell in row.Cells)
                     {
-                        foreach (TableCell cell in row.Cells)
-                        {
-                            cell.Attributes.CssStyle["text-align"] = "center";
-                        }
+                        cell.Attributes.CssStyle["text-align"] = "center";
                     }
                 }
             }

@@ -31,37 +31,34 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "ReportsHomePage";
             try
             {
+                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Response.Redirect("LoginPage.aspx", false);
                 }
-                else
+                if (!IsPostBack)
                 {
-                    CU = (CurrentUser)Session["currentUser"];
-                    if (!IsPostBack)
-                    {
-                        //Sets the calendar and text boxes start and end dates
-                        calStartDate.SelectedDate = DateTime.Today;
-                        calEndDate.SelectedDate = DateTime.Today;
-                        ddlLocation.DataSource = LM.ReturnLocationDropDown();
-                        ddlLocation.DataTextField = "locationName";
-                        ddlLocation.DataValueField = "locationID";
-                        ddlLocation.DataBind();
-                        ddlLocation.SelectedValue = CU.locationID.ToString();
+                    //Sets the calendar and text boxes start and end dates
+                    calStartDate.SelectedDate = DateTime.Today;
+                    calEndDate.SelectedDate = DateTime.Today;
+                    ddlLocation.DataSource = LM.ReturnLocationDropDown();
+                    ddlLocation.DataTextField = "locationName";
+                    ddlLocation.DataValueField = "locationID";
+                    ddlLocation.DataBind();
+                    ddlLocation.SelectedValue = CU.locationID.ToString();
 
-                    }
-                    if (CU.jobID != 0)
-                    {
-                        //User is not an admin
-                        lblReport.Text = "You are not authorized to view reports";
-                        lblReport.Visible = true;
-                        lblReport.ForeColor = System.Drawing.Color.Red;
-                        //Disables buttons
-                        btnRunReport.Visible = false;
-                        pnlDefaultButton.Visible = false;
-                    }
+                }
+                if (CU.jobID != 0)
+                {
+                    //User is not an admin
+                    lblReport.Text = "You are not authorized to view reports";
+                    lblReport.Visible = true;
+                    lblReport.ForeColor = System.Drawing.Color.Red;
+                    //Disables buttons
+                    btnRunReport.Visible = false;
+                    pnlDefaultButton.Visible = false;
                 }
             }
             //Exception catch
