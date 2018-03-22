@@ -15,7 +15,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public int invoiceSubNum { get; set; }
         public double itemRefund { get; set; }
 
-
         //Tied to both classes
         public int sku { get; set; }
         public string itemDescription { get; set; }
@@ -24,17 +23,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public double itemPrice { get; set; }
         public double itemDiscount { get; set; }
         public bool percentage { get; set; }
-
-
-        //Specific to Items class
-        public string location { get; set; }
         public int typeID { get; set; }
         public bool tradeIn { get; set; }
 
+        //May be able to amalgamate all into one and then remove the Items and ItemsManager Classes
 
-
-        
         public InvoiceItems(){}
+        //InvoiceItems
         public InvoiceItems(int InvoiceNum, int InvoiceSubNum, int Sku, int ItemQuantity, double ItemCost, double ItemPrice, 
             double ItemDiscount, double ItemRefund, bool Percentage)
         {
@@ -48,6 +43,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             itemRefund = ItemRefund;
             percentage = Percentage;
         }
+        //InvoiceItemsWithDescription
         public InvoiceItems(int InvoiceNum, int InvoiceSubNum, int Sku, string ItemDescription, int ItemQuantity, double ItemCost, 
             double ItemPrice, double ItemDiscount, double ItemRefund, bool Percentage)
         {
@@ -61,6 +57,23 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             itemDiscount = ItemDiscount;
             itemRefund = ItemRefund;
             percentage = Percentage;
+        }
+        //InvoiceItemsInCurrentSalesItems
+        public InvoiceItems(int InvoiceNum, int InvoiceSubNum, int Sku, string ItemDescription, int ItemQuantity, double ItemCost,
+            double ItemPrice, double ItemDiscount, double ItemRefund, bool Percentage, int TypeID, bool TradeIN)
+        {
+            invoiceNum = InvoiceNum;
+            invoiceSubNum = InvoiceSubNum;
+            sku = Sku;
+            itemDescription = ItemDescription;
+            itemQuantity = ItemQuantity;
+            itemCost = ItemCost;
+            itemPrice = ItemPrice;
+            itemDiscount = ItemDiscount;
+            itemRefund = ItemRefund;
+            percentage = Percentage;
+            typeID = TypeID;
+            tradeIn = TradeIN;
         }
     }
 }

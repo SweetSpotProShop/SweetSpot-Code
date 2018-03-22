@@ -73,7 +73,7 @@ namespace SweetSpotDiscountGolfPOS
                         }
                         grdPurchasedItems.DataSource = Session["ItemsInCart"];
                         grdPurchasedItems.DataBind();
-                        lblPurchaseAmountDisplay.Text = "$ " + scm.returnPurchaseAmount(itemsInCart).ToString();
+                        //lblPurchaseAmountDisplay.Text = "$ " + scm.returnPurchaseAmount(itemsInCart).ToString();
                     }
                     //Store date in a session
                     Session["strDate"] = lblDateDisplay.Text;
@@ -225,7 +225,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Bind items in cart to grid view
                 grdPurchasedItems.DataSource = itemsInCart;
                 grdPurchasedItems.DataBind();
-                lblPurchaseAmountDisplay.Text = "$ " + scm.returnPurchaseAmount(itemsInCart).ToString();
+                //lblPurchaseAmountDisplay.Text = "$ " + scm.returnPurchaseAmount(itemsInCart).ToString();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -254,7 +254,7 @@ namespace SweetSpotDiscountGolfPOS
                 grdPurchasedItems.EditIndex = index;
                 grdPurchasedItems.DataBind();
                 //Recalculates subtotal
-                lblPurchaseAmountDisplay.Text = "$ " + scm.returnPurchaseAmount(itemsInCart).ToString();
+                //lblPurchaseAmountDisplay.Text = "$ " + scm.returnPurchaseAmount(itemsInCart).ToString();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -281,7 +281,7 @@ namespace SweetSpotDiscountGolfPOS
                 grdPurchasedItems.DataSource = Session["ItemsInCart"];
                 grdPurchasedItems.DataBind();
                 //Recalcluate subtotal
-                lblPurchaseAmountDisplay.Text = "$ " + scm.returnPurchaseAmount((List<Cart>)Session["ItemsInCart"]).ToString("#0.00");
+                //lblPurchaseAmountDisplay.Text = "$ " + scm.returnPurchaseAmount((List<Cart>)Session["ItemsInCart"]).ToString("#0.00");
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -340,7 +340,7 @@ namespace SweetSpotDiscountGolfPOS
                 grdPurchasedItems.DataSource = itemsInCart;
                 grdPurchasedItems.DataBind();
                 //Recalculates the new subtotal
-                lblPurchaseAmountDisplay.Text = "$ " + scm.returnPurchaseAmount(itemsInCart).ToString("#0.00");
+                //lblPurchaseAmountDisplay.Text = "$ " + scm.returnPurchaseAmount(itemsInCart).ToString("#0.00");
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

@@ -38,14 +38,9 @@ namespace SweetSpotDiscountGolfPOS
                     CU = (CurrentUser)Session["currentUser"];
                     if (!IsPostBack)
                     {
-                        //Sets the calendar and text boxes start and end dates
-                        calStartDate.SelectedDate = DateTime.Today;
-                        calEndDate.SelectedDate = DateTime.Today;
-                        ddlLocation.DataSource = LM.ReturnLocationDropDown();
-                        ddlLocation.DataTextField = "locationName";
-                        ddlLocation.DataValueField = "locationID";
-                        ddlLocation.DataBind();
-                        ddlLocation.SelectedValue = CU.locationID.ToString();
+                        //Binds invoice list to the grid view
+                        grdCurrentOpenSales.DataSource = IM.ReturnCurrentOpenInvoices(CU.locationID);
+                        grdCurrentOpenSales.DataBind();
                     }
                 }
             }
@@ -62,19 +57,16 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
 
-        //Still Needs to be Updated
         protected void btnQuickSale_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "btnQuickSale_Click";
             try
             {
-                //****Still need this updated with new process****
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("cust", "1");
                 string invoice = CU.locationName + "-" + IM.ReturnNextInvoiceNumber() + "-1";
                 nameValues.Set("inv", invoice);
-                Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
                 //Changes page to Sales Cart
                 Response.Redirect("SalesCart.aspx?" + nameValues, false);
             }
@@ -111,49 +103,55 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void calStart_SelectionChanged(object sender, EventArgs e)
-        {
-            //Collects current method for error tracking
-            string method = "calStart_SelectionChanged";
-            try{}
-            //Exception catch
-            catch (ThreadAbortException tae) { }
-            catch (Exception ex)
-            {
-                //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
-                //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator.", this);
-            }
-        }
-        protected void calEnd_SelectionChanged(object sender, EventArgs e)
-        {
-            //Collects current method for error tracking
-            string method = "calEnd_SelectionChanged";
-            try{}
-            //Exception catch
-            catch (ThreadAbortException tae) { }
-            catch (Exception ex)
-            {
-                //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
-                //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator.", this);
-            }
-        }
         protected void btnInvoiceSearch_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "btnInvoiceSearch_Click";
             try
             {
-                //Binds invoice list to the grid view
-                grdInvoiceSelection.DataSource = IM.ReturnInvoicesBasedOnSearchCriteria(calStartDate.SelectedDate, calEndDate.SelectedDate, txtInvoiceNum.Text, Convert.ToInt32(ddlLocation.SelectedValue));
-                grdInvoiceSelection.DataBind();
+                Response.Redirect("InvoiceSearch.aspx", false);
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+        protected void btnProcessCashOut_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnSubmit_Click";
+            try
+            {
+                Reports R = new Reports();
+                int indicator = R.verifyCashoutCanBeProcessed(CU.locationID);
+                //Check to see if there are sales first
+                if (indicator == 0)
+                {
+                    var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                    nameValues.Set("dtm", DateTime.Today.ToShortDateString());
+                    //Changes to the Reports Cash Out page
+                    Response.Redirect("SalesCashOut.aspx?" + nameValues, false);
+                }
+                else if (indicator == 1)
+                {
+                    MessageBox.ShowMessage("No transactions have been processed for selected date.", this);
+                }
+                else if (indicator == 2)
+                {
+                    MessageBox.ShowMessage("There are still open transactions that need to be processed or cancelled.", this);
+                }
+                else if (indicator == 3)
+                {
+                    MessageBox.ShowMessage("A cashout has already been completed for selected date.", this);
+                }
+
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -169,34 +167,22 @@ namespace SweetSpotDiscountGolfPOS
         }
 
         //Still Needs to be Updated
-        protected void grdInvoiceSelection_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void grdCurrentOpenSales_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method for error tracking
-            string method = "grdInvoiceSelection_RowCommand";
+            string method = "grdCurrentOpenSales_RowCommand";
             try
             {
-                //Sets the string of the command argument(invoice number
+                var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                //Still need to get the cust on the Invoice
+                int index = ((GridViewRow)(((LinkButton)e.CommandSource).NamingContainer)).RowIndex;
+                nameValues.Set("cust", ((Label)grdCurrentOpenSales.Rows[index].Cells[11].FindControl("lblCustID")).Text);
                 string strInvoice = Convert.ToString(e.CommandArgument);
-                ////Splits the invoice string into numbers
-                //int invNum = Convert.ToInt32(strInvoice.Split('-')[0]);
-                int invSNum = Convert.ToInt32(strInvoice.Split('-')[1]);
-                //Checks that the command name is return invoice
-                if (e.CommandName == "returnInvoice")
-                {
-                    //determines the table to use for queries
-                    //string table = "";
-                    int tran = 3;
-                    if (invSNum > 1)
-                    {
-                        //table = "Returns";
-                        tran = 4;
-                    }
-                    //Stores required info into Sessions
-                    Session["useInvoice"] = true;
-                    Session["TranType"] = tran;
-                    //Changes to printable invoice page
-                    Response.Redirect("PrintableInvoice.aspx?inv=" + strInvoice, false);
-                }
+                nameValues.Set("inv", CU.locationName + "-" + strInvoice);
+                Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
+                //Changes page to Sales Cart
+                Response.Redirect("SalesCart.aspx?" + nameValues, false);
+
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

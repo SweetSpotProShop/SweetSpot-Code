@@ -13,7 +13,7 @@
             <asp:Label ID="lbldate" runat="server" Visible="false" Text="Select a date" />
 
         </div>
-        <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnRunReport">
+        <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnCashOutReport">
             <h2>Reports Selection</h2>
             <br />
             <asp:Label runat="server" Text="Select Location:" />
@@ -75,7 +75,7 @@
                 <asp:Table runat="server">
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:Button ID="btnRunReport" runat="server" Text="CashOut Report" Width="200px" OnClick="btnSubmit_Click" />
+                            <asp:Button ID="btnCashOutReport" runat="server" Text="CashOut Report" Width="200px" OnClick="btnCashOutReport_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Button ID="btnPurchasesReport" runat="server" Text="Purchases Report" Width="200px" OnClick="btnPurchasesReport_Click" />

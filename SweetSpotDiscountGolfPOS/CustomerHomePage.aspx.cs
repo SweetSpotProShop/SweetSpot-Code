@@ -105,13 +105,22 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (e.CommandName == "StartSale")
                 {
-                    Session["ItemsInCart"] = null;
-                    //Sets transaction type to sale
-                    Session["TranType"] = 1;
-                    //Sets customer id to guest cust
-                    Session["key"] = Convert.ToInt32(e.CommandArgument.ToString());
-                    //Open the Sales Cart page
-                    Response.Redirect("SalesCart.aspx?cust=" + e.CommandArgument.ToString(), false);
+                    //Session["ItemsInCart"] = null;
+                    ////Sets transaction type to sale
+                    //Session["TranType"] = 1;
+                    ////Sets customer id to guest cust
+                    //Session["key"] = Convert.ToInt32(e.CommandArgument.ToString());
+                    ////Open the Sales Cart page
+                    //Response.Redirect("SalesCart.aspx?cust=" + e.CommandArgument.ToString(), false);
+
+                    InvoiceManager IM = new InvoiceManager();
+                    var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                    nameValues.Set("cust", e.CommandArgument.ToString());
+                    string invoice = CU.locationName + "-" + IM.ReturnNextInvoiceNumber() + "-1";
+                    nameValues.Set("inv", invoice);
+                    Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
+                    //Changes page to Sales Cart
+                    Response.Redirect("SalesCart.aspx?" + nameValues, false);
                 }
             }
             //Exception catch

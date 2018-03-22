@@ -112,6 +112,7 @@
     <Content Include="ReportsCOGSvsPM.aspx" />
     <Content Include="ReportsDiscounts.aspx" />
     <Content Include="ReportsCashOut.aspx" />
+    <Content Include="SalesCashOut.aspx" />
     <Content Include="ReportsExtensiveInvoice.aspx" />
     <Content Include="ReportsHomePage.aspx" />
     <Content Include="ReportsPaymentType.aspx" />
@@ -126,6 +127,7 @@
     <Content Include="ReturnsCheckout.aspx" />
     <Content Include="SalesCheckout.aspx" />
     <Content Include="ReturnsHomePage.aspx" />
+    <Content Include="InvoiceSearch.aspx" />
     <Content Include="SalesHomePage.aspx" />
     <Content Include="SettingsHomePage.aspx" />
     <Content Include="TradeINEntry.aspx" />
@@ -282,6 +284,13 @@
     <Compile Include="ReportsCashOut.aspx.designer.cs">
       <DependentUpon>ReportsCashOut.aspx</DependentUpon>
     </Compile>
+    <Compile Include="SalesCashOut.aspx.cs">
+      <DependentUpon>SalesCashOut.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SalesCashOut.aspx.designer.cs">
+      <DependentUpon>SalesCashOut.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ReportsExtensiveInvoice.aspx.cs">
       <DependentUpon>ReportsExtensiveInvoice.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -379,6 +388,13 @@
     </Compile>
     <Compile Include="ReturnsHomePage.aspx.designer.cs">
       <DependentUpon>ReturnsHomePage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="InvoiceSearch.aspx.cs">
+      <DependentUpon>InvoiceSearch.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="InvoiceSearch.aspx.designer.cs">
+      <DependentUpon>InvoiceSearch.aspx</DependentUpon>
     </Compile>
     <Compile Include="SalesHomePage.aspx.cs">
       <DependentUpon>SalesHomePage.aspx</DependentUpon>

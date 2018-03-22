@@ -23,7 +23,7 @@ namespace SweetSpotDiscountGolfPOS
         CurrentUser CU = new CurrentUser();
         LocationManager LM = new LocationManager();
         Reports R = new Reports();
-        
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -59,7 +59,7 @@ namespace SweetSpotDiscountGolfPOS
                         lblReport.Visible = true;
                         lblReport.ForeColor = System.Drawing.Color.Red;
                         //Disables buttons
-                        btnRunReport.Visible = false;
+                        btnCashOutReport.Visible = false;
                         pnlDefaultButton.Visible = false;
                     }
                 }
@@ -111,41 +111,32 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
         //This is the Cashout Report
-        protected void btnSubmit_Click(object sender, EventArgs e)
+        protected void btnCashOutReport_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnSubmit_Click";
+            string method = "btnCashOutReport_Click";
             try
             {
-                if (calStartDate.SelectedDate != calEndDate.SelectedDate)
-                {
-                    //One of the date boxes is empty
-                    lbldate.Visible = true;
-                    lbldate.Text = "Please Select the same date for this report.";
-                    lbldate.ForeColor = System.Drawing.Color.Red;
 
-                }
-                else
+                ////NEED TO UPDATE THIS FOR NEW CASHOUT REPORTING
+                ////THIS WILL SHOW A LIST OF THE CASHOUTS THAT CAN THEN BE
+                ////EDITED AND THEN FINALIZED
+                //Stores report dates into Session
+                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
+                int indicator = R.CashoutsProcessed(repInfo);
+                ////Check to see if there are sales first
+                if (indicator == 0)
                 {
-                    //Stores report dates into Session
-                    DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
-                    Object[] repInfo = new Object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                    int indicator = R.verifyCashoutCanBeProcessed(repInfo);
-                    //Check to see if there are sales first
-                    if (indicator == 0)
-                    {
-                        Session["reportInfo"] = repInfo;
-                        //Changes to the Reports Cash Out page
-                        Response.Redirect("ReportsCashOut.aspx", false);
-                    }
-                    else if (indicator == 1)
-                    {
-                        MessageBox.ShowMessage("No transactions have been processed for selected date.", this);
-                    }
-                    else if (indicator == 2)
-                    {
-                        MessageBox.ShowMessage("A cashout has already been completed for selected date.", this);
-                    }
+                    var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                    nameValues.Set("from", calStartDate.SelectedDate.ToShortDateString());
+                    nameValues.Set("to", calEndDate.SelectedDate.ToShortDateString());
+                    nameValues.Set("location", ddlLocation.SelectedValue.ToString());
+                    Response.Redirect("ReportsCashOut.aspx?" + nameValues, false);
+                }
+                else if (indicator == 1)
+                {
+                    MessageBox.ShowMessage("No CashOuts have been processed for selected date range.", this);
                 }
             }
             //Exception catch

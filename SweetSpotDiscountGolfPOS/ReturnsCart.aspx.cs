@@ -65,7 +65,7 @@ namespace SweetSpotDiscountGolfPOS
                                 grdReturningItems.DataSource = returnedCart;
                                 grdReturningItems.DataBind();
                                 //displays subtotal based on the returned cart
-                                lblReturnSubtotalDisplay.Text = "$ " + cm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
+                                //lblReturnSubtotalDisplay.Text = "$ " + cm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
                             }
                             else
                             {
@@ -306,7 +306,7 @@ namespace SweetSpotDiscountGolfPOS
                 grdReturningItems.DataSource = returnedCart;
                 grdReturningItems.DataBind();
                 //recalculate the return total
-                lblReturnSubtotalDisplay.Text = "$ " + cm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
+                //lblReturnSubtotalDisplay.Text = "$ " + cm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -449,7 +449,7 @@ namespace SweetSpotDiscountGolfPOS
                 grdInvoicedItems.DataSource = itemsInCart;
                 grdInvoicedItems.DataBind();
                 //recalculate the return total
-                lblReturnSubtotalDisplay.Text = "$ " + cm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
+                //lblReturnSubtotalDisplay.Text = "$ " + cm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

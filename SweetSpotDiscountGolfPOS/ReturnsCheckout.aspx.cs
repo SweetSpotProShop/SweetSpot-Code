@@ -85,7 +85,7 @@ namespace SweetSpotDiscountGolfPOS
                         //Retrieve invoice from session
                         Invoice rInvoice = (Invoice)Session["searchReturnInvoices"];
                         //stores all checkout info in class
-                        ckm = new CheckoutManager(cm.returnRefundTotalAmount(cart), 0, 0, 0, false, false, 0, 0, 0);
+                        //ckm = new CheckoutManager(cm.returnRefundTotalAmount(cart), 0, 0, 0, false, false, 0, 0, 0);
                         foreach (var T in t)
                         {
                             //Cycles through each tax to display the correct ones and the
@@ -98,7 +98,7 @@ namespace SweetSpotDiscountGolfPOS
                                     //Only use tax amount if it was higher than 0
                                     if (rInvoice.governmentTax > 0)
                                     {
-                                        ckm.dblGst = cm.returnTaxAmount(T.taxRate, ckm.dblSubTotal);
+                                        //ckm.dblGst = cm.returnTaxAmount(T.taxRate, ckm.dblSubTotal);
                                         ckm.blGst = true;
                                     }
                                     lblGovernmentAmount.Text = "$ " + ckm.dblGst.ToString("#0.00");
@@ -109,7 +109,7 @@ namespace SweetSpotDiscountGolfPOS
                                     //Only use tax amount if it was higher than 0
                                     if (rInvoice.provincialTax > 0)
                                     {
-                                        ckm.dblPst = cm.returnTaxAmount(T.taxRate, ckm.dblSubTotal);
+                                        //ckm.dblPst = cm.returnTaxAmount(T.taxRate, ckm.dblSubTotal);
                                         ckm.blPst = true;
                                     }
                                     lblProvincialAmount.Text = "$ " + pst.ToString("#0.00");
@@ -121,7 +121,7 @@ namespace SweetSpotDiscountGolfPOS
                                     //Only use tax amount if it was higher than 0
                                     if (rInvoice.governmentTax > 0)
                                     {
-                                        ckm.dblGst = cm.returnTaxAmount(T.taxRate, ckm.dblSubTotal);
+                                        //ckm.dblGst = cm.returnTaxAmount(T.taxRate, ckm.dblSubTotal);
                                         ckm.blGst = true;
                                     }
                                     lblGovernmentAmount.Text = "$ " + gst.ToString("#0.00");
@@ -133,7 +133,7 @@ namespace SweetSpotDiscountGolfPOS
                                     //Only use tax amount if it was higher than 0
                                     if (rInvoice.provincialTax > 0)
                                     {
-                                        ckm.dblPst = cm.returnTaxAmount(T.taxRate, ckm.dblSubTotal);
+                                        //ckm.dblPst = cm.returnTaxAmount(T.taxRate, ckm.dblSubTotal);
                                         ckm.blPst = true;
                                     }
                                     lblProvincialAmount.Text = "$ " + pst.ToString("#0.00");
@@ -145,7 +145,7 @@ namespace SweetSpotDiscountGolfPOS
                                     //Only use tax amount if it was higher than 0
                                     if (rInvoice.provincialTax > 0)
                                     {
-                                        ckm.dblPst = cm.returnTaxAmount(T.taxRate, ckm.dblSubTotal);
+                                        //ckm.dblPst = cm.returnTaxAmount(T.taxRate, ckm.dblSubTotal);
                                         ckm.blPst = true;
                                     }
                                     lblProvincialAmount.Text = "$ " + pst.ToString("#0.00");

@@ -59,7 +59,7 @@ namespace SweetSpotDiscountGolfPOS
                         //Retrieves date from session
                         DateTime recDate = Convert.ToDateTime(Session["strDate"]);
                         //Creates checkout manager based on current items in cart
-                        ckm.dblTotal = cm.returnPurchaseAmount(cart);
+                        //ckm.dblTotal = cm.returnPurchaseAmount(cart);
                         ckm.dblRemainingBalance = ckm.dblTotal;
                         //Checks if there are any stored methods of payment
                         if (Session["MethodsofPayment"] != null)

@@ -1431,9 +1431,9 @@ namespace SweetShop
             while (reader.Read())
             {
                 i = new Invoice(Convert.ToInt32(reader["invoiceNum"]), Convert.ToInt32(reader["invoiceSubNum"]), Convert.ToDateTime(reader["invoiceDate"]),
-                    Convert.ToDateTime(reader["invoiceTime"]), CM.ReturnCustomer(Convert.ToInt32(reader["custID"]))[0], EM.ReturnEmployee(Convert.ToInt32(reader["empID"]))[0], 
+                    Convert.ToDateTime(reader["invoiceTime"]), CM.ReturnCustomer(Convert.ToInt32(reader["custID"]))[0], EM.ReturnEmployee(Convert.ToInt32(reader["empID"]))[0],
                     lm.ReturnLocation(Convert.ToInt32(reader["locationID"]))[0], Convert.ToDouble(reader["subTotal"]), Convert.ToInt32(reader["shippingAmount"]),
-                    Convert.ToDouble(reader["discountAmount"]), Convert.ToDouble(reader["tradeinAmount"]), Convert.ToDouble(reader["governmentTax"]), 
+                    Convert.ToDouble(reader["discountAmount"]), Convert.ToDouble(reader["tradeinAmount"]), Convert.ToDouble(reader["governmentTax"]),
                     Convert.ToDouble(reader["provincialTax"]), Convert.ToDouble(reader["balanceDue"]), IIM.ReturnInvoiceItems(reader["invoiceNum"].ToString() + "-" + reader["invoiceSubNum"].ToString()),
                     IMM.ReturnInvoiceMOPs(reader["invoiceNum"].ToString() + "-" + reader["invoiceSubNum"].ToString()), Convert.ToInt32(reader["transactionType"]),
                     reader["comments"].ToString());

@@ -38,15 +38,14 @@ namespace SweetShop
             price = Price;
             cost = Cost;
         }
-        public Items(int Sku, string Description, int Quantity, double Price, double Cost, double Discount, bool Percentage, int TypeID, bool TradeIN)
+        public Items(int Sku, string Description, string Location, int Quantity, double Price, double Cost, int TypeID, bool TradeIN)
         {
             sku = Sku;
             description = Description;
+            location = Location;
             quantity = Quantity;
             price = Price;
             cost = Cost;
-            discount = Discount;
-            percent = Percentage;
             typeID = TypeID;
             tradeIn = TradeIN;
         }

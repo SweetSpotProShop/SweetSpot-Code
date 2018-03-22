@@ -116,15 +116,11 @@
                 <br />
             </div>
             <%--//Radio button for InStore or Shipping--%>
-            <asp:RadioButton ID="RadioButton1" runat="server" Text="In Store" Checked="True" GroupName="rgSales" />
-            <asp:RadioButton ID="RadioButton2" runat="server" Text="Shipping" GroupName="rgSales" />
+            <asp:RadioButton ID="rdbInStorePurchase" runat="server" Text="In Store" Checked="True" Enabled="false" GroupName="rgSales" />
+            <asp:RadioButton ID="rdbShipping" runat="server" Text="Shipping" GroupName="rgSales" Enabled="false" />
             <asp:Label ID="lblShipping" runat="server" Text="Shipping Amount:" />
-            <asp:TextBox ID="txtShippingAmount" runat="server" />
-
-
+            <asp:TextBox ID="txtShippingAmount" runat="server" OnTextChanged="txtShippingAmount_TextChanged" AutoPostBack="true" Text="0" />
             <asp:Label ID="lblShippingWarning" runat="server" Visible="false" />
-
-
             <div>
                 <asp:Button ID="btnJumpToInventory" Text="Jump to Inventory" OnClick="btnJumpToInventory_Click" runat="server" />
             </div>
@@ -168,9 +164,9 @@
                     <asp:TemplateField HeaderText="Price" ItemStyle-Width="50px">
                         <ItemTemplate>
                             <div class='cost' id="divRollOverSearch" runat="server">
-                                <%#  (Eval("price","{0:C}")).ToString() %>
+                                <asp:Label ID="rollPrice" runat="server" Text='<%#  (Eval("price","{0:C}")).ToString() %>' />
                                 <div id="divPriceConvert" class="costDetail" runat="server">
-                                    <%# Convert.ToString(Eval("cost","{0:C}")).Replace("\n","<br/>") %>
+                                    <asp:Label ID="rollCost" runat="server" Text='<%# Convert.ToString(Eval("cost","{0:C}")).Replace("\n","<br/>") %>' />
                                 </div>
                             </div>
                         </ItemTemplate>
@@ -183,6 +179,16 @@
                             <div>
                                 <asp:TextBox ID="txtAmountDiscount" runat="server" placeholder="Enter Amount" />
                             </div>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Trade In" Visible="false" >
+                        <ItemTemplate>
+                            <asp:CheckBox ID="chkTradeInSearch" Checked='<%# Eval("tradeIn") %>' runat="server" Enabled="false" />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Type ID" Visible="false">
+                        <ItemTemplate>
+                            <asp:Label ID="lblTypeIDSearch" Text='<%# Eval("typeID") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -210,14 +216,14 @@
                         </EditItemTemplate>
                     </asp:TemplateField>
                     <asp:BoundField DataField="sku" ReadOnly="true" HeaderText="SKU" />
-                    <asp:BoundField DataField="quantity" HeaderText="Quantity" />
-                    <asp:BoundField DataField="description" ReadOnly="true" HeaderText="Description" />
+                    <asp:BoundField DataField="itemQuantity" HeaderText="Quantity" />
+                    <asp:BoundField DataField="itemDescription" ReadOnly="true" HeaderText="Description" />
                     <asp:TemplateField HeaderText="Price" ItemStyle-Width="50px">
                         <ItemTemplate>
                             <div class='cost' id="divRollOverCart" runat="server">
-                                <asp:Label ID="price" runat="server" Text='<%#  (Eval("price","{0:C}")).ToString() %>' />
+                                <asp:Label ID="price" runat="server" Text='<%#  (Eval("itemPrice","{0:C}")).ToString() %>' />
                                 <div id="divCostConvert" class="costDetail" runat="server">
-                                    <asp:Label ID="cost" runat="server" Text='<%# Convert.ToString(Eval("cost","{0:C}")).Replace("\n","<br/>") %>' />
+                                    <asp:Label ID="cost" runat="server" Text='<%# Convert.ToString(Eval("itemCost","{0:C}")).Replace("\n","<br/>") %>' />
                                 </div>
                             </div>
                         </ItemTemplate>
@@ -226,13 +232,13 @@
                         <ItemTemplate>
                             <asp:CheckBox ID="ckbPercentageDisplay" Checked='<%# Convert.ToBoolean(Eval("percentage")) %>' runat="server" Text="Discount by Percent" Enabled="false" />
                             <div id="divAmountDisplay" class="txt" runat="server">
-                                <asp:Label ID="lblAmountDisplay" runat="server" Text='<%# Eval("discount") %>' Enabled="false" />
+                                <asp:Label ID="lblAmountDisplay" runat="server" Text='<%# Eval("itemDiscount") %>' Enabled="false" />
                             </div>
                         </ItemTemplate>
                         <EditItemTemplate>
                             <asp:CheckBox ID="ckbPercentageEdit" Checked='<%# Convert.ToBoolean(Eval("percentage")) %>' runat="server" Text="Discount by Percent" Enabled="true" />
                             <div id="divAmountEdit" class="txt" runat="server">
-                                <asp:TextBox ID="txtAmnt" runat="server" Text='<%# Eval("discount") %>' Enabled="true" />
+                                <asp:TextBox ID="txtAmnt" runat="server" Text='<%# Eval("itemDiscount") %>' Enabled="true" />
                             </div>
                         </EditItemTemplate>
                     </asp:TemplateField>
@@ -252,8 +258,25 @@
             <asp:Label ID="lblSubtotal" runat="server" Text="Subtotal:" />
             <asp:Label ID="lblSubtotalDisplay" runat="server" />
             <hr />
-            <asp:Button ID="btnCancelSale" runat="server" Text="Cancel Sale" OnClick="btnCancelSale_Click" CausesValidation="false" />
-            <asp:Button ID="btnProceedToCheckout" runat="server" Text="Proceed to Checkout" OnClick="btnProceedToCheckout_Click" CausesValidation="false" />
+            <asp:Table runat="server">
+                <asp:TableRow>
+                    <asp:TableCell>
+                        <asp:Button ID="btnCancelSale" runat="server" Text="Cancel Sale" OnClick="btnCancelSale_Click" Width="163px" CausesValidation="false" />
+                    </asp:TableCell>
+                    <asp:TableCell>
+                        <asp:Button ID="btnExitSale" runat="server" Text="Exit Sale" OnClick="btnExitSale_Click" Width="163px" CausesValidation="false" />
+                    </asp:TableCell>
+                    <asp:TableCell>
+                        <asp:Button ID="btnLayaway" runat="server" Text="Layaway" OnClick="btnLayaway_Click" Width="163px" CausesValidation="false" />
+                    </asp:TableCell>
+                    <asp:TableCell>
+                        <asp:Button ID="btnProceedToCheckout" runat="server" Text="Proceed to Checkout" OnClick="btnProceedToCheckout_Click" Width="163px" CausesValidation="false" />
+                    </asp:TableCell>
+                </asp:TableRow>
+            </asp:Table>
+            
+            
+            
         </asp:Panel>
     </div>
 </asp:Content>
