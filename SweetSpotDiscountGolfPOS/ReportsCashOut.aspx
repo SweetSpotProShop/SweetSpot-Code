@@ -145,8 +145,8 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Action">
                         <ItemTemplate>
-                            <asp:Button ID="btnEdit" runat="server" Text="Edit" CommandName="EditCashout" CommandArgument='<%#Eval("cashoutDate","{0:d}") + " " + Eval("locationID")%>' />
-                            <asp:Button ID="btnFinalize" runat="server" Text="Finalize" CommandName="FinalizeCashout" CommandArgument='<%#Eval("cashoutDate","{0:d}") + " " + Eval("locationID")%>' />
+                            <asp:Button ID="btnEdit" runat="server" Text="Edit" CausesValidation="false" CommandName="EditCashout" CommandArgument='<%#Eval("cashoutDate","{0:d}") + " " + Eval("locationID")%>' />
+                            <asp:Button ID="btnFinalize" runat="server" Text="Finalize" CausesValidation="false" CommandName="FinalizeCashout" CommandArgument='<%#Eval("cashoutDate","{0:d}") + " " + Eval("locationID")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>

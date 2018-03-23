@@ -2426,6 +2426,32 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
 
         //******************CASHOUT REPORTING*******************************************************
+        private List<Cashout> ReturnCashoutFromDataTable(System.Data.DataTable dt)
+        {
+            List<Cashout> cashout = dt.AsEnumerable().Select(row =>
+            new Cashout
+            {
+                cashoutDate = row.Field<DateTime>("cashoutDate"),
+                saleTradeIn = row.Field<double>("saleTradeIn"),
+                saleGiftCard = row.Field<double>("saleGiftCard"),
+                saleCash = row.Field<double>("saleCash"),
+                saleDebit = row.Field<double>("saleDebit"),
+                saleMasterCard = row.Field<double>("saleMasterCard"),
+                saleVisa = row.Field<double>("saleVisa"),
+                receiptTradeIn = row.Field<double>("receiptTradeIn"),
+                receiptGiftCard = row.Field<double>("receiptGiftCard"),
+                receiptCash = row.Field<double>("receiptCash"),
+                receiptDebit = row.Field<double>("receiptDebit"),
+                receiptMasterCard = row.Field<double>("receiptMasterCard"),
+                receiptVisa = row.Field<double>("receiptVisa"),
+                preTax = row.Field<double>("preTax"),
+                saleGST = row.Field<double>("governmentTax"),
+                salePST = row.Field<double>("provincialTax"),
+                overShort = row.Field<double>("overShort")
+            }).ToList();
+            return cashout;
+        }
+
         public System.Data.DataTable ReturnCashoutsForSelectedDates(object[] passing)
         {
             string sqlCmd = "SELECT cashoutDate, locationID, saleTradeIn, receiptTradeIn, saleGiftCard, "
@@ -2484,6 +2510,74 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@locationID", location }
             };
 
+            dbc.executeInsertQuery(sqlCmd, parms);
+        }
+
+        public List<Cashout> ReturnSelectedCashout(object[] args)
+        {
+            string sqlCmd = "";
+            object[][] parms =
+            {
+                new object[] { "",  },
+                new object[] { "",  }
+            };
+
+            return ReturnCashoutFromDataTable(dbc.returnDataTableData(sqlCmd, parms));
+        }
+        public bool CashoutExists(object[] args)
+        {
+            bool exists = false;
+            string sqlCmd = "SELECT COUNT(cashoutDate) FROM tbl_cashout "
+                + "WHERE cashoutDate = @cashoutDate AND locationID = @locationID";
+
+            object[][] parms =
+            {
+                new object[] { "@cashoutDate", (DateTime)args[0] },
+                new object[] { "@locationID", Convert.ToInt32(args[1]) }
+            };
+            if(dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            {
+                exists = true;
+            }
+            return exists;
+        }
+        public void UpdateCashout(Cashout cas)
+        {
+            string sqlCmd = "UPDATE tbl_cashout SET cashoutDate = @cashoutDate, "
+                + "cashoutTime = @cashoutTime, saleTradeIn = @saleTradeIn, saleGiftCard = "
+                + "@saleGiftCard, saleCash = @saleCash, saleDebit = @saleDebit, saleMasterCard "
+                + "= @saleMasterCard, saleVisa = @saleVisa, receiptTradeIn = @receiptTradeIn, "
+                + "receiptGiftCard = @receiptGiftCard, receiptCash = @receiptCash, receiptDebit "
+                + "= @receiptDebit, receiptMasterCard = @receiptMasterCard, receiptVisa = "
+                + "@receiptVisa, preTax = @preTax, governmentTax = @gTax, provincialTax = @pTax, "
+                + "overShort = @overShort, finalized = @finalized, processed = @processed, "
+                + "locationID = @locID, empID = @empID";
+
+            object[][] parms =
+            {
+                new object[] { "cashoutDate", cas.cashoutDate },
+                new object[] { "cashoutTime", cas.cashoutTime },
+                new object[] { "saleTradeIn", cas.saleTradeIn },
+                new object[] { "saleGiftCard", cas.saleGiftCard },
+                new object[] { "saleCash", cas.saleCash },
+                new object[] { "saleDebit", cas.saleDebit },
+                new object[] { "saleMasterCard", cas.saleMasterCard },
+                new object[] { "saleVisa", cas.saleVisa },
+                new object[] { "receiptTradeIn", cas.receiptTradeIn },
+                new object[] { "receiptGiftCard", cas.receiptGiftCard },
+                new object[] { "receiptCash", cas.receiptCash },
+                new object[] { "receiptDebit", cas.receiptDebit },
+                new object[] { "receiptMasterCard", cas.receiptMasterCard },
+                new object[] { "receiptVisa", cas.receiptVisa },
+                new object[] { "preTax", cas.preTax },
+                new object[] { "gTax", cas.saleGST },
+                new object[] { "pTax", cas.salePST },
+                new object[] { "overShort", cas.overShort },
+                new object[] { "finalized", cas.finalized },
+                new object[] { "processed", cas.processed },
+                new object[] { "locID", cas.locationID },
+                new object[] { "empID", cas.empID }
+            };
             dbc.executeInsertQuery(sqlCmd, parms);
         }
 

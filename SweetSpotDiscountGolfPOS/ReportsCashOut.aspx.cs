@@ -37,17 +37,20 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    CU = (CurrentUser)Session["currentUser"];
-                    //Gathering the start and end dates
-                    DateTime startDate = DateTime.Parse(Request.QueryString["from"].ToString());
-                    DateTime endDate = DateTime.Parse(Request.QueryString["to"].ToString());
-                    DateTime[] rptDate = { startDate, endDate };
-                    int locationID = Convert.ToInt32(Request.QueryString["location"].ToString());
-                    object[] passing = { rptDate, locationID };
-                    lblDates.Text = "Items sold on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + L.locationName(locationID);
-                    dt = R.ReturnCashoutsForSelectedDates(passing);
-                    grdCashoutByDate.DataSource = dt;
-                    grdCashoutByDate.DataBind();
+                    if (!IsPostBack)
+                    {
+                        CU = (CurrentUser)Session["currentUser"];
+                        //Gathering the start and end dates
+                        DateTime startDate = DateTime.Parse(Request.QueryString["from"].ToString());
+                        DateTime endDate = DateTime.Parse(Request.QueryString["to"].ToString());
+                        DateTime[] rptDate = { startDate, endDate };
+                        int locationID = Convert.ToInt32(Request.QueryString["location"].ToString());
+                        object[] passing = { rptDate, locationID };
+                        lblDates.Text = "Items sold on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + L.locationName(locationID);
+                        dt = R.ReturnCashoutsForSelectedDates(passing);
+                        grdCashoutByDate.DataSource = dt;
+                        grdCashoutByDate.DataBind();
+                    }
                 }
             }
             //Exception catch
@@ -125,25 +128,17 @@ namespace SweetSpotDiscountGolfPOS
                     //Changes to the Reports Cash Out page
                     Response.Redirect("SalesCashOut.aspx?" + nameValues, false);
                 }
-                else if(e.CommandName == "FinalizeCashout")
+                else if (e.CommandName == "FinalizeCashout")
                 {
                     R.FinalizeCashout(e.CommandArgument.ToString());
-                    //Response.Redirect(Request.RawUrl, false);
-
-                    var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                    nameValues.Set("from", Request.QueryString["from"].ToString());
-                    nameValues.Set("to", Request.QueryString["to"].ToString());
-                    nameValues.Set("location", Request.QueryString["location"].ToString());
-                    Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
-
-                    //DateTime startDate = DateTime.Parse(Request.QueryString["from"].ToString());
-                    //DateTime endDate = DateTime.Parse(Request.QueryString["to"].ToString());
-                    //DateTime[] rptDate = { startDate, endDate };
-                    //int locationID = Convert.ToInt32(Request.QueryString["location"].ToString());
-                    //object[] passing = { rptDate, locationID };
-                    //dt = R.ReturnCashoutsForSelectedDates(passing);
-                    //grdCashoutByDate.DataSource = dt;
-                    //grdCashoutByDate.DataBind();
+                    DateTime startDate = DateTime.Parse(Request.QueryString["from"].ToString());
+                    DateTime endDate = DateTime.Parse(Request.QueryString["to"].ToString());
+                    DateTime[] rptDate = { startDate, endDate };
+                    int locationID = Convert.ToInt32(Request.QueryString["location"].ToString());
+                    object[] passing = { rptDate, locationID };
+                    dt = R.ReturnCashoutsForSelectedDates(passing);
+                    grdCashoutByDate.DataSource = dt;
+                    grdCashoutByDate.DataBind();
                 }
             }
             //Exception catch
