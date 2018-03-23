@@ -2428,10 +2428,10 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         //******************CASHOUT REPORTING*******************************************************
         public System.Data.DataTable ReturnCashoutsForSelectedDates(object[] passing)
         {
-            string sqlCmd = "SELECT cashoutDate, saleTradeIn, receiptTradeIn, saleGiftCard, receiptGiftCard, "
-                + "saleCash, receiptCash, saleDebit, receiptDebit, saleMasterCard, receiptMasterCard, "
-                + "saleVisa, receiptVisa, overShort, processed, finalized FROM tbl_cashout WHERE cashoutDate "
-                + "BETWEEN @startDate AND @endDate AND locationID = @locationID";
+            string sqlCmd = "SELECT cashoutDate, locationID, saleTradeIn, receiptTradeIn, saleGiftCard, "
+                + "receiptGiftCard, saleCash, receiptCash, saleDebit, receiptDebit, saleMasterCard, "
+                + "receiptMasterCard, saleVisa, receiptVisa, overShort, processed, finalized FROM "
+                + "tbl_cashout WHERE cashoutDate BETWEEN @startDate AND @endDate AND locationID = @locationID";
 
             DateTime[] dtm = (DateTime[])passing[0];
             object[][] parms =
@@ -2442,7 +2442,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             };
             return dbc.returnDataTableData(sqlCmd, parms);
         }
-
         public int CashoutsProcessed(object[] repInfo)
         {
             int indicator = 0;
@@ -2470,6 +2469,22 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 bolCIDR = true;
             }
             return bolCIDR;
+        }
+        public void FinalizeCashout(string args)
+        {
+            DateTime dtm = DateTime.Parse(args.Split(' ')[0]);
+            int location = Convert.ToInt32(args.Split(' ')[1]);
+            string sqlCmd = "UPDATE tbl_cashout SET finalized = 1 "
+                + "WHERE cashoutDate = @cashoutDate AND "
+                + "locationID = @locationID";
+
+            object[][] parms =
+            {
+                new object[] { "@cashoutDate", dtm },
+                new object[] { "@locationID", location }
+            };
+
+            dbc.executeInsertQuery(sqlCmd, parms);
         }
 
         //********************EXPORTING***************************************************************

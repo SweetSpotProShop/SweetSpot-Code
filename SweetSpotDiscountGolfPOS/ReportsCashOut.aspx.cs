@@ -26,7 +26,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "Page_Load";
-            Session["currPage"] = "ReportsSales";
+            Session["currPage"] = "ReportsCashOut";
             try
             {
                 //checks if the user has logged in
@@ -91,13 +91,118 @@ namespace SweetSpotDiscountGolfPOS
                         salesExport.Cells[recordIndex, 2].Value = row[1].ToString();
                         recordIndex++;
                     }
-
-
                     Response.Clear();
                     Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
                     Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                     Response.BinaryWrite(xlPackage.GetAsByteArray());
                     Response.End();
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+        protected void grdCashoutByDate_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            //Collects current method and page for error tracking
+            string method = "grdCashoutByDate_RowCommand";
+            try
+            {
+                if (e.CommandName == "EditCashout")
+                {
+                    string arg = e.CommandArgument.ToString();
+                    var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                    nameValues.Set("dtm", arg.Split(' ')[0]);
+                    nameValues.Set("location", arg.Split(' ')[1]);
+                    //Changes to the Reports Cash Out page
+                    Response.Redirect("SalesCashOut.aspx?" + nameValues, false);
+                }
+                else if(e.CommandName == "FinalizeCashout")
+                {
+                    R.FinalizeCashout(e.CommandArgument.ToString());
+                    //Response.Redirect(Request.RawUrl, false);
+
+                    var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                    nameValues.Set("from", Request.QueryString["from"].ToString());
+                    nameValues.Set("to", Request.QueryString["to"].ToString());
+                    nameValues.Set("location", Request.QueryString["location"].ToString());
+                    Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
+
+                    //DateTime startDate = DateTime.Parse(Request.QueryString["from"].ToString());
+                    //DateTime endDate = DateTime.Parse(Request.QueryString["to"].ToString());
+                    //DateTime[] rptDate = { startDate, endDate };
+                    //int locationID = Convert.ToInt32(Request.QueryString["location"].ToString());
+                    //object[] passing = { rptDate, locationID };
+                    //dt = R.ReturnCashoutsForSelectedDates(passing);
+                    //grdCashoutByDate.DataSource = dt;
+                    //grdCashoutByDate.DataBind();
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+        protected void grdCashoutByDate_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            //Collects current method and page for error tracking
+            string method = "grdCashoutByDate_RowDataBound";
+            try
+            {
+                if (e.Row.RowType == DataControlRowType.DataRow)
+                {
+                    if (Convert.ToInt32(DataBinder.Eval(e.Row.DataItem, "finalized")) == 1)
+                    {
+                        Button edit = (Button)e.Row.FindControl("btnEdit");
+                        edit.Enabled = false;
+                        Button final = (Button)e.Row.FindControl("btnFinalize");
+                        final.Enabled = false;
+                    }
+                    Label trade = (Label)e.Row.FindControl("lblTradeInBalance");
+                    Label gift = (Label)e.Row.FindControl("lblGiftCardBalance");
+                    Label cash = (Label)e.Row.FindControl("lblCashBalance");
+                    Label debit = (Label)e.Row.FindControl("lblDebitBalance");
+                    Label master = (Label)e.Row.FindControl("lblMasterCardBalance");
+                    Label visa = (Label)e.Row.FindControl("lblVisaBalance");
+                    if (trade.Text == "Discrepancy")
+                    {
+                        trade.ForeColor = System.Drawing.Color.Red;
+                    }
+                    if (gift.Text == "Discrepancy")
+                    {
+                        gift.ForeColor = System.Drawing.Color.Red;
+                    }
+                    if (cash.Text == "Discrepancy")
+                    {
+                        cash.ForeColor = System.Drawing.Color.Red;
+                    }
+                    if (debit.Text == "Discrepancy")
+                    {
+                        debit.ForeColor = System.Drawing.Color.Red;
+                    }
+                    if (master.Text == "Discrepancy")
+                    {
+                        master.ForeColor = System.Drawing.Color.Red;
+                    }
+                    if (visa.Text == "Discrepancy")
+                    {
+                        visa.ForeColor = System.Drawing.Color.Red;
+                    }
                 }
             }
             //Exception catch

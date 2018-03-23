@@ -178,7 +178,6 @@
                     </Columns>
                 </asp:GridView>
             </p>
-            <br />
         </div>
     </div>
     <div class="noPrint">

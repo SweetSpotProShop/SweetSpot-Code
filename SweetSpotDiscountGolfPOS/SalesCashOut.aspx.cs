@@ -51,7 +51,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "Page_Load";
-            Session["currPage"] = "ReportsCashOut.aspx";
+            Session["currPage"] = "SalesCashOut.aspx";
             try
             {
                 //checks if the user has logged in
@@ -65,11 +65,11 @@ namespace SweetSpotDiscountGolfPOS
                     CU = (CurrentUser)Session["currentUser"];
                     //Gathering the start and end dates
                     DateTime startDate = DateTime.Parse(Request.QueryString["dtm"].ToString());
-
-                    lblCashoutDate.Text = "Cashout on: " + startDate.ToString("d") + " for " + l.locationName(CU.locationID);
+                    int loc = Convert.ToInt32(Request.QueryString["location"]);
+                    lblCashoutDate.Text = "Cashout on: " + startDate.ToString("d") + " for " + l.locationName(loc);
                     //Creating a cashout list and calling a method that grabs all mops and amounts paid
-                    List<Cashout> lc = reports.cashoutAmounts(startDate, startDate, CU.locationID);
-                    Cashout rc = reports.getRemainingCashout(startDate, startDate, CU.locationID);
+                    List<Cashout> lc = reports.cashoutAmounts(startDate, startDate, loc);
+                    Cashout rc = reports.getRemainingCashout(startDate, startDate, loc);
                     //Looping through the list and adding up the totals
                     foreach (Cashout ch in lc)
                     {

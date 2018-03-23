@@ -126,7 +126,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnProcessCashOut_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnSubmit_Click";
+            string method = "btnProcessCashOut_Click";
             try
             {
                 Reports R = new Reports();
@@ -136,6 +136,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                     nameValues.Set("dtm", DateTime.Today.ToShortDateString());
+                    nameValues.Set("location", CU.locationID.ToString());
                     //Changes to the Reports Cash Out page
                     Response.Redirect("SalesCashOut.aspx?" + nameValues, false);
                 }
@@ -151,7 +152,6 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     MessageBox.ShowMessage("A cashout has already been completed for selected date.", this);
                 }
-
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -165,7 +165,6 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-
         //Still Needs to be Updated
         protected void grdCurrentOpenSales_RowCommand(object sender, GridViewCommandEventArgs e)
         {

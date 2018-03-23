@@ -307,7 +307,6 @@ namespace SweetSpotDiscountGolfPOS
                 nameValues.Set("cust", Request.QueryString["cust"].ToString());
                 string invoice = CU.locationName + "-" + IM.ReturnNextInvoiceNumber() + "-1";
                 nameValues.Set("inv", invoice);
-                Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
                 //Changes page to Sales Cart
                 Response.Redirect("SalesCart.aspx?" + nameValues, false);
             }
