@@ -2160,7 +2160,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string command = "select                                                                                                                                    " +
                                 "Concat(tbl_invoice.invoiceNum, '-', tbl_invoice.invoiceSubNum) as 'Invoice',                                                           " +
                                 "tbl_invoice.shippingAmount,                                                                                                            " +
-                                "(tbl_invoice.tradeinAmount * -1) as 'tradeinAmount', " +
+                                "(tbl_invoice.tradeinAmount * -1) as 'tradeinAmount', " + //This is the trade-ins column
                                 //"--Discount                                                                                                                           " +
                                 "case                                                                                                                                   " +
                                 "    when Exists(select tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum from tbl_invoiceItem where                            " +
@@ -2196,7 +2196,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "	else                                                                                                                                " +
                                 "        'No items found'                                                                                                               " +
                                 "end as 'Total Discount',                                                                                                               " +
-                                "tbl_invoice.subTotal as 'Pre-Tax',                                                                                                     " +
+                                "ROUND(subTotal + (tradeInAmount * -1),2) as 'Pre-Tax',                                                                                                     " +
                                 "tbl_invoice.governmentTax,                                                                                                             " +
                                 "tbl_invoice.provincialTax,                                                                                                             " +
                                 "tbl_invoice.balanceDue as 'Post-Tax',                                                                                                  " +
@@ -2226,10 +2226,10 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "                Cast(   (tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount))   - (select sum(itemCost * itemQuantity) from tbl_invoiceItem where                          " +
 
                                 "                tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                " +
-                                "              tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                                   " + //TODO: Change tbl_invoice.balanceDue to tbl_invoice.subTotal
-                                "    when Exists(select tbl_invoiceItemReturns.invoiceNum, tbl_invoiceItemReturns.invoiceSubNum from tbl_invoiceItemReturns where       " + //TODO: Trade-Ins is a negative in this report, it should not be
-                                "            tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                             " + //TODO: Add a "trade-ins amount" column
-                                "            tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                     " +
+                                "              tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                                   " + //TODO:DONE Change tbl_invoice.balanceDue to tbl_invoice.subTotal
+                                "    when Exists(select tbl_invoiceItemReturns.invoiceNum, tbl_invoiceItemReturns.invoiceSubNum from tbl_invoiceItemReturns where       " + //TODO:DONE Trade-Ins is a negative in this report, it should not be
+                                "            tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                             " + //TODO:DONE Add a "trade-ins amount" column
+                                "            tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                     " + //TODO:DONE Trade-ins need to be added to the pre-tax as they are technically a form of payment
 
                                 "                Cast(    (tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount))    + (select sum(itemCost * itemQuantity) from tbl_invoiceItemReturns where                   " +
 
