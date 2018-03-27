@@ -214,9 +214,10 @@ namespace SweetSpotDiscountGolfPOS
                         else
                         {
                             //Calls method to import the requested file
-                            DataTable errors = new DataTable();
+                            DataTable errors = new DataTable(); //TODO:DONE Re add model here
                             errors.Columns.Add("sku");
                             errors.Columns.Add("brandError");
+                            errors.Columns.Add("modelError");
                             errors.Columns.Add("identifierError");
                             errors = R.uploadItems(fupItemSheet);
                             if (errors.Rows.Count != 0)
@@ -224,21 +225,24 @@ namespace SweetSpotDiscountGolfPOS
                                 //Loops through the errors datatable pulling the sku's from there and entering them into an array
                                 //Then loops through each row on the excel sheet and checks to compare against sku array
                                 //If it is not in there, that row is deleted
-                                int[,] errorList = new int[errors.Rows.Count, 3];
+                                int[,] errorList = new int[errors.Rows.Count, 4];
                                 ArrayList errorSkus = new ArrayList();
                                 for (int i = 0; i < errors.Rows.Count; i++)
                                 {
+                                    //TODO:DONE Re add model here
                                     errorSkus.Add(errors.Rows[i][0]); //SKUs used for row deletion
                                     errorList[i, 0] = Convert.ToInt32(errors.Rows[i][0]); //SKU
                                     errorList[i, 1] = Convert.ToInt32(errors.Rows[i][1]); //Brand
-                                    errorList[i, 2] = Convert.ToInt32(errors.Rows[i][2]); //Secondary Identifier
+                                    errorList[i, 2] = Convert.ToInt32(errors.Rows[i][2]); //Model
+                                    errorList[i, 3] = Convert.ToInt32(errors.Rows[i][3]); //Secondary Identifier
                                 }
                                 //Loop through the Excel sheet
                                 for (int i = rowCnt; i >= 2; i--)
                                 {
                                     //Loop through the error array
-                                    for (int j = 0; j < errorList.Length/3; j++) 
+                                    for (int j = 0; j < errorList.Length/4; j++) 
                                     {
+                                        //TODO:DONE Re add model here
                                         //Column 3 = SKU
                                         if ((worksheet.Cells[i, 3].Value).ToString().Equals(errorList[j,0].ToString()))
                                         {
@@ -250,8 +254,14 @@ namespace SweetSpotDiscountGolfPOS
                                                 worksheet.Cells[i, 5].Style.Fill.PatternType = ExcelFillStyle.Solid;
                                                 worksheet.Cells[i, 5].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
                                             }
+                                            //If model caused an error
+                                            if(errorList[j, 2] == 1)
+                                            {
+                                                worksheet.Cells[i, 6].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                                worksheet.Cells[i, 6].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                                            }
                                             //If secondary identifier(Destination) caused an error
-                                            if (errorList[j,2] == 1)
+                                            if (errorList[j,3] == 1)
                                             {
                                                 worksheet.Cells[i, 22].Style.Fill.PatternType = ExcelFillStyle.Solid;
                                                 worksheet.Cells[i, 22].Style.Fill.BackgroundColor.SetColor(Color.Yellow);

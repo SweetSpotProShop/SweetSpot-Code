@@ -1669,6 +1669,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             System.Data.DataTable skusWithErrors = new System.Data.DataTable();
             skusWithErrors.Columns.Add("sku");
             skusWithErrors.Columns.Add("brandError");
+            skusWithErrors.Columns.Add("modelError");
             skusWithErrors.Columns.Add("identifierError");
             //This datatable can hold all items
             System.Data.DataTable listItems = new System.Data.DataTable();
@@ -1915,9 +1916,10 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                                 "typeID int, " +
                                                 "locationID int, " +
                                                 "comments varchar(500)); " +
-                                        "create table tempErrorSkus(" +
+                                        "create table tempErrorSkus(" + //TODO:DONE Re add model here
                                                 "sku int primary key," +
                                                 "brandError int," +
+                                                "modelError int," +
                                                 "identifierError int)";
                     cmd.Connection = conTempDB;
                     reader = cmd.ExecuteReader();
@@ -1948,52 +1950,48 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                                 "(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName) >= 0 and " +
                                                 "(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier) >= 0) " +
                                             "Begin " +
-                                                "insert into tempErrorSkus values(@sku, 1, 0) " +
+                                                "insert into tempErrorSkus values(@sku, 1, 0, 0) " +
                                             "end " +
                                         "else if ((select top 1 tbl_brand.brandID from tbl_brand where tbl_brand.brandName = @brandName) >= 0 and " +
                                                  "Not Exists(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName) and " +
                                                  "(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier) >= 0) " +
                                             "Begin " +
-                                                "insert into tbl_model values(@ModelName); " +/////////////// insert model, and then inserrt item (0,1,0)
-                                                "insert into tempItemStorage values( " +
-                                                    "@sku, " +
-                                                    "(select top 1 tbl_brand.brandID from tbl_brand where tbl_brand.brandName = @brandName), " +
-                                                    "(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName), " +
-                                                    "@clubType, @shaft, @numberOfClubs, @premium, @cost, @price, @quantity, @clubSpec, @shaftSpec, @shaftFlex, @dexterity, @typeID, " +
-                                                    "(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier), @comments) " +
+                                                /////////////// insert model, and then inserrt item (0,1,0) 
+                                                //TODO:DONE Re add model here
+                                                    "insert into tempErrorSkus values(@sku, 0, 1, 0) " +
                                             "end " +
                                         "else if ((select top 1 tbl_brand.brandID from tbl_brand where tbl_brand.brandName = @brandName) >= 0 and " +
                                                  "(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName) >= 0 and " +
                                                  "Not Exists(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier)) " +
                                             "Begin " +
-                                                "insert into tempErrorSkus values(@sku, 0, 1) " +
+                                                "insert into tempErrorSkus values(@sku, 0, 0, 1) " +
                                             "end " +
                                         "else if (Not Exists(select top 1 tbl_brand.brandID from tbl_brand where tbl_brand.brandName = @brandName) and " +
                                                  "Not Exists(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName) and " +
                                                  "(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier) >= 0) " +
                                             "Begin " +
-                                                "insert into tbl_model values(@ModelName); " +
-                                                "insert into tempErrorSkus values(@sku, 1, 0) " +/////////////// insert model, and then throw error (1,1,0)
+                                                 //TODO:DONE Re add model here
+                                                "insert into tempErrorSkus values(@sku, 1, 1, 0) " +/////////////// insert model, and then throw error (1,1,0) 
                                             "end " +
                                         "else if (Not Exists(select top 1 tbl_brand.brandID from tbl_brand where tbl_brand.brandName = @brandName) and " +
                                                  "(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName) >= 0 and " +
                                                  "Not Exists(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier)) " +
                                             "Begin " +
-                                                "insert into tempErrorSkus values(@sku, 1, 1) " +
+                                                "insert into tempErrorSkus values(@sku, 1, 0, 1) " +
                                             "end " +
                                         "else if ((select top 1 tbl_brand.brandID from tbl_brand where tbl_brand.brandName = @brandName) >= 0 and " +
                                                  "Not Exists(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName) and " +
                                                  "Not Exists(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier)) " +
                                             "Begin " +
-                                            "insert into tbl_model values(@ModelName); " +
-                                                "insert into tempErrorSkus values(@sku, 0, 1) " +/////////////// insert model, and then throw error (0,1,1)
+                                             //TODO:DONE Re add model here
+                                                "insert into tempErrorSkus values(@sku, 0, 1, 1) " +/////////////// insert model, and then throw error (0,1,1) 
                                             "end " +
                                         "else if (Not Exists(select top 1 tbl_brand.brandID from tbl_brand where tbl_brand.brandName = @brandName)and " +
                                                  "Not Exists(select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName)and " +
                                                  "Not Exists(select top 1 tbl_location.locationID from tbl_location where tbl_location.secondaryIdentifier = @secondaryIdentifier)) " +
                                             "Begin " +
-                                            "insert into tbl_model values(@ModelName); " +
-                                                "insert into tempErrorSkus values(@sku, 1, 1) " +/////////////// insert model, and then throw error (1,1,1)
+                                             //TODO:DONE Re add model here
+                                                "insert into tempErrorSkus values(@sku, 1, 1, 1) " +/////////////// insert model, and then throw error (1,1,1) 
                                             "end";
                         cmd.Connection = con;
                         cmd.Parameters.AddWithValue("@sku", row[0]);
