@@ -27,6 +27,14 @@
                             <asp:Label ID="lblShippingTotal" runat="server"></asp:Label>
                         </FooterTemplate>
                     </asp:TemplateField>
+                    <asp:TemplateField HeaderText ="Trade-in Amount">
+                        <ItemTemplate>
+                            <asp:Label ID="lblTradeIn" runat="server" Text='<%#Eval("tradeinAmount")%>'></asp:Label>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                            <asp:Label ID="lblTradeInTotal" runat="server"></asp:Label>
+                        </FooterTemplate>
+                    </asp:TemplateField>
                     <asp:TemplateField HeaderText ="Discount">
                         <ItemTemplate>
                             <asp:Label ID="lblDiscount" runat="server" Text='<%#Eval("Total Discount")%>'></asp:Label>
@@ -119,7 +127,6 @@
             display: none;
             /*margin-left: 0;*/
         }
-
         .yesPrint {
             display: inline-block !important;
             /* margin-right:100px;
@@ -131,9 +138,7 @@
         function CallPrint(strid) {
             var prtContent = document.getElementById(strid);
             var WinPrint = window.open('', '', 'letf=10,top=10,width="450",height="250",toolbar=1,scrollbars=1,status=0');
-
             WinPrint.document.write("<html><head><LINK rel=\"stylesheet\" type\"text/css\" href=\"css/print.css\" media=\"print\"><LINK rel=\"stylesheet\" type\"text/css\" href=\"css/print.css\" media=\"screen\"></head><body>");
-
             WinPrint.document.write(prtContent.innerHTML);
             WinPrint.document.write("</body></html>");
             WinPrint.document.close();
