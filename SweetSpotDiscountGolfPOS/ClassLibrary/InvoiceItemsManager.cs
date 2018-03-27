@@ -292,7 +292,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public bool ValidQTY(InvoiceItems ii)
         {
             bool hasValidQty = true;
-            if(ReturnQTYofItem(ii.sku, "tbl_" + ReturnTableNameFromTypeID(ii.typeID), "quantity") - (ReturnQTYofItem(ii.sku, "tbl_currentSalesItems", "itemQuantity") - ii.itemQuantity) < 0)
+            int qtyInCurrentStock = ReturnQTYofItem(ii.sku, "tbl_" + ReturnTableNameFromTypeID(ii.typeID), "quantity");
+            int qtyOnCurrentSale = ReturnQTYofItem(ii.sku, "tbl_currentSalesItems", "itemQuantity");
+
+            int remaingQTYAvailForSale = qtyInCurrentStock - (ii.itemQuantity - qtyOnCurrentSale);
+
+            if (remaingQTYAvailForSale < 0)
             {
                 hasValidQty = false;
             }
@@ -306,7 +311,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
             int NewQTYonSale = ii.itemQuantity;
 
-            RemoveQTYFromInventoryWithSKU(ii.sku, ii.typeID, AccessoryQTY - (OrigQTYonSale + NewQTYonSale));
+            RemoveQTYFromInventoryWithSKU(ii.sku, ii.typeID, AccessoryQTY - (NewQTYonSale - OrigQTYonSale));
 
             string sqlCmd = "UPDATE tbl_currentSalesItems SET itemQuantity = @itemQuantity, "
                 + "itemDiscount = @itemDiscount, percentage = @percentage WHERE invoiceNum = @invoiceNum "
