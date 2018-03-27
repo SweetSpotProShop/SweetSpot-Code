@@ -56,7 +56,6 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnInventorySearch_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            //TODO: The sku's are not highest to lowest anymore. Need to fix that
             string method = "btnInventorySearch_Click";
             try
             {

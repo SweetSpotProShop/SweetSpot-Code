@@ -39,7 +39,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             sqlCmd += " UNION ";
             sqlCmd += ReturnStringSearchForClubs(strText, quantity);
             sqlCmd += " order by sku desc ";
-            //TODO: Test to make sure it is sorted properly
             return sqlCmd;
         }
         //Returns string for search accessories

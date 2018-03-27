@@ -214,7 +214,7 @@ namespace SweetSpotDiscountGolfPOS
                         else
                         {
                             //Calls method to import the requested file
-                            DataTable errors = new DataTable(); //TODO:DONE Re add model here
+                            DataTable errors = new DataTable();
                             errors.Columns.Add("sku");
                             errors.Columns.Add("brandError");
                             errors.Columns.Add("modelError");
@@ -229,7 +229,6 @@ namespace SweetSpotDiscountGolfPOS
                                 ArrayList errorSkus = new ArrayList();
                                 for (int i = 0; i < errors.Rows.Count; i++)
                                 {
-                                    //TODO:DONE Re add model here
                                     errorSkus.Add(errors.Rows[i][0]); //SKUs used for row deletion
                                     errorList[i, 0] = Convert.ToInt32(errors.Rows[i][0]); //SKU
                                     errorList[i, 1] = Convert.ToInt32(errors.Rows[i][1]); //Brand
@@ -242,7 +241,6 @@ namespace SweetSpotDiscountGolfPOS
                                     //Loop through the error array
                                     for (int j = 0; j < errorList.Length/4; j++) 
                                     {
-                                        //TODO:DONE Re add model here
                                         //Column 3 = SKU
                                         if ((worksheet.Cells[i, 3].Value).ToString().Equals(errorList[j,0].ToString()))
                                         {
