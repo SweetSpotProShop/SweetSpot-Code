@@ -176,92 +176,148 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return dbc.MakeDataBaseCallToReturnDouble(sqlCmd, parms);
         }
 
-
-
-        public List<Cashout> cashoutAmounts(DateTime startDate, DateTime endDate, int locationID)
+        public Cashout CreateNewCashout(DateTime startDate, int locationID)
         {
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "Select tbl_invoiceMOP.mopType, tbl_invoiceMOP.amountPaid " +
-                "from tbl_invoiceMOP " +
-                "INNER JOIN tbl_invoice ON tbl_invoiceMOP.invoiceNum = tbl_invoice.invoiceNum AND tbl_invoiceMOP.invoiceSubNum = tbl_invoice.invoiceSubNum " +
-                "where tbl_invoice.invoiceDate between @startDate and @endDate and tbl_invoice.locationID = @locationID;";
-            cmd.Parameters.AddWithValue("@startDate", startDate);
-            cmd.Parameters.AddWithValue("@endDate", endDate);
-            cmd.Parameters.AddWithValue("@locationID", locationID);
-            cmd.Connection = con;
-            con.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                Cashout cs = new Cashout(
-                    Convert.ToString(reader["mopType"]),
-                    Convert.ToDouble(reader["amountPaid"]));
-                //Adding the mops to the list of type cashout
-                cashout.Add(cs);
-            }
-            con.Close();
-            //Returns the list of type cashout
-            return cashout;
+
+            ////Now need to account for anything in Layaway status
+            ////These queries will need to be updated
+            //Return PivotTable of a list of Mops
+            System.Data.DataTable dt1 = ReturnListOfMOPS(startDate, locationID);
+
+            //Gather remaining Totals (taxes, subtotal(including shipping), tradein)
+            System.Data.DataTable dt2 = ReturnAdditionTotalsForCashout(startDate, locationID);
+
+            //Save all into a cashout and return
+            Cashout C = new Cashout();
+            C.cashoutDate = DateTime.Parse(dt1.Rows[0][0].ToString());
+            C.saleTradeIn = Convert.ToDouble(dt2.Rows[0][0].ToString());
+            C.saleGiftCard = Convert.ToDouble(dt1.Rows[0][3].ToString());
+            C.saleCash = Convert.ToDouble(dt1.Rows[0][1].ToString());
+            C.saleDebit = Convert.ToDouble(dt1.Rows[0][2].ToString());
+            C.saleMasterCard = Convert.ToDouble(dt1.Rows[0][4].ToString());
+            C.saleVisa = Convert.ToDouble(dt1.Rows[0][5].ToString());
+            C.preTax = Convert.ToDouble(dt2.Rows[0][1].ToString());
+            C.saleGST = Convert.ToDouble(dt2.Rows[0][2].ToString());
+            C.salePST = Convert.ToDouble(dt2.Rows[0][3].ToString());
+
+            return C;
         }
+        private System.Data.DataTable ReturnListOfMOPS(DateTime startDate, int locationID)
+        {
+            string sqlCmd = "SELECT invoiceDate, ISNULL([Cash],0) AS Cash, ISNULL([Debit],0) AS Debit, "
+                + "ISNULL([Gift Card],0) AS GiftCard, ISNULL([MasterCard],0) AS Mastercard, ISNULL([Visa],0) AS Visa "
+                + "FROM(SELECT i.invoiceDate, m.mopType, SUM(amountPaid) AS totalPaid "
+                + "FROM tbl_invoiceMOP m join tbl_invoice i ON m.invoiceNum = i.invoiceNum AND m.invoiceSubNum = i.invoiceSubNum "
+                + "WHERE i.invoiceDate = @startDate AND i.locationID = @locationID "
+                + "GROUP BY i.invoiceDate, m.mopType) ps "
+                + "PIVOT(SUM(totalPaid) FOR mopType IN([Cash], [Debit], [Gift Card], [MasterCard], [Visa])) AS pvt";
+
+            object[][] parms =
+            {
+                new object[] { "@startDate", startDate },
+                new object[] { "@locationID", locationID }
+            };
+
+            return dbc.returnDataTableData(sqlCmd, parms);
+        }
+        private System.Data.DataTable ReturnAdditionTotalsForCashout(DateTime startDate, int locationID)
+        {
+            string sqlCmd = "SELECT SUM(tradeinAmount) AS tradeinTotal, "
+                + "SUM(subTotal) + SUM(shippingAmount) AS subTotal, "
+                + "SUM(governmentTax) AS gTax, SUM(provincialtax) AS pTax "
+                + "FROM tbl_invoice WHERE invoiceDate = @startDate AND locationID = @locationID";
+
+            object[][] parms =
+            {
+                new object[] { "@startDate", startDate },
+                new object[] { "@locationID", locationID }
+            };
+            return dbc.returnDataTableData(sqlCmd, parms);
+        }
+        //public List<Cashout> cashoutAmounts(DateTime startDate, DateTime endDate, int locationID)
+        //{
+        //    SqlConnection con = new SqlConnection(connectionString);
+        //    SqlCommand cmd = new SqlCommand();
+        //    cmd.CommandText = "Select tbl_invoiceMOP.mopType, tbl_invoiceMOP.amountPaid " +
+        //        "from tbl_invoiceMOP " +
+        //        "INNER JOIN tbl_invoice ON tbl_invoiceMOP.invoiceNum = tbl_invoice.invoiceNum AND tbl_invoiceMOP.invoiceSubNum = tbl_invoice.invoiceSubNum " +
+        //        "where tbl_invoice.invoiceDate between @startDate and @endDate and tbl_invoice.locationID = @locationID;";
+        //    cmd.Parameters.AddWithValue("@startDate", startDate);
+        //    cmd.Parameters.AddWithValue("@endDate", endDate);
+        //    cmd.Parameters.AddWithValue("@locationID", locationID);
+        //    cmd.Connection = con;
+        //    con.Open();
+        //    SqlDataReader reader = cmd.ExecuteReader();
+        //    while (reader.Read())
+        //    {
+        //        Cashout cs = new Cashout(
+        //            Convert.ToString(reader["mopType"]),
+        //            Convert.ToDouble(reader["amountPaid"]));
+        //        //Adding the mops to the list of type cashout
+        //        cashout.Add(cs);
+        //    }
+        //    con.Close();
+        //    //Returns the list of type cashout
+        //    return cashout;
+        //}
         //Used to get the subTotal, government tax, and provincial tax from the invoices based on a location ID and dates
-        public Cashout getRemainingCashout(DateTime startDate, DateTime endDate, int locationID)
-        {
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "Select " +
-                "sum(tbl_invoice.tradeinAmount) as tradeinTotal, " +
-                "sum(tbl_invoice.subTotal) as subTotal, " +
-                "sum(tbl_invoice.governmentTax) as gTax, " +
-                "sum(tbl_invoice.provincialtax) as pTax, " +
-                "sum(tbl_invoice.shippingAmount) as shippingTotal from tbl_invoice " +
-                "where tbl_invoice.invoiceDate " +
-                "between @startDate and @endDate " +
-                "and tbl_invoice.locationID = @locationID";
-            cmd.Parameters.AddWithValue("@startDate", startDate);
-            cmd.Parameters.AddWithValue("@endDate", endDate);
-            cmd.Parameters.AddWithValue("@locationID", locationID);
-            cmd.Connection = con;
-            con.Open();
-            Cashout cs = new Cashout();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                cs = new Cashout(
-                    Convert.ToDouble(reader["tradeinTotal"]),
-                    Convert.ToDouble(reader["subTotal"]),
-                    Convert.ToDouble(reader["gTax"]),
-                    Convert.ToDouble(reader["pTax"]),
-                    Convert.ToDouble(reader["shippingTotal"]));
-                //Adding the totals to a list of type cashout
+        //public Cashout getRemainingCashout(DateTime startDate, DateTime endDate, int locationID)
+        //{
+        //    SqlConnection con = new SqlConnection(connectionString);
+        //    SqlCommand cmd = new SqlCommand();
+        //    cmd.CommandText = "Select " +
+        //        "sum(tbl_invoice.tradeinAmount) as tradeinTotal, " +
+        //        "sum(tbl_invoice.subTotal) as subTotal, " +
+        //        "sum(tbl_invoice.governmentTax) as gTax, " +
+        //        "sum(tbl_invoice.provincialtax) as pTax, " +
+        //        "sum(tbl_invoice.shippingAmount) as shippingTotal from tbl_invoice " +
+        //        "where tbl_invoice.invoiceDate " +
+        //        "between @startDate and @endDate " +
+        //        "and tbl_invoice.locationID = @locationID";
+        //    cmd.Parameters.AddWithValue("@startDate", startDate);
+        //    cmd.Parameters.AddWithValue("@endDate", endDate);
+        //    cmd.Parameters.AddWithValue("@locationID", locationID);
+        //    cmd.Connection = con;
+        //    con.Open();
+        //    Cashout cs = new Cashout();
+        //    SqlDataReader reader = cmd.ExecuteReader();
+        //    while (reader.Read())
+        //    {
+        //        cs = new Cashout(
+        //            Convert.ToDouble(reader["tradeinTotal"]),
+        //            Convert.ToDouble(reader["subTotal"]),
+        //            Convert.ToDouble(reader["gTax"]),
+        //            Convert.ToDouble(reader["pTax"]),
+        //            Convert.ToDouble(reader["shippingTotal"]));
+        //        //Adding the totals to a list of type cashout
 
-            }
-            con.Close();
-            //Return the list of type cashout
-            return cs;
-        }
+        //    }
+        //    con.Close();
+        //    //Return the list of type cashout
+        //    return cs;
+        //}
         //This method gets the trade in amounts from the invoices based on a location ID and dates
-        public double getTradeInsCashout(DateTime startDate, DateTime endDate, int locationID)
-        {
-            double tradeintotal = 0;
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "Select tradeinAmount from  tbl_invoice" +
-                " where invoiceDate between @startDate and @endDate and locationID = @locationID;";
-            cmd.Parameters.AddWithValue("@startDate", startDate);
-            cmd.Parameters.AddWithValue("@endDate", endDate);
-            cmd.Parameters.AddWithValue("@locationID", locationID);
-            cmd.Connection = con;
-            con.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                tradeintotal += Convert.ToDouble(reader["tradeinAmount"]);
-            }
-            con.Close();
-            //Returns the total value of the trade ins
-            return tradeintotal;
-        }
+        //public double getTradeInsCashout(DateTime startDate, DateTime endDate, int locationID)
+        //{
+        //    double tradeintotal = 0;
+        //    SqlConnection con = new SqlConnection(connectionString);
+        //    SqlCommand cmd = new SqlCommand();
+        //    cmd.CommandText = "Select tradeinAmount from  tbl_invoice" +
+        //        " where invoiceDate between @startDate and @endDate and locationID = @locationID;";
+        //    cmd.Parameters.AddWithValue("@startDate", startDate);
+        //    cmd.Parameters.AddWithValue("@endDate", endDate);
+        //    cmd.Parameters.AddWithValue("@locationID", locationID);
+        //    cmd.Connection = con;
+        //    con.Open();
+        //    SqlDataReader reader = cmd.ExecuteReader();
+        //    while (reader.Read())
+        //    {
+        //        tradeintotal += Convert.ToDouble(reader["tradeinAmount"]);
+        //    }
+        //    con.Close();
+        //    //Returns the total value of the trade ins
+        //    return tradeintotal;
+        //}
         //Insert the cashout into the database
         public void insertCashout(Cashout cas)
         {
@@ -277,8 +333,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             " @preTax, @gTax, @pTax," +
             " @overShort, @finalized, " +
             " @processed, @locID, @empID); ";
-            cmd.Parameters.AddWithValue("@cashoutDate", cas.date);
-            cmd.Parameters.AddWithValue("@cashoutTime", cas.time);
+            cmd.Parameters.AddWithValue("@cashoutDate", cas.cashoutDate);
+            cmd.Parameters.AddWithValue("@cashoutTime", DateTime.Now.ToString("HH:mm:ss"));
             cmd.Parameters.AddWithValue("@saleTradeIn", cas.saleTradeIn);
             cmd.Parameters.AddWithValue("@saleGiftCard", cas.saleGiftCard);
             cmd.Parameters.AddWithValue("@saleCash", cas.saleCash);
@@ -2515,11 +2571,15 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
         public List<Cashout> ReturnSelectedCashout(object[] args)
         {
-            string sqlCmd = "";
+            string sqlCmd = "SELECT cashoutDate, saleTradeIn, saleGiftCard, saleCash, "
+                + "saleDebit, saleMasterCard, saleVisa, receiptTradeIn, receiptGiftCard, "
+                + "receiptCash, receiptDebit, receiptMasterCard, receiptVisa, preTax, "
+                + "governmentTax, provincialTax, overShort FROM tbl_cashout WHERE "
+                + "cashoutDate = @cashoutDate AND locationID = @locationID";
             object[][] parms =
             {
-                new object[] { "",  },
-                new object[] { "",  }
+                new object[] { "@cashoutDate", DateTime.Parse(args[0].ToString()) },
+                new object[] { "@locationID", Convert.ToInt32(args[1]) }
             };
 
             return ReturnCashoutFromDataTable(dbc.returnDataTableData(sqlCmd, parms));
@@ -2556,7 +2616,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             object[][] parms =
             {
                 new object[] { "cashoutDate", cas.cashoutDate },
-                new object[] { "cashoutTime", cas.cashoutTime },
+                new object[] { "cashoutTime", DateTime.Now.ToString("HH:mm:ss") },
                 new object[] { "saleTradeIn", cas.saleTradeIn },
                 new object[] { "saleGiftCard", cas.saleGiftCard },
                 new object[] { "saleCash", cas.saleCash },

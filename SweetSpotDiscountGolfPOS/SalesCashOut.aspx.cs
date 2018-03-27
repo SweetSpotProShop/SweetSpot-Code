@@ -3,6 +3,7 @@ using SweetSpotDiscountGolfPOS.ClassLibrary;
 using SweetSpotProShop;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Data;
 using System.Linq;
 using System.Threading;
@@ -62,96 +63,97 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    CU = (CurrentUser)Session["currentUser"];
-                    //Gathering the start and end dates
-                    DateTime startDate = DateTime.Parse(Request.QueryString["dtm"].ToString());
-                    int loc = Convert.ToInt32(Request.QueryString["location"]);
-                    object[] args = { startDate, loc };
-                    lblCashoutDate.Text = "Cashout on: " + startDate.ToString("d") + " for " + l.locationName(loc);
-                    if (R.CashoutExists(args))
+                    if (!IsPostBack)
                     {
-                        Cashout C = R.ReturnSelectedCashout(args)[0];
-
-                        lblTradeInDisplay.Text = C.saleTradeIn.ToString("C");
-                        lblGiftCardDisplay.Text = C.saleGiftCard.ToString("C");
-                        lblCashDisplay.Text = C.saleCash.ToString("C");
-                        lblDebitDisplay.Text = C.saleDebit.ToString("C");
-                        lblMasterCardDisplay.Text = C.saleMasterCard.ToString("C");
-                        lblVisaDisplay.Text = C.saleVisa.ToString("C");
-
-                        lblPreTaxDisplay.Text = C.preTax.ToString();
-                        lblGSTDisplay.Text = C.saleGST.ToString();
-                        lblPSTDisplay.Text = C.salePST.ToString() ;
-                        lblTotalDisplay.Text = (C.saleTradeIn + C.saleGiftCard + C.saleCash + C.saleDebit + C.saleMasterCard + C.saleVisa).ToString("C");
-
-                        txtTradeIn.Text = C.receiptTradeIn.ToString("C");
-                        txtGiftCard.Text = C.receiptGiftCard.ToString("C");
-                        txtCash.Text = C.receiptCash.ToString("C");
-                        txtDebit.Text = C.receiptDebit.ToString("C");
-                        txtMasterCard.Text = C.receiptMasterCard.ToString("C");
-                        txtVisa.Text = C.receiptVisa.ToString("C");
-                        
-                        lblReceiptsFinal.Text = (C.receiptTradeIn + C.receiptGiftCard + C.receiptCash + C.receiptDebit + C.receiptMasterCard + C.receiptVisa).ToString("C");
-                        lblTotalFinal.Text = (C.saleTradeIn + C.saleGiftCard + C.saleCash + C.saleDebit + C.saleMasterCard + C.saleVisa).ToString("C");
-                        lblOverShortFinal.Text = C.overShort.ToString("C");
-                    }
-                    else
-                    {
-
-
-                        //Creating a cashout list and calling a method that grabs all mops and amounts paid
-                        List<Cashout> lc = R.cashoutAmounts(startDate, startDate, loc);
-                        Cashout rc = R.getRemainingCashout(startDate, startDate, loc);
-                        //Looping through the list and adding up the totals
-                        foreach (Cashout ch in lc)
+                        CU = (CurrentUser)Session["currentUser"];
+                        //Gathering the start and end dates
+                        DateTime startDate = DateTime.Parse(Request.QueryString["dtm"].ToString());
+                        int loc = Convert.ToInt32(Request.QueryString["location"]);
+                        object[] args = { startDate, loc };
+                        lblCashoutDate.Text = "Cashout on: " + startDate.ToString("d") + " for " + l.locationName(loc);
+                        if (R.CashoutExists(args))
                         {
-                            if (ch.mop == "Visa")
-                            {
-                                visaTotal += ch.amount;
-                            }
-                            else if (ch.mop == "MasterCard")
-                            {
-                                mcTotal += ch.amount;
-                            }
-                            else if (ch.mop == "Cash")
-                            {
-                                cashTotal += ch.amount;
-                            }
-                            else if (ch.mop == "Gift Card")
-                            {
-                                giftCertTotal += ch.amount;
-                            }
-                            else if (ch.mop == "Debit")
-                            {
-                                debitTotal += ch.amount;
-                            }
-                            cashoutTotal += ch.amount;
+                            Cashout C = R.ReturnSelectedCashout(args)[0];
+
+                            lblTradeInDisplay.Text = C.saleTradeIn.ToString("C");
+                            lblGiftCardDisplay.Text = C.saleGiftCard.ToString("C");
+                            lblCashDisplay.Text = C.saleCash.ToString("C");
+                            lblDebitDisplay.Text = C.saleDebit.ToString("C");
+                            lblMasterCardDisplay.Text = C.saleMasterCard.ToString("C");
+                            lblVisaDisplay.Text = C.saleVisa.ToString("C");
+
+                            lblPreTaxDisplay.Text = C.preTax.ToString("C");
+                            lblGSTDisplay.Text = C.saleGST.ToString("C");
+                            lblPSTDisplay.Text = C.salePST.ToString("C");
+                            lblTotalDisplay.Text = (C.saleTradeIn + C.saleGiftCard + C.saleCash + C.saleDebit + C.saleMasterCard + C.saleVisa).ToString("C");
+
+                            txtTradeIn.Text = C.receiptTradeIn.ToString();
+                            txtGiftCard.Text = C.receiptGiftCard.ToString();
+                            txtCash.Text = C.receiptCash.ToString();
+                            txtDebit.Text = C.receiptDebit.ToString();
+                            txtMasterCard.Text = C.receiptMasterCard.ToString();
+                            txtVisa.Text = C.receiptVisa.ToString();
+
+                            lblReceiptsFinal.Text = (C.receiptTradeIn + C.receiptGiftCard + C.receiptCash + C.receiptDebit + C.receiptMasterCard + C.receiptVisa).ToString("C");
+                            lblTotalFinal.Text = (C.saleTradeIn + C.saleGiftCard + C.saleCash + C.saleDebit + C.saleMasterCard + C.saleVisa).ToString("C");
+                            lblOverShortFinal.Text = C.overShort.ToString("C");
                         }
-                        //Gathers total amount of trade ins done through date range
+                        else
+                        {
+                            //Creating a cashout list and calling a method that grabs all mops and amounts paid
+                            //List<Cashout> lc = R.cashoutAmounts(startDate, startDate, loc);
+                            Cashout C = R.CreateNewCashout(startDate, loc);
+                            //Looping through the list and adding up the totals
+                            //foreach (Cashout ch in lc)
+                            //{
+                            //    if (ch.mop == "Visa")
+                            //    {
+                            //        visaTotal += ch.amount;
+                            //    }
+                            //    else if (ch.mop == "MasterCard")
+                            //    {
+                            //        mcTotal += ch.amount;
+                            //    }
+                            //    else if (ch.mop == "Cash")
+                            //    {
+                            //        cashTotal += ch.amount;
+                            //    }
+                            //    else if (ch.mop == "Gift Card")
+                            //    {
+                            //        giftCertTotal += ch.amount;
+                            //    }
+                            //    else if (ch.mop == "Debit")
+                            //    {
+                            //        debitTotal += ch.amount;
+                            //    }
+                            //    cashoutTotal += ch.amount;
+                            //}
+                            ////Gathers total amount of trade ins done through date range
 
-                        //Calculates a subtotal, gst, and pst
-                        subtotalTotal = rc.saleSubTotal;
-                        gstTotal = rc.saleGST;
-                        pstTotal = rc.salePST;
-                        tradeinTotal = rc.saleTradeIn * (-1);
-                        shippingTotal = rc.shippingAmount;
-                        cashoutTotal += tradeinTotal;
+                            ////Calculates a subtotal, gst, and pst
+                            //subtotalTotal = rc.saleSubTotal;
+                            //gstTotal = rc.saleGST;
+                            //pstTotal = rc.salePST;
+                            //tradeinTotal = rc.saleTradeIn * (-1);
+                            //shippingTotal = rc.shippingAmount;
+                            //cashoutTotal += tradeinTotal;
 
-                        Cashout cas = new Cashout(tradeinTotal, giftCertTotal, cashTotal,
-                            debitTotal, mcTotal, visaTotal, gstTotal, pstTotal, subtotalTotal);
-                        //Store the cashout in a Session
-                        Session["saleCashout"] = cas;
-                        //Display all totals into labels
-                        lblVisaDisplay.Text = visaTotal.ToString("C");
-                        lblMasterCardDisplay.Text = mcTotal.ToString("C");
-                        lblCashDisplay.Text = cashTotal.ToString("C");
-                        lblGiftCardDisplay.Text = giftCertTotal.ToString("C");
-                        lblDebitDisplay.Text = debitTotal.ToString("C");
-                        lblTradeInDisplay.Text = tradeinTotal.ToString("C");
-                        lblTotalDisplay.Text = cashoutTotal.ToString("C");
-                        lblGSTDisplay.Text = gstTotal.ToString("C");
-                        lblPSTDisplay.Text = pstTotal.ToString("C");
-                        lblPreTaxDisplay.Text = (subtotalTotal + tradeinTotal + shippingTotal).ToString("C");
+                            //Cashout cas = new Cashout(tradeinTotal, giftCertTotal, cashTotal,
+                            //    debitTotal, mcTotal, visaTotal, gstTotal, pstTotal, subtotalTotal);
+                            ////Store the cashout in a Session
+                            //Session["saleCashout"] = cas;
+                            //Display all totals into labels
+                            lblVisaDisplay.Text = C.saleVisa.ToString("C");
+                            lblMasterCardDisplay.Text = C.saleMasterCard.ToString("C");
+                            lblCashDisplay.Text = C.saleCash.ToString("C");
+                            lblGiftCardDisplay.Text = C.saleGiftCard.ToString("C");
+                            lblDebitDisplay.Text = C.saleDebit.ToString("C");
+                            lblTradeInDisplay.Text = (C.saleTradeIn * -1).ToString("C");
+                            lblTotalDisplay.Text = (C.saleVisa + C.saleMasterCard + C.saleCash + C.saleGiftCard + C.saleDebit + (C.saleTradeIn * -1)).ToString("C");
+                            lblGSTDisplay.Text = C.saleGST.ToString("C");
+                            lblPSTDisplay.Text = C.salePST.ToString("C");
+                            lblPreTaxDisplay.Text = (C.preTax + (C.saleTradeIn * -1)).ToString("C");
+                        }
                     }
                 }
             }
@@ -197,6 +199,12 @@ namespace SweetSpotDiscountGolfPOS
 
                 //Setting the text for the receipt and sales totals
                 lblReceiptsFinal.Text = receiptTotal.ToString("C");
+                cashoutTotal = double.Parse(lblTradeInDisplay.Text, NumberStyles.Currency) 
+                    + double.Parse(lblGiftCardDisplay.Text, NumberStyles.Currency) 
+                    + double.Parse(lblCashDisplay.Text, NumberStyles.Currency) 
+                    + double.Parse(lblDebitDisplay.Text, NumberStyles.Currency) 
+                    + double.Parse(lblMasterCardDisplay.Text, NumberStyles.Currency) 
+                    + double.Parse(lblVisaDisplay.Text, NumberStyles.Currency);
                 lblTotalFinal.Text = cashoutTotal.ToString("C");
 
                 //Calculating overShort
@@ -213,11 +221,11 @@ namespace SweetSpotDiscountGolfPOS
                 }
 
                 //Storing in session
-                Cashout cas = new Cashout("lol", receiptTradeinTotal, receiptGiftCertTotal,
-                    receiptCashTotal, receiptDebitTotal,
-                    receiptMCTotal, receiptVisaTotal, receiptGSTTotal, receiptPSTTotal,
-                    receiptSubTotalTotal, overShort);
-                Session["receiptCashout"] = cas;
+                //Cashout cas = new Cashout("lol", receiptTradeinTotal, receiptGiftCertTotal,
+                //    receiptCashTotal, receiptDebitTotal,
+                //    receiptMCTotal, receiptVisaTotal, receiptGSTTotal, receiptPSTTotal,
+                //    receiptSubTotalTotal, overShort);
+                //Session["receiptCashout"] = cas;
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -287,10 +295,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Object[] repInfo = (Object[])Session["reportInfo"];
                 //DateTime[] reportDates = (DateTime[])repInfo[0];
                 //string date = reportDates[0].ToString();
-                string time = DateTime.Now.ToString("HH:mm:ss");
                 //Grabs cashouts from stored sessions
-                Cashout s = (Cashout)Session["saleCashout"];
-                Cashout r = (Cashout)Session["receiptCashout"];
+                //Cashout s = (Cashout)Session["saleCashout"];
+                //Cashout r = (Cashout)Session["receiptCashout"];
 
                 DateTime startDate = DateTime.Parse(Request.QueryString["dtm"].ToString());
                 int loc = Convert.ToInt32(Request.QueryString["location"]);
@@ -298,11 +305,14 @@ namespace SweetSpotDiscountGolfPOS
 
                 processed = true;
                 //Creates new cashout
-                Cashout cas = new Cashout(startDate.ToString(), time, s.saleTradeIn, s.saleGiftCard,
-                    s.saleCash, s.saleDebit, s.saleMasterCard, s.saleVisa, s.saleGST, s.salePST, s.saleSubTotal, //subtotal?
-                    r.receiptTradeIn, r.receiptGiftCard, r.receiptCash,
-                    r.receiptDebit, r.receiptMasterCard, r.receiptVisa, r.receiptGST, r.receiptPST, r.receiptSubTotal, r.overShort,
-                    finalized, processed, Double.Parse(lblPreTaxDisplay.Text, System.Globalization.NumberStyles.Currency), loc, CU.empID);
+                Cashout cas = new Cashout(startDate, startDate, double.Parse(lblTradeInDisplay.Text, NumberStyles.Currency), 
+                    double.Parse(lblGiftCardDisplay.Text, NumberStyles.Currency), double.Parse(lblCashDisplay.Text, NumberStyles.Currency), 
+                    double.Parse(lblDebitDisplay.Text, NumberStyles.Currency), double.Parse(lblMasterCardDisplay.Text, NumberStyles.Currency),
+                    double.Parse(lblVisaDisplay.Text, NumberStyles.Currency), Convert.ToDouble(txtTradeIn.Text), Convert.ToDouble(txtGiftCard.Text), 
+                    Convert.ToDouble(txtCash.Text), Convert.ToDouble(txtDebit.Text), Convert.ToDouble(txtMasterCard.Text), Convert.ToDouble(txtVisa.Text),
+                    double.Parse(lblPreTaxDisplay.Text, NumberStyles.Currency), double.Parse(lblGSTDisplay.Text, NumberStyles.Currency),
+                    double.Parse(lblPSTDisplay.Text, NumberStyles.Currency), double.Parse(lblOverShortFinal.Text, NumberStyles.Currency), finalized, processed, loc, CU.empID);
+
                 //Processes as done
                 if (R.CashoutExists(args))
                 {

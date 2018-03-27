@@ -658,7 +658,10 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnExitSale_Click";
             try
             {
+                TaxManager TM = new TaxManager();
                 Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                object[] taxText = { "Remove GST", "Remove PST" };
+                object[] results = TM.ReturnChargedTaxForSale(I, taxText);
                 I.transactionType = 1;
                 IM.UpdateCurrentInvoice(I);
                 Response.Redirect("HomePage.aspx", false);
@@ -681,7 +684,10 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnLayaway_Click";
             try
             {
+                TaxManager TM = new TaxManager();
                 Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                object[] taxText = { "Remove GST", "Remove PST" };
+                object[] results = TM.ReturnChargedTaxForSale(I, taxText);
                 I.transactionType = 6;
                 IM.UpdateCurrentInvoice(I);
                 Response.Redirect("HomePage.aspx", false);
