@@ -443,11 +443,11 @@ namespace SweetSpotDiscountGolfPOS
                 //Retrieves the checkout manager from Session
                 //ckm = (CheckoutManager)Session["CheckOutTotals"];
                 //Gathers the mop info based on the index
-                int mopRemovingID = Convert.ToInt32(((Label)gvCurrentMOPs.Rows[e.RowIndex].Cells[3].FindControl("lblTableID")).Text);
+                int mopRemovingID = Convert.ToInt32(gvCurrentMOPs.Rows[e.RowIndex].Cells[3].Text);
                 //double paidAmount = double.Parse(gvCurrentMOPs.Rows[index].Cells[2].Text, NumberStyles.Currency);
                 //Retrieves Mop list from Session
                 InvoiceMOPsManager IMM = new InvoiceMOPsManager();
-                IMM.RemoveMopFromList(Convert.ToInt32(((Label)gvCurrentMOPs.Rows[e.RowIndex].Cells[3].FindControl("lblTableID")).Text), Request.QueryString["inv"].ToString());
+                IMM.RemoveMopFromList(mopRemovingID, Request.QueryString["inv"].ToString());
                 //Loops through each mop in list
                 //double dblAmountPaid = 0;
                 //foreach (var mop in mopList)
