@@ -479,62 +479,11 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     IIM.UpdateItemFromCurrentSalesTable(newItemInfo);
                 }
-
-                ////Label price = (Label)grdCartItems.Rows[e.RowIndex].Cells[5].FindControl("price");
-                ////double sPrice = double.Parse(price.Text, NumberStyles.Currency);
-                ////Label cost = (Label)grdCartItems.Rows[e.RowIndex].Cells[5].FindControl("cost");
-                ////double sCost = double.Parse(cost.Text, NumberStyles.Currency);
-                ////bool tradeInItemInCart = ((CheckBox)grdCartItems.Rows[e.RowIndex].Cells[7].FindControl("chkTradeIn")).Checked;
-                ////string itemType = ;
-
-                ////string desc = grdCartItems.Rows[e.RowIndex].Cells[4].Text;
-                //creates a temp item with the new updates
-                ////tempItemInCart = new Cart(Convert.ToInt32(sku), desc, Convert.ToInt32(quantity), sPrice, sCost,
-                ////Convert.ToDouble(discountOnItem), radioButtonSelected, 0, tradeInItemInCart, Convert.ToInt32(itemType), CU.locationID);
-
-                //Sets current items in cart from stored session into duplicate cart 
-                ////List<Cart> duplicateCart = (List<Cart>)Session["ItemsInCart"];
-                //Queries the database to get the current remaining quantity of the selected sku
-                ////int remainingQTY = IIM.ReturnCurrentQTYofItem(sku, Convert.ToInt32(((Label)grdCartItems.Rows[e.RowIndex].Cells[8].FindControl("lblTypeID")).Text));
-                //Returns the difference between the original quantity in the cart and the new
-                //quantity in the cart
-                ////int differenceInQTY = Convert.ToInt32(Session["originalQTY"]) - Convert.ToInt32(quantity);
-                //Checks the total between remaining qty and difference is a negative
-
-                //Else there is enogh quantity to make the sale
-                //Loop through each item in the duplicate cart
-                //foreach (var cart in duplicateCart)
-                //{
-                //Check to see when the duplicate cart sku matches the selected updated sku
-                ////if (cart.sku == tempItemInCart.sku)
-                ////{
-                //Checks if the updated quantity does not = 0
-                ////if (tempItemInCart.quantity != 0)
-                ////{
-                //As long as there is a valid quantity add the updated 
-                //sku to the cart
-                ////itemsInCart.Add(tempItemInCart);
-                //Query database to remove the addition quantity
-                ////idu.removeQTYfromInventoryWithSKU(cart.sku, cart.typeID, (remainingQTY + differenceInQTY));
-                ////}
-                ////}
-                ////else
-                ////{
-                //if sku does not match selected sku then add item back into cart
-                ////itemsInCart.Add(cart);
-                ////}
-                //}
-
+                
                 //Clears the indexed row
                 grdCartItems.EditIndex = -1;
-                //Binds cart items to grid view
-                grdCartItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["inv"].ToString());
-                grdCartItems.DataBind();
-                //Recalculates the new subtotal
-                ////lblSubtotalDisplay.Text = "$ " + scm.returnSubtotalAmount(itemsInCart, CU.locationID).ToString("#0.00");
-                IM.CalculateNewInvoiceTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0]);
-                Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
-                lblSubtotalDisplay.Text = "$ " + I.subTotal.ToString("#0.00");
+                //Recalculates the new subtotal and Binds cart items to grid view
+                UpdateInvoiceTotal();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -744,7 +693,7 @@ namespace SweetSpotDiscountGolfPOS
                     if (sku == 100000)
                     {
                         //Trade In Sku to add in SK
-                        string redirect = "<script>window.open('TradeINEntry.aspx');</script>";
+                        string redirect = "<script>window.open('TradeINEntry.aspx?inv=" + Request.QueryString["inv"].ToString() + "');</script>";
                         Response.Write(redirect);
                     }
                     else
@@ -895,6 +844,15 @@ namespace SweetSpotDiscountGolfPOS
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
+        }
+
+        protected void UpdateInvoiceTotal()
+        {
+            grdCartItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["inv"].ToString());
+            grdCartItems.DataBind();
+            IM.CalculateNewInvoiceTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0]);
+            Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+            lblSubtotalDisplay.Text = "$ " + I.subTotal.ToString("#0.00");
         }
     }
 }

@@ -19,29 +19,6 @@ namespace SweetSpotDiscountGolfPOS
         CurrentUser CU;
         InvoiceManager IM = new InvoiceManager();
 
-        //SweetShopManager ssm = new SweetShopManager();
-        //List<Mops> mopList = new List<Mops>();
-        //List<Cart> itemsInCart = new List<Cart>();
-        //ItemDataUtilities idu = new ItemDataUtilities();
-        //LocationManager lm = new LocationManager();
-        //CheckoutManager ckm;
-        //EmployeeManager em = new EmployeeManager();
-        //public double dblRemaining;
-        //public double subtotal;
-        //public double gst;
-        //public double pst;
-        //public double balancedue;
-        //public double dblAmountPaid;
-        //public double tradeInCost;
-        //public double taxAmount;
-        ////Remove Prov or Gov Tax
-        //bool chargeGST;
-        //bool chargePST;
-        //double amountPaid;
-        //double dblShippingAmount;
-        //int tranType;
-        //int gridID;
-
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -62,103 +39,9 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         List<Tax> t = new List<Tax>();
                         TaxManager TM = new TaxManager();
-                        //List<Cart> cart = new List<Cart>();
-                        //SalesCalculationManager SCM = new SalesCalculationManager();
-                        //Retrieves items in the cart from Session
-                        //cart = (List<Cart>)Session["ItemsInCart"];
-                        //Retrieves date from session
-                        //DateTime recDate = Convert.ToDateTime(Session["strDate"]);
-                        //Retrieves shipping
-                        //bool bolShipping = Convert.ToBoolean(Session["shipping"]);
+
                         //Checks if shipping was charged 
                         Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
-                        //int prov = I[0].location.provID;
-                        //if (I[0].shippingAmount > 0)
-                        //{
-                        //Retrieves customer number from Session
-                        //int custNum = Convert.ToInt32(Session["key"].ToString());
-                        //Uses customer number to fill a customer class
-                        //Customer c = ssm.GetCustomerbyCustomerNumber(Convert.ToInt32(Request.QueryString["cust"].ToString()));
-                        //Based on customer province and date get taxes
-                        //prov = I[0].customer.province;
-                        //t = ssm.getTaxes(I[0].customer.province, I[0].invoiceDate);
-                        //lblShipping.Visible = true;
-                        //lblShippingAmount.Visible = true;
-                        //Retrieve shipping amount from Session
-                        //dblShippingAmount = Convert.ToDouble(Session["ShippingAmount"].ToString());
-                        //}
-                        //else
-                        //{
-                        //    //Query returns taxes based on current location
-                        //    t = ssm.getTaxes(lm.getProvIDFromLocationID(CU.locationID), I[0].invoiceDate);
-                        //    //Sets shipping amouunt to 0
-                        //    //lblShipping.Visible = false;
-                        //    //lblShippingAmount.Visible = false;
-                        //    //dblShippingAmount = 0;
-                        //}
-                        //t = SCM.getTaxes(prov, I[0].invoiceDate);
-                        //Retrieves location id from Session
-                        //int location = CU.locationID;
-                        //Creates checkout manager based on current items in cart
-                        //ckm = new CheckoutManager(cm.returnTotalAmount(cart, location), cm.returnDiscount(cart), cm.returnTradeInAmount(cart, location), dblShippingAmount, true, true, 0, 0, 0);
-                        //Loops through each tax
-                        //foreach (var T in t)
-                        //{
-                        //switch (T.taxName)
-                        //{
-                        //If tax is GST calculate and make visible
-                        //case "GST":
-                        //lblGovernment.Visible = true;
-                        //I[0].governmentTax = SCM.CallReturnTaxAmount(T.taxRate, I[0].subTotal + I[0].shippingAmount);
-                        //lblGovernmentAmount.Text = "$ " + I[0].governmentTax.ToString("#0.00");
-                        //lblGovernmentAmount.Visible = true;
-                        //btnRemoveGov.Visible = true;
-                        //break;
-                        //If tax is PST calculate and make visible
-                        //case "PST":
-                        //lblProvincial.Visible = true;
-                        //I[0].provincialTax = SCM.CallReturnTaxAmount(T.taxRate, I[0].subTotal);
-                        //lblProvincialAmount.Text = "$ " + I[0].provincialTax.ToString("#0.00");
-                        //lblProvincialAmount.Visible = true;
-                        //btnRemoveProv.Visible = true;
-                        //break;
-                        //If tax is HST calculate and make visible
-                        //case "HST":
-                        //lblProvincial.Visible = false;
-                        //lblGovernment.Text = "HST";
-                        //I[0].governmentTax = SCM.CallReturnTaxAmount(T.taxRate, I[0].subTotal + I[0].shippingAmount);
-                        //lblGovernmentAmount.Text = "$ " + I[0].governmentTax.ToString("#0.00");
-                        //lblGovernmentAmount.Visible = true;
-                        //btnRemoveProv.Visible = false;
-                        //btnRemoveGov.Text = "HST";
-                        //break;
-                        //If tax is RST calculate and make visible
-                        //case "RST":
-                        //lblProvincial.Visible = true;
-                        //lblProvincial.Text = "RST";
-                        //I[0].provincialTax = SCM.CallReturnTaxAmount(T.taxRate, I[0].subTotal);
-                        //lblProvincialAmount.Text = "$ " + I[0].provincialTax.ToString("#0.00");
-                        //lblProvincialAmount.Visible = true;
-                        //btnRemoveProv.Visible = true;
-                        //btnRemoveProv.Text = "RST";
-                        //break;
-                        //If tax is QST calculate and make visible
-                        //case "QST":
-                        //lblProvincial.Visible = true;
-                        //lblProvincial.Text = "QST";
-                        //I[0].provincialTax = SCM.CallReturnTaxAmount(T.taxRate, I[0].subTotal);
-                        //lblProvincialAmount.Text = "$ " + I[0].provincialTax.ToString("#0.00");
-                        //lblProvincialAmount.Visible = true;
-                        //btnRemoveProv.Visible = true;
-                        //btnRemoveProv.Text = "QST";
-                        //break;
-                        //}
-                        //}
-                        //I[0].balanceDue += I[0].subTotal + I[0].governmentTax + I[0].provincialTax;
-                        //IM.UpdateCurrentInvoice(I[0]);
-                        //Add taxes to balance due and remaining balance
-                        //ckm.dblBalanceDue += ckm.dblGst + ckm.dblPst;
-
                         object[] taxText = { "Add GST", "Add PST" };
                         object[] results = TM.ReturnChargedTaxForSale(I, taxText);
                         I = (Invoice)results[0];
@@ -183,41 +66,12 @@ namespace SweetSpotDiscountGolfPOS
                         UpdatePageTotals();
 
                         double dblRemainingBalance = I.balanceDue;
-                        //double dblAmountPaid = 0;
-                        //Checks if there are any stored methods of payment
-                        //if (Session["MethodsofPayment"] != null)
-                        //{
-                        //Retrieve Mops from session
-                        //InvoiceMOPsManager IMM = new InvoiceMOPsManager();
-                        //List<InvoiceMOPs>  mopList = IMM.ReturnInvoiceMOPsCurrentSale(Request.QueryString["inv"]);
-                        //    //Loops through each mop
-                        //    foreach (var mop in mopList)
-                        //    {
-                        //        //Adds amount of each mop to the amount paid total
-                        //        dblAmountPaid += mop.amountPaid;
-                        //    }
-                        //    //Binds mops to grid view
-                        //    gvCurrentMOPs.DataSource = mopList;
-                        //    gvCurrentMOPs.DataBind();
-                        //    //Update the amount paid and the remaining balance
-                        //    //ckm.dblAmountPaid = dblAmountPaid;
-                        //    dblRemainingBalance -= dblAmountPaid;
-                        ////}
-
                         //***Assign each item to its Label.
                         lblTotalInCartAmount.Text = "$ " + (I.subTotal + I.discountAmount - I.tradeinAmount).ToString("#0.00");
                         lblTotalInDiscountsAmount.Text = "$ " + I.discountAmount.ToString("#0.00");
                         lblTradeInsAmount.Text = "$ " + I.tradeinAmount.ToString("#0.00");
                         lblSubTotalAmount.Text = "$ " + (I.subTotal + I.shippingAmount).ToString("#0.00");
                         lblShippingAmount.Text = "$ " + I.shippingAmount.ToString("#0.00");
-                        //lblGovernmentAmount.Text = "$ " + I.governmentTax.ToString("#0.00");
-                        //lblProvincialAmount.Text = "$ " + I.provincialTax.ToString("#0.00");
-                        //lblBalanceAmount.Text = "$ " + I.balanceDue.ToString("#0.00");
-                        //lblRemainingBalanceDueDisplay.Text = "$ " + dblRemainingBalance.ToString("#0.00");
-                        //Stores totals in the checkout manager
-                        //Session["CheckOutTotals"] = ckm;
-                        //Updates the amount paying with the remaining balance
-                        //txtAmountPaying.Text = dblRemainingBalance.ToString("#0.00");
                     }
                 }
             }
@@ -438,49 +292,14 @@ namespace SweetSpotDiscountGolfPOS
             string method = "OnRowDeleting";
             try
             {
-                //Retrieves index of selected row
-                //int index = e.RowIndex;
-                //Retrieves the checkout manager from Session
-                //ckm = (CheckoutManager)Session["CheckOutTotals"];
                 //Gathers the mop info based on the index
                 int mopRemovingID = Convert.ToInt32(gvCurrentMOPs.Rows[e.RowIndex].Cells[3].Text);
-                //double paidAmount = double.Parse(gvCurrentMOPs.Rows[index].Cells[2].Text, NumberStyles.Currency);
                 //Retrieves Mop list from Session
                 InvoiceMOPsManager IMM = new InvoiceMOPsManager();
                 IMM.RemoveMopFromList(mopRemovingID, Request.QueryString["inv"].ToString());
-                //Loops through each mop in list
-                //double dblAmountPaid = 0;
-                //foreach (var mop in mopList)
-                //{
-                //    //Checks if the mop id do not match
-                //    //if (mop.tableID != mopRemovingID)
-                //    //{
-                //        //Not selected mop add back into the mop list
-                //    //    mopList.Add(mop);
-                //        //Calculate amount paid
-                //        dblAmountPaid += mop.amountPaid;
-                //    //}
-                //    //else
-                //    //{
-                //        //Add removed mops paid amount back into the remaining balance
-                //    //    ckm.dblRemainingBalance += paidAmount;
-                //    //}
-                //    //updtae the new amount paid total
-                //    //ckm.dblAmountPaid = dblAmountPaid;
-                //}
+                
                 ////Clear the selected index
                 gvCurrentMOPs.EditIndex = -1;
-                ////Store updated mops in Session
-                ////Session["MethodsofPayment"] = mopList;
-                //List<Invoice> I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString());
-                //double dblRemainingBalance = I[0].balanceDue - dblAmountPaid;
-                ////Bind the session to the grid view
-                //gvCurrentMOPs.DataSource = mopList;
-                //gvCurrentMOPs.DataBind();
-                ////Display remaining balance
-                //lblRemainingBalanceDueDisplay.Text = "$ " + dblRemainingBalance.ToString("#0.00");
-                //txtAmountPaying.Text = dblRemainingBalance.ToString("#0.00");
-                //buttonDisable(dblRemainingBalance);
                 UpdatePageTotals();
             }
             //Exception catch
@@ -820,55 +639,8 @@ namespace SweetSpotDiscountGolfPOS
             string method = "populateGridviewMOP";
             try
             {
-                //gridID = 0;
-                //Checks if there are any current mops used
-                //if (Session["MethodsofPayment"] != null)
-                //{
-                //Retrieves current mops from Session
-                //mopList = (List<Mops>)Session["MethodsofPayment"];
-                //Loops through each mop
-                //foreach (var mop in mopList)
-                //{
-                //Sets grid id to be the largest current id in table
-                //    if (mop.tableID > gridID)
-                //        gridID = mop.tableID;
-                //}
-                //}
-                //Sets a temp checkout with the new Mop
-                //Mops tempCK = new Mops(methodOfPayment, amountPaid, gridID + 1);
-                //Retrieves totals for check out from Session
-                //ckm = (CheckoutManager)Session["CheckOutTotals"];
-                //Adds new mop to the current mop list
-                //mopList.Add(tempCK);
                 InvoiceMOPsManager IMM = new InvoiceMOPsManager();
                 IMM.AddNewMopToList(Request.QueryString["inv"].ToString(), amountPaid, methodOfPayment);
-                //Loops through each mop
-                //double dblAmountPaid = 0;
-                //foreach (var mop in mopList)
-                //{
-                //    //Adds the total amount paid fropm each mop type
-                //    dblAmountPaid += mop.amountPaid;
-                //}
-                ////Updates the amount paid and remaining balance in the checkout manager
-                ////ckm.dblAmountPaid = dblAmountPaid;
-                ////Binds the moplist to the gridview
-                //gvCurrentMOPs.DataSource = mopList;
-                //gvCurrentMOPs.DataBind();
-                ////Center the mop grid view
-                ////foreach (GridViewRow row in gvCurrentMOPs.Rows)
-                ////{
-                ////    foreach (TableCell cell in row.Cells)
-                ////    {
-                ////        cell.Attributes.CssStyle["text-align"] = "center";
-                ////    }
-                ////}
-                ////Store moplist into session
-                ////Session["MethodsofPayment"] = mopList;
-                //List<Invoice> I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString());
-                //double dblRemainingBalance = I[0].balanceDue - dblAmountPaid;
-                ////Sets the remaining balance due
-                //lblRemainingBalanceDueDisplay.Text = "$ " + dblRemainingBalance.ToString("#0.00");
-                //txtAmountPaying.Text = dblRemainingBalance.ToString("#0.00");
                 UpdatePageTotals();
             }
             //Exception catch
@@ -923,9 +695,6 @@ namespace SweetSpotDiscountGolfPOS
         }
         private void UpdatePageTotals()
         {
-            //lblBalanceAmount.Text = I.balanceDue.ToString();
-            //InvoiceMOPsManager IMM = new InvoiceMOPsManager();
-            //List<InvoiceMOPs> mopList = IMM.ReturnInvoiceMOPsCurrentSale(Request.QueryString["inv"]);
             Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
             //Loops through each mop
             double dblAmountPaid = 0;
