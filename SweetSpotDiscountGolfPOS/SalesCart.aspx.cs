@@ -692,6 +692,7 @@ namespace SweetSpotDiscountGolfPOS
                     int sku = Convert.ToInt32(grdInventorySearched.Rows[index].Cells[1].Text);
                     if (sku == 100000)
                     {
+                        btnRefreshCart.Visible = true;
                         //Trade In Sku to add in SK
                         string redirect = "<script>window.open('TradeINEntry.aspx?inv=" + Request.QueryString["inv"].ToString() + "');</script>";
                         Response.Write(redirect);
@@ -853,6 +854,18 @@ namespace SweetSpotDiscountGolfPOS
             IM.CalculateNewInvoiceTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0]);
             Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
             lblSubtotalDisplay.Text = "$ " + I.subTotal.ToString("#0.00");
+        }
+
+        protected void btnRefreshCart_Click(object sender, EventArgs e)
+        {
+            btnRefreshCart.Visible = false;
+            UpdateInvoiceTotal();
+        }
+
+        protected void btnClearSearch_Click(object sender, EventArgs e)
+        {
+            grdInventorySearched.DataSource = null;
+            grdInventorySearched.DataBind();
         }
     }
 }
