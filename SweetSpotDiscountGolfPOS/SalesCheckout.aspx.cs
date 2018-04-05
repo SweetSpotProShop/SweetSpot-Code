@@ -293,7 +293,7 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Gathers the mop info based on the index
-                int mopRemovingID = Convert.ToInt32(gvCurrentMOPs.Rows[e.RowIndex].Cells[3].Text);
+                int mopRemovingID = Convert.ToInt32(((Label)gvCurrentMOPs.Rows[e.RowIndex].Cells[3].FindControl("mopID")).Text);
                 //Retrieves Mop list from Session
                 InvoiceMOPsManager IMM = new InvoiceMOPsManager();
                 IMM.RemoveMopFromList(mopRemovingID, Request.QueryString["inv"].ToString());

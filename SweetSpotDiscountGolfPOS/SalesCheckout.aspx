@@ -164,7 +164,11 @@
                                 </asp:TemplateField>
                                 <asp:BoundField DataField="mopType" ReadOnly="true" HeaderText="Payment Type" />
                                 <asp:BoundField DataField="amountPaid" ReadOnly="true" HeaderText="Amount Paid" DataFormatString="{0:C}" />
-                                <asp:BoundField DataField="id" ReadOnly="true" HeaderText="Table ID" Visible="false" />
+                                <asp:TemplateField HeaderText="Table ID" Visible="false" >
+                                    <ItemTemplate>
+                                        <asp:Label ID="mopID" Text='<%# Eval("id") %>' runat="server" />
+                                    </ItemTemplate>
+                                </asp:TemplateField>
                             </Columns>
                         </asp:GridView>
                     </asp:TableCell>
