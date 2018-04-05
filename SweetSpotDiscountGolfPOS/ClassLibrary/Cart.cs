@@ -14,9 +14,9 @@ namespace SweetShop
         public int quantity { get; set; }
         public double price { get; set; }
         public double cost { get; set; }
-        public double discount { get; set; }
+        public double itemDiscount { get; set; }
         public bool percentage { get; set; }
-        public bool tradeIn { get; set; }
+        public bool isTradeIn { get; set; }
         public int typeID { get; set; }
         public double returnAmount { get; set; }
         public int locationID { get; set; }
@@ -29,10 +29,10 @@ namespace SweetShop
             quantity = q;
             price = pr;
             cost = c;
-            discount = d;
+            itemDiscount = d;
             percentage = p;
             returnAmount = retA;
-            tradeIn = t;
+            isTradeIn = t;
             typeID = id;
             locationID = l;
         }
@@ -45,10 +45,10 @@ namespace SweetShop
             quantity = q;
             price = pr;
             cost = c;
-            discount = d;
+            itemDiscount = d;
             percentage = p;
             returnAmount = retA;
-            tradeIn = t;
+            isTradeIn = t;
             typeID = id;
         }
     }

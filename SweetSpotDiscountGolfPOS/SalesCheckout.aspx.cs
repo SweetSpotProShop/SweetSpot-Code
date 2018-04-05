@@ -570,10 +570,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Employee
                 //******Need to get the employee somehow
                 EmployeeManager EM = new EmployeeManager();
-
-                Employee emp = EM.getEmployeeByID(EM.returnEmployeeIDFromPassword(Convert.ToInt32(txtEmployeePasscode.Text)));
-                bool bolValidPassword = EM.returnCanEmployeeMakeSale(emp.employeeID);
-                if (bolValidPassword)
+                if (EM.returnCanEmployeeMakeSale(txtEmployeePasscode.Text))
                 {
                     //Checks the amount paid and the bypass check box
                     if (!txtAmountPaying.Text.Equals("0.00"))

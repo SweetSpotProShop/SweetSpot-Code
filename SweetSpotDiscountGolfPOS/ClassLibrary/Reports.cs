@@ -610,7 +610,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlDataReader iReader = cmd.ExecuteReader();
             while (iReader.Read())
             {
-                items.Add(new Items(Convert.ToInt32(iReader["tempSKU"]), Convert.ToInt32(iReader["tempAmountSold"])));
+                //items.Add(new Items(Convert.ToInt32(iReader["tempSKU"]), Convert.ToInt32(iReader["tempAmountSold"])));
             }
             con.Close();
             return items;
@@ -649,7 +649,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlDataReader bReader = cmd.ExecuteReader();
             while (bReader.Read())
             {
-                brands.Add(new Items(bReader["brand"].ToString(), Convert.ToInt32(bReader["brandSold"])));
+                //brands.Add(new Items(bReader["brand"].ToString(), Convert.ToInt32(bReader["brandSold"])));
             }
             con.Close();
             return brands;
@@ -688,7 +688,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlDataReader mReader = cmd.ExecuteReader();
             while (mReader.Read())
             {
-                models.Add(new Items(mReader["model"].ToString(), Convert.ToInt32(mReader["modelSold"])));
+                //models.Add(new Items(mReader["model"].ToString(), Convert.ToInt32(mReader["modelSold"])));
             }
             con.Close();
             return models;
@@ -715,19 +715,19 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //                    "group by tbl_invoiceItem.invoiceNum,  tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.percentage order by tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum";
             cmd.CommandText = "Select " +
                                 "Concat(tbl_invoiceItem.invoiceNum, '-', tbl_invoiceItem.invoiceSubNum) as 'invoice', " +
-                                "SUM(tbl_invoiceItem.itemPrice) as 'totalPrice',  " +
-                                "SUM(tbl_invoiceItem.itemCost) as 'totalCost', " +
+                                "SUM(tbl_invoiceItem.price) as 'totalPrice',  " +
+                                "SUM(tbl_invoiceItem.cost) as 'totalCost', " +
                                 "SUM(tbl_invoiceItem.itemDiscount) as 'totalDiscount', " +
                                 "tbl_invoiceItem.percentage, " +
                                 "CASE " +
-                                "    WHEN percentage = 1 and SUM(tbl_invoiceItem.itemPrice) <> 0 then " +
-                                "        sum(((tbl_invoiceItem.itemPrice - (tbl_invoiceItem.itemPrice * tbl_invoiceItem.itemDiscount) / 100)) - tbl_invoiceItem.itemCost) / SUM(tbl_invoiceItem.itemPrice) * 100 " +
-                                "    WHEN percentage = 0 and SUM(tbl_invoiceItem.itemPrice) <> 0 then " +
-                                "        sum((tbl_invoiceItem.itemPrice - tbl_invoiceItem.itemDiscount) - tbl_invoiceItem.itemCost) / SUM(tbl_invoiceItem.itemPrice) * 100 " +
-                                "    WHEN percentage = 1 and SUM(tbl_invoiceItem.itemPrice) = 0 then " +
-                                "        sum(((tbl_invoice.subTotal - (tbl_invoice.subTotal * tbl_invoiceItem.itemDiscount) / 100)) - tbl_invoiceItem.itemCost) " +
-                                "    WHEN percentage = 0 and SUM(tbl_invoiceItem.itemPrice) = 0 then " +
-                                "        sum((tbl_invoice.subTotal - tbl_invoiceItem.itemDiscount) - tbl_invoiceItem.itemCost) " +
+                                "    WHEN percentage = 1 and SUM(tbl_invoiceItem.price) <> 0 then " +
+                                "        sum(((tbl_invoiceItem.price - (tbl_invoiceItem.price * tbl_invoiceItem.itemDiscount) / 100)) - tbl_invoiceItem.cost) / SUM(tbl_invoiceItem.price) * 100 " +
+                                "    WHEN percentage = 0 and SUM(tbl_invoiceItem.price) <> 0 then " +
+                                "        sum((tbl_invoiceItem.price - tbl_invoiceItem.itemDiscount) - tbl_invoiceItem.cost) / SUM(tbl_invoiceItem.price) * 100 " +
+                                "    WHEN percentage = 1 and SUM(tbl_invoiceItem.price) = 0 then " +
+                                "        sum(((tbl_invoice.subTotal - (tbl_invoice.subTotal * tbl_invoiceItem.itemDiscount) / 100)) - tbl_invoiceItem.cost) " +
+                                "    WHEN percentage = 0 and SUM(tbl_invoiceItem.price) = 0 then " +
+                                "        sum((tbl_invoice.subTotal - tbl_invoiceItem.itemDiscount) - tbl_invoiceItem.cost) " +
                                 "END as 'totalProfit' " +
                                 "from tbl_invoiceItem inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum " +
                                 "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns) " +
@@ -756,7 +756,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
 
-            cmd.CommandText = "select sum(tbl_invoiceItem.itemCost) as 'itemCost' from tbl_invoiceItem " +
+            cmd.CommandText = "select sum(tbl_invoiceItem.cost) as 'cost' from tbl_invoiceItem " +
                                 "inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum " +
                                 "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) " +
                                 "and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns) " +
@@ -769,7 +769,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                tCost = Convert.ToDouble(reader["itemCost"]);
+                tCost = Convert.ToDouble(reader["cost"]);
             }
             con.Close();
             return tCost;
@@ -781,7 +781,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
 
-            cmd.CommandText = "select sum(tbl_invoiceItem.itemPrice) as 'itemPrice' from tbl_invoiceItem " +
+            cmd.CommandText = "select sum(tbl_invoiceItem.price) as 'price' from tbl_invoiceItem " +
                                 "inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum " +
                                 "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) " +
                                 "and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns) " +
@@ -794,7 +794,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                tPrice = Convert.ToDouble(reader["itemPrice"]);
+                tPrice = Convert.ToDouble(reader["price"]);
             }
             con.Close();
             return tPrice;
@@ -809,12 +809,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             cmd.CommandText = "create table #temp(invoiceNum int, math float, CONSTRAINT PK_key PRIMARY KEY (invoiceNum, math)) " +
                                 "insert into #temp  " +
                                 "select tbl_invoiceItem.invoiceNum,  " +
-                                "CASE WHEN tbl_invoiceItem.percentage = 1 then sum(((tbl_invoiceItem.itemPrice -(tbl_invoiceItem.itemPrice * tbl_invoiceItem.itemDiscount) / 100)) -tbl_invoiceItem.itemCost)   " +
-                                "ELSE sum((tbl_invoiceItem.itemPrice -tbl_invoiceItem.itemDiscount) -tbl_invoiceItem.itemCost) END AS 'math' from tbl_invoiceItem  " +
+                                "CASE WHEN tbl_invoiceItem.percentage = 1 then sum(((tbl_invoiceItem.price -(tbl_invoiceItem.price * tbl_invoiceItem.itemDiscount) / 100)) -tbl_invoiceItem.cost)   " +
+                                "ELSE sum((tbl_invoiceItem.price -tbl_invoiceItem.itemDiscount) -tbl_invoiceItem.cost) END AS 'math' from tbl_invoiceItem  " +
                                 "inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum  " +
                                 "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns)  " +
                                 "and tbl_invoice.locationID = @locationID and tbl_invoice.invoiceDate between @startDate and @endDate  " +
-                                "group by tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.sku, tbl_invoiceItem.itemCost, tbl_invoiceItem.itemPrice, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage  " +
+                                "group by tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.sku, tbl_invoiceItem.cost, tbl_invoiceItem.price, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage  " +
                                 "order by tbl_invoiceItem.invoiceNum  " +
                                 "select sum(math) as 'total' from #temp   " +
                                 "drop table #temp  ";
@@ -1648,7 +1648,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
 
                                 c.typeID = 1;    //The type ID of a club is always 1
-                                c.used = false;  //Not used
+                                c.isTradeIn = false;  //Not used
                                                  //Adds the club to the list of type club
                                 listClub.Add(c);
                                 o = c as Object;
@@ -2145,7 +2145,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                             cmd.Parameters.AddWithValue("dexterity", row[13]);
                             cmd.Parameters.AddWithValue("typeID", row[14]);
                             cmd.Parameters.AddWithValue("locationID", row[15]);
-                            cmd.Parameters.AddWithValue("used", 0);
+                            cmd.Parameters.AddWithValue("isTradeIn", 0);
                             cmd.Parameters.AddWithValue("comments", row[16]);
                             cmd.Parameters.AddWithValue("size", "");
                             cmd.Parameters.AddWithValue("colour", "");
@@ -2163,14 +2163,14 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                                 "UPDATE tbl_clubs SET brandID = @brandID, modelID = @modelID, clubType = @clubType, shaft = @shaft, " +
                                                 "numberOfClubs = @numberOfClubs, premium = @premium, cost = @cost, price = @price, quantity = @quantity, " +
                                                 "clubSpec = @clubSpec, shaftSpec = @shaftSpec, shaftFlex = @shaftFlex, dexterity = @dexterity, " +
-                                                "locationID = @locationID, used = @used, comments = @comments WHERE sku = @sku " +
+                                                "locationID = @locationID, isTradeIn = @isTradeIn, comments = @comments WHERE sku = @sku " +
                                             "end " +
                                         "else " +
                                             "begin " +
                                                 "Insert Into tbl_clubs (sku, brandID, modelID, clubType, shaft, numberOfClubs, " +
-                                                "premium, cost, price, quantity, clubSpec, shaftSpec, shaftFlex, dexterity, typeID, locationID, used, comments) " +
+                                                "premium, cost, price, quantity, clubSpec, shaftSpec, shaftFlex, dexterity, typeID, locationID, isTradeIn, comments) " +
                                                 "Values (@sku, @brandID, @modelID, @clubType, @shaft, @numberOfClubs, @premium, @cost, @price, " +
-                                                "@quantity, @clubSpec, @shaftSpec, @shaftFlex, @dexterity, @typeID, @locationID, @used, @comments) " +
+                                                "@quantity, @clubSpec, @shaftSpec, @shaftFlex, @dexterity, @typeID, @locationID, @isTradeIn, @comments) " +
                                             "end " +
                                     "end " +
                                 "else if (@typeID = 2) " +
@@ -2236,7 +2236,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "                Cast((select sum(                                                                                                      " +
                                 "				 case                                                                                                                   " +
                                 "                    when percentage = 1 and itemDiscount <> 0 then                                                                     " +
-                                "                        (itemPrice * (itemDiscount / 100))                                                                             " +
+                                "                        (price * (itemDiscount / 100))                                                                             " +
                                 "                    when percentage = 0 and itemDiscount <> 0 then                                                                     " +
                                 "                        itemDiscount                                                                                                   " +
                                 "					else                                                                                                                " +
@@ -2251,7 +2251,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "                Cast((select sum(                                                                                                      " +
                                 "				 case                                                                                                                   " +
                                 "                    when percentage = 1 and itemDiscount <> 0 then                                                                     " +
-                                "                        (itemPrice * (itemDiscount / 100))                                                                             " +
+                                "                        (price * (itemDiscount / 100))                                                                             " +
                                 "                    when percentage = 0 and itemDiscount <> 0 then                                                                     " +
                                 "                        itemDiscount                                                                                                   " +
                                 "					else                                                                                                                " +
@@ -2272,13 +2272,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "    when Exists(select tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum from tbl_invoiceItem where                            " +
                                 "            tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                    " +
                                 "            tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                            " +
-                                "            Cast((select sum(itemCost * itemQuantity) from tbl_invoiceItem where                                                                      " +
+                                "            Cast((select sum(cost * quantity) from tbl_invoiceItem where                                                                      " +
                                 "                tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                " +
                                 "                tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                                 " +
                                 "    when Exists(select tbl_invoiceItemReturns.invoiceNum, tbl_invoiceItemReturns.invoiceSubNum from tbl_invoiceItemReturns where       " +
                                 "            tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                             " +
                                 "            tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                     " +
-                                "            Cast((select sum(itemCost * itemQuantity) from tbl_invoiceItemReturns where                                                               " +
+                                "            Cast((select sum(cost * quantity) from tbl_invoiceItemReturns where                                                               " +
                                 "                tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                         " +
                                 "                tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                          " +
                                 "	else                                                                                                                                " +
@@ -2289,13 +2289,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "    when Exists(select tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum from tbl_invoiceItem where                            " +
                                 "            tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                    " +
                                 "            tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                            " +
-                                "                Cast(tbl_invoice.balanceDue - (select sum(itemCost * itemQuantity) from tbl_invoiceItem where                                         " +
+                                "                Cast(tbl_invoice.balanceDue - (select sum(cost * quantity) from tbl_invoiceItem where                                         " +
                                 "                tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                " +
                                 "              tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                                   " +
                                 "    when Exists(select tbl_invoiceItemReturns.invoiceNum, tbl_invoiceItemReturns.invoiceSubNum from tbl_invoiceItemReturns where       " +
                                 "            tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                             " +
                                 "            tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                     " +
-                                "                Cast(tbl_invoice.balanceDue + (select sum(itemCost * itemQuantity) from tbl_invoiceItemReturns where                                  " +
+                                "                Cast(tbl_invoice.balanceDue + (select sum(cost * quantity) from tbl_invoiceItemReturns where                                  " +
                                 "                tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                         " +
                                 "                tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                          " +
                                 "	else                                                                                                                                " +
@@ -2308,7 +2308,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "            tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                            " +
                                 "				case                                                                                                                    " +
                                 "                   when tbl_invoice.subTotal <> 0 then                                                                                 " +
-                                "                        CAST(ROUND((((tbl_invoice.balanceDue - (select sum(itemCost * itemQuantity) from tbl_invoiceItem where                        " +
+                                "                        CAST(ROUND((((tbl_invoice.balanceDue - (select sum(cost * quantity) from tbl_invoiceItem where                        " +
                                 "                                                                 tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and               " +
                                 "                                                                 tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum))           " +
                                 "                                                                 / tbl_invoice.balanceDue) *100),2) as varchar)                        " +
@@ -2320,7 +2320,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "            tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                     " +
                                 "				case                                                                                                                    " +
                                 "                    when tbl_invoice.subTotal <> 0 then                                                                                " +
-                                "                        CAST(ROUND((((tbl_invoice.balanceDue + (select sum(itemCost * itemQuantity) from tbl_invoiceItemReturns where      " +
+                                "                        CAST(ROUND((((tbl_invoice.balanceDue + (select sum(cost * quantity) from tbl_invoiceItemReturns where      " +
                                 "                                                                 tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and        " +
                                 "                                                                 tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum))    " +
                                 "                        / tbl_invoice.balanceDue) *100),2) as varchar)                                                                 " +
@@ -2384,12 +2384,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             List<Items> items = new List<Items>();
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "select tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.sku, tbl_invoiceItem.itemCost, tbl_invoiceItem.itemPrice, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage, "
-                + "CASE WHEN tbl_invoiceItem.percentage = 1 then sum(((tbl_invoiceItem.itemPrice -(tbl_invoiceItem.itemPrice * tbl_invoiceItem.itemDiscount) / 100)) -tbl_invoiceItem.itemCost) "
-                + "ELSE sum((tbl_invoiceItem.itemPrice -tbl_invoiceItem.itemDiscount) -tbl_invoiceItem.itemCost) "
+            cmd.CommandText = "select tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.sku, tbl_invoiceItem.cost, tbl_invoiceItem.price, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage, "
+                + "CASE WHEN tbl_invoiceItem.percentage = 1 then sum(((tbl_invoiceItem.price -(tbl_invoiceItem.price * tbl_invoiceItem.itemDiscount) / 100)) -tbl_invoiceItem.cost) "
+                + "ELSE sum((tbl_invoiceItem.price -tbl_invoiceItem.itemDiscount) -tbl_invoiceItem.cost) "
                 + "END AS 'profit' from tbl_invoiceItem inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum "
                 + "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns)and tbl_invoice.locationID = @locationID and tbl_invoice.invoiceDate between @startDate and @endDate "
-                + "group by tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.sku, tbl_invoiceItem.itemCost, tbl_invoiceItem.itemPrice, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage "
+                + "group by tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.sku, tbl_invoiceItem.cost, tbl_invoiceItem.price, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage "
                 + "order by tbl_invoiceItem.invoiceNum";
             cmd.Parameters.AddWithValue("@startDate", startDate);
             cmd.Parameters.AddWithValue("@endDate", endDate);
@@ -2399,11 +2399,11 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                items.Add(new Items(Convert.ToInt32(reader["invoiceNum"]),
-                    Convert.ToInt32(reader["invoiceSubNum"]), Convert.ToInt32(reader["sku"]),
-                    Convert.ToDouble(reader["itemCost"]), Convert.ToDouble(reader["itemPrice"]),
-                    Convert.ToDouble(reader["itemDiscount"]), Convert.ToBoolean(reader["percentage"]),
-                    Convert.ToDouble(reader["profit"])));
+                //items.Add(new Items(Convert.ToInt32(reader["invoiceNum"]),
+                //    Convert.ToInt32(reader["invoiceSubNum"]), Convert.ToInt32(reader["sku"]),
+                //    Convert.ToDouble(reader["itemCost"]), Convert.ToDouble(reader["itemPrice"]),
+                //    Convert.ToDouble(reader["itemDiscount"]), Convert.ToBoolean(reader["percentage"]),
+                //    Convert.ToDouble(reader["profit"])));
             }
             con.Close();
             return items;
@@ -2784,9 +2784,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             exportInvoiceItemTable.Columns.Add("invoiceNum", typeof(string));
             exportInvoiceItemTable.Columns.Add("invoiceSubNum", typeof(string));
             exportInvoiceItemTable.Columns.Add("sku", typeof(string));
-            exportInvoiceItemTable.Columns.Add("itemQuantity", typeof(string));
-            exportInvoiceItemTable.Columns.Add("itemCost", typeof(string));
-            exportInvoiceItemTable.Columns.Add("itemPrice", typeof(string));
+            exportInvoiceItemTable.Columns.Add("quantity", typeof(string));
+            exportInvoiceItemTable.Columns.Add("cost", typeof(string));
+            exportInvoiceItemTable.Columns.Add("price", typeof(string));
             exportInvoiceItemTable.Columns.Add("itemDiscount", typeof(string));
             exportInvoiceItemTable.Columns.Add("percentage", typeof(string));
             exportSales_Items();
@@ -2858,13 +2858,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 string invoiceNum = reader["invoiceNum"].ToString();
                 string invoiceSubNum = reader["invoiceSubNum"].ToString();
                 string sku = reader["sku"].ToString();
-                string itemQuantity = reader["itemQuantity"].ToString();
-                string itemCost = reader["itemCost"].ToString();
-                string itemPrice = reader["itemPrice"].ToString();
+                string quantity = reader["quantity"].ToString();
+                string cost = reader["cost"].ToString();
+                string price = reader["price"].ToString();
                 string itemDisocunt = reader["itemDiscount"].ToString();
                 string percentage = reader["percentage"].ToString();
-                exportInvoiceItemTable.Rows.Add(invoiceNum, invoiceSubNum, sku, itemQuantity, itemCost,
-                    itemPrice, itemDisocunt, percentage);
+                exportInvoiceItemTable.Rows.Add(invoiceNum, invoiceSubNum, sku, quantity, cost,
+                    price, itemDisocunt, percentage);
             }
             conn.Close();
         }
@@ -2913,7 +2913,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             String[] itemExportColumns = { "Vendor", "Store_ID", "ItemNumber", "Shipment_Date", "Brand", "Model", "Club_Type", "Shaft",
                     "Number_of_Clubs", "Tradein_Price", "Premium", "WE PAY", "QUANTITY", "Ext'd Price", "RetailPrice", "Comments",
-                    "Image", "Club_Spec", "Shaft_Spec", "Shaft_Flex", "Dexterity", "Destination", "Received", "Paid", "ItemType", "Used"};
+                    "Image", "Club_Spec", "Shaft_Spec", "Shaft_Flex", "Dexterity", "Destination", "Received", "Paid", "ItemType", "isTradeIn"};
             using (ExcelPackage xlPackage = new ExcelPackage(newFile))
             {
                 //Add page to the work book called inventory
@@ -2980,7 +2980,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "(select tbl_location.secondaryIdentifier from tbl_location where tbl_location.locationID = tbl_clubs.locationID) as locationSecondary,  " +
                                 "'' as 'received', 0 as 'paid', " +
                                 "(select tbl_itemType.typeDescription from tbl_itemType where tbl_itemType.typeID = tbl_clubs.typeID ) as itemType, " +
-                                "tbl_clubs.used " +
+                                "tbl_clubs.isTradeIn " +
                                 "from tbl_clubs";
 
             using (var cmd = new SqlCommand(command, conn))
@@ -3006,7 +3006,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "(select tbl_location.secondaryIdentifier from tbl_location where tbl_location.locationID = tbl_accessories.locationID) as locationSecondary, " +
                                 "'' as 'received', 0 as 'paid', " +
                                 "(select tbl_itemType.typeDescription from tbl_itemType where tbl_itemType.typeID = tbl_accessories.typeID ) as itemType, " +
-                                "0 as 'used' " +
+                                "0 as 'isTradeIn' " +
                                 "from tbl_accessories; ";
 
             using (var cmd = new SqlCommand(command, conn))
@@ -3032,7 +3032,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "(select tbl_location.secondaryIdentifier from tbl_location where tbl_location.locationID = tbl_clothing.locationID) as locationSecondary,  " +
                                 "'' as 'received', 0 as 'paid', " +
                                 "(select tbl_itemType.typeDescription from tbl_itemType where tbl_itemType.typeID = tbl_clothing.typeID ) as itemType, " +
-                                "0 as 'used' " +
+                                "0 as 'isTradeIn' " +
                                 " from tbl_clothing";
             using (var cmd = new SqlCommand(command, conn))
             using (var da = new SqlDataAdapter(cmd))

@@ -205,21 +205,21 @@ namespace SweetSpotDiscountGolfPOS
                     itemsSoldExport.Cells[2, 5].Value = "Item Discount";
                     itemsSoldExport.Cells[2, 6].Value = "Item Profit";
                     int recordIndex = 3;
-                    foreach (Items i in items)
+                    foreach (Items i in items) //This shold be a Class of InvoiceItem not Item
                     {
-                        itemsSoldExport.Cells[recordIndex, 1].Value = i.invoice;
+                        //itemsSoldExport.Cells[recordIndex, 1].Value = i.invoice;
                         itemsSoldExport.Cells[recordIndex, 2].Value = i.sku;
                         itemsSoldExport.Cells[recordIndex, 3].Value = i.cost;
                         itemsSoldExport.Cells[recordIndex, 4].Value = i.price;
                         if (i.percent)
                         {
-                            itemsSoldExport.Cells[recordIndex, 5].Value = i.discount + "%";
+                            itemsSoldExport.Cells[recordIndex, 5].Value = i.itemDiscount + "%";
                         }
                         else
                         {
-                            itemsSoldExport.Cells[recordIndex, 5].Value = "$" + i.discount;
+                            itemsSoldExport.Cells[recordIndex, 5].Value = "$" + i.itemDiscount;
                         }
-                        itemsSoldExport.Cells[recordIndex, 6].Value = i.difference;
+                        //itemsSoldExport.Cells[recordIndex, 6].Value = i.difference;
                         recordIndex++;
                     }
                     Response.Clear();

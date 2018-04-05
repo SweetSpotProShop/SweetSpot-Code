@@ -17,19 +17,13 @@ namespace SweetShop
         public int quantity { get; set; }
         public double price { get; set; }
         public double cost { get; set; }
-        public double discount { get; set; }
+        public double itemDiscount { get; set; }
         public bool percent { get; set; }
         public int typeID { get; set; }
-        public bool tradeIn { get; set; }
-
-
-        public double difference { get; set; }
-        public string invoice { get; set; }
-        public int amountSold { get; set; }
-
+        public bool isTradeIn { get; set; }
 
         public Items() { }
-        public Items(int Sku, string Description, string Location, int Quantity, double Price, double Cost)
+        public Items(int Sku, string Description, string Location, int Quantity, double Price, double Cost, double ItemDiscount, bool Percent, int TypeID, bool isTradeIN)
         {
             sku = Sku;
             description = Description;
@@ -37,56 +31,10 @@ namespace SweetShop
             quantity = Quantity;
             price = Price;
             cost = Cost;
-        }
-        public Items(int Sku, string Description, string Location, int Quantity, double Price, double Cost, int TypeID, bool TradeIN)
-        {
-            sku = Sku;
-            description = Description;
-            location = Location;
-            quantity = Quantity;
-            price = Price;
-            cost = Cost;
+            itemDiscount = ItemDiscount;
+            percent = Percent;
             typeID = TypeID;
-            tradeIn = TradeIN;
-        }
-        //public Items(int s, string d, int q, double p, double c, string l)
-        //{
-        //    sku = s;
-        //    description = d;
-        //    quantity = q;
-        //    price = p;
-        //    cost = c;
-        //    location = l;
-        //}
-        //public Items(int s, string d, int q, double p, double c, int t, string l)
-        //{
-        //    sku = s;
-        //    description = d;
-        //    quantity = q;
-        //    price = p;
-        //    cost = c;
-        //    typeID = t;
-        //    location = l;
-        //}
-        public Items(int num, int subNum, int s, double c, double p, double disc, bool perc, double d)
-        {
-            invoice = num.ToString() + "-" + subNum.ToString();
-            sku = s;
-            cost = c;
-            price = p;
-            discount = disc;
-            percent = perc;
-            difference = d;
-        }
-        public Items(int s, int a)
-        {
-            sku = s;
-            amountSold = a;
-        }
-        public Items(string d, int a)
-        {
-            description = d;
-            amountSold = a;
+            isTradeIn = isTradeIN;
         }
     }
 }

@@ -82,7 +82,7 @@ namespace SweetSpotProShop
                 dexterity = row.Field<string>("dexterity"),
                 typeID = row.Field<int>("typeID"),
                 itemlocation = row.Field<int>("locationID"),
-                used = row.Field<bool>("used"),
+                isTradeIn = row.Field<bool>("isTradeIn"),
                 comments = row.Field<string>("comments")
             }).ToList();
             return clubs;
@@ -93,7 +93,7 @@ namespace SweetSpotProShop
         {
             string sqlCmd = "SELECT sku, brandID, modelID, clubType, shaft, numberOfClubs, "
                 + "premium, cost, price, quantity, clubSpec, shaftSpec, shaftFlex, dexterity, "
-                + "typeID, locationID, used, comments FROM tbl_clubs WHERE sku = @sku";
+                + "typeID, locationID, isTradeIn, comments FROM tbl_clubs WHERE sku = @sku";
 
             Object[][] parms =
             {
@@ -201,9 +201,9 @@ namespace SweetSpotProShop
         {
             
             string sqlCmd = "Insert Into tbl_clubs (sku, brandID, modelID, clubType, shaft, numberOfClubs,"
-                    + " premium, cost, price, quantity, clubSpec, shaftSpec, shaftFlex, dexterity, typeID, locationID, used, comments)"
+                    + " premium, cost, price, quantity, clubSpec, shaftSpec, shaftFlex, dexterity, typeID, locationID, isTradeIn, comments)"
                     + " Values (@sku, @brandID, @modelID, @clubType, @shaft, @numberOfClubs, @premium, @cost, @price,"
-                    + " @quantity, @clubSpec, @shaftSpec, @shaftFlex, @dexterity, @typeID, @locationID, @used, @comments)";
+                    + " @quantity, @clubSpec, @shaftSpec, @shaftFlex, @dexterity, @typeID, @locationID, @isTradeIn, @comments)";
 
             Object[][] parms =
             {
@@ -223,7 +223,7 @@ namespace SweetSpotProShop
                  new object[] { "@dexterity", c.dexterity },
                  new object[] { "@typeID", c.typeID },
                  new object[] { "@locationID", c.itemlocation },
-                 new object[] { "@used", c.used },
+                 new object[] { "@isTradeIn", c.isTradeIn },
                  new object[] { "@comments", c.comments }
             };
             dbc.executeInsertQuery(sqlCmd, parms);
@@ -305,7 +305,7 @@ namespace SweetSpotProShop
             string sqlCmd = "UPDATE tbl_clubs SET brandID = @brandID, modelID = @modelID, clubType = @clubType, shaft = @shaft,"
                 + " numberOfClubs = @numberOfClubs, premium = @premium, cost = @cost, price = @price, quantity = @quantity,"
                 + " clubSpec = @clubSpec, shaftSpec = @shaftSpec, shaftFlex = @shaftFlex, dexterity = @dexterity,"
-                + " locationID = @locationID, used = @used, comments = @comments WHERE sku = @sku";
+                + " locationID = @locationID, isTradeIn = @isTradeIn, comments = @comments WHERE sku = @sku";
 
             Object[][] parms =
             {
@@ -324,7 +324,7 @@ namespace SweetSpotProShop
                  new object[] { "@shaftFlex", c.shaftFlex },
                  new object[] { "@dexterity", c.dexterity },
                  new object[] { "@locationID", c.itemlocation },
-                 new object[] { "@used", c.used },
+                 new object[] { "@isTradeIn", c.isTradeIn },
                  new object[] { "@comments", c.comments }
             };
             dbc.executeInsertQuery(sqlCmd, parms);
@@ -929,16 +929,16 @@ namespace SweetSpotProShop
             //This method addes the trade in item to the tempTradeInCartSKus table
             SqlConnection conn = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
-            int used = 0;
-            if (tradeInItem.used == true)
-            { used = 1; }
-            else { used = 0; }
+            int isTradeIn = 0;
+            if (tradeInItem.isTradeIn == true)
+            { isTradeIn = 1; }
+            else { isTradeIn = 0; }
             if (tradeInItem.itemlocation == 0)
             { tradeInItem.itemlocation = 1; }
             cmd.Connection = conn;
             cmd.CommandText = "insert into tbl_tempTradeInCartSkus values(@sku, @brandID, @modelID, "
                 + "@clubType, @shaft, @numberOfClubs, @premium, @cost, @price, @quantity, @clubSpec, "
-                + "@shaftSpec, @shaftFlex, @dexterity, @typeID, @locationID, @used, @comments)";
+                + "@shaftSpec, @shaftFlex, @dexterity, @typeID, @locationID, @isTradeIn, @comments)";
             //cmd.CommandText = "Update tbl_tempTradeInCartSkus set brandID = @brandID, modelID = @modelID, clubType = @clubType, shaft = @shaft," +
             //    "numberOfClubs = @numberOfClubs, premium = @premium, cost = @cost, price = @price, quantity = @quantity, clubSpec = @clubSpec," +
             //    "shaftSpec = @shaftSpec, shaftFlex = @shaftFlex, dexterity = @dexterity, typeID = @typeID, locationID = @locationID, used = @used," +
@@ -959,7 +959,7 @@ namespace SweetSpotProShop
             cmd.Parameters.AddWithValue("dexterity", tradeInItem.dexterity);
             cmd.Parameters.AddWithValue("typeID", tradeInItem.typeID);
             cmd.Parameters.AddWithValue("locationID", loc);
-            cmd.Parameters.AddWithValue("used", tradeInItem.used);
+            cmd.Parameters.AddWithValue("isTradeIn", tradeInItem.isTradeIn);
             cmd.Parameters.AddWithValue("comments", tradeInItem.comments);
             conn.Open();
             cmd.ExecuteNonQuery();
@@ -1076,7 +1076,7 @@ namespace SweetSpotProShop
                     percentage = 0;
                 }
                 string insert = "insert into " + tbl + " values(" + nextInvoiceNum + ", " + nextInvoiceSubNum + ", " + item.sku + ", " + item.quantity + ", " +
-                    item.cost + ", " + item.price + ", " + item.discount + ", " + item.returnAmount + ", " + percentage + ");";
+                    item.cost + ", " + item.price + ", " + item.itemDiscount + ", " + item.returnAmount + ", " + percentage + ");";
                 //Inserts the item
                 invoiceItem(insert);
             }

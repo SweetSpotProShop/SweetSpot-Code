@@ -65,7 +65,7 @@
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Item Discount">
                     <ItemTemplate>
-                        <asp:Label ID="lblTotalDiscount" runat="server" Text='<%#Eval("discount") %>'></asp:Label>
+                        <asp:Label ID="lblTotalDiscount" runat="server" Text='<%#Eval("itemDiscount") %>'></asp:Label>
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Discount as Percent" Visible="false">

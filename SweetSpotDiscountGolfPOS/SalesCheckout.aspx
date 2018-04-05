@@ -164,7 +164,7 @@
                                 </asp:TemplateField>
                                 <asp:BoundField DataField="mopType" ReadOnly="true" HeaderText="Payment Type" />
                                 <asp:BoundField DataField="amountPaid" ReadOnly="true" HeaderText="Amount Paid" DataFormatString="{0:C}" />
-                                <asp:BoundField DataField="id" ReadOnly="true" HeaderText="Table ID" Visible="true" />
+                                <asp:BoundField DataField="id" ReadOnly="true" HeaderText="Table ID" Visible="false" />
                             </Columns>
                         </asp:GridView>
                     </asp:TableCell>

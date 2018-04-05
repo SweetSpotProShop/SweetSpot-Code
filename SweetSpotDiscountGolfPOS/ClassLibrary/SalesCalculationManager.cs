@@ -26,12 +26,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 if (cart.percentage)
                 {
                     //If the discount is a percentage
-                    singleDiscoount = cart.itemQuantity * (cart.itemPrice * (cart.itemDiscount / 100));
+                    singleDiscoount = cart.quantity * (cart.price * (cart.itemDiscount / 100));
                 }
                 else
                 {
                     //If the discount is a dollar amount
-                    singleDiscoount = cart.itemQuantity * cart.itemDiscount;
+                    singleDiscoount = cart.quantity * cart.itemDiscount;
                 }
                 totalDiscount += singleDiscoount;
             }
@@ -53,7 +53,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 if (cart.sku <= range[1] && cart.sku >= range[0])
                 {
                     //Adding the trade in value to the total trade in amount
-                    singleTradeInAmount = cart.itemQuantity * cart.itemPrice;
+                    singleTradeInAmount = cart.quantity * cart.price;
                     totalTradeinAmount += singleTradeInAmount;
                 }
             }
@@ -73,7 +73,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 //Checks if the sku is outside of the range for the trade in sku's
                 if (cart.sku >= range[1] || cart.sku <= range[0])
                 {
-                    singleTotalAmount = cart.itemQuantity * cart.itemPrice;
+                    singleTotalAmount = cart.quantity * cart.price;
                     totalTotalAmount += singleTotalAmount;
                 }
             }
@@ -106,7 +106,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //Loops through the cart and pulls each item
             foreach (var cart in itemsSold)
             {
-                singleRefundSubtotalAmount = cart.itemQuantity * cart.itemRefund;
+                singleRefundSubtotalAmount = cart.quantity * cart.itemRefund;
                 totalRefundSubtotalAmount += singleRefundSubtotalAmount;
             }
             //Returns the total refund subtotal amount
@@ -118,7 +118,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             double totalPurchaseAmount = 0;
             foreach (var cart in itemsSold)
             {
-                singlePurchaseAmount = cart.itemQuantity * cart.itemCost;
+                singlePurchaseAmount = cart.quantity * cart.cost;
                 totalPurchaseAmount += singlePurchaseAmount;
             }
             //Returns the total amount of the cart
@@ -131,7 +131,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
             foreach(var cart in itemsSold)
             {
-                singleRefundSubtotalAmount = cart.itemQuantity * cart.itemRefund;
+                singleRefundSubtotalAmount = cart.quantity * cart.itemRefund;
                 totalRefundSubtotalAmount += singleRefundSubtotalAmount;
             }
             //Returns the total refund subtotal of the cart

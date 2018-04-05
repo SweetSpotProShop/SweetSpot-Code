@@ -129,30 +129,30 @@ namespace SweetSpotDiscountGolfPOS
                     int recordIndexItems = 4;
                     if (items.Count > 0)
                     {
-                        foreach (Items i in items)
+                        foreach (Items i in items) //Should be InvoiceItem Class not Item
                         {
                             itemsPage.Cells[recordIndexItems, 1].Value = i.sku;
-                            itemsPage.Cells[recordIndexItems, 2].Value = i.amountSold;
+                            //itemsPage.Cells[recordIndexItems, 2].Value = i.amountSold;
                             recordIndexItems++;
                         }
                     }
                     int recordIndexModels = 4;
                     if (models.Count > 0)
                     {
-                        foreach (Items m in models)
+                        foreach (Items m in models) //Should be InvoiceItem Class not Item
                         {
                             modelsPage.Cells[recordIndexModels, 1].Value = m.description;
-                            modelsPage.Cells[recordIndexModels, 2].Value = m.amountSold;
+                            //modelsPage.Cells[recordIndexModels, 2].Value = m.amountSold;
                             recordIndexModels++;
                         }
                     }
                     int recordIndexBrands = 4;
                     if (brands.Count > 0)
                     {
-                        foreach (Items b in brands)
+                        foreach (Items b in brands) //Should be InvoiceItem Class not Item
                         {
                             brandsPage.Cells[recordIndexBrands, 1].Value = b.description;
-                            brandsPage.Cells[recordIndexBrands, 2].Value = b.amountSold;
+                            //brandsPage.Cells[recordIndexBrands, 2].Value = b.amountSold;
                             recordIndexBrands++;
                         }
                     }

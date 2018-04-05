@@ -463,7 +463,7 @@ namespace SweetSpotDiscountGolfPOS
                 newItemInfo.invoiceSubNum = Convert.ToInt32(Request.QueryString["inv"].ToString().Split('-')[2]);
                 newItemInfo.sku = Convert.ToInt32(grdCartItems.Rows[e.RowIndex].Cells[2].Text);
                 newItemInfo.itemDiscount = Convert.ToDouble(((TextBox)grdCartItems.Rows[e.RowIndex].Cells[6].FindControl("txtAmnt")).Text);
-                newItemInfo.itemQuantity = Convert.ToInt32(((TextBox)grdCartItems.Rows[e.RowIndex].Cells[3].Controls[0]).Text);
+                newItemInfo.quantity = Convert.ToInt32(((TextBox)grdCartItems.Rows[e.RowIndex].Cells[3].Controls[0]).Text);
                 newItemInfo.percentage = ((CheckBox)grdCartItems.Rows[e.RowIndex].Cells[6].FindControl("ckbPercentageEdit")).Checked;
                 newItemInfo.typeID = Convert.ToInt32(((Label)grdCartItems.Rows[e.RowIndex].Cells[8].FindControl("lblTypeID")).Text);
 

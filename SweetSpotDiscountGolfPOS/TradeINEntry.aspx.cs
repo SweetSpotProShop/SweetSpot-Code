@@ -98,7 +98,7 @@ namespace SweetSpotDiscountGolfPOS
                 tradeIN.shaftSpec = txtShaftSpec.Text;
                 tradeIN.dexterity = txtDexterity.Text;
                 tradeIN.comments = txtComments.Text;
-                tradeIN.used = true;
+                tradeIN.isTradeIn = true;
                 tradeIN.itemlocation = CU.locationID;
 
                 //this adds to the temp tradeIncart

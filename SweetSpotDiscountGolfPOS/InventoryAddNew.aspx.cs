@@ -83,7 +83,7 @@ namespace SweetSpotDiscountGolfPOS
                                 txtShaftSpec.Text = c.shaftSpec.ToString();
                                 txtShaftFlex.Text = c.shaftFlex.ToString();
                                 txtDexterity.Text = c.dexterity.ToString();
-                                chkUsed.Checked = c.used;
+                                chkUsed.Checked = c.isTradeIn;
                                 txtComments.Text = c.comments.ToString();
                             }
                             else if (o[0] is Accessories)
@@ -357,7 +357,7 @@ namespace SweetSpotDiscountGolfPOS
                     c.shaftSpec = txtShaftSpec.Text;
                     c.shaftFlex = txtShaftFlex.Text;
                     c.dexterity = txtDexterity.Text;
-                    c.used = chkUsed.Checked;
+                    c.isTradeIn = chkUsed.Checked;
                     c.comments = txtComments.Text;
                     c.typeID = typeID;
                     //stores club as an object
@@ -511,7 +511,7 @@ namespace SweetSpotDiscountGolfPOS
                     c.shaftFlex = txtShaftFlex.Text;
                     c.dexterity = txtDexterity.Text;
                     c.comments = txtComments.Text;
-                    c.used = chkUsed.Checked;
+                    c.isTradeIn = chkUsed.Checked;
                     o = c as Object;
 
                     //changes all text boxes and dropdowns to labels
@@ -679,7 +679,7 @@ namespace SweetSpotDiscountGolfPOS
                     c.shaftSpec = txtShaftSpec.Text;
                     c.shaftFlex = txtShaftFlex.Text;
                     c.dexterity = txtDexterity.Text;
-                    c.used = chkUsed.Checked;
+                    c.isTradeIn = chkUsed.Checked;
                     c.comments = txtComments.Text;
                     c.typeID = typeID;
                     //stores club as an object

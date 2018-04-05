@@ -146,7 +146,7 @@
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:BoundField DataField="sku" HeaderText="SKU" />
-                    <asp:TemplateField HeaderText="Quantity">
+                    <asp:TemplateField HeaderText="In Stock">
                         <ItemTemplate>
                             <div>
                                 <asp:TextBox ID="quantityToAdd" runat="server" placeholder="Enter Quantity To Add" />
@@ -183,7 +183,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Trade In" Visible="false" >
                         <ItemTemplate>
-                            <asp:CheckBox ID="chkTradeInSearch" Checked='<%# Eval("tradeIn") %>' runat="server" Enabled="false" />
+                            <asp:CheckBox ID="chkTradeInSearch" Checked='<%# Eval("isTradeIn") %>' runat="server" Enabled="false" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Type ID" Visible="false">
@@ -216,14 +216,14 @@
                         </EditItemTemplate>
                     </asp:TemplateField>
                     <asp:BoundField DataField="sku" ReadOnly="true" HeaderText="SKU" />
-                    <asp:BoundField DataField="itemQuantity" HeaderText="Quantity" />
-                    <asp:BoundField DataField="itemDescription" ReadOnly="true" HeaderText="Description" />
+                    <asp:BoundField DataField="quantity" HeaderText="Quantity" />
+                    <asp:BoundField DataField="description" ReadOnly="true" HeaderText="Description" />
                     <asp:TemplateField HeaderText="Price" ItemStyle-Width="50px">
                         <ItemTemplate>
                             <div class='cost' id="divRollOverCart" runat="server">
-                                <asp:Label ID="price" runat="server" Text='<%#  (Eval("itemPrice","{0:C}")).ToString() %>' />
+                                <asp:Label ID="price" runat="server" Text='<%#  (Eval("price","{0:C}")).ToString() %>' />
                                 <div id="divCostConvert" class="costDetail" runat="server">
-                                    <asp:Label ID="cost" runat="server" Text='<%# Convert.ToString(Eval("itemCost","{0:C}")).Replace("\n","<br/>") %>' />
+                                    <asp:Label ID="cost" runat="server" Text='<%# Convert.ToString(Eval("cost","{0:C}")).Replace("\n","<br/>") %>' />
                                 </div>
                             </div>
                         </ItemTemplate>
@@ -244,7 +244,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Trade In" Visible="false">
                         <ItemTemplate>
-                            <asp:CheckBox ID="chkTradeIn" Checked='<%# Eval("tradeIn") %>' runat="server" Enabled="false" />
+                            <asp:CheckBox ID="chkTradeIn" Checked='<%# Eval("isTradeIn") %>' runat="server" Enabled="false" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Type ID" Visible="false">
@@ -274,9 +274,6 @@
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
-            
-            
-            
         </asp:Panel>
     </div>
 </asp:Content>

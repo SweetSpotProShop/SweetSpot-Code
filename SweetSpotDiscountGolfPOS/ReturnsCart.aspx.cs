@@ -16,20 +16,22 @@ namespace SweetSpotDiscountGolfPOS
     public partial class ReturnsCart : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU;
+        CurrentUser CU = new CurrentUser();
+        InvoiceManager IM = new InvoiceManager();
+        InvoiceItemsManager IIM = new InvoiceItemsManager();
 
-        public string skuString;
-        public int skuInt;
-        public int invNum;
-        SweetShopManager ssm = new SweetShopManager();
+        //public string skuString;
+        //public int skuInt;
+        //public int invNum;
+        //SweetShopManager ssm = new SweetShopManager();
         ItemDataUtilities idu = new ItemDataUtilities();
-        List<Cart> invoiceItems = new List<Cart>();
-        List<Cart> itemsInCart = new List<Cart>();
-        List<Cart> returnedCart = new List<Cart>();
-        List<Cart> temp = new List<Cart>();
-        LocationManager lm = new LocationManager();
-        Object o = new Object();
-        SalesCalculationManager cm = new SalesCalculationManager();
+        //List<Cart> invoiceItems = new List<Cart>();
+        //List<Cart> itemsInCart = new List<Cart>();
+        //List<Cart> returnedCart = new List<Cart>();
+        //List<Cart> temp = new List<Cart>();
+        //LocationManager lm = new LocationManager();
+        //Object o = new Object();
+        //SalesCalculationManager cm = new SalesCalculationManager();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -50,49 +52,48 @@ namespace SweetSpotDiscountGolfPOS
                     if (!Page.IsPostBack)
                     {
                         //Retrieves transaction type from Session
-                        int tranType = Convert.ToInt32(Session["TranType"]);
-                        if (tranType == 2)
-                        {
-                            //Retrieves Invoice from Session
-                            Invoice rInvoice = (Invoice)Session["searchReturnInvoices"];
-                            //Checks to see if the returned cart is empty
-                            if (Session["returnedCart"] != null)
-                            {
-                                //When not empty passes in 2 sessions
-                                itemsInCart = (List<Cart>)Session["ItemsInCart"];
-                                returnedCart = (List<Cart>)Session["returnedCart"];
-                                //binds returned cart to the grid view
-                                grdReturningItems.DataSource = returnedCart;
-                                grdReturningItems.DataBind();
-                                //displays subtotal based on the returned cart
-                                //lblReturnSubtotalDisplay.Text = "$ " + cm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
-                            }
-                            else
-                            {
-                                //Whjen session is empty gathers a cart from the stored invoice number
-                                temp = ssm.returningItems(rInvoice.invoiceNum, rInvoice.invoiceSub);
-                                foreach (var item in temp)
-                                {
-                                    //Checks each item to make sure it is not a trade in
-                                    if (item.typeID != 0)
-                                    {
-                                        itemsInCart.Add(item);
-                                    }
-                                }
-                            }
-                            //populates current customer info
-                            lblCustomerDisplay.Text = rInvoice.customer.firstName.ToString() + " " + rInvoice.customer.lastName.ToString();
-                            lblInvoiceNumberDisplay.Text = CU.locationName + "-" + rInvoice.invoiceNum.ToString() + "-" + idu.getNextInvoiceSubNum(rInvoice.invoiceNum).ToString();
-                            Session["Invoice"] = lblInvoiceNumberDisplay.Text;
-                            lblDateDisplay.Text = DateTime.Today.ToString("yyyy-MM-dd");
-                            Session["ItemsInCart"] = itemsInCart;
-                            //binds items in cart to gridview
-                            grdInvoicedItems.DataSource = itemsInCart;
-                            grdInvoicedItems.DataBind();
-                        }
+                        //int tranType = Convert.ToInt32(Session["TranType"]);
+                        //if (tranType == 2)
+                        //{
+                        //Retrieves Invoice from Session
+                        Invoice I = IM.ReturnInvoiceForReturns(Request.QueryString["inv"].ToString());
+                        //Checks to see if the returned cart is empty
+                        //if (Session["returnedCart"] != null)
+                        //{
+                        //    //When not empty passes in 2 sessions
+                        //    itemsInCart = ReturnInvoiceItemsFromProcessedSalesForReturn(Request.QueryString["inv"].ToString()[0]);
+                        //    returnedCart = (List<Cart>)Session["returnedCart"];
+                        //    //binds returned cart to the grid view
+                        //    grdReturningItems.DataSource = returnedCart;
+                        //    grdReturningItems.DataBind();
+                        //    //displays subtotal based on the returned cart
+                        //    //lblReturnSubtotalDisplay.Text = "$ " + cm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
+                        //}
+                        //else
+                        //{
+                        //    //When session is empty gathers a cart from the stored invoice number
+                        //    temp = ssm.returningItems(rInvoice.invoiceNum, rInvoice.invoiceSub);
+                        //    foreach (var item in temp)
+                        //    {
+                        //        //Checks each item to make sure it is not a trade in
+                        //        if (item.typeID != 0)
+                        //        {
+                        //            itemsInCart.Add(item);
+                        //        }
+                        //    }
+                        //}
+                        //populates current customer info
+                        lblCustomerDisplay.Text = I.customer.firstName.ToString() + " " + I.customer.lastName.ToString();
+                        lblInvoiceNumberDisplay.Text = Request.QueryString["inv"].ToString();
+                        lblDateDisplay.Text = DateTime.Today.ToString("yyyy-MM-dd");
+                        //binds items in cart to gridview
+                        grdReturningItems.DataSource = IIM.ReturnItemsInTheReturnCart(Request.QueryString["inv"].ToString());
+                        grdReturningItems.DataBind();
+
+                        grdInvoicedItems.DataSource = IIM.ReturnInvoiceItemsFromProcessedSalesForReturn(Request.QueryString["inv"].ToString());
+                        grdInvoicedItems.DataBind();
+                        //}
                     }
-                    //Sets Date session
-                    Session["strDate"] = lblDateDisplay.Text;
                 }
             }
             //Exception catch
@@ -113,32 +114,36 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnCancelSale_Click";
             try
             {
-                int tranType = Convert.ToInt32(Session["TranType"]);
-                if (tranType == 2)
-                {
-                    if (Session["returnedCart"] != null)
-                    {
-                        itemsInCart = (List<Cart>)Session["returnedCart"];
-                    }
-                    foreach (var cart in itemsInCart)
-                    {
-                        int remainingQTY = idu.getquantity(cart.sku, cart.typeID);
-                        idu.updateQuantity(cart.sku, cart.typeID, (remainingQTY - cart.quantity));
-                    }
-                }
-                //* *update * *to null any new seesions btnCancelReturn_Click;
-                Session["returnedCart"] = null;
-                Session["key"] = null;
-                Session["shipping"] = null;
-                Session["ItemsInCart"] = null;
-                Session["CheckOutTotals"] = null;
-                Session["MethodsofPayment"] = null;
-                Session["Invoice"] = null;
-                Session["searchReturnInvoices"] = null;
-                Session["TranType"] = null;
-                Session["ShippingAmount"] = null;
-                Session["strDate"] = null;
-                Response.Redirect("HomePage.aspx", false);
+
+                IIM.LoopThroughTheItemsToReturnToInventory(Request.QueryString["inv"].ToString());
+                IIM.RemoveInitialTotalsForTable(Request.QueryString["inv"].ToString());
+
+                //int tranType = Convert.ToInt32(Session["TranType"]);
+                //if (tranType == 2)
+                //{
+                //    if (Session["returnedCart"] != null)
+                //    {
+                //        itemsInCart = (List<Cart>)Session["returnedCart"];
+                //    }
+                //    foreach (var cart in itemsInCart)
+                //    {
+                //        int remainingQTY = idu.getquantity(cart.sku, cart.typeID);
+                //        idu.updateQuantity(cart.sku, cart.typeID, (remainingQTY - cart.quantity));
+                //    }
+                //}
+                ////* *update * *to null any new seesions btnCancelReturn_Click;
+                //Session["returnedCart"] = null;
+                //Session["key"] = null;
+                //Session["shipping"] = null;
+                //Session["ItemsInCart"] = null;
+                //Session["CheckOutTotals"] = null;
+                //Session["MethodsofPayment"] = null;
+                //Session["Invoice"] = null;
+                //Session["searchReturnInvoices"] = null;
+                //Session["TranType"] = null;
+                //Session["ShippingAmount"] = null;
+                //Session["strDate"] = null;
+                //Response.Redirect("HomePage.aspx", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -218,7 +223,7 @@ namespace SweetSpotDiscountGolfPOS
                             cart.quantity = remainingQTY;
                             //Add it into the cart of item that could be returned at
                             //this lower quantity
-                            itemsInCart.Add(cart);
+                            //itemsInCart.Add(cart);
                         }
                         //Checks if there are already items in the cart marked for return
                         if (!bolCart)
@@ -233,7 +238,7 @@ namespace SweetSpotDiscountGolfPOS
                                 {
                                     //When skus match increase the quantity for that sku
                                     //in the marked for return cart
-                                    returnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity + 1, retCart.price, retCart.cost, retCart.discount, retCart.percentage, retCart.returnAmount, retCart.tradeIn, retCart.typeID);
+                                    returnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity + 1, retCart.price, retCart.cost, retCart.itemDiscount, retCart.percentage, retCart.returnAmount, retCart.isTradeIn, retCart.typeID);
                                     //Add that item back into stock so that it could be sold again
                                     idu.removeQTYfromInventoryWithSKU(returnedItem.sku, returnedItem.typeID, inStockQTY + 1);
                                     //Trigger that the selected sku has now been added to marked return cart
@@ -243,10 +248,10 @@ namespace SweetSpotDiscountGolfPOS
                                 {
                                     //If the sku doesn't match then item we checked against
                                     //needs to be added back into the cart
-                                    returnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity, retCart.price, retCart.cost, retCart.discount, retCart.percentage, retCart.returnAmount, retCart.tradeIn, retCart.typeID);
+                                    returnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity, retCart.price, retCart.cost, retCart.itemDiscount, retCart.percentage, retCart.returnAmount, retCart.isTradeIn, retCart.typeID);
                                 }
                                 //This completes the add of the item from the if statement
-                                returnedCart.Add(returnedItem);
+                                //returnedCart.Add(returnedItem);
                             }
                             //Triggers if the selected sku didn't match any sku in the marked
                             //for return cart
@@ -257,10 +262,10 @@ namespace SweetSpotDiscountGolfPOS
                                 //on the sku
                                 if (cart.percentage) { multi = 1; } else { multi = -1; }
                                 //Adds sku in the cart of items marked for return
-                                returnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.discount, cart.percentage, -1 * returnAmount, cart.tradeIn, cart.typeID);
+                                returnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.itemDiscount, cart.percentage, -1 * returnAmount, cart.isTradeIn, cart.typeID);
                                 //Adds the new quantity back into stock
                                 idu.removeQTYfromInventoryWithSKU(returnedItem.sku, returnedItem.typeID, inStockQTY + 1);
-                                returnedCart.Add(returnedItem);
+                                //returnedCart.Add(returnedItem);
                             }
                         }
                         else
@@ -271,42 +276,29 @@ namespace SweetSpotDiscountGolfPOS
                             //on the sku
                             if (cart.percentage) { multi = 1; } else { multi = -1; }
                             //Adds sku in the cart of items marked for return
-                            returnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.discount, cart.percentage, -1 * returnAmount, cart.tradeIn, cart.typeID);
+                            returnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.itemDiscount, cart.percentage, -1 * returnAmount, cart.isTradeIn, cart.typeID);
                             //Adds the new quantity back into stock
                             idu.removeQTYfromInventoryWithSKU(returnedItem.sku, returnedItem.typeID, inStockQTY + 1);
-                            returnedCart.Add(returnedItem);
+                            //returnedCart.Add(returnedItem);
                         }
                     }
                     else if (cart.sku != sku)
                     {
                         //sku was not the selected sku add it back into the cart of items
                         //available for return
-                        itemsInCart.Add(cart);
+                        //itemsInCart.Add(cart);
                     }
                 }
                 //deselect the indexed item
                 grdInvoicedItems.EditIndex = -1;
                 //store items available for return in session
-                Session["ItemsInCart"] = itemsInCart;
-                //bind items to grid view
-                grdInvoicedItems.DataSource = itemsInCart;
-                grdInvoicedItems.DataBind();
-                //Check if the marked for returns cart has any items in it
-                if (returnedCart.Count > 0)
-                {
-                    //If yes then store in session
-                    Session["returnedCart"] = returnedCart;
-                }
-                else
-                {
-                    //If no then null the session
-                    Session["returnedCart"] = null;
-                }
-                //bind marked for return items to grid view
-                grdReturningItems.DataSource = returnedCart;
+                grdReturningItems.DataSource = IIM.ReturnItemsInTheReturnCart(Request.QueryString["inv"].ToString());
                 grdReturningItems.DataBind();
+
+                grdInvoicedItems.DataSource = IIM.ReturnInvoiceItemsFromProcessedSalesForReturn(Request.QueryString["inv"].ToString());
+                grdInvoicedItems.DataBind();
                 //recalculate the return total
-                //lblReturnSubtotalDisplay.Text = "$ " + cm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
+                ////lblReturnSubtotalDisplay.Text = "$ " + cm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -361,7 +353,7 @@ namespace SweetSpotDiscountGolfPOS
                             cart.quantity = remainingQTY;
                             //Add it into the cart of item that are marked for return
                             //at this lower quantity
-                            returnedCart.Add(cart);
+                            //returnedCart.Add(cart);
                         }
                         //Checks if there are already items in the returnable items cart
                         if (!bolCart)
@@ -376,7 +368,7 @@ namespace SweetSpotDiscountGolfPOS
                                 {
                                     //When skus match increase the quantity for that sku
                                     //in the returnable items cart
-                                    cancelReturnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity + 1, retCart.price, retCart.cost, retCart.discount, retCart.percentage, 0, retCart.tradeIn, retCart.typeID);
+                                    cancelReturnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity + 1, retCart.price, retCart.cost, retCart.itemDiscount, retCart.percentage, 0, retCart.isTradeIn, retCart.typeID);
                                     //Remove that item from stock so that it can not be sold again
                                     idu.removeQTYfromInventoryWithSKU(cancelReturnedItem.sku, cancelReturnedItem.typeID, inStockQTY - 1);
                                     //Trigger that the selected sku has now been added into the returnable items cart
@@ -386,10 +378,10 @@ namespace SweetSpotDiscountGolfPOS
                                 {
                                     //If the sku doesn't match then item we checked against
                                     //needs to be added back into the marked for return cart
-                                    cancelReturnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity, retCart.price, retCart.cost, retCart.discount, retCart.percentage, 0, retCart.tradeIn, retCart.typeID);
+                                    cancelReturnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity, retCart.price, retCart.cost, retCart.itemDiscount, retCart.percentage, 0, retCart.isTradeIn, retCart.typeID);
                                 }
                                 //This completes the add of the item from the if statement
-                                itemsInCart.Add(cancelReturnedItem);
+                                //itemsInCart.Add(cancelReturnedItem);
                             }
                             //Triggers if the selected sku didn't match any sku in the returnable
                             //items cart
@@ -400,10 +392,10 @@ namespace SweetSpotDiscountGolfPOS
                                 //on the sku
                                 if (cart.percentage) { multi = 1; } else { multi = -1; }
                                 //Adds sku in the returnable items cart
-                                cancelReturnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.discount, cart.percentage, 0, cart.tradeIn, cart.typeID);
+                                cancelReturnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.itemDiscount, cart.percentage, 0, cart.isTradeIn, cart.typeID);
                                 //Removes the new quantity from stock
                                 idu.removeQTYfromInventoryWithSKU(cancelReturnedItem.sku, cancelReturnedItem.typeID, inStockQTY - 1);
-                                itemsInCart.Add(cancelReturnedItem);
+                                //itemsInCart.Add(cancelReturnedItem);
                             }
                         }
                         //The returnable items cart was empty no checks needed on item just add
@@ -414,42 +406,29 @@ namespace SweetSpotDiscountGolfPOS
                             //on the sku
                             if (cart.percentage) { multi = 1; } else { multi = -1; }
                             //Adds sku in the returnable items cart
-                            cancelReturnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.discount, cart.percentage, 0, cart.tradeIn, cart.typeID);
+                            cancelReturnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.itemDiscount, cart.percentage, 0, cart.isTradeIn, cart.typeID);
                             //Removes the new quantity from stock
                             idu.removeQTYfromInventoryWithSKU(cancelReturnedItem.sku, cancelReturnedItem.typeID, inStockQTY - 1);
-                            itemsInCart.Add(cancelReturnedItem);
+                            //itemsInCart.Add(cancelReturnedItem);
                         }
                     }
                     else if (cart.sku != sku)
                     {
                         //sku was not the selected sku add it back into the marked for
                         //return cart
-                        returnedCart.Add(cart);
+                        //returnedCart.Add(cart);
                     }
                 }
                 //deselect the indexed item
                 grdReturningItems.EditIndex = -1;
                 //Check if the marked for returns cart has any items in it
-                if (returnedCart.Count > 0)
-                {
-                    //If yes then store in session
-                    Session["returnedCart"] = returnedCart;
-                }
-                else
-                {
-                    //If no then null the session
-                    Session["returnedCart"] = null;
-                }
-                //bind marked for return items to grid view
-                grdReturningItems.DataSource = returnedCart;
+                grdReturningItems.DataSource = IIM.ReturnItemsInTheReturnCart(Request.QueryString["inv"].ToString());
                 grdReturningItems.DataBind();
-                //store items available for return in session
-                Session["ItemsInCart"] = itemsInCart;
-                //bind items to grid view
-                grdInvoicedItems.DataSource = itemsInCart;
+
+                grdInvoicedItems.DataSource = IIM.ReturnInvoiceItemsFromProcessedSalesForReturn(Request.QueryString["inv"].ToString());
                 grdInvoicedItems.DataBind();
                 //recalculate the return total
-                //lblReturnSubtotalDisplay.Text = "$ " + cm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
+                ////lblReturnSubtotalDisplay.Text = "$ " + cm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

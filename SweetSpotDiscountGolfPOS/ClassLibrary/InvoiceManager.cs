@@ -144,7 +144,11 @@ namespace SweetSpotDiscountGolfPOS
             List<Invoice> i = ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd, parms));
             return i;
         }
-
+        public Invoice ReturnInvoiceForReturns(string invoice)
+        {
+            invoice = invoice.Split('-')[1].ToString() + "-1";
+            return ReturnInvoice(invoice)[0];
+        }
         //Returns list of invoices based on an invoice string from the Current table
         public List<Invoice> ReturnCurrentInvoice(string invoice)
         {
@@ -242,6 +246,17 @@ namespace SweetSpotDiscountGolfPOS
             return ConvertFromDataTableToInvoiceForReturns(dbc.returnDataTableData(sqlCmd, parms));
         }
 
+        public int CalculateNextInvoiceSubNum(int invoiceNum)
+        {
+            string sqlCmd = "SELECT MAX(invoiceSubNum) AS invoiceSubNum FROM tbl_invoice WHERE invoiceNum = @invoiceNum";
+
+            object[][] parms = 
+            {
+                new object[] { "@invoiceNum", invoiceNum }
+            };
+            //Return the invoice sub num
+            return ReturnInt(sqlCmd, parms) + 1;
+        }
         public void CalculateNewInvoiceTotalsToUpdate(Invoice I)
         {
             InvoiceItemsManager IIM = new InvoiceItemsManager();
@@ -317,20 +332,23 @@ namespace SweetSpotDiscountGolfPOS
             DataTable dt = IIM.ReturnItemsInTheCart("-" + I.invoiceNum.ToString() + "-" + I.invoiceSub.ToString());
             foreach (DataRow item in dt.Rows)
             {
-                string sqlCmd = "INSERT INTO tbl_invoiceItem VALUES(@invoiceNum, @invoiceSubNum, @sku, @itemQuantity, "
-                        + "@itemCost, @itemPrice, @itemDiscount, @itemRefund, @percentage)";
+                string sqlCmd = "INSERT INTO tbl_invoiceItem VALUES(@invoiceNum, @invoiceSubNum, @sku, @quantity, "
+                        + "@cost, @price, @itemDiscount, @itemRefund, @percentage, @description, @typeID, @isTradeIn)";
 
                 object[][] parms =
                 {
                 new object[] { "@invoiceNum", Convert.ToInt32(item["invoiceNum"]) },
                 new object[] { "@invoiceSubNum", Convert.ToInt32(item["invoiceSubNum"]) },
                 new object[] { "@sku", Convert.ToInt32(item["sku"]) },
-                new object[] { "@itemQuantity", Convert.ToInt32(item["itemQuantity"]) },
-                new object[] { "@itemCost", Convert.ToDouble(item["itemCost"]) },
-                new object[] { "@itemPrice", Convert.ToDouble(item["itemPrice"]) },
+                new object[] { "@quantity", Convert.ToInt32(item["quantity"]) },
+                new object[] { "@cost", Convert.ToDouble(item["cost"]) },
+                new object[] { "@price", Convert.ToDouble(item["price"]) },
                 new object[] { "@itemDiscount", Convert.ToDouble(item["itemDiscount"]) },
                 new object[] { "@itemRefund", Convert.ToDouble(item["itemRefund"]) },
-                new object[] { "@percentage", Convert.ToBoolean(item["percentage"]) }
+                new object[] { "@percentage", Convert.ToBoolean(item["percentage"]) },
+                new object[] { "@description", item["description"].ToString() },
+                new object[] { "@typeID", Convert.ToInt32(item["typeID"]) },
+                new object[] { "@isTradeIn", Convert.ToBoolean(item["isTradeIn"]) }
                 };
                 ExecuteNonReturnCall(sqlCmd, parms);
             }
@@ -378,23 +396,7 @@ namespace SweetSpotDiscountGolfPOS
             };
             ExecuteNonReturnCall(sqlCmd, parms);
         }
-
-        //public List<Invoice> ReturnInvoiceDuringCartTransactions(string invoice)
-        //{
-        //    string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, CAST(invoiceTime AS DATETIME) AS invoiceTime, "
-        //        + "custID, empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, governmentTax, "
-        //        + "provincialTax, balanceDue, transactionType, comments FROM tbl_currentSalesInvoice WHERE invoiceNum = @invoiceNum "
-        //        + "AND invoiceSubNum = @invoiceSubNum";
-
-        //    object[][] parms =
-        //    {
-        //         new object[] { "@invoiceNum", Convert.ToInt32(invoice.Split('-')[0]) },
-        //         new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[1]) }
-        //    };
-
-        //    List<Invoice> i = ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd, parms));
-        //    return i;
-        //}
+        
         public void CreateInitialTotalsForTable(object[] invoiceInfo)
         {
             string sqlCmd = "INSERT INTO tbl_currentSalesInvoice VALUES(@invoiceNum, @invoiceSubNum, "
@@ -463,7 +465,7 @@ namespace SweetSpotDiscountGolfPOS
         }
         public int ReturnNextInvoiceNumber()
         {
-            string sqlCmd = "Select invoiceNum from tbl_InvoiceNumbers";
+            string sqlCmd = "SELECT invoiceNum FROM tbl_InvoiceNumbers";
             object[][] parms = { };
             int nextInvoiceNum = ReturnInt(sqlCmd, parms) + 1;
             //Creates the invoice with the next invoice num
@@ -473,7 +475,7 @@ namespace SweetSpotDiscountGolfPOS
         }
         private void CreateInvoiceNum(int invNum)
         {
-            string sqlCmd = "update tbl_InvoiceNumbers set invoiceNum = @invNum";
+            string sqlCmd = "UPDATE tbl_InvoiceNumbers SET invoiceNum = @invNum";
             object[][] parms =
             {
                 new object[] { "@invNum", invNum }
@@ -491,60 +493,5 @@ namespace SweetSpotDiscountGolfPOS
             return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
         }
 
-
-
-        //Returns list of invoices based on search criteria and date range
-        //public List<Invoice> ReturnInvoicesBasedOnSearchCriteriaV2(DateTime stDate, DateTime endDate, string searchTxt, int locationID)
-        //{
-        //    InvoiceItemsManager IIM = new InvoiceItemsManager();
-        //    ArrayList strText = new ArrayList();
-
-        //    string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, CAST(invoiceTime AS DATETIME) AS invoiceTime, "
-        //        + "custID, empID, locationID, subTotal, discountAmount, tradeinAmount, governmentTax, provincialTax, "
-        //        + "balanceDue, transactionType, comments FROM tbl_invoice WHERE ";
-
-        //    if (searchTxt != "" && stDate == endDate)
-        //    {
-        //        for (int i = 0; i < searchTxt.Split(' ').Length; i++)
-        //        {
-        //            strText.Add(searchTxt.Split(' ')[i]);
-        //        }
-        //        sqlCmd += "( invoiceNum IN (SELECT DISTINCT invoiceNum FROM tbl_invoiceItem WHERE "
-        //            + "CAST(invoiceNum AS VARCHAR) LIKE '%" + searchTxt + "%' OR sku IN (";
-        //        sqlCmd += IIM.ReturnStringSearchForAccessories(strText);
-        //        sqlCmd += " UNION ";
-        //        sqlCmd += IIM.ReturnStringSearchForClothing(strText);
-        //        sqlCmd += " UNION ";
-        //        sqlCmd += IIM.ReturnStringSearchForClubs(strText) + ")))";
-        //    }
-        //    else if (searchTxt != "" && stDate != endDate)
-        //    {
-        //        for (int i = 0; i < searchTxt.Split(' ').Length; i++)
-        //        {
-        //            strText.Add(searchTxt.Split(' ')[i]);
-        //        }
-        //        sqlCmd += "( invoiceNum IN (SELECT DISTINCT invoiceNum FROM tbl_invoiceItem WHERE "
-        //            + "CAST(invoiceNum AS VARCHAR) LIKE '%" + searchTxt + "%' OR sku IN (";
-        //        sqlCmd += IIM.ReturnStringSearchForAccessories(strText);
-        //        sqlCmd += " UNION ";
-        //        sqlCmd += IIM.ReturnStringSearchForClothing(strText);
-        //        sqlCmd += " UNION ";
-        //        sqlCmd += IIM.ReturnStringSearchForClubs(strText) + "))) ";
-        //        sqlCmd += "OR invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "' AND locationID = @locationID";
-        //    }
-        //    else if (searchTxt == "" && stDate != endDate)
-        //    {
-        //        sqlCmd += "invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "' AND locationID = @locationID";
-        //    }
-        //    else if (searchTxt == "" && stDate == endDate)
-        //    {
-        //        sqlCmd += "invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "' AND locationID = @locationID";
-        //    }
-        //    object[][] parms =
-        //    {
-        //        new object[] { "locationID", locationID }
-        //    };
-        //    return ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd, parms));
-        //}
     }
 }
