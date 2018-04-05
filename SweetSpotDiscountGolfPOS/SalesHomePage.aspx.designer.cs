@@ -58,6 +58,15 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Button btnProcessCashOut;
         
         /// <summary>
+        /// calSearchDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Calendar calSearchDate;
+        
+        /// <summary>
         /// grdCurrentOpenSales control.
         /// </summary>
         /// <remarks>

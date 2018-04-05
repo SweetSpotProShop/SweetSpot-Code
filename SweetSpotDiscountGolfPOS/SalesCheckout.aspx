@@ -155,7 +155,7 @@
 
                 <asp:TableRow>
                     <asp:TableCell ColumnSpan="4">
-                        <asp:GridView ID="gvCurrentMOPs" runat="server" AutoGenerateColumns="false" Width="100%" OnRowDeleting="OnRowDeleting">
+                        <asp:GridView ID="gvCurrentMOPs" runat="server" AutoGenerateColumns="false" Width="100%" OnRowDeleting="OnRowDeleting" RowStyle-HorizontalAlign="Center" >
                             <Columns>
                                 <asp:TemplateField HeaderText="Remove">
                                     <ItemTemplate>

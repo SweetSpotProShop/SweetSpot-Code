@@ -140,7 +140,7 @@
                 <asp:Button ID="btnRefreshCart" runat="server" Text="Refresh Cart" Width="150" OnClick="btnRefreshCart_Click" Visible="false"/>
             </div>
             <hr />
-            <asp:GridView ID="grdInventorySearched" runat="server" AutoGenerateColumns="False" OnRowCommand="grdInventorySearched_RowCommand" >
+            <asp:GridView ID="grdInventorySearched" runat="server" AutoGenerateColumns="False" OnRowCommand="grdInventorySearched_RowCommand" RowStyle-HorizontalAlign="Center" >
                 <Columns>
                     <asp:TemplateField HeaderText="Add Item">
                         <ItemTemplate>
@@ -200,7 +200,7 @@
             <h3>Cart</h3>
             <hr />
             <asp:Label ID="lblInvalidQty" runat="server" Visible="false" Text="Label" />
-            <asp:GridView ID="grdCartItems" EmptyDataText=" No Records Found" runat="server" AutoGenerateColumns="false" Style="margin-right: 0px" OnRowEditing="OnRowEditing" OnRowUpdating="OnRowUpdating" OnRowCancelingEdit="ORowCanceling" OnRowDeleting="OnRowDeleting">
+            <asp:GridView ID="grdCartItems" EmptyDataText=" No Records Found" runat="server" AutoGenerateColumns="false" Style="margin-right: 0px" OnRowEditing="OnRowEditing" OnRowUpdating="OnRowUpdating" OnRowCancelingEdit="ORowCanceling" OnRowDeleting="OnRowDeleting" RowStyle-HorizontalAlign="Center" >
                 <Columns>
                     <%--<asp:CommandField ShowDeleteButton="True" ButtonType="Link" />--%>
                     <asp:TemplateField HeaderText="Remove Item">

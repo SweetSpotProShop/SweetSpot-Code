@@ -68,16 +68,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
         //*******************CASHOUT UTILITIES*******************************************************
         //Matches new Database Calls
-        public int verifyCashoutCanBeProcessed(int location)
+        public int verifyCashoutCanBeProcessed(int location, DateTime dtm)
         {
             int indicator = 0;
-            if (transactionsAvailable(location))
+            if (transactionsAvailable(location, dtm))
             {
                 if (openTransactions(location))
                 {
                     indicator = 2;
                 }
-                else if(cashoutAlreadyDone(location))
+                else if(cashoutAlreadyDone(location, dtm))
                 {
                     indicator = 3;
                 }
@@ -85,7 +85,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             else { indicator = 1; }
             return indicator;
         }
-        public bool transactionsAvailable(int location)
+        public bool transactionsAvailable(int location, DateTime dtm)
         {
             bool bolTA = false;
             string sqlCmd = "SELECT COUNT(invoiceNum) FROM tbl_invoice "
@@ -93,8 +93,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         + "AND locationID = @locationID";
             object[][] parms =
             {
-                new object[] { "@startDate", DateTime.Today.ToString("yyyy-MM-dd") },
-                new object[] { "@endDate", DateTime.Today.ToString("yyyy-MM-dd") },
+                new object[] { "@startDate", dtm.ToString("yyyy-MM-dd") },
+                new object[] { "@endDate", dtm.ToString("yyyy-MM-dd") },
                 new object[] { "@locationID", location }
             };
             if (dbc.MakeDataBaseCallToReturnInt(sqlCmd,parms) > 0)
@@ -103,7 +103,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             return bolTA;
         }
-        public bool cashoutAlreadyDone(int location)
+        public bool cashoutAlreadyDone(int location, DateTime dtm)
         {
             bool bolCAD = false;
             string sqlCmd = "SELECT COUNT(cashoutDate) from tbl_cashout "
@@ -111,8 +111,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         + "AND locationID = @locationID";
             object[][] parms =
             {
-                new object[] { "@startDate", DateTime.Today.ToString("yyyy-MM-dd") },
-                new object[] { "@endDate", DateTime.Today.ToString("yyyy-MM-dd") },
+                new object[] { "@startDate", dtm.ToString("yyyy-MM-dd") },
+                new object[] { "@endDate", dtm.ToString("yyyy-MM-dd") },
                 new object[] { "@locationID", location }
             };
             if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)

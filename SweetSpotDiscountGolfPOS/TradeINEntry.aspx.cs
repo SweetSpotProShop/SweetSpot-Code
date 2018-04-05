@@ -105,13 +105,22 @@ namespace SweetSpotDiscountGolfPOS
                 IM.AddTradeInItemToTempTable(tradeIN);
 
                 //change cost and price for cart
-                tradeIN.price = (tradeIN.cost * (-1));
-                tradeIN.cost = 0;
-
                 InvoiceItemsManager IIM = new InvoiceItemsManager();
-                string desc = IM.ReturnBrandlNameFromBrandID(tradeIN.brandID) + " " + IM.ReturnModelNameFromModelID(tradeIN.modelID) + " " + tradeIN.clubSpec + " " + tradeIN.clubType + " " + tradeIN.shaftSpec + " " + tradeIN.shaftFlex + " " + tradeIN.dexterity;
-                //this adds to the actual cart for sale
-                IIM.InsertItemIntoSalesCart(Request.QueryString["inv"].ToString(), tradeIN.sku, tradeIN.quantity, desc, tradeIN.cost, tradeIN.price, 0, false, true, 1);
+                InvoiceItems selectedTradeIn = new InvoiceItems();
+                selectedTradeIn.invoiceNum = Convert.ToInt32(Request.QueryString["inv"][1]);
+                selectedTradeIn.invoiceSubNum = Convert.ToInt32(Request.QueryString["inv"][2]);
+                selectedTradeIn.sku = tradeIN.sku;
+                selectedTradeIn.quantity = tradeIN.quantity;
+                selectedTradeIn.description = IM.ReturnBrandlNameFromBrandID(tradeIN.brandID) + " " + IM.ReturnModelNameFromModelID(tradeIN.modelID) + " " + tradeIN.clubSpec + " " + tradeIN.clubType + " " + tradeIN.shaftSpec + " " + tradeIN.shaftFlex + " " + tradeIN.dexterity;
+                selectedTradeIn.cost = 0;
+                selectedTradeIn.price = tradeIN.cost * (-1);
+                selectedTradeIn.itemDiscount = 0;
+                selectedTradeIn.itemRefund = 0;
+                selectedTradeIn.percentage = false;
+                selectedTradeIn.isTradeIn = true;
+                selectedTradeIn.typeID = 1;
+
+                IIM.InsertItemIntoSalesCart(selectedTradeIn);
                 //Closing the trade in information window
                 string redirect = "<script>window.close('TradeINEntry.aspx');</script>";
                 Response.Write(redirect);
