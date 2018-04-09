@@ -4,6 +4,7 @@ using SweetSpotDiscountGolfPOS.ClassLibrary;
 using SweetSpotProShop;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -26,9 +27,9 @@ namespace SweetSpotDiscountGolfPOS
         DateTime startDate;
         DateTime endDate;
 
-        List<Items> items = new List<Items>();
-        List<Items> models = new List<Items>();
-        List<Items> brands = new List<Items>();
+        System.Data.DataTable items = new System.Data.DataTable();
+        System.Data.DataTable models = new System.Data.DataTable();
+        System.Data.DataTable brands = new System.Data.DataTable();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -62,13 +63,19 @@ namespace SweetSpotDiscountGolfPOS
                         lblDates.Text = "Items sold for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
                     }
 
+                    items.Columns.Add("sku");
+                    items.Columns.Add("amountSold");
+                    brands.Columns.Add("brand");
+                    brands.Columns.Add("amountSold");
+                    models.Columns.Add("models");
+                    models.Columns.Add("amountSold");
 
                     //Binding the gridview
-                    items = r.mostSoldItemsReport1(startDate, endDate, locationID);
-                    brands = r.mostSoldBrandsReport1(startDate, endDate, locationID);
-                    models = r.mostSoldModelsReport1(startDate, endDate, locationID);
+                    items = r.mostSoldItemsReport(startDate, endDate, locationID);
+                    brands = r.mostSoldBrandsReport(startDate, endDate, locationID);
+                    models = r.mostSoldModelsReport(startDate, endDate, locationID);
                     //Checking if there are any values
-                    if (items.Count > 0 && brands.Count > 0 && models.Count > 0)
+                    if (items.Rows.Count > 0 && brands.Rows.Count > 0 && models.Rows.Count > 0)
                     {
                         grdItems.DataSource = items;
                         grdItems.DataBind();
@@ -127,32 +134,32 @@ namespace SweetSpotDiscountGolfPOS
                     modelsPage.Cells[3, 1].Value = "Model"; modelsPage.Cells[3, 2].Value = "Times Sold";
                     brandsPage.Cells[3, 1].Value = "Brand"; brandsPage.Cells[3, 2].Value = "Times Sold"; 
                     int recordIndexItems = 4;
-                    if (items.Count > 0)
+                    if (items.Rows.Count > 0)
                     {
-                        foreach (Items i in items) //Should be InvoiceItem Class not Item
+                        foreach (DataRow i in items.Rows) 
                         {
-                            itemsPage.Cells[recordIndexItems, 1].Value = i.sku;
-                            //itemsPage.Cells[recordIndexItems, 2].Value = i.amountSold;
+                            itemsPage.Cells[recordIndexItems, 1].Value = i[0];
+                            itemsPage.Cells[recordIndexItems, 2].Value = i[1];
                             recordIndexItems++;
                         }
                     }
                     int recordIndexModels = 4;
-                    if (models.Count > 0)
+                    if (models.Rows.Count > 0)
                     {
-                        foreach (Items m in models) //Should be InvoiceItem Class not Item
+                        foreach (DataRow m in models.Rows) 
                         {
-                            modelsPage.Cells[recordIndexModels, 1].Value = m.description;
-                            //modelsPage.Cells[recordIndexModels, 2].Value = m.amountSold;
+                            modelsPage.Cells[recordIndexModels, 1].Value = m[0];
+                            modelsPage.Cells[recordIndexModels, 2].Value = m[1];
                             recordIndexModels++;
                         }
                     }
                     int recordIndexBrands = 4;
-                    if (brands.Count > 0)
+                    if (brands.Rows.Count > 0)
                     {
-                        foreach (Items b in brands) //Should be InvoiceItem Class not Item
+                        foreach (DataRow b in brands.Rows) 
                         {
-                            brandsPage.Cells[recordIndexBrands, 1].Value = b.description;
-                            //brandsPage.Cells[recordIndexBrands, 2].Value = b.amountSold;
+                            brandsPage.Cells[recordIndexBrands, 1].Value = b[0];
+                            brandsPage.Cells[recordIndexBrands, 2].Value = b[1];
                             recordIndexBrands++;
                         }
                     }

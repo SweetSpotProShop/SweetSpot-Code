@@ -46,7 +46,7 @@ namespace SweetSpotDiscountGolfPOS
                         DateTime[] rptDate = { startDate, endDate };
                         int locationID = Convert.ToInt32(Request.QueryString["location"].ToString());
                         object[] passing = { rptDate, locationID };
-                        lblDates.Text = "Items sold on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + L.locationName(locationID);
+                        lblDates.Text = "Cashout report for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + L.locationName(locationID);
                         dt = R.ReturnCashoutsForSelectedDates(passing);
                         grdCashoutByDate.DataSource = dt;
                         grdCashoutByDate.DataBind();
@@ -71,6 +71,14 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnDownload_Click";
             try
             {
+                //Gathering the start and end dates
+                DateTime startDate = DateTime.Parse(Request.QueryString["from"].ToString());
+                DateTime endDate = DateTime.Parse(Request.QueryString["to"].ToString());
+                DateTime[] rptDate = { startDate, endDate };
+                int locationID = Convert.ToInt32(Request.QueryString["location"].ToString());
+                object[] passing = { rptDate, locationID };
+                dt = R.ReturnCashoutsForSelectedDates(passing);
+
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
@@ -82,17 +90,78 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     //Creates a seperate sheet for each data table
                     ExcelWorksheet salesExport = xlPackage.Workbook.Worksheets.Add("CashOut");
-                    // write to sheet   
+                    //Title
+                    salesExport.Cells[1, 1, 1, 11].Merge = true;
                     salesExport.Cells[1, 1].Value = lblDates.Text;
+                    salesExport.Cells[1, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    salesExport.Cells[1, 1].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                    //Headers
                     salesExport.Cells[2, 1].Value = "Date";
-                    salesExport.Cells[2, 2].Value = "Sales Dollars";
+                    salesExport.Cells[2, 3].Value = "Trade-In";
+                    salesExport.Cells[2, 4].Value = "Gift Card";
+                    salesExport.Cells[2, 5].Value = "Cash";
+                    salesExport.Cells[2, 6].Value = "Debit";
+                    salesExport.Cells[2, 7].Value = "MasterCard";
+                    salesExport.Cells[2, 8].Value = "Visa";
+                    salesExport.Cells[2, 9].Value = "Over/Short";
+                    salesExport.Cells[2, 10].Value = "Processed";
+                    salesExport.Cells[2, 11].Value = "Finalized";
+                    salesExport.Cells[2, 1, 2, 11].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+
+                    //salesExport.Cells[2, 2].Value = "Sales Dollars";
                     int recordIndex = 3;
                     foreach (DataRow row in dt.Rows)
                     {
+                        //Date
                         DateTime d = (DateTime)row[0];
+                        salesExport.Cells[recordIndex, 1, recordIndex + 1, 1].Merge = true;
                         salesExport.Cells[recordIndex, 1].Value = d.ToString("d");
-                        salesExport.Cells[recordIndex, 2].Value = row[1].ToString();
-                        recordIndex++;
+                        salesExport.Cells[recordIndex, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        salesExport.Cells[recordIndex, 1].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                        //Receipt over Sale
+                        salesExport.Cells[recordIndex, 2].Value = "Receipts:";
+                        salesExport.Cells[recordIndex + 1, 2].Value = "Sales:";
+                        //TradeIn
+                        salesExport.Cells[recordIndex, 3].Value = Convert.ToDouble(row[3].ToString());
+                        salesExport.Cells[recordIndex + 1, 3].Value = Convert.ToDouble(row[2].ToString());
+                        //GiftCard
+                        salesExport.Cells[recordIndex, 4].Value = Convert.ToDouble(row[5].ToString());
+                        salesExport.Cells[recordIndex + 1, 4].Value = Convert.ToDouble(row[4].ToString());
+                        //Cash
+                        salesExport.Cells[recordIndex, 5].Value = Convert.ToDouble(row[7].ToString());
+                        salesExport.Cells[recordIndex + 1, 5].Value = Convert.ToDouble(row[6].ToString());
+                        //Debit
+                        salesExport.Cells[recordIndex, 6].Value = Convert.ToDouble(row[9].ToString());
+                        salesExport.Cells[recordIndex + 1, 6].Value = Convert.ToDouble(row[8].ToString());
+                        //MasterCard
+                        salesExport.Cells[recordIndex, 7].Value = Convert.ToDouble(row[11].ToString());
+                        salesExport.Cells[recordIndex + 1, 7].Value = Convert.ToDouble(row[10].ToString());
+                        //Visa
+                        salesExport.Cells[recordIndex, 8].Value = Convert.ToDouble(row[13].ToString());
+                        salesExport.Cells[recordIndex + 1, 8].Value = Convert.ToDouble(row[12].ToString());
+                        //Over/Short
+                        salesExport.Cells[recordIndex, 9, recordIndex + 1, 9].Merge = true;
+                        salesExport.Cells[recordIndex, 9].Value = Convert.ToDouble(row[14].ToString());
+                        salesExport.Cells[recordIndex, 9].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        salesExport.Cells[recordIndex, 9].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                        //Processed
+                        salesExport.Cells[recordIndex, 10, recordIndex + 1, 10].Merge = true;
+                        salesExport.Cells[recordIndex, 10].Value = row[15].ToString();
+                        salesExport.Cells[recordIndex, 10].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        salesExport.Cells[recordIndex, 10].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                        //Finalized
+                        salesExport.Cells[recordIndex, 11, recordIndex + 1, 11].Merge = true;
+                        salesExport.Cells[recordIndex, 11].Value = row[16].ToString();
+                        salesExport.Cells[recordIndex, 11].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        salesExport.Cells[recordIndex, 11].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                        //Border
+                        salesExport.Cells[recordIndex, 1, recordIndex + 1, 11].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                        //Converting numbers to numbers
+                        salesExport.Cells[recordIndex, 3, recordIndex + 1, 9].Style.Numberformat.Format = "#,##0.00";
+                        //Autofit columns
+                        salesExport.Cells[2, 1, recordIndex + 1, 11].AutoFitColumns();
+                        //Incrementng the row
+                        recordIndex = recordIndex + 2;
                     }
                     Response.Clear();
                     Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");

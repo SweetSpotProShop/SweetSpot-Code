@@ -456,100 +456,88 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
 
         //******************MARKETING REPORTING*******************************************************
-        public List<Cart> mostSoldItemsReport(DateTime startDate, DateTime endDate, int locationID)
+        public System.Data.DataTable mostSoldItemsReport(DateTime startDate, DateTime endDate, int locationID)
         {
-            List<Cart> items = new List<Cart>();
-
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "create table #temp(sku int primary key, amountSold int, brand varchar(300), model varchar(300)) " +
+            string query = "create table #temp(sku int primary key, amountSold int) " +
                                     "insert into #temp " +
-                                    "select tbl_invoiceItem.sku, count(tbl_invoiceItem.sku) as 'amount sold', " +
-                                    "case when(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clubs.brandID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku)) is not null then " +
-                                    " (select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clubs.brandID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku))  " +
-                                    "when(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_accessories.brandID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) is not null then " +
-                                    "(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_accessories.brandID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) " +
-                                    "when(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clothing.brandID from tbl_clothing where tbl_clothing.sku = tbl_invoiceItem.sku)) is not null then " +
-                                    "(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clothing.brandID from tbl_clothing where tbl_clothing.sku = tbl_invoiceItem.sku)) " +
-                                    "end as 'brand', " +
-                                    "case when(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_clubs.modelID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku)) is not null then " +
-                                    "(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_clubs.modelID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku))  " +
-                                    "when(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_accessories.modelID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) is not null then " +
-                                    "(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_accessories.modelID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) " +
-                                    "end as 'model' " +
+                                    "select tbl_invoiceItem.sku, " +
+                                    "count(tbl_invoiceItem.sku) as 'amount sold' " +                   
                                     "from tbl_invoiceItem inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) " +
                                     "and tbl_invoice.invoiceDate between @startDate and @endDate and tbl_invoice.locationID = @locationID " +
                                     "group by sku order by 'amount sold' desc; " +
                                     "select top 10 sku as 'tempSKU', amountSold as 'tempAmountSold' from #temp order by amountSold desc; " +
                                     "drop table #temp; ";
-            cmd.Parameters.AddWithValue("@startDate", startDate);
-            cmd.Parameters.AddWithValue("@endDate", endDate);
-            cmd.Parameters.AddWithValue("@locationID", locationID);
-            cmd.Connection = con;
-            con.Open();
-            SqlDataReader iReader = cmd.ExecuteReader();
-            while (iReader.Read())
-            {
-                //items.Add(new Cart(Convert.ToInt32(iReader["tempSKU"]),"", Convert.ToInt32(iReader["tempAmountSold"]), 0, 0, 0, false, 0, false, 0));
-            }
-            con.Close();
-            return items;
-        }
-        public List<Cart> mostSoldBrandsReport(DateTime startDate, DateTime endDate, int locationID)
-        {
-            List<Cart> brands = new List<Cart>();
-
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "create table #temp(sku int primary key, amountSold int, brand varchar(300), model varchar(300)) " +
+            //Creating the datatable
+            System.Data.DataTable dt = new System.Data.DataTable(); dt.Columns.Add("sku"); dt.Columns.Add("amountSold");
+            using (cmd = new SqlCommand(query, con))
+            using (var da = new SqlDataAdapter(cmd))
+            {
+                cmd.Parameters.AddWithValue("@startDate", startDate);
+                cmd.Parameters.AddWithValue("@endDate", endDate);
+                cmd.Parameters.AddWithValue("@locationID", locationID);
+                //Filling the table with what is found
+                da.Fill(dt);
+            }
+
+
+            System.Data.DataTable data = new System.Data.DataTable(); data.Columns.Add("sku"); data.Columns.Add("amountSold");
+            foreach (DataRow row in dt.Rows)
+            {
+                data.Rows.Add(row[2].ToString(), row[3].ToString());
+            }           
+            return data;
+        }
+        public System.Data.DataTable mostSoldBrandsReport(DateTime startDate, DateTime endDate, int locationID)
+        {
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            string query = "create table #temp(brand varchar(300)) " +
                                     "insert into #temp " +
-                                    "select tbl_invoiceItem.sku, count(tbl_invoiceItem.sku) as 'amount sold', " +
-                                    "case when(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clubs.brandID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku)) is not null then " +
+                                    "select " +
+                                    "CASE WHEN(SELECT tbl_brand.brandName FROM tbl_brand WHERE tbl_brand.brandID = (SELECT tbl_clubs.brandID FROM tbl_clubs WHERE tbl_clubs.sku = tbl_invoiceItem.sku)) is not null then " +
                                     " (select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clubs.brandID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku))  " +
                                     "when(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_accessories.brandID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) is not null then " +
                                     "(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_accessories.brandID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) " +
                                     "when(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clothing.brandID from tbl_clothing where tbl_clothing.sku = tbl_invoiceItem.sku)) is not null then " +
                                     "(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clothing.brandID from tbl_clothing where tbl_clothing.sku = tbl_invoiceItem.sku)) " +
-                                    "end as 'brand', " +
-                                    "case when(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_clubs.modelID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku)) is not null then " +
-                                    "(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_clubs.modelID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku))  " +
-                                    "when(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_accessories.modelID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) is not null then " +
-                                    "(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_accessories.modelID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) " +
-                                    "end as 'model' " +
+                                    "else " +
+                                    " '' " +
+                                    "end as 'brand' " +                  
                                     "from tbl_invoiceItem inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) " +
-                                    "and tbl_invoice.invoiceDate between @startDate and @endDate and tbl_invoice.locationID = @locationID " +
-                                    "group by sku order by 'amount sold' desc; " +
+                                    "and tbl_invoice.invoiceDate between @startDate and @endDate and tbl_invoice.locationID = @locationID ;" +
                                     "select top 10 brand, count(brand) as 'brandSold' from #temp group by brand order by 'brandSold' desc; " +
                                     "drop table #temp; ";
-            cmd.Parameters.AddWithValue("@startDate", startDate);
-            cmd.Parameters.AddWithValue("@endDate", endDate);
-            cmd.Parameters.AddWithValue("@locationID", locationID);
-            cmd.Connection = con;
-            con.Open();
-            SqlDataReader bReader = cmd.ExecuteReader();
-            while (bReader.Read())
+            
+            
+            System.Data.DataTable dt = new System.Data.DataTable();
+            dt.Columns.Add("brand");
+            dt.Columns.Add("amountSold");
+            using (cmd = new SqlCommand(query, con)) 
+            using (var da = new SqlDataAdapter(cmd))
             {
-                //brands.Add(new Cart(0, bReader["brand"].ToString(), Convert.ToInt32(bReader["brandSold"]), 0, 0 , 0, false, 0, false, 0));
+                cmd.Parameters.AddWithValue("@startDate", startDate);
+                cmd.Parameters.AddWithValue("@endDate", endDate);
+                cmd.Parameters.AddWithValue("@locationID", locationID);
+                //Filling the table with what is found
+                da.Fill(dt);
             }
-            con.Close();
-            return brands;
-        }
-        public List<Cart> mostSoldModelsReport(DateTime startDate, DateTime endDate, int locationID)
-        {
-            List<Cart> models = new List<Cart>();
 
+            System.Data.DataTable data = new System.Data.DataTable(); data.Columns.Add("brand"); data.Columns.Add("amountSold");
+            foreach (DataRow row in dt.Rows)
+            {
+                data.Rows.Add(row[0].ToString(), row[2].ToString());
+            }
+            return data;
+        }
+        public System.Data.DataTable mostSoldModelsReport(DateTime startDate, DateTime endDate, int locationID)
+        {
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "create table #temp(sku int primary key, amountSold int, brand varchar(300), model varchar(300)) " +
+            string query = "create table #temp(model varchar(300)) " +
                                     "insert into #temp " +
-                                    "select tbl_invoiceItem.sku, count(tbl_invoiceItem.sku) as 'amount sold', " +
-                                    "case when(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clubs.brandID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku)) is not null then " +
-                                    " (select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clubs.brandID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku))  " +
-                                    "when(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_accessories.brandID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) is not null then " +
-                                    "(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_accessories.brandID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) " +
-                                    "when(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clothing.brandID from tbl_clothing where tbl_clothing.sku = tbl_invoiceItem.sku)) is not null then " +
-                                    "(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clothing.brandID from tbl_clothing where tbl_clothing.sku = tbl_invoiceItem.sku)) " +
-                                    "end as 'brand', " +
+                                    "select " +
                                     "case when(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_clubs.modelID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku)) is not null then " +
                                     "(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_clubs.modelID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku))  " +
                                     "when(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_accessories.modelID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) is not null then " +
@@ -557,21 +545,28 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                     "end as 'model' " +
                                     "from tbl_invoiceItem inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) " +
                                     "and tbl_invoice.invoiceDate between @startDate and @endDate and tbl_invoice.locationID = @locationID " +
-                                    "group by sku order by 'amount sold' desc; " +
                                     "select top 10 model, count(model) as 'modelSold' from #temp group by model order by 'modelSold' desc; " +
                                     "drop table #temp; ";
-            cmd.Parameters.AddWithValue("@startDate", startDate);
-            cmd.Parameters.AddWithValue("@endDate", endDate);
-            cmd.Parameters.AddWithValue("@locationID", locationID);
-            cmd.Connection = con;
-            con.Open();
-            SqlDataReader mReader = cmd.ExecuteReader();
-            while (mReader.Read())
+            
+            
+            System.Data.DataTable dt = new System.Data.DataTable();
+            dt.Columns.Add("model");
+            dt.Columns.Add("amountSold");
+            using (cmd = new SqlCommand(query, con))
+            using (var da = new SqlDataAdapter(cmd))
             {
-                //models.Add(new Cart(0, mReader["model"].ToString(), Convert.ToInt32(mReader["modelSold"]), 0, 0, 0, false, 0, false, 0));
+                cmd.Parameters.AddWithValue("@startDate", startDate);
+                cmd.Parameters.AddWithValue("@endDate", endDate);
+                cmd.Parameters.AddWithValue("@locationID", locationID);
+                //Filling the table with what is found
+                da.Fill(dt);
             }
-            con.Close();
-            return models;
+            System.Data.DataTable data = new System.Data.DataTable(); data.Columns.Add("model"); data.Columns.Add("amountSold");
+            foreach (DataRow row in dt.Rows)
+            {
+                data.Rows.Add(row[0].ToString(), row[2].ToString());
+            }
+            return data;
         }
 
 
@@ -847,7 +842,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         {
             bool bolTA = false;
             DateTime[] dtm = (DateTime[])repInfo[0];
-            string sqlCmd = "SeELECT COUNT(invoiceNum) FROM tbl_invoice "
+            string sqlCmd = "SELECT COUNT(invoiceNum) FROM tbl_invoice "
                         + "WHERE invoiceDate BETWEEN @startDate AND @endDate "
                         + "AND locationID = @locationID";
             object[][] parms =
