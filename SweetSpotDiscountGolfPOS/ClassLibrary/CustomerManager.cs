@@ -151,10 +151,10 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public void updateCustomer(Customer c)
         {
             //New command
-            string sqlCmd = "Update tbl_customers Set firstName = @FirstName, lastName = @LastName, primaryAddress = @primaryAddress,"
+            string sqlCmd = "UPDATE tbl_customers SET firstName = @FirstName, lastName = @LastName, primaryAddress = @primaryAddress,"
                 + " secondaryAddress = @secondaryAddress, primaryPhoneINT = @primaryPhoneNumber, secondaryPhoneINT = @secondaryPhoneNumber,"
                 + " marketingEmail = @marketingEmail, email = @Email, city = @City, provStateID = @Province, country = @Country,"
-                + " postZip = @PostalCode Where custID = @CustomerID";
+                + " postZip = @PostalCode WHERE custID = @CustomerID";
 
             Object[][] parms =
             {

@@ -50,7 +50,7 @@
                 <Columns>
                     <asp:TemplateField HeaderText="Brand" ControlStyle-Width="300px">
                         <ItemTemplate>
-                            <asp:Label ID="lblBrand" runat="server" Text='<%#Eval("description")%>'></asp:Label>
+                            <asp:Label ID="lblBrand" runat="server" Text='<%#Eval("brand")%>'></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Times Sold" ControlStyle-Width="300px">
@@ -68,7 +68,7 @@
                 <Columns>
                     <asp:TemplateField HeaderText="Model" ControlStyle-Width="300px">
                         <ItemTemplate>
-                            <asp:Label ID="lblModel" runat="server" Text='<%#Eval("description")%>'></asp:Label>
+                            <asp:Label ID="lblModel" runat="server" Text='<%#Eval("model")%>'></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Times Sold" ControlStyle-Width="300px">

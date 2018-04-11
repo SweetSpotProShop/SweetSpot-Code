@@ -192,14 +192,14 @@ namespace SweetShop
             {
                 new object[] { "@pWord", pWord }
             };
-            
+
             //Checks to see if the password is already in use
             if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) < 0)
             {
-                
+
                 //When password not in use check if the employee is already in the user info table
                 sqlCmd = "Select empID from tbl_userInfo where empID = @empID";
-                Object[][] parms1 = 
+                Object[][] parms1 =
                 {
                     new object [] { "@empID", empID }
                 };
@@ -223,7 +223,7 @@ namespace SweetShop
                 dbc.executeInsertQuery(sqlCmd, parms2);
                 bolAdded = true;
             }
-            
+
             return bolAdded;
         }
         public List<CurrentUser> ReturnCurrentUserFromPassword(string password)
@@ -237,8 +237,27 @@ namespace SweetShop
             };
             return ConvertFromDataTableToCurrentUser(dbc.returnDataTableData(sqlCmd, parms));
         }
+        //Password check to complete a Sale
+        public bool returnCanEmployeeMakeSale(string empPassword)
+        {
+            bool bolValid = false;
 
+            int jobID = ExecuteJobIDCheck(empPassword);
 
+            if (jobID > 0) { bolValid = true; }
+            return bolValid;
+        }
+        private int ExecuteJobIDCheck(string empPassword)
+        {
+            string sqlCmd = "SELECT E.jobID FROM tbl_employee E JOIN tbl_userInfo U "
+                + "ON E.empID = U.empID WHERE U.password = @password";
+
+            object[][] parms =
+            {
+                new object[] { "@password", empPassword }
+            };
+            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms);
+        }
 
 
         //Retrieves Employee from search parameters Nathan and Tyler created
@@ -386,44 +405,22 @@ namespace SweetShop
             //Returns the job name
             return job;
         }
-        public int returnEmployeeIDFromPassword(int empPassword)
-        {
-            int empID = 0;
-            SqlConnection conn = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = conn;
-            cmd.CommandText = "SELECT empID FROM tbl_userInfo Where password = @empPassword";
-            cmd.Parameters.AddWithValue("empPassword", empPassword);
-            conn.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                empID = Convert.ToInt32(reader["empID"]);
-            }
-            conn.Close();
-            return empID;
-        }
-        public bool returnCanEmployeeMakeSale(int empID)
-        {
-            bool bolValid = false;
-            int jobID = 0;
-            if (empID != 0)
-            {
-                SqlConnection conn = new SqlConnection(connectionString);
-                SqlCommand cmd = new SqlCommand();
-                cmd.Connection = conn;
-                cmd.CommandText = "SELECT jobID FROM tbl_employee Where empID = @empID";
-                cmd.Parameters.AddWithValue("empID", empID);
-                conn.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    jobID = Convert.ToInt32(reader["jobID"]);
-                }
-                conn.Close();
-                if(jobID !=-0) { bolValid = true; }
-            }
-            return bolValid;
-        }
+        //public int returnEmployeeIDFromPassword(int empPassword)
+        //{
+        //    int empID = 0;
+        //    SqlConnection conn = new SqlConnection(connectionString);
+        //    SqlCommand cmd = new SqlCommand();
+        //    cmd.Connection = conn;
+        //    cmd.CommandText = "SELECT empID FROM tbl_userInfo Where password = @empPassword";
+        //    cmd.Parameters.AddWithValue("empPassword", empPassword);
+        //    conn.Open();
+        //    SqlDataReader reader = cmd.ExecuteReader();
+        //    while (reader.Read())
+        //    {
+        //        empID = Convert.ToInt32(reader["empID"]);
+        //    }
+        //    conn.Close();
+        //    return empID;
+        //}
     }
 }

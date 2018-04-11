@@ -30,6 +30,7 @@ namespace SweetShop
         public List<InvoiceMOPs> usedMops { get; set; }
         public int transactionType { get; set; }
         public string comments { get; set; }
+        public string transactionName { get; set; }
 
         public string customerName { get; set; }
         public string employeeName { get; set; }
@@ -57,7 +58,7 @@ namespace SweetShop
         }
         public Invoice(int I, int S, DateTime D, DateTime T, Customer CID, Employee EID,
             Location LID, double ST, double SA, double DA, double TA, double G, double P, 
-            double BD, List<InvoiceItems> SoldItems, List<InvoiceMOPs> UsedMops, int TT, string C)
+            double BD, List<InvoiceItems> SoldItems, List<InvoiceMOPs> UsedMops, int TT, string TN, string C)
         {
             invoiceNum = I;
             invoiceSub = S;
@@ -76,6 +77,7 @@ namespace SweetShop
             soldItems = SoldItems;
             usedMops = UsedMops;
             transactionType = TT;
+            transactionName = TN;
             comments = C;
         }
 
@@ -168,6 +170,29 @@ namespace SweetShop
             employeeName = e;
             discountAmount = da;
             balanceDue = bd;
+        }
+        public Invoice(int I, int S, DateTime D, DateTime T, Customer CID, Employee EID,
+            Location LID, double ST, double SA, double DA, double TA, double G, double P,
+            double BD, List<InvoiceItems> SoldItems, List<InvoiceMOPs> UsedMops, int TT, string C)
+        {
+            invoiceNum = I;
+            invoiceSub = S;
+            invoiceDate = D;
+            invoiceTime = T;
+            customer = CID;
+            employee = EID;
+            location = LID;
+            subTotal = ST;
+            shippingAmount = SA;
+            discountAmount = DA;
+            tradeinAmount = TA;
+            governmentTax = G;
+            provincialTax = P;
+            balanceDue = BD;
+            soldItems = SoldItems;
+            usedMops = UsedMops;
+            transactionType = TT;
+            comments = C;
         }
     }
 }

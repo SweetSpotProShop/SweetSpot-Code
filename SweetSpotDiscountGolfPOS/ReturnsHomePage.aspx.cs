@@ -28,14 +28,17 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "SalesHomePage.aspx";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Response.Redirect("LoginPage.aspx", false);
                 }
-                if (!IsPostBack) { calSearchDate.SelectedDate = DateTime.Today; }
+                else
+                {
+                    CU = (CurrentUser)Session["currentUser"];
+                    if (!IsPostBack) { calSearchDate.SelectedDate = DateTime.Today; }
+                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -44,9 +47,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         //Searches invoices and displays them 
@@ -67,9 +70,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         protected void grdInvoiceSelection_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -82,15 +85,12 @@ namespace SweetSpotDiscountGolfPOS
                 if (e.CommandName == "returnInvoice")
                 {
                     //Retrieves all the invoices that were searched
-                    List<Invoice> returnInvoice = IM.ReturnInvoice(Convert.ToString(e.CommandArgument));
-                    //Sets the Customer key id
-                    Session["key"] = returnInvoice[0].customer.customerId;
-                    //Sets the session to the single invoice
-                    Session["searchReturnInvoices"] = returnInvoice[0];
-                    //Sets transaction type to return
-                    Session["TranType"] = 2;
+                    Invoice RI = IM.ReturnInvoice(Convert.ToString(e.CommandArgument))[0];
+                    var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                    string invoice = CU.locationName + "-" + RI.invoiceNum + "-" + IM.CalculateNextInvoiceSubNum(RI.invoiceNum);
+                    nameValues.Set("inv", invoice);
                     //Changes to Returns cart
-                    Response.Redirect("ReturnsCart.aspx", false);
+                    Response.Redirect("ReturnsCart.aspx?" + nameValues, false);
                 }
             }
             //Exception catch
@@ -100,9 +100,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
 
@@ -114,9 +114,9 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
     }

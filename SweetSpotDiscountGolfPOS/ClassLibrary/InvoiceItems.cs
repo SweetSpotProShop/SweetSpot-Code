@@ -9,44 +9,41 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
     //Used in storing the items from a sale in the database
     public class InvoiceItems
     {
+
+        //Specific to Invoice Items class
         public int invoiceNum { get; set; }
         public int invoiceSubNum { get; set; }
-        public int sku { get; set; }
-        public string itemDescription { get; set; }
-        public int itemQuantity { get; set; }
-        public double itemCost { get; set; }
-        public double itemPrice { get; set; }
-        public double itemDiscount { get; set; }
         public double itemRefund { get; set; }
-        public bool percentage { get; set; }
 
+        //Tied to both classes
+        public int sku { get; set; }
+        public string description { get; set; }
+        public int quantity { get; set; }
+        public double cost { get; set; }
+        public double price { get; set; }
+        public double itemDiscount { get; set; }
+        public bool percentage { get; set; }
+        public int typeID { get; set; }
+        public bool isTradeIn { get; set; }
+
+        //May be able to amalgamate all into one and then remove the Items and ItemsManager Classes
         public InvoiceItems(){}
-        public InvoiceItems(int InvoiceNum, int InvoiceSubNum, int Sku, int ItemQuantity, double ItemCost, double ItemPrice, 
-            double ItemDiscount, double ItemRefund, bool Percentage)
+        //InvoiceItemsInCurrentSalesItems
+        public InvoiceItems(int InvoiceNum, int InvoiceSubNum, int Sku, string Description, int Quantity, double Cost,
+            double Price, double ItemDiscount, double ItemRefund, bool Percentage, int TypeID, bool isTradeIN)
         {
             invoiceNum = InvoiceNum;
             invoiceSubNum = InvoiceSubNum;
             sku = Sku;
-            itemQuantity = ItemQuantity;
-            itemCost = ItemCost;
-            itemPrice = ItemPrice;
+            description = Description;
+            quantity = Quantity;
+            cost = Cost;
+            price = Price;
             itemDiscount = ItemDiscount;
             itemRefund = ItemRefund;
             percentage = Percentage;
-        }
-        public InvoiceItems(int InvoiceNum, int InvoiceSubNum, int Sku, string ItemDescription, int ItemQuantity, double ItemCost, 
-            double ItemPrice, double ItemDiscount, double ItemRefund, bool Percentage)
-        {
-            invoiceNum = InvoiceNum;
-            invoiceSubNum = InvoiceSubNum;
-            sku = Sku;
-            itemDescription = ItemDescription;
-            itemQuantity = ItemQuantity;
-            itemCost = ItemCost;
-            itemPrice = ItemPrice;
-            itemDiscount = ItemDiscount;
-            itemRefund = ItemRefund;
-            percentage = Percentage;
+            typeID = TypeID;
+            isTradeIn = isTradeIN;
         }
     }
 }

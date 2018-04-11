@@ -42,48 +42,50 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "ReportsCOGSvsPM";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Server.Transfer("LoginPage.aspx", false);
                 }
-
-                //Gathering the start and end dates
-                Object[] passing = (Object[])Session["reportInfo"];
-                DateTime[] reportDates = (DateTime[])passing[0];
-                startDate = reportDates[0];
-                endDate = reportDates[1];
-                locationID = (int)passing[1];
-                //Builds string to display in label
-                if (startDate == endDate)
-                {
-                    lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("d") + " for " + l.locationName(locationID);
-                }
                 else
                 {
-                    lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
-                }                
-                //Binding the gridview
-                inv = r.returnInvoicesForCOGS(startDate, endDate, locationID);
-                //Checking if there are any values
-                if (inv.Count > 0)
-                {
-                    grdInvoiceSelection.DataSource = inv;
-                    grdInvoiceSelection.DataBind();
-                }
-                else
-                {
+                    CU = (CurrentUser)Session["currentUser"];
+                    //Gathering the start and end dates
+                    Object[] passing = (Object[])Session["reportInfo"];
+                    DateTime[] reportDates = (DateTime[])passing[0];
+                    startDate = reportDates[0];
+                    endDate = reportDates[1];
+                    locationID = (int)passing[1];
+                    //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "There are no invoices for: " + startDate.ToString("d");
+                        lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("d") + " for " + l.locationName(locationID);
                     }
                     else
                     {
-                        lblDates.Text = "There are no invoices for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
+                        lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
                     }
-                    grdInvoiceSelection.Visible = false;
+                    //Binding the gridview
+                    inv = r.returnInvoicesForCOGS(startDate, endDate, locationID);
+                    //Checking if there are any values
+                    if (inv.Count > 0)
+                    {
+                        grdInvoiceSelection.DataSource = inv;
+                        grdInvoiceSelection.DataBind();
+                    }
+                    else
+                    {
+                        if (startDate == endDate)
+                        {
+                            lblDates.Text = "There are no invoices for: " + startDate.ToString("d");
+                        }
+                        else
+                        {
+                            lblDates.Text = "There are no invoices for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
+                        }
+                        grdInvoiceSelection.Visible = false;
+                    }
                 }
             }
             //Exception catch
@@ -93,9 +95,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         protected void lbtnInvoiceNumber_Click(object sender, EventArgs e)
@@ -138,9 +140,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         protected void grdInvoiceSelection_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -238,9 +240,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
     }

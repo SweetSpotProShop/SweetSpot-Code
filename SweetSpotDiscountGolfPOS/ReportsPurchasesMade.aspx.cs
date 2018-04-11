@@ -36,31 +36,33 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "ReportsPurchasesMade.aspx";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Server.Transfer("LoginPage.aspx", false);
                 }
-
-                //Gathering the start and end dates
-                Object[] repInfo = (Object[])Session["reportInfo"];
-                DateTime[] reportDates = (DateTime[])repInfo[0];
-                DateTime startDate = reportDates[0];
-                DateTime endDate = reportDates[1];
-                int locationID = (int)repInfo[1];
-                //Builds string to display in label
-                lblPurchasesMadeDate.Text = "Purchases Made Between: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
-                //Creating a cashout list and calling a method that grabs all mops and amounts paid
-                purch = reports.returnPurchasesDuringDates(startDate, endDate, locationID);
-                grdPurchasesMade.DataSource = purch;
-                grdPurchasesMade.DataBind();
-                foreach (GridViewRow row in grdPurchasesMade.Rows)
+                else
                 {
-                    foreach (TableCell cell in row.Cells)
+                    CU = (CurrentUser)Session["currentUser"];
+                    //Gathering the start and end dates
+                    Object[] repInfo = (Object[])Session["reportInfo"];
+                    DateTime[] reportDates = (DateTime[])repInfo[0];
+                    DateTime startDate = reportDates[0];
+                    DateTime endDate = reportDates[1];
+                    int locationID = (int)repInfo[1];
+                    //Builds string to display in label
+                    lblPurchasesMadeDate.Text = "Purchases Made Between: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
+                    //Creating a cashout list and calling a method that grabs all mops and amounts paid
+                    purch = reports.returnPurchasesDuringDates(startDate, endDate, locationID);
+                    grdPurchasesMade.DataSource = purch;
+                    grdPurchasesMade.DataBind();
+                    foreach (GridViewRow row in grdPurchasesMade.Rows)
                     {
-                        cell.Attributes.CssStyle["text-align"] = "center";
+                        foreach (TableCell cell in row.Cells)
+                        {
+                            cell.Attributes.CssStyle["text-align"] = "center";
+                        }
                     }
                 }
             }
@@ -71,9 +73,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         protected void grdPurchasesMade_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -109,9 +111,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         protected void lbtnReceiptNumber_Click(object sender, EventArgs e)
@@ -146,9 +148,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         protected void btnDownload_Click(object sender, EventArgs e)
@@ -200,9 +202,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
     }

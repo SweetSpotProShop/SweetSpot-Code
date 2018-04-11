@@ -1,9 +1,11 @@
-﻿using SweetShop;
+﻿using OfficeOpenXml;
+using SweetShop;
 using SweetSpotDiscountGolfPOS.ClassLibrary;
 using SweetSpotProShop;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Web;
@@ -16,122 +18,157 @@ namespace SweetSpotDiscountGolfPOS
     {
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU = new CurrentUser();
-
-        SweetShopManager ssm = new SweetShopManager();
-        DateTime startDate;
-        DateTime endDate;
-        Employee e;
-        Reports reports = new Reports();
-        ItemDataUtilities idu = new ItemDataUtilities();
-        LocationManager l = new LocationManager();
-        double cashoutTotal;
-        double mcTotal = 0;
-        double visaTotal = 0;
-        double giftCertTotal = 0;
-        double cashTotal = 0;
-        double debitTotal = 0;
-        double tradeinTotal = 0;
-        double subtotalTotal;
-        double pstTotal = 0;
-        double gstTotal = 0;
-        double receiptTotal = 0;
-        double receiptMCTotal;// = 0;
-        double receiptVisaTotal;// = 0;        
-        double receiptGiftCertTotal;// = 0;
-        double receiptCashTotal;// = 0;        
-        double receiptDebitTotal;// = 0;
-        double receiptSubTotalTotal;
-        double receiptGSTTotal;
-        double receiptPSTTotal;
-        double receiptTradeinTotal;// = 0;
-        double overShort = 0;
-        bool finalized = false;
-        bool processed = false;
-        double shippingTotal;
+        Reports R = new Reports();
+        LocationManager L = new LocationManager();
+        DataTable dt = new DataTable();
 
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
             string method = "Page_Load";
-            Session["currPage"] = "ReportsCashOut.aspx";
+            Session["currPage"] = "ReportsCashOut";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Server.Transfer("LoginPage.aspx", false);
                 }
-
-                //Gathering the start and end dates
-                Object[] repInfo = (Object[])Session["reportInfo"];
-                DateTime[] reportDates = (DateTime[])repInfo[0];
-                startDate = reportDates[0];
-                endDate = reportDates[1];
-                int locationID = (int)repInfo[1];
-                //Builds string to display in label
-                if (startDate == endDate)
-                {
-                    lblCashoutDate.Text = "Cashout on: " + startDate.ToString("d") + " for " + l.locationName(locationID);
-                }
                 else
                 {
-                    lblCashoutDate.Text = "Cashout on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
+                    if (!IsPostBack)
+                    {
+                        CU = (CurrentUser)Session["currentUser"];
+                        //Gathering the start and end dates
+                        DateTime startDate = DateTime.Parse(Request.QueryString["from"].ToString());
+                        DateTime endDate = DateTime.Parse(Request.QueryString["to"].ToString());
+                        DateTime[] rptDate = { startDate, endDate };
+                        int locationID = Convert.ToInt32(Request.QueryString["location"].ToString());
+                        object[] passing = { rptDate, locationID };
+                        lblDates.Text = "Cashout report for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + L.locationName(locationID);
+                        dt = R.ReturnCashoutsForSelectedDates(passing);
+                        grdCashoutByDate.DataSource = dt;
+                        grdCashoutByDate.DataBind();
+                    }
                 }
-                //Creating a cashout list and calling a method that grabs all mops and amounts paid
-                List<Cashout> lc = reports.cashoutAmounts(startDate, endDate, locationID);
-                Cashout rc = reports.getRemainingCashout(startDate, endDate, locationID);
-                //Looping through the list and adding up the totals
-                foreach (Cashout ch in lc)
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+        protected void btnDownload_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnDownload_Click";
+            try
+            {
+                //Gathering the start and end dates
+                DateTime startDate = DateTime.Parse(Request.QueryString["from"].ToString());
+                DateTime endDate = DateTime.Parse(Request.QueryString["to"].ToString());
+                DateTime[] rptDate = { startDate, endDate };
+                int locationID = Convert.ToInt32(Request.QueryString["location"].ToString());
+                object[] passing = { rptDate, locationID };
+                dt = R.ReturnCashoutsForSelectedDates(passing);
+
+                //Sets path and file name to download report to
+                string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                string pathDownload = (pathUser + "\\Downloads\\");
+                string loc = L.locationName(Convert.ToInt32(Request.QueryString["location"].ToString()));
+                string fileName = "CashOut Report by Date - " + loc + ".xlsx";
+
+                FileInfo newFile = new FileInfo(pathDownload + fileName);
+                using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
-                    if (ch.mop == "Visa")
+                    //Creates a seperate sheet for each data table
+                    ExcelWorksheet salesExport = xlPackage.Workbook.Worksheets.Add("CashOut");
+                    //Title
+                    salesExport.Cells[1, 1, 1, 11].Merge = true;
+                    salesExport.Cells[1, 1].Value = lblDates.Text;
+                    salesExport.Cells[1, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    salesExport.Cells[1, 1].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                    //Headers
+                    salesExport.Cells[2, 1].Value = "Date";
+                    salesExport.Cells[2, 3].Value = "Trade-In";
+                    salesExport.Cells[2, 4].Value = "Gift Card";
+                    salesExport.Cells[2, 5].Value = "Cash";
+                    salesExport.Cells[2, 6].Value = "Debit";
+                    salesExport.Cells[2, 7].Value = "MasterCard";
+                    salesExport.Cells[2, 8].Value = "Visa";
+                    salesExport.Cells[2, 9].Value = "Over/Short";
+                    salesExport.Cells[2, 10].Value = "Processed";
+                    salesExport.Cells[2, 11].Value = "Finalized";
+                    salesExport.Cells[2, 1, 2, 11].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+
+                    //salesExport.Cells[2, 2].Value = "Sales Dollars";
+                    int recordIndex = 3;
+                    foreach (DataRow row in dt.Rows)
                     {
-                        visaTotal += ch.amount;
+                        //Date
+                        DateTime d = (DateTime)row[0];
+                        salesExport.Cells[recordIndex, 1, recordIndex + 1, 1].Merge = true;
+                        salesExport.Cells[recordIndex, 1].Value = d.ToString("d");
+                        salesExport.Cells[recordIndex, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        salesExport.Cells[recordIndex, 1].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                        //Receipt over Sale
+                        salesExport.Cells[recordIndex, 2].Value = "Receipts:";
+                        salesExport.Cells[recordIndex + 1, 2].Value = "Sales:";
+                        //TradeIn
+                        salesExport.Cells[recordIndex, 3].Value = Convert.ToDouble(row[3].ToString());
+                        salesExport.Cells[recordIndex + 1, 3].Value = Convert.ToDouble(row[2].ToString());
+                        //GiftCard
+                        salesExport.Cells[recordIndex, 4].Value = Convert.ToDouble(row[5].ToString());
+                        salesExport.Cells[recordIndex + 1, 4].Value = Convert.ToDouble(row[4].ToString());
+                        //Cash
+                        salesExport.Cells[recordIndex, 5].Value = Convert.ToDouble(row[7].ToString());
+                        salesExport.Cells[recordIndex + 1, 5].Value = Convert.ToDouble(row[6].ToString());
+                        //Debit
+                        salesExport.Cells[recordIndex, 6].Value = Convert.ToDouble(row[9].ToString());
+                        salesExport.Cells[recordIndex + 1, 6].Value = Convert.ToDouble(row[8].ToString());
+                        //MasterCard
+                        salesExport.Cells[recordIndex, 7].Value = Convert.ToDouble(row[11].ToString());
+                        salesExport.Cells[recordIndex + 1, 7].Value = Convert.ToDouble(row[10].ToString());
+                        //Visa
+                        salesExport.Cells[recordIndex, 8].Value = Convert.ToDouble(row[13].ToString());
+                        salesExport.Cells[recordIndex + 1, 8].Value = Convert.ToDouble(row[12].ToString());
+                        //Over/Short
+                        salesExport.Cells[recordIndex, 9, recordIndex + 1, 9].Merge = true;
+                        salesExport.Cells[recordIndex, 9].Value = Convert.ToDouble(row[14].ToString());
+                        salesExport.Cells[recordIndex, 9].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        salesExport.Cells[recordIndex, 9].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                        //Processed
+                        salesExport.Cells[recordIndex, 10, recordIndex + 1, 10].Merge = true;
+                        salesExport.Cells[recordIndex, 10].Value = row[15].ToString();
+                        salesExport.Cells[recordIndex, 10].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        salesExport.Cells[recordIndex, 10].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                        //Finalized
+                        salesExport.Cells[recordIndex, 11, recordIndex + 1, 11].Merge = true;
+                        salesExport.Cells[recordIndex, 11].Value = row[16].ToString();
+                        salesExport.Cells[recordIndex, 11].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        salesExport.Cells[recordIndex, 11].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                        //Border
+                        salesExport.Cells[recordIndex, 1, recordIndex + 1, 11].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                        //Converting numbers to numbers
+                        salesExport.Cells[recordIndex, 3, recordIndex + 1, 9].Style.Numberformat.Format = "#,##0.00";
+                        //Autofit columns
+                        salesExport.Cells[2, 1, recordIndex + 1, 11].AutoFitColumns();
+                        //Incrementng the row
+                        recordIndex = recordIndex + 2;
                     }
-                    else if (ch.mop == "MasterCard")
-                    {
-                        mcTotal += ch.amount;
-                    }
-                    else if (ch.mop == "Cash")
-                    {
-                        cashTotal += ch.amount;
-                    }
-                    else if (ch.mop == "Gift Card")
-                    {
-                        giftCertTotal += ch.amount;
-                    }
-                    else if (ch.mop == "Debit")
-                    {
-                        debitTotal += ch.amount;
-                    }
-                    cashoutTotal += ch.amount;
+                    Response.Clear();
+                    Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
+                    Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    Response.BinaryWrite(xlPackage.GetAsByteArray());
+                    Response.End();
                 }
-                //Gathers total amount of trade ins done through date range
-
-                //Calculates a subtotal, gst, and pst
-                subtotalTotal = rc.saleSubTotal;
-                gstTotal = rc.saleGST;
-                pstTotal = rc.salePST;
-                tradeinTotal = rc.saleTradeIn * (-1);
-                shippingTotal = rc.shippingAmount;
-                cashoutTotal += tradeinTotal;
-
-                Cashout cas = new Cashout(tradeinTotal, giftCertTotal, cashTotal,
-                    debitTotal, mcTotal, visaTotal, gstTotal, pstTotal, subtotalTotal);
-                //Store the cashout in a Session
-                Session["saleCashout"] = cas;
-                //Display all totals into labels
-                lblVisaDisplay.Text = visaTotal.ToString("C");
-                lblMasterCardDisplay.Text = mcTotal.ToString("C");
-                lblCashDisplay.Text = cashTotal.ToString("C");
-                lblGiftCardDisplay.Text = giftCertTotal.ToString("C");
-                lblDebitDisplay.Text = debitTotal.ToString("C");
-                lblTradeInDisplay.Text = tradeinTotal.ToString("C");
-                lblTotalDisplay.Text = cashoutTotal.ToString("C");
-                lblGSTDisplay.Text = gstTotal.ToString("C");
-                lblPSTDisplay.Text = pstTotal.ToString("C");
-                lblPreTaxDisplay.Text = (subtotalTotal + tradeinTotal + shippingTotal).ToString("C");
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -140,62 +177,38 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
-        //Calculating the cashout
-        protected void btnCalculate_Click(object sender, EventArgs e)
+        protected void grdCashoutByDate_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            //Collects current method for error tracking
-            string method = "btnCalculate_Click";
+            //Collects current method and page for error tracking
+            string method = "grdCashoutByDate_RowCommand";
             try
             {
-                //If nothing is entered, setting text to 0.00 and the total to 0
-                if (txtCash.Text == "") { txtCash.Text = "0.00"; receiptCashTotal = 0; }
-                if (txtDebit.Text == "") { txtDebit.Text = "0.00"; receiptDebitTotal = 0; }
-                if (txtGiftCard.Text == "") { txtGiftCard.Text = "0.00"; receiptGiftCertTotal = 0; }
-                if (txtMasterCard.Text == "") { txtMasterCard.Text = "0.00"; receiptMCTotal = 0; }
-                if (txtTradeIn.Text == "") { txtTradeIn.Text = "0.00"; receiptTradeinTotal = 0; }
-                if (txtVisa.Text == "") { txtVisa.Text = "0.00"; receiptVisaTotal = 0; }
-
-                //Giving values to the entered totals
-                receiptCashTotal = Convert.ToDouble(txtCash.Text);
-                receiptDebitTotal = Convert.ToDouble(txtDebit.Text);
-                receiptGiftCertTotal = Convert.ToDouble(txtGiftCard.Text);
-                receiptMCTotal = Convert.ToDouble(txtMasterCard.Text);
-                receiptTradeinTotal = Convert.ToDouble(txtTradeIn.Text);
-                receiptVisaTotal = Convert.ToDouble(txtVisa.Text);
-
-                //The calculation of the receipt total
-                receiptTotal = receiptCashTotal +
-                    receiptDebitTotal + receiptGiftCertTotal + receiptMCTotal +
-                    receiptTradeinTotal + receiptVisaTotal;
-
-                //Setting the text for the receipt and sales totals
-                lblReceiptsFinal.Text = receiptTotal.ToString("C");
-                lblTotalFinal.Text = cashoutTotal.ToString("C");
-
-                //Calculating overShort
-                overShort = receiptTotal - cashoutTotal;
-
-                //Checking over or under
-                if (overShort >= 0)
+                if (e.CommandName == "EditCashout")
                 {
-                    lblOverShortFinal.Text = overShort.ToString("C");
+                    string arg = e.CommandArgument.ToString();
+                    var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                    nameValues.Set("dtm", arg.Split(' ')[0]);
+                    nameValues.Set("location", arg.Split(' ')[1]);
+                    //Changes to the Reports Cash Out page
+                    Response.Redirect("SalesCashOut.aspx?" + nameValues, false);
                 }
-                else if (overShort < 0)
+                else if (e.CommandName == "FinalizeCashout")
                 {
-                    lblOverShortFinal.Text = "(" + overShort.ToString("C") + ")";
+                    R.FinalizeCashout(e.CommandArgument.ToString());
+                    DateTime startDate = DateTime.Parse(Request.QueryString["from"].ToString());
+                    DateTime endDate = DateTime.Parse(Request.QueryString["to"].ToString());
+                    DateTime[] rptDate = { startDate, endDate };
+                    int locationID = Convert.ToInt32(Request.QueryString["location"].ToString());
+                    object[] passing = { rptDate, locationID };
+                    dt = R.ReturnCashoutsForSelectedDates(passing);
+                    grdCashoutByDate.DataSource = dt;
+                    grdCashoutByDate.DataBind();
                 }
-
-                //Storing in session
-                Cashout cas = new Cashout("lol", receiptTradeinTotal, receiptGiftCertTotal,
-                    receiptCashTotal, receiptDebitTotal,
-                    receiptMCTotal, receiptVisaTotal, receiptGSTTotal, receiptPSTTotal,
-                    receiptSubTotalTotal, overShort);
-                Session["receiptCashout"] = cas;
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -204,25 +217,57 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
-        //Clearing the entered amounts
-        protected void btnClear_Click(object sender, EventArgs e)
+        protected void grdCashoutByDate_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            //Collects current method for error tracking
-            string method = "btnClear_Click";
+            //Collects current method and page for error tracking
+            string method = "grdCashoutByDate_RowDataBound";
             try
             {
-                //Blanking the textboxes
-                txtCash.Text = "";
-                txtDebit.Text = "";
-                txtGiftCard.Text = "";
-                txtMasterCard.Text = "";
-                txtTradeIn.Text = "";
-                txtVisa.Text = "";
+                if (e.Row.RowType == DataControlRowType.DataRow)
+                {
+                    if (Convert.ToInt32(DataBinder.Eval(e.Row.DataItem, "finalized")) == 1)
+                    {
+                        Button edit = (Button)e.Row.FindControl("btnEdit");
+                        edit.Enabled = false;
+                        Button final = (Button)e.Row.FindControl("btnFinalize");
+                        final.Enabled = false;
+                    }
+                    Label trade = (Label)e.Row.FindControl("lblTradeInBalance");
+                    Label gift = (Label)e.Row.FindControl("lblGiftCardBalance");
+                    Label cash = (Label)e.Row.FindControl("lblCashBalance");
+                    Label debit = (Label)e.Row.FindControl("lblDebitBalance");
+                    Label master = (Label)e.Row.FindControl("lblMasterCardBalance");
+                    Label visa = (Label)e.Row.FindControl("lblVisaBalance");
+                    if (trade.Text == "Discrepancy")
+                    {
+                        trade.ForeColor = System.Drawing.Color.Red;
+                    }
+                    if (gift.Text == "Discrepancy")
+                    {
+                        gift.ForeColor = System.Drawing.Color.Red;
+                    }
+                    if (cash.Text == "Discrepancy")
+                    {
+                        cash.ForeColor = System.Drawing.Color.Red;
+                    }
+                    if (debit.Text == "Discrepancy")
+                    {
+                        debit.ForeColor = System.Drawing.Color.Red;
+                    }
+                    if (master.Text == "Discrepancy")
+                    {
+                        master.ForeColor = System.Drawing.Color.Red;
+                    }
+                    if (visa.Text == "Discrepancy")
+                    {
+                        visa.ForeColor = System.Drawing.Color.Red;
+                    }
+                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -231,71 +276,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
-            }
-        }
-        protected void printReport(object sender, EventArgs e)
-        {
-            //Collects current method for error tracking
-            string method = "printReport";
-            //Current method does nothing
-            try
-            { }
-            //Exception catch
-            catch (ThreadAbortException tae) { }
-            catch (Exception ex)
-            {
-                //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
-                //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
-            }
-        }
-        protected void btnProcessReport_Click(object sender, EventArgs e)
-        {
-            //Collects current method for error tracking
-            string method = "btnProcessReport_Click";
-            try
-            {
-                //Sets date and time
-                Object[] repInfo = (Object[])Session["reportInfo"];
-                DateTime[] reportDates = (DateTime[])repInfo[0];
-                string date = reportDates[0].ToString();
-                string time = DateTime.Now.ToString("HH:mm:ss");
-                //Grabs cashouts from stored sessions
-                Cashout s = (Cashout)Session["saleCashout"];
-                Cashout r = (Cashout)Session["receiptCashout"];
-
-                processed = true;
-                //Creates new cashout
-                Cashout cas = new Cashout(date, time, s.saleTradeIn, s.saleGiftCard,
-                    s.saleCash, s.saleDebit, s.saleMasterCard, s.saleVisa, s.saleGST, s.salePST, s.saleSubTotal, //subtotal?
-                    r.receiptTradeIn, r.receiptGiftCard, r.receiptCash,
-                    r.receiptDebit, r.receiptMasterCard, r.receiptVisa, r.receiptGST, r.receiptPST, r.receiptSubTotal, r.overShort,
-                    finalized, processed, Double.Parse(lblPreTaxDisplay.Text, System.Globalization.NumberStyles.Currency), CU.locationID, CU.empID);
-                //Processes as done
-                reports.insertCashout(cas);
-                //Empties current cashout sessions
-                Session["saleCashout"] = null;
-                Session["receiptCashout"] = null;
-                MessageBox.ShowMessage("Cashout has been processed", this);
-                btnPrint.Enabled = true;
-                btnProcessReport.Enabled = false;
-            }
-            //Exception catch
-            catch (ThreadAbortException tae) { }
-            catch (Exception ex)
-            {
-                //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
-                //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
     }

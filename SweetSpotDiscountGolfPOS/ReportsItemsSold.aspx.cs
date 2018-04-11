@@ -10,6 +10,7 @@ using System.Threading;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Data;
 
 namespace SweetSpotDiscountGolfPOS
 {
@@ -29,7 +30,7 @@ namespace SweetSpotDiscountGolfPOS
         double tPrice;
         //double tDiscount;
         double tProfit;
-        List<Items> items = new List<Items>();
+        DataTable items = new DataTable();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -38,47 +39,49 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "ReportsItemsSold";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Server.Transfer("LoginPage.aspx", false);
                 }
-
-                //Gathering the start and end dates
-                Object[] passing = (Object[])Session["reportInfo"];
-                DateTime[] reportDates = (DateTime[])passing[0];
-                DateTime startDate = reportDates[0];
-                DateTime endDate = reportDates[1];
-                int locationID = (int)passing[1];
-                //Builds string to display in label
-                if (startDate == endDate)
-                {
-                    lblDates.Text = "Items sold on: " + startDate.ToString("d") + " for " + l.locationName(locationID);
-                }
                 else
                 {
-                    lblDates.Text = "Items sold on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
-                }
-
-                //Binding the gridview
-                items = r.returnItemsSold(startDate, endDate, locationID);
-                //Checking if there are any values
-                if (items.Count > 0)
-                {
-                    grdItems.DataSource = items;
-                    grdItems.DataBind();
-                }
-                else
-                {
+                    CU = (CurrentUser)Session["currentUser"];
+                    //Gathering the start and end dates
+                    Object[] passing = (Object[])Session["reportInfo"];
+                    DateTime[] reportDates = (DateTime[])passing[0];
+                    DateTime startDate = reportDates[0];
+                    DateTime endDate = reportDates[1];
+                    int locationID = (int)passing[1];
+                    //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "There are no items sold for: " + startDate.ToString("d");
+                        lblDates.Text = "Items sold on: " + startDate.ToString("d") + " for " + l.locationName(locationID);
                     }
                     else
                     {
-                        lblDates.Text = "There are no items sold for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
+                        lblDates.Text = "Items sold on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
+                    }
+
+                    //Binding the gridview
+                    items = r.returnItemsSold(startDate, endDate, locationID);
+                    //Checking if there are any values
+                    if (items.Rows.Count > 0)
+                    {
+                        grdItems.DataSource = items;
+                        grdItems.DataBind();
+                    }
+                    else
+                    {
+                        if (startDate == endDate)
+                        {
+                            lblDates.Text = "There are no items sold for: " + startDate.ToString("d");
+                        }
+                        else
+                        {
+                            lblDates.Text = "There are no items sold for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
+                        }
                     }
                 }
             }
@@ -89,9 +92,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         protected void grdItems_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -123,7 +126,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 tCost += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "cost"));
                 tPrice += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "price"));
-                tProfit += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "difference"));
+                tProfit += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "profit"));
             }
             else if (e.Row.RowType == DataControlRowType.Footer)
             {
@@ -172,9 +175,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         protected void btnDownload_Click(object sender, EventArgs e)
@@ -203,21 +206,22 @@ namespace SweetSpotDiscountGolfPOS
                     itemsSoldExport.Cells[2, 5].Value = "Item Discount";
                     itemsSoldExport.Cells[2, 6].Value = "Item Profit";
                     int recordIndex = 3;
-                    foreach (Items i in items)
+                    foreach (DataRow i in items.Rows) 
                     {
-                        itemsSoldExport.Cells[recordIndex, 1].Value = i.invoice;
-                        itemsSoldExport.Cells[recordIndex, 2].Value = i.sku;
-                        itemsSoldExport.Cells[recordIndex, 3].Value = i.cost;
-                        itemsSoldExport.Cells[recordIndex, 4].Value = i.price;
-                        if (i.percent)
+                        //itemsSoldExport.Cells[recordIndex, 1].Value = i.invoice;
+                        itemsSoldExport.Cells[recordIndex, 1].Value = i[0].ToString();
+                        itemsSoldExport.Cells[recordIndex, 2].Value = i[1].ToString();
+                        itemsSoldExport.Cells[recordIndex, 3].Value = Convert.ToDouble(i[2].ToString());
+                        itemsSoldExport.Cells[recordIndex, 4].Value = Convert.ToDouble(i[3].ToString());
+                        if (Convert.ToBoolean(i[5]))
                         {
-                            itemsSoldExport.Cells[recordIndex, 5].Value = i.discount + "%";
+                            itemsSoldExport.Cells[recordIndex, 5].Value = i[4].ToString() + "%";
                         }
                         else
                         {
-                            itemsSoldExport.Cells[recordIndex, 5].Value = "$" + i.discount;
+                            itemsSoldExport.Cells[recordIndex, 5].Value = "$" + i[4].ToString();
                         }
-                        itemsSoldExport.Cells[recordIndex, 6].Value = i.difference;
+                        itemsSoldExport.Cells[recordIndex, 6].Value = Convert.ToDouble(i[6].ToString());
                         recordIndex++;
                     }
                     Response.Clear();
@@ -234,9 +238,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
     }

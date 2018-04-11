@@ -27,18 +27,20 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "InventoryHomePage";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Response.Redirect("LoginPage.aspx", false);
                 }
-
-                if (CU.jobID != 0)
+                else
                 {
-                    //If user is not an admin then disable the add new item button
-                    btnAddNewInventory.Enabled = false;
+                    CU = (CurrentUser)Session["currentUser"];
+                    if (CU.jobID != 0)
+                    {
+                        //If user is not an admin then disable the add new item button
+                        btnAddNewInventory.Enabled = false;
+                    }
                 }
             }
             //Exception catch
@@ -48,9 +50,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         protected void btnInventorySearch_Click(object sender, EventArgs e)
@@ -81,9 +83,9 @@ namespace SweetSpotDiscountGolfPOS
                     //Log all info into error table
                     ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                     //Display message box
-                    MessageBox.ShowMessage("An Error has occured and been logged. "
+                    MessageBox.ShowMessage("An Error has occurred and been logged. "
                         + "If you continue to receive this message please contact "
-                        + "your system administrator", this);
+                        + "your system administrator.", this);
                 }
             }
         }           
@@ -103,9 +105,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
 
@@ -128,9 +130,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
 
@@ -153,9 +155,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         protected void grdInventorySearched_PageIndexChanging(object sender, GridViewPageEventArgs e)
@@ -479,9 +481,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
     }

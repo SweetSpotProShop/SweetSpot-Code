@@ -42,35 +42,38 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "HomePage.aspx";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Response.Redirect("LoginPage.aspx", false);
                 }
-                if (!this.IsPostBack)
-                {
-                    ddlLocation.DataSource = LM.ReturnLocationDropDown();
-                    ddlLocation.DataTextField = "locationName";
-                    ddlLocation.DataValueField = "locationID";
-                    ddlLocation.DataBind();
-                    ddlLocation.SelectedValue = CU.locationID.ToString();
-                }
-                //Checks user for admin status
-                if (CU.jobID == 0)
-                {
-                    lbluser.Text = "You have Admin Access";
-                    lbluser.Visible = true;
-                }
                 else
                 {
-                    //If no admin status shows location as label instead of drop down
-                    ddlLocation.Enabled = false;
+                    CU = (CurrentUser)Session["currentUser"];
+                    if (!this.IsPostBack)
+                    {
+                        ddlLocation.DataSource = LM.ReturnLocationDropDown();
+                        ddlLocation.DataTextField = "locationName";
+                        ddlLocation.DataValueField = "locationID";
+                        ddlLocation.DataBind();
+                        ddlLocation.SelectedValue = CU.locationID.ToString();
+                    }
+                    //Checks user for admin status
+                    if (CU.jobID == 0)
+                    {
+                        lbluser.Text = "You have Admin Access";
+                        lbluser.Visible = true;
+                    }
+                    else
+                    {
+                        //If no admin status shows location as label instead of drop down
+                        ddlLocation.Enabled = false;
+                    }
+                    //populate gridview with todays sales
+                    grdSameDaySales.DataSource = R.getInvoiceBySaleDate(DateTime.Today, DateTime.Today, Convert.ToInt32(ddlLocation.SelectedValue));
+                    grdSameDaySales.DataBind();
                 }
-                //populate gridview with todays sales
-                grdSameDaySales.DataSource = R.getInvoiceBySaleDate(DateTime.Today, DateTime.Today, Convert.ToInt32(ddlLocation.SelectedValue));
-                grdSameDaySales.DataBind();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -79,9 +82,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         protected void lbtnInvoiceNumber_Click(object sender, EventArgs e)
@@ -103,9 +106,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         protected void grdSameDaySales_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -178,9 +181,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
 

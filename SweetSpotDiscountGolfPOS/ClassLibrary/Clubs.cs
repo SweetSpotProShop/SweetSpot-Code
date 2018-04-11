@@ -25,14 +25,14 @@ namespace SweetShop
         public string shaftFlex { get; set; }
         public string dexterity { get; set; }
         public int itemlocation { get; set; }
-        public bool used { get; set; }
+        public bool isTradeIn { get; set; }
         public string comments { get; set; }
 
         public Clubs() { }
         //*******still used in TradeIn page
         public Clubs(int SKU, int brand, int model, int type, string ClubType, string Shaft, string NumberOfClubs,
             double Premium, double Cost, double Price, int Quantity, string ClubSpec, string ShaftSpec, string ShaftFlex,
-            string Dexterity, bool Used, string Comments)
+            string Dexterity, bool IsTradeIn, string Comments)
         {
             sku = SKU;
             brandID = brand;
@@ -49,13 +49,13 @@ namespace SweetShop
             shaftSpec = ShaftSpec;
             shaftFlex = ShaftFlex;
             dexterity = Dexterity;
-            used = Used;
+            isTradeIn = IsTradeIn;
             comments = Comments;
         }
         //This one has location
         public Clubs(int SKU, int brand, int model, int type, string ClubType, string Shaft, string NumberOfClubs,
             double Premium, double Cost, double Price, int Quantity, string ClubSpec, string ShaftSpec, string ShaftFlex,
-            string Dexterity, int itemLocation, bool Used, string Comments)
+            string Dexterity, int itemLocation, bool IsTradeIn, string Comments)
         {
             sku = SKU;
             brandID = brand;
@@ -73,7 +73,7 @@ namespace SweetShop
             shaftFlex = ShaftFlex;
             dexterity = Dexterity;
             itemlocation = itemLocation;
-            used = Used;
+            isTradeIn = IsTradeIn;
             comments = Comments;
         }
     }

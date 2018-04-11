@@ -292,13 +292,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Button btnCancelSale;
         
         /// <summary>
-        /// btnReturnToCart control.
+        /// btnExitSale control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnReturnToCart;
+        protected global::System.Web.UI.WebControls.Button btnExitSale;
         
         /// <summary>
         /// btnLayaway control.
@@ -308,6 +308,15 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnLayaway;
+        
+        /// <summary>
+        /// btnReturnToCart control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnReturnToCart;
         
         /// <summary>
         /// btnFinalize control.

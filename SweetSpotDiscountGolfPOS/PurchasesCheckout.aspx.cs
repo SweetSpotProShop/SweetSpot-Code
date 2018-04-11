@@ -42,49 +42,52 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "PurchasesCheckout.aspx";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Response.Redirect("LoginPage.aspx", false);
                 }
-                if (!Page.IsPostBack)
+                else
                 {
-                    //Retrieves items in the cart from Session
-                    List<Cart> cart = (List<Cart>)Session["ItemsInCart"];
-                    SalesCalculationManager cm = new SalesCalculationManager();
-                    //Retrieves date from session
-                    DateTime recDate = Convert.ToDateTime(Session["strDate"]);
-                    //Creates checkout manager based on current items in cart
-                    ckm.dblTotal = cm.returnPurchaseAmount(cart);
-                    ckm.dblRemainingBalance = ckm.dblTotal;
-                    //Checks if there are any stored methods of payment
-                    if (Session["MethodsofPayment"] != null)
+                    CU = (CurrentUser)Session["currentUser"];
+                    if (!Page.IsPostBack)
                     {
-                        //Retrieve Mops from session
-                        mopList = (List<Mops>)Session["MethodsofPayment"];
-                        //Loops through each mop
-                        foreach (var mop in mopList)
+                        //Retrieves items in the cart from Session
+                        List<Cart> cart = (List<Cart>)Session["ItemsInCart"];
+                        SalesCalculationManager cm = new SalesCalculationManager();
+                        //Retrieves date from session
+                        DateTime recDate = Convert.ToDateTime(Session["strDate"]);
+                        //Creates checkout manager based on current items in cart
+                        //ckm.dblTotal = cm.returnPurchaseAmount(cart);
+                        ckm.dblRemainingBalance = ckm.dblTotal;
+                        //Checks if there are any stored methods of payment
+                        if (Session["MethodsofPayment"] != null)
                         {
-                            //Adds amount of each mop to the amount paid total
-                            dblAmountPaid += mop.amountPaid;
+                            //Retrieve Mops from session
+                            mopList = (List<Mops>)Session["MethodsofPayment"];
+                            //Loops through each mop
+                            foreach (var mop in mopList)
+                            {
+                                //Adds amount of each mop to the amount paid total
+                                dblAmountPaid += mop.amountPaid;
+                            }
+                            //Binds mops to grid view
+                            gvCurrentMOPs.DataSource = mopList;
+                            gvCurrentMOPs.DataBind();
+                            //Update the amount paid and the remaining balance
+                            ckm.dblAmountPaid = dblAmountPaid;
+                            ckm.dblRemainingBalance = ckm.dblTotal - ckm.dblAmountPaid;
                         }
-                        //Binds mops to grid view
-                        gvCurrentMOPs.DataSource = mopList;
-                        gvCurrentMOPs.DataBind();
-                        //Update the amount paid and the remaining balance
-                        ckm.dblAmountPaid = dblAmountPaid;
-                        ckm.dblRemainingBalance = ckm.dblTotal - ckm.dblAmountPaid;
-                    }
 
-                    //***Assign each item to its Label.
-                    lblTotalPurchaseAmount.Text = "$ " + ckm.dblTotal.ToString("#0.00");
-                    lblRemainingPurchaseDueDisplay.Text = "$ " + ckm.dblRemainingBalance.ToString("#0.00");
-                    //Stores totals in the checkout manager
-                    Session["CheckOutTotals"] = ckm;
-                    //Updates the amount paying with the remaining balance
-                    txtPurchaseAmount.Text = ckm.dblRemainingBalance.ToString("#0.00");
+                        //***Assign each item to its Label.
+                        lblTotalPurchaseAmount.Text = "$ " + ckm.dblTotal.ToString("#0.00");
+                        lblRemainingPurchaseDueDisplay.Text = "$ " + ckm.dblRemainingBalance.ToString("#0.00");
+                        //Stores totals in the checkout manager
+                        Session["CheckOutTotals"] = ckm;
+                        //Updates the amount paying with the remaining balance
+                        txtPurchaseAmount.Text = ckm.dblRemainingBalance.ToString("#0.00");
+                    }
                 }
             }
             //Exception catch
@@ -94,9 +97,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         //Cash
@@ -128,9 +131,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         //Cheque
@@ -162,9 +165,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         //Debit
@@ -196,9 +199,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         //Gift Card
@@ -230,9 +233,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         //Populating gridview with MOPs
@@ -295,9 +298,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         protected void OnRowDeleting(object sender, GridViewDeleteEventArgs e)
@@ -352,9 +355,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         //Other functionality
@@ -388,9 +391,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         protected void btnReturnToPurchaseCart_Click(object sender, EventArgs e)
@@ -410,9 +413,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         protected void btnFinalizePurchase_Click(object sender, EventArgs e)
@@ -461,9 +464,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
     }

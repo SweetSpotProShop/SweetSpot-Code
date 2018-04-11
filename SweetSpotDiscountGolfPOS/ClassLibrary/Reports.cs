@@ -35,7 +35,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         SweetShopManager ssm = new SweetShopManager();
         ItemDataUtilities idu = new ItemDataUtilities();
         LocationManager lm = new LocationManager();
-        Object o = new Object();
+        object o = new object();
         private System.Data.DataTable exportTable;
         private System.Data.DataTable exportInvoiceTable;
         private System.Data.DataTable exportInvoiceItemTable;
@@ -56,7 +56,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 + "tradeinAmount, governmentTax, provincialTax, balanceDue, mopType, amountPaid FROM tbl_invoice inner join tbl_invoiceMOP on tbl_invoice.invoiceNum = tbl_invoiceMOP.invoiceNum "
                 + "and tbl_invoiceMOP.invoiceSubNum = tbl_invoice.invoiceSubNum  WHERE invoiceDate between @startDate and @endDate AND locationID = @locationID  ;";
 
-            Object[][] parms =
+            object[][] parms =
             {
                  new object[] { "@startDate", startDate },
                  new object[] { "@endDate", endDate },
@@ -68,65 +68,79 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
         //*******************CASHOUT UTILITIES*******************************************************
         //Matches new Database Calls
-        public int verifyCashoutCanBeProcessed(Object[] repInfo)
+        public int verifyCashoutCanBeProcessed(int location)
         {
             int indicator = 0;
-            if (transactionsAvailable(repInfo))
+            if (transactionsAvailable(location))
             {
-                if (cashoutAlreadyDone(repInfo))
+                if (openTransactions(location))
                 {
                     indicator = 2;
+                }
+                else if (cashoutAlreadyDone(location))
+                {
+                    indicator = 3;
                 }
             }
             else { indicator = 1; }
             return indicator;
         }
-        public bool transactionsAvailable(Object[] repInfo)
+        public bool transactionsAvailable(int location)
         {
             bool bolTA = false;
-            DateTime[] dtm = (DateTime[])repInfo[0];
-
-            string sqlCmd = "Select count(invoiceNum) from tbl_invoice "
-                        + "where invoiceDate between @startDate and @endDate "
-                        + "and locationID = @locationID";
-            Object[][] parms =
+            string sqlCmd = "SELECT COUNT(invoiceNum) FROM tbl_invoice "
+                        + "WHERE invoiceDate BETWEEN @startDate AND @endDate "
+                        + "AND locationID = @locationID";
+            object[][] parms =
             {
-                new object[] { "@startDate", dtm[0] },
-                new object[] { "@endDate", dtm[1] },
-                new object[] { "@locationID", Convert.ToInt32(repInfo[1]) }
+                new object[] { "@startDate", DateTime.Today.ToString("yyyy-MM-dd") },
+                new object[] { "@endDate", DateTime.Today.ToString("yyyy-MM-dd") },
+                new object[] { "@locationID", location }
             };
 
             if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
             {
                 bolTA = true;
             }
-
             return bolTA;
         }
-        public bool cashoutAlreadyDone(Object[] repInfo)
+        public bool cashoutAlreadyDone(int location)
         {
             bool bolCAD = false;
-            DateTime[] dtm = (DateTime[])repInfo[0];
-
-            string sqlCmd = "Select count(cashoutDate) from tbl_cashout "
-                        + "where cashoutDate between @startDate and @endDate "
-                        + "and locationID = @locationID";
-            Object[][] parms =
+            string sqlCmd = "SELECT COUNT(cashoutDate) from tbl_cashout "
+                        + "WHERE cashoutDate BETWEEN @startDate AND @endDate "
+                        + "AND locationID = @locationID";
+            object[][] parms =
             {
-                new object[] { "@startDate", dtm[0] },
-                new object[] { "@endDate", dtm[1] },
-                new object[] { "@locationID", Convert.ToInt32(repInfo[1]) }
+                new object[] { "@startDate", DateTime.Today.ToString("yyyy-MM-dd") },
+                new object[] { "@endDate", DateTime.Today.ToString("yyyy-MM-dd") },
+                new object[] { "@locationID", location }
             };
-
             if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
             {
                 bolCAD = true;
             }
-
             return bolCAD;
         }
+        private bool openTransactions(int location)
+        {
+            bool bolOT = false;
+            string sqlCmd = "SELECT COUNT(invoiceNum) FROM tbl_currentSalesInvoice "
+                        + "WHERE transactionType = 1 AND locationID = @locationID";
+            object[][] parms =
+            {
+                new object[] { "@locationID", location }
+            };
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            {
+                bolOT = true;
+            }
+            return bolOT;
+        }
+
+
         //This method connects to the database and gets the totals for the MOPs based on location and dates
-        public List<Mops> SumOfMOPSBasedOnLocationAndDateRange(Object[] repInfo)
+        public List<Mops> SumOfMOPSBasedOnLocationAndDateRange(object[] repInfo)
         {
             DateTime[] dtm = (DateTime[])repInfo[0];
 
@@ -146,14 +160,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //Returns the list of Mops types and totals
             return MM.ReturnMopsFromCmdAndParams(sqlCmd, parms);
         }
-        public double SumOfTradeInsBasedOnLocationAndDateRange(Object[] repInfo)
+        public double SumOfTradeInsBasedOnLocationAndDateRange(object[] repInfo)
         {
             DateTime[] dtm = (DateTime[])repInfo[0];
-
             string sqlCmd = "SELECT SUM(tradeinAmount) AS amountPaid "
                 + "FROM tbl_invoice WHERE invoiceDate BETWEEN @startDate "
                 + "AND @endDate AND locationID = @locationID";
-            Object[][] parms =
+            object[][] parms =
             {
                 new object[] { "@startDate", dtm[0] },
                 new object[] { "@endDate", dtm[1] },
@@ -164,92 +177,148 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return dbc.MakeDataBaseCallToReturnDouble(sqlCmd, parms);
         }
 
-
-
-        public List<Cashout> cashoutAmounts(DateTime startDate, DateTime endDate, int locationID)
+        public Cashout CreateNewCashout(DateTime startDate, int locationID)
         {
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "Select tbl_invoiceMOP.mopType, tbl_invoiceMOP.amountPaid " +
-                "from tbl_invoiceMOP " +
-                "INNER JOIN tbl_invoice ON tbl_invoiceMOP.invoiceNum = tbl_invoice.invoiceNum AND tbl_invoiceMOP.invoiceSubNum = tbl_invoice.invoiceSubNum " +
-                "where tbl_invoice.invoiceDate between @startDate and @endDate and tbl_invoice.locationID = @locationID;";
-            cmd.Parameters.AddWithValue("@startDate", startDate);
-            cmd.Parameters.AddWithValue("@endDate", endDate);
-            cmd.Parameters.AddWithValue("@locationID", locationID);
-            cmd.Connection = con;
-            con.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                Cashout cs = new Cashout(
-                    Convert.ToString(reader["mopType"]),
-                    Convert.ToDouble(reader["amountPaid"]));
-                //Adding the mops to the list of type cashout
-                cashout.Add(cs);
-            }
-            con.Close();
-            //Returns the list of type cashout
-            return cashout;
+
+            ////Now need to account for anything in Layaway status
+            ////These queries will need to be updated
+            //Return PivotTable of a list of Mops
+            System.Data.DataTable dt1 = ReturnListOfMOPS(startDate, locationID);
+
+            //Gather remaining Totals (taxes, subtotal(including shipping), tradein)
+            System.Data.DataTable dt2 = ReturnAdditionTotalsForCashout(startDate, locationID);
+
+            //Save all into a cashout and return
+            Cashout C = new Cashout();
+            C.cashoutDate = DateTime.Parse(dt1.Rows[0][0].ToString());
+            C.saleTradeIn = Convert.ToDouble(dt2.Rows[0][0].ToString());
+            C.saleGiftCard = Convert.ToDouble(dt1.Rows[0][3].ToString());
+            C.saleCash = Convert.ToDouble(dt1.Rows[0][1].ToString());
+            C.saleDebit = Convert.ToDouble(dt1.Rows[0][2].ToString());
+            C.saleMasterCard = Convert.ToDouble(dt1.Rows[0][4].ToString());
+            C.saleVisa = Convert.ToDouble(dt1.Rows[0][5].ToString());
+            C.preTax = Convert.ToDouble(dt2.Rows[0][1].ToString());
+            C.saleGST = Convert.ToDouble(dt2.Rows[0][2].ToString());
+            C.salePST = Convert.ToDouble(dt2.Rows[0][3].ToString());
+
+            return C;
         }
+        private System.Data.DataTable ReturnListOfMOPS(DateTime startDate, int locationID)
+        {
+            string sqlCmd = "SELECT invoiceDate, ISNULL([Cash],0) AS Cash, ISNULL([Debit],0) AS Debit, "
+                + "ISNULL([Gift Card],0) AS GiftCard, ISNULL([MasterCard],0) AS Mastercard, ISNULL([Visa],0) AS Visa "
+                + "FROM(SELECT i.invoiceDate, m.mopType, SUM(amountPaid) AS totalPaid "
+                + "FROM tbl_invoiceMOP m join tbl_invoice i ON m.invoiceNum = i.invoiceNum AND m.invoiceSubNum = i.invoiceSubNum "
+                + "WHERE i.invoiceDate = @startDate AND i.locationID = @locationID "
+                + "GROUP BY i.invoiceDate, m.mopType) ps "
+                + "PIVOT(SUM(totalPaid) FOR mopType IN([Cash], [Debit], [Gift Card], [MasterCard], [Visa])) AS pvt";
+
+            object[][] parms =
+            {
+                new object[] { "@startDate", startDate },
+                new object[] { "@locationID", locationID }
+            };
+
+            return dbc.returnDataTableData(sqlCmd, parms);
+        }
+        private System.Data.DataTable ReturnAdditionTotalsForCashout(DateTime startDate, int locationID)
+        {
+            string sqlCmd = "SELECT SUM(tradeinAmount) AS tradeinTotal, "
+                + "SUM(subTotal) + SUM(shippingAmount) AS subTotal, "
+                + "SUM(governmentTax) AS gTax, SUM(provincialtax) AS pTax "
+                + "FROM tbl_invoice WHERE invoiceDate = @startDate AND locationID = @locationID";
+
+            object[][] parms =
+            {
+                new object[] { "@startDate", startDate },
+                new object[] { "@locationID", locationID }
+            };
+            return dbc.returnDataTableData(sqlCmd, parms);
+        }
+        //public List<Cashout> cashoutAmounts(DateTime startDate, DateTime endDate, int locationID)
+        //{
+        //    SqlConnection con = new SqlConnection(connectionString);
+        //    SqlCommand cmd = new SqlCommand();
+        //    cmd.CommandText = "Select tbl_invoiceMOP.mopType, tbl_invoiceMOP.amountPaid " +
+        //        "from tbl_invoiceMOP " +
+        //        "INNER JOIN tbl_invoice ON tbl_invoiceMOP.invoiceNum = tbl_invoice.invoiceNum AND tbl_invoiceMOP.invoiceSubNum = tbl_invoice.invoiceSubNum " +
+        //        "where tbl_invoice.invoiceDate between @startDate and @endDate and tbl_invoice.locationID = @locationID;";
+        //    cmd.Parameters.AddWithValue("@startDate", startDate);
+        //    cmd.Parameters.AddWithValue("@endDate", endDate);
+        //    cmd.Parameters.AddWithValue("@locationID", locationID);
+        //    cmd.Connection = con;
+        //    con.Open();
+        //    SqlDataReader reader = cmd.ExecuteReader();
+        //    while (reader.Read())
+        //    {
+        //        Cashout cs = new Cashout(
+        //            Convert.ToString(reader["mopType"]),
+        //            Convert.ToDouble(reader["amountPaid"]));
+        //        //Adding the mops to the list of type cashout
+        //        cashout.Add(cs);
+        //    }
+        //    con.Close();
+        //    //Returns the list of type cashout
+        //    return cashout;
+        //}
         //Used to get the subTotal, government tax, and provincial tax from the invoices based on a location ID and dates
-        public Cashout getRemainingCashout(DateTime startDate, DateTime endDate, int locationID)
-        {
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "Select " +
-                "sum(tbl_invoice.tradeinAmount) as tradeinTotal, " +
-                "sum(tbl_invoice.subTotal) as subTotal, " +
-                "sum(tbl_invoice.governmentTax) as gTax, " +
-                "sum(tbl_invoice.provincialtax) as pTax, " +
-                "sum(tbl_invoice.shippingAmount) as shippingTotal from tbl_invoice " +
-                "where tbl_invoice.invoiceDate " +
-                "between @startDate and @endDate " +
-                "and tbl_invoice.locationID = @locationID";
-            cmd.Parameters.AddWithValue("@startDate", startDate);
-            cmd.Parameters.AddWithValue("@endDate", endDate);
-            cmd.Parameters.AddWithValue("@locationID", locationID);
-            cmd.Connection = con;
-            con.Open();
-            Cashout cs = new Cashout();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                cs = new Cashout(
-                    Convert.ToDouble(reader["tradeinTotal"]),
-                    Convert.ToDouble(reader["subTotal"]),
-                    Convert.ToDouble(reader["gTax"]),
-                    Convert.ToDouble(reader["pTax"]),
-                    Convert.ToDouble(reader["shippingTotal"]));
-                //Adding the totals to a list of type cashout
+        //public Cashout getRemainingCashout(DateTime startDate, DateTime endDate, int locationID)
+        //{
+        //    SqlConnection con = new SqlConnection(connectionString);
+        //    SqlCommand cmd = new SqlCommand();
+        //    cmd.CommandText = "Select " +
+        //        "sum(tbl_invoice.tradeinAmount) as tradeinTotal, " +
+        //        "sum(tbl_invoice.subTotal) as subTotal, " +
+        //        "sum(tbl_invoice.governmentTax) as gTax, " +
+        //        "sum(tbl_invoice.provincialtax) as pTax, " +
+        //        "sum(tbl_invoice.shippingAmount) as shippingTotal from tbl_invoice " +
+        //        "where tbl_invoice.invoiceDate " +
+        //        "between @startDate and @endDate " +
+        //        "and tbl_invoice.locationID = @locationID";
+        //    cmd.Parameters.AddWithValue("@startDate", startDate);
+        //    cmd.Parameters.AddWithValue("@endDate", endDate);
+        //    cmd.Parameters.AddWithValue("@locationID", locationID);
+        //    cmd.Connection = con;
+        //    con.Open();
+        //    Cashout cs = new Cashout();
+        //    SqlDataReader reader = cmd.ExecuteReader();
+        //    while (reader.Read())
+        //    {
+        //        cs = new Cashout(
+        //            Convert.ToDouble(reader["tradeinTotal"]),
+        //            Convert.ToDouble(reader["subTotal"]),
+        //            Convert.ToDouble(reader["gTax"]),
+        //            Convert.ToDouble(reader["pTax"]),
+        //            Convert.ToDouble(reader["shippingTotal"]));
+        //        //Adding the totals to a list of type cashout
 
-            }
-            con.Close();
-            //Return the list of type cashout
-            return cs;
-        }
+        //    }
+        //    con.Close();
+        //    //Return the list of type cashout
+        //    return cs;
+        //}
         //This method gets the trade in amounts from the invoices based on a location ID and dates
-        public double getTradeInsCashout(DateTime startDate, DateTime endDate, int locationID)
-        {
-            double tradeintotal = 0;
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "Select tradeinAmount from  tbl_invoice" +
-                " where invoiceDate between @startDate and @endDate and locationID = @locationID;";
-            cmd.Parameters.AddWithValue("@startDate", startDate);
-            cmd.Parameters.AddWithValue("@endDate", endDate);
-            cmd.Parameters.AddWithValue("@locationID", locationID);
-            cmd.Connection = con;
-            con.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                tradeintotal += Convert.ToDouble(reader["tradeinAmount"]);
-            }
-            con.Close();
-            //Returns the total value of the trade ins
-            return tradeintotal;
-        }
+        //public double getTradeInsCashout(DateTime startDate, DateTime endDate, int locationID)
+        //{
+        //    double tradeintotal = 0;
+        //    SqlConnection con = new SqlConnection(connectionString);
+        //    SqlCommand cmd = new SqlCommand();
+        //    cmd.CommandText = "Select tradeinAmount from  tbl_invoice" +
+        //        " where invoiceDate between @startDate and @endDate and locationID = @locationID;";
+        //    cmd.Parameters.AddWithValue("@startDate", startDate);
+        //    cmd.Parameters.AddWithValue("@endDate", endDate);
+        //    cmd.Parameters.AddWithValue("@locationID", locationID);
+        //    cmd.Connection = con;
+        //    con.Open();
+        //    SqlDataReader reader = cmd.ExecuteReader();
+        //    while (reader.Read())
+        //    {
+        //        tradeintotal += Convert.ToDouble(reader["tradeinAmount"]);
+        //    }
+        //    con.Close();
+        //    //Returns the total value of the trade ins
+        //    return tradeintotal;
+        //}
         //Insert the cashout into the database
         public void insertCashout(Cashout cas)
         {
@@ -265,8 +334,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             " @preTax, @gTax, @pTax," +
             " @overShort, @finalized, " +
             " @processed, @locID, @empID); ";
-            cmd.Parameters.AddWithValue("@cashoutDate", cas.date);
-            cmd.Parameters.AddWithValue("@cashoutTime", cas.time);
+            cmd.Parameters.AddWithValue("@cashoutDate", cas.cashoutDate);
+            cmd.Parameters.AddWithValue("@cashoutTime", DateTime.Now.ToString("HH:mm:ss"));
             cmd.Parameters.AddWithValue("@saleTradeIn", cas.saleTradeIn);
             cmd.Parameters.AddWithValue("@saleGiftCard", cas.saleGiftCard);
             cmd.Parameters.AddWithValue("@saleCash", cas.saleCash);
@@ -299,7 +368,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
         //******************PURCHASES REPORTING*******************************************************
         //Matches new Database Calls
-        public int verifyPurchasesMade(Object[] repInfo)
+        public int verifyPurchasesMade(object[] repInfo)
         {
             int indicator = 0;
             if (!purchasesAvailable(repInfo))
@@ -308,7 +377,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             return indicator;
         }
-        public bool purchasesAvailable(Object[] repInfo)
+        public bool purchasesAvailable(object[] repInfo)
         {
             bool bolTA = false;
             DateTime[] dtm = (DateTime[])repInfo[0];
@@ -316,7 +385,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string sqlCmd = "Select count(receiptNumber) from tbl_receipt "
                         + "where receiptDate between @startDate and @endDate "
                         + "and locationID = @locationID";
-            Object[][] parms =
+            object[][] parms =
             {
                 new object[] { "@startDate", dtm[0] },
                 new object[] { "@endDate", dtm[1] },
@@ -332,7 +401,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
 
 
-        public bool tradeinsHaveBeenProcessed(Object[] repInfo)
+        public bool tradeinsHaveBeenProcessed(object[] repInfo)
         {
             bool bolTI = false;
             DateTime[] dtm = (DateTime[])repInfo[0];
@@ -388,100 +457,88 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
 
         //******************MARKETING REPORTING*******************************************************
-        public List<Cart> mostSoldItemsReport(DateTime startDate, DateTime endDate, int locationID)
+        public System.Data.DataTable mostSoldItemsReport(DateTime startDate, DateTime endDate, int locationID)
         {
-            List<Cart> items = new List<Cart>();
-
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "create table #temp(sku int primary key, amountSold int, brand varchar(300), model varchar(300)) " +
+            string query = "create table #temp(sku int primary key, amountSold int) " +
                                     "insert into #temp " +
-                                    "select tbl_invoiceItem.sku, count(tbl_invoiceItem.sku) as 'amount sold', " +
-                                    "case when(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clubs.brandID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku)) is not null then " +
-                                    " (select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clubs.brandID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku))  " +
-                                    "when(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_accessories.brandID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) is not null then " +
-                                    "(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_accessories.brandID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) " +
-                                    "when(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clothing.brandID from tbl_clothing where tbl_clothing.sku = tbl_invoiceItem.sku)) is not null then " +
-                                    "(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clothing.brandID from tbl_clothing where tbl_clothing.sku = tbl_invoiceItem.sku)) " +
-                                    "end as 'brand', " +
-                                    "case when(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_clubs.modelID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku)) is not null then " +
-                                    "(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_clubs.modelID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku))  " +
-                                    "when(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_accessories.modelID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) is not null then " +
-                                    "(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_accessories.modelID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) " +
-                                    "end as 'model' " +
+                                    "select tbl_invoiceItem.sku, " +
+                                    "count(tbl_invoiceItem.sku) as 'amount sold' " +
                                     "from tbl_invoiceItem inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) " +
                                     "and tbl_invoice.invoiceDate between @startDate and @endDate and tbl_invoice.locationID = @locationID " +
                                     "group by sku order by 'amount sold' desc; " +
                                     "select top 10 sku as 'tempSKU', amountSold as 'tempAmountSold' from #temp order by amountSold desc; " +
                                     "drop table #temp; ";
-            cmd.Parameters.AddWithValue("@startDate", startDate);
-            cmd.Parameters.AddWithValue("@endDate", endDate);
-            cmd.Parameters.AddWithValue("@locationID", locationID);
-            cmd.Connection = con;
-            con.Open();
-            SqlDataReader iReader = cmd.ExecuteReader();
-            while (iReader.Read())
-            {
-                //items.Add(new Cart(Convert.ToInt32(iReader["tempSKU"]),"", Convert.ToInt32(iReader["tempAmountSold"]), 0, 0, 0, false, 0, false, 0));
-            }
-            con.Close();
-            return items;
-        }
-        public List<Cart> mostSoldBrandsReport(DateTime startDate, DateTime endDate, int locationID)
-        {
-            List<Cart> brands = new List<Cart>();
-
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "create table #temp(sku int primary key, amountSold int, brand varchar(300), model varchar(300)) " +
+            //Creating the datatable
+            System.Data.DataTable dt = new System.Data.DataTable(); dt.Columns.Add("sku"); dt.Columns.Add("amountSold");
+            using (cmd = new SqlCommand(query, con))
+            using (var da = new SqlDataAdapter(cmd))
+            {
+                cmd.Parameters.AddWithValue("@startDate", startDate);
+                cmd.Parameters.AddWithValue("@endDate", endDate);
+                cmd.Parameters.AddWithValue("@locationID", locationID);
+                //Filling the table with what is found
+                da.Fill(dt);
+            }
+
+
+            System.Data.DataTable data = new System.Data.DataTable(); data.Columns.Add("sku"); data.Columns.Add("amountSold");
+            foreach (DataRow row in dt.Rows)
+            {
+                data.Rows.Add(row[2].ToString(), row[3].ToString());
+            }
+            return data;
+        }
+        public System.Data.DataTable mostSoldBrandsReport(DateTime startDate, DateTime endDate, int locationID)
+        {
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            string query = "create table #temp(brand varchar(300)) " +
                                     "insert into #temp " +
-                                    "select tbl_invoiceItem.sku, count(tbl_invoiceItem.sku) as 'amount sold', " +
-                                    "case when(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clubs.brandID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku)) is not null then " +
+                                    "select " +
+                                    "CASE WHEN(SELECT tbl_brand.brandName FROM tbl_brand WHERE tbl_brand.brandID = (SELECT tbl_clubs.brandID FROM tbl_clubs WHERE tbl_clubs.sku = tbl_invoiceItem.sku)) is not null then " +
                                     " (select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clubs.brandID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku))  " +
                                     "when(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_accessories.brandID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) is not null then " +
                                     "(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_accessories.brandID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) " +
                                     "when(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clothing.brandID from tbl_clothing where tbl_clothing.sku = tbl_invoiceItem.sku)) is not null then " +
                                     "(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clothing.brandID from tbl_clothing where tbl_clothing.sku = tbl_invoiceItem.sku)) " +
-                                    "end as 'brand', " +
-                                    "case when(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_clubs.modelID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku)) is not null then " +
-                                    "(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_clubs.modelID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku))  " +
-                                    "when(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_accessories.modelID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) is not null then " +
-                                    "(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_accessories.modelID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) " +
-                                    "end as 'model' " +
+                                    "else " +
+                                    " '' " +
+                                    "end as 'brand' " +
                                     "from tbl_invoiceItem inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) " +
-                                    "and tbl_invoice.invoiceDate between @startDate and @endDate and tbl_invoice.locationID = @locationID " +
-                                    "group by sku order by 'amount sold' desc; " +
+                                    "and tbl_invoice.invoiceDate between @startDate and @endDate and tbl_invoice.locationID = @locationID ;" +
                                     "select top 10 brand, count(brand) as 'brandSold' from #temp group by brand order by 'brandSold' desc; " +
                                     "drop table #temp; ";
-            cmd.Parameters.AddWithValue("@startDate", startDate);
-            cmd.Parameters.AddWithValue("@endDate", endDate);
-            cmd.Parameters.AddWithValue("@locationID", locationID);
-            cmd.Connection = con;
-            con.Open();
-            SqlDataReader bReader = cmd.ExecuteReader();
-            while (bReader.Read())
-            {
-                //brands.Add(new Cart(0, bReader["brand"].ToString(), Convert.ToInt32(bReader["brandSold"]), 0, 0 , 0, false, 0, false, 0));
-            }
-            con.Close();
-            return brands;
-        }
-        public List<Cart> mostSoldModelsReport(DateTime startDate, DateTime endDate, int locationID)
-        {
-            List<Cart> models = new List<Cart>();
 
+
+            System.Data.DataTable dt = new System.Data.DataTable();
+            dt.Columns.Add("brand");
+            dt.Columns.Add("amountSold");
+            using (cmd = new SqlCommand(query, con))
+            using (var da = new SqlDataAdapter(cmd))
+            {
+                cmd.Parameters.AddWithValue("@startDate", startDate);
+                cmd.Parameters.AddWithValue("@endDate", endDate);
+                cmd.Parameters.AddWithValue("@locationID", locationID);
+                //Filling the table with what is found
+                da.Fill(dt);
+            }
+
+            System.Data.DataTable data = new System.Data.DataTable(); data.Columns.Add("brand"); data.Columns.Add("amountSold");
+            foreach (DataRow row in dt.Rows)
+            {
+                data.Rows.Add(row[0].ToString(), row[2].ToString());
+            }
+            return data;
+        }
+        public System.Data.DataTable mostSoldModelsReport(DateTime startDate, DateTime endDate, int locationID)
+        {
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "create table #temp(sku int primary key, amountSold int, brand varchar(300), model varchar(300)) " +
+            string query = "create table #temp(model varchar(300)) " +
                                     "insert into #temp " +
-                                    "select tbl_invoiceItem.sku, count(tbl_invoiceItem.sku) as 'amount sold', " +
-                                    "case when(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clubs.brandID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku)) is not null then " +
-                                    " (select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clubs.brandID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku))  " +
-                                    "when(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_accessories.brandID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) is not null then " +
-                                    "(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_accessories.brandID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) " +
-                                    "when(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clothing.brandID from tbl_clothing where tbl_clothing.sku = tbl_invoiceItem.sku)) is not null then " +
-                                    "(select tbl_brand.brandName from tbl_brand where tbl_brand.brandID = (select tbl_clothing.brandID from tbl_clothing where tbl_clothing.sku = tbl_invoiceItem.sku)) " +
-                                    "end as 'brand', " +
+                                    "select " +
                                     "case when(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_clubs.modelID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku)) is not null then " +
                                     "(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_clubs.modelID from tbl_clubs where tbl_clubs.sku = tbl_invoiceItem.sku))  " +
                                     "when(select tbl_model.modelName from tbl_model where tbl_model.modelID = (select tbl_accessories.modelID from tbl_accessories where tbl_accessories.sku = tbl_invoiceItem.sku)) is not null then " +
@@ -489,21 +546,28 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                     "end as 'model' " +
                                     "from tbl_invoiceItem inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) " +
                                     "and tbl_invoice.invoiceDate between @startDate and @endDate and tbl_invoice.locationID = @locationID " +
-                                    "group by sku order by 'amount sold' desc; " +
                                     "select top 10 model, count(model) as 'modelSold' from #temp group by model order by 'modelSold' desc; " +
                                     "drop table #temp; ";
-            cmd.Parameters.AddWithValue("@startDate", startDate);
-            cmd.Parameters.AddWithValue("@endDate", endDate);
-            cmd.Parameters.AddWithValue("@locationID", locationID);
-            cmd.Connection = con;
-            con.Open();
-            SqlDataReader mReader = cmd.ExecuteReader();
-            while (mReader.Read())
+
+
+            System.Data.DataTable dt = new System.Data.DataTable();
+            dt.Columns.Add("model");
+            dt.Columns.Add("amountSold");
+            using (cmd = new SqlCommand(query, con))
+            using (var da = new SqlDataAdapter(cmd))
             {
-                //models.Add(new Cart(0, mReader["model"].ToString(), Convert.ToInt32(mReader["modelSold"]), 0, 0, 0, false, 0, false, 0));
+                cmd.Parameters.AddWithValue("@startDate", startDate);
+                cmd.Parameters.AddWithValue("@endDate", endDate);
+                cmd.Parameters.AddWithValue("@locationID", locationID);
+                //Filling the table with what is found
+                da.Fill(dt);
             }
-            con.Close();
-            return models;
+            System.Data.DataTable data = new System.Data.DataTable(); data.Columns.Add("model"); data.Columns.Add("amountSold");
+            foreach (DataRow row in dt.Rows)
+            {
+                data.Rows.Add(row[0].ToString(), row[2].ToString());
+            }
+            return data;
         }
 
 
@@ -542,7 +606,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlDataReader iReader = cmd.ExecuteReader();
             while (iReader.Read())
             {
-                items.Add(new Items(Convert.ToInt32(iReader["tempSKU"]), Convert.ToInt32(iReader["tempAmountSold"])));
+                //items.Add(new Items(Convert.ToInt32(iReader["tempSKU"]), Convert.ToInt32(iReader["tempAmountSold"])));
             }
             con.Close();
             return items;
@@ -581,7 +645,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlDataReader bReader = cmd.ExecuteReader();
             while (bReader.Read())
             {
-                brands.Add(new Items(bReader["brand"].ToString(), Convert.ToInt32(bReader["brandSold"])));
+                //brands.Add(new Items(bReader["brand"].ToString(), Convert.ToInt32(bReader["brandSold"])));
             }
             con.Close();
             return brands;
@@ -620,7 +684,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlDataReader mReader = cmd.ExecuteReader();
             while (mReader.Read())
             {
-                models.Add(new Items(mReader["model"].ToString(), Convert.ToInt32(mReader["modelSold"])));
+                //models.Add(new Items(mReader["model"].ToString(), Convert.ToInt32(mReader["modelSold"])));
             }
             con.Close();
             return models;
@@ -647,19 +711,19 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //                    "group by tbl_invoiceItem.invoiceNum,  tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.percentage order by tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum";
             cmd.CommandText = "Select " +
                                 "Concat(tbl_invoiceItem.invoiceNum, '-', tbl_invoiceItem.invoiceSubNum) as 'invoice', " +
-                                "SUM(tbl_invoiceItem.itemPrice) as 'totalPrice',  " +
-                                "SUM(tbl_invoiceItem.itemCost) as 'totalCost', " +
+                                "SUM(tbl_invoiceItem.price) as 'totalPrice',  " +
+                                "SUM(tbl_invoiceItem.cost) as 'totalCost', " +
                                 "SUM(tbl_invoiceItem.itemDiscount) as 'totalDiscount', " +
                                 "tbl_invoiceItem.percentage, " +
                                 "CASE " +
-                                "    WHEN percentage = 1 and SUM(tbl_invoiceItem.itemPrice) <> 0 then " +
-                                "        sum(((tbl_invoiceItem.itemPrice - (tbl_invoiceItem.itemPrice * tbl_invoiceItem.itemDiscount) / 100)) - tbl_invoiceItem.itemCost) / SUM(tbl_invoiceItem.itemPrice) * 100 " +
-                                "    WHEN percentage = 0 and SUM(tbl_invoiceItem.itemPrice) <> 0 then " +
-                                "        sum((tbl_invoiceItem.itemPrice - tbl_invoiceItem.itemDiscount) - tbl_invoiceItem.itemCost) / SUM(tbl_invoiceItem.itemPrice) * 100 " +
-                                "    WHEN percentage = 1 and SUM(tbl_invoiceItem.itemPrice) = 0 then " +
-                                "        sum(((tbl_invoice.subTotal - (tbl_invoice.subTotal * tbl_invoiceItem.itemDiscount) / 100)) - tbl_invoiceItem.itemCost) " +
-                                "    WHEN percentage = 0 and SUM(tbl_invoiceItem.itemPrice) = 0 then " +
-                                "        sum((tbl_invoice.subTotal - tbl_invoiceItem.itemDiscount) - tbl_invoiceItem.itemCost) " +
+                                "    WHEN percentage = 1 and SUM(tbl_invoiceItem.price) <> 0 then " +
+                                "        sum(((tbl_invoiceItem.price - (tbl_invoiceItem.price * tbl_invoiceItem.itemDiscount) / 100)) - tbl_invoiceItem.cost) / SUM(tbl_invoiceItem.price) * 100 " +
+                                "    WHEN percentage = 0 and SUM(tbl_invoiceItem.price) <> 0 then " +
+                                "        sum((tbl_invoiceItem.price - tbl_invoiceItem.itemDiscount) - tbl_invoiceItem.cost) / SUM(tbl_invoiceItem.price) * 100 " +
+                                "    WHEN percentage = 1 and SUM(tbl_invoiceItem.price) = 0 then " +
+                                "        sum(((tbl_invoice.subTotal - (tbl_invoice.subTotal * tbl_invoiceItem.itemDiscount) / 100)) - tbl_invoiceItem.cost) " +
+                                "    WHEN percentage = 0 and SUM(tbl_invoiceItem.price) = 0 then " +
+                                "        sum((tbl_invoice.subTotal - tbl_invoiceItem.itemDiscount) - tbl_invoiceItem.cost) " +
                                 "END as 'totalProfit' " +
                                 "from tbl_invoiceItem inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum " +
                                 "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns) " +
@@ -688,7 +752,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
 
-            cmd.CommandText = "select sum(tbl_invoiceItem.itemCost) as 'itemCost' from tbl_invoiceItem " +
+            cmd.CommandText = "select sum(tbl_invoiceItem.cost) as 'cost' from tbl_invoiceItem " +
                                 "inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum " +
                                 "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) " +
                                 "and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns) " +
@@ -701,7 +765,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                tCost = Convert.ToDouble(reader["itemCost"]);
+                tCost = Convert.ToDouble(reader["cost"]);
             }
             con.Close();
             return tCost;
@@ -713,7 +777,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
 
-            cmd.CommandText = "select sum(tbl_invoiceItem.itemPrice) as 'itemPrice' from tbl_invoiceItem " +
+            cmd.CommandText = "select sum(tbl_invoiceItem.price) as 'price' from tbl_invoiceItem " +
                                 "inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum " +
                                 "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) " +
                                 "and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns) " +
@@ -726,7 +790,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                tPrice = Convert.ToDouble(reader["itemPrice"]);
+                tPrice = Convert.ToDouble(reader["price"]);
             }
             con.Close();
             return tPrice;
@@ -741,12 +805,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             cmd.CommandText = "create table #temp(invoiceNum int, math float, CONSTRAINT PK_key PRIMARY KEY (invoiceNum, math)) " +
                                 "insert into #temp  " +
                                 "select tbl_invoiceItem.invoiceNum,  " +
-                                "CASE WHEN tbl_invoiceItem.percentage = 1 then sum(((tbl_invoiceItem.itemPrice -(tbl_invoiceItem.itemPrice * tbl_invoiceItem.itemDiscount) / 100)) -tbl_invoiceItem.itemCost)   " +
-                                "ELSE sum((tbl_invoiceItem.itemPrice -tbl_invoiceItem.itemDiscount) -tbl_invoiceItem.itemCost) END AS 'math' from tbl_invoiceItem  " +
+                                "CASE WHEN tbl_invoiceItem.percentage = 1 then sum(((tbl_invoiceItem.price -(tbl_invoiceItem.price * tbl_invoiceItem.itemDiscount) / 100)) -tbl_invoiceItem.cost)   " +
+                                "ELSE sum((tbl_invoiceItem.price -tbl_invoiceItem.itemDiscount) -tbl_invoiceItem.cost) END AS 'math' from tbl_invoiceItem  " +
                                 "inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum  " +
                                 "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns)  " +
                                 "and tbl_invoice.locationID = @locationID and tbl_invoice.invoiceDate between @startDate and @endDate  " +
-                                "group by tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.sku, tbl_invoiceItem.itemCost, tbl_invoiceItem.itemPrice, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage  " +
+                                "group by tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.sku, tbl_invoiceItem.cost, tbl_invoiceItem.price, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage  " +
                                 "order by tbl_invoiceItem.invoiceNum  " +
                                 "select sum(math) as 'total' from #temp   " +
                                 "drop table #temp  ";
@@ -766,19 +830,35 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
         //******************Sales by Date Report*******************************************************
         //Matches new Database Calls
-        public int verifySalesHaveBeenMade(Object[] repInfo)
+        public int verifySalesHaveBeenMade(object[] repInfo)
         {
             int indicator = 0;
-            if (!transactionsAvailable(repInfo))
+            if (!transactionsAvailableOverMultipleDates(repInfo))
             {
                 indicator = 1;
             }
             return indicator;
         }
-
-
-
-        public System.Data.DataTable returnSalesForSelectedDate(Object[] repInfo)
+        public bool transactionsAvailableOverMultipleDates(object[] repInfo)
+        {
+            bool bolTA = false;
+            DateTime[] dtm = (DateTime[])repInfo[0];
+            string sqlCmd = "SELECT COUNT(invoiceNum) FROM tbl_invoice "
+                        + "WHERE invoiceDate BETWEEN @startDate AND @endDate "
+                        + "AND locationID = @locationID";
+            object[][] parms =
+            {
+                new object[] { "@startDate", dtm[0] },
+                new object[] { "@endDate", dtm[1] },
+                new object[] { "@locationID", Convert.ToInt32(repInfo[1]) }
+            };
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            {
+                bolTA = true;
+            }
+            return bolTA;
+        }
+        public System.Data.DataTable returnSalesForSelectedDate(object[] repInfo)
         {
             System.Data.DataTable transactions = new System.Data.DataTable();
             DateTime[] dtm = (DateTime[])repInfo[0];
@@ -803,7 +883,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
 
         //******************Trade Ins by Date Report*******************************************************
-        public int verifyTradeInsHaveBeenMade(Object[] repInfo)
+        public int verifyTradeInsHaveBeenMade(object[] repInfo)
         {
             int indicator = 0;
             if (!tradeinsHaveBeenProcessed(repInfo))
@@ -812,7 +892,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             return indicator;
         }
-        public System.Data.DataTable returnTradeInsForSelectedDate(Object[] repInfo)
+        public System.Data.DataTable returnTradeInsForSelectedDate(object[] repInfo)
         {
             System.Data.DataTable transactions = new System.Data.DataTable();
             DateTime[] dtm = (DateTime[])repInfo[0];
@@ -837,7 +917,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
 
         //******************Sales by Payment Type By Date Report***************************************
-        public System.Data.DataTable returnSalesByPaymentTypeForSelectedDate(Object[] repInfo)
+        public System.Data.DataTable returnSalesByPaymentTypeForSelectedDate(object[] repInfo)
         {
             System.Data.DataTable payments = new System.Data.DataTable();
             DateTime[] dtm = (DateTime[])repInfo[0];
@@ -1564,8 +1644,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
 
                                 c.typeID = 1;    //The type ID of a club is always 1
-                                c.used = false;  //Not used
-                                                 //Adds the club to the list of type club
+                                c.isTradeIn = false;  //Not used
+                                                      //Adds the club to the list of type club
                                 listClub.Add(c);
                                 o = c as Object;
                             }
@@ -1916,7 +1996,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                                 "typeID int, " +
                                                 "locationID int, " +
                                                 "comments varchar(500)); " +
-                                        "create table tempErrorSkus(" + 
+                                        "create table tempErrorSkus(" +
                                                 "sku int primary key," +
                                                 "brandError int," +
                                                 "modelError int," +
@@ -2040,6 +2120,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                     //Step 8: Loop through the temp datatable and insert the rows into the database
                     //***************************************************************************************************
 
+
                     foreach (DataRow row in temp.Rows)
                     {
                         //loop through just one, and it will know the itemID because we set it ealier in the process                            
@@ -2153,7 +2234,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "                Cast((select sum(                                                                                                      " +
                                 "				 case                                                                                                                   " +
                                 "                    when percentage = 1 and itemDiscount <> 0 then                                                                     " +
-                                "                        (itemPrice * (itemDiscount / 100))                                                                             " +
+                                "                        (price * (itemDiscount / 100))                                                                             " +
                                 "                    when percentage = 0 and itemDiscount <> 0 then                                                                     " +
                                 "                        itemDiscount                                                                                                   " +
                                 "					else                                                                                                                " +
@@ -2168,7 +2249,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "                Cast((select sum(                                                                                                      " +
                                 "				 case                                                                                                                   " +
                                 "                    when percentage = 1 and itemDiscount <> 0 then                                                                     " +
-                                "                        (itemPrice * (itemDiscount / 100))                                                                             " +
+                                "                        (price * (itemDiscount / 100))                                                                             " +
                                 "                    when percentage = 0 and itemDiscount <> 0 then                                                                     " +
                                 "                        itemDiscount                                                                                                   " +
                                 "					else                                                                                                                " +
@@ -2189,13 +2270,17 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "    when Exists(select tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum from tbl_invoiceItem where                            " +
                                 "            tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                    " +
                                 "            tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                            " +
-                                "            Cast((select sum(itemCost * itemQuantity) from tbl_invoiceItem where                                                       " +
+
+                                "            Cast((select sum(cost * quantity) from tbl_invoiceItem where                                                                      " +
+
                                 "                tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                " +
                                 "                tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                                 " +
                                 "    when Exists(select tbl_invoiceItemReturns.invoiceNum, tbl_invoiceItemReturns.invoiceSubNum from tbl_invoiceItemReturns where       " +
                                 "            tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                             " +
                                 "            tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                     " +
-                                "            Cast((select sum(itemCost * itemQuantity) from tbl_invoiceItemReturns where                                                " +
+
+                                "            Cast((select sum(cost * quantity) from tbl_invoiceItemReturns where                                                               " +
+
                                 "                tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                         " +
                                 "                tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                          " +
                                 "	else                                                                                                                                " +
@@ -2206,13 +2291,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "    when Exists(select tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum from tbl_invoiceItem where                            " +
                                 "            tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                    " +
                                 "            tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                            " +
-                                "                Cast(   (tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount))   - (select sum(itemCost * itemQuantity) from tbl_invoiceItem where                          " +
+
+                                "                Cast(tbl_invoice.balanceDue - (select sum(cost * quantity) from tbl_invoiceItem where                                         " +
+
                                 "                tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                " +
                                 "              tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                                   " +
                                 "    when Exists(select tbl_invoiceItemReturns.invoiceNum, tbl_invoiceItemReturns.invoiceSubNum from tbl_invoiceItemReturns where       " +
-                                "            tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                             " + 
+                                "            tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                             " +
                                 "            tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                     " +
-                                "                Cast(    (tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount))    + (select sum(itemCost * itemQuantity) from tbl_invoiceItemReturns where                   " +
+
+                                "                Cast(tbl_invoice.balanceDue + (select sum(cost * quantity) from tbl_invoiceItemReturns where                                  " +
 
                                 "                tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                         " +
                                 "                tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                          " +
@@ -2226,10 +2314,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "            tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                            " +
                                 "				case                                                                                                                    " +
                                 "                   when tbl_invoice.subTotal <> 0 then                                                                                 " +
-                                "                        CAST(ROUND((((tbl_invoice.subTotal - (select sum(itemCost * itemQuantity) from tbl_invoiceItem where         " +
+
+                                "                        CAST(ROUND((((tbl_invoice.balanceDue - (select sum(cost * quantity) from tbl_invoiceItem where                        " +
+
                                 "                                                                 tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and               " +
                                 "                                                                 tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum))           " +
-                                "                                                                 / tbl_invoice.subTotal) *100),2) as varchar)                        " + 
+                                "                                                                 / tbl_invoice.subTotal) *100),2) as varchar)                        " +
                                 "                    when tbl_invoice.balanceDue = 0 then                                                                               " +
                                 "                        'N/A'                                                                                                          " +
                                 "                end                                                                                                                    " +
@@ -2238,7 +2328,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "            tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                     " +
                                 "				case                                                                                                                    " +
                                 "                    when tbl_invoice.subTotal <> 0 then                                                                                " +
-                                "                        CAST(ROUND((((tbl_invoice.subTotal + (select sum(itemCost * itemQuantity) from tbl_invoiceItemReturns where  " +
+
+                                "                        CAST(ROUND((((tbl_invoice.balanceDue + (select sum(cost * quantity) from tbl_invoiceItemReturns where      " +
+
                                 "                                                                 tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and        " +
                                 "                                                                 tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum))    " +
                                 "                        / tbl_invoice.subTotal) *100),2) as varchar)                                                                 " +
@@ -2265,10 +2357,299 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return invoices;
         }
 
+        //*******GST and PST totals********
+        public List<TaxReport> returnTaxReportDetails(DateTime dtmStartDate, DateTime dtmEndDate)
+        {
+            List<TaxReport> tr = new List<TaxReport>();
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "SELECT invoiceDate, locationID, sum(subTotal) AS subTotal, sum(shippingAmount) AS shippingAmount, "
+                            + "sum(discountAmount) AS discountAmount, sum(tradeInAmount) AS tradeInAmount, "
+                            + "sum(governmentTax) AS governmentTax, sum(provincialTax) AS provincialTax, "
+                            + "sum(balanceDue) AS balanceDue, transactionType FROM tbl_invoice "
+                            + "WHERE invoiceDate BETWEEN @dtmStartDate and @dtmEndDate "
+                            + "GROUP BY invoiceDate, locationID, transactionType";
+            cmd.Parameters.AddWithValue("@dtmStartDate", dtmStartDate);
+            cmd.Parameters.AddWithValue("@dtmEndDate", dtmEndDate);
+            cmd.Connection = con;
+            con.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                tr.Add(new TaxReport(Convert.ToDateTime(reader["invoiceDate"]),
+                    Convert.ToInt32(reader["locationID"]), Convert.ToDouble(reader["subTotal"]),
+                    Convert.ToDouble(reader["shippingAmount"]), Convert.ToDouble(reader["discountAmount"]),
+                    Convert.ToDouble(reader["tradeInAmount"]), Convert.ToDouble(reader["governmentTax"]),
+                    Convert.ToDouble(reader["provincialTax"]), Convert.ToDouble(reader["balanceDue"]),
+                    Convert.ToInt32(reader["transactionType"])));
+            }
+            con.Close();
+            return tr;
+        }
+
+        //******************ITEMS SOLD REPORTING*******************************************************
+        public System.Data.DataTable returnItemsSold(DateTime startDate, DateTime endDate, int locationID)
+        {
+            //This method returns the invoice numbers, sku, itemCost, and itemPrice 
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            string query = "select Concat(tbl_invoiceItem.invoiceNum, '-', tbl_invoiceItem.invoiceSubNum) as 'invoice', tbl_invoiceItem.sku, tbl_invoiceItem.cost, tbl_invoiceItem.price, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage, "
+                + "CASE WHEN tbl_invoiceItem.percentage = 1 then sum(((tbl_invoiceItem.price -(tbl_invoiceItem.price * tbl_invoiceItem.itemDiscount) / 100)) -tbl_invoiceItem.cost) "
+                + "ELSE sum((tbl_invoiceItem.price -tbl_invoiceItem.itemDiscount) -tbl_invoiceItem.cost) "
+                + "END AS 'profit' from tbl_invoiceItem inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum "
+                + "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns)and tbl_invoice.locationID = @locationID and tbl_invoice.invoiceDate between @startDate and @endDate "
+                + "group by tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.sku, tbl_invoiceItem.cost, tbl_invoiceItem.price, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage "
+                + "order by tbl_invoiceItem.invoiceNum";
+            cmd.Parameters.AddWithValue("@startDate", startDate);
+            cmd.Parameters.AddWithValue("@endDate", endDate);
+            cmd.Parameters.AddWithValue("@locationID", locationID);
+            cmd.Connection = con;
+            System.Data.DataTable dt = new System.Data.DataTable();
+            using (cmd = new SqlCommand(query, con))
+            using (var da = new SqlDataAdapter(cmd))
+            {
+                cmd.Parameters.AddWithValue("@startDate", startDate);
+                cmd.Parameters.AddWithValue("@endDate", endDate);
+                cmd.Parameters.AddWithValue("@locationID", locationID);
+                //Filling the table with what is found
+                da.Fill(dt);
+            }
+            return dt;
+        }
+
+        //******************DISCOUNT REPORTING*******************************************************
+        public List<Invoice> returnDiscountsBetweenDates(DateTime startDate, DateTime endDate)
+        {
+            //This method returns all invoices with discounts between two dates
+            List<Invoice> returns = new List<Invoice>();
+
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "select invoiceNum, invoiceSubNum, invoiceDate, " +
+                " (select Concat(firstName, ' ', lastName) from tbl_customers where custID = tbl_invoice.custID) as 'customerName', " +
+                " (select Concat(firstName, ' ', lastName) from tbl_employee where empID = tbl_invoice.empID) as 'employeeName', " +
+                " discountAmount, balanceDue " +
+                " from tbl_invoice where discountAmount <> 0 and invoiceDate between @startDate and @endDate;";
+            cmd.Parameters.AddWithValue("@startDate", startDate);
+            cmd.Parameters.AddWithValue("@endDate", endDate);
+            cmd.Connection = con;
+            con.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                returns.Add(new Invoice(Convert.ToInt32(reader["invoiceNum"]), Convert.ToInt32(reader["invoiceSubNum"]),
+                Convert.ToDateTime(reader["invoiceDate"]), reader["customerName"].ToString(),
+                 reader["employeeName"].ToString(), Convert.ToDouble(reader["discountAmount"]), Convert.ToDouble(reader["balanceDue"])));
+            }
+            con.Close();
+            return returns;
+        }
+        public double returnDiscountTotalBetweenDates(DateTime startDate, DateTime endDate)
+        {
+            //This method returns the total value of discounts between two dates
+            double total = 0;
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "select sum(discountAmount) as 'sumDiscountTotal' from tbl_invoice where invoiceDate between @startDate and @endDate";
+            cmd.Parameters.AddWithValue("startDate", startDate);
+            cmd.Parameters.AddWithValue("endDate", endDate);
+            cmd.Connection = con;
+            con.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                if (reader["sumDiscountTotal"] != DBNull.Value)
+                {
+                    total = Convert.ToDouble(reader["sumDiscountTotal"]);
+                }
+            }
+            con.Close();
+            return total;
+        }
+        public double returnDiscountTotalsForLocations(DateTime startDate, DateTime endDate, int locID)
+        {
+            double total = 0;
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = "select sum(discountAmount) as 'sumDiscountTotal' from tbl_invoice where invoiceDate between @startDate and @endDate and discountAmount <> 0 and locationID = @locID";
+            cmd.Parameters.AddWithValue("startDate", startDate);
+            cmd.Parameters.AddWithValue("endDate", endDate);
+            cmd.Parameters.AddWithValue("locID", locID);
+            cmd.Connection = con;
+            con.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                if (reader["sumDiscountTotal"] != DBNull.Value)
+                {
+                    total = Convert.ToDouble(reader["sumDiscountTotal"]);
+                }
+            }
+            con.Close();
+            return total;
+        }
+
+        //******************CASHOUT REPORTING*******************************************************
+        private List<Cashout> ReturnCashoutFromDataTable(System.Data.DataTable dt)
+        {
+            List<Cashout> cashout = dt.AsEnumerable().Select(row =>
+            new Cashout
+            {
+                cashoutDate = row.Field<DateTime>("cashoutDate"),
+                saleTradeIn = row.Field<double>("saleTradeIn"),
+                saleGiftCard = row.Field<double>("saleGiftCard"),
+                saleCash = row.Field<double>("saleCash"),
+                saleDebit = row.Field<double>("saleDebit"),
+                saleMasterCard = row.Field<double>("saleMasterCard"),
+                saleVisa = row.Field<double>("saleVisa"),
+                receiptTradeIn = row.Field<double>("receiptTradeIn"),
+                receiptGiftCard = row.Field<double>("receiptGiftCard"),
+                receiptCash = row.Field<double>("receiptCash"),
+                receiptDebit = row.Field<double>("receiptDebit"),
+                receiptMasterCard = row.Field<double>("receiptMasterCard"),
+                receiptVisa = row.Field<double>("receiptVisa"),
+                preTax = row.Field<double>("preTax"),
+                saleGST = row.Field<double>("governmentTax"),
+                salePST = row.Field<double>("provincialTax"),
+                overShort = row.Field<double>("overShort")
+            }).ToList();
+            return cashout;
+        }
+
+        public System.Data.DataTable ReturnCashoutsForSelectedDates(object[] passing)
+        {
+            string sqlCmd = "SELECT cashoutDate, locationID, saleTradeIn, receiptTradeIn, saleGiftCard, "
+                + "receiptGiftCard, saleCash, receiptCash, saleDebit, receiptDebit, saleMasterCard, "
+                + "receiptMasterCard, saleVisa, receiptVisa, overShort, processed, finalized FROM "
+                + "tbl_cashout WHERE cashoutDate BETWEEN @startDate AND @endDate AND locationID = @locationID";
+
+            DateTime[] dtm = (DateTime[])passing[0];
+            object[][] parms =
+            {
+                new object[] { "@startDate", dtm[0] },
+                new object[] { "@endDate", dtm[1] },
+                new object[] { "@locationID", passing[1] }
+            };
+            return dbc.returnDataTableData(sqlCmd, parms);
+        }
+        public int CashoutsProcessed(object[] repInfo)
+        {
+            int indicator = 0;
+            if (!CashotInDateRange(repInfo))
+            {
+                indicator = 1;
+            }
+            return indicator;
+        }
+        private bool CashotInDateRange(object[] repInfo)
+        {
+            bool bolCIDR = false;
+            DateTime[] dtm = (DateTime[])repInfo[0];
+            string sqlCmd = "SELECT COUNT(cashoutDate) FROM tbl_cashout "
+                        + "WHERE cashoutDate BETWEEN @startDate AND @endDate "
+                        + "AND locationID = @locationID";
+            object[][] parms =
+            {
+                new object[] { "@startDate", dtm[0] },
+                new object[] { "@endDate", dtm[1] },
+                new object[] { "@locationID", Convert.ToInt32(repInfo[1]) }
+            };
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            {
+                bolCIDR = true;
+            }
+            return bolCIDR;
+        }
+        public void FinalizeCashout(string args)
+        {
+            DateTime dtm = DateTime.Parse(args.Split(' ')[0]);
+            int location = Convert.ToInt32(args.Split(' ')[1]);
+            string sqlCmd = "UPDATE tbl_cashout SET finalized = 1 "
+                + "WHERE cashoutDate = @cashoutDate AND "
+                + "locationID = @locationID";
+
+            object[][] parms =
+            {
+                new object[] { "@cashoutDate", dtm },
+                new object[] { "@locationID", location }
+            };
+
+            dbc.executeInsertQuery(sqlCmd, parms);
+        }
+
+        public List<Cashout> ReturnSelectedCashout(object[] args)
+        {
+            string sqlCmd = "SELECT cashoutDate, saleTradeIn, saleGiftCard, saleCash, "
+                + "saleDebit, saleMasterCard, saleVisa, receiptTradeIn, receiptGiftCard, "
+                + "receiptCash, receiptDebit, receiptMasterCard, receiptVisa, preTax, "
+                + "governmentTax, provincialTax, overShort FROM tbl_cashout WHERE "
+                + "cashoutDate = @cashoutDate AND locationID = @locationID";
+            object[][] parms =
+            {
+                new object[] { "@cashoutDate", DateTime.Parse(args[0].ToString()) },
+                new object[] { "@locationID", Convert.ToInt32(args[1]) }
+            };
+
+            return ReturnCashoutFromDataTable(dbc.returnDataTableData(sqlCmd, parms));
+        }
+        public bool CashoutExists(object[] args)
+        {
+            bool exists = false;
+            string sqlCmd = "SELECT COUNT(cashoutDate) FROM tbl_cashout "
+                + "WHERE cashoutDate = @cashoutDate AND locationID = @locationID";
+
+            object[][] parms =
+            {
+                new object[] { "@cashoutDate", (DateTime)args[0] },
+                new object[] { "@locationID", Convert.ToInt32(args[1]) }
+            };
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            {
+                exists = true;
+            }
+            return exists;
+        }
+        public void UpdateCashout(Cashout cas)
+        {
+            string sqlCmd = "UPDATE tbl_cashout SET cashoutDate = @cashoutDate, "
+                + "cashoutTime = @cashoutTime, saleTradeIn = @saleTradeIn, saleGiftCard = "
+                + "@saleGiftCard, saleCash = @saleCash, saleDebit = @saleDebit, saleMasterCard "
+                + "= @saleMasterCard, saleVisa = @saleVisa, receiptTradeIn = @receiptTradeIn, "
+                + "receiptGiftCard = @receiptGiftCard, receiptCash = @receiptCash, receiptDebit "
+                + "= @receiptDebit, receiptMasterCard = @receiptMasterCard, receiptVisa = "
+                + "@receiptVisa, preTax = @preTax, governmentTax = @gTax, provincialTax = @pTax, "
+                + "overShort = @overShort, finalized = @finalized, processed = @processed, "
+                + "locationID = @locID, empID = @empID";
+
+            object[][] parms =
+            {
+                new object[] { "cashoutDate", cas.cashoutDate },
+                new object[] { "cashoutTime", DateTime.Now.ToString("HH:mm:ss") },
+                new object[] { "saleTradeIn", cas.saleTradeIn },
+                new object[] { "saleGiftCard", cas.saleGiftCard },
+                new object[] { "saleCash", cas.saleCash },
+                new object[] { "saleDebit", cas.saleDebit },
+                new object[] { "saleMasterCard", cas.saleMasterCard },
+                new object[] { "saleVisa", cas.saleVisa },
+                new object[] { "receiptTradeIn", cas.receiptTradeIn },
+                new object[] { "receiptGiftCard", cas.receiptGiftCard },
+                new object[] { "receiptCash", cas.receiptCash },
+                new object[] { "receiptDebit", cas.receiptDebit },
+                new object[] { "receiptMasterCard", cas.receiptMasterCard },
+                new object[] { "receiptVisa", cas.receiptVisa },
+                new object[] { "preTax", cas.preTax },
+                new object[] { "gTax", cas.saleGST },
+                new object[] { "pTax", cas.salePST },
+                new object[] { "overShort", cas.overShort },
+                new object[] { "finalized", cas.finalized },
+                new object[] { "processed", cas.processed },
+                new object[] { "locID", cas.locationID },
+                new object[] { "empID", cas.empID }
+            };
+            dbc.executeInsertQuery(sqlCmd, parms);
+        }
+
         //********************EXPORTING***************************************************************
-
-
-
         //Export ALL sales/invoices to excel
         public void exportAllSalesToExcel()
         {
@@ -2411,9 +2792,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             exportInvoiceItemTable.Columns.Add("invoiceNum", typeof(string));
             exportInvoiceItemTable.Columns.Add("invoiceSubNum", typeof(string));
             exportInvoiceItemTable.Columns.Add("sku", typeof(string));
-            exportInvoiceItemTable.Columns.Add("itemQuantity", typeof(string));
-            exportInvoiceItemTable.Columns.Add("itemCost", typeof(string));
-            exportInvoiceItemTable.Columns.Add("itemPrice", typeof(string));
+            exportInvoiceItemTable.Columns.Add("quantity", typeof(string));
+            exportInvoiceItemTable.Columns.Add("cost", typeof(string));
+            exportInvoiceItemTable.Columns.Add("price", typeof(string));
             exportInvoiceItemTable.Columns.Add("itemDiscount", typeof(string));
             exportInvoiceItemTable.Columns.Add("percentage", typeof(string));
             exportSales_Items();
@@ -2485,13 +2866,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 string invoiceNum = reader["invoiceNum"].ToString();
                 string invoiceSubNum = reader["invoiceSubNum"].ToString();
                 string sku = reader["sku"].ToString();
-                string itemQuantity = reader["itemQuantity"].ToString();
-                string itemCost = reader["itemCost"].ToString();
-                string itemPrice = reader["itemPrice"].ToString();
+                string quantity = reader["quantity"].ToString();
+                string cost = reader["cost"].ToString();
+                string price = reader["price"].ToString();
                 string itemDisocunt = reader["itemDiscount"].ToString();
                 string percentage = reader["percentage"].ToString();
-                exportInvoiceItemTable.Rows.Add(invoiceNum, invoiceSubNum, sku, itemQuantity, itemCost,
-                    itemPrice, itemDisocunt, percentage);
+                exportInvoiceItemTable.Rows.Add(invoiceNum, invoiceSubNum, sku, quantity, cost,
+                    price, itemDisocunt, percentage);
             }
             conn.Close();
         }
@@ -2516,143 +2897,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             conn.Close();
         }
-
-
-        //*******GST and PST totals********
-        public List<TaxReport> returnTaxReportDetails(DateTime dtmStartDate, DateTime dtmEndDate)
-        {
-            List<TaxReport> tr = new List<TaxReport>();
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "SELECT invoiceDate, locationID, sum(subTotal) AS subTotal, sum(shippingAmount) AS shippingAmount, "
-                            + "sum(discountAmount) AS discountAmount, sum(tradeInAmount) AS tradeInAmount, "
-                            + "sum(governmentTax) AS governmentTax, sum(provincialTax) AS provincialTax, "
-                            + "sum(balanceDue) AS balanceDue, transactionType FROM tbl_invoice "
-                            + "WHERE invoiceDate BETWEEN @dtmStartDate and @dtmEndDate "
-                            + "GROUP BY invoiceDate, locationID, transactionType";
-            cmd.Parameters.AddWithValue("@dtmStartDate", dtmStartDate);
-            cmd.Parameters.AddWithValue("@dtmEndDate", dtmEndDate);
-            cmd.Connection = con;
-            con.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                tr.Add(new TaxReport(Convert.ToDateTime(reader["invoiceDate"]),
-                    Convert.ToInt32(reader["locationID"]), Convert.ToDouble(reader["subTotal"]),
-                    Convert.ToDouble(reader["shippingAmount"]), Convert.ToDouble(reader["discountAmount"]),
-                    Convert.ToDouble(reader["tradeInAmount"]), Convert.ToDouble(reader["governmentTax"]),
-                    Convert.ToDouble(reader["provincialTax"]), Convert.ToDouble(reader["balanceDue"]),
-                    Convert.ToInt32(reader["transactionType"])));
-            }
-            con.Close();
-            return tr;
-        }
-
-        //******************ITEMS SOLD REPORTING*******************************************************
-        public List<Items> returnItemsSold(DateTime startDate, DateTime endDate, int locationID)
-        {
-            //This method returns the invoice numbers, sku, itemCost, and itemPrice 
-            List<Items> items = new List<Items>();
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "select tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.sku, tbl_invoiceItem.itemCost, tbl_invoiceItem.itemPrice, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage, "
-                + "CASE WHEN tbl_invoiceItem.percentage = 1 then sum(((tbl_invoiceItem.itemPrice -(tbl_invoiceItem.itemPrice * tbl_invoiceItem.itemDiscount) / 100)) -tbl_invoiceItem.itemCost) "
-                + "ELSE sum((tbl_invoiceItem.itemPrice -tbl_invoiceItem.itemDiscount) -tbl_invoiceItem.itemCost) "
-                + "END AS 'profit' from tbl_invoiceItem inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum "
-                + "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns)and tbl_invoice.locationID = @locationID and tbl_invoice.invoiceDate between @startDate and @endDate "
-                + "group by tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.sku, tbl_invoiceItem.itemCost, tbl_invoiceItem.itemPrice, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage "
-                + "order by tbl_invoiceItem.invoiceNum";
-            cmd.Parameters.AddWithValue("@startDate", startDate);
-            cmd.Parameters.AddWithValue("@endDate", endDate);
-            cmd.Parameters.AddWithValue("@locationID", locationID);
-            cmd.Connection = con;
-            con.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                items.Add(new Items(Convert.ToInt32(reader["invoiceNum"]),
-                    Convert.ToInt32(reader["invoiceSubNum"]), Convert.ToInt32(reader["sku"]),
-                    Convert.ToDouble(reader["itemCost"]), Convert.ToDouble(reader["itemPrice"]),
-                    Convert.ToDouble(reader["itemDiscount"]), Convert.ToBoolean(reader["percentage"]),
-                    Convert.ToDouble(reader["profit"])));
-            }
-            con.Close();
-            return items;
-        }
-        //******************DISCOUNT REPORTING*******************************************************
-        public List<Invoice> returnDiscountsBetweenDates(DateTime startDate, DateTime endDate)
-        {
-            //This method returns all invoices with discounts between two dates
-            List<Invoice> returns = new List<Invoice>();
-
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "select invoiceNum, invoiceSubNum, invoiceDate, " +
-                " (select Concat(firstName, ' ', lastName) from tbl_customers where custID = tbl_invoice.custID) as 'customerName', " +
-                " (select Concat(firstName, ' ', lastName) from tbl_employee where empID = tbl_invoice.empID) as 'employeeName', " +
-                " discountAmount, balanceDue " +
-                " from tbl_invoice where discountAmount <> 0 and invoiceDate between @startDate and @endDate;";
-            cmd.Parameters.AddWithValue("@startDate", startDate);
-            cmd.Parameters.AddWithValue("@endDate", endDate);
-            cmd.Connection = con;
-            con.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                returns.Add(new Invoice(Convert.ToInt32(reader["invoiceNum"]), Convert.ToInt32(reader["invoiceSubNum"]),
-                Convert.ToDateTime(reader["invoiceDate"]), reader["customerName"].ToString(),
-                 reader["employeeName"].ToString(), Convert.ToDouble(reader["discountAmount"]), Convert.ToDouble(reader["balanceDue"])));
-            }
-            con.Close();
-            return returns;
-        }
-        public double returnDiscountTotalBetweenDates(DateTime startDate, DateTime endDate)
-        {
-            //This method returns the total value of discounts between two dates
-            double total = 0;
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "select sum(discountAmount) as 'sumDiscountTotal' from tbl_invoice where invoiceDate between @startDate and @endDate";
-            cmd.Parameters.AddWithValue("startDate", startDate);
-            cmd.Parameters.AddWithValue("endDate", endDate);
-            cmd.Connection = con;
-            con.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                if (reader["sumDiscountTotal"] != DBNull.Value)
-                {
-                    total = Convert.ToDouble(reader["sumDiscountTotal"]);
-                }
-            }
-            con.Close();
-            return total;
-        }
-        public double returnDiscountTotalsForLocations(DateTime startDate, DateTime endDate, int locID)
-        {
-            double total = 0;
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "select sum(discountAmount) as 'sumDiscountTotal' from tbl_invoice where invoiceDate between @startDate and @endDate and discountAmount <> 0 and locationID = @locID";
-            cmd.Parameters.AddWithValue("startDate", startDate);
-            cmd.Parameters.AddWithValue("endDate", endDate);
-            cmd.Parameters.AddWithValue("locID", locID);
-            cmd.Connection = con;
-            con.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                if (reader["sumDiscountTotal"] != DBNull.Value)
-                {
-                    total = Convert.ToDouble(reader["sumDiscountTotal"]);
-                }
-            }
-            con.Close();
-            return total;
-        }
-
-
-
         public void itemExports(string selection, FileInfo newFile, string fileName)
         {
             //This is the table that has all of the information lined up the way Caspio needs it to be
@@ -2677,7 +2921,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             String[] itemExportColumns = { "Vendor", "Store_ID", "ItemNumber", "Shipment_Date", "Brand", "Model", "Club_Type", "Shaft",
                     "Number_of_Clubs", "Tradein_Price", "Premium", "WE PAY", "QUANTITY", "Ext'd Price", "RetailPrice", "Comments",
-                    "Image", "Club_Spec", "Shaft_Spec", "Shaft_Flex", "Dexterity", "Destination", "Received", "Paid", "ItemType", "Used"};
+                    "Image", "Club_Spec", "Shaft_Spec", "Shaft_Flex", "Dexterity", "Destination", "Received", "Paid", "ItemType", "isTradeIn"};
             using (ExcelPackage xlPackage = new ExcelPackage(newFile))
             {
                 //Add page to the work book called inventory
@@ -2744,7 +2988,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "(select tbl_location.secondaryIdentifier from tbl_location where tbl_location.locationID = tbl_clubs.locationID) as locationSecondary,  " +
                                 "'' as 'received', 0 as 'paid', " +
                                 "(select tbl_itemType.typeDescription from tbl_itemType where tbl_itemType.typeID = tbl_clubs.typeID ) as itemType, " +
-                                "tbl_clubs.used " +
+                                "tbl_clubs.isTradeIn " +
                                 "from tbl_clubs";
 
             using (var cmd = new SqlCommand(command, conn))
@@ -2770,7 +3014,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "(select tbl_location.secondaryIdentifier from tbl_location where tbl_location.locationID = tbl_accessories.locationID) as locationSecondary, " +
                                 "'' as 'received', 0 as 'paid', " +
                                 "(select tbl_itemType.typeDescription from tbl_itemType where tbl_itemType.typeID = tbl_accessories.typeID ) as itemType, " +
-                                "0 as 'used' " +
+                                "0 as 'isTradeIn' " +
                                 "from tbl_accessories; ";
 
             using (var cmd = new SqlCommand(command, conn))
@@ -2796,7 +3040,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "(select tbl_location.secondaryIdentifier from tbl_location where tbl_location.locationID = tbl_clothing.locationID) as locationSecondary,  " +
                                 "'' as 'received', 0 as 'paid', " +
                                 "(select tbl_itemType.typeDescription from tbl_itemType where tbl_itemType.typeID = tbl_clothing.typeID ) as itemType, " +
-                                "0 as 'used' " +
+                                "0 as 'isTradeIn' " +
                                 " from tbl_clothing";
             using (var cmd = new SqlCommand(command, conn))
             using (var da = new SqlDataAdapter(cmd))

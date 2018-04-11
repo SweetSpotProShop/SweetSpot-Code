@@ -79,7 +79,6 @@ namespace SweetSpotDiscountGolfPOS
                 return -10;
             }
         }
-        //Rename as this isn't just inserting, it's executing any query that doesn't require a return value
         public void executeInsertQuery(string sqlCmd, object[][] parms)
         {
             System.Data.DataTable dt = new System.Data.DataTable();

@@ -23,12 +23,15 @@ namespace SweetSpotDiscountGolfPOS
             Session["currPage"] = "CustomerHomePage";
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
                 //checks if the user has logged in
                 if (Session["currentUser"] == null)
                 {
                     //Go back to Login to log in
                     Response.Redirect("LoginPage.aspx", false);
+                }
+                else
+                {
+                    CU = (CurrentUser)Session["currentUser"];
                 }
             }
             //Exception catch
@@ -38,9 +41,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         protected void btnCustomerSearch_Click(object sender, EventArgs e)
@@ -63,9 +66,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         protected void btnAddNewCustomer_Click(object sender, EventArgs e)
@@ -84,9 +87,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         protected void grdCustomersSearched_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -102,13 +105,22 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (e.CommandName == "StartSale")
                 {
-                    Session["ItemsInCart"] = null;
-                    //Sets transaction type to sale
-                    Session["TranType"] = 1;
-                    //Sets customer id to guest cust
-                    Session["key"] = Convert.ToInt32(e.CommandArgument.ToString());
-                    //Open the Sales Cart page
-                    Response.Redirect("SalesCart.aspx?cust=" + e.CommandArgument.ToString(), false);
+                    //Session["ItemsInCart"] = null;
+                    ////Sets transaction type to sale
+                    //Session["TranType"] = 1;
+                    ////Sets customer id to guest cust
+                    //Session["key"] = Convert.ToInt32(e.CommandArgument.ToString());
+                    ////Open the Sales Cart page
+                    //Response.Redirect("SalesCart.aspx?cust=" + e.CommandArgument.ToString(), false);
+
+                    InvoiceManager IM = new InvoiceManager();
+                    var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                    nameValues.Set("cust", e.CommandArgument.ToString());
+                    string invoice = CU.locationName + "-" + IM.ReturnNextInvoiceNumber() + "-1";
+                    nameValues.Set("inv", invoice);
+                    Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
+                    //Changes page to Sales Cart
+                    Response.Redirect("SalesCart.aspx?" + nameValues, false);
                 }
             }
             //Exception catch
@@ -118,9 +130,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
-                    + "your system administrator", this);
+                    + "your system administrator.", this);
             }
         }
         protected void grdCustomersSearched_PageIndexChanging(object sender, GridViewPageEventArgs e)
@@ -144,9 +156,9 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occured and been logged. "
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
                                 + "If you continue to receive this message please contact "
-                                + "your system administrator", this);
+                                + "your system administrator.", this);
             }
         }
     }
