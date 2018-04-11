@@ -2373,13 +2373,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
 
         //******************ITEMS SOLD REPORTING*******************************************************
-        public List<Items> returnItemsSold(DateTime startDate, DateTime endDate, int locationID)
+        public System.Data.DataTable returnItemsSold(DateTime startDate, DateTime endDate, int locationID)
         {
             //This method returns the invoice numbers, sku, itemCost, and itemPrice 
-            List<Items> items = new List<Items>();
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "select tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.sku, tbl_invoiceItem.cost, tbl_invoiceItem.price, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage, "
+            string query = "select Concat(tbl_invoiceItem.invoiceNum, '-', tbl_invoiceItem.invoiceSubNum) as 'invoice', tbl_invoiceItem.sku, tbl_invoiceItem.cost, tbl_invoiceItem.price, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage, "
                 + "CASE WHEN tbl_invoiceItem.percentage = 1 then sum(((tbl_invoiceItem.price -(tbl_invoiceItem.price * tbl_invoiceItem.itemDiscount) / 100)) -tbl_invoiceItem.cost) "
                 + "ELSE sum((tbl_invoiceItem.price -tbl_invoiceItem.itemDiscount) -tbl_invoiceItem.cost) "
                 + "END AS 'profit' from tbl_invoiceItem inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum "
@@ -2390,18 +2389,17 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             cmd.Parameters.AddWithValue("@endDate", endDate);
             cmd.Parameters.AddWithValue("@locationID", locationID);
             cmd.Connection = con;
-            con.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
+            System.Data.DataTable dt = new System.Data.DataTable();
+            using (cmd = new SqlCommand(query, con))
+            using (var da = new SqlDataAdapter(cmd))
             {
-                //items.Add(new Items(Convert.ToInt32(reader["invoiceNum"]),
-                //    Convert.ToInt32(reader["invoiceSubNum"]), Convert.ToInt32(reader["sku"]),
-                //    Convert.ToDouble(reader["itemCost"]), Convert.ToDouble(reader["itemPrice"]),
-                //    Convert.ToDouble(reader["itemDiscount"]), Convert.ToBoolean(reader["percentage"]),
-                //    Convert.ToDouble(reader["profit"])));
+                cmd.Parameters.AddWithValue("@startDate", startDate);
+                cmd.Parameters.AddWithValue("@endDate", endDate);
+                cmd.Parameters.AddWithValue("@locationID", locationID);
+                //Filling the table with what is found
+                da.Fill(dt);
             }
-            con.Close();
-            return items;
+            return dt;
         }
 
         //******************DISCOUNT REPORTING*******************************************************
