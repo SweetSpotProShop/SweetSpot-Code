@@ -600,3 +600,4 @@ C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\
 C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.csproj.CopyComplete
 C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.dll
 C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.pdb
+C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.csprojResolveAssemblyReference.cache

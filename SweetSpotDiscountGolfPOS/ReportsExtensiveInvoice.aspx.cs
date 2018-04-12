@@ -1,4 +1,5 @@
 ﻿using OfficeOpenXml;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using SweetShop;
 using SweetSpotDiscountGolfPOS.ClassLibrary;
 using SweetSpotProShop;
@@ -40,6 +41,9 @@ namespace SweetSpotDiscountGolfPOS
         double margin;
         int marginCounter;
         double tradein;
+
+        //Counter for rows
+        int counter = 0;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -111,9 +115,27 @@ namespace SweetSpotDiscountGolfPOS
             Label lblRevenue = (Label)e.Row.FindControl("lblRevenue");
             Label lblProfitMargin = (Label)e.Row.FindControl("lblProfitMargin");
             Label lblDate = (Label)e.Row.FindControl("lblDate");
-            // check row type
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
+                //if (e.Row.RowIndex % 10 == 0 && e.Row.RowIndex > 0)
+                //{
+                //    GridViewRow gvrHeaderRow = new GridViewRow(0, 0, DataControlRowType.Header, DataControlRowState.Normal);
+                //    for (int i = 0; i < grdInvoices.Columns.Count; i++)
+                //    {
+                //        if (grdInvoices.Columns[i].Visible == true)
+                //        {
+                //            TableCell tcHeaders = new TableCell();
+                //            tcHeaders.Text = grdInvoices.Columns[i].HeaderText;
+                //            gvrHeaderRow.Cells.Add(tcHeaders);
+                //        }
+                //    }
+                //    //ERROR:Specified argument was out of the range of valid values.\r\nParameter name: index
+                //    grdInvoices.Controls.AddAt(e.Row.RowIndex + counter, gvrHeaderRow);
+                //    //grdInvoices.Controls.Add(gvrHeaderRow);
+                //    counter++;
+                //}
+                //else
+                //{
                 //Shipping
                 if (lblShipping.Text.isNumber())
                 {
@@ -179,6 +201,9 @@ namespace SweetSpotDiscountGolfPOS
                 string date = lblDate.Text;
                 DateTime invoiceDate = Convert.ToDateTime(date);
                 lblDate.Text = invoiceDate.ToString("dd-MM-yyyy");
+                //}
+
+
             }
             else if (e.Row.RowType == DataControlRowType.Footer)
             {

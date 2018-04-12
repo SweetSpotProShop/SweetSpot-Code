@@ -2161,12 +2161,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                             "UPDATE tbl_clubs SET brandID = @brandID, modelID = @modelID, clubType = @clubType, shaft = @shaft, " +
                                             "numberOfClubs = @numberOfClubs, premium = @premium, cost = @cost, price = @price, quantity = @quantity, " +
                                             "clubSpec = @clubSpec, shaftSpec = @shaftSpec, shaftFlex = @shaftFlex, dexterity = @dexterity, " +
-                                            "locationID = @locationID, used = @used, comments = @comments WHERE sku = @sku " +
+                                            "locationID = @locationID, isTradeIn = @used, comments = @comments WHERE sku = @sku " +
                                         "end " +
                                     "else " +
                                         "begin " +
                                             "Insert Into tbl_clubs (sku, brandID, modelID, clubType, shaft, numberOfClubs, " +
-                                            "premium, cost, price, quantity, clubSpec, shaftSpec, shaftFlex, dexterity, typeID, locationID, used, comments) " +
+                                            "premium, cost, price, quantity, clubSpec, shaftSpec, shaftFlex, dexterity, typeID, locationID, isTradeIn, comments) " +
                                             "Values (@sku, @brandID, @modelID, @clubType, @shaft, @numberOfClubs, @premium, @cost, @price, " +
                                             "@quantity, @clubSpec, @shaftSpec, @shaftFlex, @dexterity, @typeID, @locationID, @used, @comments) " +
                                         "end " +
@@ -2309,7 +2309,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "                        CAST(ROUND((((   (tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount)) - (select sum(cost * quantity) from tbl_invoiceItem where         " +
                                 "                                                                 tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and               " +
                                 "                                                                 tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum))           " +
-                                "                                                                 / (tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount))) *100),2) as varchar)                        " +
+                                "                                                                 / (NULLIF(tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount),0))) *100),2) as varchar)                        " +
                                 "                    when tbl_invoice.subTotal = 0 then                                                                               " +
                                 "                        'N/A'                                                                                                          " +
                                 "                end                                                                                                                    " +
@@ -2321,7 +2321,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "                        CAST(ROUND((((    (tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount))    + (select sum(cost * quantity) from tbl_invoiceItemReturns where  " +
                                 "                                                                 tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and        " +
                                 "                                                                 tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum))    " +
-                                "                        / (tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount))) *100),2) as varchar)                                                                 " +
+                                "                        / (NULLIF(tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount),0))) *100),2) as varchar)                                                                 " +
                                 "                    when tbl_invoice.subTotal = 0 then                                                                               " +
                                 "                        'N/A'                                                                                                          " +
                                 "                end                                                                                                                    " +
