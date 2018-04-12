@@ -136,41 +136,49 @@ namespace SweetSpotDiscountGolfPOS
                 lblInvalidQty.Visible = false;
                 //Stores the info about the item in that index
                 InvoiceItems selectedSku = IIM.ReturnInvoiceItemForReturnProcess(Convert.ToInt32(grdInvoicedItems.Rows[e.RowIndex].Cells[1].Text), Request.QueryString["inv"].ToString());
-                int currentQTY = selectedSku.quantity;
-                string quantityForReturn = ((TextBox)grdInvoicedItems.Rows[e.RowIndex].Cells[2].FindControl("quantityToReturn")).Text;
-                int quantitySold = Convert.ToInt32(((Label)grdInvoicedItems.Rows[e.RowIndex].Cells[2].FindControl("quantitySold")).Text);
-                int returnQuantity = 1;
-                if (quantityForReturn != "")
+                if (IIM.ItemAlreadyInCart(selectedSku))
                 {
-                    returnQuantity = Convert.ToInt32(quantityForReturn);
-                }
-                if (returnQuantity > quantitySold)
-                {
-                    lblInvalidQty.Visible = true;
-                    lblInvalidQty.Text = "Quantity Exceeds the Quantity Sold";
-                    lblInvalidQty.ForeColor = System.Drawing.Color.Red;
+                    int currentQTY = selectedSku.quantity;
+                    string quantityForReturn = ((TextBox)grdInvoicedItems.Rows[e.RowIndex].Cells[2].FindControl("quantityToReturn")).Text;
+                    int quantitySold = Convert.ToInt32(((Label)grdInvoicedItems.Rows[e.RowIndex].Cells[2].FindControl("quantitySold")).Text);
+                    int returnQuantity = 1;
+                    if (quantityForReturn != "")
+                    {
+                        returnQuantity = Convert.ToInt32(quantityForReturn);
+                    }
+                    if (returnQuantity > quantitySold)
+                    {
+                        lblInvalidQty.Visible = true;
+                        lblInvalidQty.Text = "Quantity Exceeds the Quantity Sold";
+                        lblInvalidQty.ForeColor = System.Drawing.Color.Red;
+                    }
+                    else
+                    {
+                        double returnAmount = Convert.ToDouble(((TextBox)grdInvoicedItems.Rows[e.RowIndex].Cells[7].FindControl("txtReturnAmount")).Text);
+                        IIM.RemoveQTYFromInventoryWithSKU(selectedSku.sku, selectedSku.typeID, (currentQTY + returnQuantity));
+                        selectedSku.invoiceSubNum = Convert.ToInt32(Request.QueryString["inv"].Split('-')[2].ToString());
+                        selectedSku.quantity = returnQuantity;
+                        selectedSku.itemRefund = returnAmount;
+                        IIM.InsertItemIntoSalesCart(selectedSku);
+                        //deselect the indexed item
+                        grdInvoicedItems.EditIndex = -1;
+                        //store items available for return in session
+                        grdInvoicedItems.DataSource = IIM.ReturnInvoiceItemsFromProcessedSalesForReturn(Request.QueryString["inv"].ToString());
+                        grdInvoicedItems.DataBind();
+
+                        grdReturningItems.DataSource = IIM.ReturnItemsInTheReturnCart(Request.QueryString["inv"].ToString());
+                        grdReturningItems.DataBind();
+
+                        //recalculate the return total
+                        IM.CalculateNewInvoiceReturnTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0]);
+                        Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                        lblReturnSubtotalDisplay.Text = "$ " + I.subTotal.ToString("#0.00");
+                    }
                 }
                 else
                 {
-                    double returnAmount = Convert.ToDouble(((TextBox)grdInvoicedItems.Rows[e.RowIndex].Cells[7].FindControl("txtReturnAmount")).Text);
-                    IIM.RemoveQTYFromInventoryWithSKU(selectedSku.sku, selectedSku.typeID, (currentQTY + returnQuantity));
-                    selectedSku.invoiceSubNum = Convert.ToInt32(Request.QueryString["inv"].Split('-')[2].ToString());
-                    selectedSku.quantity = returnQuantity;
-                    selectedSku.itemRefund = returnAmount;
-                    IIM.InsertItemIntoSalesCart(selectedSku);
-                    //deselect the indexed item
-                    grdInvoicedItems.EditIndex = -1;
-                    //store items available for return in session
-                    grdInvoicedItems.DataSource = IIM.ReturnInvoiceItemsFromProcessedSalesForReturn(Request.QueryString["inv"].ToString());
-                    grdInvoicedItems.DataBind();
-
-                    grdReturningItems.DataSource = IIM.ReturnItemsInTheReturnCart(Request.QueryString["inv"].ToString());
-                    grdReturningItems.DataBind();
-
-                    //recalculate the return total
-                    IM.CalculateNewInvoiceReturnTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0]);
-                    Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
-                    lblReturnSubtotalDisplay.Text = "$ " + I.subTotal.ToString("#0.00");
+                    MessageBox.ShowMessage("Same item cannot be returnred for a different amount. "
+                         + "Either cancel item to set both at new return amount or process a second return.", this);
                 }
             }
             //Exception catch
@@ -197,7 +205,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Stores the info about the item in that index
                 int sku = Convert.ToInt32(grdReturningItems.Rows[index].Cells[1].Text);
                 InvoiceItems selectedSku = IIM.ReturnSkuFromCurrentSalesUsingSKU(sku, Request.QueryString["inv"].ToString());
-                
+
                 //add item to table and remove the added qty from current inventory
                 IIM.DoNotReturnTheItemOnReturn(selectedSku);
                 IIM.RemoveQTYFromInventoryWithSKU(selectedSku.sku, selectedSku.typeID, (IIM.ReturnCurrentQuantityOfItem(selectedSku) - selectedSku.quantity));

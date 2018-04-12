@@ -107,8 +107,8 @@ namespace SweetSpotDiscountGolfPOS
                 //change cost and price for cart
                 InvoiceItemsManager IIM = new InvoiceItemsManager();
                 InvoiceItems selectedTradeIn = new InvoiceItems();
-                selectedTradeIn.invoiceNum = Convert.ToInt32(Request.QueryString["inv"][1]);
-                selectedTradeIn.invoiceSubNum = Convert.ToInt32(Request.QueryString["inv"][2]);
+                selectedTradeIn.invoiceNum = Convert.ToInt32((Request.QueryString["inv"]).Split('-')[1]);
+                selectedTradeIn.invoiceSubNum = Convert.ToInt32((Request.QueryString["inv"]).Split('-')[2]);
                 selectedTradeIn.sku = tradeIN.sku;
                 selectedTradeIn.quantity = tradeIN.quantity;
                 selectedTradeIn.description = IM.ReturnBrandlNameFromBrandID(tradeIN.brandID) + " " + IM.ReturnModelNameFromModelID(tradeIN.modelID) + " " + tradeIN.clubSpec + " " + tradeIN.clubType + " " + tradeIN.shaftSpec + " " + tradeIN.shaftFlex + " " + tradeIN.dexterity;

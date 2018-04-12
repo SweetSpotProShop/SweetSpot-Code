@@ -535,51 +535,59 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     InvoiceItems selectedSku = new InvoiceItems();
                     selectedSku.sku = Convert.ToInt32(grdInventorySearched.Rows[index].Cells[1].Text);
-                    if (selectedSku.sku == 100000)
+                    selectedSku.invoiceNum = Convert.ToInt32((Request.QueryString["inv"].ToString()).Split('-')[1]);
+                    selectedSku.invoiceSubNum = Convert.ToInt32((Request.QueryString["inv"].ToString()).Split('-')[2]);
+                    if (IIM.ItemAlreadyInCart(selectedSku))
                     {
-                        btnRefreshCart.Visible = true;
-                        //Trade In Sku to add in SK
-                        string redirect = "<script>window.open('TradeINEntry.aspx?inv=" + Request.QueryString["inv"].ToString() + "');</script>";
-                        Response.Write(redirect);
+                        if (selectedSku.sku == 100000)
+                        {
+                            btnRefreshCart.Visible = true;
+                            //Trade In Sku to add in SK
+                            string redirect = "<script>window.open('TradeINEntry.aspx?inv=" + Request.QueryString["inv"].ToString() + "');</script>";
+                            Response.Write(redirect);
+                        }
+                        else
+                        {
+
+                            double discount = 0;
+                            string discountAmount = ((TextBox)grdInventorySearched.Rows[index].Cells[5].FindControl("txtAmountDiscount")).Text;
+                            if (discountAmount != "")
+                            {
+                                discount = Convert.ToDouble(discountAmount);
+                            }
+                            selectedSku.itemDiscount = discount;
+                            selectedSku.description = ((Label)grdInventorySearched.Rows[index].Cells[3].FindControl("Description")).Text;
+                            selectedSku.itemRefund = 0;
+                            selectedSku.price = double.Parse(((Label)grdInventorySearched.Rows[index].Cells[4].FindControl("rollPrice")).Text, NumberStyles.Currency);
+                            selectedSku.cost = double.Parse(((Label)grdInventorySearched.Rows[index].Cells[4].FindControl("rollCost")).Text, NumberStyles.Currency);
+                            selectedSku.percentage = ((CheckBox)grdInventorySearched.Rows[index].Cells[5].FindControl("chkDiscountPercent")).Checked;
+                            selectedSku.isTradeIn = ((CheckBox)grdInventorySearched.Rows[index].Cells[6].FindControl("chkTradeInSearch")).Checked;
+                            selectedSku.typeID = Convert.ToInt32(((Label)grdInventorySearched.Rows[index].Cells[7].FindControl("lblTypeIDSearch")).Text);
+                            selectedSku.quantity = quantity;
+
+                            //add item to table and remove the added qty from current inventory
+                            IIM.InsertItemIntoSalesCart(selectedSku);
+                            IIM.RemoveQTYFromInventoryWithSKU(selectedSku.sku, selectedSku.typeID, (currentQty - quantity));
+                            //Process an update of totals
+
+                            //refresh the cart grd from table
+                            grdCartItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["inv"].ToString());
+                            grdCartItems.DataBind();
+                            //Set an empty variable to bind to the searched items grid view so it is empty
+                            List<Cart> nullGrid = new List<Cart>();
+                            nullGrid = null;
+                            grdInventorySearched.DataSource = nullGrid;
+                            grdInventorySearched.DataBind();
+                            //Recalculate the new subtotal
+                            IM.CalculateNewInvoiceTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0]);
+                            Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                            lblSubtotalDisplay.Text = "$ " + I.subTotal.ToString("#0.00");
+                        }
                     }
                     else
                     {
-
-                        double discount = 0;
-                        string discountAmount = ((TextBox)grdInventorySearched.Rows[index].Cells[5].FindControl("txtAmountDiscount")).Text;
-                        if (discountAmount != "")
-                        {
-                            discount = Convert.ToDouble(discountAmount);
-                        }
-                        selectedSku.invoiceNum = Convert.ToInt32((Request.QueryString["inv"].ToString()).Split('-')[1]);
-                        selectedSku.invoiceSubNum = Convert.ToInt32((Request.QueryString["inv"].ToString()).Split('-')[2]);
-                        selectedSku.itemDiscount = discount;
-                        selectedSku.description = ((Label)grdInventorySearched.Rows[index].Cells[3].FindControl("Description")).Text;
-                        selectedSku.itemRefund = 0;
-                        selectedSku.price = double.Parse(((Label)grdInventorySearched.Rows[index].Cells[4].FindControl("rollPrice")).Text, NumberStyles.Currency);
-                        selectedSku.cost = double.Parse(((Label)grdInventorySearched.Rows[index].Cells[4].FindControl("rollCost")).Text, NumberStyles.Currency);
-                        selectedSku.percentage = ((CheckBox)grdInventorySearched.Rows[index].Cells[5].FindControl("chkDiscountPercent")).Checked;
-                        selectedSku.isTradeIn = ((CheckBox)grdInventorySearched.Rows[index].Cells[6].FindControl("chkTradeInSearch")).Checked;
-                        selectedSku.typeID = Convert.ToInt32(((Label)grdInventorySearched.Rows[index].Cells[7].FindControl("lblTypeIDSearch")).Text);
-                        selectedSku.quantity = quantity;
-
-                        //add item to table and remove the added qty from current inventory
-                        IIM.InsertItemIntoSalesCart(selectedSku);
-                        IIM.RemoveQTYFromInventoryWithSKU(selectedSku.sku, selectedSku.typeID, (currentQty - quantity));
-                        //Process an update of totals
-
-                        //refresh the cart grd from table
-                        grdCartItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["inv"].ToString());
-                        grdCartItems.DataBind();
-                        //Set an empty variable to bind to the searched items grid view so it is empty
-                        List<Cart> nullGrid = new List<Cart>();
-                        nullGrid = null;
-                        grdInventorySearched.DataSource = nullGrid;
-                        grdInventorySearched.DataBind();
-                        //Recalculate the new subtotal
-                        IM.CalculateNewInvoiceTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0]);
-                        Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
-                        lblSubtotalDisplay.Text = "$ " + I.subTotal.ToString("#0.00");
+                        MessageBox.ShowMessage("Item is alraedy in the cart. Please update item in "
+                         + "cart or process a second sale.", this);
                     }
                 }
             }

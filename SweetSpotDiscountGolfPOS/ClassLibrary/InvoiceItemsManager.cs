@@ -449,5 +449,27 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         {
             return ReturnQTYofItem(ii.sku, "tbl_" + ReturnTableNameFromTypeID(ii.typeID), "quantity");
         }
+        public bool ItemAlreadyInCart(InvoiceItems ii)
+        {
+            bool itemInCart = false;
+
+            string sqlCmd = "SELECT sku FROM tbl_currentSalesItems WHERE "
+                + "invoiceNum = @invoiceNum AND invoiceSubNum = @invoiceSubNum "
+                + "AND sku = @sku";
+
+            object[][] parms =
+            {
+                new object[] { "@invoiceNum", ii.invoiceNum },
+                new object[] { "@invoiceSubNum", ii.invoiceSubNum },
+                new object[] { "@sku", ii.sku }
+            };
+
+            DataTable dt = dbc.returnDataTableData(sqlCmd, parms);
+            if(dt.Rows.Count > 0)
+            {
+                itemInCart = true;
+            }
+            return itemInCart;
+        }
     }
 }
