@@ -60,9 +60,6 @@
             <asp:Label ID="lblCustomerDisplay" runat="server" Text="" />
             <br />
             <br />
-            <%--//Radio button for InStore or Shipping--%>
-            <asp:Label ID="lblShipping" runat="server" Text="Shipping Amount:" />
-            <asp:Label ID="lblShippingAmount" runat="server" Text="" />
             <div style="text-align: right">
                 <asp:Label ID="lblInvoiceNumber" runat="server" Text="Invoice No:" />
                 <asp:Label ID="lblInvoiceNumberDisplay" runat="server" />

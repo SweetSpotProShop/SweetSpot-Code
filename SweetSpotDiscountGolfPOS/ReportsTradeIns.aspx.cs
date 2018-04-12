@@ -16,16 +16,18 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsTradeIns : System.Web.UI.Page
     {
-        ErrorReporting er = new ErrorReporting();
+        CurrentUser CU = new CurrentUser();
+        ErrorReporting ER = new ErrorReporting();
+        Reports R = new Reports();
+
+
         SweetShopManager ssm = new SweetShopManager();
-        Reports r = new Reports();
         ItemDataUtilities idu = new ItemDataUtilities();
         CustomMessageBox cmb = new CustomMessageBox();
-        CurrentUser cu = new CurrentUser();
         LocationManager l = new LocationManager();
         double tradeInDollars;
-
         DataTable dt = new DataTable();
+
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -42,7 +44,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    cu = (CurrentUser)Session["currentUser"];
+                    CU = (CurrentUser)Session["currentUser"];
                     //Gathering the start and end dates
                     Object[] passing = (Object[])Session["reportInfo"];
                     DateTime[] reportDates = (DateTime[])passing[0];
@@ -58,7 +60,7 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         lblDates.Text = "Items sold on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
                     }
-                    dt = r.returnTradeInsForSelectedDate(passing);
+                    dt = R.returnTradeInsForSelectedDate(passing);
                     grdTradeInsByDate.DataSource = dt;
                     grdTradeInsByDate.DataBind();
                 }
@@ -68,24 +70,37 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                er.logError(ex, cu.empID, Convert.ToString(Session["currPage"]), method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
-                //Server.Transfer(prevPage, false);
             }
         }
         protected void grdTradeInsByDate_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            if (e.Row.RowType == DataControlRowType.DataRow)
+            string method = "grdTradeInsByDate_RowDataBound";
+            try
             {
-                tradeInDollars += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "totalTradeIns"));
+                if (e.Row.RowType == DataControlRowType.DataRow)
+                {
+                    tradeInDollars += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "totalTradeIns"));
+                }
+                else if (e.Row.RowType == DataControlRowType.Footer)
+                {
+                    e.Row.Cells[1].Text = String.Format("{0:C}", tradeInDollars);
+                }
             }
-            else if (e.Row.RowType == DataControlRowType.Footer)
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
             {
-                e.Row.Cells[1].Text = String.Format("{0:C}", tradeInDollars);
+                //Log all info into error table
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
             }
         }
         protected void btnDownload_Click(object sender, EventArgs e)
@@ -128,18 +143,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
-                //Server.Transfer(prevPage, false);
             }
         }
     }

@@ -53,9 +53,9 @@ namespace SweetShop
             List<CurrentUser> currentUser = dt.AsEnumerable().Select(row =>
             new CurrentUser
             {
-                empID = row.Field<int>("empID"),
+                emp = ReturnEmployee(row.Field<int>("empID"))[0],
                 jobID = row.Field<int>("jobID"),
-                locationID = row.Field<int>("locationID"),
+                location = LM.ReturnLocation(row.Field<int>("locationID"))[0],
                 locationName = row.Field<string>("city"),
                 password = row.Field<int>("password")
             }).ToList();

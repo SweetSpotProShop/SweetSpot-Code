@@ -46,24 +46,24 @@ namespace SweetSpotDiscountGolfPOS
                         if (!IsPostBack)
                         {
                             //Create an employee class
-                            List<Employee> employee = EM.ReturnEmployee(Convert.ToInt32(Request.QueryString["emp"].ToString()));
+                            Employee employee = EM.ReturnEmployee(Convert.ToInt32(Request.QueryString["emp"].ToString()))[0];
                             //Fill asll lables with current selected employee info
-                            txtFirstName.Text = employee[0].firstName.ToString();
-                            txtLastName.Text = employee[0].lastName.ToString();
-                            ddlJob.SelectedValue = employee[0].jobID.ToString();
-                            ddlLocation.SelectedValue = employee[0].location.locationID.ToString();
-                            txtEmail.Text = employee[0].emailAddress.ToString();
-                            txtPrimaryPhoneNumber.Text = employee[0].primaryContactNumber.ToString();
-                            txtSecondaryPhoneNumber.Text = employee[0].secondaryContactNumber.ToString();
-                            txtPrimaryAddress.Text = employee[0].primaryAddress.ToString();
-                            txtSecondaryAddress.Text = employee[0].secondaryAddress.ToString();
-                            txtCity.Text = employee[0].city.ToString();
-                            txtPostalCode.Text = employee[0].postZip.ToString();
-                            ddlProvince.SelectedValue = employee[0].provState.ToString();
-                            ddlCountry.SelectedValue = employee[0].country.ToString();
+                            txtFirstName.Text = employee.firstName.ToString();
+                            txtLastName.Text = employee.lastName.ToString();
+                            ddlJob.SelectedValue = employee.jobID.ToString();
+                            ddlLocation.SelectedValue = employee.location.locationID.ToString();
+                            txtEmail.Text = employee.emailAddress.ToString();
+                            txtPrimaryPhoneNumber.Text = employee.primaryContactNumber.ToString();
+                            txtSecondaryPhoneNumber.Text = employee.secondaryContactNumber.ToString();
+                            txtPrimaryAddress.Text = employee.primaryAddress.ToString();
+                            txtSecondaryAddress.Text = employee.secondaryAddress.ToString();
+                            txtCity.Text = employee.city.ToString();
+                            txtPostalCode.Text = employee.postZip.ToString();
+                            ddlProvince.SelectedValue = employee.provState.ToString();
+                            ddlCountry.SelectedValue = employee.country.ToString();
                             ddlProvince.DataTextField = "provName";
                             ddlProvince.DataValueField = "provStateID";
-                            ddlProvince.DataSource = LM.ReturnProvinceDropDown(employee[0].country);
+                            ddlProvince.DataSource = LM.ReturnProvinceDropDown(employee.country);
                             ddlProvince.DataBind();
                         }
                     }
@@ -71,7 +71,7 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         if (!IsPostBack)
                         {
-                            ddlLocation.SelectedValue = CU.locationID.ToString();
+                            ddlLocation.SelectedValue = CU.location.locationID.ToString();
                             ddlProvince.DataTextField = "provName";
                             ddlProvince.DataValueField = "provStateID";
                             ddlProvince.DataSource = LM.ReturnProvinceDropDown(0);
@@ -108,7 +108,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -146,7 +146,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -194,7 +194,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -263,7 +263,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -284,7 +284,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -305,7 +305,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -348,7 +348,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -371,7 +371,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

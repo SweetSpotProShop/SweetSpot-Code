@@ -26,7 +26,7 @@ namespace SweetSpotDiscountGolfPOS
                 CU = (CurrentUser)Session["currentUser"];
                 if (!IsPostBack)
                 {
-                    lblSKUDisplay.Text = IM.ReserveTradeInSKU(CU.locationID).ToString();
+                    lblSKUDisplay.Text = IM.ReserveTradeInSKU(CU.location.locationID).ToString();
                     ddlBrand.DataSource = IM.ReturnDropDownForBrand();
                     ddlBrand.DataTextField = "brandName";
                     ddlBrand.DataValueField = "brandID";
@@ -47,7 +47,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.1", method, this);
                 //string prevPage = Convert.ToString(Session["prevPage"]);
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -66,7 +66,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.1", method, this);
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
@@ -99,7 +99,7 @@ namespace SweetSpotDiscountGolfPOS
                 tradeIN.dexterity = txtDexterity.Text;
                 tradeIN.comments = txtComments.Text;
                 tradeIN.isTradeIn = true;
-                tradeIN.itemlocation = CU.locationID;
+                tradeIN.itemlocation = CU.location.locationID;
 
                 //this adds to the temp tradeIncart
                 IM.AddTradeInItemToTempTable(tradeIN);
@@ -128,7 +128,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.1", method, this);
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);

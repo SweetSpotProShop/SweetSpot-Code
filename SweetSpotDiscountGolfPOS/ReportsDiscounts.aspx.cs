@@ -17,13 +17,15 @@ namespace SweetSpotDiscountGolfPOS
     {
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU = new CurrentUser();
+        Reports R = new Reports();
+
+
 
         SweetShopManager ssm = new SweetShopManager();
         LocationManager lm = new LocationManager();
         DateTime startDate;
         DateTime endDate;
         Employee e;
-        Reports reports = new Reports();
         LocationManager l = new LocationManager();
         ItemDataUtilities idu = new ItemDataUtilities();
         double tDiscount;
@@ -62,7 +64,7 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         lblReportDate.Text = "Discount Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + lm.locationName(locID);
                     }
-                    discounts = reports.returnDiscountsBetweenDates(startDate, endDate);
+                    discounts = R.returnDiscountsBetweenDates(startDate, endDate);
                     if (discounts.Count == 0)
                     {
                         if (startDate == endDate)
@@ -86,7 +88,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -115,7 +117,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -169,7 +171,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

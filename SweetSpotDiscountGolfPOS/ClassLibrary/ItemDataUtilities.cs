@@ -1027,7 +1027,7 @@ namespace SweetSpotProShop
             cmd.Parameters.AddWithValue("invoiceTime", time);
             cmd.Parameters.AddWithValue("custID", c.customerId);
             cmd.Parameters.AddWithValue("empID", e.employeeID);
-            cmd.Parameters.AddWithValue("locationID", cu.locationID);
+            cmd.Parameters.AddWithValue("locationID", cu.location.locationID);
             cmd.Parameters.AddWithValue("subTotal", ckm.dblSubTotal);
             cmd.Parameters.AddWithValue("shippingAmount", ckm.dblShipping);
             cmd.Parameters.AddWithValue("discountAmount", ckm.dblDiscounts);
@@ -1112,7 +1112,7 @@ namespace SweetSpotProShop
             cmd.Parameters.AddWithValue("receiptTime", time);
             cmd.Parameters.AddWithValue("custID", c.customerId);
             cmd.Parameters.AddWithValue("empID", e.employeeID);
-            cmd.Parameters.AddWithValue("locationID", cu.locationID);
+            cmd.Parameters.AddWithValue("locationID", cu.location.locationID);
             cmd.Parameters.AddWithValue("receiptTotal", ckm.dblTotal);
             cmd.Parameters.AddWithValue("transactionType", transactionType);
             cmd.Parameters.AddWithValue("comments", comments);

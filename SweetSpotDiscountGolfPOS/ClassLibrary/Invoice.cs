@@ -30,8 +30,9 @@ namespace SweetShop
         public List<InvoiceMOPs> usedMops { get; set; }
         public int transactionType { get; set; }
         public string comments { get; set; }
-        public string transactionName { get; set; }
 
+        //Get Rid of
+        public string transactionName { get; set; }
         public string customerName { get; set; }
         public string employeeName { get; set; }
 
@@ -142,15 +143,15 @@ namespace SweetShop
             transactionType = TT;
             comments = C;
         }
-        public Invoice(int I, int S, DateTime D, DateTime T, int CID, int EID, int LID, double ST, double SA, double DA, double TA, double G, double P, double BD, int TT, string C)
+        public Invoice(int I, int S, DateTime D, DateTime T, Customer C, Employee E, Location L, double ST, double SA, double DA, double TA, double G, double P, double BD, int TT, string CS)
         {
             invoiceNum = I;
             invoiceSub = S;
             invoiceDate = D;
             invoiceTime = T;
-            customerID = CID;
-            employeeID = EID;
-            locationID = LID;
+            customer = C;
+            employee = E;
+            location = L;
             subTotal = ST;
             shippingAmount = SA;
             discountAmount = DA;
@@ -159,7 +160,7 @@ namespace SweetShop
             provincialTax = P;
             balanceDue = BD;
             transactionType = TT;
-            comments = C;
+            comments = CS;
         }
         public Invoice(int num, int subNum, DateTime d, string c, string e, double da, double bd)
         {

@@ -16,19 +16,19 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsExtensiveInvoice : System.Web.UI.Page
     {
+        CurrentUser CU = new CurrentUser();
+        ErrorReporting ER = new ErrorReporting();
+        Reports R = new Reports();
+
+
         SweetShopManager ssm = new SweetShopManager();
-        ErrorReporting er = new ErrorReporting();
         LocationManager lm = new LocationManager();
         DateTime startDate;
         DateTime endDate;
         Employee e;
-        Reports reports = new Reports();
         LocationManager l = new LocationManager();
         ItemDataUtilities idu = new ItemDataUtilities();
-        CurrentUser cu = new CurrentUser();
-
-        DataTable invoices;
-
+        DataTable invoices = new DataTable();
         double shipping;
         double discount;
         double preTax;
@@ -55,7 +55,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    cu = (CurrentUser)Session["currentUser"];
+                    CU = (CurrentUser)Session["currentUser"];
                     //Gathering the start and end dates
                     Object[] repInfo = (Object[])Session["reportInfo"];
                     DateTime[] reportDates = (DateTime[])repInfo[0];
@@ -71,10 +71,8 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + lm.locationName(locID);
                     }
-                    invoices = new DataTable();
-                    invoices = reports.returnExtensiveInvoices(startDate, endDate, locID);
-
-                    grdInvoices.DataSource = invoices;
+                    
+                    grdInvoices.DataSource = R.returnExtensiveInvoices(startDate, endDate, locID);
                     grdInvoices.DataBind();
                 }
             }
@@ -82,121 +80,128 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
-                //Server.Transfer(prevPage, false);
             }
         }
-
         protected void grdInvoices_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            Label lblShipping = (Label)e.Row.FindControl("lblShipping");
-            Label lblDiscount = (Label)e.Row.FindControl("lblDiscount");
-            Label lblPreTax = (Label)e.Row.FindControl("lblPreTax");
-            Label lblGovTax = (Label)e.Row.FindControl("lblGovernmentTax");
-            Label lblProvTax = (Label)e.Row.FindControl("lblProvincialTax");
-            Label lblPostTax = (Label)e.Row.FindControl("lblPostTax");
-            Label lblCOGS = (Label)e.Row.FindControl("lblCOGS");
-            Label lblRevenue = (Label)e.Row.FindControl("lblRevenue");
-            Label lblProfitMargin = (Label)e.Row.FindControl("lblProfitMargin");
-            Label lblDate = (Label)e.Row.FindControl("lblDate");
-            // check row type
-            if (e.Row.RowType == DataControlRowType.DataRow)
-            {               
-                //Shipping
-                if (lblShipping.Text.isNumber())
-                {
-                    shipping += Convert.ToDouble(lblShipping.Text);
-                    lblShipping.Text = "$" + lblShipping.Text;                    
-                }
-                //Discount
-                if (lblDiscount.Text.isNumber())
-                {
-                    discount += Convert.ToDouble(lblDiscount.Text);
-                    lblDiscount.Text = "$" + lblDiscount.Text;                    
-                }
-                //Pre-Tax
-                if(lblPreTax.Text.isNumber())
-                {
-                    preTax += Convert.ToDouble(lblPreTax.Text);
-                    lblPreTax.Text = "$" + lblPreTax.Text;                    
-                }
-                //Gov Tax
-                if(lblGovTax.Text.isNumber())
-                {
-                    govTax += Convert.ToDouble(lblGovTax.Text);
-                    lblGovTax.Text = "$" + lblGovTax.Text;                    
-                }
-                //Prov Tax
-                if(lblProvTax.Text.isNumber())
-                {
-                    proTax += Convert.ToDouble(lblProvTax.Text);
-                    lblProvTax.Text = "$" + lblProvTax.Text;                    
-                }
-                //Post-Tax
-                if (lblPostTax.Text.isNumber())
-                {
-                    postTax += Convert.ToDouble(lblPostTax.Text);
-                    lblPostTax.Text = "$" + lblPostTax.Text;
-                }
-                //COGS
-                if (lblCOGS.Text.isNumber())
-                {
-                    cogs += Convert.ToDouble(lblCOGS.Text);
-                    lblCOGS.Text = "$" + lblCOGS.Text;
-                }
-                //Revenue
-                if (lblRevenue.Text.isNumber())
-                {
-                    revenue += Convert.ToDouble(lblRevenue.Text);
-                    lblRevenue.Text = "$" + lblRevenue.Text;
-                }
-                //Profit Margin
-                if (lblProfitMargin.Text.isNumber())
-                {
-                    margin += Convert.ToDouble(lblProfitMargin.Text);
-                    marginCounter++;
-                    lblProfitMargin.Text = lblProfitMargin.Text + "%";
-                }
-                //Removing the time from the date
-                string date = lblDate.Text;
-                DateTime invoiceDate = Convert.ToDateTime(date);
-                lblDate.Text = invoiceDate.ToString("dd-MM-yyyy");             
-            }
-            else if (e.Row.RowType == DataControlRowType.Footer)
+            string method = "grdInvoices_RowDataBound";
+            try
             {
-                Label lblShippingTotal = (Label)e.Row.FindControl("lblShippingTotal");
-                Label lblDiscountTotal = (Label)e.Row.FindControl("lblDiscountTotal");
-                Label lblPreTaxTotal = (Label)e.Row.FindControl("lblPreTaxTotal");
-                Label lblGovTaxTotal = (Label)e.Row.FindControl("lblGovernmentTaxTotal");
-                Label lblProvTaxTotal = (Label)e.Row.FindControl("lblProvincialTaxTotal");
-                Label lblPostTaxTotal = (Label)e.Row.FindControl("lblPostTaxTotal");
-                Label lblCOGSTotal = (Label)e.Row.FindControl("lblCOGSTotal");
-                Label lblRevenueTotal = (Label)e.Row.FindControl("lblRevenueTotal");
-                Label lblProfitMarginTotal = (Label)e.Row.FindControl("lblProfitMarginTotal");
+                Label lblShipping = (Label)e.Row.FindControl("lblShipping");
+                Label lblDiscount = (Label)e.Row.FindControl("lblDiscount");
+                Label lblPreTax = (Label)e.Row.FindControl("lblPreTax");
+                Label lblGovTax = (Label)e.Row.FindControl("lblGovernmentTax");
+                Label lblProvTax = (Label)e.Row.FindControl("lblProvincialTax");
+                Label lblPostTax = (Label)e.Row.FindControl("lblPostTax");
+                Label lblCOGS = (Label)e.Row.FindControl("lblCOGS");
+                Label lblRevenue = (Label)e.Row.FindControl("lblRevenue");
+                Label lblProfitMargin = (Label)e.Row.FindControl("lblProfitMargin");
+                Label lblDate = (Label)e.Row.FindControl("lblDate");
+                // check row type
+                if (e.Row.RowType == DataControlRowType.DataRow)
+                {
+                    //Shipping
+                    if (lblShipping.Text.isNumber())
+                    {
+                        shipping += Convert.ToDouble(lblShipping.Text);
+                        lblShipping.Text = "$" + lblShipping.Text;
+                    }
+                    //Discount
+                    if (lblDiscount.Text.isNumber())
+                    {
+                        discount += Convert.ToDouble(lblDiscount.Text);
+                        lblDiscount.Text = "$" + lblDiscount.Text;
+                    }
+                    //Pre-Tax
+                    if (lblPreTax.Text.isNumber())
+                    {
+                        preTax += Convert.ToDouble(lblPreTax.Text);
+                        lblPreTax.Text = "$" + lblPreTax.Text;
+                    }
+                    //Gov Tax
+                    if (lblGovTax.Text.isNumber())
+                    {
+                        govTax += Convert.ToDouble(lblGovTax.Text);
+                        lblGovTax.Text = "$" + lblGovTax.Text;
+                    }
+                    //Prov Tax
+                    if (lblProvTax.Text.isNumber())
+                    {
+                        proTax += Convert.ToDouble(lblProvTax.Text);
+                        lblProvTax.Text = "$" + lblProvTax.Text;
+                    }
+                    //Post-Tax
+                    if (lblPostTax.Text.isNumber())
+                    {
+                        postTax += Convert.ToDouble(lblPostTax.Text);
+                        lblPostTax.Text = "$" + lblPostTax.Text;
+                    }
+                    //COGS
+                    if (lblCOGS.Text.isNumber())
+                    {
+                        cogs += Convert.ToDouble(lblCOGS.Text);
+                        lblCOGS.Text = "$" + lblCOGS.Text;
+                    }
+                    //Revenue
+                    if (lblRevenue.Text.isNumber())
+                    {
+                        revenue += Convert.ToDouble(lblRevenue.Text);
+                        lblRevenue.Text = "$" + lblRevenue.Text;
+                    }
+                    //Profit Margin
+                    if (lblProfitMargin.Text.isNumber())
+                    {
+                        margin += Convert.ToDouble(lblProfitMargin.Text);
+                        marginCounter++;
+                        lblProfitMargin.Text = lblProfitMargin.Text + "%";
+                    }
+                    //Removing the time from the date
+                    string date = lblDate.Text;
+                    DateTime invoiceDate = Convert.ToDateTime(date);
+                    lblDate.Text = invoiceDate.ToString("dd-MM-yyyy");
+                }
+                else if (e.Row.RowType == DataControlRowType.Footer)
+                {
+                    Label lblShippingTotal = (Label)e.Row.FindControl("lblShippingTotal");
+                    Label lblDiscountTotal = (Label)e.Row.FindControl("lblDiscountTotal");
+                    Label lblPreTaxTotal = (Label)e.Row.FindControl("lblPreTaxTotal");
+                    Label lblGovTaxTotal = (Label)e.Row.FindControl("lblGovernmentTaxTotal");
+                    Label lblProvTaxTotal = (Label)e.Row.FindControl("lblProvincialTaxTotal");
+                    Label lblPostTaxTotal = (Label)e.Row.FindControl("lblPostTaxTotal");
+                    Label lblCOGSTotal = (Label)e.Row.FindControl("lblCOGSTotal");
+                    Label lblRevenueTotal = (Label)e.Row.FindControl("lblRevenueTotal");
+                    Label lblProfitMarginTotal = (Label)e.Row.FindControl("lblProfitMarginTotal");
 
-                lblShippingTotal.Text = String.Format("{0:C}", shipping);
-                lblDiscountTotal.Text = String.Format("{0:C}", discount);
-                lblPreTaxTotal.Text = String.Format("{0:C}", preTax);
-                lblGovTaxTotal.Text = String.Format("{0:C}", govTax);
-                lblProvTaxTotal.Text = String.Format("{0:C}", proTax);
-                lblPostTaxTotal.Text = String.Format("{0:C}", postTax);
-                lblCOGSTotal.Text = String.Format("{0:C}", cogs);
-                lblRevenueTotal.Text = String.Format("{0:C}", revenue);
-                double profitMarginAverage = (margin / marginCounter);
-                lblProfitMarginTotal.Text = profitMarginAverage.ToString("#.##") + "%";
+                    lblShippingTotal.Text = String.Format("{0:C}", shipping);
+                    lblDiscountTotal.Text = String.Format("{0:C}", discount);
+                    lblPreTaxTotal.Text = String.Format("{0:C}", preTax);
+                    lblGovTaxTotal.Text = String.Format("{0:C}", govTax);
+                    lblProvTaxTotal.Text = String.Format("{0:C}", proTax);
+                    lblPostTaxTotal.Text = String.Format("{0:C}", postTax);
+                    lblCOGSTotal.Text = String.Format("{0:C}", cogs);
+                    lblRevenueTotal.Text = String.Format("{0:C}", revenue);
+                    double profitMarginAverage = (margin / marginCounter);
+                    lblProfitMarginTotal.Text = profitMarginAverage.ToString("#.##") + "%";
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
             }
         }
-
         protected void btnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -273,21 +278,14 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
-                //Server.Transfer(prevPage, false);
             }
         }
-
         protected void lbtnInvoiceNumber_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -328,18 +326,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
-                //Server.Transfer(prevPage, false);
             }
         }
     }

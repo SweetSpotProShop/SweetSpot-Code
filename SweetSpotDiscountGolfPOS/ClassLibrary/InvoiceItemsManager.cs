@@ -36,6 +36,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
 
         //Returns list of InvoiceItems based on an Invoice Number
+        //THIS CAN BE UPDATED TO GET ALL INFO FROM INVOICE TABLES (remove all joins)
         public List<InvoiceItems> ReturnInvoiceItems(string invoice)
         {
             string sqlCmd = "SELECT II.invoiceNum, II.invoiceSubNum, II.sku, (SELECT B.brandName + ' ' + M.modelName "
@@ -110,16 +111,23 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             return invoiceItems;
         }
-        //public DataTable ReturnInvoiceItemsForSalesCart(int sku)
-        //{
-        //    string sqlCmd = "SELECT ";
-        //    object[][] parms =
-        //    {
-        //        new object[] { "@sku", sku }
-        //    };
-        //    return dbc.returnDataTableData(sqlCmd, parms);
-        //}
-        //Returns string for search accessories
+        public List<InvoiceItems> ReturnInvoiceItemsCurrentSale(string invoice)
+        {
+            string sqlCmd = "SELECT invoiceNum, invoiceSubNum, sku, description, quantity, cost, price, "
+                + "itemDiscount, itemRefund, percentage, typeID, isTradeIn FROM tbl_currentSalesItems  "
+                + "WHERE invoiceNum = @invoiceNum AND invoiceSubNum = @invoiceSubNum";
+
+            int num = Convert.ToInt32(invoice.Split('-')[1]);
+            int sub = Convert.ToInt32(invoice.Split('-')[2]);
+
+            Object[][] parms =
+            {
+                 new object[] { "@invoiceNum", num },
+                 new object[] { "@invoiceSubNum", sub }
+            };
+            
+            return ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms));
+        }
         public string ReturnStringSearchForAccessories(ArrayList array)
         {
             string sqlCmd = "";
@@ -428,6 +436,18 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             InvoiceItems II = ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms))[0];
             II.quantity = ReturnQTYofItem(II.sku, "tbl_" + ReturnTableNameFromTypeID(II.typeID), "quantity");
             return II;
+        }
+        public void DoNotReturnTheItemOnReturn(InvoiceItems ii)
+        {
+            RemoveItemFromCurrentSalesTable(ii);
+        }
+        public InvoiceItems ReturnSkuFromCurrentSalesUsingSKU(int sku, string invoice)
+        {
+            return ReturnItemDetailsFromCurrentSaleTable(sku, invoice)[0];
+        }
+        public int ReturnCurrentQuantityOfItem(InvoiceItems ii)
+        {
+            return ReturnQTYofItem(ii.sku, "tbl_" + ReturnTableNameFromTypeID(ii.typeID), "quantity");
         }
     }
 }

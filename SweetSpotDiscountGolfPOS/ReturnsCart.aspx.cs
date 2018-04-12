@@ -19,19 +19,20 @@ namespace SweetSpotDiscountGolfPOS
         CurrentUser CU = new CurrentUser();
         InvoiceManager IM = new InvoiceManager();
         InvoiceItemsManager IIM = new InvoiceItemsManager();
+        //SalesCalculationManager SCM = new SalesCalculationManager();
 
         //public string skuString;
         //public int skuInt;
         //public int invNum;
         //SweetShopManager ssm = new SweetShopManager();
-        ItemDataUtilities idu = new ItemDataUtilities();
+        //ItemDataUtilities idu = new ItemDataUtilities();
         //List<Cart> invoiceItems = new List<Cart>();
         //List<Cart> itemsInCart = new List<Cart>();
         //List<Cart> returnedCart = new List<Cart>();
         //List<Cart> temp = new List<Cart>();
         //LocationManager lm = new LocationManager();
         //Object o = new Object();
-        //SalesCalculationManager cm = new SalesCalculationManager();
+
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -58,6 +59,19 @@ namespace SweetSpotDiscountGolfPOS
                         //{
                         //Retrieves Invoice from Session
                         Invoice I = IM.ReturnInvoiceForReturns(Request.QueryString["inv"].ToString());
+
+                        if (!IM.ReturnBolInvoiceExists(Request.QueryString["inv"].ToString()))
+                        {
+                            I.invoiceSub = Convert.ToInt32((Request.QueryString["inv"].ToString()).Split('-')[2]);
+                            I.subTotal = 0;
+                            I.discountAmount = 0;
+                            I.tradeinAmount = 0;
+                            I.balanceDue = 0;
+                            I.location = CU.location;
+                            I.employee = CU.emp;
+                            IM.CreateInitialTotalsForTable(I);
+                        }
+
                         //Checks to see if the returned cart is empty
                         //if (Session["returnedCart"] != null)
                         //{
@@ -94,6 +108,12 @@ namespace SweetSpotDiscountGolfPOS
                         grdReturningItems.DataSource = IIM.ReturnItemsInTheReturnCart(Request.QueryString["inv"].ToString());
                         grdReturningItems.DataBind();
                         //}
+
+                        IM.CalculateNewInvoiceReturnTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0]);
+                        I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                        lblReturnSubtotalDisplay.Text = "$ " + I.subTotal.ToString("#0.00");
+
+                        //lblReturnSubtotalDisplay.Text = "$ " + SCM.returnRefundSubtotalAmount(Request.QueryString["inv"].ToString()).ToString("#0.00");
                     }
                 }
             }
@@ -102,7 +122,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -144,14 +164,14 @@ namespace SweetSpotDiscountGolfPOS
                 //Session["TranType"] = null;
                 //Session["ShippingAmount"] = null;
                 //Session["strDate"] = null;
-                //Response.Redirect("HomePage.aspx", false);
+                Response.Redirect("HomePage.aspx", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -166,14 +186,16 @@ namespace SweetSpotDiscountGolfPOS
             {
                 lblInvalidQty.Visible = false;
                 //Changes page to the returns checkout page
-                Response.Redirect("ReturnsCheckout.aspx", false);
+                var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                nameValues.Set("inv", Request.QueryString["inv"].ToString());
+                Response.Redirect("ReturnsCheckout.aspx?" + nameValues, false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -311,7 +333,11 @@ namespace SweetSpotDiscountGolfPOS
                     grdReturningItems.DataBind();
 
                     //recalculate the return total
-                    ////lblReturnSubtotalDisplay.Text = "$ " + cm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
+                    IM.CalculateNewInvoiceReturnTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0]);
+                    Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                    lblReturnSubtotalDisplay.Text = "$ " + I.subTotal.ToString("#0.00");
+
+                    //lblReturnSubtotalDisplay.Text = "$ " + SCM.returnRefundSubtotalAmount(Request.QueryString["inv"].ToString()).ToString("#0.00");
                 }
             }
             //Exception catch
@@ -319,7 +345,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -337,120 +363,133 @@ namespace SweetSpotDiscountGolfPOS
                 int index = e.RowIndex;
                 //Stores the info about the item in that index
                 int sku = Convert.ToInt32(grdReturningItems.Rows[index].Cells[1].Text);
-                int quantity = Convert.ToInt32(grdReturningItems.Rows[index].Cells[2].Text);
-                int itemType = Convert.ToInt32(((Label)grdReturningItems.Rows[index].Cells[6].FindControl("lblReturnedTypeID")).Text);
-                //Calls current quantity of the sku that is in stock
-                int inStockQTY = idu.getquantity(sku, itemType);
-                int remainingQTY = 0;
-                //Transfers Session of items that have been marked for return
-                List<Cart> duplicateCart = (List<Cart>)Session["returnedCart"];
-                Cart cancelReturnedItem = new Cart();
-                //Transfers Session of items that could be returned into a duplicate cart
-                List<Cart> duplicateReturnedCart = (List<Cart>)Session["ItemsInCart"];
-                bool bolAdded = false;
-                bool bolCart = true;
-                //Checks if there are already items in the cart that could be returned
-                if (duplicateReturnedCart.Count > 0)
-                {
-                    bolCart = false;
-                }
-                //Loops through each cart item that has been marked for return
-                foreach (var cart in duplicateCart)
-                {
-                    //Matches the selected sku with cart item that has been marked for return
-                    if (cart.sku == sku)
-                    {
-                        //Checks if there are more than 1 of that item that is marked for return
-                        if (quantity > 1)
-                        {
-                            //If there are then reduce the quantity of that item by 1
-                            remainingQTY = quantity - 1;
-                            cart.quantity = remainingQTY;
-                            //Add it into the cart of item that are marked for return
-                            //at this lower quantity
-                            //returnedCart.Add(cart);
-                        }
-                        //Checks if there are already items in the returnable items cart
-                        if (!bolCart)
-                        {
-                            //When there are need to loop through that cart to see if
-                            //the item now being updated already has a quantity in
-                            //the available for return cart
-                            foreach (var retCart in duplicateReturnedCart)
-                            {
-                                //checks to see if the skus match
-                                if (retCart.sku == cart.sku)
-                                {
-                                    //When skus match increase the quantity for that sku
-                                    //in the returnable items cart
-                                    cancelReturnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity + 1, retCart.price, retCart.cost, retCart.itemDiscount, retCart.percentage, 0, retCart.isTradeIn, retCart.typeID);
-                                    //Remove that item from stock so that it can not be sold again
-                                    idu.removeQTYfromInventoryWithSKU(cancelReturnedItem.sku, cancelReturnedItem.typeID, inStockQTY - 1);
-                                    //Trigger that the selected sku has now been added into the returnable items cart
-                                    bolAdded = true;
-                                }
-                                else
-                                {
-                                    //If the sku doesn't match then item we checked against
-                                    //needs to be added back into the marked for return cart
-                                    cancelReturnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity, retCart.price, retCart.cost, retCart.itemDiscount, retCart.percentage, 0, retCart.isTradeIn, retCart.typeID);
-                                }
-                                //This completes the add of the item from the if statement
-                                //itemsInCart.Add(cancelReturnedItem);
-                            }
-                            //Triggers if the selected sku didn't match any sku in the returnable
-                            //items cart
-                            if (!bolAdded)
-                            {
-                                int multi;
-                                //checks if there was a percentage discount or dollar discount
-                                //on the sku
-                                if (cart.percentage) { multi = 1; } else { multi = -1; }
-                                //Adds sku in the returnable items cart
-                                cancelReturnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.itemDiscount, cart.percentage, 0, cart.isTradeIn, cart.typeID);
-                                //Removes the new quantity from stock
-                                idu.removeQTYfromInventoryWithSKU(cancelReturnedItem.sku, cancelReturnedItem.typeID, inStockQTY - 1);
-                                //itemsInCart.Add(cancelReturnedItem);
-                            }
-                        }
-                        //The returnable items cart was empty no checks needed on item just add
-                        else
-                        {
-                            int multi;
-                            //checks if there was a percentage discount or dollar discount
-                            //on the sku
-                            if (cart.percentage) { multi = 1; } else { multi = -1; }
-                            //Adds sku in the returnable items cart
-                            cancelReturnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.itemDiscount, cart.percentage, 0, cart.isTradeIn, cart.typeID);
-                            //Removes the new quantity from stock
-                            idu.removeQTYfromInventoryWithSKU(cancelReturnedItem.sku, cancelReturnedItem.typeID, inStockQTY - 1);
-                            //itemsInCart.Add(cancelReturnedItem);
-                        }
-                    }
-                    else if (cart.sku != sku)
-                    {
-                        //sku was not the selected sku add it back into the marked for
-                        //return cart
-                        //returnedCart.Add(cart);
-                    }
-                }
+                InvoiceItems selectedSku = IIM.ReturnSkuFromCurrentSalesUsingSKU(sku, Request.QueryString["inv"].ToString());
+                
+                //add item to table and remove the added qty from current inventory
+                IIM.DoNotReturnTheItemOnReturn(selectedSku);
+                IIM.RemoveQTYFromInventoryWithSKU(selectedSku.sku, selectedSku.typeID, (IIM.ReturnCurrentQuantityOfItem(selectedSku) - selectedSku.quantity));
+
+
+
+                //int quantity = Convert.ToInt32(grdReturningItems.Rows[index].Cells[2].Text);
+                //int itemType = Convert.ToInt32(((Label)grdReturningItems.Rows[index].Cells[6].FindControl("lblReturnedTypeID")).Text);
+                ////Calls current quantity of the sku that is in stock
+                //int inStockQTY = idu.getquantity(sku, itemType);
+                //int remainingQTY = 0;
+                ////Transfers Session of items that have been marked for return
+                //List<Cart> duplicateCart = (List<Cart>)Session["returnedCart"];
+                //Cart cancelReturnedItem = new Cart();
+                ////Transfers Session of items that could be returned into a duplicate cart
+                //List<Cart> duplicateReturnedCart = (List<Cart>)Session["ItemsInCart"];
+                //bool bolAdded = false;
+                //bool bolCart = true;
+                ////Checks if there are already items in the cart that could be returned
+                //if (duplicateReturnedCart.Count > 0)
+                //{
+                //    bolCart = false;
+                //}
+                ////Loops through each cart item that has been marked for return
+                //foreach (var cart in duplicateCart)
+                //{
+                //    //Matches the selected sku with cart item that has been marked for return
+                //    if (cart.sku == sku)
+                //    {
+                //        //Checks if there are more than 1 of that item that is marked for return
+                //        if (quantity > 1)
+                //        {
+                //            //If there are then reduce the quantity of that item by 1
+                //            remainingQTY = quantity - 1;
+                //            cart.quantity = remainingQTY;
+                //            //Add it into the cart of item that are marked for return
+                //            //at this lower quantity
+                //            //returnedCart.Add(cart);
+                //        }
+                //        //Checks if there are already items in the returnable items cart
+                //        if (!bolCart)
+                //        {
+                //            //When there are need to loop through that cart to see if
+                //            //the item now being updated already has a quantity in
+                //            //the available for return cart
+                //            foreach (var retCart in duplicateReturnedCart)
+                //            {
+                //                //checks to see if the skus match
+                //                if (retCart.sku == cart.sku)
+                //                {
+                //                    //When skus match increase the quantity for that sku
+                //                    //in the returnable items cart
+                //                    cancelReturnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity + 1, retCart.price, retCart.cost, retCart.itemDiscount, retCart.percentage, 0, retCart.isTradeIn, retCart.typeID);
+                //                    //Remove that item from stock so that it can not be sold again
+                //                    idu.removeQTYfromInventoryWithSKU(cancelReturnedItem.sku, cancelReturnedItem.typeID, inStockQTY - 1);
+                //                    //Trigger that the selected sku has now been added into the returnable items cart
+                //                    bolAdded = true;
+                //                }
+                //                else
+                //                {
+                //                    //If the sku doesn't match then item we checked against
+                //                    //needs to be added back into the marked for return cart
+                //                    cancelReturnedItem = new Cart(retCart.sku, retCart.description, retCart.quantity, retCart.price, retCart.cost, retCart.itemDiscount, retCart.percentage, 0, retCart.isTradeIn, retCart.typeID);
+                //                }
+                //                //This completes the add of the item from the if statement
+                //                //itemsInCart.Add(cancelReturnedItem);
+                //            }
+                //            //Triggers if the selected sku didn't match any sku in the returnable
+                //            //items cart
+                //            if (!bolAdded)
+                //            {
+                //                int multi;
+                //                //checks if there was a percentage discount or dollar discount
+                //                //on the sku
+                //                if (cart.percentage) { multi = 1; } else { multi = -1; }
+                //                //Adds sku in the returnable items cart
+                //                cancelReturnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.itemDiscount, cart.percentage, 0, cart.isTradeIn, cart.typeID);
+                //                //Removes the new quantity from stock
+                //                idu.removeQTYfromInventoryWithSKU(cancelReturnedItem.sku, cancelReturnedItem.typeID, inStockQTY - 1);
+                //                //itemsInCart.Add(cancelReturnedItem);
+                //            }
+                //        }
+                //        //The returnable items cart was empty no checks needed on item just add
+                //        else
+                //        {
+                //            int multi;
+                //            //checks if there was a percentage discount or dollar discount
+                //            //on the sku
+                //            if (cart.percentage) { multi = 1; } else { multi = -1; }
+                //            //Adds sku in the returnable items cart
+                //            cancelReturnedItem = new Cart(cart.sku, cart.description, 1, -1 * cart.price, cart.cost, multi * cart.itemDiscount, cart.percentage, 0, cart.isTradeIn, cart.typeID);
+                //            //Removes the new quantity from stock
+                //            idu.removeQTYfromInventoryWithSKU(cancelReturnedItem.sku, cancelReturnedItem.typeID, inStockQTY - 1);
+                //            //itemsInCart.Add(cancelReturnedItem);
+                //        }
+                //    }
+                //    else if (cart.sku != sku)
+                //    {
+                //        //sku was not the selected sku add it back into the marked for
+                //        //return cart
+                //        //returnedCart.Add(cart);
+                //    }
+                //}
                 //deselect the indexed item
                 grdReturningItems.EditIndex = -1;
                 //Check if the marked for returns cart has any items in it
+                grdInvoicedItems.DataSource = IIM.ReturnInvoiceItemsFromProcessedSalesForReturn(Request.QueryString["inv"].ToString());
+                grdInvoicedItems.DataBind();
+
                 grdReturningItems.DataSource = IIM.ReturnItemsInTheReturnCart(Request.QueryString["inv"].ToString());
                 grdReturningItems.DataBind();
 
-                grdInvoicedItems.DataSource = IIM.ReturnInvoiceItemsFromProcessedSalesForReturn(Request.QueryString["inv"].ToString());
-                grdInvoicedItems.DataBind();
                 //recalculate the return total
-                ////lblReturnSubtotalDisplay.Text = "$ " + cm.returnRefundSubtotalAmount(returnedCart).ToString("#0.00");
+                IM.CalculateNewInvoiceReturnTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0]);
+                Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                lblReturnSubtotalDisplay.Text = "$ " + I.subTotal.ToString("#0.00");
+
+                //lblReturnSubtotalDisplay.Text = "$ " + SCM.returnRefundSubtotalAmount(Request.QueryString["inv"].ToString()).ToString("#0.00");
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

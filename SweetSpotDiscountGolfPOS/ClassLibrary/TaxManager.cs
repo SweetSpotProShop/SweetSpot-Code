@@ -258,5 +258,11 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //Returns the gst amount 
             return TaxAmount;
         }
+        public void TaxCorrectionOnReturnInvoice(Invoice I)
+        {
+            I.balanceDue = I.balanceDue - (I.governmentTax + I.provincialTax);
+            InvoiceManager IM = new InvoiceManager();
+            IM.CalculateNewInvoiceReturnTotalsToUpdate(I);
+        }
     }
 }

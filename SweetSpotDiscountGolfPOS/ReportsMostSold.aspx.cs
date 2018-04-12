@@ -17,15 +17,12 @@ namespace SweetSpotDiscountGolfPOS
     {
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU = new CurrentUser();
+        Reports R = new Reports();
+
 
         SweetShopManager ssm = new SweetShopManager();
-        Reports r = new Reports();
         ItemDataUtilities idu = new ItemDataUtilities();
         LocationManager l = new LocationManager();
-        CustomMessageBox cmb = new CustomMessageBox();
-        DateTime startDate;
-        DateTime endDate;
-
         List<Items> items = new List<Items>();
         List<Items> models = new List<Items>();
         List<Items> brands = new List<Items>();
@@ -64,9 +61,9 @@ namespace SweetSpotDiscountGolfPOS
 
 
                     //Binding the gridview
-                    items = r.mostSoldItemsReport1(startDate, endDate, locationID);
-                    brands = r.mostSoldBrandsReport1(startDate, endDate, locationID);
-                    models = r.mostSoldModelsReport1(startDate, endDate, locationID);
+                    items = R.mostSoldItemsReport1(startDate, endDate, locationID);
+                    brands = R.mostSoldBrandsReport1(startDate, endDate, locationID);
+                    models = R.mostSoldModelsReport1(startDate, endDate, locationID);
                     //Checking if there are any values
                     if (items.Count > 0 && brands.Count > 0 && models.Count > 0)
                     {
@@ -95,7 +92,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -168,7 +165,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

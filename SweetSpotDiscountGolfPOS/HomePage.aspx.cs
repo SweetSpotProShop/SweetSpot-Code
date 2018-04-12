@@ -19,7 +19,9 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting ER = new ErrorReporting();
         Reports R = new Reports();
         LocationManager LM = new LocationManager();
-        CurrentUser CU;
+        CurrentUser CU = new CurrentUser();
+
+
         int totalSales = 0;
         double totalDiscounts = 0;
         double totalTradeIns = 0;
@@ -27,14 +29,12 @@ namespace SweetSpotDiscountGolfPOS
         double totalGST = 0;
         double totalPST = 0;
         double totalBalancePaid = 0;
-
         double totalMOPAmount = 0;
         string oldInvoice = string.Empty;
         string newInvoice = string.Empty;
         int currentRow = 0;
 
 
-        
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -57,7 +57,7 @@ namespace SweetSpotDiscountGolfPOS
                         ddlLocation.DataTextField = "locationName";
                         ddlLocation.DataValueField = "locationID";
                         ddlLocation.DataBind();
-                        ddlLocation.SelectedValue = CU.locationID.ToString();
+                        ddlLocation.SelectedValue = CU.location.locationID.ToString();
                     }
                     //Checks user for admin status
                     if (CU.jobID == 0)
@@ -80,7 +80,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -104,7 +104,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -173,55 +173,68 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 currentRow++;
             }
-
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-
-        protected static void MergeRows(GridView gridView)
+        private void MergeRows(GridView gridView)
         {
-            for (int rowIndex = gridView.Rows.Count - 2; rowIndex >= 0; rowIndex--)
+            string method = "MergeRows";
+            try
             {
-                GridViewRow row = gridView.Rows[rowIndex];
-                GridViewRow previousRow = gridView.Rows[rowIndex + 1];
+                for (int rowIndex = gridView.Rows.Count - 2; rowIndex >= 0; rowIndex--)
+                {
+                    GridViewRow row = gridView.Rows[rowIndex];
+                    GridViewRow previousRow = gridView.Rows[rowIndex + 1];
 
-                string rowText = row.Cells[1].Text;
-                string previousRowText = previousRow.Cells[1].Text;
-                string rowInvoice;
-                string prevRowInvoice;
-                LinkButton lbtnRow = (LinkButton)row.FindControl("lbtnInvoiceNumber");
-                LinkButton lbtnPrevRow = (LinkButton)previousRow.FindControl("lbtnInvoiceNumber");
-                if (lbtnRow != null)
-                    rowInvoice = lbtnRow.Text;
-                else
-                    rowInvoice = "";
-                if (lbtnPrevRow != null)
-                    prevRowInvoice = lbtnPrevRow.Text;
-                else
-                    prevRowInvoice = "";
-                if (rowText.Equals(previousRowText) && !rowText.isNumber() && !previousRowText.isNumber())
-                {
-                    row.Cells[1].RowSpan = previousRow.Cells[1].RowSpan < 2
-                                     ? 2 // merge the first two cells
-                                     : previousRow.Cells[1].RowSpan + 1; //any subsequent merging
-                    previousRow.Cells[1].Visible = false;
+                    string rowText = row.Cells[1].Text;
+                    string previousRowText = previousRow.Cells[1].Text;
+                    string rowInvoice;
+                    string prevRowInvoice;
+                    LinkButton lbtnRow = (LinkButton)row.FindControl("lbtnInvoiceNumber");
+                    LinkButton lbtnPrevRow = (LinkButton)previousRow.FindControl("lbtnInvoiceNumber");
+                    if (lbtnRow != null)
+                        rowInvoice = lbtnRow.Text;
+                    else
+                        rowInvoice = "";
+                    if (lbtnPrevRow != null)
+                        prevRowInvoice = lbtnPrevRow.Text;
+                    else
+                        prevRowInvoice = "";
+                    if (rowText.Equals(previousRowText) && !rowText.isNumber() && !previousRowText.isNumber())
+                    {
+                        row.Cells[1].RowSpan = previousRow.Cells[1].RowSpan < 2
+                                         ? 2 // merge the first two cells
+                                         : previousRow.Cells[1].RowSpan + 1; //any subsequent merging
+                        previousRow.Cells[1].Visible = false;
+                    }
+                    if (rowInvoice.Equals(prevRowInvoice) || prevRowInvoice.Equals(""))
+                    {
+                        row.Cells[0].RowSpan = previousRow.Cells[0].RowSpan < 2
+                                         ? 2 // merge the first two cells
+                                         : previousRow.Cells[0].RowSpan + 1; //any subsequent merging
+                        previousRow.Cells[0].Visible = false;
+                    }
                 }
-                if (rowInvoice.Equals(prevRowInvoice) || prevRowInvoice.Equals(""))
-                {
-                    row.Cells[0].RowSpan = previousRow.Cells[0].RowSpan < 2
-                                     ? 2 // merge the first two cells
-                                     : previousRow.Cells[0].RowSpan + 1; //any subsequent merging
-                    previousRow.Cells[0].Visible = false;
-                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
             }
         }
     }

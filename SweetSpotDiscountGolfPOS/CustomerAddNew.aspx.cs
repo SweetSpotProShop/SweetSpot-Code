@@ -18,7 +18,8 @@ namespace SweetSpotDiscountGolfPOS
         LocationManager LM = new LocationManager();
         CustomerManager CM = new CustomerManager();
         EmployeeManager EM = new EmployeeManager();
-        CurrentUser CU;
+        CurrentUser CU = new CurrentUser();
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -41,35 +42,35 @@ namespace SweetSpotDiscountGolfPOS
                         if (!IsPostBack)
                         {
                             //Create customer class and fill page with all info based in the customer number 
-                            List<Customer> customer = CM.ReturnCustomerWithInvoiceList(Convert.ToInt32(Request.QueryString["cust"].ToString()));
+                            Customer customer = CM.ReturnCustomerWithInvoiceList(Convert.ToInt32(Request.QueryString["cust"].ToString()))[0];
 
-                            txtFirstName.Text = customer[0].firstName.ToString();
-                            txtLastName.Text = customer[0].lastName.ToString();
-                            txtPrimaryAddress.Text = customer[0].primaryAddress.ToString();
-                            txtSecondaryAddress.Text = customer[0].secondaryAddress.ToString();
-                            txtPrimaryPhoneNumber.Text = customer[0].primaryPhoneNumber.ToString();
-                            txtSecondaryPhoneNumber.Text = customer[0].secondaryPhoneNumber.ToString();
-                            txtEmail.Text = customer[0].email.ToString();
-                            txtCity.Text = customer[0].city.ToString();
-                            ddlProvince.SelectedValue = customer[0].province.ToString();
-                            ddlCountry.SelectedValue = customer[0].country.ToString();
+                            txtFirstName.Text = customer.firstName.ToString();
+                            txtLastName.Text = customer.lastName.ToString();
+                            txtPrimaryAddress.Text = customer.primaryAddress.ToString();
+                            txtSecondaryAddress.Text = customer.secondaryAddress.ToString();
+                            txtPrimaryPhoneNumber.Text = customer.primaryPhoneNumber.ToString();
+                            txtSecondaryPhoneNumber.Text = customer.secondaryPhoneNumber.ToString();
+                            txtEmail.Text = customer.email.ToString();
+                            txtCity.Text = customer.city.ToString();
+                            ddlProvince.SelectedValue = customer.province.ToString();
+                            ddlCountry.SelectedValue = customer.country.ToString();
 
                             ddlCountry.DataSource = LM.ReturnCountryDropDown();
                             ddlCountry.DataTextField = "countryDesc";
                             ddlCountry.DataValueField = "countryID";
                             ddlCountry.DataBind();
-                            ddlCountry.SelectedValue = customer[0].country.ToString();
-                            ddlProvince.DataSource = LM.ReturnProvinceDropDown(customer[0].country);
+                            ddlCountry.SelectedValue = customer.country.ToString();
+                            ddlProvince.DataSource = LM.ReturnProvinceDropDown(customer.country);
                             ddlProvince.DataTextField = "provName";
                             ddlProvince.DataValueField = "provStateID";
-                            ddlProvince.SelectedValue = customer[0].province.ToString();
+                            ddlProvince.SelectedValue = customer.province.ToString();
                             ddlProvince.DataBind();
 
-                            txtPostalCode.Text = customer[0].postalCode.ToString();
-                            chkEmailList.Checked = customer[0].emailList;
+                            txtPostalCode.Text = customer.postalCode.ToString();
+                            chkEmailList.Checked = customer.emailList;
 
                             //Binds invoice list to the grid view
-                            grdInvoiceSelection.DataSource = customer[0].invoices;
+                            grdInvoiceSelection.DataSource = customer.invoices;
                             grdInvoiceSelection.DataBind();
                         }
                     }
@@ -118,7 +119,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -155,7 +156,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -195,7 +196,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -259,7 +260,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -280,7 +281,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -315,7 +316,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -336,7 +337,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -360,7 +361,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -383,7 +384,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

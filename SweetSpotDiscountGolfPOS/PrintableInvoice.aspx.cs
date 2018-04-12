@@ -37,34 +37,34 @@ namespace SweetSpotDiscountGolfPOS
                     CU = (CurrentUser)Session["currentUser"];
                     if (!IsPostBack)
                     {
-                        List<Invoice> invoices = IM.ReturnInvoice(Request.QueryString["inv"]);
+                        Invoice invoices = IM.ReturnInvoice(Request.QueryString["inv"])[0];
 
                         //display information on receipt
-                        lblCustomerName.Text = invoices[0].customer.firstName.ToString() + " " + invoices[0].customer.lastName.ToString();
-                        lblStreetAddress.Text = invoices[0].customer.primaryAddress.ToString();
-                        lblPostalAddress.Text = invoices[0].customer.city.ToString() + ", " + LM.ReturnProvinceName(invoices[0].customer.province) + " " + invoices[0].customer.postalCode.ToString();
-                        lblPhone.Text = invoices[0].customer.primaryPhoneNumber.ToString();
-                        lblinvoiceNum.Text = invoices[0].invoiceNum.ToString() + "-" + invoices[0].invoiceSub.ToString();
-                        lblDate.Text = invoices[0].invoiceDate.ToShortDateString();
-                        lblTime.Text = invoices[0].invoiceTime.ToString("h:mm tt");
+                        lblCustomerName.Text = invoices.customer.firstName.ToString() + " " + invoices.customer.lastName.ToString();
+                        lblStreetAddress.Text = invoices.customer.primaryAddress.ToString();
+                        lblPostalAddress.Text = invoices.customer.city.ToString() + ", " + LM.ReturnProvinceName(invoices.customer.province) + " " + invoices.customer.postalCode.ToString();
+                        lblPhone.Text = invoices.customer.primaryPhoneNumber.ToString();
+                        lblinvoiceNum.Text = invoices.invoiceNum.ToString() + "-" + invoices.invoiceSub.ToString();
+                        lblDate.Text = invoices.invoiceDate.ToShortDateString();
+                        lblTime.Text = invoices.invoiceTime.ToString("h:mm tt");
 
                         //Display the location information
-                        lblSweetShopName.Text = invoices[0].location.locationName.ToString();
-                        lblSweetShopStreetAddress.Text = invoices[0].location.address.ToString();
-                        lblSweetShopPostalAddress.Text = invoices[0].location.city.ToString() + ", " + LM.ReturnProvinceName(invoices[0].location.provID) + " " + invoices[0].location.postal.ToString();
-                        lblSweetShopPhone.Text = invoices[0].location.primaryPhone.ToString();
-                        lblTaxNum.Text = invoices[0].location.taxNumber.ToString();
+                        lblSweetShopName.Text = invoices.location.locationName.ToString();
+                        lblSweetShopStreetAddress.Text = invoices.location.address.ToString();
+                        lblSweetShopPostalAddress.Text = invoices.location.city.ToString() + ", " + LM.ReturnProvinceName(invoices.location.provID) + " " + invoices.location.postal.ToString();
+                        lblSweetShopPhone.Text = invoices.location.primaryPhone.ToString();
+                        lblTaxNum.Text = invoices.location.taxNumber.ToString();
 
                         //Display the totals
-                        lblDiscountsDisplay.Text = invoices[0].discountAmount.ToString("#0.00");
-                        lblTradeInsDisplay.Text = invoices[0].tradeinAmount.ToString("#0.00");
-                        lblShippingDisplay.Text = invoices[0].shippingAmount.ToString("#0.00");
-                        lblGSTDisplay.Text = invoices[0].governmentTax.ToString("#0.00");
-                        lblPSTDisplay.Text = invoices[0].provincialTax.ToString("#0.00");
-                        lblSubtotalDisplay.Text = invoices[0].subTotal.ToString("#0.00");
-                        lblTotalPaidDisplay.Text = invoices[0].balanceDue.ToString("#0.00");
+                        lblDiscountsDisplay.Text = invoices.discountAmount.ToString("#0.00");
+                        lblTradeInsDisplay.Text = invoices.tradeinAmount.ToString("#0.00");
+                        lblShippingDisplay.Text = invoices.shippingAmount.ToString("#0.00");
+                        lblGSTDisplay.Text = invoices.governmentTax.ToString("#0.00");
+                        lblPSTDisplay.Text = invoices.provincialTax.ToString("#0.00");
+                        lblSubtotalDisplay.Text = invoices.subTotal.ToString("#0.00");
+                        lblTotalPaidDisplay.Text = invoices.balanceDue.ToString("#0.00");
 
-                        if (invoices[0].invoiceSub > 1)
+                        if (invoices.invoiceSub > 1)
                         {
                             //    //Changes headers if the invoice is return
                             grdItemsSoldList.Columns[2].HeaderText = "Sold At";
@@ -72,12 +72,12 @@ namespace SweetSpotDiscountGolfPOS
                             grdItemsSoldList.Columns[5].HeaderText = "Returned At";
                         }
                         //Binds the cart to the grid view
-                        grdItemsSoldList.DataSource = invoices[0].soldItems;
+                        grdItemsSoldList.DataSource = invoices.soldItems;
                         grdItemsSoldList.DataBind();
 
                         //Displays the total amount ppaid
                         //Binds the payment methods to a gridview
-                        grdMOPS.DataSource = invoices[0].usedMops;
+                        grdMOPS.DataSource = invoices.usedMops;
                         grdMOPS.DataBind();
                     }
                 }
@@ -87,7 +87,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -118,7 +118,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

@@ -13,7 +13,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
     //The calculation manager class is a hub where calculations are stored to clean up the codebehind on the webpages
     public class SalesCalculationManager
     {
-        DatabaseCalls dbc = new DatabaseCalls();
         //This method returns the total discounts applied in the cart as a total **Checked and Verified
         private double returnDiscount(List<InvoiceItems> itemsSold)
         {
@@ -124,18 +123,21 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //Returns the total amount of the cart
             return totalPurchaseAmount * -1;
         }
-        private double returnRefundSubtotalAmount(List<InvoiceItems> itemsSold)
+        public double returnRefundSubtotalAmount(string invoice)
         {
-            double singleRefundSubtotalAmount = 0;
-            double totalRefundSubtotalAmount = 0;
+            string sqlCmd = "SELECT (CASE WHEN SUM(itemRefund * quantity) IS NULL OR "
+                + "SUM(itemRefund * quantity) = '' THEN 0 ELSE SUM(itemRefund * quantity) END) "
+                + "AS totalRefund FROM tbl_currentSalesItems WHERE invoiceNum = @invoiceNum "
+                + "AND invoiceSubNum = @invoiceSubNum";
 
-            foreach(var cart in itemsSold)
+            object[][] parms =
             {
-                singleRefundSubtotalAmount = cart.quantity * cart.itemRefund;
-                totalRefundSubtotalAmount += singleRefundSubtotalAmount;
-            }
+                new object[] { "@invoiceNum", Convert.ToInt32(invoice.Split('-')[1]) },
+                new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[2]) }
+            };
             //Returns the total refund subtotal of the cart
-            return totalRefundSubtotalAmount;
+            DatabaseCalls dbc = new DatabaseCalls();
+            return dbc.MakeDataBaseCallToReturnDouble(sqlCmd, parms);
         }
 
         //Finds and returns an array containing the upper and lower range for the trade in skus
@@ -144,11 +146,11 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             int[] range = new int[2];
             string sqlCmd = "Select skuStartAt, skuStopAt from tbl_tradeInSkusForCart where locationID = @locationID";
 
-            object[][] parms = 
+            object[][] parms =
             {
                 new object[] { "@locationID", location }
             };
-
+            DatabaseCalls dbc = new DatabaseCalls();
             DataTable dt = dbc.returnDataTableData(sqlCmd, parms);
             //Setting the values in the array
             range[0] = dt.Rows[0].Field<int>("skuStartAt");
@@ -165,6 +167,31 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             I.balanceDue = I.subTotal;
             return I;
         }
-        
+
+        public Invoice SaveAllInvoiceTotalsForReturn(Invoice I)
+        {
+            I.subTotal = returnSubtotalReturnAmount(I);
+            I.balanceDue = I.subTotal;
+            return I;
+        }
+        private double returnSubtotalReturnAmount(Invoice I)
+        {
+            return returnTotalAmountForReturn(I.soldItems, I.locationID);
+        }
+        private double returnTotalAmountForReturn(List<InvoiceItems> itemsSold, int loc)
+        {
+            //Checks the range of trade in sku's by location
+            double singleTotalAmount = 0;
+            double totalTotalAmount = 0;
+            //Loops through the cart and pulls each item
+            foreach (var cart in itemsSold)
+            {
+                //Checks if the sku is outside of the range for the trade in sku's
+                singleTotalAmount = cart.quantity * cart.itemRefund;
+                totalTotalAmount += singleTotalAmount;
+            }
+            //Returns the total amount value of the cart
+            return totalTotalAmount;
+        }
     }
 }

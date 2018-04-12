@@ -18,35 +18,7 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU = new CurrentUser();
         Reports R = new Reports();
-
-        SweetShopManager ssm = new SweetShopManager();
-        Employee e;
-        ItemDataUtilities idu = new ItemDataUtilities();
-        LocationManager l = new LocationManager();
-        double cashoutTotal;
-        double mcTotal = 0;
-        double visaTotal = 0;
-        double giftCertTotal = 0;
-        double cashTotal = 0;
-        double debitTotal = 0;
-        double tradeinTotal = 0;
-        double subtotalTotal;
-        double pstTotal = 0;
-        double gstTotal = 0;
-        double receiptTotal = 0;
-        double receiptMCTotal;// = 0;
-        double receiptVisaTotal;// = 0;        
-        double receiptGiftCertTotal;// = 0;
-        double receiptCashTotal;// = 0;        
-        double receiptDebitTotal;// = 0;
-        double receiptSubTotalTotal;
-        double receiptGSTTotal;
-        double receiptPSTTotal;
-        double receiptTradeinTotal;// = 0;
-        double overShort = 0;
-        bool finalized = false;
-        bool processed = false;
-        double shippingTotal;
+        LocationManager L = new LocationManager();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -70,7 +42,7 @@ namespace SweetSpotDiscountGolfPOS
                         DateTime startDate = DateTime.Parse(Request.QueryString["dtm"].ToString());
                         int loc = Convert.ToInt32(Request.QueryString["location"]);
                         object[] args = { startDate, loc };
-                        lblCashoutDate.Text = "Cashout on: " + startDate.ToString("d") + " for " + l.locationName(loc);
+                        lblCashoutDate.Text = "Cashout on: " + startDate.ToString("d") + " for " + L.locationName(loc);
                         if (R.CashoutExists(args))
                         {
                             Cashout C = R.ReturnSelectedCashout(args)[0];
@@ -162,7 +134,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -177,29 +149,21 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //If nothing is entered, setting text to 0.00 and the total to 0
-                if (txtCash.Text == "") { txtCash.Text = "0.00"; receiptCashTotal = 0; }
-                if (txtDebit.Text == "") { txtDebit.Text = "0.00"; receiptDebitTotal = 0; }
-                if (txtGiftCard.Text == "") { txtGiftCard.Text = "0.00"; receiptGiftCertTotal = 0; }
-                if (txtMasterCard.Text == "") { txtMasterCard.Text = "0.00"; receiptMCTotal = 0; }
-                if (txtTradeIn.Text == "") { txtTradeIn.Text = "0.00"; receiptTradeinTotal = 0; }
-                if (txtVisa.Text == "") { txtVisa.Text = "0.00"; receiptVisaTotal = 0; }
-
-                //Giving values to the entered totals
-                receiptCashTotal = Convert.ToDouble(txtCash.Text);
-                receiptDebitTotal = Convert.ToDouble(txtDebit.Text);
-                receiptGiftCertTotal = Convert.ToDouble(txtGiftCard.Text);
-                receiptMCTotal = Convert.ToDouble(txtMasterCard.Text);
-                receiptTradeinTotal = Convert.ToDouble(txtTradeIn.Text);
-                receiptVisaTotal = Convert.ToDouble(txtVisa.Text);
-
+                if (txtCash.Text == "") { txtCash.Text = "0.00"; }
+                if (txtDebit.Text == "") { txtDebit.Text = "0.00"; }
+                if (txtGiftCard.Text == "") { txtGiftCard.Text = "0.00"; }
+                if (txtMasterCard.Text == "") { txtMasterCard.Text = "0.00"; }
+                if (txtTradeIn.Text == "") { txtTradeIn.Text = "0.00"; }
+                if (txtVisa.Text == "") { txtVisa.Text = "0.00"; }
+                
                 //The calculation of the receipt total
-                receiptTotal = receiptCashTotal +
-                    receiptDebitTotal + receiptGiftCertTotal + receiptMCTotal +
-                    receiptTradeinTotal + receiptVisaTotal;
+                double receiptTotal = Convert.ToDouble(txtCash.Text) + Convert.ToDouble(txtDebit.Text) 
+                    + Convert.ToDouble(txtGiftCard.Text) + Convert.ToDouble(txtMasterCard.Text) 
+                    + Convert.ToDouble(txtTradeIn.Text) + Convert.ToDouble(txtVisa.Text);
 
                 //Setting the text for the receipt and sales totals
                 lblReceiptsFinal.Text = receiptTotal.ToString("C");
-                cashoutTotal = double.Parse(lblTradeInDisplay.Text, NumberStyles.Currency) 
+                double cashoutTotal = double.Parse(lblTradeInDisplay.Text, NumberStyles.Currency) 
                     + double.Parse(lblGiftCardDisplay.Text, NumberStyles.Currency) 
                     + double.Parse(lblCashDisplay.Text, NumberStyles.Currency) 
                     + double.Parse(lblDebitDisplay.Text, NumberStyles.Currency) 
@@ -208,7 +172,7 @@ namespace SweetSpotDiscountGolfPOS
                 lblTotalFinal.Text = cashoutTotal.ToString("C");
 
                 //Calculating overShort
-                overShort = receiptTotal - cashoutTotal;
+                double overShort = receiptTotal - cashoutTotal;
 
                 //Checking over or under
                 if (overShort >= 0)
@@ -232,7 +196,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -259,7 +223,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -278,7 +242,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -303,7 +267,6 @@ namespace SweetSpotDiscountGolfPOS
                 int loc = Convert.ToInt32(Request.QueryString["location"]);
                 object[] args = { startDate, loc };
 
-                processed = true;
                 //Creates new cashout
                 Cashout cas = new Cashout(startDate, startDate, double.Parse(lblTradeInDisplay.Text, NumberStyles.Currency), 
                     double.Parse(lblGiftCardDisplay.Text, NumberStyles.Currency), double.Parse(lblCashDisplay.Text, NumberStyles.Currency), 
@@ -311,7 +274,7 @@ namespace SweetSpotDiscountGolfPOS
                     double.Parse(lblVisaDisplay.Text, NumberStyles.Currency), Convert.ToDouble(txtTradeIn.Text), Convert.ToDouble(txtGiftCard.Text), 
                     Convert.ToDouble(txtCash.Text), Convert.ToDouble(txtDebit.Text), Convert.ToDouble(txtMasterCard.Text), Convert.ToDouble(txtVisa.Text),
                     double.Parse(lblPreTaxDisplay.Text, NumberStyles.Currency), double.Parse(lblGSTDisplay.Text, NumberStyles.Currency),
-                    double.Parse(lblPSTDisplay.Text, NumberStyles.Currency), double.Parse(lblOverShortFinal.Text, NumberStyles.Currency), finalized, processed, loc, CU.empID);
+                    double.Parse(lblPSTDisplay.Text, NumberStyles.Currency), double.Parse(lblOverShortFinal.Text, NumberStyles.Currency), false, true, loc, CU.emp.employeeID);
 
                 //Processes as done
                 if (R.CashoutExists(args))
@@ -334,7 +297,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

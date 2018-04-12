@@ -20,8 +20,9 @@ namespace SweetSpotDiscountGolfPOS
     {
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU = new CurrentUser();
+        Reports R = new Reports();
 
-        Reports reports = new Reports();
+
         LocationManager l = new LocationManager();
         SweetShopManager ssm = new SweetShopManager();
         double totalPurchAmount = 0;
@@ -54,8 +55,7 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     lblPurchasesMadeDate.Text = "Purchases Made Between: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
                     //Creating a cashout list and calling a method that grabs all mops and amounts paid
-                    purch = reports.returnPurchasesDuringDates(startDate, endDate, locationID);
-                    grdPurchasesMade.DataSource = purch;
+                    grdPurchasesMade.DataSource = R.returnPurchasesDuringDates(startDate, endDate, locationID);
                     grdPurchasesMade.DataBind();
                     foreach (GridViewRow row in grdPurchasesMade.Rows)
                     {
@@ -71,7 +71,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -80,21 +80,36 @@ namespace SweetSpotDiscountGolfPOS
         }
         protected void grdPurchasesMade_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            // check row type
-            if (e.Row.RowType == DataControlRowType.DataRow)
+            string method = "grdPurchasesMade_RowDataBound";
+            try
             {
-                if (Convert.ToInt32(DataBinder.Eval(e.Row.DataItem, "chequeNumber")) > 0)
+                // check row type
+                if (e.Row.RowType == DataControlRowType.DataRow)
                 {
-                    totalCheques += 1;
+                    if (Convert.ToInt32(DataBinder.Eval(e.Row.DataItem, "chequeNumber")) > 0)
+                    {
+                        totalCheques += 1;
+                    }
+                    totalPurchases += 1;
+                    totalPurchAmount += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "amountPaid"));
                 }
-                totalPurchases += 1;
-                totalPurchAmount += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "amountPaid"));
+                else if (e.Row.RowType == DataControlRowType.Footer)
+                {
+                    e.Row.Cells[2].Text = totalPurchases.ToString();
+                    e.Row.Cells[3].Text = totalCheques.ToString();
+                    e.Row.Cells[4].Text = String.Format("{0:c}", totalPurchAmount);
+                }
             }
-            else if (e.Row.RowType == DataControlRowType.Footer)
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
             {
-                e.Row.Cells[2].Text = totalPurchases.ToString();
-                e.Row.Cells[3].Text = totalCheques.ToString();
-                e.Row.Cells[4].Text = String.Format("{0:c}", totalPurchAmount);
+                //Log all info into error table
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
             }
         }
         protected void printReport(object sender, EventArgs e)
@@ -109,7 +124,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -146,7 +161,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -200,7 +215,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
