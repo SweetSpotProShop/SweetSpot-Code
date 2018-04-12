@@ -288,11 +288,19 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    IM.FinalizeInvoice(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0], txtComments.Text, "tbl_invoiceItemReturns");
-                    string printableInvoiceNum = Request.QueryString["inv"].ToString().Split('-')[1] + "-" + Request.QueryString["inv"].ToString().Split('-')[2];
-                    var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                    nameValues.Set("inv", printableInvoiceNum);
-                    Response.Redirect("PrintableInvoice.aspx?" + nameValues, false);
+                    if (IM.VerifyMOPHasBeenAdded(Request.QueryString["inv"].ToString()))
+                    {
+                        IM.FinalizeInvoice(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0], txtComments.Text, "tbl_invoiceItemReturns");
+                        string printableInvoiceNum = Request.QueryString["inv"].ToString().Split('-')[1] + "-" + Request.QueryString["inv"].ToString().Split('-')[2];
+                        var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                        nameValues.Set("inv", printableInvoiceNum);
+                        Response.Redirect("PrintableInvoice.aspx?" + nameValues, false);
+                    }
+                    else
+                    {
+                        MessageBox.ShowMessage("At least one method of payment "
+                            + "is required even for a $0.00 return.", this);
+                    }
                 }
             }
             //Exception catch

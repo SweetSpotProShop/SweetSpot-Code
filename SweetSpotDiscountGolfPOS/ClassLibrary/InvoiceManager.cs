@@ -506,6 +506,24 @@ namespace SweetSpotDiscountGolfPOS
             };
             return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
         }
+        public bool VerifyMOPHasBeenAdded(string invoice)
+        {
+            bool mopsAdded = false;
+            string sqlCmd = "SELECT COUNT(currentSalesMID) AS currentSalesMID "
+                + "FROM tbl_currentSalesMops WHERE invoiceNum = @invoiceNum AND "
+                + "invoiceSubNum = @invoiceSubNum";
 
+            object[][] parms =
+            {
+                new object[] { "@invoiceNum", invoice.Split('-')[1] },
+                new object[] { "@invoiceSubNum", invoice.Split('-')[2] }
+            };
+
+            if(ReturnInt(sqlCmd, parms) > 0)
+            {
+                mopsAdded = true;
+            }
+            return mopsAdded;
+        }
     }
 }
