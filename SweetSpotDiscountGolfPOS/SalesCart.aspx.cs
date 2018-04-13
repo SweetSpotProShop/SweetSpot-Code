@@ -586,7 +586,7 @@ namespace SweetSpotDiscountGolfPOS
                     }
                     else
                     {
-                        MessageBox.ShowMessage("Item is alraedy in the cart. Please update item in "
+                        MessageBox.ShowMessage("Item is already in the cart. Please update item in "
                          + "cart or process a second sale.", this);
                     }
                 }

@@ -177,7 +177,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    MessageBox.ShowMessage("Same item cannot be returnred for a different amount. "
+                    MessageBox.ShowMessage("Same item cannot be returned for a different amount. "
                          + "Either cancel item to set both at new return amount or process a second return.", this);
                 }
             }
