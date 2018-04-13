@@ -412,6 +412,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 + "AS locationName FROM tbl_clubs C JOIN tbl_location L ON C.locationID = L.locationID WHERE C.sku = "
                 + "I.sku))) AS locationName, I.cost, I.price, I.itemDiscount, I.itemRefund, I.percentage, I.typeID, "
                 + "I.isTradeIn FROM tbl_invoiceItem I WHERE invoiceNum = @invoiceNum and invoiceSubNum = 1";
+            //"
+            //    + "AND I.isTradeIn = 0";
 
             object[][] parms =
             {

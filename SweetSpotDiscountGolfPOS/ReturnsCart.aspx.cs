@@ -136,6 +136,7 @@ namespace SweetSpotDiscountGolfPOS
                 lblInvalidQty.Visible = false;
                 //Stores the info about the item in that index
                 InvoiceItems selectedSku = IIM.ReturnInvoiceItemForReturnProcess(Convert.ToInt32(grdInvoicedItems.Rows[e.RowIndex].Cells[1].Text), Request.QueryString["inv"].ToString());
+                selectedSku.invoiceSubNum = Convert.ToInt32(Request.QueryString["inv"].Split('-')[2].ToString());
                 if (!IIM.ItemAlreadyInCart(selectedSku))
                 {
                     int currentQTY = selectedSku.quantity;
@@ -167,7 +168,6 @@ namespace SweetSpotDiscountGolfPOS
                             }
                         }
                         IIM.RemoveQTYFromInventoryWithSKU(selectedSku.sku, selectedSku.typeID, (currentQTY + returnQuantity));
-                        selectedSku.invoiceSubNum = Convert.ToInt32(Request.QueryString["inv"].Split('-')[2].ToString());
                         selectedSku.quantity = returnQuantity;
                         selectedSku.itemRefund = returnDollars;
                         IIM.InsertItemIntoSalesCart(selectedSku);
