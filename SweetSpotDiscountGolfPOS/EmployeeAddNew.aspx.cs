@@ -15,7 +15,7 @@ namespace SweetSpotDiscountGolfPOS
     public partial class EmployeeAddNew : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU = new CurrentUser();
+        CurrentUser CU;
         EmployeeManager EM = new EmployeeManager();
         LocationManager LM = new LocationManager();
         

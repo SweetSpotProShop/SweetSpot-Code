@@ -16,7 +16,7 @@ namespace SweetSpotDiscountGolfPOS
     public partial class ReturnsCart : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU = new CurrentUser();
+        CurrentUser CU;
         InvoiceManager IM = new InvoiceManager();
         InvoiceItemsManager IIM = new InvoiceItemsManager();
 
@@ -144,7 +144,10 @@ namespace SweetSpotDiscountGolfPOS
                     int returnQuantity = 1;
                     if (quantityForReturn != "")
                     {
-                        returnQuantity = Convert.ToInt32(quantityForReturn);
+                        if (int.TryParse(quantityForReturn, out returnQuantity))
+                        {
+                            returnQuantity = Convert.ToInt32(quantityForReturn);
+                        }
                     }
                     if (returnQuantity > quantitySold)
                     {
@@ -154,11 +157,19 @@ namespace SweetSpotDiscountGolfPOS
                     }
                     else
                     {
-                        double returnAmount = Convert.ToDouble(((TextBox)grdInvoicedItems.Rows[e.RowIndex].Cells[7].FindControl("txtReturnAmount")).Text);
+                        double returnDollars = 0;
+                        string returnAmount = ((TextBox)grdInvoicedItems.Rows[e.RowIndex].Cells[7].FindControl("txtReturnAmount")).Text;
+                        if(returnAmount != "")
+                        {
+                            if(double.TryParse(returnAmount, out returnDollars))
+                            {
+                                returnDollars = Convert.ToDouble(returnAmount);
+                            }
+                        }
                         IIM.RemoveQTYFromInventoryWithSKU(selectedSku.sku, selectedSku.typeID, (currentQTY + returnQuantity));
                         selectedSku.invoiceSubNum = Convert.ToInt32(Request.QueryString["inv"].Split('-')[2].ToString());
                         selectedSku.quantity = returnQuantity;
-                        selectedSku.itemRefund = returnAmount;
+                        selectedSku.itemRefund = returnDollars;
                         IIM.InsertItemIntoSalesCart(selectedSku);
                         //deselect the indexed item
                         grdInvoicedItems.EditIndex = -1;

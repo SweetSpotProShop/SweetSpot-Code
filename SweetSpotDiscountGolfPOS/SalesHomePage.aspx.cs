@@ -18,7 +18,7 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting ER = new ErrorReporting();
         InvoiceManager IM = new InvoiceManager();
         LocationManager LM = new LocationManager();
-        CurrentUser CU = new CurrentUser();
+        CurrentUser CU;
 
         protected void Page_Load(object sender, EventArgs e)
         {

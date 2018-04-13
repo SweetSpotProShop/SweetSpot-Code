@@ -16,7 +16,7 @@ namespace SweetSpotDiscountGolfPOS
     public partial class SalesCashOut : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU = new CurrentUser();
+        CurrentUser CU;
         Reports R = new Reports();
         LocationManager L = new LocationManager();
 
@@ -35,9 +35,9 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
+                    CU = (CurrentUser)Session["currentUser"];
                     if (!IsPostBack)
                     {
-                        CU = (CurrentUser)Session["currentUser"];
                         //Gathering the start and end dates
                         DateTime startDate = DateTime.Parse(Request.QueryString["dtm"].ToString());
                         int loc = Convert.ToInt32(Request.QueryString["location"]);

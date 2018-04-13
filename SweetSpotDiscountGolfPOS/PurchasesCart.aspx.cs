@@ -14,7 +14,7 @@ namespace SweetSpotDiscountGolfPOS
     public partial class PurchasesCart : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU = new CurrentUser();
+        CurrentUser CU;
         CustomerManager CM = new CustomerManager();
 
         public int receiptNum;

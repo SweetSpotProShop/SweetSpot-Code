@@ -15,7 +15,7 @@ namespace SweetSpotDiscountGolfPOS
     public partial class ReturnsCheckout : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU = new CurrentUser();
+        CurrentUser CU;
         InvoiceManager IM = new InvoiceManager();
 
         protected void Page_Load(object sender, EventArgs e)

@@ -14,7 +14,7 @@ namespace SweetSpotDiscountGolfPOS
     public partial class InventoryAddNew : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU = new CurrentUser();
+        CurrentUser CU;
         ItemDataUtilities IDU = new ItemDataUtilities();
         ItemsManager IM = new ItemsManager();
         LocationManager LM = new LocationManager();

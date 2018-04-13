@@ -23,7 +23,7 @@ namespace SweetSpotDiscountGolfPOS
     public partial class SettingsHomePage : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU = new CurrentUser();
+        CurrentUser CU;
         EmployeeManager EM = new EmployeeManager();
         Reports R = new Reports();
         TaxManager TM = new TaxManager();

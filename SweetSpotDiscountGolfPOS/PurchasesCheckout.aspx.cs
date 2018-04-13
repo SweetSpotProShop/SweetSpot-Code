@@ -15,7 +15,7 @@ namespace SweetSpotDiscountGolfPOS
     public partial class PurchasesCheckout : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU = new CurrentUser();
+        CurrentUser CU;
 
 
         SweetShopManager ssm = new SweetShopManager();

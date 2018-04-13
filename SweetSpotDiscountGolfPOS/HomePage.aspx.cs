@@ -19,7 +19,7 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting ER = new ErrorReporting();
         Reports R = new Reports();
         LocationManager LM = new LocationManager();
-        CurrentUser CU = new CurrentUser();
+        CurrentUser CU;
 
 
         int totalSales = 0;
@@ -51,7 +51,7 @@ namespace SweetSpotDiscountGolfPOS
                 else
                 {
                     CU = (CurrentUser)Session["currentUser"];
-                    if (!this.IsPostBack)
+                    if (!IsPostBack)
                     {
                         ddlLocation.DataSource = LM.ReturnLocationDropDown();
                         ddlLocation.DataTextField = "locationName";

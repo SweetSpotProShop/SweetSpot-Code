@@ -20,7 +20,7 @@ namespace SweetSpotDiscountGolfPOS
     public partial class ReportsHomePage : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU = new CurrentUser();
+        CurrentUser CU;
         LocationManager LM = new LocationManager();
         Reports R = new Reports();
 

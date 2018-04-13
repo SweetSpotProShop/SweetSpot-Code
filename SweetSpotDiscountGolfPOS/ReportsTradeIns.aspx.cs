@@ -16,7 +16,7 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsTradeIns : System.Web.UI.Page
     {
-        CurrentUser CU = new CurrentUser();
+        CurrentUser CU;
         ErrorReporting ER = new ErrorReporting();
         Reports R = new Reports();
 

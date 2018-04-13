@@ -16,7 +16,7 @@ namespace SweetSpotDiscountGolfPOS
     public partial class InventoryHomePage : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU = new CurrentUser();
+        CurrentUser CU;
         ItemsManager IM = new ItemsManager();
         List<Items> searched = new List<Items>();
 

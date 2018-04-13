@@ -18,7 +18,7 @@ namespace SweetSpotDiscountGolfPOS
         LocationManager LM = new LocationManager();
         CustomerManager CM = new CustomerManager();
         EmployeeManager EM = new EmployeeManager();
-        CurrentUser CU = new CurrentUser();
+        CurrentUser CU;
 
         protected void Page_Load(object sender, EventArgs e)
         {

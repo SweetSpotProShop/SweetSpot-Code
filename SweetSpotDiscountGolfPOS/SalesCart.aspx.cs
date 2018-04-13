@@ -22,7 +22,7 @@ namespace SweetSpotDiscountGolfPOS
         InvoiceManager IM = new InvoiceManager();
         ItemsManager ITM = new ItemsManager();
         InvoiceItemsManager IIM = new InvoiceItemsManager();
-        CurrentUser CU = new CurrentUser();
+        CurrentUser CU;
 
         //Still need to account for a duplicate item being added
         protected void Page_Load(object sender, EventArgs e)
@@ -522,7 +522,10 @@ namespace SweetSpotDiscountGolfPOS
                 string qty = ((TextBox)grdInventorySearched.Rows[index].Cells[2].FindControl("quantityToAdd")).Text;
                 if (qty != "")
                 {
-                    quantity = Convert.ToInt32(qty);
+                    if (int.TryParse(qty, out quantity))
+                    {
+                        quantity = Convert.ToInt32(qty);
+                    }
                 }
                 int currentQty = Convert.ToInt32(((Label)grdInventorySearched.Rows[index].Cells[2].FindControl("QuantityInOrder")).Text);
                 if (quantity > currentQty)
@@ -553,7 +556,10 @@ namespace SweetSpotDiscountGolfPOS
                             string discountAmount = ((TextBox)grdInventorySearched.Rows[index].Cells[5].FindControl("txtAmountDiscount")).Text;
                             if (discountAmount != "")
                             {
-                                discount = Convert.ToDouble(discountAmount);
+                                if (double.TryParse(discountAmount, out discount))
+                                {
+                                    discount = Convert.ToDouble(discountAmount);
+                                }
                             }
                             selectedSku.itemDiscount = discount;
                             selectedSku.description = ((Label)grdInventorySearched.Rows[index].Cells[3].FindControl("Description")).Text;

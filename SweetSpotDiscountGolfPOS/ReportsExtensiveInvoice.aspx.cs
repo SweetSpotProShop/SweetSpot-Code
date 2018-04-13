@@ -16,7 +16,7 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsExtensiveInvoice : System.Web.UI.Page
     {
-        CurrentUser CU = new CurrentUser();
+        CurrentUser CU;
         ErrorReporting ER = new ErrorReporting();
         Reports R = new Reports();
 

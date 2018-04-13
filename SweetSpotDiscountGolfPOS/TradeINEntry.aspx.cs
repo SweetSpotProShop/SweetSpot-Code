@@ -14,7 +14,7 @@ namespace SweetSpotDiscountGolfPOS
     public partial class TradeINEntry : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU = new CurrentUser();
+        CurrentUser CU;
         ItemsManager IM = new ItemsManager();
 
         protected void Page_Load(object sender, EventArgs e)
