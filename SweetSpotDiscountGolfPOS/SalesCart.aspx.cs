@@ -540,7 +540,7 @@ namespace SweetSpotDiscountGolfPOS
                     selectedSku.sku = Convert.ToInt32(grdInventorySearched.Rows[index].Cells[1].Text);
                     selectedSku.invoiceNum = Convert.ToInt32((Request.QueryString["inv"].ToString()).Split('-')[1]);
                     selectedSku.invoiceSubNum = Convert.ToInt32((Request.QueryString["inv"].ToString()).Split('-')[2]);
-                    if (IIM.ItemAlreadyInCart(selectedSku))
+                    if (!IIM.ItemAlreadyInCart(selectedSku))
                     {
                         if (selectedSku.sku == 100000)
                         {

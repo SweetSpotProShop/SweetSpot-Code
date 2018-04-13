@@ -136,7 +136,7 @@ namespace SweetSpotDiscountGolfPOS
                 lblInvalidQty.Visible = false;
                 //Stores the info about the item in that index
                 InvoiceItems selectedSku = IIM.ReturnInvoiceItemForReturnProcess(Convert.ToInt32(grdInvoicedItems.Rows[e.RowIndex].Cells[1].Text), Request.QueryString["inv"].ToString());
-                if (IIM.ItemAlreadyInCart(selectedSku))
+                if (!IIM.ItemAlreadyInCart(selectedSku))
                 {
                     int currentQTY = selectedSku.quantity;
                     string quantityForReturn = ((TextBox)grdInvoicedItems.Rows[e.RowIndex].Cells[2].FindControl("quantityToReturn")).Text;
