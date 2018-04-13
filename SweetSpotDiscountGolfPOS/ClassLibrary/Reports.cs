@@ -2603,40 +2603,40 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
         public void UpdateCashout(Cashout cas)
         {
-            string sqlCmd = "UPDATE tbl_cashout SET cashoutDate = @cashoutDate, "
-                + "cashoutTime = @cashoutTime, saleTradeIn = @saleTradeIn, saleGiftCard = "
-                + "@saleGiftCard, saleCash = @saleCash, saleDebit = @saleDebit, saleMasterCard "
-                + "= @saleMasterCard, saleVisa = @saleVisa, receiptTradeIn = @receiptTradeIn, "
-                + "receiptGiftCard = @receiptGiftCard, receiptCash = @receiptCash, receiptDebit "
-                + "= @receiptDebit, receiptMasterCard = @receiptMasterCard, receiptVisa = "
-                + "@receiptVisa, preTax = @preTax, governmentTax = @gTax, provincialTax = @pTax, "
+            string sqlCmd = "UPDATE tbl_cashout SET cashoutTime = @cashoutTime, "
+                + "saleTradeIn = @saleTradeIn, saleGiftCard = @saleGiftCard, saleCash = @saleCash, "
+                + "saleDebit = @saleDebit, saleMasterCard = @saleMasterCard, saleVisa = @saleVisa, "
+                + "receiptTradeIn = @receiptTradeIn, receiptGiftCard = @receiptGiftCard, "
+                + "receiptCash = @receiptCash, receiptDebit = @receiptDebit, "
+                + "receiptMasterCard = @receiptMasterCard, receiptVisa = @receiptVisa, "
+                + "preTax = @preTax, governmentTax = @gTax, provincialTax = @pTax, "
                 + "overShort = @overShort, finalized = @finalized, processed = @processed, "
-                + "locationID = @locID, empID = @empID";
+                + "empID = @empID WHERE cashoutDate = @cashoutDate AND locationID = @locID";
 
             object[][] parms =
             {
-                new object[] { "cashoutDate", cas.cashoutDate },
-                new object[] { "cashoutTime", DateTime.Now.ToString("HH:mm:ss") },
-                new object[] { "saleTradeIn", cas.saleTradeIn },
-                new object[] { "saleGiftCard", cas.saleGiftCard },
-                new object[] { "saleCash", cas.saleCash },
-                new object[] { "saleDebit", cas.saleDebit },
-                new object[] { "saleMasterCard", cas.saleMasterCard },
-                new object[] { "saleVisa", cas.saleVisa },
-                new object[] { "receiptTradeIn", cas.receiptTradeIn },
-                new object[] { "receiptGiftCard", cas.receiptGiftCard },
-                new object[] { "receiptCash", cas.receiptCash },
-                new object[] { "receiptDebit", cas.receiptDebit },
-                new object[] { "receiptMasterCard", cas.receiptMasterCard },
-                new object[] { "receiptVisa", cas.receiptVisa },
-                new object[] { "preTax", cas.preTax },
-                new object[] { "gTax", cas.saleGST },
-                new object[] { "pTax", cas.salePST },
-                new object[] { "overShort", cas.overShort },
-                new object[] { "finalized", cas.finalized },
-                new object[] { "processed", cas.processed },
-                new object[] { "locID", cas.locationID },
-                new object[] { "empID", cas.empID }
+                new object[] { "@cashoutDate", cas.cashoutDate },
+                new object[] { "@cashoutTime", DateTime.Now.ToString("HH:mm:ss") },
+                new object[] { "@saleTradeIn", cas.saleTradeIn },
+                new object[] { "@saleGiftCard", cas.saleGiftCard },
+                new object[] { "@saleCash", cas.saleCash },
+                new object[] { "@saleDebit", cas.saleDebit },
+                new object[] { "@saleMasterCard", cas.saleMasterCard },
+                new object[] { "@saleVisa", cas.saleVisa },
+                new object[] { "@receiptTradeIn", cas.receiptTradeIn },
+                new object[] { "@receiptGiftCard", cas.receiptGiftCard },
+                new object[] { "@receiptCash", cas.receiptCash },
+                new object[] { "@receiptDebit", cas.receiptDebit },
+                new object[] { "@receiptMasterCard", cas.receiptMasterCard },
+                new object[] { "@receiptVisa", cas.receiptVisa },
+                new object[] { "@preTax", cas.preTax },
+                new object[] { "@gTax", cas.saleGST },
+                new object[] { "@pTax", cas.salePST },
+                new object[] { "@overShort", cas.overShort },
+                new object[] { "@finalized", cas.finalized },
+                new object[] { "@processed", cas.processed },
+                new object[] { "@locID", cas.locationID },
+                new object[] { "@empID", cas.empID }
             };
             dbc.executeInsertQuery(sqlCmd, parms);
         }
