@@ -169,7 +169,7 @@ namespace SweetSpotDiscountGolfPOS
                         }
                         IIM.RemoveQTYFromInventoryWithSKU(selectedSku.sku, selectedSku.typeID, (currentQTY + returnQuantity));
                         selectedSku.quantity = returnQuantity;
-                        selectedSku.itemRefund = returnDollars;
+                        selectedSku.itemRefund = -1 * returnDollars;
                         IIM.InsertItemIntoSalesCart(selectedSku);
                         //deselect the indexed item
                         grdInvoicedItems.EditIndex = -1;
