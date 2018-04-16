@@ -525,5 +525,31 @@ namespace SweetSpotDiscountGolfPOS
             }
             return mopsAdded;
         }
+
+        public int ReturnNextReceiptNumber()
+        {
+            int nextReceiptNum = 0;
+            string sqlCmd = "Select receiptNumber from tbl_receiptNumbers";
+
+            object[][] parms =
+            {
+                new object[] {}
+            };
+            nextReceiptNum = ReturnInt(sqlCmd, parms);
+            //Creates the invoice with the next invoice num
+            createReceiptNum(nextReceiptNum);
+            //Returns the next invoiceNum
+            return nextReceiptNum + 1;
+        }
+        public void createReceiptNum(int recNum)
+        {
+            string sqlCmd = "Update tbl_receiptNumbers set receiptNumber = @recNum";
+
+            object[][] parms =
+            {
+                new object[] { "recNum", recNum }
+            };
+            ExecuteNonReturnCall(sqlCmd, parms);
+        }
     }
 }

@@ -16,6 +16,7 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU;
         CustomerManager CM = new CustomerManager();
+        InvoiceItemsManager IIM = new InvoiceItemsManager();
 
         public int receiptNum;
         SweetShopManager ssm = new SweetShopManager();
@@ -45,38 +46,18 @@ namespace SweetSpotDiscountGolfPOS
                     if (!Page.IsPostBack)
                     {
                         //Checks if there is a Customer Number stored in the Session
-                        if (Session["key"] != null)
-                        {
-                            //If yes then convert number to int and call Customer class using it
-                            int custNum = (int)(Convert.ToInt32(Session["key"].ToString()));
-                            Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
-                            //Set name in text box
-                            txtCustomer.Text = c.firstName + " " + c.lastName;
-                        }
+                        Customer c = ssm.GetCustomerbyCustomerNumber(Convert.ToInt32(Request.QueryString["cust"].ToString()));
+                        //Set name in text box
+                        txtCustomer.Text = c.firstName + " " + c.lastName;
                         //display system time in Sales Page
                         DateTime today = DateTime.Today;
                         lblDateDisplay.Text = today.ToString("yyyy-MM-dd");
-                        //Retrieves location from Session
-                        string loc = CU.locationName;
+                        lblReceiptNumberDisplay.Text = CU.locationName + "-" + Request.QueryString["receipt"].ToString();
 
-                        if (Session["Invoice"] == null)
-                        {
-                            receiptNum = idu.getNextReceiptNum();
-                            lblReceiptNumberDisplay.Text = loc + "-" + receiptNum;
-                            Session["Invoice"] = lblReceiptNumberDisplay.Text;
-                        }
-                        else { lblReceiptNumberDisplay.Text = Session["Invoice"].ToString(); }
-
-                        if (Session["ItemsInCart"] != null)
-                        {
-                            itemsInCart = (List<Cart>)Session["ItemsInCart"];
-                        }
-                        grdPurchasedItems.DataSource = Session["ItemsInCart"];
+                        grdPurchasedItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["inv"].ToString());
                         grdPurchasedItems.DataBind();
                         //lblPurchaseAmountDisplay.Text = "$ " + scm.returnPurchaseAmount(itemsInCart).ToString();
                     }
-                    //Store date in a session
-                    Session["strDate"] = lblDateDisplay.Text;
                 }
             }
             //Exception catch

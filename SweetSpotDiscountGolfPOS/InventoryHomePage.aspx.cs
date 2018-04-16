@@ -18,6 +18,7 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU;
         ItemsManager IM = new ItemsManager();
+        InvoiceManager InM = new InvoiceManager();
         List<Items> searched = new List<Items>();
 
         protected void Page_Load(object sender, EventArgs e)
@@ -118,10 +119,10 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnMakePurchase_Click";
             try
             {
-                //Sets customer id to guest cust
-                Session["key"] = 1;
-                //Changes page to Sales Cart
-                Response.Redirect("PurchasesCart.aspx", false);
+                var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                nameValues.Set("cust", "1");
+                nameValues.Set("receipt", (InM.ReturnNextReceiptNumber()).ToString());
+                Response.Redirect("PurchasesCart.aspx?" + nameValues, false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
