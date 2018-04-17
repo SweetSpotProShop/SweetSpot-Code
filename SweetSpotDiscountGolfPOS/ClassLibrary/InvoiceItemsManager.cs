@@ -300,7 +300,10 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             int NewQTYonSale = ii.quantity;
 
             RemoveQTYFromInventoryWithSKU(ii.sku, ii.typeID, AccessoryQTY - (NewQTYonSale - OrigQTYonSale));
-
+            UpdateItemFromCurrentSalesTableActualQuery(ii);
+        }
+        public void UpdateItemFromCurrentSalesTableActualQuery(InvoiceItems ii)
+        {
             string sqlCmd = "UPDATE tbl_currentSalesItems SET quantity = @quantity, "
                 + "itemDiscount = @itemDiscount, percentage = @percentage WHERE invoiceNum = @invoiceNum "
                 + "AND invoiceSubNum = @invoiceSubNum AND sku = @sku";
@@ -317,6 +320,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
             ExecuteNonReturnQuery(sqlCmd, parms);
         }
+
         public void LoopThroughTheItemsToReturnToInventory(string invoice)
         {
             DataTable dt = ReturnItemsInTheCart(invoice);

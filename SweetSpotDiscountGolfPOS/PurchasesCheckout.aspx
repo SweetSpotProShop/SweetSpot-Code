@@ -24,46 +24,45 @@
     <div>
         <%--REMEMBER TO SET DEFAULT BUTTON--%>
         <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="mopCash">
-            <table>
-                <tr>
-                    <td colspan="2" class="auto-style1">
+            <asp:Table runat="server">
+                <asp:TableRow>
+                    <asp:TableCell ColumnSpan="2" CssClass="auto-style1">
                         <table>
-                            <tr>
-                                <td colspan="2" style="text-align: center">Methods of Payment</td>
-                            </tr>
-                            <tr>
-                                <td>
+                            <asp:TableRow>
+                                <asp:TableCell ColumnSpan="2" style="text-align: center">Methods of Payment</asp:TableCell>
+                            </asp:TableRow>
+                            <asp:TableRow>
+                                <asp:TableCell>
                                     <asp:Button ID="mopCash" runat="server" Text="Cash" OnClick="mopCash_Click" Width="163px" OnClientClick="return confirm('Confirm Cash');" />
-
-                                </td>
-                                <td>
+                                </asp:TableCell>
+                                <asp:TableCell>
                                     <asp:Button ID="mopCheque" runat="server" Text="Cheque" OnClick="mopCheque_Click" Width="163px" OnClientClick="return confirm('Confirm Cheque');" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
+                                </asp:TableCell>
+                            </asp:TableRow>
+                            <asp:TableRow>
+                                <asp:TableCell>
                                     <asp:Button ID="mopDebit" runat="server" Text="Debit" OnClick="mopDebit_Click" Width="163px" OnClientClick="return confirm('Confirm Debit');" />
-                                </td>
-                                <td>
+                                </asp:TableCell>
+                                <asp:TableCell>
                                     <asp:Button ID="mopGiftCard" runat="server" Text="Gift Card" OnClick="mopGiftCard_Click" Width="163px" OnClientClick="return confirm('Confirm Gift Card');" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
+                                </asp:TableCell>
+                            </asp:TableRow>
+                            <asp:TableRow>
+                                <asp:TableCell ColumnSpan="2">
                                     <hr />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
+                                </asp:TableCell>
+                            </asp:TableRow>
+                            <asp:TableRow>
+                                <asp:TableCell>
                                     <asp:Label ID="lblPurchaseAmount" runat="server" Text="Purchase Amount:" Width="163px" />
-                                </td>
-                                <td>
+                                </asp:TableCell>
+                                <asp:TableCell>
                                     <asp:TextBox ID="txtPurchaseAmount" runat="server" Width="159px" />
-                                </td>
-                            </tr>
+                                </asp:TableCell>
+                            </asp:TableRow>
                         </table>
-                    </td>
-                    <td colspan="2" class="auto-style1">
+                    </asp:TableCell>
+                    <asp:TableCell ColumnSpan="2" CssClass="auto-style1">
                         <asp:Table ID="tblTotals" runat="server">
                             <asp:TableRow>
                                 <asp:TableCell>
@@ -89,11 +88,11 @@
                                 </asp:TableCell>
                             </asp:TableRow>
                         </asp:Table>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="4">
-                        <asp:GridView ID="gvCurrentMOPs" runat="server" AutoGenerateColumns="false" Width="100%" OnRowDeleting="OnRowDeleting">
+                    </asp:TableCell>
+                </asp:TableRow>
+                <asp:TableRow>
+                    <asp:TableCell ColumnSpan="4">
+                        <asp:GridView ID="gvCurrentMOPs" runat="server" AutoGenerateColumns="false" Width="100%" OnRowDeleting="OnRowDeleting" HorizontalAlign="Center" >
                             <Columns>
                                 <asp:TemplateField HeaderText="Remove">
                                     <ItemTemplate>
@@ -110,30 +109,30 @@
                                 </asp:TemplateField>
                             </Columns>
                         </asp:GridView>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
+                    </asp:TableCell>
+                </asp:TableRow>
+                <asp:TableRow>
+                    <asp:TableCell ColumnSpan="2">
                         <hr />
                         <asp:Label ID="lblRemainingPurchaseDue" runat="server" Text="Remaining Purchase Due" />
-                    </td>
-                    <td colspan="2">
+                    </asp:TableCell>
+                    <asp:TableCell ColumnSpan="2">
                         <hr />
                         <asp:Label ID="lblRemainingPurchaseDueDisplay" runat="server" Text="" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
+                    </asp:TableCell>
+                </asp:TableRow>
+                <asp:TableRow>
+                    <asp:TableCell>
                         <asp:Button ID="btnCancelPurchase" runat="server" Text="Cancel Purchase" OnClick="btnCancelPurchase_Click" Width="163px" />
-                    </td>
-                    <td>
+                    </asp:TableCell>
+                    <asp:TableCell>
                         <asp:Button ID="btnReturnToPurchaseCart" runat="server" Text="Return To Purchases" OnClick="btnReturnToPurchaseCart_Click" Width="163px" />
-                    </td>
-                    <td>
+                    </asp:TableCell>
+                    <asp:TableCell>
                         <asp:Button ID="btnFinalizePurchase" runat="server" Text="Process Purchase" OnClick="btnFinalizePurchase_Click" Width="163px" />
-                    </td>
-                </tr>
-            </table>
+                    </asp:TableCell>
+                </asp:TableRow>
+            </asp:Table>
             <p>
                 Comments:
                <br />

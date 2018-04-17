@@ -45,12 +45,12 @@ namespace SweetSpotDiscountGolfPOS
                     if (!Page.IsPostBack)
                     {
                         txtSearch.Focus();
-                        Customer c = CM.ReturnCustomer(Convert.ToInt32(Request.QueryString["cust"].ToString()))[0];
+                        Customer C = CM.ReturnCustomer(Convert.ToInt32(Request.QueryString["cust"].ToString()))[0];
                         //Set name in text box
-                        txtCustomer.Text = c.firstName + " " + c.lastName;
+                        txtCustomer.Text = C.firstName + " " + C.lastName;
                         lblDateDisplay.Text = DateTime.Today.ToString("yyyy-MM-dd");
                         lblInvoiceNumberDisplay.Text = Request.QueryString["inv"].ToString();
-                        Invoice I = new Invoice(Convert.ToInt32(Request.QueryString["inv"].ToString().Split('-')[1]), Convert.ToInt32(Request.QueryString["inv"].ToString().Split('-')[2]), DateTime.Now, DateTime.Now, c, CU.emp, CU.location, 0, 0, 0, 0, 0, 0, 0, 1, "");
+                        Invoice I = new Invoice(Convert.ToInt32(Request.QueryString["inv"].ToString().Split('-')[1]), Convert.ToInt32(Request.QueryString["inv"].ToString().Split('-')[2]), DateTime.Now, DateTime.Now, C, CU.emp, CU.location, 0, 0, 0, 0, 0, 0, 0, 1, "");
                         if (!IM.ReturnBolInvoiceExists(Request.QueryString["inv"].ToString()))
                         {
                             IM.CreateInitialTotalsForTable(I);
@@ -191,6 +191,7 @@ namespace SweetSpotDiscountGolfPOS
                 i[0].customer = c;
                 IM.UpdateCurrentInvoice(i[0]);
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                nameValues.Set("inv", Request.QueryString["inv"].ToString());
                 nameValues.Set("cust", custNum.ToString());
                 Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
             }
@@ -243,6 +244,7 @@ namespace SweetSpotDiscountGolfPOS
                     IM.UpdateCurrentInvoice(I);
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                     nameValues.Set("cust", C.customerId.ToString());
+                    nameValues.Set("receipt", Request.QueryString["inv"].ToString());
                     Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
                 }
             }

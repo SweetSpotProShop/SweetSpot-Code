@@ -79,7 +79,21 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@invoiceNum", Convert.ToInt32(invoice.Split('-')[1].ToString()) },
                 new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[2].ToString()) },
                 new object[] { "@mopType", ReturnMOPInt(method) },
-                new object[] { "@amountPaid", amountPaid },
+                new object[] { "@amountPaid", amountPaid }
+            };
+            dbc.executeInsertQuery(sqlCmd, parms);
+        }
+        public void AddNewMopToReceiptList(string invoice, double amountPaid, string method, int chequeNumber)
+        {
+            string sqlCmd = "INSERT INTO tbl_currentPurchaseMops VALUES(@receiptNum, @mopType, "
+                + "@chequeNum, @amountPaid)";
+
+            object[][] parms =
+            {
+                new object[] { "@receiptNum", Convert.ToInt32(invoice.Split('-')[1].ToString()) },
+                new object[] { "@mopType", ReturnMOPInt(method) },
+                new object[] { "@chequeNum", chequeNumber },
+                new object[] { "@amountPaid", amountPaid }
             };
             dbc.executeInsertQuery(sqlCmd, parms);
         }

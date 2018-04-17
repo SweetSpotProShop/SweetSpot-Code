@@ -17,15 +17,9 @@ namespace SweetSpotDiscountGolfPOS
         CurrentUser CU;
         CustomerManager CM = new CustomerManager();
         InvoiceItemsManager IIM = new InvoiceItemsManager();
-
-        public int receiptNum;
-        SweetShopManager ssm = new SweetShopManager();
-        ItemDataUtilities idu = new ItemDataUtilities();
-        List<Cart> itemsInCart = new List<Cart>();
-        Cart purchItem = new Cart();
-        List<Customer> c;
-        LocationManager lm = new LocationManager();
-        SalesCalculationManager scm = new SalesCalculationManager();
+        InvoiceManager IM = new InvoiceManager();
+        LocationManager LM = new LocationManager();
+        ItemsManager ItM = new ItemsManager();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -46,17 +40,23 @@ namespace SweetSpotDiscountGolfPOS
                     if (!Page.IsPostBack)
                     {
                         //Checks if there is a Customer Number stored in the Session
-                        Customer c = ssm.GetCustomerbyCustomerNumber(Convert.ToInt32(Request.QueryString["cust"].ToString()));
+                        Customer C = CM.ReturnCustomer(Convert.ToInt32(Request.QueryString["cust"].ToString()))[0];
                         //Set name in text box
-                        txtCustomer.Text = c.firstName + " " + c.lastName;
+                        txtCustomer.Text = C.firstName + " " + C.lastName;
                         //display system time in Sales Page
                         DateTime today = DateTime.Today;
                         lblDateDisplay.Text = today.ToString("yyyy-MM-dd");
                         lblReceiptNumberDisplay.Text = CU.locationName + "-" + Request.QueryString["receipt"].ToString();
 
+                        Invoice R = new Invoice(Convert.ToInt32(Request.QueryString["receipt"].ToString().Split('-')[1]), 1, DateTime.Now, DateTime.Now, C, CU.emp, CU.location, 0, 0, 0, 0, 0, 0, 0, 1, "");
+                        if (!IM.ReturnBolReceiptExists(Request.QueryString["inv"].ToString()))
+                        {
+                            IM.CreateInitialTotalsForTable(R);
+                        }
+
                         grdPurchasedItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["inv"].ToString());
                         grdPurchasedItems.DataBind();
-                        //lblPurchaseAmountDisplay.Text = "$ " + scm.returnPurchaseAmount(itemsInCart).ToString();
+                        lblPurchaseAmountDisplay.Text = "$ " + R.subTotal.ToString();
                     }
                 }
             }
@@ -82,16 +82,14 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     btnCustomerSelect.Text = "Change Customer";
                     grdCustomersSearched.Visible = false;
-                    int custNum = (Convert.ToInt32(Session["key"].ToString()));
-                    Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
+                    Customer C = CM.ReturnCustomer(Convert.ToInt32(Request.QueryString["cust"].ToString()))[0];
                     //Set name in text box
-                    txtCustomer.Text = c.firstName + " " + c.lastName;
+                    txtCustomer.Text = C.firstName + " " + C.lastName;
                 }
                 else
                 {
                     grdCustomersSearched.Visible = true;
-                    c = ssm.GetCustomerfromSearch(txtCustomer.Text);
-                    grdCustomersSearched.DataSource = c;
+                    grdCustomersSearched.DataSource = CM.ReturnCustomerBasedOnText(txtCustomer.Text);
                     grdCustomersSearched.DataBind();
                     if (grdCustomersSearched.Rows.Count > 0)
                     {
@@ -116,30 +114,28 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnAddCustomer_Click";
             try
             {
-                //Get info from textboxes
-                TextBox fName = grdCustomersSearched.FooterRow.FindControl("txtFirstName") as TextBox;
-                TextBox lName = grdCustomersSearched.FooterRow.FindControl("txtLastName") as TextBox;
-                TextBox phoneNumber = grdCustomersSearched.FooterRow.FindControl("txtPhoneNumber") as TextBox;
-                TextBox email = grdCustomersSearched.FooterRow.FindControl("txtEmail") as TextBox;
-                CheckBox marketing = grdCustomersSearched.FooterRow.FindControl("chkMarketingEnrollment") as CheckBox;
-                bool enrolled = false;
-                if (marketing.Checked)
-                {
-                    enrolled = true;
-                }
-                //Using current user's info
-                int provStateID = lm.getProvIDFromLocationID(CU.location.locationID);
-                int countryID = lm.getCountryIDFromProvID(provStateID);
-                //Creating a customer
-                Customer c = new Customer(0, fName.Text, lName.Text, "", "", phoneNumber.Text, "", email.Text, "", provStateID, countryID, "", enrolled);
-                //Set the session key to customer ID
-                string key = CM.addCustomer(c).ToString();
-                Session["key"] = key;
-                //Hide stuff
-                grdCustomersSearched.Visible = false;
-                //Set name in text box
-                txtCustomer.Text = fName.Text + " " + lName.Text;
-                btnCustomerSelect.Text = "Change Customer";
+                Location L = LM.ReturnLocation(CU.location.locationID)[0];
+                Customer C = new Customer();
+                C.firstName = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtFirstName")).Text;
+                C.lastName = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtLastName")).Text;
+                C.primaryAddress = "";
+                C.secondaryAddress = "";
+                C.primaryPhoneNumber = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtPhoneNumber")).Text;
+                C.secondaryPhoneNumber = "";
+                C.emailList = ((CheckBox)grdCustomersSearched.FooterRow.FindControl("chkMarketingEnrollment")).Checked;
+                C.email = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtEmail")).Text;
+                C.city = "";
+                C.province = L.provID;
+                C.country = L.countryID;
+                C.postalCode = "";
+                C.customerId = CM.addCustomer(C);
+                Invoice R = IM.ReturnCurrentInvoice(Request.QueryString["receipt"].ToString())[0];
+                R.customer = C;
+                IM.UpdateCurrentInvoice(R);
+                var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                nameValues.Set("receipt", Request.QueryString["receipt"].ToString());
+                nameValues.Set("cust", R.customer.customerId.ToString());
+                Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -159,13 +155,8 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 grdCustomersSearched.PageIndex = e.NewPageIndex;
-                //Looks through database and returns a list of customers
-                //based on the search criteria entered
-                SweetShopManager ssm = new SweetShopManager();
-                c = ssm.GetCustomerfromSearch(txtCustomer.Text);
-                //Binds the results to the gridview
                 grdCustomersSearched.Visible = true;
-                grdCustomersSearched.DataSource = c;
+                grdCustomersSearched.DataSource = CM.ReturnCustomerBasedOnText(txtCustomer.Text);
                 grdCustomersSearched.DataBind();
             }
             //Exception catch
@@ -187,17 +178,17 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //grabs the command argument for the command pressed 
-                string key = e.CommandArgument.ToString();
                 if (e.CommandName == "SwitchCustomer")
                 {
                     //if command argument is SwitchCustomer, set the new key
-                    Session["key"] = key;
-                    //Hide stuff
-                    grdCustomersSearched.Visible = false;
-                    //Get customer name
-                    Customer c = ssm.GetCustomerbyCustomerNumber(Convert.ToInt32(key));
-                    //Set name in text box
-                    txtCustomer.Text = c.firstName + " " + c.lastName;
+                    Customer C = CM.ReturnCustomer(Convert.ToInt32(e.CommandArgument.ToString()))[0];
+                    Invoice R = IM.ReturnCurrentInvoice(Request.QueryString["receipt"].ToString() + "-1")[0];
+                    R.customer = C;
+                    IM.UpdateCurrentInvoice(R);
+                    var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                    nameValues.Set("cust", C.customerId.ToString());
+                    nameValues.Set("receipt", Request.QueryString["receipt"].ToString());
+                    Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
                 }
                 btnCustomerSelect.Text = "Change Customer";
             }
@@ -220,23 +211,24 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnAddPurchase_Click";
             try
             {
-                //Check if there are items in the cart
-                if (Session["ItemsInCart"] != null)
-                {
-                    //If there are pass the session into variable for use
-                    itemsInCart = (List<Cart>)Session["ItemsInCart"];
-                }
-                purchItem.sku = idu.reserveTradeInSKu(CU.location.locationID);
+                InvoiceItems purchItem = new InvoiceItems();
+
+                purchItem.sku = ItM.ReserveTradeInSKU(CU.location.locationID);
                 purchItem.quantity = 1;
                 purchItem.description = "";
                 purchItem.cost = 0.00;
-                itemsInCart.Add(purchItem);
-                //Set items in cart into Session
-                Session["ItemsInCart"] = itemsInCart;
+                purchItem.invoiceNum = Convert.ToInt32((Request.QueryString["receipt"].ToString()).Split('-')[1]);
+                purchItem.invoiceSubNum = 1;
+                purchItem.itemDiscount = 0;
+                purchItem.itemRefund = 0;
+                purchItem.price = 0;
+                purchItem.percentage = false;
+                purchItem.isTradeIn = false;
+                purchItem.typeID = 1;
+
+                IIM.InsertItemIntoSalesCart(purchItem);
                 //Bind items in cart to grid view
-                grdPurchasedItems.DataSource = itemsInCart;
-                grdPurchasedItems.DataBind();
-                //lblPurchaseAmountDisplay.Text = "$ " + scm.returnPurchaseAmount(itemsInCart).ToString();
+                UpdateReceiptTotal();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -257,12 +249,9 @@ namespace SweetSpotDiscountGolfPOS
             string method = "OnRowEditing";
             try
             {
-                //Gets the index of the selected row
-                int index = e.NewEditIndex;
-                //binds grid view to the items in cart setting the indexed item up to edit
                 //it's available columns
-                grdPurchasedItems.DataSource = (List<Cart>)Session["ItemsInCart"];
-                grdPurchasedItems.EditIndex = index;
+                grdPurchasedItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["receipt"].ToString() + "-1");
+                grdPurchasedItems.EditIndex = e.NewEditIndex;
                 grdPurchasedItems.DataBind();
                 //Recalculates subtotal
                 //lblPurchaseAmountDisplay.Text = "$ " + scm.returnPurchaseAmount(itemsInCart).ToString();
@@ -280,7 +269,7 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
         //Currently used for cancelling the edit
-        protected void ORowCanceling(object sender, GridViewCancelEditEventArgs e)
+        protected void OnRowCanceling(object sender, GridViewCancelEditEventArgs e)
         {
             //Collects current method for error tracking
             string method = "ORowCanceling";
@@ -289,7 +278,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Clears the indexed row
                 grdPurchasedItems.EditIndex = -1;
                 //Binds gridview to Session items in cart
-                grdPurchasedItems.DataSource = Session["ItemsInCart"];
+                grdPurchasedItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["receipt"].ToString() + "-1");
                 grdPurchasedItems.DataBind();
                 //Recalcluate subtotal
                 //lblPurchaseAmountDisplay.Text = "$ " + scm.returnPurchaseAmount((List<Cart>)Session["ItemsInCart"]).ToString("#0.00");
@@ -313,45 +302,21 @@ namespace SweetSpotDiscountGolfPOS
             string method = "OnRowUpdating";
             try
             {
-                int index = e.RowIndex;
-                //Stores all the data for each element in the row
-                int sku = Convert.ToInt32(grdPurchasedItems.Rows[index].Cells[1].Text);
-                string desc = ((TextBox)grdPurchasedItems.Rows[index].Cells[2].Controls[0]).Text;
-                double cost = Convert.ToDouble(((TextBox)grdPurchasedItems.Rows[index].Cells[3].Controls[0]).Text);
-
                 //creates a temp item with the new updates
-                purchItem.sku = sku;
-                purchItem.cost = cost;
-                purchItem.description = desc;
+                InvoiceItems purchItem = new InvoiceItems();
+                purchItem.invoiceNum = Convert.ToInt32(Request.QueryString["receipt"].ToString());
+                purchItem.invoiceSubNum = 1;
+                purchItem.itemDiscount = 0;
+                purchItem.sku = Convert.ToInt32(grdPurchasedItems.Rows[e.RowIndex].Cells[1].Text);
+                purchItem.cost = Convert.ToDouble(((TextBox)grdPurchasedItems.Rows[e.RowIndex].Cells[3].Controls[0]).Text);
+                purchItem.description = ((TextBox)grdPurchasedItems.Rows[e.RowIndex].Cells[2].Controls[0]).Text;
 
-                //Sets current items in cart from stored session into duplicate cart 
-                List<Cart> duplicateCart = (List<Cart>)Session["ItemsInCart"];
+                IIM.UpdateItemFromCurrentSalesTableActualQuery(purchItem);
 
-                //Loop through each item in the duplicate cart
-                foreach (var cart in duplicateCart)
-                {
-                    //Check to see when the duplicate cart sku matches the selected updated sku
-                    if (cart.sku == purchItem.sku)
-                    {
-                        purchItem.quantity = cart.quantity;
-                        //sku to the cart
-                        itemsInCart.Add(purchItem);
-                    }
-                    else
-                    {
-                        //if sku does not match selected sku then add item back into cart
-                        itemsInCart.Add(cart);
-                    }
-                }
                 //Clears the indexed row
                 grdPurchasedItems.EditIndex = -1;
-                //Sets cart items to Session
-                Session["ItemsInCart"] = itemsInCart;
                 //Binds cart items to grid view
-                grdPurchasedItems.DataSource = itemsInCart;
-                grdPurchasedItems.DataBind();
-                //Recalculates the new subtotal
-                //lblPurchaseAmountDisplay.Text = "$ " + scm.returnPurchaseAmount(itemsInCart).ToString("#0.00");
+                UpdateReceiptTotal();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -371,13 +336,7 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnCancelSale_Click";
             try
             {
-                Session["key"] = null;
-                Session["ItemsInCart"] = null;
-                Session["CheckOutTotals"] = null;
-                Session["MethodsofPayment"] = null;
-                Session["Invoice"] = null;
-                Session["TranType"] = null;
-                Session["strDate"] = null;
+                IM.CancellingReceipt(IM.ReturnCurrentInvoice(Request.QueryString["receipt"].ToString() + "-1")[0]);
                 //Change to Home Page
                 Response.Redirect("HomePage.aspx", false);
             }
@@ -399,8 +358,11 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnProceedToCheckout_Click";
             try
             {
+                var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                nameValues.Set("receipt", Request.QueryString["receipt"].ToString());
+                nameValues.Set("cust", Request.QueryString["cust"].ToString());
                 //Changes to Sales Checkout page
-                Response.Redirect("PurchasesCheckout.aspx", false);
+                Response.Redirect("PurchasesCheckout.aspx?" + nameValues, false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -413,6 +375,15 @@ namespace SweetSpotDiscountGolfPOS
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
+        }
+        protected void UpdateReceiptTotal()
+        {
+            IM.CalculateNewReceiptTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["receipt"].ToString() + "-1")[0]);
+            Invoice R = IM.ReturnCurrentInvoice(Request.QueryString["receipt"].ToString() + "-1")[0];
+            grdPurchasedItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["receipt"].ToString() + "-1");
+            grdPurchasedItems.DataBind();
+            //Recalculates the new subtotal
+            lblPurchaseAmountDisplay.Text = "$ " + R.subTotal.ToString("#0.00");
         }
     }
 }

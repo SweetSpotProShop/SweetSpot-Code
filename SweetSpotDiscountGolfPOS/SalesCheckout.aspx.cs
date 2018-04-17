@@ -502,7 +502,15 @@ namespace SweetSpotDiscountGolfPOS
             {
                 if (rb >= -.001 && rb <= 0.001)
                 {
-                    mopCash.Enabled = false;
+                    if (IM.VerifyMOPHasBeenAdded(Request.QueryString["inv"].ToString()))
+                    {
+                        mopCash.Enabled = false;
+                    }
+                    else
+                    {
+                        MessageBox.ShowMessage("At least one method of payment "
+                            + "is required even for a $0.00 sale.", this);
+                    }
                     mopDebit.Enabled = false;
                     mopGiftCard.Enabled = false;
                     mopMasterCard.Enabled = false;

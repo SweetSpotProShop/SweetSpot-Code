@@ -84,6 +84,31 @@ namespace SweetSpotDiscountGolfPOS
             }).ToList();
             return i;
         }
+        private List<Invoice> ConvertFromDataTableToCurrentReceipt(DataTable dt)
+        {
+            CustomerManager CM = new CustomerManager();
+            EmployeeManager EM = new EmployeeManager();
+            LocationManager LM = new LocationManager();
+            InvoiceItemsManager IIM = new InvoiceItemsManager();
+            InvoiceMOPsManager IMM = new InvoiceMOPsManager();
+            List<Invoice> i = dt.AsEnumerable().Select(row =>
+            new Invoice
+            {
+                invoiceNum = row.Field<int>("receiptNumber"),
+                invoiceDate = row.Field<DateTime>("receiptDate"),
+                invoiceTime = row.Field<DateTime>("receiptTime"),
+                customer = CM.ReturnCustomer(row.Field<int>("custID"))[0],
+                employee = EM.ReturnEmployee(row.Field<int>("empID"))[0],
+                location = LM.ReturnLocation(row.Field<int>("locationID"))[0],
+                subTotal = row.Field<double>("receiptTotal"),
+                soldItems = IIM.ReturnInvoiceItemsCurrentSale("-" + row.Field<int>("receiptNumber").ToString() + "-" + 1),
+                usedMops = IMM.ReturnInvoiceMOPsCurrentSale("-" + row.Field<int>("receiptNumber").ToString() + "-" + 1),
+                transactionType = row.Field<int>("transactionType"),
+                transactionName = ReturnTransactionName(row.Field<int>("transactionType")),
+                comments = row.Field<string>("comments")
+            }).ToList();
+            return i;
+        }
         private List<Invoice> ConvertFromDataTableToInvoiceForReturns(DataTable dt)
         {
             CustomerManager CM = new CustomerManager();
@@ -261,12 +286,18 @@ namespace SweetSpotDiscountGolfPOS
         {
             SalesCalculationManager SCM = new SalesCalculationManager();
             //calculate subTotal, discountAmount, tradeinAmount, governmentTax, provincialTax, balanceDue
-            UpdateCurrentInvoice(SCM.SaveAllInvoiceTotals(I.soldItems, I));
+            UpdateCurrentInvoice(SCM.SaveAllInvoiceTotals(I));
         }
         public void CalculateNewInvoiceReturnTotalsToUpdate(Invoice I)
         {
             SalesCalculationManager SCM = new SalesCalculationManager();
             UpdateCurrentInvoice(SCM.SaveAllInvoiceTotalsForReturn(I));
+        }
+        public void CalculateNewReceiptTotalsToUpdate(Invoice I)
+        {
+            SalesCalculationManager SCM = new SalesCalculationManager();
+            //calculate subTotal, discountAmount, tradeinAmount, governmentTax, provincialTax, balanceDue
+            UpdateCurrentInvoice(SCM.SaveAllReceiptTotals(I));
         }
         public void FinalizeInvoice(Invoice I, string comments, string tbl)
         {
@@ -448,6 +479,23 @@ namespace SweetSpotDiscountGolfPOS
             }
             return exists;
         }
+        public bool ReturnBolReceiptExists(string invoice)
+        {
+            bool exists = false;
+            string sqlCmd = "SELECT COUNT(receiptNumber) AS receiptCount FROM "
+                + "tbl_receipt WHERE receiptNumber = @receiptNumber";
+
+            object[][] parms =
+            {
+                new object[] { "@invoiceNum", Convert.ToInt32(invoice.Split('-')[1].ToString()) },
+            };
+
+            if (ReturnInt(sqlCmd, parms) > 0)
+            {
+                exists = true;
+            }
+            return exists;
+        }
         public void UpdateCurrentInvoice(Invoice I)
         {
             string sqlCmd = "UPDATE tbl_currentSalesInvoice SET invoiceDate = @invoiceDate, invoiceTime = @invoiceTime, custID = @custID, "
@@ -526,6 +574,20 @@ namespace SweetSpotDiscountGolfPOS
             return mopsAdded;
         }
 
+        public List<Invoice> ReturnCurrentReceipt(string invoice)
+        {
+            string sqlCmd = "SELECT receipteNumber, receiptDate, CAST(receiptTime AS DATETIME) "
+                + "AS receiptTime, custID, empID, locationID, receiptTotal, transactionType, "
+                + "comments FROM tbl_receipt WHERE receiptNumber = @receiptNum";
+
+            object[][] parms =
+            {
+                 new object[] { "@receiptNum", Convert.ToInt32(invoice.Split('-')[1]) }
+            };
+
+            List<Invoice> i = ConvertFromDataTableToCurrentInvoice(dbc.returnDataTableData(sqlCmd, parms));
+            return i;
+        }
         public int ReturnNextReceiptNumber()
         {
             int nextReceiptNum = 0;
@@ -550,6 +612,17 @@ namespace SweetSpotDiscountGolfPOS
                 new object[] { "recNum", recNum }
             };
             ExecuteNonReturnCall(sqlCmd, parms);
+        }
+        public void CancellingReceipt(Invoice R)
+        {
+            //Step 2: Remove Receipt from the Current Invoice Table
+            RemoveInvoiceFromTheCurrentInvoiceTable(R);
+
+            //Step 4: Remove Receipt Items from the Current Invoice Items Table
+            RemoveInvoiceItemsFromTheCurrentItemsTable(R);
+
+            //Step 6: Remove Receipt Mops from the Current Invoice Mops Table
+            RemoveInvoiceMopsFromTheCurrentMopsTable(R);
         }
     }
 }

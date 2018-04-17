@@ -42,8 +42,8 @@ namespace SweetSpotDiscountGolfPOS
                         //Retrieve taxes based on current location
                         string gTax = "Do Nothing";
                         string pTax = "Do Nothing";
-                        if (I.governmentTax > 0) { gTax = "Add GST"; }
-                        if (I.provincialTax > 0) { pTax = "Add PST"; }
+                        if (I.governmentTax != 0) { gTax = "Add GST"; }
+                        if (I.provincialTax != 0) { pTax = "Add PST"; }
                         object[] taxText = { gTax, pTax };
                         object[] results = TM.ReturnChargedTaxForSale(I, taxText);
                         I = (Invoice)results[0];
