@@ -66,7 +66,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             {
                 if (i == 0)
                 {
-                    sqlCmd = "SELECT A.sku, (SELECT B.brandName + ' ' + M.modelName + ' ' + AC.size + ' ' + AC.colour + ' ' + AC.comments AS description FROM tbl_accessories AC JOIN tbl_brand B ON AC.brandID = B.brandID JOIN tbl_model M ON AC.modelID = M.modelID WHERE AC.sku = A.sku) AS description, "
+                    sqlCmd = "SELECT TOP (50) A.sku, (SELECT B.brandName + ' ' + M.modelName + ' ' + AC.size + ' ' + AC.colour + ' ' + AC.comments AS description FROM tbl_accessories AC JOIN tbl_brand B ON AC.brandID = B.brandID JOIN tbl_model M ON AC.modelID = M.modelID WHERE AC.sku = A.sku) AS description, "
                             + "(SELECT L.locationName FROM tbl_accessories AC JOIN tbl_location L ON AC.locationID = L.locationID WHERE AC.sku = A.sku) AS locationName, "
                             + "A.quantity, A.price, A.cost, A.typeID, CAST(0 AS bit) AS isTradeIn FROM tbl_accessories A WHERE ((CAST(sku AS VARCHAR) LIKE '%" + array[i] + "%' "
                             + "OR brandID IN(SELECT brandID FROM tbl_brand WHERE brandName LIKE '%" + array[i] + "%') "
@@ -75,7 +75,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 }
                 else
                 {
-                    sqlCmd += "INTERSECT(SELECT A.sku, (SELECT B.brandName + ' ' + M.modelName + ' ' + AC.size + ' ' + AC.colour + ' ' + AC.comments AS description FROM tbl_accessories AC JOIN tbl_brand B ON AC.brandID = B.brandID JOIN tbl_model M ON AC.modelID = M.modelID WHERE AC.sku = A.sku) AS description, "
+                    sqlCmd += "INTERSECT(SELECT TOP (50) A.sku, (SELECT B.brandName + ' ' + M.modelName + ' ' + AC.size + ' ' + AC.colour + ' ' + AC.comments AS description FROM tbl_accessories AC JOIN tbl_brand B ON AC.brandID = B.brandID JOIN tbl_model M ON AC.modelID = M.modelID WHERE AC.sku = A.sku) AS description, "
                             + "(SELECT L.locationName FROM tbl_accessories AC JOIN tbl_location L ON AC.locationID = L.locationID WHERE AC.sku = A.sku) AS locationName, "
                             + "A.quantity, A.price, A.cost, A.typeID, CAST(0 AS bit) AS isTradeIn FROM tbl_accessories A WHERE ((CAST(sku AS VARCHAR) LIKE '%" + array[i] + "%' "
                             + "OR brandID IN(SELECT brandID FROM tbl_brand WHERE brandName LIKE '%" + array[i] + "%') "
@@ -93,7 +93,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             {
                 if (i == 0)
                 {
-                    sqlCmd = "SELECT CL.sku, (SELECT B.brandName + ' ' + CLO.size + ' ' + CLO.colour + ' ' + CLO.gender + "
+                    sqlCmd = "SELECT TOP (50) CL.sku, (SELECT B.brandName + ' ' + CLO.size + ' ' + CLO.colour + ' ' + CLO.gender + "
                         + "' ' + CLO.style + ' ' + CLO.comments AS description FROM tbl_clothing CLO JOIN tbl_brand B "
                         + "ON CLO.brandID = B.brandID WHERE CLO.sku = CL.sku) AS description, (SELECT L.locationName "
                         + "FROM tbl_clothing CLO JOIN tbl_location L ON CLO.locationID = L.locationID WHERE CLO.sku = CL.sku) "
@@ -103,7 +103,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 }
                 else
                 {
-                    sqlCmd += "INTERSECT(SELECT CL.sku, (SELECT B.brandName + ' ' + CLO.size + ' ' + CLO.colour + ' ' + CLO.gender + "
+                    sqlCmd += "INTERSECT(SELECT TOP (50) CL.sku, (SELECT B.brandName + ' ' + CLO.size + ' ' + CLO.colour + ' ' + CLO.gender + "
                         + "' ' + CLO.style + ' ' + CLO.comments AS description FROM tbl_clothing CLO JOIN tbl_brand B "
                         + "ON CLO.brandID = B.brandID WHERE CLO.sku = CL.sku) AS description, (SELECT L.locationName "
                         + "FROM tbl_clothing CLO JOIN tbl_location L ON CLO.locationID = L.locationID WHERE CLO.sku = CL.sku) "
@@ -122,7 +122,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             {
                 if (i == 0)
                 {
-                    sqlCmd = "SELECT C.sku, (SELECT B.brandName + ' ' + M.modelName + ' ' + CLU.clubSpec + ' ' + "
+                    sqlCmd = "SELECT TOP (50) C.sku, (SELECT B.brandName + ' ' + M.modelName + ' ' + CLU.clubSpec + ' ' + "
                         + "CLU.clubType + ' ' + CLU.shaftSpec + ' ' + CLU.shaftFlex + ' ' + CLU.dexterity AS description "
                         + "FROM tbl_clubs CLU JOIN tbl_brand B ON CLU.brandID = B.brandID JOIN tbl_model M ON CLU.modelID = "
                         + "M.modelID  WHERE CLU.sku = C.sku) AS description, (SELECT L.locationName FROM tbl_clubs "
@@ -134,7 +134,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 }
                 else
                 {
-                    sqlCmd += "INTERSECT(SELECT C.sku, (SELECT B.brandName + ' ' + M.modelName + ' ' + CLU.clubSpec + ' ' + "
+                    sqlCmd += "INTERSECT(SELECT TOP (50) C.sku, (SELECT B.brandName + ' ' + M.modelName + ' ' + CLU.clubSpec + ' ' + "
                         + "CLU.clubType + ' ' + CLU.shaftSpec + ' ' + CLU.shaftFlex + ' ' + CLU.dexterity AS description "
                         + "FROM tbl_clubs CLU JOIN tbl_brand B ON CLU.brandID = B.brandID JOIN tbl_model M ON CLU.modelID = "
                         + "M.modelID  WHERE CLU.sku = C.sku) AS description, (SELECT L.locationName FROM tbl_clubs "

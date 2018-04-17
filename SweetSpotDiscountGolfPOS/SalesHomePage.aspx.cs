@@ -38,8 +38,9 @@ namespace SweetSpotDiscountGolfPOS
                     CU = (CurrentUser)Session["currentUser"];
                     if (!IsPostBack)
                     {
+                        calSearchDate.SelectedDate = DateTime.Today;
                         //Binds invoice list to the grid view
-                        grdCurrentOpenSales.DataSource = IM.ReturnCurrentOpenInvoices(CU.locationID);
+                        grdCurrentOpenSales.DataSource = IM.ReturnCurrentOpenInvoices(CU.location.locationID);
                         grdCurrentOpenSales.DataBind();
                     }
                 }
@@ -49,7 +50,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -75,7 +76,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -96,7 +97,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -116,7 +117,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -130,13 +131,13 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 Reports R = new Reports();
-                int indicator = R.verifyCashoutCanBeProcessed(CU.locationID);
+                int indicator = R.verifyCashoutCanBeProcessed(CU.location.locationID, calSearchDate.SelectedDate);
                 //Check to see if there are sales first
                 if (indicator == 0)
                 {
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                    nameValues.Set("dtm", DateTime.Today.ToShortDateString());
-                    nameValues.Set("location", CU.locationID.ToString());
+                    nameValues.Set("dtm", calSearchDate.SelectedDate.ToShortDateString());
+                    nameValues.Set("location", CU.location.locationID.ToString());
                     //Changes to the Reports Cash Out page
                     Response.Redirect("SalesCashOut.aspx?" + nameValues, false);
                 }
@@ -158,14 +159,14 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        //Still Needs to be Updated
+        
         protected void grdCurrentOpenSales_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method for error tracking
@@ -188,8 +189,21 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+        protected void calSearchDate_SelectionChanged(object sender, EventArgs e)
+        {
+            string method = "calSearchDate_SelectionChanged";
+            try { }
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);

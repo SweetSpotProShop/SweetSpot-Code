@@ -60,9 +60,6 @@
             <asp:Label ID="lblCustomerDisplay" runat="server" Text="" />
             <br />
             <br />
-            <%--//Radio button for InStore or Shipping--%>
-            <asp:Label ID="lblShipping" runat="server" Text="Shipping Amount:" />
-            <asp:Label ID="lblShippingAmount" runat="server" Text="" />
             <div style="text-align: right">
                 <asp:Label ID="lblInvoiceNumber" runat="server" Text="Invoice No:" />
                 <asp:Label ID="lblInvoiceNumberDisplay" runat="server" />
@@ -71,10 +68,10 @@
                 <asp:Label ID="lblDateDisplay" runat="server" Text="" />
                 <hr />
             </div>
+            <h3>Available Items</h3>
             <hr />
-            <h3>Cart</h3>
-            <hr />
-            <asp:GridView ID="grdInvoicedItems" runat="server" AutoGenerateColumns="false" OnRowDeleting="grdInvoicedItems_RowDeleting">
+            <asp:Label ID="lblInvalidQty" runat="server" Visible="false" Text="Label" />
+            <asp:GridView ID="grdInvoicedItems" runat="server" AutoGenerateColumns="false" OnRowDeleting="grdInvoicedItems_RowDeleting" RowStyle-HorizontalAlign="Center" >
                 <Columns>
                     <asp:TemplateField HeaderText="Return Item">
                         <ItemTemplate>
@@ -119,7 +116,9 @@
                 </Columns>
             </asp:GridView>
             <hr />
-            <asp:GridView ID="grdReturningItems" runat="server" AutoGenerateColumns="false" OnRowDeleting="grdReturningItems_RowDeleting">
+            <h3>Return Cart</h3>
+            <hr />
+            <asp:GridView ID="grdReturningItems" runat="server" AutoGenerateColumns="false" OnRowDeleting="grdReturningItems_RowDeleting" RowStyle-HorizontalAlign="Center" >
                 <Columns>
                     <asp:TemplateField HeaderText="Cancel Return">
                         <ItemTemplate>
@@ -129,7 +128,7 @@
                     <asp:BoundField DataField="sku" ReadOnly="true" HeaderText="SKU" />
                     <asp:BoundField DataField="quantity" ReadOnly="true" HeaderText="Quantity" />
                     <asp:BoundField DataField="description" ReadOnly="true" HeaderText="Description" />
-                    <asp:BoundField DataField="returnAmount" ReadOnly="true" HeaderText="Refund Amount" DataFormatString="{0:C}" />
+                    <asp:BoundField DataField="itemRefund" ReadOnly="true" HeaderText="Refund Amount" DataFormatString="{0:C}" />
                     <asp:TemplateField HeaderText="Discount Applied" Visible="false">
                         <ItemTemplate>
                             <asp:CheckBox ID="ckbRIPercentage" Checked='<%# Convert.ToBoolean(Eval("percentage")) %>' runat="server" Text="Discount by Percent" Enabled="false" />

@@ -17,18 +17,16 @@ namespace SweetSpotDiscountGolfPOS
     public partial class ReportsItemsSold : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU = new CurrentUser();
+        CurrentUser CU;
+        Reports R = new Reports();
+
+
 
         SweetShopManager ssm = new SweetShopManager();
-        Reports r = new Reports();
         ItemDataUtilities idu = new ItemDataUtilities();
-        CustomMessageBox cmb = new CustomMessageBox();
         LocationManager l = new LocationManager();
-        DateTime startDate;
-        DateTime endDate;
         double tCost;
         double tPrice;
-        //double tDiscount;
         double tProfit;
         DataTable items = new DataTable();
 
@@ -65,7 +63,7 @@ namespace SweetSpotDiscountGolfPOS
                     }
 
                     //Binding the gridview
-                    items = r.returnItemsSold(startDate, endDate, locationID);
+                    items = R.returnItemsSold(startDate, endDate, locationID);
                     //Checking if there are any values
                     if (items.Rows.Count > 0)
                     {
@@ -90,7 +88,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -99,40 +97,55 @@ namespace SweetSpotDiscountGolfPOS
         }
         protected void grdItems_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            if (e.Row.RowType == DataControlRowType.DataRow)
+            string method = "grdItems_RowDataBound";
+            try
             {
-                Label percent = (Label)e.Row.FindControl("lblPercentage");
-                Label discount = (Label)e.Row.FindControl("lblTotalDiscount");
-                if (percent.Text.Equals("True"))
+                if (e.Row.RowType == DataControlRowType.DataRow)
                 {
-                    discount.Text = discount.Text + "%";
-                }
-                else
-                {
-                    if (discount.Text.Equals("0"))
+                    Label percent = (Label)e.Row.FindControl("lblPercentage");
+                    Label discount = (Label)e.Row.FindControl("lblTotalDiscount");
+                    if (percent.Text.Equals("True"))
                     {
-                        discount.Text = "-";
+                        discount.Text = discount.Text + "%";
                     }
                     else
                     {
-                        discount.Text = "$" + discount.Text;
+                        if (discount.Text.Equals("0"))
+                        {
+                            discount.Text = "-";
+                        }
+                        else
+                        {
+                            discount.Text = "$" + discount.Text;
+                        }
                     }
+                    Label lblProfit = (Label)e.Row.FindControl("lblTotalProfit");
+                    string profitText = lblProfit.Text;
+                    if (profitText.Contains("("))
+                    {
+                        lblProfit.ForeColor = System.Drawing.Color.Red;
+                    }
+                    tCost += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "cost"));
+                    tPrice += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "price"));
+                    tProfit += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "profit"));
                 }
-                Label lblProfit = (Label)e.Row.FindControl("lblTotalProfit");
-                string profitText = lblProfit.Text;
-                if (profitText.Contains("("))
+                else if (e.Row.RowType == DataControlRowType.Footer)
                 {
-                    lblProfit.ForeColor = System.Drawing.Color.Red;
+                    e.Row.Cells[2].Text = String.Format("{0:C}", tCost);
+                    e.Row.Cells[3].Text = String.Format("{0:C}", tPrice);
+                    e.Row.Cells[6].Text = String.Format("{0:C}", tProfit);
                 }
-                tCost += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "cost"));
-                tPrice += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "price"));
-                tProfit += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "profit"));
             }
-            else if (e.Row.RowType == DataControlRowType.Footer)
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
             {
-                e.Row.Cells[2].Text = String.Format("{0:C}", tCost);
-                e.Row.Cells[3].Text = String.Format("{0:C}", tPrice);
-                e.Row.Cells[6].Text = String.Format("{0:C}", tProfit);
+                //Log all info into error table
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
             }
         }
         protected void lbtnInvoiceNumber_Click(object sender, EventArgs e)
@@ -173,7 +186,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -236,7 +249,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

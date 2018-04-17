@@ -25,6 +25,18 @@
                     <asp:TableCell>
                         <asp:Button ID="btnProcessCashOut" runat="server" Text="Process CashOut" OnClick="btnProcessCashOut_Click" />
                     </asp:TableCell>
+                    <asp:TableCell>
+                        <asp:Calendar ID="calSearchDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest" Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="184px" Width="200px" OnSelectionChanged="calSearchDate_SelectionChanged" >
+                            <DayHeaderStyle BackColor="#5FD367" Font-Bold="True" Font-Size="7pt" />
+                            <NextPrevStyle VerticalAlign="Bottom" />
+                            <OtherMonthDayStyle ForeColor="#808080" />
+                            <SelectedDayStyle BackColor="#666666" Font-Bold="True" ForeColor="White" />
+                            <SelectorStyle BackColor="#CCCCCC" />
+                            <TitleStyle BackColor="#005555" BorderColor="Black" Font-Bold="True" />
+                            <TodayDayStyle BackColor="#CCCCCC" ForeColor="Black" />
+                            <WeekendDayStyle BackColor="#FFFFCC" />
+                        </asp:Calendar>
+                    </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
 

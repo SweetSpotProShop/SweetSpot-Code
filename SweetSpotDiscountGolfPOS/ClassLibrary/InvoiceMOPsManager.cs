@@ -58,10 +58,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string sqlCmd = "SELECT currentSalesMID, invoiceNum, invoiceSubNum, mopType, amountPaid "
                 + "FROM tbl_currentSalesMops WHERE invoiceNum = @invoiceNum AND invoiceSubNum = @invoiceSubNum";
 
+            int num = Convert.ToInt32(invoice.Split('-')[1]);
+            int sub = Convert.ToInt32(invoice.Split('-')[2]);
+
             Object[][] parms =
             {
-                 new object[] { "@invoiceNum", Convert.ToInt32(invoice.Split('-')[1]) },
-                 new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[2]) }
+                 new object[] { "@invoiceNum", num },
+                 new object[] { "@invoiceSubNum", sub }
             };
 
             return ConvertFromDataTableToCurrentInvoiceMOPs(dbc.returnDataTableData(sqlCmd, parms));

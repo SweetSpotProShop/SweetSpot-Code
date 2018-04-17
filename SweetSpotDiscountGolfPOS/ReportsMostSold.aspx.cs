@@ -17,10 +17,11 @@ namespace SweetSpotDiscountGolfPOS
     public partial class ReportsMSI : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU = new CurrentUser();
+        CurrentUser CU;
+        Reports R = new Reports();
+
 
         SweetShopManager ssm = new SweetShopManager();
-        Reports r = new Reports();
         ItemDataUtilities idu = new ItemDataUtilities();
         LocationManager l = new LocationManager();
         CustomMessageBox cmb = new CustomMessageBox();
@@ -71,9 +72,9 @@ namespace SweetSpotDiscountGolfPOS
                     models.Columns.Add("amountSold");
 
                     //Binding the gridview
-                    items = r.mostSoldItemsReport(startDate, endDate, locationID);
-                    brands = r.mostSoldBrandsReport(startDate, endDate, locationID);
-                    models = r.mostSoldModelsReport(startDate, endDate, locationID);
+                    items = R.mostSoldItemsReport(startDate, endDate, locationID);
+                    brands = R.mostSoldBrandsReport(startDate, endDate, locationID);
+                    models = R.mostSoldModelsReport(startDate, endDate, locationID);
                     //Checking if there are any values
                     if (items.Rows.Count > 0 && brands.Rows.Count > 0 && models.Rows.Count > 0)
                     {
@@ -102,7 +103,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -175,7 +176,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

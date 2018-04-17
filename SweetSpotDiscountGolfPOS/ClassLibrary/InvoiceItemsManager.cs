@@ -36,6 +36,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
 
         //Returns list of InvoiceItems based on an Invoice Number
+        //THIS CAN BE UPDATED TO GET ALL INFO FROM INVOICE TABLES (remove all joins)
         public List<InvoiceItems> ReturnInvoiceItems(string invoice)
         {
             string sqlCmd = "SELECT II.invoiceNum, II.invoiceSubNum, II.sku, (SELECT B.brandName + ' ' + M.modelName "
@@ -110,16 +111,23 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             return invoiceItems;
         }
-        //public DataTable ReturnInvoiceItemsForSalesCart(int sku)
-        //{
-        //    string sqlCmd = "SELECT ";
-        //    object[][] parms =
-        //    {
-        //        new object[] { "@sku", sku }
-        //    };
-        //    return dbc.returnDataTableData(sqlCmd, parms);
-        //}
-        //Returns string for search accessories
+        public List<InvoiceItems> ReturnInvoiceItemsCurrentSale(string invoice)
+        {
+            string sqlCmd = "SELECT invoiceNum, invoiceSubNum, sku, description, quantity, cost, price, "
+                + "itemDiscount, itemRefund, percentage, typeID, isTradeIn FROM tbl_currentSalesItems  "
+                + "WHERE invoiceNum = @invoiceNum AND invoiceSubNum = @invoiceSubNum";
+
+            int num = Convert.ToInt32(invoice.Split('-')[1]);
+            int sub = Convert.ToInt32(invoice.Split('-')[2]);
+
+            Object[][] parms =
+            {
+                 new object[] { "@invoiceNum", num },
+                 new object[] { "@invoiceSubNum", sub }
+            };
+            
+            return ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms));
+        }
         public string ReturnStringSearchForAccessories(ArrayList array)
         {
             string sqlCmd = "";
@@ -187,24 +195,25 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return sqlCmd;
         }
 
-        public void InsertItemIntoSalesCart(string invoice, int sku, int qty, string desc, double cost, double price, double itemDiscount, bool percent, bool isTradeIn, int typeID)
+        public void InsertItemIntoSalesCart(InvoiceItems II)
         {
             string sqlCmd = "INSERT INTO tbl_currentSalesItems VALUES(@invoiceNum, @invoiceSubNum, @sku, @qty, "
-                + "@desc, @cost, @price, @itemDiscount, 0, @percent, @isTradeIn, @typeID)";
+                + "@desc, @cost, @price, @itemDiscount, @itemRefund, @percent, @isTradeIn, @typeID)";
 
             object[][] parms =
             {
-                new object[] { "@invoiceNum", invoice.Split('-')[1] },
-                new object[] { "@invoiceSubNum", invoice.Split('-')[2] },
-                new object[] { "@sku", sku },
-                new object[] { "@qty", qty },
-                new object[] { "@desc", desc},
-                new object[] { "@cost", cost },
-                new object[] { "@price", price },
-                new object[] { "@itemDiscount", itemDiscount },
-                new object[] { "@percent", percent },
-                new object[] { "@isTradeIn", isTradeIn },
-                new object[] { "@typeID", typeID}
+                new object[] { "@invoiceNum", II.invoiceNum },
+                new object[] { "@invoiceSubNum", II.invoiceSubNum },
+                new object[] { "@sku", II.sku },
+                new object[] { "@qty", II.quantity },
+                new object[] { "@desc", II.description },
+                new object[] { "@cost", II.cost },
+                new object[] { "@price", II.price },
+                new object[] { "@itemDiscount", II.itemDiscount },
+                new object[] { "@itemRefund", II.itemRefund },
+                new object[] { "@percent", II.percentage },
+                new object[] { "@isTradeIn", II.isTradeIn },
+                new object[] { "@typeID", II.typeID }
             };
             ExecuteNonReturnQuery(sqlCmd, parms);
         }
@@ -249,7 +258,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         {
             string sqlCmd = "SELECT invoiceNum, invoiceSubNum, sku, quantity, description, "
                 + "cost, price, itemDiscount, itemRefund, percentage, isTradeIn, typeID FROM "
-                + "tbl_currentReturnsItems WHERE invoiceNum = @invoiceNum AND invoiceSubNum = @invoiceSubNum";
+                + "tbl_currentSalesItems WHERE invoiceNum = @invoiceNum AND invoiceSubNum = @invoiceSubNum";
 
             object[][] parms =
             {
@@ -390,13 +399,19 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         //Search results for A Return
         public List<InvoiceItems> ReturnInvoiceItemsFromProcessedSalesForReturn(string invoice)
         {
-            string sqlCmd = "SELECT I.invoiceNum, I.invoiceSubNum, I.sku, (SELECT SUM(DISTINCT II.quantity) - CASE WHEN SUM(IIR.quantity) IS NULL OR SUM(IIR.quantity) = '' THEN "
-                + "0 ELSE SUM(IIR.quantity) END AS quantity FROM tbl_invoiceItem II LEFT JOIN tbl_invoiceItemReturns IIR ON II.invoiceNum = IIR.invoiceNum AND II.sku = IIR.sku "
-                + "WHERE II.invoiceNum = @invoiceNum AND II.sku = I.sku GROUP BY II.invoiceNum, II.sku) AS quantity, I.description, (CONCAT((SELECT L.locationName AS locationName "
-                + "FROM tbl_accessories A JOIN tbl_location L ON A.locationID = L.locationID WHERE A.sku = I.sku), (SELECT L.locationName AS locationName FROM tbl_clothing CL JOIN "
-                + "tbl_location L ON CL.locationID = L.locationID WHERE CL.sku = I.sku), (SELECT L.locationName AS locationName FROM tbl_clubs C JOIN tbl_location L ON C.locationID "
-                + "= L.locationID WHERE C.sku = I.sku))) AS locationName, I.cost, I.price, I.itemDiscount, I.percentage, I.typeID, I.isTradeIn FROM tbl_invoiceItem I WHERE "
-                + "invoiceNum = @invoiceNum and invoiceSubNum = 1";
+            string sqlCmd = "SELECT I.invoiceNum, I.invoiceSubNum, I.sku, (SELECT SUM(DISTINCT II.quantity) - "
+                + "((CASE WHEN SUM(IIR.quantity) IS NULL OR SUM(IIR.quantity) = '' THEN 0 ELSE SUM(IIR.quantity) "
+                + "END) + (CASE WHEN SUM(CSI.quantity) IS NULL OR SUM(CSI.quantity) = '' THEN 0 ELSE "
+                + "SUM(CSI.quantity) END)) AS quantity FROM tbl_invoiceItem II LEFT JOIN tbl_invoiceItemReturns "
+                + "IIR ON II.invoiceNum = IIR.invoiceNum AND II.sku = IIR.sku LEFT JOIN tbl_currentSalesItems CSI "
+                + "ON II.invoiceNum = CSI.invoiceNum AND II.sku = CSI.sku WHERE II.invoiceNum = @invoiceNum AND "
+                + "II.sku = I.sku GROUP BY II.invoiceNum, II.sku) AS quantity, I.description, (CONCAT((SELECT "
+                + "L.locationName AS locationName FROM tbl_accessories A JOIN tbl_location L ON A.locationID = "
+                + "L.locationID WHERE A.sku = I.sku), (SELECT L.locationName AS locationName FROM tbl_clothing CL "
+                + "JOIN tbl_location L ON CL.locationID = L.locationID WHERE CL.sku = I.sku), (SELECT L.locationName "
+                + "AS locationName FROM tbl_clubs C JOIN tbl_location L ON C.locationID = L.locationID WHERE C.sku = "
+                + "I.sku))) AS locationName, I.cost, I.price, I.itemDiscount, I.itemRefund, I.percentage, I.typeID, "
+                + "I.isTradeIn FROM tbl_invoiceItem I WHERE invoiceNum = @invoiceNum and invoiceSubNum = 1";
 
             object[][] parms =
             {
@@ -404,6 +419,57 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             };
 
             return ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms));
+        }
+        public InvoiceItems ReturnInvoiceItemForReturnProcess(int sku, string invoice)
+        {
+            string sqlCmd = "SELECT invoiceNum, invoiceSubNum, sku, quantity, cost, price, "
+                + "itemDiscount, itemRefund, percentage, description, typeID, isTradeIn FROM "
+                + "tbl_invoiceItem WHERE invoiceNum = @invoiceNum AND invoiceSubNum = 1 "
+                + "AND sku = @sku";
+
+            object[][] parms =
+            {
+                new object[] { "@invoiceNum", invoice.Split('-')[1] },
+                new object[] { "@sku", sku }
+            };
+
+            InvoiceItems II = ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms))[0];
+            II.quantity = ReturnQTYofItem(II.sku, "tbl_" + ReturnTableNameFromTypeID(II.typeID), "quantity");
+            return II;
+        }
+        public void DoNotReturnTheItemOnReturn(InvoiceItems ii)
+        {
+            RemoveItemFromCurrentSalesTable(ii);
+        }
+        public InvoiceItems ReturnSkuFromCurrentSalesUsingSKU(int sku, string invoice)
+        {
+            return ReturnItemDetailsFromCurrentSaleTable(sku, invoice)[0];
+        }
+        public int ReturnCurrentQuantityOfItem(InvoiceItems ii)
+        {
+            return ReturnQTYofItem(ii.sku, "tbl_" + ReturnTableNameFromTypeID(ii.typeID), "quantity");
+        }
+        public bool ItemAlreadyInCart(InvoiceItems ii)
+        {
+            bool itemInCart = false;
+
+            string sqlCmd = "SELECT sku FROM tbl_currentSalesItems WHERE "
+                + "invoiceNum = @invoiceNum AND invoiceSubNum = @invoiceSubNum "
+                + "AND sku = @sku";
+
+            object[][] parms =
+            {
+                new object[] { "@invoiceNum", ii.invoiceNum },
+                new object[] { "@invoiceSubNum", ii.invoiceSubNum },
+                new object[] { "@sku", ii.sku }
+            };
+
+            DataTable dt = dbc.returnDataTableData(sqlCmd, parms);
+            if(dt.Rows.Count > 0)
+            {
+                itemInCart = true;
+            }
+            return itemInCart;
         }
     }
 }

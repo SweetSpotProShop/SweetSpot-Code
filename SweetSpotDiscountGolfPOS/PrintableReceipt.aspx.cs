@@ -17,12 +17,16 @@ namespace SweetSpotDiscountGolfPOS
         CurrentUser CU;
         LocationManager LM = new LocationManager();
 
+
+
         SweetShopManager ssm = new SweetShopManager();
         List<Mops> mopList = new List<Mops>();
         List<Cart> cart = new List<Cart>();
         CheckoutManager ckm = new CheckoutManager();
         int tranType;
         double dblAmountPaid;
+
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -54,7 +58,7 @@ namespace SweetSpotDiscountGolfPOS
                     //Determins the session to get the cart items from
                     cart = (List<Cart>)Session["ItemsInCart"];
                     //Use current location to display on invoice
-                    List<Location> l = LM.ReturnLocation(CU.locationID);
+                    List<Location> l = LM.ReturnLocation(CU.location.locationID);
 
                     //Display the location information
                     lblSweetShopName.Text = l[0].locationName.ToString();
@@ -90,7 +94,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -121,7 +125,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

@@ -16,6 +16,7 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU;
         CustomerManager CM = new CustomerManager();
+        InvoiceItemsManager IIM = new InvoiceItemsManager();
 
         public int receiptNum;
         SweetShopManager ssm = new SweetShopManager();
@@ -45,38 +46,18 @@ namespace SweetSpotDiscountGolfPOS
                     if (!Page.IsPostBack)
                     {
                         //Checks if there is a Customer Number stored in the Session
-                        if (Session["key"] != null)
-                        {
-                            //If yes then convert number to int and call Customer class using it
-                            int custNum = (int)(Convert.ToInt32(Session["key"].ToString()));
-                            Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
-                            //Set name in text box
-                            txtCustomer.Text = c.firstName + " " + c.lastName;
-                        }
+                        Customer c = ssm.GetCustomerbyCustomerNumber(Convert.ToInt32(Request.QueryString["cust"].ToString()));
+                        //Set name in text box
+                        txtCustomer.Text = c.firstName + " " + c.lastName;
                         //display system time in Sales Page
                         DateTime today = DateTime.Today;
                         lblDateDisplay.Text = today.ToString("yyyy-MM-dd");
-                        //Retrieves location from Session
-                        string loc = CU.locationName;
+                        lblReceiptNumberDisplay.Text = CU.locationName + "-" + Request.QueryString["receipt"].ToString();
 
-                        if (Session["Invoice"] == null)
-                        {
-                            receiptNum = idu.getNextReceiptNum();
-                            lblReceiptNumberDisplay.Text = loc + "-" + receiptNum;
-                            Session["Invoice"] = lblReceiptNumberDisplay.Text;
-                        }
-                        else { lblReceiptNumberDisplay.Text = Session["Invoice"].ToString(); }
-
-                        if (Session["ItemsInCart"] != null)
-                        {
-                            itemsInCart = (List<Cart>)Session["ItemsInCart"];
-                        }
-                        grdPurchasedItems.DataSource = Session["ItemsInCart"];
+                        grdPurchasedItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["inv"].ToString());
                         grdPurchasedItems.DataBind();
                         //lblPurchaseAmountDisplay.Text = "$ " + scm.returnPurchaseAmount(itemsInCart).ToString();
                     }
-                    //Store date in a session
-                    Session["strDate"] = lblDateDisplay.Text;
                 }
             }
             //Exception catch
@@ -84,7 +65,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -123,7 +104,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -132,42 +113,72 @@ namespace SweetSpotDiscountGolfPOS
         }
         protected void btnAddCustomer_Click(object sender, EventArgs e)
         {
-            //Get info from textboxes
-            TextBox fName = grdCustomersSearched.FooterRow.FindControl("txtFirstName") as TextBox;
-            TextBox lName = grdCustomersSearched.FooterRow.FindControl("txtLastName") as TextBox;
-            TextBox phoneNumber = grdCustomersSearched.FooterRow.FindControl("txtPhoneNumber") as TextBox;
-            TextBox email = grdCustomersSearched.FooterRow.FindControl("txtEmail") as TextBox;
-            CheckBox marketing = grdCustomersSearched.FooterRow.FindControl("chkMarketingEnrollment") as CheckBox;
-            bool enrolled = false;
-            if (marketing.Checked)
+            string method = "btnAddCustomer_Click";
+            try
             {
-                enrolled = true;
+                //Get info from textboxes
+                TextBox fName = grdCustomersSearched.FooterRow.FindControl("txtFirstName") as TextBox;
+                TextBox lName = grdCustomersSearched.FooterRow.FindControl("txtLastName") as TextBox;
+                TextBox phoneNumber = grdCustomersSearched.FooterRow.FindControl("txtPhoneNumber") as TextBox;
+                TextBox email = grdCustomersSearched.FooterRow.FindControl("txtEmail") as TextBox;
+                CheckBox marketing = grdCustomersSearched.FooterRow.FindControl("chkMarketingEnrollment") as CheckBox;
+                bool enrolled = false;
+                if (marketing.Checked)
+                {
+                    enrolled = true;
+                }
+                //Using current user's info
+                int provStateID = lm.getProvIDFromLocationID(CU.location.locationID);
+                int countryID = lm.getCountryIDFromProvID(provStateID);
+                //Creating a customer
+                Customer c = new Customer(0, fName.Text, lName.Text, "", "", phoneNumber.Text, "", email.Text, "", provStateID, countryID, "", enrolled);
+                //Set the session key to customer ID
+                string key = CM.addCustomer(c).ToString();
+                Session["key"] = key;
+                //Hide stuff
+                grdCustomersSearched.Visible = false;
+                //Set name in text box
+                txtCustomer.Text = fName.Text + " " + lName.Text;
+                btnCustomerSelect.Text = "Change Customer";
             }
-            //Using current user's info
-            int provStateID = lm.getProvIDFromLocationID(CU.locationID);
-            int countryID = lm.getCountryIDFromProvID(provStateID);
-            //Creating a customer
-            Customer c = new Customer(0, fName.Text, lName.Text, "", "", phoneNumber.Text, "", email.Text, "", provStateID, countryID, "", enrolled);
-            //Set the session key to customer ID
-            string key = CM.addCustomer(c).ToString();
-            Session["key"] = key;
-            //Hide stuff
-            grdCustomersSearched.Visible = false;
-            //Set name in text box
-            txtCustomer.Text = fName.Text + " " + lName.Text;
-            btnCustomerSelect.Text = "Change Customer";
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
         }
         protected void grdCustomersSearched_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
-            grdCustomersSearched.PageIndex = e.NewPageIndex;
-            //Looks through database and returns a list of customers
-            //based on the search criteria entered
-            SweetShopManager ssm = new SweetShopManager();
-            c = ssm.GetCustomerfromSearch(txtCustomer.Text);
-            //Binds the results to the gridview
-            grdCustomersSearched.Visible = true;
-            grdCustomersSearched.DataSource = c;
-            grdCustomersSearched.DataBind();
+            string method = "grdCustomersSearched_PageIndexChanging";
+            try
+            {
+                grdCustomersSearched.PageIndex = e.NewPageIndex;
+                //Looks through database and returns a list of customers
+                //based on the search criteria entered
+                SweetShopManager ssm = new SweetShopManager();
+                c = ssm.GetCustomerfromSearch(txtCustomer.Text);
+                //Binds the results to the gridview
+                grdCustomersSearched.Visible = true;
+                grdCustomersSearched.DataSource = c;
+                grdCustomersSearched.DataBind();
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
         }
         protected void grdCustomersSearched_RowCommand(object sender, GridViewCommandEventArgs e)
         {
@@ -195,7 +206,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -215,7 +226,7 @@ namespace SweetSpotDiscountGolfPOS
                     //If there are pass the session into variable for use
                     itemsInCart = (List<Cart>)Session["ItemsInCart"];
                 }
-                purchItem.sku = idu.reserveTradeInSKu(CU.locationID);
+                purchItem.sku = idu.reserveTradeInSKu(CU.location.locationID);
                 purchItem.quantity = 1;
                 purchItem.description = "";
                 purchItem.cost = 0.00;
@@ -232,7 +243,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -261,7 +272,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -288,7 +299,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -347,11 +358,11 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
-                                + "If you continue to receive this message please contact "
-                                + "your system administrator.", this);
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
             }
         }
         protected void btnCancelPurchase_Click(object sender, EventArgs e)
@@ -375,7 +386,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -396,7 +407,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

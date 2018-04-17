@@ -17,19 +17,19 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsExtensiveInvoice : System.Web.UI.Page
     {
+        CurrentUser CU;
+        ErrorReporting ER = new ErrorReporting();
+        Reports R = new Reports();
+
+
         SweetShopManager ssm = new SweetShopManager();
-        ErrorReporting er = new ErrorReporting();
         LocationManager lm = new LocationManager();
         DateTime startDate;
         DateTime endDate;
         Employee e;
-        Reports reports = new Reports();
         LocationManager l = new LocationManager();
         ItemDataUtilities idu = new ItemDataUtilities();
-        CurrentUser cu = new CurrentUser();
-
-        DataTable invoices;
-
+        DataTable invoices = new DataTable();
         double shipping;
         double discount;
         double preTax;
@@ -60,7 +60,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    cu = (CurrentUser)Session["currentUser"];
+                    CU = (CurrentUser)Session["currentUser"];
                     //Gathering the start and end dates
                     Object[] repInfo = (Object[])Session["reportInfo"];
                     DateTime[] reportDates = (DateTime[])repInfo[0];
@@ -76,10 +76,8 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + lm.locationName(locID);
                     }
-                    invoices = new DataTable();
-                    invoices = reports.returnExtensiveInvoices(startDate, endDate, locID);
 
-                    grdInvoices.DataSource = invoices;
+                    grdInvoices.DataSource = R.returnExtensiveInvoices(startDate, endDate, locID);
                     grdInvoices.DataBind();
                 }
             }
@@ -87,23 +85,17 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
-                //Server.Transfer(prevPage, false);
             }
         }
-
         protected void grdInvoices_RowDataBound(object sender, GridViewRowEventArgs e)
         {
+
             Label lblShipping = (Label)e.Row.FindControl("lblShipping");
             Label lblTradeIn = (Label)e.Row.FindControl("lblTradeIn");
             Label lblDiscount = (Label)e.Row.FindControl("lblDiscount");
@@ -117,25 +109,6 @@ namespace SweetSpotDiscountGolfPOS
             Label lblDate = (Label)e.Row.FindControl("lblDate");
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                //if (e.Row.RowIndex % 10 == 0 && e.Row.RowIndex > 0)
-                //{
-                //    GridViewRow gvrHeaderRow = new GridViewRow(0, 0, DataControlRowType.Header, DataControlRowState.Normal);
-                //    for (int i = 0; i < grdInvoices.Columns.Count; i++)
-                //    {
-                //        if (grdInvoices.Columns[i].Visible == true)
-                //        {
-                //            TableCell tcHeaders = new TableCell();
-                //            tcHeaders.Text = grdInvoices.Columns[i].HeaderText;
-                //            gvrHeaderRow.Cells.Add(tcHeaders);
-                //        }
-                //    }
-                //    //ERROR:Specified argument was out of the range of valid values.\r\nParameter name: index
-                //    grdInvoices.Controls.AddAt(e.Row.RowIndex + counter, gvrHeaderRow);
-                //    //grdInvoices.Controls.Add(gvrHeaderRow);
-                //    counter++;
-                //}
-                //else
-                //{
                 //Shipping
                 if (lblShipping.Text.isNumber())
                 {
@@ -190,23 +163,13 @@ namespace SweetSpotDiscountGolfPOS
                     revenue += Convert.ToDouble(lblRevenue.Text);
                     lblRevenue.Text = "$" + lblRevenue.Text;
                 }
-                //Profit Margin
-                if (lblProfitMargin.Text.isNumber())
-                {
-                    margin += Convert.ToDouble(lblProfitMargin.Text);
-                    marginCounter++;
-                    lblProfitMargin.Text = lblProfitMargin.Text + "%";
-                }
+            }
+            else if (e.Row.RowType == DataControlRowType.Footer)
+            {
                 //Removing the time from the date
                 string date = lblDate.Text;
                 DateTime invoiceDate = Convert.ToDateTime(date);
                 lblDate.Text = invoiceDate.ToString("dd-MM-yyyy");
-                //}
-
-
-            }
-            else if (e.Row.RowType == DataControlRowType.Footer)
-            {
                 Label lblShippingTotal = (Label)e.Row.FindControl("lblShippingTotal");
                 Label lblTradeinTotal = (Label)e.Row.FindControl("lblTradeInTotal");
                 Label lblDiscountTotal = (Label)e.Row.FindControl("lblDiscountTotal");
@@ -231,7 +194,6 @@ namespace SweetSpotDiscountGolfPOS
                 lblProfitMarginTotal.Text = profitMarginAverage.ToString("#.##") + "%";
             }
         }
-
         protected void btnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -249,7 +211,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     //Creates a seperate sheet for each data table
                     ExcelWorksheet invoicesExport = xlPackage.Workbook.Worksheets.Add("Invoices"); //TODO:DONE Update the download to include the trade in column
-                    // write to sheet   
+                                                                                                   // write to sheet   
                     invoicesExport.Cells[1, 1].Value = lblDates.Text;
                     invoicesExport.Cells[2, 1].Value = "Invoice";
                     invoicesExport.Cells[2, 2].Value = "Shipping";
@@ -311,21 +273,14 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
-                //Server.Transfer(prevPage, false);
             }
         }
-
         protected void lbtnInvoiceNumber_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -366,18 +321,12 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                //Log employee number
-                int employeeID = cu.empID;
-                //Log current page
-                string currPage = Convert.ToString(Session["currPage"]);
                 //Log all info into error table
-                er.logError(ex, employeeID, currPage, method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
-                //Server.Transfer(prevPage, false);
             }
         }
     }

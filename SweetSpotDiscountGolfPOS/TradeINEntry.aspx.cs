@@ -14,7 +14,7 @@ namespace SweetSpotDiscountGolfPOS
     public partial class TradeINEntry : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU = new CurrentUser();
+        CurrentUser CU;
         ItemsManager IM = new ItemsManager();
 
         protected void Page_Load(object sender, EventArgs e)
@@ -26,7 +26,7 @@ namespace SweetSpotDiscountGolfPOS
                 CU = (CurrentUser)Session["currentUser"];
                 if (!IsPostBack)
                 {
-                    lblSKUDisplay.Text = IM.ReserveTradeInSKU(CU.locationID).ToString();
+                    lblSKUDisplay.Text = IM.ReserveTradeInSKU(CU.location.locationID).ToString();
                     ddlBrand.DataSource = IM.ReturnDropDownForBrand();
                     ddlBrand.DataTextField = "brandName";
                     ddlBrand.DataValueField = "brandID";
@@ -47,7 +47,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.1", method, this);
                 //string prevPage = Convert.ToString(Session["prevPage"]);
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -66,7 +66,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.1", method, this);
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
@@ -99,19 +99,28 @@ namespace SweetSpotDiscountGolfPOS
                 tradeIN.dexterity = txtDexterity.Text;
                 tradeIN.comments = txtComments.Text;
                 tradeIN.isTradeIn = true;
-                tradeIN.itemlocation = CU.locationID;
+                tradeIN.itemlocation = CU.location.locationID;
 
                 //this adds to the temp tradeIncart
                 IM.AddTradeInItemToTempTable(tradeIN);
 
                 //change cost and price for cart
-                tradeIN.price = (tradeIN.cost * (-1));
-                tradeIN.cost = 0;
-
                 InvoiceItemsManager IIM = new InvoiceItemsManager();
-                string desc = IM.ReturnBrandlNameFromBrandID(tradeIN.brandID) + " " + IM.ReturnModelNameFromModelID(tradeIN.modelID) + " " + tradeIN.clubSpec + " " + tradeIN.clubType + " " + tradeIN.shaftSpec + " " + tradeIN.shaftFlex + " " + tradeIN.dexterity;
-                //this adds to the actual cart for sale
-                IIM.InsertItemIntoSalesCart(Request.QueryString["inv"].ToString(), tradeIN.sku, tradeIN.quantity, desc, tradeIN.cost, tradeIN.price, 0, false, true, 1);
+                InvoiceItems selectedTradeIn = new InvoiceItems();
+                selectedTradeIn.invoiceNum = Convert.ToInt32((Request.QueryString["inv"]).Split('-')[1]);
+                selectedTradeIn.invoiceSubNum = Convert.ToInt32((Request.QueryString["inv"]).Split('-')[2]);
+                selectedTradeIn.sku = tradeIN.sku;
+                selectedTradeIn.quantity = tradeIN.quantity;
+                selectedTradeIn.description = IM.ReturnBrandlNameFromBrandID(tradeIN.brandID) + " " + IM.ReturnModelNameFromModelID(tradeIN.modelID) + " " + tradeIN.clubSpec + " " + tradeIN.clubType + " " + tradeIN.shaftSpec + " " + tradeIN.shaftFlex + " " + tradeIN.dexterity;
+                selectedTradeIn.cost = 0;
+                selectedTradeIn.price = tradeIN.cost * (-1);
+                selectedTradeIn.itemDiscount = 0;
+                selectedTradeIn.itemRefund = 0;
+                selectedTradeIn.percentage = false;
+                selectedTradeIn.isTradeIn = true;
+                selectedTradeIn.typeID = 1;
+
+                IIM.InsertItemIntoSalesCart(selectedTradeIn);
                 //Closing the trade in information window
                 string redirect = "<script>window.close('TradeINEntry.aspx');</script>";
                 Response.Write(redirect);
@@ -119,7 +128,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                ER.logError(ex, CU.empID, Convert.ToString(Session["currPage"]) + "-V3.1", method, this);
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.1", method, this);
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);

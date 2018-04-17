@@ -51,17 +51,7 @@
                                 <asp:TableCell>
                                     <asp:Button ID="mopGiftCard" runat="server" Text="Gift Card" OnClick="mopGiftCard_Click" Width="163px" OnClientClick="return confirm('Confirm Gift Card');" CausesValidation="false" />
                                 </asp:TableCell>
-                                <%--<td></td>--%>
                             </asp:TableRow>
-                            <%--<tr>
-                                <td>
-
-                                    <%--<asp:Button ID="mopOnAccount" runat="server" Text="Charge to Account" OnClick="mopOnAccount_Click" Width="163px" />
-                                </td>
-                                <td>
-                                    <%-- <asp:Button ID="mopGiftCard" runat="server" Text="Gift Card" OnClick="mopGiftCard_Click" Width="163px" OnClientClick="return confirm('Confirm Gift Card');" />
-                                </td>
-                            </tr>--%>
                             <asp:TableRow>
                                 <asp:TableCell ColumnSpan="2">
                                     <hr />
@@ -152,10 +142,9 @@
                         </asp:Table>
                     </asp:TableCell>
                 </asp:TableRow>
-
                 <asp:TableRow>
                     <asp:TableCell ColumnSpan="4">
-                        <asp:GridView ID="gvCurrentMOPs" runat="server" AutoGenerateColumns="false" Width="100%" OnRowDeleting="OnRowDeleting">
+                        <asp:GridView ID="gvCurrentMOPs" runat="server" AutoGenerateColumns="false" Width="100%" OnRowDeleting="OnRowDeleting" RowStyle-HorizontalAlign="Center" >
                             <Columns>
                                 <asp:TemplateField HeaderText="Remove">
                                     <ItemTemplate>

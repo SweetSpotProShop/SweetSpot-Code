@@ -27,10 +27,10 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnLogin_Click(object sender, EventArgs e)
         {
             //Connectes to the database and returns the employee id based on the password used
-            List<CurrentUser> cu = EM.ReturnCurrentUserFromPassword(txtPasswordEntry.Text);
-            if (cu.Count > 0)
+            List<CurrentUser> CU = EM.ReturnCurrentUserFromPassword(txtPasswordEntry.Text);
+            if (CU.Count > 0)
             {
-                Session["currentUser"] = cu[0];
+                Session["currentUser"] = CU[0];
                 Response.Redirect("HomePage.aspx", false);
             }
             else

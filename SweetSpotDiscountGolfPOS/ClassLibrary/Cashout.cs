@@ -31,26 +31,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public bool processed { get; set; }
         public int locationID { get; set; }
         public int empID { get; set; }
-
-
-        //public string mop { get; set; }
-        //public double amount { get; set; }
-        //public double tradeIn { get; set; }
-        //public double saleSubTotal { get; set; }
-        //public double receiptGST { get; set; }
-        //public double receiptPST { get; set; }
-        //public double receiptSubTotal { get; set; }
-        //public string date { get; set; }
-        //public string time { get; set; }
-        //public double shippingAmount { get; set; }
-
+        
 
         public Cashout() { } //These could be cleaned up after the cashout process get cleaned up
-        //public Cashout(string m, double a)
-        //{
-        //    mop = m;
-        //    amount = a;
-        //}
         public Cashout(DateTime CDate, DateTime CTime, double SalesTradeIn, double SalesGiftCard, 
             double SalesCash, double SalesDebit, double SalesMasterCard, double SalesVisa, 
             double ReceiptsTradeIn, double ReceiptsGiftCard, double ReceiptsCash, double ReceiptsDebit, 

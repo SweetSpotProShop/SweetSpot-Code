@@ -76,7 +76,7 @@ namespace SweetSpotDiscountGolfPOS
                 governmentTax = row.Field<double>("governmentTax"),
                 provincialTax = row.Field<double>("provincialTax"),
                 balanceDue = row.Field<double>("balanceDue"),
-                soldItems = IIM.ReturnInvoiceItems(row.Field<int>("invoiceNum").ToString() + "-" + row.Field<int>("invoiceSubNum").ToString()),
+                soldItems = IIM.ReturnInvoiceItemsCurrentSale("-" + row.Field<int>("invoiceNum").ToString() + "-" + row.Field<int>("invoiceSubNum").ToString()),
                 usedMops = IMM.ReturnInvoiceMOPsCurrentSale("-" + row.Field<int>("invoiceNum").ToString() + "-" + row.Field<int>("invoiceSubNum").ToString()),
                 transactionType = row.Field<int>("transactionType"),
                 transactionName = ReturnTransactionName(row.Field<int>("transactionType")),
@@ -231,14 +231,14 @@ namespace SweetSpotDiscountGolfPOS
         {
             string sqlCmd = "SELECT I.invoiceNum, I.invoiceSubNum, I.invoiceDate, C.custID, C.firstName, "
                 + "C.lastName, I.locationID, I.balanceDue FROM tbl_invoice I JOIN tbl_customers C ON "
-                + "I.custID = C.custID WHERE I.invoiceDate = @selectedDate ";
+                + "I.custID = C.custID WHERE I.invoiceSubNum = 1 AND (I.invoiceDate = @selectedDate";
 
             if (txtSearch != "")
             {
-                sqlCmd += "OR CAST(I.invoiceNum AS VARCHAR) LIKE '%" + txtSearch + "%' OR "
-                + "CONCAT(C.firstName, C.lastName, C.primaryPhoneINT) LIKE '%" + txtSearch + "%' ";
+                sqlCmd += " OR CAST(I.invoiceNum AS VARCHAR) LIKE '%" + txtSearch + "%' OR "
+                + "CONCAT(C.firstName, C.lastName, C.primaryPhoneINT) LIKE '%" + txtSearch + "%'";
             }
-            sqlCmd += "ORDER BY I.invoiceNum DESC";
+            sqlCmd += ") ORDER BY I.invoiceNum DESC";
             object[][] parms =
             {
                  new object[] { "@selectedDate", selectedDate }
@@ -259,13 +259,16 @@ namespace SweetSpotDiscountGolfPOS
         }
         public void CalculateNewInvoiceTotalsToUpdate(Invoice I)
         {
-            InvoiceItemsManager IIM = new InvoiceItemsManager();
             SalesCalculationManager SCM = new SalesCalculationManager();
-            List<InvoiceItems> ii = IIM.ReturnItemsToCalculateTotals("-" + I.invoiceNum.ToString() + "-" + I.invoiceSub.ToString());
             //calculate subTotal, discountAmount, tradeinAmount, governmentTax, provincialTax, balanceDue
-            UpdateCurrentInvoice(SCM.SaveAllInvoiceTotals(ii, I));
+            UpdateCurrentInvoice(SCM.SaveAllInvoiceTotals(I.soldItems, I));
         }
-        public void FinalizeInvoice(Invoice I, string comments)
+        public void CalculateNewInvoiceReturnTotalsToUpdate(Invoice I)
+        {
+            SalesCalculationManager SCM = new SalesCalculationManager();
+            UpdateCurrentInvoice(SCM.SaveAllInvoiceTotalsForReturn(I));
+        }
+        public void FinalizeInvoice(Invoice I, string comments, string tbl)
         {
             //Step 1: Save New Invoice to the Final Invoice Table
             InsertInvoiceIntoFinalTable(I, comments);
@@ -274,7 +277,7 @@ namespace SweetSpotDiscountGolfPOS
             RemoveInvoiceFromTheCurrentInvoiceTable(I);
 
             //Step 3: Save New Invoice Items to the Final Invoice Items Table
-            InsertInvoiceItemsIntoFinalItemsTable(I);
+            InsertInvoiceItemsIntoFinalItemsTable(I, tbl);
 
             //Step 4: Remove Invoice Items from the Current Invoice Items Table
             RemoveInvoiceItemsFromTheCurrentItemsTable(I);
@@ -326,13 +329,13 @@ namespace SweetSpotDiscountGolfPOS
             ExecuteNonReturnCall(sqlCmd, parms);
         }
         //Final Items Move
-        private void InsertInvoiceItemsIntoFinalItemsTable(Invoice I)
+        private void InsertInvoiceItemsIntoFinalItemsTable(Invoice I, string tbl)
         {
             InvoiceItemsManager IIM = new InvoiceItemsManager();
             DataTable dt = IIM.ReturnItemsInTheCart("-" + I.invoiceNum.ToString() + "-" + I.invoiceSub.ToString());
             foreach (DataRow item in dt.Rows)
             {
-                string sqlCmd = "INSERT INTO tbl_invoiceItem VALUES(@invoiceNum, @invoiceSubNum, @sku, @quantity, "
+                string sqlCmd = "INSERT INTO " + tbl + " VALUES(@invoiceNum, @invoiceSubNum, @sku, @quantity, "
                         + "@cost, @price, @itemDiscount, @itemRefund, @percentage, @description, @typeID, @isTradeIn)";
 
                 object[][] parms =
@@ -397,20 +400,31 @@ namespace SweetSpotDiscountGolfPOS
             ExecuteNonReturnCall(sqlCmd, parms);
         }
         
-        public void CreateInitialTotalsForTable(object[] invoiceInfo)
+        public void CreateInitialTotalsForTable(Invoice I)
         {
             string sqlCmd = "INSERT INTO tbl_currentSalesInvoice VALUES(@invoiceNum, @invoiceSubNum, "
-                + "@invoiceDate, @invoiceTime, @custID, @empID, @locationID, 0, 0, 0, 0, 0, 0, 0, 1, '')";
+                + "@invoiceDate, @invoiceTime, @custID, @empID, @locationID, @subTotal, @shippingAmount, "
+                + "@discountAmount, @trdaeinAmount, @governmentTax, @provincialTax, @balanceDue, "
+                + "@transactionType, @comments)";
 
             object[][] parms =
             {
-                new object[] { "@invoiceNum", Convert.ToInt32(Convert.ToString(invoiceInfo[0]).Split('-')[1]) },
-                new object[] { "@invoiceSubNum", Convert.ToInt32(Convert.ToString(invoiceInfo[0]).Split('-')[2]) },
+                new object[] { "@invoiceNum", I.invoiceNum },
+                new object[] { "@invoiceSubNum", I.invoiceSub },
                 new object[] { "@invoiceDate", DateTime.Now.ToString("yyyy-MM-dd") },
                 new object[] { "@invoiceTime", DateTime.Now.ToString("HH:mm:ss") },
-                new object[] { "@custID", Convert.ToInt32(invoiceInfo[1]) },
-                new object[] { "@empID", Convert.ToInt32(invoiceInfo[2]) },
-                new object[] { "@locationID", Convert.ToInt32(invoiceInfo[3]) }
+                new object[] { "@custID", I.customer.customerId },
+                new object[] { "@empID", I.employee.employeeID },
+                new object[] { "@locationID", I.location.locationID },
+                new object[] { "@subTotal", I.subTotal },
+                new object[] { "@shippingAmount", I.shippingAmount },
+                new object[] { "@discountAmount", I.discountAmount },
+                new object[] { "@trdaeinAmount", I.tradeinAmount },
+                new object[] { "@governmentTax", I.governmentTax },
+                new object[] { "@provincialTax", I.provincialTax },
+                new object[] { "@balanceDue", I.balanceDue },
+                new object[] { "@transactionType", I.transactionType },
+                new object[] { "@comments", I.comments }
             };
 
             ExecuteNonReturnCall(sqlCmd, parms);
@@ -492,6 +506,50 @@ namespace SweetSpotDiscountGolfPOS
             };
             return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
         }
+        public bool VerifyMOPHasBeenAdded(string invoice)
+        {
+            bool mopsAdded = false;
+            string sqlCmd = "SELECT COUNT(currentSalesMID) AS currentSalesMID "
+                + "FROM tbl_currentSalesMops WHERE invoiceNum = @invoiceNum AND "
+                + "invoiceSubNum = @invoiceSubNum";
 
+            object[][] parms =
+            {
+                new object[] { "@invoiceNum", invoice.Split('-')[1] },
+                new object[] { "@invoiceSubNum", invoice.Split('-')[2] }
+            };
+
+            if(ReturnInt(sqlCmd, parms) > 0)
+            {
+                mopsAdded = true;
+            }
+            return mopsAdded;
+        }
+
+        public int ReturnNextReceiptNumber()
+        {
+            int nextReceiptNum = 0;
+            string sqlCmd = "Select receiptNumber from tbl_receiptNumbers";
+
+            object[][] parms =
+            {
+                new object[] {}
+            };
+            nextReceiptNum = ReturnInt(sqlCmd, parms);
+            //Creates the invoice with the next invoice num
+            createReceiptNum(nextReceiptNum);
+            //Returns the next invoiceNum
+            return nextReceiptNum + 1;
+        }
+        public void createReceiptNum(int recNum)
+        {
+            string sqlCmd = "Update tbl_receiptNumbers set receiptNumber = @recNum";
+
+            object[][] parms =
+            {
+                new object[] { "recNum", recNum }
+            };
+            ExecuteNonReturnCall(sqlCmd, parms);
+        }
     }
 }

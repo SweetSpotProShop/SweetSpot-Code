@@ -68,16 +68,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
         //*******************CASHOUT UTILITIES*******************************************************
         //Matches new Database Calls
-        public int verifyCashoutCanBeProcessed(int location)
+        public int verifyCashoutCanBeProcessed(int location, DateTime dtm)
         {
             int indicator = 0;
-            if (transactionsAvailable(location))
+            if (transactionsAvailable(location, dtm))
             {
                 if (openTransactions(location))
                 {
                     indicator = 2;
                 }
-                else if (cashoutAlreadyDone(location))
+                else if(cashoutAlreadyDone(location, dtm))
                 {
                     indicator = 3;
                 }
@@ -85,7 +85,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             else { indicator = 1; }
             return indicator;
         }
-        public bool transactionsAvailable(int location)
+        public bool transactionsAvailable(int location, DateTime dtm)
         {
             bool bolTA = false;
             string sqlCmd = "SELECT COUNT(invoiceNum) FROM tbl_invoice "
@@ -93,8 +93,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         + "AND locationID = @locationID";
             object[][] parms =
             {
-                new object[] { "@startDate", DateTime.Today.ToString("yyyy-MM-dd") },
-                new object[] { "@endDate", DateTime.Today.ToString("yyyy-MM-dd") },
+                new object[] { "@startDate", dtm.ToString("yyyy-MM-dd") },
+                new object[] { "@endDate", dtm.ToString("yyyy-MM-dd") },
                 new object[] { "@locationID", location }
             };
 
@@ -104,7 +104,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             return bolTA;
         }
-        public bool cashoutAlreadyDone(int location)
+        public bool cashoutAlreadyDone(int location, DateTime dtm)
         {
             bool bolCAD = false;
             string sqlCmd = "SELECT COUNT(cashoutDate) from tbl_cashout "
@@ -112,8 +112,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         + "AND locationID = @locationID";
             object[][] parms =
             {
-                new object[] { "@startDate", DateTime.Today.ToString("yyyy-MM-dd") },
-                new object[] { "@endDate", DateTime.Today.ToString("yyyy-MM-dd") },
+                new object[] { "@startDate", dtm.ToString("yyyy-MM-dd") },
+                new object[] { "@endDate", dtm.ToString("yyyy-MM-dd") },
                 new object[] { "@locationID", location }
             };
             if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
@@ -2599,40 +2599,40 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
         public void UpdateCashout(Cashout cas)
         {
-            string sqlCmd = "UPDATE tbl_cashout SET cashoutDate = @cashoutDate, "
-                + "cashoutTime = @cashoutTime, saleTradeIn = @saleTradeIn, saleGiftCard = "
-                + "@saleGiftCard, saleCash = @saleCash, saleDebit = @saleDebit, saleMasterCard "
-                + "= @saleMasterCard, saleVisa = @saleVisa, receiptTradeIn = @receiptTradeIn, "
-                + "receiptGiftCard = @receiptGiftCard, receiptCash = @receiptCash, receiptDebit "
-                + "= @receiptDebit, receiptMasterCard = @receiptMasterCard, receiptVisa = "
-                + "@receiptVisa, preTax = @preTax, governmentTax = @gTax, provincialTax = @pTax, "
+            string sqlCmd = "UPDATE tbl_cashout SET cashoutTime = @cashoutTime, "
+                + "saleTradeIn = @saleTradeIn, saleGiftCard = @saleGiftCard, saleCash = @saleCash, "
+                + "saleDebit = @saleDebit, saleMasterCard = @saleMasterCard, saleVisa = @saleVisa, "
+                + "receiptTradeIn = @receiptTradeIn, receiptGiftCard = @receiptGiftCard, "
+                + "receiptCash = @receiptCash, receiptDebit = @receiptDebit, "
+                + "receiptMasterCard = @receiptMasterCard, receiptVisa = @receiptVisa, "
+                + "preTax = @preTax, governmentTax = @gTax, provincialTax = @pTax, "
                 + "overShort = @overShort, finalized = @finalized, processed = @processed, "
-                + "locationID = @locID, empID = @empID";
+                + "empID = @empID WHERE cashoutDate = @cashoutDate AND locationID = @locID";
 
             object[][] parms =
             {
-                new object[] { "cashoutDate", cas.cashoutDate },
-                new object[] { "cashoutTime", DateTime.Now.ToString("HH:mm:ss") },
-                new object[] { "saleTradeIn", cas.saleTradeIn },
-                new object[] { "saleGiftCard", cas.saleGiftCard },
-                new object[] { "saleCash", cas.saleCash },
-                new object[] { "saleDebit", cas.saleDebit },
-                new object[] { "saleMasterCard", cas.saleMasterCard },
-                new object[] { "saleVisa", cas.saleVisa },
-                new object[] { "receiptTradeIn", cas.receiptTradeIn },
-                new object[] { "receiptGiftCard", cas.receiptGiftCard },
-                new object[] { "receiptCash", cas.receiptCash },
-                new object[] { "receiptDebit", cas.receiptDebit },
-                new object[] { "receiptMasterCard", cas.receiptMasterCard },
-                new object[] { "receiptVisa", cas.receiptVisa },
-                new object[] { "preTax", cas.preTax },
-                new object[] { "gTax", cas.saleGST },
-                new object[] { "pTax", cas.salePST },
-                new object[] { "overShort", cas.overShort },
-                new object[] { "finalized", cas.finalized },
-                new object[] { "processed", cas.processed },
-                new object[] { "locID", cas.locationID },
-                new object[] { "empID", cas.empID }
+                new object[] { "@cashoutDate", cas.cashoutDate },
+                new object[] { "@cashoutTime", DateTime.Now.ToString("HH:mm:ss") },
+                new object[] { "@saleTradeIn", cas.saleTradeIn },
+                new object[] { "@saleGiftCard", cas.saleGiftCard },
+                new object[] { "@saleCash", cas.saleCash },
+                new object[] { "@saleDebit", cas.saleDebit },
+                new object[] { "@saleMasterCard", cas.saleMasterCard },
+                new object[] { "@saleVisa", cas.saleVisa },
+                new object[] { "@receiptTradeIn", cas.receiptTradeIn },
+                new object[] { "@receiptGiftCard", cas.receiptGiftCard },
+                new object[] { "@receiptCash", cas.receiptCash },
+                new object[] { "@receiptDebit", cas.receiptDebit },
+                new object[] { "@receiptMasterCard", cas.receiptMasterCard },
+                new object[] { "@receiptVisa", cas.receiptVisa },
+                new object[] { "@preTax", cas.preTax },
+                new object[] { "@gTax", cas.saleGST },
+                new object[] { "@pTax", cas.salePST },
+                new object[] { "@overShort", cas.overShort },
+                new object[] { "@finalized", cas.finalized },
+                new object[] { "@processed", cas.processed },
+                new object[] { "@locID", cas.locationID },
+                new object[] { "@empID", cas.empID }
             };
             dbc.executeInsertQuery(sqlCmd, parms);
         }

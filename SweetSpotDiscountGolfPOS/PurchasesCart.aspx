@@ -56,7 +56,7 @@
 </asp:Content>
 <asp:Content ID="PurchasesPageContent" ContentPlaceHolderID="IndividualPageContent" runat="server">
     <div id="Cart">
-        <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnAddPurchase">
+        <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnAddPurchase" >
             <asp:Label ID="lblCustomer" runat="server" Text="Customer Name:" />
             <asp:Label ID="lblCustomerDisplay" runat="server" Text="" Visible="false" />
             <asp:TextBox ID="txtCustomer" runat="server" />
@@ -64,7 +64,7 @@
             <div>
                 <br />
                 <div>
-                    <asp:GridView ID="grdCustomersSearched" runat="server" AutoGenerateColumns="false" ShowFooter="true" OnRowCommand="grdCustomersSearched_RowCommand" AllowPaging="True" PageSize="5" OnPageIndexChanging="grdCustomersSearched_PageIndexChanging">
+                    <asp:GridView ID="grdCustomersSearched" runat="server" AutoGenerateColumns="false" ShowFooter="true" OnRowCommand="grdCustomersSearched_RowCommand" AllowPaging="True" PageSize="5" OnPageIndexChanging="grdCustomersSearched_PageIndexChanging" >
                         <Columns>
                             <asp:TemplateField HeaderText="Switch Customer">
                                 <ItemTemplate>
@@ -95,7 +95,7 @@
                                     <asp:TextBox ID="txtPhoneNumber" runat="server" placeholder="Phone Number" ToolTip="Phone Number" />
                                 </FooterTemplate>
                             </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Email Address">
+                            <asp:TemplateField HeaderText="Email Address" >
                                 <ItemTemplate>
                                     <asp:Label runat="server" Text='<%#Eval("email") %>' />
                                 </ItemTemplate>
@@ -104,7 +104,7 @@
                                         <asp:TextBox ID="txtEmail" runat="server" placeholder="Email" ToolTip="Email" />
                                     </div>     
                                     <div>
-                                        <asp:CheckBox ID="chkMarketingEnrollment" runat="server" Text="Marketing Enrollment"/>
+                                        <asp:CheckBox ID="chkMarketingEnrollment" runat="server" Text="Marketing Enrollment" />
                                     </div>                                    
                                 </FooterTemplate>
                             </asp:TemplateField>
@@ -124,9 +124,9 @@
             <h3>Purchases</h3>
             <asp:Button ID="btnAddPurchase" runat="server" Text="Add Purchase" OnClick="btnAddPurchase_Click" />
             <hr />
-            <asp:GridView ID="grdPurchasedItems" runat="server" AutoGenerateColumns="false" Style="margin-right: 0px" OnRowEditing="OnRowEditing" OnRowUpdating="OnRowUpdating" OnRowCancelingEdit="ORowCanceling">
+            <asp:GridView ID="grdPurchasedItems" runat="server" AutoGenerateColumns="false" Style="margin-right: 0px" OnRowEditing="OnRowEditing" OnRowUpdating="OnRowUpdating" OnRowCancelingEdit="ORowCanceling" >
                 <Columns>
-                    <asp:TemplateField HeaderStyle-Width="20%" HeaderText="Edit Item">
+                    <asp:TemplateField HeaderStyle-Width="20%" HeaderText="Edit Item" >
                         <ItemTemplate>
                             <asp:LinkButton Text="Edit" runat="server" CommandName="Edit" CommandArgument='<%#Eval("sku")%>' CausesValidation="false" />
                         </ItemTemplate>
