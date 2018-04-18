@@ -53,10 +53,7 @@ namespace SweetSpotDiscountGolfPOS
                         {
                             IM.CreateInitialTotalsForTable(R);
                         }
-
-                        grdPurchasedItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["receipt"].ToString());
-                        grdPurchasedItems.DataBind();
-                        lblPurchaseAmountDisplay.Text = "$ " + R.subTotal.ToString();
+                        UpdateReceiptTotal();
                     }
                 }
             }
