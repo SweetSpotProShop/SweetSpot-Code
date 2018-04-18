@@ -46,15 +46,15 @@ namespace SweetSpotDiscountGolfPOS
                         //display system time in Sales Page
                         DateTime today = DateTime.Today;
                         lblDateDisplay.Text = today.ToString("yyyy-MM-dd");
-                        lblReceiptNumberDisplay.Text = CU.locationName + "-" + Request.QueryString["receipt"].ToString();
+                        lblReceiptNumberDisplay.Text = Request.QueryString["receipt"].ToString();
 
-                        Invoice R = new Invoice(Convert.ToInt32(Request.QueryString["receipt"].ToString().Split('-')[1]), 1, DateTime.Now, DateTime.Now, C, CU.emp, CU.location, 0, 0, 0, 0, 0, 0, 0, 1, "");
-                        if (!IM.ReturnBolReceiptExists(Request.QueryString["inv"].ToString()))
+                        Invoice R = new Invoice(Convert.ToInt32(Request.QueryString["receipt"].ToString().Split('-')[1]), 1, DateTime.Now, DateTime.Now, C, CU.emp, CU.location, 0, 0, 0, 0, 0, 0, 0, 5, "");
+                        if (!IM.ReturnBolInvoiceExists(Request.QueryString["receipt"].ToString()))
                         {
                             IM.CreateInitialTotalsForTable(R);
                         }
 
-                        grdPurchasedItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["inv"].ToString());
+                        grdPurchasedItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["receipt"].ToString());
                         grdPurchasedItems.DataBind();
                         lblPurchaseAmountDisplay.Text = "$ " + R.subTotal.ToString();
                     }
@@ -218,7 +218,7 @@ namespace SweetSpotDiscountGolfPOS
                 purchItem.description = "";
                 purchItem.cost = 0.00;
                 purchItem.invoiceNum = Convert.ToInt32((Request.QueryString["receipt"].ToString()).Split('-')[1]);
-                purchItem.invoiceSubNum = 1;
+                purchItem.invoiceSubNum = Convert.ToInt32((Request.QueryString["receipt"].ToString()).Split('-')[2]);
                 purchItem.itemDiscount = 0;
                 purchItem.itemRefund = 0;
                 purchItem.price = 0;
@@ -304,14 +304,13 @@ namespace SweetSpotDiscountGolfPOS
             {
                 //creates a temp item with the new updates
                 InvoiceItems purchItem = new InvoiceItems();
-                purchItem.invoiceNum = Convert.ToInt32(Request.QueryString["receipt"].ToString());
-                purchItem.invoiceSubNum = 1;
-                purchItem.itemDiscount = 0;
+                purchItem.invoiceNum = Convert.ToInt32((Request.QueryString["receipt"].ToString()).Split('-')[1]);
+                purchItem.invoiceSubNum = Convert.ToInt32((Request.QueryString["receipt"].ToString()).Split('-')[2]);
                 purchItem.sku = Convert.ToInt32(grdPurchasedItems.Rows[e.RowIndex].Cells[1].Text);
                 purchItem.cost = Convert.ToDouble(((TextBox)grdPurchasedItems.Rows[e.RowIndex].Cells[3].Controls[0]).Text);
                 purchItem.description = ((TextBox)grdPurchasedItems.Rows[e.RowIndex].Cells[2].Controls[0]).Text;
 
-                IIM.UpdateItemFromCurrentSalesTableActualQuery(purchItem);
+                IIM.UpdateItemFromCurrentSalesTableActualQueryForPurchases(purchItem);
 
                 //Clears the indexed row
                 grdPurchasedItems.EditIndex = -1;
@@ -378,9 +377,9 @@ namespace SweetSpotDiscountGolfPOS
         }
         protected void UpdateReceiptTotal()
         {
-            IM.CalculateNewReceiptTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["receipt"].ToString() + "-1")[0]);
-            Invoice R = IM.ReturnCurrentInvoice(Request.QueryString["receipt"].ToString() + "-1")[0];
-            grdPurchasedItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["receipt"].ToString() + "-1");
+            IM.CalculateNewReceiptTotalsToUpdate(IM.ReturnCurrentPurchaseInvoice(Request.QueryString["receipt"].ToString())[0]);
+            Invoice R = IM.ReturnCurrentPurchaseInvoice(Request.QueryString["receipt"].ToString())[0];
+            grdPurchasedItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["receipt"].ToString());
             grdPurchasedItems.DataBind();
             //Recalculates the new subtotal
             lblPurchaseAmountDisplay.Text = "$ " + R.subTotal.ToString("#0.00");

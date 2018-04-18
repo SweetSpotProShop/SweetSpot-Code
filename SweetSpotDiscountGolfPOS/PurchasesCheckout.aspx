@@ -27,7 +27,7 @@
             <asp:Table runat="server">
                 <asp:TableRow>
                     <asp:TableCell ColumnSpan="2" CssClass="auto-style1">
-                        <table>
+                        <asp:Table runat="server" >
                             <asp:TableRow>
                                 <asp:TableCell ColumnSpan="2" style="text-align: center">Methods of Payment</asp:TableCell>
                             </asp:TableRow>
@@ -60,7 +60,7 @@
                                     <asp:TextBox ID="txtPurchaseAmount" runat="server" Width="159px" />
                                 </asp:TableCell>
                             </asp:TableRow>
-                        </table>
+                        </asp:Table>
                     </asp:TableCell>
                     <asp:TableCell ColumnSpan="2" CssClass="auto-style1">
                         <asp:Table ID="tblTotals" runat="server">
@@ -99,12 +99,12 @@
                                         <asp:LinkButton Text="Remove MOP" runat="server" CommandName="Delete" OnClientClick="return confirm('Are you sure you want to remove this Method of Payment?');" CausesValidation="false" />
                                     </ItemTemplate>
                                 </asp:TemplateField>
-                                <asp:BoundField DataField="methodOfPayment" ReadOnly="true" HeaderText="Payment Type" />
+                                <asp:BoundField DataField="mopType" ReadOnly="true" HeaderText="Payment Type" />
                                 <asp:BoundField DataField="amountPaid" ReadOnly="true" HeaderText="Amount Paid" DataFormatString="{0:C}" />
-                                <asp:BoundField DataField="chequeNum" ReadOnly="true" HeaderText="Cheque Number" />
+                                <asp:BoundField DataField="cheque" ReadOnly="true" HeaderText="Cheque Number" />
                                 <asp:TemplateField HeaderText="Table ID" Visible="false">
                                     <ItemTemplate>
-                                        <asp:Label ID="lblTableID" Text='<%#Eval("tableID") %>' runat="server" />
+                                        <asp:Label ID="lblTableID" Text='<%#Eval("id") %>' runat="server" />
                                     </ItemTemplate>
                                 </asp:TemplateField>
                             </Columns>
@@ -115,28 +115,18 @@
                     <asp:TableCell ColumnSpan="2">
                         <hr />
                         <asp:Label ID="lblRemainingPurchaseDue" runat="server" Text="Remaining Purchase Due" />
-                    </asp:TableCell>
-                    <asp:TableCell ColumnSpan="2">
+                    </asp:TableCell><asp:TableCell ColumnSpan="2">
                         <hr />
                         <asp:Label ID="lblRemainingPurchaseDueDisplay" runat="server" Text="" />
-                    </asp:TableCell>
-                </asp:TableRow>
-                <asp:TableRow>
+                    </asp:TableCell></asp:TableRow><asp:TableRow>
                     <asp:TableCell>
                         <asp:Button ID="btnCancelPurchase" runat="server" Text="Cancel Purchase" OnClick="btnCancelPurchase_Click" Width="163px" />
-                    </asp:TableCell>
-                    <asp:TableCell>
+                    </asp:TableCell><asp:TableCell>
                         <asp:Button ID="btnReturnToPurchaseCart" runat="server" Text="Return To Purchases" OnClick="btnReturnToPurchaseCart_Click" Width="163px" />
-                    </asp:TableCell>
-                    <asp:TableCell>
+                    </asp:TableCell><asp:TableCell>
                         <asp:Button ID="btnFinalizePurchase" runat="server" Text="Process Purchase" OnClick="btnFinalizePurchase_Click" Width="163px" />
-                    </asp:TableCell>
-                </asp:TableRow>
-            </asp:Table>
-            <p>
-                Comments:
-               <br />
-                <asp:TextBox ID="txtComments" runat="server" TextMode="MultiLine" />
+                    </asp:TableCell></asp:TableRow></asp:Table><p>
+                Comments: <br /><asp:TextBox ID="txtComments" runat="server" TextMode="MultiLine" />
             </p>
         </asp:Panel>
     </div>

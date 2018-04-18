@@ -16,15 +16,7 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU;
         LocationManager LM = new LocationManager();
-
-
-
-        SweetShopManager ssm = new SweetShopManager();
-        List<Mops> mopList = new List<Mops>();
-        List<Cart> cart = new List<Cart>();
-        CheckoutManager ckm = new CheckoutManager();
-        int tranType;
-        double dblAmountPaid;
+        InvoiceManager IM = new InvoiceManager();
 
 
         protected void Page_Load(object sender, EventArgs e)
@@ -43,50 +35,35 @@ namespace SweetSpotDiscountGolfPOS
                 else
                 {
                     CU = (CurrentUser)Session["currentUser"];
-                    //get current customer from customer number session
-                    int custNum = (Convert.ToInt32(Session["key"].ToString()));
-                    //Store in Customer class
-                    Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
-                    //display information on receipt
-                    lblCustomerName.Text = c.firstName.ToString() + " " + c.lastName.ToString();
-                    lblStreetAddress.Text = c.primaryAddress.ToString();
-                    lblPostalAddress.Text = c.city.ToString() + ", " + LM.ReturnProvinceName(c.province) + " " + c.postalCode.ToString();
-                    lblPhone.Text = c.primaryPhoneNumber.ToString();
-                    lblinvoiceNum.Text = Convert.ToString(Session["Invoice"]);
-                    lblDate.Text = Convert.ToDateTime(Session["strDate"]).ToString("yyyy-MM-dd");
-                    //Gather transaction type from Session
-                    //Determins the session to get the cart items from
-                    cart = (List<Cart>)Session["ItemsInCart"];
-                    //Use current location to display on invoice
-                    List<Location> l = LM.ReturnLocation(CU.location.locationID);
-
-                    //Display the location information
-                    lblSweetShopName.Text = l[0].locationName.ToString();
-                    lblSweetShopStreetAddress.Text = l[0].address.ToString();
-                    lblSweetShopPostalAddress.Text = l[0].city.ToString() + ", " + LM.ReturnProvinceName(l[0].provID) + " " + l[0].postal.ToString();
-                    lblSweetShopPhone.Text = l[0].primaryPhone.ToString();
-
-                    //Gathers stored totals
-                    ckm = (CheckoutManager)Session["CheckOutTotals"];
-                    //Gathers stored payment methods
-                    mopList = (List<Mops>)Session["MethodsofPayment"];
-                    //Displays subtotal
-                    lblSubtotalDisplay.Text = "$ " + ckm.dblTotal.ToString("#0.00");
-                    //Loops through each payment method and totlas them
-                    foreach (var mop in mopList)
+                    if (!IsPostBack)
                     {
-                        dblAmountPaid += mop.amountPaid;
+                        //Store in Customer class
+                        Invoice I = IM.ReturnPurchaseInvoice(Request.QueryString["receipt"].ToString())[0];
+                        //display information on receipt
+                        lblCustomerName.Text = I.customer.firstName.ToString() + " " + I.customer.lastName.ToString();
+                        lblStreetAddress.Text = I.customer.primaryAddress.ToString();
+                        lblPostalAddress.Text = I.customer.city.ToString() + ", " + LM.ReturnProvinceName(I.customer.province) + " " + I.customer.postalCode.ToString();
+                        lblPhone.Text = I.customer.primaryPhoneNumber.ToString();
+                        lblinvoiceNum.Text = I.invoiceNum.ToString();
+                        lblDate.Text = I.invoiceDate.ToShortDateString();
+                        //Gather transaction type from Session
+                        //Display the location information
+                        lblSweetShopName.Text = I.location.locationName.ToString();
+                        lblSweetShopStreetAddress.Text = I.location.address.ToString();
+                        lblSweetShopPostalAddress.Text = I.location.city.ToString() + ", " + LM.ReturnProvinceName(I.location.provID) + " " + I.location.postal.ToString();
+                        lblSweetShopPhone.Text = I.location.primaryPhone.ToString();
+
+                        //Binds the cart to the grid view
+                        grdItemsBoughtList.DataSource = I.soldItems;
+                        grdItemsBoughtList.DataBind();
+
+                        //Displays the total amount ppaid
+                        lblSubtotalDisplay.Text = I.subTotal.ToString("#0.00");
+                        lblTotalPaidDisplay.Text = I.subTotal.ToString("#0.00");
+                        //Binds the payment methods to a gridview
+                        grdMOPS.DataSource = I.usedMops;
+                        grdMOPS.DataBind();
                     }
-
-                    //Binds the cart to the grid view
-                    grdItemsBoughtList.DataSource = cart;
-                    grdItemsBoughtList.DataBind();
-
-                    //Displays the total amount ppaid
-                    lblTotalPaidDisplay.Text = "$ " + dblAmountPaid.ToString("#0.00");
-                    //Binds the payment methods to a gridview
-                    grdMOPS.DataSource = mopList;
-                    grdMOPS.DataBind();
                 }
             }
             //Exception catch
@@ -107,16 +84,6 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnHome_Click";
             try
             {
-                //Nulls used stored sessions 
-                Session["useInvoice"] = null;
-                Session["Invoice"] = null;
-                Session["key"] = null;
-                Session["ItemsInCart"] = null;
-                Session["returnedCart"] = null;
-                Session["TranType"] = null;
-                Session["CheckOutTotals"] = null;
-                Session["MethodsofPayment"] = null;
-                Session["strDate"] = null;
                 //Change to the Home Page
                 Response.Redirect("HomePage.aspx", false);
             }

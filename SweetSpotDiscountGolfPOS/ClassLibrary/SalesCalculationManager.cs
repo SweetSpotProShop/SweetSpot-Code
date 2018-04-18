@@ -190,6 +190,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public Invoice SaveAllReceiptTotals(Invoice I)
         {
             I.subTotal = returnReceiptSubtotalAmount(I.soldItems, I.location.locationID);
+            I.balanceDue = I.subTotal;
             return I;
         }
         private double returnSubtotalReturnAmount(Invoice I)

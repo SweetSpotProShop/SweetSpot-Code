@@ -214,6 +214,10 @@ namespace SweetSpotDiscountGolfPOS
             string method = "populateGridviewMOP";
             try
             {
+                if(amountPaid > 0)
+                {
+                    amountPaid = amountPaid * -1;
+                }
                 InvoiceMOPsManager IMM = new InvoiceMOPsManager();
                 IMM.AddNewMopToReceiptList(Request.QueryString["receipt"].ToString(), amountPaid, methodOfPayment, chequeNumber);
                 //Center the mop grid view
@@ -240,43 +244,42 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Retrieves index of selected row
-                int index = e.RowIndex;
-                //Retrieves the checkout manager from Session
-                ////ckm = (CheckoutManager)Session["CheckOutTotals"];
-                //Gathers the mop info based on the index
-                int mopRemovingID = Convert.ToInt32(((Label)gvCurrentMOPs.Rows[index].Cells[3].FindControl("lblTableID")).Text);
-                double paidAmount = double.Parse(gvCurrentMOPs.Rows[index].Cells[2].Text, NumberStyles.Currency);
+                int mopRemovingID = Convert.ToInt32(((Label)gvCurrentMOPs.Rows[e.RowIndex].Cells[3].FindControl("lblTableID")).Text);
+                //double paidAmount = double.Parse(gvCurrentMOPs.Rows[index].Cells[2].Text, NumberStyles.Currency);
                 //Retrieves Mop list from Session
-                List<Mops> tempMopList = (List<Mops>)Session["MethodsofPayment"];
+                //List<Mops> tempMopList = (List<Mops>)Session["MethodsofPayment"];
                 //Loops through each mop in list
-                foreach (var mop in tempMopList)
-                {
-                    //Checks if the mop id do not match
-                    if (mop.tableID != mopRemovingID)
-                    {
-                        //Not selected mop add back into the mop list
-                        ////mopList.Add(mop);
-                        //Calculate amount paid
-                        ////dblAmountPaid += mop.amountPaid;
-                    }
-                    else
-                    {
-                        //Add removed mops paid amount back into the remaining balance
-                        ////ckm.dblRemainingBalance += paidAmount;
-                    }
-                    //updtae the new amount paid total
-                    ////ckm.dblAmountPaid = dblAmountPaid;
-                }
+                //foreach (var mop in tempMopList)
+                //{
+                //Checks if the mop id do not match
+                //if (mop.tableID != mopRemovingID)
+                //{
+                //Not selected mop add back into the mop list
+                ////mopList.Add(mop);
+                //Calculate amount paid
+                ////dblAmountPaid += mop.amountPaid;
+                //}
+                //else
+                InvoiceMOPsManager IMM = new InvoiceMOPsManager();
+                IMM.RemoveMopFromPurchaseList(mopRemovingID, Request.QueryString["receipt"].ToString());
+                //{
+                //Add removed mops paid amount back into the remaining balance
+                ////ckm.dblRemainingBalance += paidAmount;
+                //}
+                //updtae the new amount paid total
+                ////ckm.dblAmountPaid = dblAmountPaid;
+                //}
                 //Clear the selected index
                 gvCurrentMOPs.EditIndex = -1;
                 //Store updated mops in Session
                 ////Session["MethodsofPayment"] = mopList;
                 //Bind the session to the grid view
                 ////gvCurrentMOPs.DataSource = mopList;
-                gvCurrentMOPs.DataBind();
+                //gvCurrentMOPs.DataBind();
                 //Display remaining balance
                 ////lblRemainingPurchaseDueDisplay.Text = "$ " + ckm.dblRemainingBalance.ToString("#0.00");
                 ////txtPurchaseAmount.Text = ckm.dblRemainingBalance.ToString("#0.00");
+                UpdatePageTotals();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -292,7 +295,7 @@ namespace SweetSpotDiscountGolfPOS
         }
         protected void UpdatePageTotals()
         {
-            Invoice R = IM.ReturnCurrentInvoice(Request.QueryString["receipt"].ToString() + "-1")[0];
+            Invoice R = IM.ReturnCurrentPurchaseInvoice(Request.QueryString["receipt"].ToString() + "-1")[0];
             lblTotalPurchaseAmount.Text = "$ " + R.subTotal.ToString("#0.00");
 
             double dblAmountPaid = 0;
@@ -308,6 +311,47 @@ namespace SweetSpotDiscountGolfPOS
             lblRemainingPurchaseDueDisplay.Text = "$ " + (R.balanceDue - dblAmountPaid).ToString("#0.00");
             //Updates the amount paying with the remaining balance
             txtPurchaseAmount.Text = (R.balanceDue - dblAmountPaid).ToString("#0.00");
+            buttonDisable(R.balanceDue - dblAmountPaid);
+        }
+        private void buttonDisable(double rb)
+        {
+            string method = "buttonDisable";
+            try
+            {
+                if (rb >= -.001 && rb <= 0.001)
+                {
+                    if (IM.VerifyPurchaseMOPHasBeenAdded(Request.QueryString["receipt"].ToString()))
+                    {
+                        mopCash.Enabled = false;
+                    }
+                    else
+                    {
+                        MessageBox.ShowMessage("At least one method of payment "
+                            + "is required even for a $0.00 sale.", this);
+                    }
+                    mopDebit.Enabled = false;
+                    mopGiftCard.Enabled = false;
+                    mopCheque.Enabled = false;
+                }
+                else
+                {
+                    mopCash.Enabled = true;
+                    mopDebit.Enabled = true;
+                    mopGiftCard.Enabled = true;
+                    mopCheque.Enabled = true;
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.1 Test", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive the message please contact "
+                    + "your system administrator.", this);
+            }
         }
         //Other functionality
         protected void btnCancelPurchase_Click(object sender, EventArgs e)
@@ -316,7 +360,7 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnCancelPurchase_Click";
             try
             {
-                IM.CancellingReceipt(IM.ReturnCurrentInvoice(Request.QueryString["receipt"].ToString() + "-1")[0]);
+                IM.CancellingReceipt(IM.ReturnCurrentPurchaseInvoice(Request.QueryString["receipt"].ToString())[0]);
                 //Change to Home Page
                 Response.Redirect("HomePage.aspx", false);
             }
@@ -341,7 +385,7 @@ namespace SweetSpotDiscountGolfPOS
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("receipt", Request.QueryString["receipt"].ToString());
                 nameValues.Set("cust", Request.QueryString["cust"].ToString());
-                Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
+                Response.Redirect("PurchasesCart.aspx?" + nameValues, false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -370,28 +414,21 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    //Gathering needed information for the invoice
-                    List<Cart> cart = (List<Cart>)Session["ItemsInCart"];
-                    //Customer
-                    int custNum = Convert.ToInt32(Session["key"]);
-                    ////Customer c = ssm.GetCustomerbyCustomerNumber(custNum);
-                    //Employee
-                    //******Need to get the employee somehow
-                    EmployeeManager em = new EmployeeManager();
-                    Employee emp = em.getEmployeeByID(CU.emp.employeeID);
-                    //CheckoutTotals
-                    ////ckm = (CheckoutManager)Session["CheckOutTotals"];
-                    //MOP
-                    ////mopList = (List<Mops>)Session["MethodsofPayment"];
-
-                    //Stores all the Sales data to the database
-                    ////idu.mainPurchaseInvoice(ckm, cart, mopList, c, emp, tranType, (Session["Invoice"]).ToString(), txtComments.Text, CU);
-                    //Nullifies all related sessions
-                    Session["shipping"] = null;
-                    Session["ShippingAmount"] = null;
-                    Session["searchReturnInvoices"] = null;
-                    //Changes page to printable invoice
-                    Response.Redirect("PrintableReceipt.aspx", false);
+                    if (IM.VerifyPurchaseMOPHasBeenAdded(Request.QueryString["receipt"].ToString()))
+                    {
+                        //Stores all the Sales data to the database
+                        IM.FinalizeReceipt(IM.ReturnCurrentPurchaseInvoice(Request.QueryString["receipt"].ToString())[0], txtComments.Text, "tbl_receiptItem");
+                        string printableInvoiceNum = Request.QueryString["receipt"].ToString().Split('-')[1];
+                        var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                        nameValues.Set("receipt", printableInvoiceNum);
+                        //Changes page to printable invoice
+                        Response.Redirect("PrintableReceipt.aspx?" + nameValues, false);
+                    }
+                    else
+                    {
+                        MessageBox.ShowMessage("At least one method of payment "
+                            + "is required even for a $0.00 sale.", this);
+                    }
                 }
             }
             //Exception catch

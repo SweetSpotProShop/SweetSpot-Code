@@ -121,7 +121,8 @@ namespace SweetSpotDiscountGolfPOS
             {
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("cust", "1");
-                nameValues.Set("receipt", (InM.ReturnNextReceiptNumber()).ToString());
+                string receipt = CU.locationName + "-" + InM.ReturnNextReceiptNumber() + "-1";
+                nameValues.Set("receipt", receipt);
                 Response.Redirect("PurchasesCart.aspx?" + nameValues, false);
             }
             //Exception catch
