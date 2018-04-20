@@ -100,16 +100,6 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnHome_Click";
             try
             {
-                //Nulls used stored sessions 
-                Session["useInvoice"] = null;
-                Session["Invoice"] = null;
-                Session["key"] = null;
-                Session["ItemsInCart"] = null;
-                Session["returnedCart"] = null;
-                Session["TranType"] = null;
-                Session["CheckOutTotals"] = null;
-                Session["MethodsofPayment"] = null;
-                Session["strDate"] = null;
                 //Change to the Home Page
                 Response.Redirect("HomePage.aspx", false);
             }

@@ -54,7 +54,7 @@ namespace SweetSpotDiscountGolfPOS
                     if (!IsPostBack)
                     {
                         ddlLocation.DataSource = LM.ReturnLocationDropDown();
-                        ddlLocation.DataTextField = "locationName";
+                        ddlLocation.DataTextField = "city";
                         ddlLocation.DataValueField = "locationID";
                         ddlLocation.DataBind();
                         ddlLocation.SelectedValue = CU.location.locationID.ToString();

@@ -96,8 +96,5 @@ namespace SweetSpotDiscountGolfPOS
             cmd.ExecuteNonQuery();
             con.Close();
         }
-        
-        
-
     }
 }

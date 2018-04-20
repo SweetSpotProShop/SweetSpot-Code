@@ -30,6 +30,19 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }).ToList();
             return invoiceItems;
         }
+        private List<InvoiceItems> ConvertFromDataTableToReceiptItems(DataTable dt)
+        {
+            List<InvoiceItems> receiptItems = dt.AsEnumerable().Select(row =>
+            new InvoiceItems
+            {
+                invoiceNum = row.Field<int>("receiptNum"),
+                sku = row.Field<int>("sku"),
+                quantity = row.Field<int>("itemQuantity"),
+                description = row.Field<string>("description"),
+                cost = row.Field<double>("itemCost")
+            }).ToList();
+            return receiptItems;
+        }
         private void ExecuteNonReturnQuery(string sqlCmd, object[][] parms)
         {
             dbc.executeInsertQuery(sqlCmd, parms);
@@ -51,7 +64,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 + "IR.cost, IR.price, IR.itemDiscount, IR.itemRefund, IR.percentage, IR.typeID, IR.isTradeIn FROM tbl_invoiceItemReturns IR "
                 + "WHERE IR.invoiceNum = @invoiceNum AND IR.invoiceSubNum = @invoiceSubNum";
 
-            Object[][] parms =
+            object[][] parms =
             {
                  new object[] { "@invoiceNum", Convert.ToInt32(invoice.Split('-')[0]) },
                  new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[1]) }
@@ -120,13 +133,25 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             int num = Convert.ToInt32(invoice.Split('-')[1]);
             int sub = Convert.ToInt32(invoice.Split('-')[2]);
 
-            Object[][] parms =
+            object[][] parms =
             {
                  new object[] { "@invoiceNum", num },
                  new object[] { "@invoiceSubNum", sub }
             };
             
             return ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms));
+        }
+        public List<InvoiceItems> ReturnInvoiceItemsReceipt(string receipt)
+        {
+            string sqlCmd = "SELECT receiptNum, sku, itemQuantity, description, itemCost "
+                + "FROM tbl_receiptItem WHERE receiptNum = @receiptNum";
+
+            object[][] parms =
+            {
+                 new object[] { "@receiptNum", Convert.ToInt32(receipt) }
+            };
+
+            return ConvertFromDataTableToReceiptItems(dbc.returnDataTableData(sqlCmd, parms));
         }
         public string ReturnStringSearchForAccessories(ArrayList array)
         {
@@ -300,7 +325,10 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             int NewQTYonSale = ii.quantity;
 
             RemoveQTYFromInventoryWithSKU(ii.sku, ii.typeID, AccessoryQTY - (NewQTYonSale - OrigQTYonSale));
-
+            UpdateItemFromCurrentSalesTableActualQuery(ii);
+        }
+        public void UpdateItemFromCurrentSalesTableActualQuery(InvoiceItems ii)
+        {
             string sqlCmd = "UPDATE tbl_currentSalesItems SET quantity = @quantity, "
                 + "itemDiscount = @itemDiscount, percentage = @percentage WHERE invoiceNum = @invoiceNum "
                 + "AND invoiceSubNum = @invoiceSubNum AND sku = @sku";
@@ -317,6 +345,24 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
             ExecuteNonReturnQuery(sqlCmd, parms);
         }
+
+        public void UpdateItemFromCurrentSalesTableActualQueryForPurchases(InvoiceItems ii)
+        {
+            string sqlCmd = "UPDATE tbl_currentSalesItems SET cost = @cost, description = @description "
+                + "WHERE invoiceNum = @invoiceNum AND invoiceSubNum = @invoiceSubNum AND sku = @sku";
+
+            object[][] parms =
+            {
+                new object[] { "@cost", ii.cost },
+                new object[] { "@description", ii.description },
+                new object[] { "@invoiceNum", ii.invoiceNum },
+                new object[] { "@invoiceSubNum", ii.invoiceSubNum },
+                new object[] { "@sku", ii.sku }
+            };
+
+            ExecuteNonReturnQuery(sqlCmd, parms);
+        }
+
         public void LoopThroughTheItemsToReturnToInventory(string invoice)
         {
             DataTable dt = ReturnItemsInTheCart(invoice);

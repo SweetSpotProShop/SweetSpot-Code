@@ -138,23 +138,29 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 LinkButton btn = sender as LinkButton;
-                Object[] o = new Object[3];
-                o = ssm.getSingleReceipt(Convert.ToInt32(btn.Text));
+                //Object[] o = new Object[3];
+                //o = ssm.getSingleReceipt(Convert.ToInt32(btn.Text));
 
-                Invoice receipt = (Invoice)o[0];
-                List<Cart> rItems = (List<Cart>)o[1];
-                List<Mops> rOut = (List<Mops>)o[2];
+                //Invoice receipt = (Invoice)o[0];
+                //List<Cart> rItems = (List<Cart>)o[1];
+                //List<Mops> rOut = (List<Mops>)o[2];
 
-                Session["key"] = receipt.customerID;
-                Session["Invoice"] = receipt.invoiceNum;
-                Session["strDate"] = receipt.invoiceDate;
-                Session["TranType"] = 6;
-                Session["ItemsInCart"] = rItems;
-                Session["CheckOutTotals"] = new CheckoutManager(receipt.balanceDue);
-                Session["MethodsofPayment"] = rOut;
+                //Session["key"] = receipt.customerID;
+                //Session["Invoice"] = receipt.invoiceNum;
+                //Session["strDate"] = receipt.invoiceDate;
+                //Session["TranType"] = 6;
+                //Session["ItemsInCart"] = rItems;
+                //Session["CheckOutTotals"] = new CheckoutManager(receipt.balanceDue);
+                //Session["MethodsofPayment"] = rOut;
 
                 //Changes to the Reports Cash Out page
-                Server.Transfer("PrintableReceipt.aspx", false);
+                var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                nameValues.Set("receipt", btn.Text);
+                //Changes page to printable invoice
+                Response.Redirect("PrintableReceipt.aspx?" + nameValues, false);
+
+
+                //Server.Transfer("PrintableReceipt.aspx", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

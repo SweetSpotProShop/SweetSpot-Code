@@ -96,6 +96,19 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //Returns the subtotal value of the cart
             return totalSubtotalAmount;
         }
+        private double returnReceiptSubtotalAmount(List<InvoiceItems> itemsSold, int loc)
+        {
+            double singleTotalAmount = 0;
+            double totalTotalAmount = 0;
+            //Loops through the cart and pulls each item
+            foreach (var cart in itemsSold)
+            {
+                singleTotalAmount = cart.quantity * cart.cost;
+                totalTotalAmount += singleTotalAmount;
+            }
+            //Returns the total amount value of the cart
+            return totalTotalAmount * -1;
+        }
 
         //This method returns the total refund subtotal amount **Checked and Verified
         private double returnRefundTotalAmount(List<InvoiceItems> itemsSold)
@@ -159,11 +172,11 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //Returns the range
             return range;
         }
-        public Invoice SaveAllInvoiceTotals(List<InvoiceItems> ii, Invoice I)
+        public Invoice SaveAllInvoiceTotals(Invoice I)
         {
-            I.subTotal = returnSubtotalAmount(ii, I.location.locationID);
-            I.discountAmount = returnDiscount(ii);
-            I.tradeinAmount = returnTradeInAmount(ii, I.location.locationID);
+            I.subTotal = returnSubtotalAmount(I.soldItems, I.location.locationID);
+            I.discountAmount = returnDiscount(I.soldItems);
+            I.tradeinAmount = returnTradeInAmount(I.soldItems, I.location.locationID);
             I.balanceDue = I.subTotal;
             return I;
         }
@@ -171,6 +184,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public Invoice SaveAllInvoiceTotalsForReturn(Invoice I)
         {
             I.subTotal = returnSubtotalReturnAmount(I);
+            I.balanceDue = I.subTotal;
+            return I;
+        }
+        public Invoice SaveAllReceiptTotals(Invoice I)
+        {
+            I.subTotal = returnReceiptSubtotalAmount(I.soldItems, I.location.locationID);
             I.balanceDue = I.subTotal;
             return I;
         }
