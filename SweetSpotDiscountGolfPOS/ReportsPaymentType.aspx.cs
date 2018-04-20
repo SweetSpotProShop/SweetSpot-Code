@@ -64,7 +64,8 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         lblDates.Text = "Items sold on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
                     }
-                    grdSalesByDate.DataSource = R.returnSalesByPaymentTypeForSelectedDate(passing);
+                    dt = R.returnSalesByPaymentTypeForSelectedDate(passing);
+                    grdSalesByDate.DataSource = dt;
                     grdSalesByDate.DataBind();
                 }
             }

@@ -64,7 +64,7 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         lblReportDate.Text = "Discount Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + lm.locationName(locID);
                     }
-                    discounts = R.returnDiscountsBetweenDates(startDate, endDate);
+                    discounts = R.returnDiscountsBetweenDates(startDate, endDate, locID);
                     if (discounts.Count == 0)
                     {
                         if (startDate == endDate)

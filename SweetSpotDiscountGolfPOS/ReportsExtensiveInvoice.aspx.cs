@@ -76,8 +76,8 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + lm.locationName(locID);
                     }
-
-                    grdInvoices.DataSource = R.returnExtensiveInvoices(startDate, endDate, locID);
+                    invoices = R.returnExtensiveInvoices(startDate, endDate, locID);
+                    grdInvoices.DataSource = invoices;
                     grdInvoices.DataBind();
                 }
             }
@@ -163,13 +163,20 @@ namespace SweetSpotDiscountGolfPOS
                     revenue += Convert.ToDouble(lblRevenue.Text);
                     lblRevenue.Text = "$" + lblRevenue.Text;
                 }
-            }
-            else if (e.Row.RowType == DataControlRowType.Footer)
-            {
+                //Profit Margin
+                if (lblProfitMargin.Text.isNumber())
+                {
+                    margin += Convert.ToDouble(lblProfitMargin.Text);
+                    marginCounter++;
+                    lblProfitMargin.Text = lblProfitMargin.Text + "%";
+                }
                 //Removing the time from the date
-                string date = lblDate.Text;
+                string date = lblDate.Text; //Error object reference not set
                 DateTime invoiceDate = Convert.ToDateTime(date);
                 lblDate.Text = invoiceDate.ToString("dd-MM-yyyy");
+            }
+            else if (e.Row.RowType == DataControlRowType.Footer)
+            {                
                 Label lblShippingTotal = (Label)e.Row.FindControl("lblShippingTotal");
                 Label lblTradeinTotal = (Label)e.Row.FindControl("lblTradeInTotal");
                 Label lblDiscountTotal = (Label)e.Row.FindControl("lblDiscountTotal");

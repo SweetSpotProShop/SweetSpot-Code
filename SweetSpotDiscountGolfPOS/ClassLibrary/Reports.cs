@@ -2406,7 +2406,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
 
         //******************DISCOUNT REPORTING*******************************************************
-        public List<Invoice> returnDiscountsBetweenDates(DateTime startDate, DateTime endDate)
+        public List<Invoice> returnDiscountsBetweenDates(DateTime startDate, DateTime endDate, int locID)
         {
             //This method returns all invoices with discounts between two dates
             List<Invoice> returns = new List<Invoice>();
@@ -2417,9 +2417,10 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 " (select Concat(firstName, ' ', lastName) from tbl_customers where custID = tbl_invoice.custID) as 'customerName', " +
                 " (select Concat(firstName, ' ', lastName) from tbl_employee where empID = tbl_invoice.empID) as 'employeeName', " +
                 " discountAmount, balanceDue " +
-                " from tbl_invoice where discountAmount <> 0 and invoiceDate between @startDate and @endDate;";
+                " from tbl_invoice where discountAmount <> 0 and invoiceDate between @startDate and @endDate and locationID = @locID;";
             cmd.Parameters.AddWithValue("@startDate", startDate);
             cmd.Parameters.AddWithValue("@endDate", endDate);
+            cmd.Parameters.AddWithValue("@locID", locID);
             cmd.Connection = con;
             con.Open();
             SqlDataReader reader = cmd.ExecuteReader();
