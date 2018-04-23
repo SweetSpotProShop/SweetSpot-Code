@@ -65,17 +65,17 @@
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Item Discount">
                     <ItemTemplate>
-                        <asp:Label ID="lblTotalDiscount" runat="server" Text='<%#Eval("discount") %>'></asp:Label>
+                        <asp:Label ID="lblTotalDiscount" runat="server" Text='<%#Eval("itemDiscount") %>'></asp:Label>
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Discount as Percent" Visible="false">
                     <ItemTemplate>
-                        <asp:Label ID="lblPercentage" runat="server" Text='<%#Eval("percent") %>'></asp:Label>
+                        <asp:Label ID="lblPercentage" runat="server" Text='<%#Eval("percentage") %>'></asp:Label>
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Item Profit">
                     <ItemTemplate>
-                        <asp:Label ID="lblTotalProfit" runat="server" Text='<%#Eval("difference","{0:C}") %>'></asp:Label>
+                        <asp:Label ID="lblTotalProfit" runat="server" Text='<%#Eval("profit","{0:C}") %>'></asp:Label>
                     </ItemTemplate>
                 </asp:TemplateField>
             </Columns>
@@ -100,4 +100,3 @@
         }
     </script>--%>
 </asp:Content>
-

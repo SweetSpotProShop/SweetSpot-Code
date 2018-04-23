@@ -6,42 +6,41 @@
 </asp:Content>--%>
 
 <asp:Content ID="ReportsPageContent" ContentPlaceHolderID="IndividualPageContent" runat="server">
-    <asp:SqlDataSource ID="sqlLocations" runat="server" ConnectionString="<%$ ConnectionStrings:SweetSpotDevConnectionString %>" SelectCommand="SELECT [locationID], [locationName] FROM [tbl_location] ORDER BY [locationName]"></asp:SqlDataSource>
     <div id="Reports">
         <div style="text-align: left">
-            <asp:Label ID="lblReport" runat="server" Visible="false" Text="Report Access"></asp:Label>
+            <asp:Label ID="lblReport" runat="server" Visible="false" Text="Report Access" />
 
-            <asp:Label ID="lbldate" runat="server" Visible="false" Text="Select a date"></asp:Label>
+            <asp:Label ID="lbldate" runat="server" Visible="false" Text="Select a date" />
 
         </div>
-        <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnRunReport">
+        <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnCashOutReport">
             <h2>Reports Selection</h2>
             <br />
             <asp:Label runat="server" Text="Select Location:" />
-            <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="True" DataSourceID="sqlLocations" DataTextField="locationName" DataValueField="locationID" Visible="true"></asp:DropDownList>
+            <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="True" Visible="true" />
             <hr />
             <%--Start Calendar--%>
             <asp:Table runat="server">
                 <asp:TableRow>
                     <asp:TableCell Width="33%">
-                        <asp:Label runat="server" Text="Start Date:"></asp:Label>
+                        <%--<asp:Label runat="server" Text="Start Date:" />--%>
                     </asp:TableCell>
                     <asp:TableCell Width="33%">
-                        <asp:Label runat="server" Text="End Date:"></asp:Label>
+                        <%--<asp:Label runat="server" Text="End Date:" />--%>
                     </asp:TableCell>
                     <%--<asp:TableCell Width="33%">
-                        <asp:Label runat="server" Text="Inovice Number:"></asp:Label>
+                        <asp:Label runat="server" Text="Inovice Number:" />
                     </asp:TableCell>--%>
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtStartDate" ReadOnly="true" Width="195px" placeholder="Please select a starting date." Text="" runat="server"></asp:TextBox>
+                        <%--<asp:TextBox ID="txtStartDate" ReadOnly="true" Width="195px" placeholder="Please select a starting date." Text="" runat="server" />--%>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtEndDate" ReadOnly="true" Width="195px" placeholder="Please select a ending date." Text="" runat="server"></asp:TextBox>
+                        <%--<asp:TextBox ID="txtEndDate" ReadOnly="true" Width="195px" placeholder="Please select a ending date." Text="" runat="server" />--%>
                     </asp:TableCell>
                     <%--<asp:TableCell>
-                        <asp:TextBox ID="txtInvoiceNum" Width="195px" placeholder="Please enter an invoice number" Text="" runat="server"></asp:TextBox>
+                        <asp:TextBox ID="txtInvoiceNum" Width="195px" placeholder="Please enter an invoice number" Text="" runat="server" />
                     </asp:TableCell>--%>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -76,7 +75,7 @@
                 <asp:Table runat="server">
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:Button ID="btnRunReport" runat="server" Text="CashOut Report" Width="200px" OnClick="btnSubmit_Click" />
+                            <asp:Button ID="btnCashOutReport" runat="server" Text="CashOut Report" Width="200px" OnClick="btnCashOutReport_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Button ID="btnPurchasesReport" runat="server" Text="Purchases Report" Width="200px" OnClick="btnPurchasesReport_Click" />
@@ -110,7 +109,7 @@
                             <asp:Button ID="btnTradeInsByDateReport" runat="server" Text="Trade Ins By Date" Width="200px" Onclick="btnTradeInsByDateReport_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            
+                            <asp:Button ID="btnExtensiveInvoice" runat="server" Text="Extensive Invoice" Width="200px" Onclick="btnExtensiveInvoice_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
                             

@@ -41,11 +41,13 @@
     <link rel="stylesheet" type="text/css" href="CSS/displayPrintableInvoice.css" />
     <div id="printable" runat="server">
         <div id="Invoice" class="yesPrint">
-            <h3><b>Receipt: </b>
-                <asp:Label ID="lblinvoiceNum" runat="server" Text=""></asp:Label></h3>
+            <h3>
+                <b>Receipt: </b>
+                <asp:Label ID="lblinvoiceNum" runat="server" Text="" />
+            </h3>
             <p>
                 Date:
-                <asp:Label ID="lblDate" runat="server" Text=""></asp:Label>
+                <asp:Label ID="lblDate" runat="server" Text="" />
             </p>
             <hr />
         </div>
@@ -54,56 +56,54 @@
             <asp:Table ID="tblPartiesInvolved" runat="server" Width="100%">
                 <asp:TableRow>
                     <asp:TableCell CssClass="leftSide">
-                        <h3>
-                            <asp:Label ID="lblCustomerName" runat="server" Text=""></asp:Label></h3>
+                        <h3><asp:Label ID="lblCustomerName" runat="server" Text="" /></h3>
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSide">
-                        <h3>
-                            <asp:Label ID="lblSweetShopName" runat="server" Text="Sweet Spot Discount Golf"></asp:Label></h3>
+                        <h3><asp:Label ID="lblSweetShopName" runat="server" Text="Sweet Spot Discount Golf" /></h3>
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell CssClass="leftSide">
-                        <asp:Label ID="lblStreetAddress" runat="server" Text=""></asp:Label>
+                        <asp:Label ID="lblStreetAddress" runat="server" Text="" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSide">
-                        <asp:Label ID="lblSweetShopStreetAddress" runat="server" Text="644 Main St. N"></asp:Label>
+                        <asp:Label ID="lblSweetShopStreetAddress" runat="server" Text="644 Main St. N" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell CssClass="leftSide">
-                        <asp:Label ID="lblPostalAddress" runat="server" Text=""></asp:Label>
+                        <asp:Label ID="lblPostalAddress" runat="server" Text="" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSide">
-                        <asp:Label ID="lblSweetShopPostalAddress" runat="server" Text="Moose Jaw, Saskatchewan S6H 3K4"></asp:Label>
+                        <asp:Label ID="lblSweetShopPostalAddress" runat="server" Text="Moose Jaw, Saskatchewan S6H 3K4" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell CssClass="leftSide">
-                        <asp:Label ID="lblPhone" runat="server" Text=""></asp:Label>
+                        <asp:Label ID="lblPhone" runat="server" Text="" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSide">
-                        <asp:Label ID="lblSweetShopPhone" runat="server" Text="(306) 692-8337"></asp:Label>
+                        <asp:Label ID="lblSweetShopPhone" runat="server" Text="(306) 692-8337" />
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
             <hr />
 
-            <asp:GridView ID="grdItemsBoughtList" runat="server" CellPadding="4" Width="70%" AutoGenerateColumns="False">
+            <asp:GridView ID="grdItemsBoughtList" runat="server" CellPadding="4" Width="70%" AutoGenerateColumns="False" RowStyle-HorizontalAlign="Center" >
                 <Columns>
                     <asp:TemplateField HeaderText="SKU #">
                         <ItemTemplate>
-                            <asp:Label ID="sku" Text='<%#Eval("SKU")%>' runat="server"></asp:Label>
+                            <asp:Label ID="sku" Text='<%#Eval("SKU")%>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Description">
                         <ItemTemplate>
-                            <asp:Label ID="description" Text='<%#Eval("description")%>' runat="server"></asp:Label>
+                            <asp:Label ID="description" Text='<%#Eval("description")%>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Quantity">
                         <ItemTemplate>
-                            <asp:Label ID="quantity" Text='<%#Eval("quantity")%>' runat="server"></asp:Label>
+                            <asp:Label ID="quantity" Text='<%#Eval("quantity")%>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Cost">
@@ -117,29 +117,28 @@
         </div>
         <div id="purchaseDetails" class="yesPrint">
             <h3>Purchase Details</h3>
-
             <asp:Table ID="tblSummary" runat="server" Width="70%">
                 <asp:TableRow>
                     <asp:TableCell CssClass="leftFirst">
-                        <asp:Label ID="lblSubtotal" runat="server" Text="Subtotal:"></asp:Label>
+                        <asp:Label ID="lblSubtotal" runat="server" Text="Subtotal:" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="leftSecond">
-                        <asp:Label ID="lblSubtotalDisplay" runat="server" Text=""></asp:Label>
+                        <asp:Label ID="lblSubtotalDisplay" runat="server" Text="" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightFirst">
-                        <asp:Label ID="lblTotalPaid" runat="server" Text="Total Paid:"></asp:Label>
+                        <asp:Label ID="lblTotalPaid" runat="server" Text="Total Paid:" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSecond">
-                        <asp:Label ID="lblTotalPaidDisplay" runat="server" Text=""></asp:Label>
+                        <asp:Label ID="lblTotalPaidDisplay" runat="server" Text="" />
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
             <p>
-                <asp:GridView ID="grdMOPS" runat="server" CellPadding="4" Width="70%" AutoGenerateColumns="false">
+                <asp:GridView ID="grdMOPS" runat="server" CellPadding="4" Width="70%" AutoGenerateColumns="false" RowStyle-HorizontalAlign="Center" >
                     <Columns>
-                        <asp:BoundField DataField="methodOfPayment" ReadOnly="true" HeaderText="Payment Type" />
+                        <asp:BoundField DataField="mopType" ReadOnly="true" HeaderText="Payment Type" />
                         <asp:BoundField DataField="amountPaid" ReadOnly="true" HeaderText="Amount Paid" DataFormatString="{0:C}" />
-                        <asp:BoundField DataField="chequeNum" ReadOnly="true" HeaderText="Cheque Number" />
+                        <asp:BoundField DataField="cheque" ReadOnly="true" HeaderText="Cheque Number" />
                     </Columns>
                 </asp:GridView>
             </p>
@@ -156,5 +155,4 @@
             <p>beyond the point of sale. <b>ALL SALES FINAL</b> Thank you for shopping at the Sweet Spot.</p>--%>
         </div>
     </div>
-
 </asp:Content>

@@ -164,6 +164,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string sqlCmd = ReturnItemsFromSearchString(searchText, -1);
             return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd));
         }
+        public List<Items> ReturnTradeInSku()
+        {
+            string sqlCmd = "SELECT C.sku, (SELECT B.brandName + ' ' + M.modelName + ' ' + CLU.clubSpec + ' ' + "
+                       + "CLU.clubType + ' ' + CLU.shaftSpec + ' ' + CLU.shaftFlex + ' ' + CLU.dexterity AS description "
+                       + "FROM tbl_clubs CLU JOIN tbl_brand B ON CLU.brandID = B.brandID JOIN tbl_model M ON CLU.modelID = "
+                       + "M.modelID  WHERE CLU.sku = C.sku) AS description, (SELECT L.city FROM tbl_clubs "
+                       + "CLU JOIN tbl_location L ON CLU.locationID = L.locationID WHERE CLU.sku = C.sku) AS locationName, "
+                       + "C.quantity,	C.price, C.cost, C.typeID, C.isTradeIn FROM tbl_clubs C WHERE C.sku = 100000";
+            return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd));
+        }
 
         //DropDownList insertion
         public DataTable ReturnDropDownForBrand()

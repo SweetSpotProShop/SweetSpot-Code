@@ -24,113 +24,109 @@
     <div>
         <%--REMEMBER TO SET DEFAULT BUTTON--%>
         <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="mopCash">
-            <table>
-                <tr>
-                    <td colspan="2" class="auto-style1">
-                        <table>
-                            <tr>
-                                <td colspan="2" style="text-align: center">Methods of Payment</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <asp:Button ID="mopCash" runat="server" Text="Cash" OnClick="mopCash_Click" Width="163px" OnClientClick="return confirm('Confirm Cash');" />
-
-                                </td>
-                                <td>
-                                    <asp:Button ID="mopCheque" runat="server" Text="Cheque" OnClick="mopCheque_Click" Width="163px" OnClientClick="return confirm('Confirm Cheque');" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <asp:Button ID="mopDebit" runat="server" Text="Debit" OnClick="mopDebit_Click" Width="163px" OnClientClick="return confirm('Confirm Debit');" />
-                                </td>
-                                <td>
-                                    <asp:Button ID="mopGiftCard" runat="server" Text="Gift Card" OnClick="mopGiftCard_Click" Width="163px" OnClientClick="return confirm('Confirm Gift Card');" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <hr />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <asp:Label ID="lblPurchaseAmount" runat="server" Text="Purchase Amount:" Width="163px"></asp:Label>
-                                </td>
-                                <td>
-                                    <asp:TextBox ID="txtPurchaseAmount" runat="server" Width="159px"></asp:TextBox>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                    <td colspan="2" class="auto-style1">
-                        <asp:Table ID="tblTotals" runat="server">
+            <asp:Table runat="server">
+                <asp:TableRow>
+                    <asp:TableCell ColumnSpan="2" CssClass="auto-style1">
+                        <asp:Table runat="server" >
+                            <asp:TableRow>
+                                <asp:TableCell ColumnSpan="2" style="text-align: center">Methods of Payment</asp:TableCell>
+                            </asp:TableRow>
                             <asp:TableRow>
                                 <asp:TableCell>
-                                    <asp:Label ID="lblChequeNumber" runat="server" Text="Enter Cheque Number:"></asp:Label>
+                                    <asp:Button ID="mopCash" runat="server" Text="Cash" OnClick="mopCash_Click" Width="163px" OnClientClick="return confirm('Confirm Cash');" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:TextBox ID="txtChequeNumber" runat="server" Text="0000" />
+                                    <asp:Button ID="mopCheque" runat="server" Text="Cheque" OnClick="mopCheque_Click" Width="163px" OnClientClick="return confirm('Confirm Cheque');" />
                                 </asp:TableCell>
                             </asp:TableRow>
                             <asp:TableRow>
                                 <asp:TableCell>
-                                    <asp:Label ID="lblTotalPurchase" runat="server" Text="Total Purchases:"></asp:Label>
+                                    <asp:Button ID="mopDebit" runat="server" Text="Debit" OnClick="mopDebit_Click" Width="163px" OnClientClick="return confirm('Confirm Debit');" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:Label ID="lblTotalPurchaseAmount" runat="server" Text=""></asp:Label>
+                                    <asp:Button ID="mopGiftCard" runat="server" Text="Gift Card" OnClick="mopGiftCard_Click" Width="163px" OnClientClick="return confirm('Confirm Gift Card');" />
+                                </asp:TableCell>
+                            </asp:TableRow>
+                            <asp:TableRow>
+                                <asp:TableCell ColumnSpan="2">
+                                    <hr />
+                                </asp:TableCell>
+                            </asp:TableRow>
+                            <asp:TableRow>
+                                <asp:TableCell>
+                                    <asp:Label ID="lblPurchaseAmount" runat="server" Text="Purchase Amount:" Width="163px" />
+                                </asp:TableCell>
+                                <asp:TableCell>
+                                    <asp:TextBox ID="txtPurchaseAmount" runat="server" Width="159px" />
                                 </asp:TableCell>
                             </asp:TableRow>
                         </asp:Table>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="4">
-                        <asp:GridView ID="gvCurrentMOPs" runat="server" AutoGenerateColumns="false" Width="100%" OnRowDeleting="OnRowDeleting">
+                    </asp:TableCell>
+                    <asp:TableCell ColumnSpan="2" CssClass="auto-style1">
+                        <asp:Table ID="tblTotals" runat="server">
+                            <asp:TableRow>
+                                <asp:TableCell>
+                                    <asp:Label ID="lblChequeNumber" runat="server" Text="Enter Cheque Number:" />
+                                </asp:TableCell>
+                                <asp:TableCell>
+                                    <asp:TextBox ID="txtChequeNumber" runat="server" Text="0000" />
+                                    <asp:RegularExpressionValidator ID="revChequeNumber"
+                                        ControlToValidate="txtChequeNumber"
+                                        ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
+                                        Display="Static"
+                                        EnableClientScript="true"
+                                        ErrorMessage="Requires a number"
+                                        runat="server" />
+                                </asp:TableCell>
+                            </asp:TableRow>
+                            <asp:TableRow>
+                                <asp:TableCell>
+                                    <asp:Label ID="lblTotalPurchase" runat="server" Text="Total Purchases:" />
+                                </asp:TableCell>
+                                <asp:TableCell>
+                                    <asp:Label ID="lblTotalPurchaseAmount" runat="server" Text="" />
+                                </asp:TableCell>
+                            </asp:TableRow>
+                        </asp:Table>
+                    </asp:TableCell>
+                </asp:TableRow>
+                <asp:TableRow>
+                    <asp:TableCell ColumnSpan="4">
+                        <asp:GridView ID="gvCurrentMOPs" runat="server" AutoGenerateColumns="false" Width="100%" OnRowDeleting="OnRowDeleting" HorizontalAlign="Center" >
                             <Columns>
                                 <asp:TemplateField HeaderText="Remove">
                                     <ItemTemplate>
                                         <asp:LinkButton Text="Remove MOP" runat="server" CommandName="Delete" OnClientClick="return confirm('Are you sure you want to remove this Method of Payment?');" CausesValidation="false" />
                                     </ItemTemplate>
                                 </asp:TemplateField>
-                                <asp:BoundField DataField="methodOfPayment" ReadOnly="true" HeaderText="Payment Type" />
+                                <asp:BoundField DataField="mopType" ReadOnly="true" HeaderText="Payment Type" />
                                 <asp:BoundField DataField="amountPaid" ReadOnly="true" HeaderText="Amount Paid" DataFormatString="{0:C}" />
-                                <asp:BoundField DataField="chequeNum" ReadOnly="true" HeaderText="Cheque Number" />
+                                <asp:BoundField DataField="cheque" ReadOnly="true" HeaderText="Cheque Number" />
                                 <asp:TemplateField HeaderText="Table ID" Visible="false">
                                     <ItemTemplate>
-                                        <asp:Label ID="lblTableID" Text='<%#Eval("tableID") %>' runat="server" />
+                                        <asp:Label ID="lblTableID" Text='<%#Eval("id") %>' runat="server" />
                                     </ItemTemplate>
                                 </asp:TemplateField>
                             </Columns>
                         </asp:GridView>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
+                    </asp:TableCell>
+                </asp:TableRow>
+                <asp:TableRow>
+                    <asp:TableCell ColumnSpan="2">
                         <hr />
-                        <asp:Label ID="lblRemainingPurchaseDue" runat="server" Text="Remaining Purchase Due"></asp:Label>
-                    </td>
-                    <td colspan="2">
+                        <asp:Label ID="lblRemainingPurchaseDue" runat="server" Text="Remaining Purchase Due" />
+                    </asp:TableCell><asp:TableCell ColumnSpan="2">
                         <hr />
-                        <asp:Label ID="lblRemainingPurchaseDueDisplay" runat="server" Text=""></asp:Label>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
+                        <asp:Label ID="lblRemainingPurchaseDueDisplay" runat="server" Text="" />
+                    </asp:TableCell></asp:TableRow><asp:TableRow>
+                    <asp:TableCell>
                         <asp:Button ID="btnCancelPurchase" runat="server" Text="Cancel Purchase" OnClick="btnCancelPurchase_Click" Width="163px" />
-                    </td>
-                    <td>
+                    </asp:TableCell><asp:TableCell>
                         <asp:Button ID="btnReturnToPurchaseCart" runat="server" Text="Return To Purchases" OnClick="btnReturnToPurchaseCart_Click" Width="163px" />
-                    </td>
-                    <td>
+                    </asp:TableCell><asp:TableCell>
                         <asp:Button ID="btnFinalizePurchase" runat="server" Text="Process Purchase" OnClick="btnFinalizePurchase_Click" Width="163px" />
-                    </td>
-                </tr>
-            </table>
-            <p>
-                Comments:
-               <br />
-                <asp:TextBox ID="txtComments" runat="server" TextMode="MultiLine"></asp:TextBox>
+                    </asp:TableCell></asp:TableRow></asp:Table><p>
+                Comments: <br /><asp:TextBox ID="txtComments" runat="server" TextMode="MultiLine" />
             </p>
         </asp:Panel>
     </div>

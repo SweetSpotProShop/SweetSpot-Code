@@ -332,3 +332,4 @@ C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Releas
 C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Release\SweetSpotDiscountGolfPOS.csproj.CoreCompileInputs.cache
 C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Release\SweetSpotDiscountGolfPOS.dll
 C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Release\SweetSpotDiscountGolfPOS.pdb
+C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Release\SweetSpotDiscountGolfPOS.csproj.CopyComplete

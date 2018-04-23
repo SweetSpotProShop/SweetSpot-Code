@@ -266,9 +266,17 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnInventorySearch_Click";
             try
             {
+                if (txtSearch.Text.Equals("100000"))
+                {                   
+                    grdInventorySearched.DataSource = ITM.ReturnTradeInSku();
+                }
+                else
+                {
+                    grdInventorySearched.DataSource = ITM.ReturnInvoiceItemsFromSearchStringForSale(txtSearch.Text);
+                }
                 lblInvalidQty.Visible = false;
                 //Binds list to the grid view
-                grdInventorySearched.DataSource = ITM.ReturnInvoiceItemsFromSearchStringForSale(txtSearch.Text);
+                
                 grdInventorySearched.DataBind();
                 //Clears search text box
                 txtSearch.Text = "";
