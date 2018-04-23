@@ -51,8 +51,8 @@ namespace SweetSpotDiscountGolfPOS
                             ddlBrand.DataTextField = "brandName";
                             ddlBrand.DataValueField = "brandID";
                             ddlBrand.DataBind();
-                            ddlLocation.DataSource = LM.ReturnLocationDropDownAll();
-                            ddlLocation.DataTextField = "locationName";
+                            ddlLocation.DataSource = LM.ReturnLocationDropDown();
+                            ddlLocation.DataTextField = "city";
                             ddlLocation.DataValueField = "locationID";
                             ddlLocation.DataBind();
                             ddlType.DataSource = IM.ReturnDropDownForItemType();
