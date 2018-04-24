@@ -99,6 +99,14 @@
                         <asp:Label ID="lblProfitMarginTotal" runat="server"></asp:Label>
                     </FooterTemplate>
                 </asp:TemplateField>
+                <asp:TemplateField HeaderText="Payment">
+                    <ItemTemplate>
+                        <asp:Label ID="lblPayment" runat="server" Text='<%#Eval("Payment")%>'></asp:Label>
+                    </ItemTemplate>
+                    <FooterTemplate>
+                        <asp:Label ID="lblPaymentTotal" runat="server"></asp:Label>
+                    </FooterTemplate>
+                </asp:TemplateField>
                 <asp:TemplateField HeaderText="Customer Name">
                     <ItemTemplate>
                         <asp:Label ID="lblCustomer" runat="server" Text='<%#Eval("Customer Name")%>'></asp:Label>

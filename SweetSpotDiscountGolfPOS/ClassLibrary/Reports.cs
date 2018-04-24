@@ -2328,6 +2328,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "	else                                                                                                                                " +
                                 "        'No items found'                                                                                                               " +
                                 "end as 'Profit Margin',                                                                                                                " +
+                                "(Select SUM(amountPaid) from tbl_invoiceMOP where tbl_invoiceMOP.invoiceNum = tbl_invoice.invoiceNum and tbl_invoiceMOP.invoiceSubNum = tbl_invoice.invoiceSubNum) as 'Payment', " +
                                 "(Select Concat(firstname, ' ', lastName) from tbl_customers where tbl_customers.custID = tbl_invoice.custID) as 'Customer Name',       " +
                                 "(Select Concat(firstname, ' ', lastName) from tbl_employee where tbl_employee.empID = tbl_invoice.empID) as 'Employee Name',           " +
                                 "tbl_invoice.invoiceDate                                                                                                                " +

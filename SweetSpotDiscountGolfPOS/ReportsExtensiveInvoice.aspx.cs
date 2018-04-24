@@ -39,6 +39,7 @@ namespace SweetSpotDiscountGolfPOS
         double cogs;
         double revenue;
         double margin;
+        double payment;
         int marginCounter;
         double tradein;
 
@@ -107,6 +108,7 @@ namespace SweetSpotDiscountGolfPOS
             Label lblRevenue = (Label)e.Row.FindControl("lblRevenue");
             Label lblProfitMargin = (Label)e.Row.FindControl("lblProfitMargin");
             Label lblDate = (Label)e.Row.FindControl("lblDate");
+            Label lblPayment = (Label)e.Row.FindControl("lblPayment");
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
                 //Shipping
@@ -163,6 +165,12 @@ namespace SweetSpotDiscountGolfPOS
                     revenue += Convert.ToDouble(lblRevenue.Text);
                     lblRevenue.Text = "$" + lblRevenue.Text;
                 }
+                //Payment
+                if (lblPayment.Text.isNumber())
+                {
+                    payment += Convert.ToDouble(lblPayment.Text);
+                    lblPayment.Text = "$" + lblPayment.Text;
+                }
                 //Profit Margin
                 if (lblProfitMargin.Text.isNumber())
                 {
@@ -187,6 +195,7 @@ namespace SweetSpotDiscountGolfPOS
                 Label lblCOGSTotal = (Label)e.Row.FindControl("lblCOGSTotal");
                 Label lblRevenueTotal = (Label)e.Row.FindControl("lblRevenueTotal");
                 Label lblProfitMarginTotal = (Label)e.Row.FindControl("lblProfitMarginTotal");
+                Label lblPaymentTotal = (Label)e.Row.FindControl("lblPaymentTotal");
 
                 lblShippingTotal.Text = String.Format("{0:C}", shipping);
                 lblTradeinTotal.Text = String.Format("{0:C}", tradein);
@@ -197,6 +206,7 @@ namespace SweetSpotDiscountGolfPOS
                 lblPostTaxTotal.Text = String.Format("{0:C}", postTax);
                 lblCOGSTotal.Text = String.Format("{0:C}", cogs);
                 lblRevenueTotal.Text = String.Format("{0:C}", revenue);
+                lblPaymentTotal.Text = String.Format("{0:C}", payment);
                 double profitMarginAverage = (margin / marginCounter);
                 lblProfitMarginTotal.Text = profitMarginAverage.ToString("#.##") + "%";
             }
@@ -231,9 +241,10 @@ namespace SweetSpotDiscountGolfPOS
                     invoicesExport.Cells[2, 9].Value = "COGS";
                     invoicesExport.Cells[2, 10].Value = "Revenue Earned";
                     invoicesExport.Cells[2, 11].Value = "Profit Margin";
-                    invoicesExport.Cells[2, 12].Value = "Customer";
-                    invoicesExport.Cells[2, 13].Value = "Employee";
-                    invoicesExport.Cells[2, 14].Value = "Date";
+                    invoicesExport.Cells[2, 12].Value = "Payment";
+                    invoicesExport.Cells[2, 13].Value = "Customer";
+                    invoicesExport.Cells[2, 14].Value = "Employee";
+                    invoicesExport.Cells[2, 15].Value = "Date";
                     int recordIndex = 3;
                     foreach (DataRow row in invoices.Rows)
                     {
@@ -251,8 +262,9 @@ namespace SweetSpotDiscountGolfPOS
                         invoicesExport.Cells[recordIndex, 11].Value = row[10].ToString();
                         invoicesExport.Cells[recordIndex, 12].Value = row[11].ToString();
                         invoicesExport.Cells[recordIndex, 13].Value = row[12].ToString();
-                        DateTime date = Convert.ToDateTime(row[13]);
-                        invoicesExport.Cells[recordIndex, 14].Value = date.ToString("dd-MM-yyyy");
+                        invoicesExport.Cells[recordIndex, 14].Value = row[13].ToString();
+                        DateTime date = Convert.ToDateTime(row[14]);
+                        invoicesExport.Cells[recordIndex, 15].Value = date.ToString("dd-MM-yyyy");
                         recordIndex++;
                     }
                     //Totals
@@ -268,6 +280,7 @@ namespace SweetSpotDiscountGolfPOS
                     invoicesExport.Cells[recordIndex + 1, 10].Value = revenue.ToString();
 
                     invoicesExport.Cells[recordIndex + 1, 11].Value = (margin / marginCounter).ToString();
+                    invoicesExport.Cells[recordIndex + 1, 12].Value = payment.ToString();
 
                     Response.Clear();
                     Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
