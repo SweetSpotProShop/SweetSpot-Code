@@ -18,7 +18,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 invoiceNum = row.Field<int>("invoiceNum"),
                 invoiceSubNum = row.Field<int>("invoiceSubNum"),
                 mopType = row.Field<string>("mopType"),
-                amountPaid = row.Field<double>("amountPaid")
+                amountPaid = row.Field<double>("amountPaid"),
+                tender = row.Field<double>("tender"),
+                change = row.Field<double>("change")
             }).ToList();
             return invoiceMOPs;
         }
@@ -31,7 +33,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 invoiceNum = row.Field<int>("invoiceNum"),
                 invoiceSubNum = row.Field<int>("invoiceSubNum"),
                 mopType = ReturnMOPString(row.Field<int>("mopType")),
-                amountPaid = row.Field<double>("amountPaid")
+                amountPaid = row.Field<double>("amountPaid"),
+                tender = row.Field<double>("tender"),
+                change = row.Field<double>("change")
             }).ToList();
             return invoiceMOPs;
         }
@@ -64,7 +68,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         //Returns list of MOPs based on an Invoice number
         public List<InvoiceMOPs> ReturnInvoiceMOPs(string invoice)
         {
-            string sqlCmd = "SELECT ID, invoiceNum, invoiceSubNum, mopType, amountPaid "
+            string sqlCmd = "SELECT ID, invoiceNum, invoiceSubNum, mopType, amountPaid, tender, change "
                 + "FROM tbl_invoiceMOP WHERE invoiceNum = @invoiceNum AND invoiceSubNum = @invoiceSubNum";
 
             Object[][] parms =
@@ -80,7 +84,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         //Returns list of MOPs based on an Invoice number in currentSales Table
         public List<InvoiceMOPs> ReturnInvoiceMOPsCurrentSale(string invoice)
         {
-            string sqlCmd = "SELECT currentSalesMID, invoiceNum, invoiceSubNum, mopType, amountPaid "
+            string sqlCmd = "SELECT currentSalesMID, invoiceNum, invoiceSubNum, mopType, amountPaid, tender, change "
                 + "FROM tbl_currentSalesMops WHERE invoiceNum = @invoiceNum AND invoiceSubNum = @invoiceSubNum";
 
             object[][] parms =
@@ -115,17 +119,19 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
             return ConvertFromDataTableToReceiptPurchaseMOPs(dbc.returnDataTableData(sqlCmd, parms));
         }
-        public void AddNewMopToList(string invoice, double amountPaid, string method)
+        public void AddNewMopToList(string invoice, double amountPaid, string method, object[] amounts)
         {
             string sqlCmd = "INSERT INTO tbl_currentSalesMops VALUES(@invoiceNum, @invoiceSubNum, "
-                + "@mopType, @amountPaid)";
+                + "@mopType, @amountPaid, @tender, @change)";
 
             object[][] parms =
             {
                 new object[] { "@invoiceNum", Convert.ToInt32(invoice.Split('-')[1].ToString()) },
                 new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[2].ToString()) },
                 new object[] { "@mopType", ReturnMOPInt(method) },
-                new object[] { "@amountPaid", amountPaid }
+                new object[] { "@amountPaid", amountPaid },
+                new object[] { "@tender", Convert.ToDouble(amounts[0]) },
+                new object[] { "@change", Convert.ToDouble(amounts[1]) }
             };
             dbc.executeInsertQuery(sqlCmd, parms);
         }

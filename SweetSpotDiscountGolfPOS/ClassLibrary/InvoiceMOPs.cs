@@ -15,15 +15,19 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public string mopType { get; set; }
         public double amountPaid { get; set; }
         public int cheque { get; set; }
+        public double tender { get; set; }
+        public double change { get; set; }
 
         public InvoiceMOPs() { }
-        public InvoiceMOPs(int ID, int InvoiceNum, int InvoiceSubNum, string MopType, double AmountPaid)
+        public InvoiceMOPs(int ID, int InvoiceNum, int InvoiceSubNum, string MopType, double AmountPaid, double Tender, double Change)
         {
             id = ID;
             invoiceNum = InvoiceNum;
             invoiceSubNum = InvoiceSubNum;
             mopType = MopType;
             amountPaid = AmountPaid;
+            tender = Tender;
+            change = Change;
         }
         public InvoiceMOPs(int ID, int InvoiceNum, string MopType, int Cheque, double AmountPaid)
         {

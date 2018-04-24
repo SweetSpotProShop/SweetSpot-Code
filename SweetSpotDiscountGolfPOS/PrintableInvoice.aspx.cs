@@ -64,6 +64,10 @@ namespace SweetSpotDiscountGolfPOS
                         lblSubtotalDisplay.Text = invoices.subTotal.ToString("#0.00");
                         lblTotalPaidDisplay.Text = invoices.balanceDue.ToString("#0.00");
 
+                        object[] amounts = IM.ReturnTotalsForTenderAndChange(invoices);
+                        lblTenderDisplay.Text = Convert.ToDouble(amounts[0]).ToString("#0.00");
+                        lblChangeDisplay.Text = Convert.ToDouble(amounts[1]).ToString("#0.00");
+
                         if (invoices.invoiceSub > 1)
                         {
                             //    //Changes headers if the invoice is return
@@ -71,6 +75,7 @@ namespace SweetSpotDiscountGolfPOS
                             grdItemsSoldList.Columns[3].HeaderText = "Non Refundable";
                             grdItemsSoldList.Columns[5].HeaderText = "Returned At";
                         }
+
                         //Binds the cart to the grid view
                         grdItemsSoldList.DataSource = invoices.soldItems;
                         grdItemsSoldList.DataBind();

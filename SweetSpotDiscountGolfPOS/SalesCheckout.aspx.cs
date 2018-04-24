@@ -93,8 +93,9 @@ namespace SweetSpotDiscountGolfPOS
             {
                 if (txtAmountPaying.Text != "")
                 {
-                    ClientScript.RegisterStartupScript(GetType(), "sCheckout", "userInput(" + Convert.ToDouble(txtAmountPaying.Text) + ")", true);
-                    populateGridviewMOP(Convert.ToDouble(txtAmountPaying.Text), "Cash");
+                    //ClientScript.RegisterStartupScript(GetType(), "sCheckout", "userInput(" + Convert.ToDouble(txtAmountPaying.Text) + ")", true);
+                    object[] amounts = { hdnTender.Value, hdnChange.Value };
+                    populateGridviewMOP(Convert.ToDouble(txtAmountPaying.Text), "Cash", amounts);
                 }
             }
             //Exception catch
@@ -118,7 +119,10 @@ namespace SweetSpotDiscountGolfPOS
             {
                 if (txtAmountPaying.Text != "")
                 {
-                    populateGridviewMOP(Convert.ToDouble(txtAmountPaying.Text), "MasterCard");
+                    object[] amounts = { txtAmountPaying.Text, 0 };
+                    hdnTender.Value = txtAmountPaying.Text;
+                    hdnChange.Value = "0";
+                    populateGridviewMOP(Convert.ToDouble(txtAmountPaying.Text), "MasterCard", amounts);
                 }
             }
             //Exception catch
@@ -142,7 +146,10 @@ namespace SweetSpotDiscountGolfPOS
             {
                 if (txtAmountPaying.Text != "")
                 {
-                    populateGridviewMOP(Convert.ToDouble(txtAmountPaying.Text), "Debit");
+                    object[] amounts = { txtAmountPaying.Text, 0 };
+                    hdnTender.Value = txtAmountPaying.Text;
+                    hdnChange.Value = "0";
+                    populateGridviewMOP(Convert.ToDouble(txtAmountPaying.Text), "Debit", amounts);
                 }
             }
             //Exception catch
@@ -166,7 +173,10 @@ namespace SweetSpotDiscountGolfPOS
             {
                 if (txtAmountPaying.Text != "")
                 {
-                    populateGridviewMOP(Convert.ToDouble(txtAmountPaying.Text), "Visa");
+                    object[] amounts = { txtAmountPaying.Text, 0 };
+                    hdnTender.Value = txtAmountPaying.Text;
+                    hdnChange.Value = "0";
+                    populateGridviewMOP(Convert.ToDouble(txtAmountPaying.Text), "Visa", amounts);
                 }
             }
             //Exception catch
@@ -190,7 +200,10 @@ namespace SweetSpotDiscountGolfPOS
             {
                 if (txtAmountPaying.Text != "")
                 {
-                    populateGridviewMOP(Convert.ToDouble(txtAmountPaying.Text), "Gift Card");
+                    object[] amounts = { txtAmountPaying.Text, 0 };
+                    hdnTender.Value = txtAmountPaying.Text;
+                    hdnChange.Value = "0";
+                    populateGridviewMOP(Convert.ToDouble(txtAmountPaying.Text), "Gift Card", amounts);
                 }   
             }
             //Exception catch
@@ -440,7 +453,8 @@ namespace SweetSpotDiscountGolfPOS
                         if (IM.VerifyMOPHasBeenAdded(Request.QueryString["inv"].ToString()))
                         {
                             //Stores all the Sales data to the database
-                            IM.FinalizeInvoice(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0], txtComments.Text, "tbl_invoiceItem");
+                            Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                            IM.FinalizeInvoice(I, txtComments.Text, "tbl_invoiceItem");
                             string printableInvoiceNum = Request.QueryString["inv"].ToString().Split('-')[1] + "-" + Request.QueryString["inv"].ToString().Split('-')[2];
                             var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                             nameValues.Set("inv", printableInvoiceNum);
@@ -473,14 +487,14 @@ namespace SweetSpotDiscountGolfPOS
         }
 
         //Populating gridview with MOPs
-        private void populateGridviewMOP(double amountPaid, string methodOfPayment)
+        private void populateGridviewMOP(double amountPaid, string methodOfPayment, object[] amounts)
         {
             //Collects current method for error tracking
             string method = "populateGridviewMOP";
             try
             {
                 InvoiceMOPsManager IMM = new InvoiceMOPsManager();
-                IMM.AddNewMopToList(Request.QueryString["inv"].ToString(), amountPaid, methodOfPayment);
+                IMM.AddNewMopToList(Request.QueryString["inv"].ToString(), amountPaid, methodOfPayment, amounts);
                 UpdatePageTotals();
             }
             //Exception catch

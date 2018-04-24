@@ -465,14 +465,16 @@ namespace SweetSpotDiscountGolfPOS
             foreach (InvoiceMOPs mop in I.usedMops)
             {
                 string sqlCmd = "INSERT INTO tbl_invoiceMOP VALUES(@invoiceNum, @invoiceSubNum, "
-                    + "@mopType, @amountPaid)";
+                    + "@mopType, @amountPaid, @tender, @change)";
 
                 object[][] parms =
                 {
                     new object[] { "@invoiceNum", mop.invoiceNum },
                     new object[] { "@invoiceSubNum", mop.invoiceSubNum },
                     new object[] { "@mopType", mop.mopType },
-                    new object[] { "@amountPaid", mop.amountPaid }
+                    new object[] { "@amountPaid", mop.amountPaid },
+                    new object[] { "@tender", mop.tender},
+                    new object[] { "@change", mop.change }
                 };
                 ExecuteNonReturnCall(sqlCmd, parms);
             }
@@ -780,6 +782,21 @@ namespace SweetSpotDiscountGolfPOS
                 };
                 ExecuteNonReturnCall(sqlCmd, parms);
             }
+        }
+
+        public object[] ReturnTotalsForTenderAndChange(Invoice I)
+        {
+            double tender = 0;
+            double change = 0;
+
+            foreach(InvoiceMOPs m in I.usedMops)
+            {
+                tender += m.tender;
+                change += m.change;
+            }
+
+            object[] amounts = { tender, change };
+            return amounts;
         }
     }
 }

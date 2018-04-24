@@ -73,7 +73,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             int indicator = 0;
             if (transactionsAvailable(location, dtm))
             {
-                if (openTransactions(location))
+                if (openTransactions(location,dtm))
                 {
                     indicator = 2;
                 }
@@ -122,14 +122,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             return bolCAD;
         }
-        private bool openTransactions(int location)
+        private bool openTransactions(int location, DateTime dtm)
         {
             bool bolOT = false;
             string sqlCmd = "SELECT COUNT(invoiceNum) FROM tbl_currentSalesInvoice "
-                        + "WHERE transactionType = 1 AND locationID = @locationID";
+                        + "WHERE transactionType = 1 AND locationID = @locationID "
+                        + "AND invoiceDate = @invoiceDate";
             object[][] parms =
             {
-                new object[] { "@locationID", location }
+                new object[] { "@locationID", location },
+                new object[] { "@invoiceDate", dtm.ToString("yyyy-MM-dd")}
             };
             if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
             {

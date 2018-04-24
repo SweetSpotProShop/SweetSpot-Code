@@ -86,7 +86,8 @@ namespace SweetSpotDiscountGolfPOS
             {
                 if (txtAmountRefunding.Text != "")
                 {
-                    populateGridviewMOP(Convert.ToDouble(txtAmountRefunding.Text), "Cash");
+                    object[] amounts = { txtAmountRefunding.Text, 0 };
+                    populateGridviewMOP(Convert.ToDouble(txtAmountRefunding.Text), "Cash", amounts);
                 }
             }
             //Exception catch
@@ -110,7 +111,8 @@ namespace SweetSpotDiscountGolfPOS
             {
                 if (txtAmountRefunding.Text != "")
                 {
-                    populateGridviewMOP(Convert.ToDouble(txtAmountRefunding.Text), "MasterCard");
+                    object[] amounts = { txtAmountRefunding.Text, 0 };
+                    populateGridviewMOP(Convert.ToDouble(txtAmountRefunding.Text), "MasterCard", amounts);
                 }
             }
             //Exception catch
@@ -134,7 +136,8 @@ namespace SweetSpotDiscountGolfPOS
             {
                 if (txtAmountRefunding.Text != "")
                 {
-                    populateGridviewMOP(Convert.ToDouble(txtAmountRefunding.Text), "Debit");
+                    object[] amounts = { txtAmountRefunding.Text, 0 };
+                    populateGridviewMOP(Convert.ToDouble(txtAmountRefunding.Text), "Debit", amounts);
                 }
             }
             //Exception catch
@@ -158,7 +161,8 @@ namespace SweetSpotDiscountGolfPOS
             {
                 if (txtAmountRefunding.Text != "")
                 {
-                    populateGridviewMOP(Convert.ToDouble(txtAmountRefunding.Text), "Visa");
+                    object[] amounts = { txtAmountRefunding.Text, 0 };
+                    populateGridviewMOP(Convert.ToDouble(txtAmountRefunding.Text), "Visa", amounts);
                 }
             }
             //Exception catch
@@ -182,7 +186,8 @@ namespace SweetSpotDiscountGolfPOS
             {
                 if (txtAmountRefunding.Text != "")
                 {
-                    populateGridviewMOP(Convert.ToDouble(txtAmountRefunding.Text), "Gift Card");
+                    object[] amounts = { txtAmountRefunding.Text, 0 };
+                    populateGridviewMOP(Convert.ToDouble(txtAmountRefunding.Text), "Gift Card", amounts);
                 }
             }
             //Exception catch
@@ -317,14 +322,14 @@ namespace SweetSpotDiscountGolfPOS
         }
 
         //Populating gridview with MOPs
-        protected void populateGridviewMOP(double amountPaid, string methodOfPayment)
+        protected void populateGridviewMOP(double amountPaid, string methodOfPayment, object[] amounts)
         {
             //Collects current method for error tracking
             string method = "populateGridviewMOP";
             try
             {
                 InvoiceMOPsManager IMM = new InvoiceMOPsManager();
-                IMM.AddNewMopToList(Request.QueryString["inv"].ToString(), amountPaid, methodOfPayment);
+                IMM.AddNewMopToList(Request.QueryString["inv"].ToString(), amountPaid, methodOfPayment, amounts);
                 UpdatePageTotals();
             }
             //Exception catch

@@ -33,7 +33,7 @@
                             </asp:TableRow>
                             <asp:TableRow>
                                 <asp:TableCell>
-                                    <asp:Button ID="mopCash" runat="server" Text="Cash" OnClick="mopCash_Click" Width="163px" OnClientClick="return confirm('Confirm Cash');" CausesValidation="false" />
+                                    <asp:Button ID="mopCash" runat="server" Text="Cash" OnClick="mopCash_Click" Width="163px" OnClientClick="userInput();" CausesValidation="false" />
                                 </asp:TableCell>
                                 <asp:TableCell>
                                     <asp:Button ID="mopVisa" runat="server" Text="Visa" OnClick="mopVisa_Click" Width="163px" OnClientClick="return confirm('Confirm Visa');" CausesValidation="false" />
@@ -189,21 +189,25 @@
                          <asp:RequiredFieldValidator ID="valEmployeePasscode" runat="server" ForeColor="red" ErrorMessage="Must Enter Passcode" ControlToValidate="txtEmployeePasscode" />
                     </asp:TableCell></asp:TableRow></asp:Table><p>
                 Comments: <br /><asp:TextBox ID="txtComments" runat="server" TextMode="MultiLine" />
+                        <asp:HiddenField ID="hdnTender" runat="server" />
+                        <asp:HiddenField ID="hdnChange" runat="server" />
             </p>
         </asp:Panel>
     </div>
     <script>
-        function userInput(owing) {
-            var given = prompt("Change Calculator", "");
-            var change = owing - given;
-            if (change < 0) {
+        function userInput() {
+            var r = confirm('Confirm Cash');
+            if (r) {
+                var given = prompt("Change Calculator", "");
+                var change = Number(document.getElementById('<%=txtAmountPaying.ClientID %>').value) - given;
                 var give = String(change.toFixed(2));
-                alert("Change: " + give);
-            }
-            else if (change >= 0) {   
+                if (change < 0) {
+                    alert("Change: " + give);
+                }
+                document.getElementById('<%=hdnTender.ClientID %>').value = given;
+                document.getElementById('<%=hdnChange.ClientID %>').value = give;
             }
         }
-
     </script>
 </asp:Content>
 <asp:Content ID="Content1" runat="server" ContentPlaceHolderID="head">
