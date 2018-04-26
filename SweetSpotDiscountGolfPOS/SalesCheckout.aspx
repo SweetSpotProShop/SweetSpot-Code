@@ -171,13 +171,13 @@
                         <asp:Label ID="lblRemainingBalanceDueDisplay" runat="server" />
                     </asp:TableCell></asp:TableRow><asp:TableRow>
                     <asp:TableCell>
-                        <asp:Button ID="btnCancelSale" runat="server" Text="Cancel Sale" OnClick="btnCancelSale_Click" Width="163px" CausesValidation="false" />
+                        <asp:Button ID="btnCancelSale" runat="server" Text="Void Transaction" OnClick="btnCancelSale_Click" Width="163px" CausesValidation="false" />
                     </asp:TableCell><asp:TableCell>
-                        <asp:Button ID="btnExitSale" runat="server" Text="Exit Sale" OnClick="btnExitSale_Click" Width="163px" CausesValidation="false" />
+                        <asp:Button ID="btnExitSale" runat="server" Text="Hold Sale" OnClick="btnExitSale_Click" Width="163px" CausesValidation="false" />
                     </asp:TableCell><asp:TableCell>
                         <asp:Button ID="btnLayaway" runat="server" Text="Layaway" OnClick="btnLayaway_Click" Width="163px" CausesValidation="false" />
                     </asp:TableCell><asp:TableCell>
-                        <asp:Button ID="btnReturnToCart" runat="server" Text="Return To Cart" OnClick="btnReturnToCart_Click" Width="163px" CausesValidation="false" />
+                        <asp:Button ID="btnReturnToCart" runat="server" Text="Sales Cart" OnClick="btnReturnToCart_Click" Width="163px" CausesValidation="false" />
                     </asp:TableCell><asp:TableCell>
                         <asp:Button ID="btnFinalize" runat="server" Text="Process Sale" OnClick="btnFinalize_Click" Width="163px" CausesValidation="true" />
                     </asp:TableCell></asp:TableRow><asp:TableRow>
