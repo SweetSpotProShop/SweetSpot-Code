@@ -25,7 +25,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 price = row.Field<double>("price"),
                 cost = row.Field<double>("cost"),
                 typeID = row.Field<int>("typeID"),
-                isTradeIn = row.Field<bool>("isTradeIn")
+                isTradeIn = row.Field<bool>("isTradeIn"),
+                comments = row.Field<string>("comments")
             }).ToList();
             return items;
         }
@@ -66,18 +67,18 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             {
                 if (i == 0)
                 {
-                    sqlCmd = "SELECT TOP (2000) A.sku, (SELECT B.brandName + ' ' + M.modelName + ' ' + AC.size + ' ' + AC.colour + ' ' + AC.comments AS description FROM tbl_accessories AC JOIN tbl_brand B ON AC.brandID = B.brandID JOIN tbl_model M ON AC.modelID = M.modelID WHERE AC.sku = A.sku) AS description, "
+                    sqlCmd = "SELECT TOP (2000) A.sku, (SELECT B.brandName + ' ' + M.modelName + ' ' + AC.size + ' ' + AC.colour AS description FROM tbl_accessories AC JOIN tbl_brand B ON AC.brandID = B.brandID JOIN tbl_model M ON AC.modelID = M.modelID WHERE AC.sku = A.sku) AS description, "
                             + "(SELECT L.city FROM tbl_accessories AC JOIN tbl_location L ON AC.locationID = L.locationID WHERE AC.sku = A.sku) AS locationName, "
-                            + "A.quantity, A.price, A.cost, A.typeID, CAST(0 AS bit) AS isTradeIn FROM tbl_accessories A WHERE ((CAST(sku AS VARCHAR) LIKE '%" + array[i] + "%' "
+                            + "A.quantity, A.price, A.cost, A.typeID, CAST(0 AS bit) AS isTradeIn, A.comments FROM tbl_accessories A WHERE ((CAST(sku AS VARCHAR) LIKE '%" + array[i] + "%' "
                             + "OR brandID IN(SELECT brandID FROM tbl_brand WHERE brandName LIKE '%" + array[i] + "%') "
                             + "OR modelID IN(SELECT modelID FROM tbl_model WHERE modelName LIKE '%" + array[i] + "%') "
                             + "OR CONCAT(size, colour, accessoryType, comments) LIKE '%" + array[i] + "%')) AND A.quantity > " + quantity + " ";
                 }
                 else
                 {
-                    sqlCmd += "INTERSECT(SELECT TOP (2000) A.sku, (SELECT B.brandName + ' ' + M.modelName + ' ' + AC.size + ' ' + AC.colour + ' ' + AC.comments AS description FROM tbl_accessories AC JOIN tbl_brand B ON AC.brandID = B.brandID JOIN tbl_model M ON AC.modelID = M.modelID WHERE AC.sku = A.sku) AS description, "
+                    sqlCmd += "INTERSECT(SELECT TOP (2000) A.sku, (SELECT B.brandName + ' ' + M.modelName + ' ' + AC.size + ' ' + AC.colour AS description FROM tbl_accessories AC JOIN tbl_brand B ON AC.brandID = B.brandID JOIN tbl_model M ON AC.modelID = M.modelID WHERE AC.sku = A.sku) AS description, "
                             + "(SELECT L.city FROM tbl_accessories AC JOIN tbl_location L ON AC.locationID = L.locationID WHERE AC.sku = A.sku) AS locationName, "
-                            + "A.quantity, A.price, A.cost, A.typeID, CAST(0 AS bit) AS isTradeIn FROM tbl_accessories A WHERE ((CAST(sku AS VARCHAR) LIKE '%" + array[i] + "%' "
+                            + "A.quantity, A.price, A.cost, A.typeID, CAST(0 AS bit) AS isTradeIn, A.comments FROM tbl_accessories A WHERE ((CAST(sku AS VARCHAR) LIKE '%" + array[i] + "%' "
                             + "OR brandID IN(SELECT brandID FROM tbl_brand WHERE brandName LIKE '%" + array[i] + "%') "
                             + "OR modelID IN(SELECT modelID FROM tbl_model WHERE modelName LIKE '%" + array[i] + "%') "
                             + "OR CONCAT(size, colour, accessoryType, comments) LIKE '%" + array[i] + "%')) AND A.quantity > " + quantity + ") ";
@@ -94,20 +95,20 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 if (i == 0)
                 {
                     sqlCmd = "SELECT TOP (2000) CL.sku, (SELECT B.brandName + ' ' + CLO.size + ' ' + CLO.colour + ' ' + CLO.gender + "
-                        + "' ' + CLO.style + ' ' + CLO.comments AS description FROM tbl_clothing CLO JOIN tbl_brand B "
+                        + "' ' + CLO.style AS description FROM tbl_clothing CLO JOIN tbl_brand B "
                         + "ON CLO.brandID = B.brandID WHERE CLO.sku = CL.sku) AS description, (SELECT L.city "
                         + "FROM tbl_clothing CLO JOIN tbl_location L ON CLO.locationID = L.locationID WHERE CLO.sku = CL.sku) "
-                        + "AS locationName, CL.quantity, CL.price, CL.cost, CL.typeID, CAST(0 AS bit) AS isTradeIn FROM tbl_clothing CL WHERE ((CAST(sku AS VARCHAR) "
+                        + "AS locationName, CL.quantity, CL.price, CL.cost, CL.typeID, CAST(0 AS bit) AS isTradeIn, CL.comments FROM tbl_clothing CL WHERE ((CAST(sku AS VARCHAR) "
                         + "LIKE '%" + array[i] + "%' OR brandID IN(SELECT brandID FROM tbl_brand WHERE brandName LIKE '%"
                         + array[i] + "%') OR CONCAT(size, colour, gender, style, comments) LIKE '%" + array[i] + "%')) AND CL.quantity > " + quantity + " ";
                 }
                 else
                 {
                     sqlCmd += "INTERSECT(SELECT TOP (2000) CL.sku, (SELECT B.brandName + ' ' + CLO.size + ' ' + CLO.colour + ' ' + CLO.gender + "
-                        + "' ' + CLO.style + ' ' + CLO.comments AS description FROM tbl_clothing CLO JOIN tbl_brand B "
+                        + "' ' + CLO.style AS description FROM tbl_clothing CLO JOIN tbl_brand B "
                         + "ON CLO.brandID = B.brandID WHERE CLO.sku = CL.sku) AS description, (SELECT L.city "
                         + "FROM tbl_clothing CLO JOIN tbl_location L ON CLO.locationID = L.locationID WHERE CLO.sku = CL.sku) "
-                        + "AS locationName, CL.quantity, CL.price, CL.cost, CL.typeID, CAST(0 AS bit) AS isTradeIn FROM tbl_clothing CL WHERE ((CAST(sku AS VARCHAR) "
+                        + "AS locationName, CL.quantity, CL.price, CL.cost, CL.typeID, CAST(0 AS bit) AS isTradeIn, CL.comments FROM tbl_clothing CL WHERE ((CAST(sku AS VARCHAR) "
                         + "LIKE '%" + array[i] + "%' OR brandID IN(SELECT brandID FROM tbl_brand WHERE brandName LIKE '%"
                         + array[i] + "%') OR CONCAT(size, colour, gender, style, comments) LIKE '%" + array[i] + "%')) AND CL.quantity > " + quantity + ") ";
                 }
@@ -127,7 +128,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         + "FROM tbl_clubs CLU JOIN tbl_brand B ON CLU.brandID = B.brandID JOIN tbl_model M ON CLU.modelID = "
                         + "M.modelID  WHERE CLU.sku = C.sku) AS description, (SELECT L.city FROM tbl_clubs "
                         + "CLU JOIN tbl_location L ON CLU.locationID = L.locationID WHERE CLU.sku = C.sku) AS locationName, "
-                        + "C.quantity, C.price, C.cost, C.typeID, C.isTradeIn FROM tbl_clubs C WHERE ((CAST(sku AS VARCHAR) LIKE '%" + array[i] + "%' "
+                        + "C.quantity, C.price, C.cost, C.typeID, C.isTradeIn, C.comments FROM tbl_clubs C WHERE ((CAST(sku AS VARCHAR) LIKE '%" + array[i] + "%' "
                         + "OR brandID IN(SELECT brandID FROM tbl_brand WHERE brandName LIKE '%" + array[i] + "%') "
                         + "OR modelID IN(SELECT modelID FROM tbl_model WHERE modelName LIKE '%" + array[i] + "%') "
                         + "OR CONCAT(clubSpec, clubType, shaftSpec, shaftFlex, dexterity) LIKE '%" + array[i] + "%')) AND C.quantity > " + quantity + " ";
@@ -139,7 +140,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         + "FROM tbl_clubs CLU JOIN tbl_brand B ON CLU.brandID = B.brandID JOIN tbl_model M ON CLU.modelID = "
                         + "M.modelID  WHERE CLU.sku = C.sku) AS description, (SELECT L.city FROM tbl_clubs "
                         + "CLU JOIN tbl_location L ON CLU.locationID = L.locationID WHERE CLU.sku = C.sku) AS locationName, "
-                        + "C.quantity, C.price, C.cost, C.typeID, C.isTradeIn FROM tbl_clubs C WHERE ((CAST(sku AS VARCHAR) LIKE '%" + array[i] + "%' "
+                        + "C.quantity, C.price, C.cost, C.typeID, C.isTradeIn, C.comments FROM tbl_clubs C WHERE ((CAST(sku AS VARCHAR) LIKE '%" + array[i] + "%' "
                         + "OR brandID IN(SELECT brandID FROM tbl_brand WHERE brandName LIKE '%" + array[i] + "%') "
                         + "OR modelID IN(SELECT modelID FROM tbl_model WHERE modelName LIKE '%" + array[i] + "%') "
                         + "OR CONCAT(clubSpec, clubType, shaftSpec, shaftFlex, dexterity) LIKE '%" + array[i] + "%')) AND C.quantity > " + quantity + ") ";
@@ -171,7 +172,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                        + "FROM tbl_clubs CLU JOIN tbl_brand B ON CLU.brandID = B.brandID JOIN tbl_model M ON CLU.modelID = "
                        + "M.modelID  WHERE CLU.sku = C.sku) AS description, (SELECT L.city FROM tbl_clubs "
                        + "CLU JOIN tbl_location L ON CLU.locationID = L.locationID WHERE CLU.sku = C.sku) AS locationName, "
-                       + "C.quantity,	C.price, C.cost, C.typeID, C.isTradeIn FROM tbl_clubs C WHERE C.sku = 100000";
+                       + "C.quantity,	C.price, C.cost, C.typeID, C.isTradeIn, C.comments FROM tbl_clubs C WHERE C.sku = 100000";
             return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd));
         }
 

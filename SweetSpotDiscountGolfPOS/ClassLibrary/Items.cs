@@ -21,9 +21,10 @@ namespace SweetShop
         public bool percent { get; set; }
         public int typeID { get; set; }
         public bool isTradeIn { get; set; }
+        public string comments { get; set; }
 
         public Items() { }
-        public Items(int Sku, string Description, string Location, int Quantity, double Price, double Cost, double ItemDiscount, bool Percent, int TypeID, bool isTradeIN)
+        public Items(int Sku, string Description, string Location, int Quantity, double Price, double Cost, double ItemDiscount, bool Percent, int TypeID, bool isTradeIN, string Comments)
         {
             sku = Sku;
             description = Description;
@@ -35,6 +36,7 @@ namespace SweetShop
             percent = Percent;
             typeID = TypeID;
             isTradeIn = isTradeIN;
+            comments = Comments;
         }
     }
 }
