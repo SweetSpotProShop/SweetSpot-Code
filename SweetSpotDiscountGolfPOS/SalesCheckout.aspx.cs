@@ -96,15 +96,16 @@ namespace SweetSpotDiscountGolfPOS
                     //ClientScript.RegisterStartupScript(GetType(), "sCheckout", "userInput(" + Convert.ToDouble(txtAmountPaying.Text) + ")", true);
                     double cash = Convert.ToDouble(txtAmountPaying.Text);
                     double paid = cash;
-
+                    double change = 0;
                     if (!hdnTender.Value.Equals(0))
                     {
                         if (hdnTender.Value != "")
                         {
                             paid = Convert.ToDouble(hdnTender.Value);
+                            change = Convert.ToDouble(hdnChange.Value);
                         }
                     }
-                    object[] amounts = { paid, hdnChange.Value };
+                    object[] amounts = { paid, change };
                     populateGridviewMOP(cash, "Cash", amounts);
                 }
             }
