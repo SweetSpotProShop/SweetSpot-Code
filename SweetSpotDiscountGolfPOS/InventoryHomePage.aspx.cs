@@ -62,7 +62,7 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnInventorySearch_Click";
             try
             {
-                string[] headers = { "SKU", "Description ▼", "Store ▼", "Quantity ▼", "Price ▼", "Cost ▼" };
+                string[] headers = { "SKU", "Description ▼", "Store ▼", "Quantity ▼", "Price ▼", "Cost ▼", "Comments ▼" };
                 ViewState["headers"] = headers;
 
                 searched = IM.ReturnInvoiceItemsFromSearchStringAndQuantity(txtSearch.Text, chkIncludeZero.Checked);
@@ -248,6 +248,7 @@ namespace SweetSpotDiscountGolfPOS
                 headers[3] = "Quantity";
                 headers[4] = "Price";
                 headers[5] = "Cost";
+                headers[6] = "Comments";
                 ViewState["headers"] = headers;
                 //Populating/Sorting the gridview
                 populateGridview(searched);
@@ -307,6 +308,7 @@ namespace SweetSpotDiscountGolfPOS
                 headers[3] = "Quantity";
                 headers[4] = "Price";
                 headers[5] = "Cost";
+                headers[6] = "Comments";
                 ViewState["headers"] = headers;
                 //Populating/Sorting the gridview
                 populateGridview(searched);
@@ -366,6 +368,7 @@ namespace SweetSpotDiscountGolfPOS
                 headers[3] = "Quantity";
                 headers[4] = "Price";
                 headers[5] = "Cost";
+                headers[6] = "Comments";
                 ViewState["headers"] = headers;
                 //Populating/Sorting the gridview
                 populateGridview(searched);
@@ -425,6 +428,7 @@ namespace SweetSpotDiscountGolfPOS
                 headers[2] = "Store";
                 headers[4] = "Price";
                 headers[5] = "Cost";
+                headers[6] = "Comments";
                 ViewState["headers"] = headers;
                 //Populating/Sorting the gridview
                 populateGridview(searched);
@@ -484,6 +488,7 @@ namespace SweetSpotDiscountGolfPOS
                 headers[2] = "Store";
                 headers[3] = "Quantity";
                 headers[5] = "Cost";
+                headers[6] = "Comments";
                 ViewState["headers"] = headers;
                 //Populating/Sorting the gridview
                 populateGridview(searched);
@@ -543,6 +548,67 @@ namespace SweetSpotDiscountGolfPOS
                 headers[2] = "Store";
                 headers[3] = "Quantity";
                 headers[4] = "Price";
+                headers[6] = "Comments";
+                ViewState["headers"] = headers;
+                //Populating/Sorting the gridview
+                populateGridview(searched);
+                updateButtonText(headers);
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+        protected void btnComments_Click(object sender, EventArgs e)
+        {
+            string method = "btnComments_Click";
+            try
+            {
+                //Grabbing the list
+                searched = (List<Items>)ViewState["listItems"];
+                Button comment = grdInventorySearched.HeaderRow.FindControl("btnComments") as Button;
+                string sort = comment.Text;
+                string[] headers = ViewState["headers"] as string[];
+                switch (sort)
+                {
+                    case "Comments":
+                        headers[6] = "Comments ▲";
+                        //Ascending Order
+                        searched.Sort(delegate (Items x, Items y)
+                        {
+                            return x.comments.CompareTo(y.comments);
+                        });
+                        break;
+                    case "Comments ▼":
+                        headers[6] = "Comments ▲";
+                        //Ascending Order
+                        searched.Sort(delegate (Items x, Items y)
+                        {
+                            return x.comments.CompareTo(y.comments);
+                        });
+                        break;
+                    case "Comments ▲":
+                        headers[6] = "Comments ▼";
+                        //Descending Order
+                        searched.Sort(delegate (Items x, Items y)
+                        {
+                            return y.comments.CompareTo(x.comments);
+                        });
+                        break;
+                }
+                headers[0] = "SKU";
+                headers[1] = "Description";
+                headers[2] = "Store";
+                headers[3] = "Quantity";
+                headers[4] = "Price";
+                headers[5] = "Cost";
                 ViewState["headers"] = headers;
                 //Populating/Sorting the gridview
                 populateGridview(searched);
@@ -571,6 +637,7 @@ namespace SweetSpotDiscountGolfPOS
                 (grdInventorySearched.HeaderRow.FindControl("btnQuantity") as Button).Text = headers[3];
                 (grdInventorySearched.HeaderRow.FindControl("btnPrice") as Button).Text = headers[4];
                 (grdInventorySearched.HeaderRow.FindControl("btnCost") as Button).Text = headers[5];
+                (grdInventorySearched.HeaderRow.FindControl("btnComments") as Button).Text = headers[6];
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -609,6 +676,7 @@ namespace SweetSpotDiscountGolfPOS
                     searchExport.Cells[1, 4].Value = "Quantity";
                     searchExport.Cells[1, 5].Value = "Price";
                     searchExport.Cells[1, 6].Value = "Cost";
+                    searchExport.Cells[1, 7].Value = "Comments";
                     int recordIndex = 2;
                     foreach (Items item in searched)
                     {
@@ -618,6 +686,7 @@ namespace SweetSpotDiscountGolfPOS
                         searchExport.Cells[recordIndex, 4].Value = item.quantity;
                         searchExport.Cells[recordIndex, 5].Value = item.price;
                         searchExport.Cells[recordIndex, 6].Value = item.cost;
+                        searchExport.Cells[recordIndex, 7].Value = item.comments;
                         recordIndex++;
                     }
                     searchExport.Cells[searchExport.Dimension.Address].AutoFitColumns();

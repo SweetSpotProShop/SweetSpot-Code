@@ -18,29 +18,19 @@
                         <asp:TableRow>
                             <asp:TableCell>
                                 <asp:Label ID="lblSearch" runat="server" Text="Enter Search Text" />
-                            </asp:TableCell>
-                            <asp:TableCell>
+                            </asp:TableCell><asp:TableCell>
                                 <asp:CheckBox ID="chkIncludeZero" runat="server" Text="Return Zero Quantity" TextAlign="Left" />
-                            </asp:TableCell>
-                        </asp:TableRow>
-
-                        <asp:TableRow>
+                            </asp:TableCell></asp:TableRow><asp:TableRow>
                             <asp:TableCell>
                                 <%--Enter search text to find matching Inventory information--%>
                                 <asp:TextBox ID="txtSearch" runat="server" />
-                            </asp:TableCell>
-                            <asp:TableCell>
+                            </asp:TableCell><asp:TableCell>
                                 <asp:Button ID="btnInventorySearch" runat="server" Width="150" Text="Inventory Search" OnClick="btnInventorySearch_Click" />                                
-                            </asp:TableCell>
-                            <asp:TableCell>
+                            </asp:TableCell><asp:TableCell>
                                 <asp:Button ID="btnAddNewInventory" runat="server" Width="150" Text="Add New Inventory" OnClick="btnAddNewInventory_Click" />
-                            </asp:TableCell>
-                            <asp:TableCell>
+                            </asp:TableCell><asp:TableCell>
                                 <asp:Button ID="btnMakePurchase" runat="server" Width="150" Text="Make Purchase" OnClick="btnMakePurchase_Click" />
-                            </asp:TableCell>
-                        </asp:TableRow>
-                    </asp:Table>
-                    <asp:UpdateProgress ID="UpdateProgress1" runat="server">
+                            </asp:TableCell></asp:TableRow></asp:Table><asp:UpdateProgress ID="UpdateProgress1" runat="server">
                                     <ProgressTemplate>
                                         <div>
                                             <img src="Images/ajax-loader.gif" />
@@ -53,10 +43,7 @@
                         <Columns>
                             <asp:TemplateField HeaderText="View Item">
                                 <ItemTemplate>
-                                    <asp:LinkButton ID="lbtnView" CommandName="viewItem" CommandArgument='<%#Eval("sku") %>' Text="View Item" runat="server">View Item</asp:LinkButton>
-                                </ItemTemplate>
-                            </asp:TemplateField>
-                            <asp:TemplateField HeaderText="SKU">
+                                    <asp:LinkButton ID="lbtnView" CommandName="viewItem" CommandArgument='<%#Eval("sku") %>' Text="View Item" runat="server">View Item</asp:LinkButton></ItemTemplate></asp:TemplateField><asp:TemplateField HeaderText="SKU">
                                 <HeaderTemplate>
                                     <asp:Button ID="btnSKU" runat="server" OnClick="lbtnSKU_Click" Width="100px" Text="SKU" />
                                 </HeaderTemplate>
@@ -104,18 +91,17 @@
                                     <asp:Label runat="server" Text='<%#Eval("cost","{0:C}")%>' />
                                 </ItemTemplate>
                             </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Comments">
+                                <HeaderTemplate>
+                                    <asp:Button ID="btnComments" runat="server" OnClick="btnComments_Click" Width="100px" Text="Comments" />
+                                </HeaderTemplate>
+                                <ItemTemplate>
+                                    <asp:Label runat="server" Text='<%#Eval("comments")%>' />
+                                </ItemTemplate>
+                            </asp:TemplateField>
                         </Columns>
                         <EmptyDataTemplate>
-                            No current Inventory data, please search for an Inventory Item
-                        </EmptyDataTemplate>
-                    </asp:GridView>
-
-                </ContentTemplate>
-            </asp:UpdatePanel>
-
-
-            <hr />
-            <asp:Button class="noPrint" ID="btnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="btnDownload_Click" />
+                            No current Inventory data, please search for an Inventory Item</EmptyDataTemplate></asp:GridView></ContentTemplate></asp:UpdatePanel><hr /><asp:Button class="noPrint" ID="btnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="btnDownload_Click" />
         </asp:Panel>
     </div>
 </asp:Content>
