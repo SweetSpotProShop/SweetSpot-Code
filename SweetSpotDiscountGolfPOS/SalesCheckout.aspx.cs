@@ -94,19 +94,8 @@ namespace SweetSpotDiscountGolfPOS
                 if (txtAmountPaying.Text != "")
                 {
                     //ClientScript.RegisterStartupScript(GetType(), "sCheckout", "userInput(" + Convert.ToDouble(txtAmountPaying.Text) + ")", true);
-                    double cash = Convert.ToDouble(txtAmountPaying.Text);
-                    double paid = cash;
-                    double change = 0;
-                    if (!hdnTender.Value.Equals(0))
-                    {
-                        if (hdnTender.Value != "")
-                        {
-                            paid = Convert.ToDouble(hdnTender.Value);
-                            change = Convert.ToDouble(hdnChange.Value);
-                        }
-                    }
-                    object[] amounts = { paid, change };
-                    populateGridviewMOP(cash, "Cash", amounts);
+                    object[] amounts = verifyTenderAndChange();
+                    populateGridviewMOP(Convert.ToDouble(txtAmountPaying.Text), "Cash", amounts);
                 }
             }
             //Exception catch
@@ -597,6 +586,22 @@ namespace SweetSpotDiscountGolfPOS
                     + "If you continue to receive the message please contact "
                     + "your system administrator.", this);
             }
+        }
+        private object[] verifyTenderAndChange()
+        {
+            double cash = Convert.ToDouble(txtAmountPaying.Text);
+            double paid = cash;
+            double change = 0;
+            if (!hdnTender.Value.Equals(0))
+            {
+                if (hdnTender.Value != "")
+                {
+                    paid = Convert.ToDouble(hdnTender.Value);
+                    change = Convert.ToDouble(hdnChange.Value);
+                }
+            }
+            object[] amounts = { paid, change };
+            return amounts;
         }
     }
 }
