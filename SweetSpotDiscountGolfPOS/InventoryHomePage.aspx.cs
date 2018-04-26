@@ -657,45 +657,49 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method for error tracking
             string method = "btnDownload_Click";
             try
-            {
-                searched = ViewState["listItems"] as List<Items>;
-                //Sets path and file name to download report to
-                string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-                string pathDownload = (pathUser + "\\Downloads\\");
-                string loc = CU.locationName;
-                string fileName = "Item Search - " + txtSearch.Text + ".xlsx";
-                FileInfo newFile = new FileInfo(pathDownload + fileName);
-                using (ExcelPackage xlPackage = new ExcelPackage(newFile))
+            {                
+                if (ViewState["listItems"] != null)
                 {
-                    //Creates a seperate sheet for each data table
-                    ExcelWorksheet searchExport = xlPackage.Workbook.Worksheets.Add("Items");
-                    // write to sheet     
-                    searchExport.Cells[1, 1].Value = "SKU";
-                    searchExport.Cells[1, 2].Value = "Description";
-                    searchExport.Cells[1, 3].Value = "Store";
-                    searchExport.Cells[1, 4].Value = "Quantity";
-                    searchExport.Cells[1, 5].Value = "Price";
-                    searchExport.Cells[1, 6].Value = "Cost";
-                    searchExport.Cells[1, 7].Value = "Comments";
-                    int recordIndex = 2;
-                    foreach (Items item in searched)
+                    searched = ViewState["listItems"] as List<Items>;
+                    //Sets path and file name to download report to
+                    string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                    string pathDownload = (pathUser + "\\Downloads\\");
+                    string loc = CU.locationName;
+                    string fileName = "Item Search - " + txtSearch.Text + ".xlsx";
+                    FileInfo newFile = new FileInfo(pathDownload + fileName);
+                    using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                     {
-                        searchExport.Cells[recordIndex, 1].Value = item.sku;
-                        searchExport.Cells[recordIndex, 2].Value = item.description;
-                        searchExport.Cells[recordIndex, 3].Value = item.location;
-                        searchExport.Cells[recordIndex, 4].Value = item.quantity;
-                        searchExport.Cells[recordIndex, 5].Value = item.price;
-                        searchExport.Cells[recordIndex, 6].Value = item.cost;
-                        searchExport.Cells[recordIndex, 7].Value = item.comments;
-                        recordIndex++;
+                        //Creates a seperate sheet for each data table
+                        ExcelWorksheet searchExport = xlPackage.Workbook.Worksheets.Add("Items");
+                        // write to sheet     
+                        searchExport.Cells[1, 1].Value = "SKU";
+                        searchExport.Cells[1, 2].Value = "Description";
+                        searchExport.Cells[1, 3].Value = "Store";
+                        searchExport.Cells[1, 4].Value = "Quantity";
+                        searchExport.Cells[1, 5].Value = "Price";
+                        searchExport.Cells[1, 6].Value = "Cost";
+                        searchExport.Cells[1, 7].Value = "Comments";
+                        int recordIndex = 2;
+                        foreach (Items item in searched)
+                        {
+                            searchExport.Cells[recordIndex, 1].Value = item.sku;
+                            searchExport.Cells[recordIndex, 2].Value = item.description;
+                            searchExport.Cells[recordIndex, 3].Value = item.location;
+                            searchExport.Cells[recordIndex, 4].Value = item.quantity;
+                            searchExport.Cells[recordIndex, 5].Value = item.price;
+                            searchExport.Cells[recordIndex, 6].Value = item.cost;
+                            searchExport.Cells[recordIndex, 7].Value = item.comments;
+                            recordIndex++;
+                        }
+                        searchExport.Cells[searchExport.Dimension.Address].AutoFitColumns();
+                        Response.Clear();
+                        Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
+                        Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                        Response.BinaryWrite(xlPackage.GetAsByteArray());
+                        Response.End();
                     }
-                    searchExport.Cells[searchExport.Dimension.Address].AutoFitColumns();
-                    Response.Clear();
-                    Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
-                    Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                    Response.BinaryWrite(xlPackage.GetAsByteArray());
-                    Response.End();
                 }
+                
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
