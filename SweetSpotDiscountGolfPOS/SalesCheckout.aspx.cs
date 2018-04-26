@@ -94,8 +94,18 @@ namespace SweetSpotDiscountGolfPOS
                 if (txtAmountPaying.Text != "")
                 {
                     //ClientScript.RegisterStartupScript(GetType(), "sCheckout", "userInput(" + Convert.ToDouble(txtAmountPaying.Text) + ")", true);
-                    object[] amounts = { hdnTender.Value, hdnChange.Value };
-                    populateGridviewMOP(Convert.ToDouble(txtAmountPaying.Text), "Cash", amounts);
+                    double cash = Convert.ToDouble(txtAmountPaying.Text);
+                    double paid = cash;
+
+                    if (!hdnTender.Value.Equals(0))
+                    {
+                        if (hdnTender.Value != "")
+                        {
+                            paid = Convert.ToDouble(hdnTender.Value);
+                        }
+                    }
+                    object[] amounts = { paid, hdnChange.Value };
+                    populateGridviewMOP(cash, "Cash", amounts);
                 }
             }
             //Exception catch
@@ -204,7 +214,7 @@ namespace SweetSpotDiscountGolfPOS
                     hdnTender.Value = txtAmountPaying.Text;
                     hdnChange.Value = "0";
                     populateGridviewMOP(Convert.ToDouble(txtAmountPaying.Text), "Gift Card", amounts);
-                }   
+                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -230,7 +240,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Retrieves Mop list from Session
                 InvoiceMOPsManager IMM = new InvoiceMOPsManager();
                 IMM.RemoveMopFromList(mopRemovingID, Request.QueryString["inv"].ToString());
-                
+
                 ////Clear the selected index
                 gvCurrentMOPs.EditIndex = -1;
                 UpdatePageTotals();
@@ -576,8 +586,8 @@ namespace SweetSpotDiscountGolfPOS
                 txtAmountPaying.Text = ((I.balanceDue + I.shippingAmount) - dblAmountPaid).ToString("#0.00");
                 buttonDisable(((I.balanceDue + I.shippingAmount) - dblAmountPaid));
             }
-            catch(ThreadAbortException tae) { }
-            catch(Exception ex)
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
             {
                 //Log all info into error table
                 ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);

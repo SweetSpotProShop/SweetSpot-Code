@@ -189,8 +189,8 @@
                          <asp:RequiredFieldValidator ID="valEmployeePasscode" runat="server" ForeColor="red" ErrorMessage="Must Enter Passcode" ControlToValidate="txtEmployeePasscode" />
                     </asp:TableCell></asp:TableRow></asp:Table><p>
                 Comments: <br /><asp:TextBox ID="txtComments" runat="server" TextMode="MultiLine" />
-                        <asp:HiddenField ID="hdnTender" runat="server" />
-                        <asp:HiddenField ID="hdnChange" runat="server" />
+                        <asp:HiddenField ID="hdnTender" runat="server" Value="0" />
+                        <asp:HiddenField ID="hdnChange" runat="server" value="0" />
             </p>
         </asp:Panel>
     </div>

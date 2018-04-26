@@ -199,10 +199,10 @@
                     </asp:TableCell>
 
                     <asp:TableCell CssClass="rightFirst">
-                        <asp:Label ID="lblChange" runat="server" Text="Change:" />
+                        <asp:Label ID="lblChange" runat="server" Text="Change:" visible="false"/>
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSecond">
-                        <asp:Label ID="lblChangeDisplay" runat="server" Text="" DataFormatString="{0:C}" />
+                        <asp:Label ID="lblChangeDisplay" runat="server" Text="" DataFormatString="{0:C}" visible="false"/>
                     </asp:TableCell>
 
                 </asp:TableRow>
