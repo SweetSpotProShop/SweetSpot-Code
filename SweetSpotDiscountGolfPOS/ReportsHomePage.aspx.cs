@@ -488,5 +488,28 @@ namespace SweetSpotDiscountGolfPOS
                 //Server.Transfer(prevPage, false);
             }
         }
+
+        protected void btnCostOfInventory_Click(object sender, EventArgs e)
+        {
+            //Collects current method and page for error tracking
+            string method = "btnCostOfInventory_Click";
+            try
+            {
+                Server.Transfer("ReportsCostOfInventory.aspx", false);
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                //string prevPage = Convert.ToString(Session["prevPage"]);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+                //Server.Transfer(prevPage, false);
+            }
+        }
     }
 }

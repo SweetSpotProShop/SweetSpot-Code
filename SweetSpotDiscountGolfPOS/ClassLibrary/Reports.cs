@@ -65,6 +65,53 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return dbc.returnDataTableData(sqlCmd, parms);
         }
 
+        //******************COST OF INVENTORY REPORTING*******************************************************
+        public System.Data.DataTable costOfInventoryReport()
+        {
+            //TODO: These will need to be changed for the live site
+            string query = "select top 1 " +
+                            "(select SUM(cost * quantity) from tbl_clubs where locationID = 1) as cMJ, " +
+                            "(select SUM(cost * quantity) from tbl_clubs where locationID = 2) as cCAL, " +
+                            "(select SUM(cost * quantity) from tbl_clubs where locationID = 8) as cEDM, " +
+                            "(select SUM(cost * quantity) from tbl_accessories where locationID = 1) as aMJ, " +
+                            "(select SUM(cost * quantity) from tbl_accessories where locationID = 2) as aCAL, " +
+                            "(select SUM(cost * quantity) from tbl_accessories where locationID = 8) as aEDM, " +
+                            "(select SUM(cost * quantity) from tbl_clothing where locationID = 1) as clMJ, " +
+                            "(select SUM(cost * quantity) from tbl_clothing where locationID = 2) as clCAL, " +
+                            "(select SUM(cost * quantity) from tbl_clothing where locationID = 8) as clEDM " +
+                            "from tbl_clubs";
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            //Creating the datatable
+            System.Data.DataTable dt = new System.Data.DataTable();
+            dt.Columns.Add("cMJ"); dt.Columns.Add("cCAL"); dt.Columns.Add("cEDM");
+            dt.Columns.Add("aMJ"); dt.Columns.Add("aCAL"); dt.Columns.Add("aEDM");
+            dt.Columns.Add("clMJ"); dt.Columns.Add("clCAL"); dt.Columns.Add("clEDM");
+            using (cmd = new SqlCommand(query, con))
+            using (var da = new SqlDataAdapter(cmd))
+            {
+                //Filling the table with what is found
+                da.Fill(dt);
+            }
+            System.Data.DataTable data = new System.Data.DataTable();
+            //Clubs
+            data.Columns.Add("cMJ");
+            data.Columns.Add("cCAL");
+            data.Columns.Add("cEDM");
+            //Accessories
+            data.Columns.Add("aMJ");
+            data.Columns.Add("aCAL");
+            data.Columns.Add("aEDM");
+            //Clothing
+            data.Columns.Add("clMJ");
+            data.Columns.Add("clCAL");
+            data.Columns.Add("clEDM");
+            foreach (DataRow row in dt.Rows)
+            {
+                data.Rows.Add(row[0].ToString(), row[1].ToString(), row[2].ToString(), row[3].ToString(), row[4].ToString(), row[5].ToString(), row[6].ToString(), row[7].ToString(), row[8].ToString());
+            }
+            return data;
+        }
 
         //*******************CASHOUT UTILITIES*******************************************************
         //Matches new Database Calls

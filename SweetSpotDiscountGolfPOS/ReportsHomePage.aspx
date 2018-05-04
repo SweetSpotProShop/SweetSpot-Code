@@ -112,7 +112,7 @@
                             <asp:Button ID="btnExtensiveInvoice" runat="server" Text="Extensive Invoice" Width="200px" Onclick="btnExtensiveInvoice_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            
+                            <asp:Button ID="btnCostOfInventory" runat="server" Text="Cost of Inventory" Width="200px" OnClick="btnCostOfInventory_Click" />
                         </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>
