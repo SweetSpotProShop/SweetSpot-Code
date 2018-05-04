@@ -267,7 +267,7 @@
                         <asp:Button ID="btnExitSale" runat="server" Text="Hold Sale" OnClick="btnExitSale_Click" Width="163px" CausesValidation="false" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnLayaway" runat="server" Text="Layaway" OnClick="btnLayaway_Click" Width="163px" CausesValidation="false" />
+                        <asp:Button ID="btnLayaway" runat="server" Text="Layaway" OnClick="btnLayaway_Click" Width="163px" CausesValidation="false" Visible="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Button ID="btnProceedToCheckout" runat="server" Text="Checkout" OnClick="btnProceedToCheckout_Click" Width="163px" CausesValidation="false" />

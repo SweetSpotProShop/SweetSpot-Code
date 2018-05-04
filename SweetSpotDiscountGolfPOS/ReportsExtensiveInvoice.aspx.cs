@@ -207,8 +207,8 @@ namespace SweetSpotDiscountGolfPOS
                 lblCOGSTotal.Text = String.Format("{0:C}", cogs);
                 lblRevenueTotal.Text = String.Format("{0:C}", revenue);
                 lblPaymentTotal.Text = String.Format("{0:C}", payment);
-                double profitMarginAverage = (margin / marginCounter);
-                lblProfitMarginTotal.Text = profitMarginAverage.ToString("#.##") + "%";
+                double profitMargin = (revenue / preTax) * 100;
+                lblProfitMarginTotal.Text = profitMargin.ToString("#.##") + "%";
             }
         }
         protected void btnDownload_Click(object sender, EventArgs e)

@@ -304,10 +304,13 @@ namespace SweetSpotDiscountGolfPOS
                 sqlCmd += " UNION ";
                 sqlCmd += IIM.ReturnStringSearchForClothing(strText);
                 sqlCmd += " UNION ";
-                sqlCmd += IIM.ReturnStringSearchForClubs(strText) + ")) OR ";
+                sqlCmd += IIM.ReturnStringSearchForClubs(strText) + "))) AND locationID = @locationID";
             }
-
-            sqlCmd += "invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "') AND locationID = @locationID";
+            else
+            {
+                sqlCmd += " invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "') AND locationID = @locationID";
+            }
+            
             object[][] parms =
             {
                 new object[] { "locationID", locationID }
