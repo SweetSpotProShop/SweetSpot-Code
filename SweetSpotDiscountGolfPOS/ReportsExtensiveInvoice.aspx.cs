@@ -227,7 +227,7 @@ namespace SweetSpotDiscountGolfPOS
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
                     //Creates a seperate sheet for each data table
-                    ExcelWorksheet invoicesExport = xlPackage.Workbook.Worksheets.Add("Invoices"); //TODO:DONE Update the download to include the trade in column
+                    ExcelWorksheet invoicesExport = xlPackage.Workbook.Worksheets.Add("Invoices"); 
                                                                                                    // write to sheet   
                     invoicesExport.Cells[1, 1].Value = lblDates.Text;
                     invoicesExport.Cells[2, 1].Value = "Invoice";

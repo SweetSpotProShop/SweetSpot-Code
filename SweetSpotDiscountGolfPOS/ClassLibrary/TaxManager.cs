@@ -118,10 +118,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                             gstText = "Remove GST";
                         }
                         bolGSTDisplay = true;
-                        
-                        //lblGovernmentAmount.Text = "$ " + I[0].governmentTax.ToString("#0.00");
-                        //lblGovernmentAmount.Visible = true;
-                        //btnRemoveGov.Visible = true;
                         break;
                     //If tax is PST calculate and make visible
                     case "PST":
@@ -142,12 +138,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                             pstText = "Remove PST";
                         }
                         bolPSTDisplay = true;
-
-                        //lblProvincial.Visible = true;
-                        //I.provincialTax = CallReturnTaxAmount(T.taxRate, I.subTotal);
-                        //lblProvincialAmount.Text = "$ " + I[0].provincialTax.ToString("#0.00");
-                        //lblProvincialAmount.Visible = true;
-                        //btnRemoveProv.Visible = true;
                         break;
                     //If tax is HST calculate and make visible
                     case "HST":
@@ -168,14 +158,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                             gstText = "Remove HST";
                         }
                         bolGSTDisplay = true;
-
-                        //lblProvincial.Visible = false;
-                        //lblGovernment.Text = "HST";
-                        //I.governmentTax = CallReturnTaxAmount(T.taxRate, I.subTotal + I.shippingAmount);
-                        //lblGovernmentAmount.Text = "$ " + I[0].governmentTax.ToString("#0.00");
-                        //lblGovernmentAmount.Visible = true;
-                        //btnRemoveProv.Visible = false;
-                        //btnRemoveGov.Text = "HST";
                         break;
                     //If tax is RST calculate and make visible
                     case "RST":
@@ -196,14 +178,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                             pstText = "Remove RST";
                         }
                         bolPSTDisplay = true;
-
-                        //lblProvincial.Visible = true;
-                        //lblProvincial.Text = "RST";
-                        //I.provincialTax = CallReturnTaxAmount(T.taxRate, I.subTotal);
-                        //lblProvincialAmount.Text = "$ " + I[0].provincialTax.ToString("#0.00");
-                        //lblProvincialAmount.Visible = true;
-                        //btnRemoveProv.Visible = true;
-                        //btnRemoveProv.Text = "RST";
                         break;
                     //If tax is QST calculate and make visible
                     case "QST":
@@ -224,20 +198,22 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                             pstText = "Remove QST";
                         }
                         bolPSTDisplay = true;
-
-                        //lblProvincial.Visible = true;
-                        //lblProvincial.Text = "QST";
-                        //I.provincialTax = CallReturnTaxAmount(T.taxRate, I.subTotal);
-                        //lblProvincialAmount.Text = "$ " + I[0].provincialTax.ToString("#0.00");
-                        //lblProvincialAmount.Visible = true;
-                        //btnRemoveProv.Visible = true;
-                        //btnRemoveProv.Text = "QST";
                         break;
                 }
                 totalTax += taxAmount;
             }
             //Adds the tax amount to the balance due
-            I.balanceDue += totalTax;
+
+
+            if(I.taxesApplied == true)
+            {
+                I.balanceDue = I.balanceDue;                
+            }
+            else
+            {
+                I.balanceDue += totalTax;
+                I.taxesApplied = true;
+            }
             object[] btnParms = { bolGSTDisplay, gstText, bolPSTDisplay, pstText };
             InvoiceManager IM = new InvoiceManager();
             IM.UpdateCurrentInvoice(I);

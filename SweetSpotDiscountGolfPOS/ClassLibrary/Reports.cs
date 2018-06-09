@@ -68,7 +68,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         //******************COST OF INVENTORY REPORTING*******************************************************
         public System.Data.DataTable costOfInventoryReport()
         {
-            //TODO: These will need to be changed for the live site
             string query = "select top 1 " +
                             "(select SUM(cost * quantity) from tbl_clubs where locationID = 1) as cMJ, " +
                             "(select SUM(cost * quantity) from tbl_clubs where locationID = 2) as cCAL, " +
