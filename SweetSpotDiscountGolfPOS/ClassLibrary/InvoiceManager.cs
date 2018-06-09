@@ -54,6 +54,7 @@ namespace SweetSpotDiscountGolfPOS
         }
         private List<Invoice> ConvertFromDataTableToCurrentInvoice(DataTable dt)
         {
+            //TODO: Update ConvertFromDataTableToCurrentInvoice
             CustomerManager CM = new CustomerManager();
             EmployeeManager EM = new EmployeeManager();
             LocationManager LM = new LocationManager();
@@ -80,7 +81,8 @@ namespace SweetSpotDiscountGolfPOS
                 usedMops = IMM.ReturnInvoiceMOPsCurrentSale("-" + row.Field<int>("invoiceNum").ToString() + "-" + row.Field<int>("invoiceSubNum").ToString()),
                 transactionType = row.Field<int>("transactionType"),
                 transactionName = ReturnTransactionName(row.Field<int>("transactionType")),
-                comments = row.Field<string>("comments")
+                comments = row.Field<string>("comments"),
+                taxesApplied = row.Field<Boolean>("taxesApplied")
             }).ToList();
             return i;
         }
@@ -223,9 +225,10 @@ namespace SweetSpotDiscountGolfPOS
         //Returns list of invoices based on an invoice string from the Current table
         public List<Invoice> ReturnCurrentInvoice(string invoice)
         {
+            //TODO: Update ReturnCurrentInvoice
             string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, CAST(invoiceTime AS DATETIME) AS invoiceTime, "
                 + "custID, empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, governmentTax, "
-                + "provincialTax, balanceDue, transactionType, comments FROM tbl_currentSalesInvoice WHERE invoiceNum = @invoiceNum "
+                + "provincialTax, balanceDue, transactionType, comments, taxesApplied FROM tbl_currentSalesInvoice WHERE invoiceNum = @invoiceNum "
                 + "AND invoiceSubNum = @invoiceSubNum";
 
             object[][] parms =
@@ -255,9 +258,10 @@ namespace SweetSpotDiscountGolfPOS
         }
         public List<Invoice> ReturnCurrentOpenInvoices(int locID)
         {
+            //TODO: Update ReturnCurrentOpenInvoice
             string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, CAST(invoiceTime AS DATETIME) AS invoiceTime, "
                 + "custID, empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, governmentTax, "
-                + "provincialTax, balanceDue, transactionType, comments FROM tbl_currentSalesInvoice "
+                + "provincialTax, balanceDue, transactionType, comments, taxesApplied FROM tbl_currentSalesInvoice "
                 + "WHERE locationID = @locID";
 
             object[][] parms = 
@@ -503,13 +507,13 @@ namespace SweetSpotDiscountGolfPOS
             };
             ExecuteNonReturnCall(sqlCmd, parms);
         }
-
+        //TODO: Update CreateInitialTotalsForTable
         public void CreateInitialTotalsForTable(Invoice I)
         {
             string sqlCmd = "INSERT INTO tbl_currentSalesInvoice VALUES(@invoiceNum, @invoiceSubNum, "
                 + "@invoiceDate, @invoiceTime, @custID, @empID, @locationID, @subTotal, @shippingAmount, "
                 + "@discountAmount, @trdaeinAmount, @governmentTax, @provincialTax, @balanceDue, "
-                + "@transactionType, @comments)";
+                + "@transactionType, @comments, @taxesApplied)";
 
             object[][] parms =
             {
@@ -528,7 +532,8 @@ namespace SweetSpotDiscountGolfPOS
                 new object[] { "@provincialTax", I.provincialTax },
                 new object[] { "@balanceDue", I.balanceDue },
                 new object[] { "@transactionType", I.transactionType },
-                new object[] { "@comments", I.comments }
+                new object[] { "@comments", I.comments },
+                new object[] { "@taxesApplied", false }
             };
 
             ExecuteNonReturnCall(sqlCmd, parms);
@@ -552,29 +557,13 @@ namespace SweetSpotDiscountGolfPOS
             }
             return exists;
         }
-        //public bool ReturnBolReceiptExists(string invoice)
-        //{
-        //    bool exists = false;
-        //    string sqlCmd = "SELECT COUNT(receiptNumber) AS receiptCount FROM "
-        //        + "tbl_receipt WHERE receiptNumber = @receiptNumber";
-
-        //    object[][] parms =
-        //    {
-        //        new object[] { "@invoiceNum", Convert.ToInt32(invoice.Split('-')[1].ToString()) },
-        //    };
-
-        //    if (ReturnInt(sqlCmd, parms) > 0)
-        //    {
-        //        exists = true;
-        //    }
-        //    return exists;
-        //}
-        public void UpdateCurrentInvoice(Invoice I)
+        //TODO:Update UpdateCurentInvoice
+        public void UpdateCurrentInvoice(Invoice I) 
         {
             string sqlCmd = "UPDATE tbl_currentSalesInvoice SET invoiceDate = @invoiceDate, invoiceTime = @invoiceTime, custID = @custID, "
                 + "empID = @empID, locationID = @locationID, subTotal = @subTotal, shippingAmount = @shippingAmount, "
                 + "discountAmount = @discountAmount, tradeinAmount = @tradeinAmount, governmentTax = @governmentTax, "
-                + "provincialTax = @provincialTax, balanceDue = @balanceDue, transactionType = @transactionType, comments = @comments WHERE invoiceNum = @invoiceNum "
+                + "provincialTax = @provincialTax, balanceDue = @balanceDue, transactionType = @transactionType, comments = @comments, taxesApplied = @taxesApplied WHERE invoiceNum = @invoiceNum "
                 + "AND invoiceSubNum = @invoiceSubNum";
 
             object[][] parms =
@@ -594,7 +583,8 @@ namespace SweetSpotDiscountGolfPOS
                 new object[] { "@provincialTax", I.provincialTax },
                 new object[] { "@balanceDue", I.balanceDue },
                 new object[] { "@transactionType", I.transactionType },
-                new object[] { "@comments", I.comments }
+                new object[] { "@comments", I.comments },
+                new object[] { "@taxesApplied", I.taxesApplied}
             };
             ExecuteNonReturnCall(sqlCmd, parms);
         }

@@ -31,6 +31,8 @@ namespace SweetShop
         public int transactionType { get; set; }
         public string comments { get; set; }
 
+        public Boolean taxesApplied { get; set; }
+
         //Get Rid of
         public string transactionName { get; set; }
         public string customerName { get; set; }
@@ -81,7 +83,32 @@ namespace SweetShop
             transactionName = TN;
             comments = C;
         }
-
+        //Booleans included
+        public Invoice(int I, int S, DateTime D, DateTime T, Customer CID, Employee EID,
+            Location LID, double ST, double SA, double DA, double TA, double G, double P,
+            double BD, List<InvoiceItems> SoldItems, List<InvoiceMOPs> UsedMops, int TT, string TN, string C, Boolean govTaxApplied, Boolean ta)
+        {
+            invoiceNum = I;
+            invoiceSub = S;
+            invoiceDate = D;
+            invoiceTime = T;
+            customer = CID;
+            employee = EID;
+            location = LID;
+            subTotal = ST;
+            shippingAmount = SA;
+            discountAmount = DA;
+            tradeinAmount = TA;
+            governmentTax = G;
+            provincialTax = P;
+            balanceDue = BD;
+            soldItems = SoldItems;
+            usedMops = UsedMops;
+            transactionType = TT;
+            transactionName = TN;
+            comments = C;
+            taxesApplied = ta;
+        }
 
         //Old collection code
         public string invoice { get; set; }

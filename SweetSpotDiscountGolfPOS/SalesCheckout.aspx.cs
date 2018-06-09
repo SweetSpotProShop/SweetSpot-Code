@@ -41,26 +41,28 @@ namespace SweetSpotDiscountGolfPOS
                         TaxManager TM = new TaxManager();
 
                         //Checks if shipping was charged 
-                        Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                        Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];                        
+
                         object[] taxText = { "Add GST", "Add PST" };
+                        //This is where the taxes are set?
                         object[] results = TM.ReturnChargedTaxForSale(I, taxText);
                         I = (Invoice)results[0];
                         object[] taxStatus = (object[])results[1];
                         if (Convert.ToBoolean(taxStatus[0]))
-                        {
-                            lblGovernment.Visible = true;
-                            lblGovernmentAmount.Text = "$ " + I.governmentTax.ToString("#0.00");
-                            lblGovernmentAmount.Visible = true;
-                            btnRemoveGov.Text = taxStatus[1].ToString();
-                            btnRemoveGov.Visible = true;
+                        {                            
+                                lblGovernment.Visible = true;
+                                lblGovernmentAmount.Text = "$ " + I.governmentTax.ToString("#0.00");
+                                lblGovernmentAmount.Visible = true;
+                                btnRemoveGov.Text = taxStatus[1].ToString();
+                                btnRemoveGov.Visible = true;                                                 
                         }
                         if (Convert.ToBoolean(taxStatus[2]))
                         {
-                            lblProvincial.Visible = true;
-                            lblProvincialAmount.Text = "$ " + I.provincialTax.ToString("#0.00");
-                            lblProvincialAmount.Visible = true;
-                            btnRemoveProv.Text = taxStatus[3].ToString();
-                            btnRemoveProv.Visible = true;
+                                lblProvincial.Visible = true;
+                                lblProvincialAmount.Text = "$ " + I.provincialTax.ToString("#0.00");
+                                lblProvincialAmount.Visible = true;
+                                btnRemoveProv.Text = taxStatus[3].ToString();
+                                btnRemoveProv.Visible = true;                            
                         }
                         UpdatePageTotals();
                         //***Assign each item to its Label.
@@ -348,6 +350,7 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnExitSale_Click";
             try
             {
+                //TODO: btnExitSale_Click is good as it doesn't read the new values. It removes the entry 
                 TaxManager TM = new TaxManager();
                 Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
                 object[] taxText = { "Remove GST", "Remove PST" };
@@ -411,7 +414,7 @@ namespace SweetSpotDiscountGolfPOS
                     taxText[1] = "Do Nothing";
                 }
                 TaxManager TM = new TaxManager();
-                object[] results = TM.ReturnChargedTaxForSale(I, taxText);
+                object[] results = TM.ReturnChargedTaxForSale(I, taxText); //UPDATING THE CURRENT SALES TABLE
                 //Sets session to true
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("cust", Request.QueryString["cust"].ToString());
