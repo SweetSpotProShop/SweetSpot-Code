@@ -41,7 +41,7 @@ namespace SweetSpotDiscountGolfPOS
                         TaxManager TM = new TaxManager();
 
                         //Checks if shipping was charged 
-                        Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];                        
+                        Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
 
                         object[] taxText = { "Add GST", "Add PST" };
                         //This is where the taxes are set?
@@ -49,20 +49,34 @@ namespace SweetSpotDiscountGolfPOS
                         I = (Invoice)results[0];
                         object[] taxStatus = (object[])results[1];
                         if (Convert.ToBoolean(taxStatus[0]))
-                        {                            
-                                lblGovernment.Visible = true;
+                        {
+                            lblGovernment.Visible = true;
+                            if (I.chargeGST)
+                            {
                                 lblGovernmentAmount.Text = "$ " + I.governmentTax.ToString("#0.00");
-                                lblGovernmentAmount.Visible = true;
-                                btnRemoveGov.Text = taxStatus[1].ToString();
-                                btnRemoveGov.Visible = true;                                                 
+                            }
+                            else
+                            {
+                                lblGovernmentAmount.Text = "$ 0.00";
+                            }
+                            lblGovernmentAmount.Visible = true;
+                            btnRemoveGov.Text = taxStatus[1].ToString();
+                            btnRemoveGov.Visible = true;
                         }
                         if (Convert.ToBoolean(taxStatus[2]))
                         {
-                                lblProvincial.Visible = true;
+                            lblProvincial.Visible = true;
+                            if (I.chargePST)
+                            {
                                 lblProvincialAmount.Text = "$ " + I.provincialTax.ToString("#0.00");
-                                lblProvincialAmount.Visible = true;
-                                btnRemoveProv.Text = taxStatus[3].ToString();
-                                btnRemoveProv.Visible = true;                            
+                            }
+                            else
+                            {
+                                lblProvincialAmount.Text = "$ 0.00";
+                            }
+                            lblProvincialAmount.Visible = true;
+                            btnRemoveProv.Text = taxStatus[3].ToString();
+                            btnRemoveProv.Visible = true;
                         }
                         UpdatePageTotals();
                         //***Assign each item to its Label.
@@ -265,7 +279,14 @@ namespace SweetSpotDiscountGolfPOS
                 if (Convert.ToBoolean(taxStatus[0]))
                 {
                     lblGovernment.Visible = true;
-                    lblGovernmentAmount.Text = "$ " + I.governmentTax.ToString("#0.00");
+                    if (I.chargeGST)
+                    {
+                        lblGovernmentAmount.Text = "$ " + I.governmentTax.ToString("#0.00");
+                    }
+                    else
+                    {
+                        lblGovernmentAmount.Text = "$ 0.00";
+                    }
                     lblGovernmentAmount.Visible = true;
                     btnRemoveGov.Text = taxStatus[1].ToString();
                     btnRemoveGov.Visible = true;
@@ -300,7 +321,14 @@ namespace SweetSpotDiscountGolfPOS
                 if (Convert.ToBoolean(taxStatus[2]))
                 {
                     lblProvincial.Visible = true;
-                    lblProvincialAmount.Text = "$ " + I.provincialTax.ToString("#0.00");
+                    if (I.chargePST)
+                    {
+                        lblProvincialAmount.Text = "$ " + I.provincialTax.ToString("#0.00");
+                    }
+                    else
+                    {
+                        lblProvincialAmount.Text = "$ 0.00";
+                    }
                     lblProvincialAmount.Visible = true;
                     btnRemoveProv.Text = taxStatus[3].ToString();
                     btnRemoveProv.Visible = true;
@@ -573,11 +601,20 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 gvCurrentMOPs.DataSource = I.usedMops;
                 gvCurrentMOPs.DataBind();
+                double tx = 0;
+                if (I.chargeGST)
+                {
+                    tx += I.governmentTax;
+                }
+                if (I.chargePST)
+                {
+                    tx += I.provincialTax;
+                }
                 //Displays the remaining balance
-                lblBalanceAmount.Text = "$ " + (I.balanceDue + I.shippingAmount).ToString("#0.00");
-                lblRemainingBalanceDueDisplay.Text = "$ " + ((I.balanceDue + I.shippingAmount) - dblAmountPaid).ToString("#0.00");
-                txtAmountPaying.Text = ((I.balanceDue + I.shippingAmount) - dblAmountPaid).ToString("#0.00");
-                buttonDisable(((I.balanceDue + I.shippingAmount) - dblAmountPaid));
+                lblBalanceAmount.Text = "$ " + (I.balanceDue + I.shippingAmount + tx).ToString("#0.00");
+                lblRemainingBalanceDueDisplay.Text = "$ " + ((I.balanceDue + I.shippingAmount + tx) - dblAmountPaid).ToString("#0.00");
+                txtAmountPaying.Text = ((I.balanceDue + I.shippingAmount + tx) - dblAmountPaid).ToString("#0.00");
+                buttonDisable(((I.balanceDue + I.shippingAmount + tx) - dblAmountPaid));
             }
             catch (ThreadAbortException tae) { }
             catch (Exception ex)

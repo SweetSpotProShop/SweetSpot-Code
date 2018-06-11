@@ -114,7 +114,7 @@
                                     <asp:Label ID="lblGovernment" runat="server" Text="GST:" Visible="false" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:Label ID="lblGovernmentAmount" runat="server" Visible="false" />
+                                    <asp:Label ID="lblGovernmentAmount" runat="server" Visible="false" Text="0" />
                                 </asp:TableCell>
                                 <asp:TableCell>
                                     <asp:Button ID="btnRemoveGov" runat="server" Text="Remove GST" Width="163px" OnClick="btnRemoveGovTax" Visible="false" CausesValidation="false" />
@@ -125,7 +125,7 @@
                                     <asp:Label ID="lblProvincial" runat="server" Text="PST:" Visible="false" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:Label ID="lblProvincialAmount" runat="server" Visible="false" />
+                                    <asp:Label ID="lblProvincialAmount" runat="server" Visible="false" Text="0" />
                                 </asp:TableCell>
                                 <asp:TableCell>
                                     <asp:Button ID="btnRemoveProv" runat="server" Text="Remove PST" Width="163px" OnClick="btnRemoveProvTax" Visible="false" CausesValidation="false" />

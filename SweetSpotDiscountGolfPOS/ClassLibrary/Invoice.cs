@@ -30,8 +30,8 @@ namespace SweetShop
         public List<InvoiceMOPs> usedMops { get; set; }
         public int transactionType { get; set; }
         public string comments { get; set; }
-
-        public Boolean taxesApplied { get; set; }
+        public bool chargeGST { get; set; }
+        public bool chargePST { get; set; }
 
         //Get Rid of
         public string transactionName { get; set; }
@@ -41,7 +41,7 @@ namespace SweetShop
         public Invoice() { }
         public Invoice(int I, int S, DateTime D, DateTime T, Employee EID,
             Location LID, double ST, double SA, double DA, double TA, double G, double P,
-            double BD, int TT, string C)
+            double BD, int TT, string C, bool GST, bool PST)
         {
             invoiceNum = I;
             invoiceSub = S;
@@ -58,10 +58,13 @@ namespace SweetShop
             balanceDue = BD;
             transactionType = TT;
             comments = C;
+            chargeGST = GST;
+            chargePST = PST;
         }
         public Invoice(int I, int S, DateTime D, DateTime T, Customer CID, Employee EID,
             Location LID, double ST, double SA, double DA, double TA, double G, double P, 
-            double BD, List<InvoiceItems> SoldItems, List<InvoiceMOPs> UsedMops, int TT, string TN, string C)
+            double BD, List<InvoiceItems> SoldItems, List<InvoiceMOPs> UsedMops, int TT,
+            string TN, string C, bool GST, bool PST)
         {
             invoiceNum = I;
             invoiceSub = S;
@@ -82,32 +85,8 @@ namespace SweetShop
             transactionType = TT;
             transactionName = TN;
             comments = C;
-        }
-        //Booleans included
-        public Invoice(int I, int S, DateTime D, DateTime T, Customer CID, Employee EID,
-            Location LID, double ST, double SA, double DA, double TA, double G, double P,
-            double BD, List<InvoiceItems> SoldItems, List<InvoiceMOPs> UsedMops, int TT, string TN, string C, Boolean govTaxApplied, Boolean ta)
-        {
-            invoiceNum = I;
-            invoiceSub = S;
-            invoiceDate = D;
-            invoiceTime = T;
-            customer = CID;
-            employee = EID;
-            location = LID;
-            subTotal = ST;
-            shippingAmount = SA;
-            discountAmount = DA;
-            tradeinAmount = TA;
-            governmentTax = G;
-            provincialTax = P;
-            balanceDue = BD;
-            soldItems = SoldItems;
-            usedMops = UsedMops;
-            transactionType = TT;
-            transactionName = TN;
-            comments = C;
-            taxesApplied = ta;
+            chargeGST = GST;
+            chargePST = PST;
         }
 
         //Old collection code

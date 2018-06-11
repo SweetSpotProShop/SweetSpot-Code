@@ -105,7 +105,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         {
                             //Sets tax amount to a negative version of GST
                             taxAmount = -(I.governmentTax);
-                            I.governmentTax = 0;
+                            I.chargeGST = false;
                             //Changes button name
                             gstText = "Add GST";
                         }
@@ -114,6 +114,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                             //Sets tax amount to a positive version of GST
                             I.governmentTax = CallReturnTaxAmount(T.taxRate, I.subTotal + I.shippingAmount);
                             taxAmount = I.governmentTax;
+                            I.chargeGST = true;
                             //Changes button name
                             gstText = "Remove GST";
                         }
@@ -125,7 +126,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         {
                             //Sets tax amount to a negative version of PST
                             taxAmount = -(I.provincialTax);
-                            I.provincialTax = 0;
+                            I.chargePST = false;
                             //Changes button name
                             pstText = "Add PST"; //*** Need to figure out proper name of tax
                         }
@@ -134,6 +135,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                             //Sets tax amount to a positive version of PST
                             I.provincialTax = CallReturnTaxAmount(T.taxRate, I.subTotal);
                             taxAmount = I.provincialTax;
+                            I.chargePST = true;
                             //Changes button name
                             pstText = "Remove PST";
                         }
@@ -145,7 +147,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         {
                             //Sets tax amount to a negative version of GST
                             taxAmount = -(I.governmentTax);
-                            I.governmentTax = 0;
+                            I.chargeGST = false;
                             //Changes button name
                             gstText = "Add HST";
                         }
@@ -154,6 +156,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                             //Sets tax amount to a positive version of GST
                             I.governmentTax = CallReturnTaxAmount(T.taxRate, I.subTotal + I.shippingAmount);
                             taxAmount = I.governmentTax;
+                            I.chargeGST = true;
                             //Changes button name
                             gstText = "Remove HST";
                         }
@@ -165,7 +168,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         {
                             //Sets tax amount to a negative version of PST
                             taxAmount = -(I.provincialTax);
-                            I.provincialTax = 0;
+                            I.chargePST = false;
                             //Changes button name
                             pstText = "Add RST"; //*** Need to figure out proper name of tax
                         }
@@ -174,6 +177,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                             //Sets tax amount to a positive version of PST
                             I.provincialTax = CallReturnTaxAmount(T.taxRate, I.subTotal);
                             taxAmount = I.provincialTax;
+                            I.chargePST = true;
                             //Changes button name
                             pstText = "Remove RST";
                         }
@@ -185,7 +189,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         {
                             //Sets tax amount to a negative version of PST
                             taxAmount = -(I.provincialTax);
-                            I.provincialTax = 0;
+                            I.chargePST = false;
                             //Changes button name
                             pstText = "Add QST"; //*** Need to figure out proper name of tax
                         }
@@ -194,33 +198,21 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                             //Sets tax amount to a positive version of PST
                             I.provincialTax = CallReturnTaxAmount(T.taxRate, I.subTotal);
                             taxAmount = I.provincialTax;
+                            I.chargePST = true;
                             //Changes button name
                             pstText = "Remove QST";
                         }
                         bolPSTDisplay = true;
                         break;
                 }
-                totalTax += taxAmount;
+                //totalTax += taxAmount;
             }
-            //Adds the tax amount to the balance due
 
-
-            if(I.taxesApplied == true)
-            {
-                I.balanceDue = I.balanceDue;                
-            }
-            else
-            {
-                I.balanceDue += totalTax;
-                I.taxesApplied = true;
-            }
             object[] btnParms = { bolGSTDisplay, gstText, bolPSTDisplay, pstText };
             InvoiceManager IM = new InvoiceManager();
             IM.UpdateCurrentInvoice(I);
             object[] results = { I, btnParms };
             return results;
-
-
         }
         private double CallReturnTaxAmount(double rate, double subTotal)
         {
