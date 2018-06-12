@@ -117,7 +117,7 @@
             <%--//Radio button for InStore or Shipping--%>
             <asp:RadioButton ID="rdbInStorePurchase" runat="server" Text="In Store" Checked="True" Enabled="false" GroupName="rgSales" />
             <asp:RadioButton ID="rdbShipping" runat="server" Text="Shipping" GroupName="rgSales" Enabled="false" />
-            <asp:Label ID="lblShipping" runat="server" Text="Shipping Amount:" />
+            <asp:Label ID="lblShipping" runat="server" Text="Amount:" />
             <asp:TextBox ID="txtShippingAmount" runat="server" OnTextChanged="txtShippingAmount_TextChanged" AutoPostBack="true" Text="0" />
             <asp:Label ID="lblShippingWarning" runat="server" Visible="false" />
             <div>
@@ -261,16 +261,16 @@
             <asp:Table runat="server">
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:Button ID="btnCancelSale" runat="server" Text="Cancel Sale" OnClick="btnCancelSale_Click" Width="163px" CausesValidation="false" />
+                        <asp:Button ID="btnCancelSale" runat="server" Text="Void Transaction" OnClick="btnCancelSale_Click" Width="163px" CausesValidation="false" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnExitSale" runat="server" Text="Exit Sale" OnClick="btnExitSale_Click" Width="163px" CausesValidation="false" />
+                        <asp:Button ID="btnExitSale" runat="server" Text="Hold Sale" OnClick="btnExitSale_Click" Width="163px" CausesValidation="false" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnLayaway" runat="server" Text="Layaway" OnClick="btnLayaway_Click" Width="163px" CausesValidation="false" />
+                        <asp:Button ID="btnLayaway" runat="server" Text="Layaway" OnClick="btnLayaway_Click" Width="163px" CausesValidation="false" Visible="false" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnProceedToCheckout" runat="server" Text="Proceed to Checkout" OnClick="btnProceedToCheckout_Click" Width="163px" CausesValidation="false" />
+                        <asp:Button ID="btnProceedToCheckout" runat="server" Text="Checkout" OnClick="btnProceedToCheckout_Click" Width="163px" CausesValidation="false" />
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>

@@ -136,10 +136,10 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:Button ID="btnCancelReturn" runat="server" Text="Cancel Return" OnClick="btnCancelReturn_Click" Width="163px" />
+                        <asp:Button ID="btnCancelReturn" runat="server" Text="Void Transaction" OnClick="btnCancelReturn_Click" Width="163px" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnReturnToCart" runat="server" Text="Return To Cart" OnClick="btnReturnToCart_Click" Width="163px" />
+                        <asp:Button ID="btnReturnToCart" runat="server" Text="Cart" OnClick="btnReturnToCart_Click" Width="163px" />
                     </asp:TableCell>
                     <asp:TableCell>
                     </asp:TableCell>
