@@ -148,8 +148,8 @@
             <asp:Label ID="lblReturnSubtotal" runat="server" Text="Return Subtotal:" />
             <asp:Label ID="lblReturnSubtotalDisplay" runat="server" Text="" />
             <hr />
-            <asp:Button ID="btnCancelReturn" runat="server" Text="Cancel Return" OnClick="btnCancelReturn_Click" CausesValidation="false" />
-            <asp:Button ID="btnProceedToReturnCheckout" runat="server" Text="Reimburse Customer" OnClick="btnProceedToReturnCheckout_Click" CausesValidation="false" />
+            <asp:Button ID="btnCancelReturn" runat="server" Text="Void Transaction" OnClick="btnCancelReturn_Click" CausesValidation="false" />
+            <asp:Button ID="btnProceedToReturnCheckout" runat="server" Text="Checkout" OnClick="btnProceedToReturnCheckout_Click" CausesValidation="false" />
         </asp:Panel>
     </div>
 </asp:Content>

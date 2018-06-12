@@ -53,12 +53,16 @@ namespace SweetSpotDiscountGolfPOS
                             lblGovernment.Visible = true;
                             lblGovernmentAmount.Text = "$ " + I.governmentTax.ToString("#0.00");
                             lblGovernmentAmount.Visible = true;
+                            I.balanceDue = I.balanceDue + I.governmentTax;
+                            IM.UpdateCurrentInvoice(I);
                         }
                         if (Convert.ToBoolean(taxStatus[2]))
                         {
                             lblProvincial.Visible = true;
                             lblProvincialAmount.Text = "$ " + I.provincialTax.ToString("#0.00");
                             lblProvincialAmount.Visible = true;
+                            I.balanceDue = I.balanceDue + I.provincialTax;
+                            IM.UpdateCurrentInvoice(I);
                         }
                         UpdatePageTotals();
                         lblRefundSubTotalAmount.Text = "$ " + I.subTotal.ToString("#0.00");

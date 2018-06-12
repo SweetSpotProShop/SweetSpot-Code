@@ -33,7 +33,7 @@
                             </asp:TableRow>
                             <asp:TableRow>
                                 <asp:TableCell>
-                                    <asp:Button ID="mopCash" runat="server" Text="Cash" OnClick="mopCash_Click" Width="163px" OnClientClick="return confirm('Confirm Cash');" CausesValidation="false" />
+                                    <asp:Button ID="mopCash" runat="server" Text="Cash" OnClick="mopCash_Click" Width="163px" OnClientClick="userInput();" CausesValidation="false" />
                                 </asp:TableCell>
                                 <asp:TableCell>
                                     <asp:Button ID="mopVisa" runat="server" Text="Visa" OnClick="mopVisa_Click" Width="163px" OnClientClick="return confirm('Confirm Visa');" CausesValidation="false" />
@@ -114,7 +114,7 @@
                                     <asp:Label ID="lblGovernment" runat="server" Text="GST:" Visible="false" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:Label ID="lblGovernmentAmount" runat="server" Visible="false" />
+                                    <asp:Label ID="lblGovernmentAmount" runat="server" Visible="false" Text="0" />
                                 </asp:TableCell>
                                 <asp:TableCell>
                                     <asp:Button ID="btnRemoveGov" runat="server" Text="Remove GST" Width="163px" OnClick="btnRemoveGovTax" Visible="false" CausesValidation="false" />
@@ -125,7 +125,7 @@
                                     <asp:Label ID="lblProvincial" runat="server" Text="PST:" Visible="false" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:Label ID="lblProvincialAmount" runat="server" Visible="false" />
+                                    <asp:Label ID="lblProvincialAmount" runat="server" Visible="false" Text="0" />
                                 </asp:TableCell>
                                 <asp:TableCell>
                                     <asp:Button ID="btnRemoveProv" runat="server" Text="Remove PST" Width="163px" OnClick="btnRemoveProvTax" Visible="false" CausesValidation="false" />
@@ -171,13 +171,13 @@
                         <asp:Label ID="lblRemainingBalanceDueDisplay" runat="server" />
                     </asp:TableCell></asp:TableRow><asp:TableRow>
                     <asp:TableCell>
-                        <asp:Button ID="btnCancelSale" runat="server" Text="Cancel Sale" OnClick="btnCancelSale_Click" Width="163px" CausesValidation="false" />
+                        <asp:Button ID="btnCancelSale" runat="server" Text="Void Transaction" OnClick="btnCancelSale_Click" Width="163px" CausesValidation="false" />
                     </asp:TableCell><asp:TableCell>
-                        <asp:Button ID="btnExitSale" runat="server" Text="Exit Sale" OnClick="btnExitSale_Click" Width="163px" CausesValidation="false" />
+                        <asp:Button ID="btnExitSale" runat="server" Text="Hold Sale" OnClick="btnExitSale_Click" Width="163px" CausesValidation="false" />
                     </asp:TableCell><asp:TableCell>
-                        <asp:Button ID="btnLayaway" runat="server" Text="Layaway" OnClick="btnLayaway_Click" Width="163px" CausesValidation="false" />
+                        <asp:Button ID="btnLayaway" runat="server" Text="Layaway" OnClick="btnLayaway_Click" Width="163px" CausesValidation="false" Visible="false" />
                     </asp:TableCell><asp:TableCell>
-                        <asp:Button ID="btnReturnToCart" runat="server" Text="Return To Cart" OnClick="btnReturnToCart_Click" Width="163px" CausesValidation="false" />
+                        <asp:Button ID="btnReturnToCart" runat="server" Text="Sales Cart" OnClick="btnReturnToCart_Click" Width="163px" CausesValidation="false" />
                     </asp:TableCell><asp:TableCell>
                         <asp:Button ID="btnFinalize" runat="server" Text="Process Sale" OnClick="btnFinalize_Click" Width="163px" CausesValidation="true" />
                     </asp:TableCell></asp:TableRow><asp:TableRow>
@@ -189,21 +189,25 @@
                          <asp:RequiredFieldValidator ID="valEmployeePasscode" runat="server" ForeColor="red" ErrorMessage="Must Enter Passcode" ControlToValidate="txtEmployeePasscode" />
                     </asp:TableCell></asp:TableRow></asp:Table><p>
                 Comments: <br /><asp:TextBox ID="txtComments" runat="server" TextMode="MultiLine" />
+                        <asp:HiddenField ID="hdnTender" runat="server" Value="0" />
+                        <asp:HiddenField ID="hdnChange" runat="server" value="0" />
             </p>
         </asp:Panel>
     </div>
     <script>
-        function userInput(owing) {
-            var given = prompt("Change Calculator", "");
-            var change = owing - given;
-            if (change < 0) {
+        function userInput() {
+            var r = confirm('Confirm Cash');
+            if (r) {
+                var given = prompt("Change Calculator", "");
+                var change = Number(document.getElementById('<%=txtAmountPaying.ClientID %>').value) - given;
                 var give = String(change.toFixed(2));
-                alert("Change: " + give);
-            }
-            else if (change >= 0) {   
+                if (change < 0) {
+                    alert("Change: " + give);
+                }
+                document.getElementById('<%=hdnTender.ClientID %>').value = given;
+                document.getElementById('<%=hdnChange.ClientID %>').value = give;
             }
         }
-
     </script>
 </asp:Content>
 <asp:Content ID="Content1" runat="server" ContentPlaceHolderID="head">

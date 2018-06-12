@@ -42,7 +42,7 @@
 
             <%--<div class="divider" />--%>
             <hr />
-            <h2>Current Open & Layaway Sales</h2>
+            <h2>Current Open Sales</h2>
             <hr />
             <div>
                 <asp:GridView ID="grdCurrentOpenSales" runat="server" AutoGenerateColumns="false" Width="100%" OnRowCommand="grdCurrentOpenSales_RowCommand" RowStyle-HorizontalAlign="Center" >
