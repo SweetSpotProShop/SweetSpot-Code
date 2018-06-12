@@ -342,7 +342,8 @@ namespace SweetSpotDiscountGolfPOS
         public List<Invoice> ReturnInvoicesBasedOnSearchForReturns(string txtSearch, DateTime selectedDate)
         {
             string sqlCmd = "SELECT I.invoiceNum, I.invoiceSubNum, I.invoiceDate, C.custID, C.firstName, "
-                + "C.lastName, I.locationID, I.balanceDue FROM tbl_invoice I JOIN tbl_customers C ON "
+                + "C.lastName, I.locationID, (I.balanceDue + CASE WHEN I.chargeGST = 1 THEN I.governmentTax ELSE 0 END + "
+                + "CASE WHEN I.chargePST = 1 THEN I.provincialTax ELSE 0 END) AS balanceDue FROM tbl_invoice I JOIN tbl_customers C ON "
                 + "I.custID = C.custID WHERE I.invoiceSubNum = 1 AND (I.invoiceDate = @selectedDate";
 
             if (txtSearch != "")

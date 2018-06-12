@@ -53,16 +53,16 @@ namespace SweetSpotDiscountGolfPOS
                             lblGovernment.Visible = true;
                             lblGovernmentAmount.Text = "$ " + I.governmentTax.ToString("#0.00");
                             lblGovernmentAmount.Visible = true;
-                            I.balanceDue = I.balanceDue + I.governmentTax;
-                            IM.UpdateCurrentInvoice(I);
+                            //I.balanceDue = I.balanceDue + I.governmentTax;
+                            //IM.UpdateCurrentInvoice(I);
                         }
                         if (Convert.ToBoolean(taxStatus[2]))
                         {
                             lblProvincial.Visible = true;
                             lblProvincialAmount.Text = "$ " + I.provincialTax.ToString("#0.00");
                             lblProvincialAmount.Visible = true;
-                            I.balanceDue = I.balanceDue + I.provincialTax;
-                            IM.UpdateCurrentInvoice(I);
+                            //I.balanceDue = I.balanceDue + I.provincialTax;
+                            //IM.UpdateCurrentInvoice(I);
                         }
                         UpdatePageTotals();
                         lblRefundSubTotalAmount.Text = "$ " + I.subTotal.ToString("#0.00");
@@ -397,11 +397,20 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 gvCurrentMOPs.DataSource = I.usedMops;
                 gvCurrentMOPs.DataBind();
+                double tx = 0;
+                if (I.chargeGST)
+                {
+                    tx += I.governmentTax;
+                }
+                if (I.chargePST)
+                {
+                    tx += I.provincialTax;
+                }
                 //Displays the remaining balance
-                lblRefundBalanceAmount.Text = "$ " + I.balanceDue.ToString("#0.00");
-                lblRemainingRefundDisplay.Text = "$ " + (I.balanceDue - dblAmountPaid).ToString("#0.00");
-                txtAmountRefunding.Text = (I.balanceDue - dblAmountPaid).ToString("#0.00");
-                buttonDisable(I.balanceDue - dblAmountPaid);
+                lblRefundBalanceAmount.Text = "$ " + (I.balanceDue + tx).ToString("#0.00");
+                lblRemainingRefundDisplay.Text = "$ " + ((I.balanceDue + tx) - dblAmountPaid).ToString("#0.00");
+                txtAmountRefunding.Text = ((I.balanceDue + tx) - dblAmountPaid).ToString("#0.00");
+                buttonDisable((I.balanceDue + tx) - dblAmountPaid);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
