@@ -197,8 +197,10 @@ namespace SweetSpotDiscountGolfPOS
         public List<Invoice> ReturnInvoice(string invoice)
         {
             string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, CAST(invoiceTime AS DATETIME) AS invoiceTime, "
-                + "custID, empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, governmentTax, "
-                + "provincialTax, balanceDue, transactionType, comments, chargeGST, chargePST FROM tbl_invoice WHERE "
+                + "custID, empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, "
+                + "CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END AS governmentTax, "
+                + "CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END AS provincialTax, "
+                + "balanceDue, transactionType, comments, chargeGST, chargePST FROM tbl_invoice WHERE "
                 + "invoiceNum = @invoiceNum AND invoiceSubNum = @invoiceSubNum";
 
             object[][] parms =
@@ -234,8 +236,10 @@ namespace SweetSpotDiscountGolfPOS
         {
             //TODO: Update ReturnCurrentInvoice
             string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, CAST(invoiceTime AS DATETIME) AS invoiceTime, "
-                + "custID, empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, governmentTax, "
-                + "provincialTax, balanceDue, transactionType, comments, chargeGST, chargePST FROM tbl_currentSalesInvoice "
+                + "custID, empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, "
+                + "CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END AS governmentTax, "
+                + "CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END AS provincialTax, "
+                + "balanceDue, transactionType, comments, chargeGST, chargePST FROM tbl_currentSalesInvoice "
                 + "WHERE invoiceNum = @invoiceNum AND invoiceSubNum = @invoiceSubNum";
 
             object[][] parms =
@@ -250,8 +254,10 @@ namespace SweetSpotDiscountGolfPOS
         public List<Invoice> ReturnCurrentPurchaseInvoice(string invoice)
         {
             string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, CAST(invoiceTime AS DATETIME) AS invoiceTime, "
-                + "custID, empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, governmentTax, "
-                + "provincialTax, balanceDue, transactionType, comments, chargeGST, chargePST FROM tbl_currentSalesInvoice "
+                + "custID, empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, "
+                + "CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END AS governmentTax, "
+                + "CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END AS provincialTax, "
+                + "balanceDue, transactionType, comments, chargeGST, chargePST FROM tbl_currentSalesInvoice "
                 + "WHERE invoiceNum = @invoiceNum AND invoiceSubNum = @invoiceSubNum";
 
             object[][] parms =
@@ -267,8 +273,10 @@ namespace SweetSpotDiscountGolfPOS
         {
             //TODO: Update ReturnCurrentOpenInvoice
             string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, CAST(invoiceTime AS DATETIME) AS invoiceTime, "
-                + "custID, empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, governmentTax, "
-                + "provincialTax, balanceDue, transactionType, comments, chargeGST, chargePST FROM tbl_currentSalesInvoice "
+                + "custID, empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, "
+                + "CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END AS governmentTax, "
+                + "CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END AS provincialTax, "
+                + "balanceDue, transactionType, comments, chargeGST, chargePST FROM tbl_currentSalesInvoice "
                 + "WHERE locationID = @locID";
 
             object[][] parms = 
@@ -282,8 +290,10 @@ namespace SweetSpotDiscountGolfPOS
         public List<Invoice> ReturnInvoiceByCustomers(int custNum)
         {
             string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, CAST(invoiceTime AS DATETIME) AS invoiceTime, "
-                + "custID, empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, governmentTax, "
-                + "provincialTax, balanceDue, transactionType, comments, chargeGST, chargePST FROM tbl_invoice WHERE custID = @custID";
+                + "custID, empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, "
+                + "CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END AS governmentTax, "
+                + "CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END AS provincialTax, "
+                + "balanceDue, transactionType, comments, chargeGST, chargePST FROM tbl_invoice WHERE custID = @custID";
 
             object[][] parms =
             {
@@ -300,8 +310,10 @@ namespace SweetSpotDiscountGolfPOS
             ArrayList strText = new ArrayList();
 
             string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, CAST(invoiceTime AS DATETIME) AS invoiceTime, "
-                + "custID, empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, governmentTax, "
-                + "provincialTax, balanceDue, transactionType, comments, chargeGST, chargePST FROM tbl_invoice WHERE (";
+                + "custID, empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, "
+                + "CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END AS governmentTax, "
+                + "CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END AS provincialTax, "
+                + "balanceDue, transactionType, comments, chargeGST, chargePST FROM tbl_invoice WHERE (";
 
             if (searchTxt != "")
             {
@@ -320,8 +332,7 @@ namespace SweetSpotDiscountGolfPOS
             else
             {
                 sqlCmd += " invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "') AND locationID = @locationID";
-            }
-            
+            }            
             object[][] parms =
             {
                 new object[] { "locationID", locationID }

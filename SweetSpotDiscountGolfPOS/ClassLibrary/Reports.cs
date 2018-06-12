@@ -53,8 +53,10 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         {
             //Gets a list of all invoices based on date and location. Stores in a list
             string sqlCmd = "SELECT tbl_invoice.invoiceNum, tbl_invoice.invoiceSubNum, custID, empID, subTotal, discountAmount, "
-                + "tradeinAmount, governmentTax, provincialTax, balanceDue, mopType, amountPaid FROM tbl_invoice inner join tbl_invoiceMOP on tbl_invoice.invoiceNum = tbl_invoiceMOP.invoiceNum "
-                + "and tbl_invoiceMOP.invoiceSubNum = tbl_invoice.invoiceSubNum  WHERE invoiceDate between @startDate and @endDate AND locationID = @locationID  ;";
+                + "tradeinAmount, CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END AS governmentTax, "
+                + "CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END AS provincialTax, balanceDue, mopType, amountPaid "
+                + "FROM tbl_invoice INNER JOIN tbl_invoiceMOP ON tbl_invoice.invoiceNum = tbl_invoiceMOP.invoiceNum "
+                + "AND tbl_invoiceMOP.invoiceSubNum = tbl_invoice.invoiceSubNum WHERE invoiceDate BETWEEN @startDate AND @endDate AND locationID = @locationID";
 
             object[][] parms =
             {
@@ -273,7 +275,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         {
             string sqlCmd = "SELECT SUM(tradeinAmount) AS tradeinTotal, "
                 + "SUM(subTotal) + SUM(shippingAmount) AS subTotal, "
-                + "SUM(governmentTax) AS gTax, SUM(provincialtax) AS pTax "
+                + "SUM(CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END) AS gTax, "
+                + "SUM(CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END) AS pTax "
                 + "FROM tbl_invoice WHERE invoiceDate = @startDate AND locationID = @locationID";
 
             object[][] parms =
@@ -2309,22 +2312,22 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                 "	else                                                                                                                                " +
                                 "        'No items found'                                                                                                               " +
                                 "end as 'Total Discount',                                                                                                               " +
-                                "ROUND(subTotal + (tradeInAmount * -1),2) as 'Pre-Tax',                                                                                                     " +
-                                "tbl_invoice.governmentTax,                                                                                                             " +
-                                "tbl_invoice.provincialTax,                                                                                                             " +
-                                "ROUND(tbl_invoice.balanceDue + (tradeInAmount * -1),2) as 'Post-Tax',                                                                                                  " +
+                                "ROUND(subTotal + (tradeInAmount * -1),2) as 'Pre-Tax',                                                                                 " +
+                                "CASE WHEN tbl_invoice.chargeGST = 1 THEN tbl_invoice.governmentTax ELSE 0 END AS governmentTax,                                       " +
+                                "CASE WHEN tbl_invoice.chargePST = 1 THEN tbl_invoice.provincialTax ELSE 0 END AS provincialTax,                                       " +
+                                "ROUND(tbl_invoice.balanceDue + (tradeInAmount * -1),2) as 'Post-Tax',                                                                  " +
                                 //"--COGS                                                                                                                               " +
                                 "case                                                                                                                                   " +
                                 "    when Exists(select tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum from tbl_invoiceItem where                            " +
                                 "            tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                    " +
                                 "            tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                            " +
-                                "            Cast((select sum(cost * quantity) from tbl_invoiceItem where                                                       " +
+                                "            Cast((select sum(cost * quantity) from tbl_invoiceItem where                                                               " +
                                 "                tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and                                                                " +
                                 "                tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                                 " +
                                 "    when Exists(select tbl_invoiceItemReturns.invoiceNum, tbl_invoiceItemReturns.invoiceSubNum from tbl_invoiceItemReturns where       " +
                                 "            tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                             " +
                                 "            tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) then                                                     " +
-                                "            Cast((select sum(cost * quantity) from tbl_invoiceItemReturns where                                                " +
+                                "            Cast((select sum(cost * quantity) from tbl_invoiceItemReturns where                                                        " +
                                 "                tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and                                                         " +
                                 "                tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum) as varchar)                                          " +
                                 "	else                                                                                                                                " +
@@ -2400,11 +2403,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             List<TaxReport> tr = new List<TaxReport>();
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
-            cmd.CommandText = "SELECT invoiceDate, locationID, sum(subTotal) AS subTotal, sum(shippingAmount) AS shippingAmount, "
-                            + "sum(discountAmount) AS discountAmount, sum(tradeInAmount) AS tradeInAmount, "
-                            + "sum(governmentTax) AS governmentTax, sum(provincialTax) AS provincialTax, "
-                            + "sum(balanceDue) AS balanceDue, transactionType FROM tbl_invoice "
-                            + "WHERE invoiceDate BETWEEN @dtmStartDate and @dtmEndDate "
+            cmd.CommandText = "SELECT invoiceDate, locationID, SUM(subTotal) AS subTotal, SUM(shippingAmount) AS shippingAmount, "
+                            + "SUM(discountAmount) AS discountAmount, SUM(tradeInAmount) AS tradeInAmount, "
+                            + "SUM(CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END) AS governmentTax, "
+                            + "SUM(CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END) AS provincialTax,"
+                            + "SUM(balanceDue) AS balanceDue, transactionType FROM tbl_invoice "
+                            + "WHERE invoiceDate BETWEEN @dtmStartDate AND @dtmEndDate "
                             + "GROUP BY invoiceDate, locationID, transactionType";
             cmd.Parameters.AddWithValue("@dtmStartDate", dtmStartDate);
             cmd.Parameters.AddWithValue("@dtmEndDate", dtmEndDate);
@@ -2620,7 +2624,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string sqlCmd = "SELECT cashoutDate, saleTradeIn, saleGiftCard, saleCash, "
                 + "saleDebit, saleMasterCard, saleVisa, receiptTradeIn, receiptGiftCard, "
                 + "receiptCash, receiptDebit, receiptMasterCard, receiptVisa, preTax, "
-                + "governmentTax, provincialTax, overShort FROM tbl_cashout WHERE "
+                + "CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END AS governmentTax, "
+                + "CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END AS provincialTax, "
+                + "overShort FROM tbl_cashout WHERE "
                 + "cashoutDate = @cashoutDate AND locationID = @locationID";
             object[][] parms =
             {
@@ -2814,6 +2820,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             exportInvoiceTable.Columns.Add("tradeinAmount", typeof(string));
             exportInvoiceTable.Columns.Add("governmentTax", typeof(string));
             exportInvoiceTable.Columns.Add("provincialTax", typeof(string));
+            exportInvoiceTable.Columns.Add("chargeGST", typeof(string));
+            exportInvoiceTable.Columns.Add("chargePST", typeof(string));
             exportInvoiceTable.Columns.Add("balanceDue", typeof(string));
             exportInvoiceTable.Columns.Add("transactionType", typeof(string));
             exportInvoiceTable.Columns.Add("comments", typeof(string));
@@ -2879,12 +2887,14 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 string tradeinAmount = reader["tradeinAmount"].ToString();
                 string governmentTax = reader["governmentTax"].ToString();
                 string provincialTax = reader["provincialTax"].ToString();
+                string chargeGST = reader["chargeGST"].ToString();
+                string chargePST = reader["chargePST"].ToString();
                 string balanceDue = reader["balanceDue"].ToString();
                 string transactionType = reader["transactionType"].ToString();
                 string comments = reader["comments"].ToString();
                 exportInvoiceTable.Rows.Add(invoiceNum, invoiceSubNum, invoiceDate, invioceTime,
                     custID, empID, locationID, subTotal, discountAmount,
-                    tradeinAmount, governmentTax, provincialTax, balanceDue, transactionType, comments);
+                    tradeinAmount, governmentTax, provincialTax, chargeGST, chargePST, balanceDue, transactionType, comments);
             }
             conn.Close();
         }

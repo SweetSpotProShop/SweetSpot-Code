@@ -1395,8 +1395,8 @@ namespace SweetShop
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             cmd.CommandText = "SELECT invoiceNum, invoiceSubNum, invoiceDate, Cast(invoiceTime as DATETIME) as invoiceTime, custID, empID, locationID, subTotal, discountAmount, "
-                + "tradeinAmount, governmentTax, provincialTax, balanceDue, transactionType, comments FROM tbl_invoice "
-                + "WHERE invoiceNum = @invoiceNum";
+                + "tradeinAmount, CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END AS governmentTax, CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END AS provincialTax, "
+                + "balanceDue, transactionType, comments FROM tbl_invoice WHERE invoiceNum = @invoiceNum";
             cmd.Parameters.AddWithValue("invoiceNum", invoiceID);
             cmd.Connection = con;
             con.Open();
@@ -1420,7 +1420,8 @@ namespace SweetShop
             InvoiceMOPsManager IMM = new InvoiceMOPsManager();
             SqlCommand cmd = new SqlCommand();
             cmd.CommandText = "SELECT invoiceNum, invoiceSubNum, invoiceDate, Cast(invoiceTime as DATETIME) as invoiceTime, custID, empID, locationID, subTotal, shippingAmount, "
-                + "discountAmount, tradeinAmount, governmentTax, provincialTax, balanceDue, transactionType, comments FROM tbl_invoice "
+                + "discountAmount, tradeinAmount, CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END AS governmentTax, "
+                + "CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END AS provincialTax, balanceDue, transactionType, comments FROM tbl_invoice "
                 + "WHERE invoiceNum = @invoiceNum and invoiceSubNum = @invoiceSubNum";
             cmd.Parameters.AddWithValue("invoiceNum", invoiceID);
             cmd.Parameters.AddWithValue("invoiceSubNum", invoiceSub);
@@ -1457,8 +1458,8 @@ namespace SweetShop
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             string selectStatement = "SELECT invoiceNum, invoiceSubNum, invoiceDate, Cast(invoiceTime as DATETIME) as invoiceTime, custID, empID, locationID, subTotal, discountAmount, "
-                + "tradeinAmount, governmentTax, provincialTax, balanceDue, transactionType, comments FROM tbl_invoice "
-                + "WHERE (";
+                + "tradeinAmount, CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END AS governmentTax, CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END AS provincialTax, "
+                + "balanceDue, transactionType, comments FROM tbl_invoice WHERE (";
             int firstCust = Enumerable.First(customerNum);
             //Loops through the customer IDs
             foreach (var num in customerNum)
@@ -1611,7 +1612,8 @@ namespace SweetShop
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             cmd.CommandText = "SELECT invoiceNum, invoiceSubNum, invoiceDate, custID, empID, locationID, subTotal, discountAmount, "
-                + "tradeinAmount, governmentTax, provincialTax, balanceDue FROM tbl_invoice "
+                + "tradeinAmount, CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END AS governmentTax, "
+                + "CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END AS provincialTax, balanceDue FROM tbl_invoice "
                 + "WHERE invoiceDate between @startDate AND @endDate";
             cmd.Parameters.AddWithValue("startDate", startDate);
             cmd.Parameters.AddWithValue("endDate", endDate);
@@ -1672,8 +1674,10 @@ namespace SweetShop
             SqlConnection conn = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = conn;
-            cmd.CommandText = "Select subTotal, shippingAmount, discountAmount, tradeinAmount, governmentTax, provincialTax " +
-                "FROM " + table + " Where invoiceNum = @invoiceNum and invoiceSubNum = @invoiceSubNum";
+            cmd.CommandText = "Select subTotal, shippingAmount, discountAmount, tradeinAmount, "
+                + "CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END AS governmentTax, "
+                + "CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END AS provincialTax "
+                + "FROM " + table + " Where invoiceNum = @invoiceNum and invoiceSubNum = @invoiceSubNum";
             cmd.Parameters.AddWithValue("invoiceNum", invoiceNum);
             cmd.Parameters.AddWithValue("invoiceSubNum", invoiceSubNum);
             conn.Open();
@@ -1783,7 +1787,8 @@ namespace SweetShop
             cmd.CommandText = "SELECT tbl_invoice.invoiceNum, tbl_invoice.invoiceSubNum, tbl_invoice.invoiceDate," +
                 " Cast(tbl_invoice.invoiceTime as DATETIME) as invoiceTime, tbl_invoice.custID, tbl_invoice.empID," +
                 " tbl_invoice.locationID, tbl_invoice.subTotal, tbl_invoice.discountAmount, " +
-                " tbl_invoice.tradeinAmount, tbl_invoice.governmentTax, tbl_invoice.provincialTax, " +
+                " tbl_invoice.tradeinAmount, CASE WHEN tbl_invoice.chargeGST = 1 THEN tbl_invoice.governmentTax ELSE 0 END AS governmentTax, "
+                + "CASE WHEN tbl_invoice.chargePST = 1 THEN tbl_invoice.provincialTax ELSE 0 END AS provincialTax " +
                 " tbl_invoice.balanceDue, tbl_invoice.transactionType, tbl_invoice.comments FROM tbl_invoice " +
                 " inner join tbl_invoiceItem on " +
                 " tbl_invoice.invoiceNum = tbl_invoiceItem.invoiceNum " +
@@ -1811,7 +1816,9 @@ namespace SweetShop
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             cmd.CommandText = "SELECT invoiceNum, invoiceSubNum, invoiceDate, Cast(invoiceTime as DATETIME) as invoiceTime, custID, "
-                            + "empID, locationID, subTotal, discountAmount, tradeinAmount, governmentTax, provincialTax, balanceDue, "
+                            + "empID, locationID, subTotal, discountAmount, tradeinAmount, "
+                            + "CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END AS governmentTax, "
+                            + "CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END AS provincialTax, balanceDue, "
                             + "transactionType, comments from tbl_invoice where custID = @custID";
             cmd.Parameters.AddWithValue("@custID", custID);
             cmd.Connection = con;

@@ -62,7 +62,7 @@ namespace SweetSpotDiscountGolfPOS
                         lblGSTDisplay.Text = invoices.governmentTax.ToString("#0.00");
                         lblPSTDisplay.Text = invoices.provincialTax.ToString("#0.00");
                         lblSubtotalDisplay.Text = invoices.subTotal.ToString("#0.00");
-                        lblTotalPaidDisplay.Text = invoices.balanceDue.ToString("#0.00");
+                        lblTotalPaidDisplay.Text = (invoices.balanceDue + invoices.governmentTax + invoices.provincialTax).ToString("#0.00");
 
                         object[] amounts = IM.ReturnTotalsForTenderAndChange(invoices);
                         lblTenderDisplay.Text = Convert.ToDouble(amounts[0]).ToString("#0.00");

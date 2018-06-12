@@ -30,7 +30,12 @@
             <asp:BoundField DataField="subTotal" ReadOnly="true" HeaderText="Subtotal" DataFormatString="{0:C}" />
             <asp:BoundField DataField="governmentTax" ReadOnly="true" HeaderText="Government Tax" DataFormatString="{0:C}" />
             <asp:BoundField DataField="provincialTax" ReadOnly="true" HeaderText="Provincial Tax" DataFormatString="{0:C}" />
-            <asp:BoundField DataField="balanceDue" ReadOnly="true" HeaderText="Balance Paid" DataFormatString="{0:C}" />
+            <asp:TemplateField HeaderText="Balance Due">
+                <ItemTemplate>
+                    <asp:Label ID="lblBalanceDue" Text='<%# (Convert.ToDouble(Eval("balanceDue")) + Convert.ToDouble(Eval("governmentTax")) + Convert.ToDouble(Eval("provincialTax"))).ToString("C") %>' runat="server" />
+                </ItemTemplate>
+            </asp:TemplateField>
+            <%--<asp:BoundField DataField="balanceDue" ReadOnly="true" HeaderText="Balance Paid" DataFormatString="{0:C}" />--%>
             <asp:BoundField DataField="mopType" ReadOnly="true" HeaderText="MOP Type" />
             <asp:BoundField DataField="amountPaid" ReadOnly="true" HeaderText="MOP Amount" DataFormatString="{0:C}" />
         </Columns>

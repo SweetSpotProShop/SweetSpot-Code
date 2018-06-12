@@ -1001,9 +1001,9 @@ namespace SweetSpotProShop
             //+ ", '" + date + "', '" + time + "', "
             cmd.CommandText = "Insert Into tbl_invoice (invoiceNum, invoiceSubNum, invoiceDate, invoiceTime, custID, empID, locationID, "
                 + "subTotal, shippingAmount, discountAmount, tradeinAmount, governmentTax, provincialTax, balanceDue, "
-                + "transactionType, comments) values(@invoiceNum, @invoiceSubNum, @invoiceDate, @invoiceTime, @custID, "
+                + "transactionType, comments, chargeGST, chargePST) values(@invoiceNum, @invoiceSubNum, @invoiceDate, @invoiceTime, @custID, "
                 + "@empID, @locationID, @subtotal, @shippingAmount, @discountAmount, @tradeinAmount, @governmentTax, "
-                + "@provincialTax, @balanceDue, @transactionType, @comments);";
+                + "@provincialTax, @balanceDue, @transactionType, @comments, @chargeGST, @chargePST);";
 
             //"update tbl_invoice set " +
             //    "invoiceSubNum = @invoiceSubNum, " +
@@ -1032,17 +1032,19 @@ namespace SweetSpotProShop
             cmd.Parameters.AddWithValue("shippingAmount", ckm.dblShipping);
             cmd.Parameters.AddWithValue("discountAmount", ckm.dblDiscounts);
             cmd.Parameters.AddWithValue("tradeinAmount", ckm.dblTradeIn);
-            double gTax = 0;
-            //If the GST is included, set it's value to the checkoutmanager GST value otherwise it stays at 0
-            if (ckm.blGst) { gTax = ckm.dblGst; }
-            cmd.Parameters.AddWithValue("governmentTax", gTax);
-            double pTax = 0;
-            //If the GST is included, set it's value to the checkoutmanager GST value otherwise it stays at 0
-            if (ckm.blPst) { pTax = ckm.dblPst; }
-            cmd.Parameters.AddWithValue("provincialTax", pTax);
+            //double gTax = 0;
+            ////If the GST is included, set it's value to the checkoutmanager GST value otherwise it stays at 0
+            //if (ckm.blGst) { gTax = ckm.dblGst; }
+            cmd.Parameters.AddWithValue("governmentTax", ckm.dblGst);
+            //double pTax = 0;
+            ////If the GST is included, set it's value to the checkoutmanager GST value otherwise it stays at 0
+            //if (ckm.blPst) { pTax = ckm.dblPst; }
+            cmd.Parameters.AddWithValue("provincialTax", ckm.dblPst);
             cmd.Parameters.AddWithValue("balanceDue", ckm.dblBalanceDue);
             cmd.Parameters.AddWithValue("transactionType", transactionType);
             cmd.Parameters.AddWithValue("comments", comments);
+            cmd.Parameters.AddWithValue("chargeGST", ckm.blGst);
+            cmd.Parameters.AddWithValue("chargePST", ckm.blPst);
             conn.Open();
             SqlDataReader reader = cmd.ExecuteReader();
             //while (reader.Read())
