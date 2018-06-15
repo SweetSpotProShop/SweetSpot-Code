@@ -93,12 +93,12 @@ namespace SweetShop
         public string invoice { get; set; }
         public double totalCost { get; set; }
         public bool percentage { get; set; }
-        public double totalProfit { get; set; }
+        public string totalProfit { get; set; }
         public string locationName { get; set; }
         public int customerID { get; set; }
         public int employeeID { get; set; }
         public int locationID { get; set; }
-        public Invoice(string I, double tc, double td, bool p, double tp, double tpf)
+        public Invoice(string I, double tc, double td, bool p, double tp, string tpf)
         {
             invoice = I;
             totalCost = tc;

@@ -429,7 +429,7 @@ namespace SweetSpotDiscountGolfPOS
                 new object[] { "@tradeinAmount", I.tradeinAmount },
                 new object[] { "@governmentTax", I.governmentTax },
                 new object[] { "@provincialTax", I.provincialTax },
-                new object[] { "@balanceDue", I.balanceDue },
+                new object[] { "@balanceDue", I.balanceDue + I.shippingAmount },
                 new object[] { "@transactionType", 1 },
                 new object[] { "@comments", comments },
                 new object[] { "@chargeGST", I.chargeGST},
