@@ -50,7 +50,6 @@ namespace SweetSpotDiscountGolfPOS
                         ddlLocation.DataValueField = "locationID";
                         ddlLocation.DataBind();
                         ddlLocation.SelectedValue = CU.location.locationID.ToString();
-
                     }
                     if (CU.jobID != 0)
                     {
@@ -117,20 +116,19 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnCashOutReport_Click";
             try
             {
-
                 ////NEED TO UPDATE THIS FOR NEW CASHOUT REPORTING
                 ////THIS WILL SHOW A LIST OF THE CASHOUTS THAT CAN THEN BE
                 ////EDITED AND THEN FINALIZED
                 //Stores report dates into Session
-                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
                 int indicator = R.CashoutsProcessed(repInfo);
                 ////Check to see if there are sales first
                 if (indicator == 0)
                 {
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                    nameValues.Set("from", calStartDate.SelectedDate.ToShortDateString());
-                    nameValues.Set("to", calEndDate.SelectedDate.ToShortDateString());
+                    nameValues.Set("from", dtm[0].ToString());
+                    nameValues.Set("to", dtm[1].ToString());
                     nameValues.Set("location", ddlLocation.SelectedValue.ToString());
                     Response.Redirect("ReportsCashOut.aspx?" + nameValues, false);
                 }
@@ -158,7 +156,7 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Stores report dates into Session
-                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 Object[] repInfo = new Object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
                 int indicator = R.verifyPurchasesMade(repInfo);
                 //Check to see if there are sales first
@@ -192,7 +190,7 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnTesting_Click";
             try
             {
-                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 Object[] passing = new Object[2] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
                 Session["reportInfo"] = passing;
                 Response.Redirect("ReportsTaxes.aspx", false);
@@ -216,7 +214,7 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnCOGSvsPMReport_Click";
             try
             {
-                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 Object[] passing = new Object[2] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
                 Session["reportInfo"] = passing;
 
@@ -241,7 +239,7 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnItemsSold_Click";
             try
             {
-                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 Object[] passing = new Object[2] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
                 Session["reportInfo"] = passing;
                 Response.Redirect("ReportsItemsSold.aspx", false);
@@ -265,7 +263,7 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnMostSold_Click";
             try
             {
-                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 Object[] passing = new Object[2] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
                 Session["reportInfo"] = passing;
                 Response.Redirect("ReportsMostSold.aspx", false);
@@ -290,7 +288,7 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Stores report dates into Session
-                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 Object[] passing = new Object[2] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
                 Session["reportInfo"] = passing;
                 //Changes to the Reports Cash Out page
@@ -315,7 +313,7 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Stores report dates into Session
-                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 Object[] repInfo = new Object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
                 int indicator = R.verifySalesHaveBeenMade(repInfo);
                 //Check to see if there are sales first
@@ -348,7 +346,7 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Stores report dates into Session
-                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 Object[] repInfo = new Object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
                 int indicator = R.verifySalesHaveBeenMade(repInfo);
                 //Check to see if there are sales first
@@ -381,7 +379,7 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Stores report dates into Session
-                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 int loc = Convert.ToInt32(ddlLocation.SelectedValue);
                 Object[] repInfo = new Object[] { dtm, loc };
                 int indicator = R.verifyTradeInsHaveBeenMade(repInfo);
@@ -458,8 +456,9 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnExtensiveInvoice_Click";
             try
             {
-                //Stores report dates into Session
-                DateTime[] dtm = new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+
+                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
+
                 int loc = Convert.ToInt32(ddlLocation.SelectedValue);
                 Object[] repInfo = new Object[] { dtm, loc };
                 int indicator = R.verifySalesHaveBeenMade(repInfo);
@@ -510,6 +509,16 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
                 //Server.Transfer(prevPage, false);
             }
+        }
+
+        protected DateTime[] getDateRange(DateTime startDate, DateTime endDate)
+        {
+            if (ddlDatePeriod.SelectedItem.Text.Equals("Day"))
+            { return new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate }; }
+            else if (ddlDatePeriod.SelectedItem.Text.Equals("Week"))
+            { return new DateTime[2] { calStartDate.SelectedDate.GetWeekStart(), calEndDate.SelectedDate.GetWeekEnd() }; }
+            else
+            { return new DateTime[2] { calStartDate.SelectedDate.GetMonthStart(), calEndDate.SelectedDate.GetMonthEnd() }; }            
         }
     }
 }

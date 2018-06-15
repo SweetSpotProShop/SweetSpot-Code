@@ -2558,6 +2558,36 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return cashout;
         }
 
+
+
+        //******************STORE STATS REPORT***********************
+        public object[] returnStoreStats(DateTime startDate, DateTime endDate)
+        {
+            object[] dataTables = {
+                1,
+                2,
+                3,
+                4};
+            return dataTables;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
         public System.Data.DataTable ReturnCashoutsForSelectedDates(object[] passing)
         {
             string sqlCmd = "SELECT cashoutDate, locationID, saleTradeIn, receiptTradeIn, saleGiftCard, "

@@ -45,6 +45,18 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
+                        <asp:Label runat="server" Text="Select date type:"/>                        
+                    </asp:TableCell>
+                    <asp:TableCell>
+                        <asp:DropDownList ID="ddlDatePeriod" runat="server" AutoPostBack="true">
+                            <asp:ListItem Text="Day" Value="1" selected="True"/>
+                            <asp:ListItem Text="Week" Value="2" />
+                            <asp:ListItem Text="Month" Value="3" />
+                        </asp:DropDownList>
+                    </asp:TableCell>
+                </asp:TableRow>
+                <asp:TableRow>
+                    <asp:TableCell>
                         <asp:Calendar ID="calStartDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest" Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="184px" Width="200px" OnSelectionChanged="calStart_SelectionChanged">
                             <DayHeaderStyle BackColor="#5FD367" Font-Bold="True" Font-Size="7pt" />
                             <NextPrevStyle VerticalAlign="Bottom" />
