@@ -31,7 +31,6 @@ namespace SweetSpotDiscountGolfPOS
         int locationID;
         double tCost;
         double tPrice;
-        double tProfit;
         List<Invoice> inv = new List<Invoice>();
 
         protected void Page_Load(object sender, EventArgs e)
@@ -176,7 +175,6 @@ namespace SweetSpotDiscountGolfPOS
                     }
                     tCost += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "totalCost"));
                     tPrice += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "balanceDue"));
-                    tProfit += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "totalProfit"));
                 }
                 else if (e.Row.RowType == DataControlRowType.Footer)
                 {
@@ -236,7 +234,7 @@ namespace SweetSpotDiscountGolfPOS
                         cogsExport.Cells[recordIndex, 4].Style.Numberformat.Format = "0.0";
 
 
-                        cogsExport.Cells[recordIndex, 5].Value = i.totalProfit.ToString("#.##") + "%";
+                        cogsExport.Cells[recordIndex, 5].Value = i.totalProfit.ToString() + "%";
                         recordIndex++;
                     }                 
                     

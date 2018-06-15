@@ -21,7 +21,6 @@ namespace SweetSpotDiscountGolfPOS
         Reports R = new Reports();
 
 
-
         SweetShopManager ssm = new SweetShopManager();
         ItemDataUtilities idu = new ItemDataUtilities();
         LocationManager l = new LocationManager();

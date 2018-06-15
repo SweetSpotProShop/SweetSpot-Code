@@ -44,6 +44,7 @@ namespace SweetSpotDiscountGolfPOS
                         if (!IM.ReturnBolInvoiceExists(Request.QueryString["inv"].ToString()))
                         {
                             I.invoiceSub = Convert.ToInt32((Request.QueryString["inv"].ToString()).Split('-')[2]);
+                            I.shippingAmount = 0;
                             I.subTotal = 0;
                             I.discountAmount = 0;
                             I.tradeinAmount = 0;
