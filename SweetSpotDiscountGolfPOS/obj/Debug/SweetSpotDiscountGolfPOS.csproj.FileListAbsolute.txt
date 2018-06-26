@@ -595,10 +595,10 @@ C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\bin\EPPlus
 C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
 C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\bin\EPPlus.xml
 C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.csprojResolveAssemblyReference.cache
 C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.csproj.CoreCompileInputs.cache
 C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.csproj.CopyComplete
 C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.dll
 C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.pdb
 C:\Users\Voltron\Desktop\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.csprojAssemblyReference.cache
 C:\Users\Voltron\Desktop\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.csproj.CopyComplete
+C:\Users\tyler\Desktop\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.csprojAssemblyReference.cache

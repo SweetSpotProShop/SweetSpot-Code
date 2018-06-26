@@ -487,7 +487,6 @@ namespace SweetSpotDiscountGolfPOS
                 //Server.Transfer(prevPage, false);
             }
         }
-
         protected void btnCostOfInventory_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -509,16 +508,41 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
                 //Server.Transfer(prevPage, false);
             }
-        }
+        }       
 
+        protected void btnStoreStatsReport_Click(object sender, EventArgs e)
+        {
+            //Collects current method and page for error tracking
+            string method = "btnStoreStatsReport";
+            try
+            {
+                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
+                Object[] passing = new Object[2] { dtm, ddlDatePeriod.SelectedItem.Text.ToString() };
+                Session["reportInfo"] = passing;
+                Response.Redirect("ReportsStoreStats.aspx", false);
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
         protected DateTime[] getDateRange(DateTime startDate, DateTime endDate)
         {
             if (ddlDatePeriod.SelectedItem.Text.Equals("Day"))
             { return new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate }; }
+            else if (ddlDatePeriod.SelectedItem.Text.Equals("Default"))
+            { return new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate }; }
             else if (ddlDatePeriod.SelectedItem.Text.Equals("Week"))
             { return new DateTime[2] { calStartDate.SelectedDate.GetWeekStart(), calEndDate.SelectedDate.GetWeekEnd() }; }
             else
-            { return new DateTime[2] { calStartDate.SelectedDate.GetMonthStart(), calEndDate.SelectedDate.GetMonthEnd() }; }            
+            { return new DateTime[2] { calStartDate.SelectedDate.GetMonthStart(), calEndDate.SelectedDate.GetMonthEnd() }; }
         }
     }
 }

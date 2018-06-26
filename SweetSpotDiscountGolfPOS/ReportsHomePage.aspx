@@ -49,7 +49,8 @@
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:DropDownList ID="ddlDatePeriod" runat="server" AutoPostBack="true">
-                            <asp:ListItem Text="Day" Value="1" selected="True"/>
+                            <asp:ListItem Text="Default" Value="0" Selected="True" />
+                            <asp:ListItem Text="Day" Value="1" />
                             <asp:ListItem Text="Week" Value="2" />
                             <asp:ListItem Text="Month" Value="3" />
                         </asp:DropDownList>
@@ -125,6 +126,11 @@
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Button ID="btnCostOfInventory" runat="server" Text="Cost of Inventory" Width="200px" OnClick="btnCostOfInventory_Click" />
+                        </asp:TableCell>
+                    </asp:TableRow>
+                    <asp:TableRow>
+                        <asp:TableCell>
+                            <asp:Button ID="btnStoreStatsReport" runat="server" Text="Store Stats Report" Width="200px" OnClick="btnStoreStatsReport_Click" />
                         </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>

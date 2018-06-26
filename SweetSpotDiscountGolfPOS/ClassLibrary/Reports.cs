@@ -2606,14 +2606,91 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
 
         //******************STORE STATS REPORT***********************
-        public object[] returnStoreStats(DateTime startDate, DateTime endDate)
+        public System.Data.DataTable returnStoreStats(DateTime startDate, DateTime endDate, int timeFrame)
         {
-            object[] dataTables = {
-                1,
-                2,
-                3,
-                4};
-            return dataTables;
+            System.Data.DataTable stats = new System.Data.DataTable();
+
+            object[][] parms =
+            {
+                new object[] { "@startDate", startDate },
+                new object[] { "@endDate", endDate }
+            };
+            if (timeFrame == 1)
+            {
+                string dailyStats = "SELECT " +
+                                        "YEAR(tbl_invoice.invoiceDate) AS invoiceYear, " +
+                                        "DATENAME(month, '1900/' + CAST(MONTH(tbl_invoice.invoiceDate) AS VARCHAR(2)) + '/01') AS monthName, " +
+                                        "tbl_invoice.invoiceDate as date, " +
+                                        "(Select city from tbl_location where locationID = tbl_invoice.locationID) as cityName, " +
+                                        "Round(SUM(CASE WHEN tbl_invoice.chargeGST = 1 THEN tbl_invoice.governmentTax ELSE 0 END), 2) AS governmentTax, " +
+                                        "Round(SUM(CASE WHEN tbl_invoice.chargePST = 1 THEN tbl_invoice.provincialTax ELSE 0 END), 2) AS provincialTax, " +
+                                        "(SELECT cogs.COGS FROM(SELECT YEAR(G.invoiceDate) AS invoiceYear, G.invoiceDate as invoiceDay, SUM(G.soldCogs) AS COGS, G.locationID FROM( " +
+                                            "SELECT i.invoiceDate, i.locationID, ROUND(SUM(II.cost* II.quantity), 2) AS soldCogs, 1 AS sal FROM tbl_invoice i JOIN tbl_invoiceItem II ON II.invoiceNum = i.invoiceNum AND II.invoiceSubNum = i.invoiceSubNum GROUP BY i.invoiceDate, i.locationID " +
+                                            "UNION ALL SELECT i.invoiceDate, i.locationID, ROUND(SUM(IR.cost * IR.quantity), 2) AS returnCogs, 0 AS ret FROM tbl_invoice i JOIN tbl_invoiceItemReturns IR ON IR.invoiceNum = i.invoiceNum AND IR.invoiceSubNum = i.invoiceSubNum GROUP BY i.invoiceDate, i.locationID) AS G " +
+                                            "GROUP BY locationID, YEAR(G.invoiceDate),G.invoiceDate) AS cogs " +
+                                            "WHERE cogs.locationID = tbl_invoice.locationID AND cogs.invoiceYear = YEAR(tbl_invoice.invoiceDate) AND cogs.invoiceDay = tbl_invoice.invoiceDate) AS totalCOGS, " +
+                                        "(Select ROUND(AVG(pm.pm), 2) from(SELECT ROUND(((((tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount)) - (select sum(cost * quantity) from tbl_invoiceItem where tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum)) / (NULLIF(tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount), 0))) *100),2)  " +
+                                            "AS pm, tbl_invoice.invoiceDate as iDate, YEAR(tbl_invoice.invoiceDate) as iYear, tbl_invoice.locationID, tbl_invoice.invoiceDate FROM tbl_invoice " +
+                                            "UNION ALL SELECT ROUND(((((tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount)) - (select sum(cost * quantity) from tbl_invoiceItemReturns where tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum)) / (NULLIF(tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount), 0))) *100),2) " +
+                                            "AS pm, tbl_invoice.invoiceDate, YEAR(tbl_invoice.invoiceDate), tbl_invoice.locationID, tbl_invoice.invoiceDate FROM tbl_invoice) AS pm WHERE pm.locationID = tbl_invoice.locationID AND pm.iYear = YEAR(tbl_invoice.invoiceDate) AND pm.iDate = tbl_invoice.invoiceDate " +
+                                            "Group by pm.invoiceDate, YEAR(pm.invoiceDate), pm.locationID) AS averageProfitMargin, " +
+                                        "ROUND(SUM(tbl_invoice.balanceDue + (CASE WHEN tbl_invoice.chargeGST = 1 THEN tbl_invoice.governmentTax ELSE 0 END) + (CASE WHEN tbl_invoice.chargePST = 1 THEN tbl_invoice.provincialTax ELSE 0 END) + (tradeInAmount * -1)),2) as sales " +
+                                    "from tbl_invoice where tbl_invoice.invoiceDate BETWEEN @startDate AND @endDate " +
+                                    "group by tbl_invoice.invoiceDate, YEAR(tbl_invoice.invoiceDate), tbl_invoice.locationID " +
+                                    "order by invoiceYear asc";
+                stats = dbc.returnDataTableData(dailyStats, parms);
+            }
+            else if( timeFrame == 2)
+            {
+                string weeklyStats = "SELECT " +
+                                        "YEAR(tbl_invoice.invoiceDate) AS invoiceYear, " +
+                                        "DATENAME(month, '1900/' + CAST(MONTH(tbl_invoice.invoiceDate) AS VARCHAR(2)) + '/01') AS monthName, " +
+                                        "(select dateadd(week, DatePart(wk, tbl_invoice.invoiceDate), dateadd(year, YEAR(tbl_invoice.invoiceDate) - 1900, 0)) - 4 - datepart(dw, dateadd(week, DatePart(wk, tbl_invoice.invoiceDate), dateadd(year, YEAR(tbl_invoice.invoiceDate) - 1900, 0)) - 4) + 1) AS date, " +
+                                        "(Select city from tbl_location where locationID = tbl_invoice.locationID) as cityName, " +
+                                        "Round(SUM(CASE WHEN tbl_invoice.chargeGST = 1 THEN tbl_invoice.governmentTax ELSE 0 END), 2) AS governmentTax, " +
+                                        "Round(SUM(CASE WHEN tbl_invoice.chargePST = 1 THEN tbl_invoice.provincialTax ELSE 0 END), 2) AS provincialTax, " +
+                                            "(SELECT cogs.COGS FROM(SELECT YEAR(G.invoiceDate) AS invoiceYear, MONTH(G.invoiceDate) as invoiceMonth, DATEPART(wk, G.invoiceDate) AS invoiceWeek, SUM(G.soldCogs) AS COGS, G.locationID FROM( " +
+                                            "SELECT i.invoiceDate, i.locationID, ROUND(SUM(II.cost* II.quantity), 2) AS soldCogs, 1 AS sal FROM tbl_invoice i JOIN tbl_invoiceItem II ON II.invoiceNum = i.invoiceNum AND II.invoiceSubNum = i.invoiceSubNum GROUP BY i.invoiceDate, i.locationID " +
+                                            "UNION ALL SELECT i.invoiceDate, i.locationID, ROUND(SUM(IR.cost * IR.quantity), 2) AS returnCogs, 0 AS ret FROM tbl_invoice i JOIN tbl_invoiceItemReturns IR ON IR.invoiceNum = i.invoiceNum AND IR.invoiceSubNum = i.invoiceSubNum GROUP BY i.invoiceDate, i.locationID) AS G " +
+                                            "GROUP BY DATEPART(wk, G.invoiceDate), locationID, YEAR(G.invoiceDate), MONTH(G.invoiceDate)) AS cogs " +
+                                            "WHERE cogs.invoiceWeek = DATEPART(wk, tbl_invoice.invoiceDate) AND cogs.locationID = tbl_invoice.locationID AND cogs.invoiceYear = YEAR(tbl_invoice.invoiceDate) AND cogs.invoiceMonth = MONTH(tbl_invoice.invoiceDate)) AS totalCOGS, " +
+                                        "(Select ROUND(AVG(pm.pm), 2) from(SELECT ROUND(((((tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount)) - (select sum(cost * quantity) from tbl_invoiceItem where tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum)) / (NULLIF(tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount), 0))) *100),2) " +
+                                            "AS pm, DATEPART(wk, tbl_invoice.invoiceDate) as iWeek, MONTH(tbl_invoice.invoiceDate) as iMonth, YEAR(tbl_invoice.invoiceDate) as iYear, tbl_invoice.locationID, tbl_invoice.invoiceDate FROM tbl_invoice " +
+                                            "UNION ALL SELECT ROUND(((((tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount)) - (select sum(cost * quantity) from tbl_invoiceItemReturns where tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum)) / (NULLIF(tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount), 0))) *100),2) " +
+                                            "AS pm, DATEPART(wk, tbl_invoice.invoiceDate), MONTH(tbl_invoice.invoiceDate), YEAR(tbl_invoice.invoiceDate), tbl_invoice.locationID, tbl_invoice.invoiceDate FROM tbl_invoice) AS pm WHERE pm.iWeek = DATEPART(wk, tbl_invoice.invoiceDate) AND pm.locationID = tbl_invoice.locationID AND pm.iYear = YEAR(tbl_invoice.invoiceDate) AND pm.iMonth = MONTH(tbl_invoice.invoiceDate) Group by DATEPART(wk, pm.invoiceDate), MONTH(pm.invoiceDate), YEAR(pm.invoiceDate), pm.locationID) AS averageProfitMargin, " +
+                                        "ROUND(SUM(tbl_invoice.balanceDue + (CASE WHEN tbl_invoice.chargeGST = 1 THEN tbl_invoice.governmentTax ELSE 0 END) + (CASE WHEN tbl_invoice.chargePST = 1 THEN tbl_invoice.provincialTax ELSE 0 END) + (tradeInAmount * -1)),2) as sales " +
+                                    "from tbl_invoice where tbl_invoice.invoiceDate BETWEEN @startDate AND @endDate " +
+                                    "group by DatePart(wk, tbl_invoice.invoiceDate), MONTH(tbl_invoice.invoiceDate), YEAR(tbl_invoice.invoiceDate), tbl_invoice.locationID " +
+                                    "order by date asc, CityName asc";
+                stats = dbc.returnDataTableData(weeklyStats, parms);
+            }
+            else
+            {
+                string monthlyStats = "SELECT " +
+                                    "MONTH(tbl_invoice.invoiceDate) AS invoiceMonth, " +
+                                    "YEAR(tbl_invoice.invoiceDate) AS invoiceYear, " +
+                                    "DATENAME(month, '1900/' + CAST(MONTH(tbl_invoice.invoiceDate) AS VARCHAR(2)) + '/01') AS monthName, " +
+                                    "DATENAME(month, '1900/' + CAST(MONTH(tbl_invoice.invoiceDate) AS VARCHAR(2)) + '/01') AS date, " +
+                                    "(Select city from tbl_location where locationID = tbl_invoice.locationID) as cityName, " +
+                                    "Round(SUM(CASE WHEN tbl_invoice.chargeGST = 1 THEN tbl_invoice.governmentTax ELSE 0 END), 2) AS governmentTax, " +
+                                    "Round(SUM(CASE WHEN tbl_invoice.chargePST = 1 THEN tbl_invoice.provincialTax ELSE 0 END), 2) AS provincialTax, " +
+                                    "(SELECT cogs.COGS FROM(SELECT YEAR(G.invoiceDate) AS invoiceYear, MONTH(G.invoiceDate) as invoiceMonth, SUM(G.soldCogs) AS COGS, G.locationID FROM( " +
+                                        "SELECT i.invoiceDate, i.locationID, ROUND(SUM(II.cost* II.quantity), 2) AS soldCogs, 1 AS sal FROM tbl_invoice i JOIN tbl_invoiceItem II ON II.invoiceNum = i.invoiceNum AND II.invoiceSubNum = i.invoiceSubNum GROUP BY i.invoiceDate, i.locationID " +
+                                        "UNION ALL SELECT i.invoiceDate, i.locationID, ROUND(SUM(IR.cost * IR.quantity), 2) AS returnCogs, 0 AS ret FROM tbl_invoice i JOIN tbl_invoiceItemReturns IR ON IR.invoiceNum = i.invoiceNum AND IR.invoiceSubNum = i.invoiceSubNum GROUP BY i.invoiceDate, i.locationID) AS G " +
+                                        "GROUP BY locationID, YEAR(G.invoiceDate), MONTH(G.invoiceDate)) AS cogs " +
+                                        "WHERE cogs.locationID = tbl_invoice.locationID AND cogs.invoiceYear = YEAR(tbl_invoice.invoiceDate) AND cogs.invoiceMonth = MONTH(tbl_invoice.invoiceDate)) AS totalCOGS, " +
+                                    "(Select ROUND(AVG(pm.pm), 2) from(SELECT ROUND(((((tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount)) - (select sum(cost * quantity) from tbl_invoiceItem where tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum)) / (NULLIF(tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount), 0))) *100),2) " +
+                                        "AS pm, MONTH(tbl_invoice.invoiceDate) as iMonth, YEAR(tbl_invoice.invoiceDate) as iYear, tbl_invoice.locationID, tbl_invoice.invoiceDate FROM tbl_invoice " +
+                                        "UNION ALL SELECT ROUND(((((tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount)) - (select sum(cost * quantity) from tbl_invoiceItemReturns where tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum)) / (NULLIF(tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount), 0))) *100),2) " +
+                                        "AS pm, MONTH(tbl_invoice.invoiceDate), YEAR(tbl_invoice.invoiceDate), tbl_invoice.locationID, tbl_invoice.invoiceDate FROM tbl_invoice) AS pm WHERE pm.locationID = tbl_invoice.locationID AND pm.iYear = YEAR(tbl_invoice.invoiceDate) AND pm.iMonth = MONTH(tbl_invoice.invoiceDate) " +
+                                        "Group by MONTH(pm.invoiceDate), YEAR(pm.invoiceDate), pm.locationID) AS averageProfitMargin, " +
+                                    "ROUND(SUM(tbl_invoice.balanceDue + (CASE WHEN tbl_invoice.chargeGST = 1 THEN tbl_invoice.governmentTax ELSE 0 END) + (CASE WHEN tbl_invoice.chargePST = 1 THEN tbl_invoice.provincialTax ELSE 0 END) + (tradeInAmount * -1)),2) as sales " +
+                                    "from tbl_invoice where tbl_invoice.invoiceDate BETWEEN @startDate AND @endDate " +
+                                    "group by MONTH(tbl_invoice.invoiceDate), YEAR(tbl_invoice.invoiceDate), tbl_invoice.locationID " +
+                                    "order by invoiceYear asc";
+                stats = dbc.returnDataTableData(monthlyStats, parms);
+            }
+            return stats;
         }
 
 

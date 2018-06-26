@@ -45,6 +45,19 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
+                        <asp:Label runat="server" Text="Select date type:"/>                        
+                    </asp:TableCell>
+                    <asp:TableCell>
+                        <asp:DropDownList ID="ddlDatePeriod" runat="server" AutoPostBack="true">
+                            <asp:ListItem Text="Default" Value="0" Selected="True" />
+                            <asp:ListItem Text="Day" Value="1" />
+                            <asp:ListItem Text="Week" Value="2" />
+                            <asp:ListItem Text="Month" Value="3" />
+                        </asp:DropDownList>
+                    </asp:TableCell>
+                </asp:TableRow>
+                <asp:TableRow>
+                    <asp:TableCell>
                         <asp:Calendar ID="calStartDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest" Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="184px" Width="200px" OnSelectionChanged="calStart_SelectionChanged">
                             <DayHeaderStyle BackColor="#5FD367" Font-Bold="True" Font-Size="7pt" />
                             <NextPrevStyle VerticalAlign="Bottom" />
@@ -113,6 +126,11 @@
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Button ID="btnCostOfInventory" runat="server" Text="Cost of Inventory" Width="200px" OnClick="btnCostOfInventory_Click" />
+                        </asp:TableCell>
+                    </asp:TableRow>
+                    <asp:TableRow>
+                        <asp:TableCell>
+                            <asp:Button ID="btnStoreStatsReport" runat="server" Text="Store Stats Report" Width="200px" OnClick="btnStoreStatsReport_Click" />
                         </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>
