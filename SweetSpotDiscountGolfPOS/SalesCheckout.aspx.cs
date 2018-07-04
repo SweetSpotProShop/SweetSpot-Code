@@ -485,6 +485,7 @@ namespace SweetSpotDiscountGolfPOS
                         {
                             //Stores all the Sales data to the database
                             Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                            I.employee = EM.returnEmployeeFromPassword(Convert.ToInt32(txtEmployeePasscode.Text))[0];
                             IM.FinalizeInvoice(I, txtComments.Text, "tbl_invoiceItem");
                             string printableInvoiceNum = Request.QueryString["inv"].ToString().Split('-')[1] + "-" + Request.QueryString["inv"].ToString().Split('-')[2];
                             var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());

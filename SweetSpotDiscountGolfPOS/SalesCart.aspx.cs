@@ -502,6 +502,7 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnProceedToCheckout_Click";
             try
             {
+                UpdateInvoiceTotal();
                 lblInvalidQty.Visible = false;
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("cust", Request.QueryString["cust"].ToString());

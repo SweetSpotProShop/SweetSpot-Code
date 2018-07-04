@@ -405,22 +405,18 @@ namespace SweetShop
             //Returns the job name
             return job;
         }
-        //public int returnEmployeeIDFromPassword(int empPassword)
-        //{
-        //    int empID = 0;
-        //    SqlConnection conn = new SqlConnection(connectionString);
-        //    SqlCommand cmd = new SqlCommand();
-        //    cmd.Connection = conn;
-        //    cmd.CommandText = "SELECT empID FROM tbl_userInfo Where password = @empPassword";
-        //    cmd.Parameters.AddWithValue("empPassword", empPassword);
-        //    conn.Open();
-        //    SqlDataReader reader = cmd.ExecuteReader();
-        //    while (reader.Read())
-        //    {
-        //        empID = Convert.ToInt32(reader["empID"]);
-        //    }
-        //    conn.Close();
-        //    return empID;
-        //}
+        public List<Employee> returnEmployeeFromPassword(int empPassword)
+        {
+            string sqlCmd = "SELECT e.empID, e.firstName, e.lastName, e.jobID, e.locationID, e.email, "
+                + "e.primaryContactINT, e.secondaryContactINT, e.primaryAddress, e.secondaryAddress, "
+                + "e.city, e.provStateID, e.countryID, e.postZip FROM tbl_employee e JOIN tbl_userInfo u "
+                + "ON u.empID = e.empID Where u.password = @empPassword";
+            object[][] parms =
+            {
+                new object[] { "empPassword", empPassword }
+            };
+
+            return ConvertFromDataTableToEmployee(dbc.returnDataTableData(sqlCmd, parms));
+        }
     }
 }
