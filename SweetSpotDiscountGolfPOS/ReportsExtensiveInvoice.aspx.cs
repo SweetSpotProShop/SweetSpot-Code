@@ -279,7 +279,10 @@ namespace SweetSpotDiscountGolfPOS
                     invoicesExport.Cells[recordIndex + 1, 9].Value = cogs.ToString();
                     invoicesExport.Cells[recordIndex + 1, 10].Value = revenue.ToString();
 
-                    invoicesExport.Cells[recordIndex + 1, 11].Value = (margin / marginCounter).ToString();
+                    double profitMargin = (revenue / preTax) * 100;
+                    invoicesExport.Cells[recordIndex + 1, 11].Value = profitMargin.ToString();
+
+
                     invoicesExport.Cells[recordIndex + 1, 12].Value = payment.ToString();
 
                     Response.Clear();

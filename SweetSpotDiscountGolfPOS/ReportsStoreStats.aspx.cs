@@ -25,7 +25,8 @@ namespace SweetSpotDiscountGolfPOS
         double gTax = 0;
         double pTax = 0;
         double cogs = 0;
-        double sales = 0;
+        double salesPrT = 0;
+        double salesPoT = 0;
         int counter = 0;
         double pm = 0;
         double avp = 0;
@@ -99,7 +100,8 @@ namespace SweetSpotDiscountGolfPOS
             Label lblProvTax = (Label)e.Row.FindControl("lblProvTax");
             Label lblCOGS = (Label)e.Row.FindControl("lblCOGS");
             Label lblAverageProfitMargin = (Label)e.Row.FindControl("lblAverageProfitMargin");
-            Label lblSales = (Label)e.Row.FindControl("lblSales");
+            Label lblSalesPreTax = (Label)e.Row.FindControl("lblSalesPreTax");
+            Label lblSalesPostTax = (Label)e.Row.FindControl("lblSalesPostTax");
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
                 if (lblGovTax.Text.isNumber())
@@ -123,10 +125,15 @@ namespace SweetSpotDiscountGolfPOS
                     lblAverageProfitMargin.Text = lblAverageProfitMargin.Text + "%";
                     counter++;
                 }
-                if (lblSales.Text.isNumber())
+                if (lblSalesPreTax.Text.isNumber())
                 {
-                    sales += Convert.ToDouble(lblSales.Text);
-                    lblSales.Text = "$" + lblSales.Text;
+                    salesPrT += Convert.ToDouble(lblSalesPreTax.Text);
+                    lblSalesPreTax.Text = "$" + lblSalesPreTax.Text;
+                }
+                if (lblSalesPostTax.Text.isNumber())
+                {
+                    salesPoT += Convert.ToDouble(lblSalesPostTax.Text);
+                    lblSalesPostTax.Text = "$" + lblSalesPostTax.Text;
                 }
             }
             else if (e.Row.RowType == DataControlRowType.Footer)
@@ -135,14 +142,16 @@ namespace SweetSpotDiscountGolfPOS
                 Label lblProvTaxTotal = (Label)e.Row.FindControl("lblProvTaxTotal");
                 Label lblCOGSTotal = (Label)e.Row.FindControl("lblCOGSTotal");
                 Label lblAverageProfitMarginTotal = (Label)e.Row.FindControl("lblAverageProfitMarginTotal");
-                Label lblSalesTotal = (Label)e.Row.FindControl("lblSalesTotal");
+                Label lblSalesPreTaxTotal = (Label)e.Row.FindControl("lblSalesPreTaxTotal");
+                Label lblSalesPostTaxTotal = (Label)e.Row.FindControl("lblSalesPostTaxTotal");
 
                 lblGovTaxTotal.Text = "$" + Math.Round(gTax, 2).ToString();
                 lblProvTaxTotal.Text = "$" + Math.Round(pTax, 2).ToString();
                 lblCOGSTotal.Text = "$" + Math.Round(cogs, 2).ToString();
                 avp = (pm / counter);
                 lblAverageProfitMarginTotal.Text = Math.Round(avp, 2).ToString() + "%";
-                lblSalesTotal.Text = "$" + Math.Round(sales, 2).ToString();
+                lblSalesPreTaxTotal.Text = "$" + Math.Round(salesPrT, 2).ToString();
+                lblSalesPostTaxTotal.Text = "$" + Math.Round(salesPoT, 2).ToString();
             }
         }
         protected void btnDownload_Click(object sender, EventArgs e)
@@ -177,7 +186,8 @@ namespace SweetSpotDiscountGolfPOS
                     statsExport.Cells[2, 6 - rowAdjust].Value = "Provincial Tax";
                     statsExport.Cells[2, 7 - rowAdjust].Value = "Total COGS";
                     statsExport.Cells[2, 8 - rowAdjust].Value = "Average Profit Margin";
-                    statsExport.Cells[2, 9 - rowAdjust].Value = "Sales";
+                    statsExport.Cells[2, 9 - rowAdjust].Value = "Sales Pre-Tax";
+                    statsExport.Cells[2, 10 - rowAdjust].Value = "Sales Post-Tax";
                     int recordIndex = 3;
                     foreach (DataRow row in stats.Rows)
                     {                       
@@ -193,6 +203,7 @@ namespace SweetSpotDiscountGolfPOS
                             statsExport.Cells[recordIndex, 7].Value = row[6].ToString();
                             statsExport.Cells[recordIndex, 8].Value = row[7].ToString();
                             statsExport.Cells[recordIndex, 9].Value = row[8].ToString();
+                            statsExport.Cells[recordIndex, 10].Value = row[9].ToString();
                         }
                         else
                         {
@@ -203,7 +214,8 @@ namespace SweetSpotDiscountGolfPOS
                             statsExport.Cells[recordIndex, 6 - rowAdjust].Value = row[6].ToString(); //PTax
                             statsExport.Cells[recordIndex, 7 - rowAdjust].Value = row[7].ToString(); //COGS
                             statsExport.Cells[recordIndex, 8 - rowAdjust].Value = row[8].ToString(); //AVP
-                            statsExport.Cells[recordIndex, 9 - rowAdjust].Value = row[9].ToString(); //Sale
+                            statsExport.Cells[recordIndex, 9 - rowAdjust].Value = row[9].ToString(); //Sale pre
+                            statsExport.Cells[recordIndex, 10 - rowAdjust].Value = row[10].ToString(); //Sale pos
                         }
                         
                            
@@ -215,7 +227,8 @@ namespace SweetSpotDiscountGolfPOS
                     statsExport.Cells[recordIndex + 1, 6 - rowAdjust].Value = pTax.ToString();
                     statsExport.Cells[recordIndex + 1, 7 - rowAdjust].Value = cogs.ToString();
                     statsExport.Cells[recordIndex + 1, 8 - rowAdjust].Value = avp.ToString();
-                    statsExport.Cells[recordIndex + 1, 9 - rowAdjust].Value = sales.ToString();
+                    statsExport.Cells[recordIndex + 1, 9 - rowAdjust].Value = salesPrT.ToString();
+                    statsExport.Cells[recordIndex + 1, 10 - rowAdjust].Value = salesPoT.ToString();
                     Response.Clear();
                     Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
                     Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
