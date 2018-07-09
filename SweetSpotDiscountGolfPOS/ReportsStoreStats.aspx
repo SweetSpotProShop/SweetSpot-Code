@@ -81,12 +81,20 @@
                         <asp:Label ID="lblAverageProfitMarginTotal" runat="server"></asp:Label>
                     </FooterTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Sales">
+                    <asp:TemplateField HeaderText="Sales Pre-Tax">
                         <ItemTemplate>
-                            <asp:Label ID="lblSales" runat="server" Text='<%#Eval("sales")%>'></asp:Label>
+                            <asp:Label ID="lblSalesPreTax" runat="server" Text='<%#Eval("salespretax")%>'></asp:Label>
                         </ItemTemplate>
                         <FooterTemplate>
-                        <asp:Label ID="lblSalesTotal" runat="server"></asp:Label>
+                        <asp:Label ID="lblSalesPreTaxTotal" runat="server"></asp:Label>
+                    </FooterTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Sales Post-Tax">
+                        <ItemTemplate>
+                            <asp:Label ID="lblSalesPostTax" runat="server" Text='<%#Eval("salesposttax")%>'></asp:Label>
+                        </ItemTemplate>
+                        <FooterTemplate>
+                        <asp:Label ID="lblSalesPostTaxTotal" runat="server"></asp:Label>
                     </FooterTemplate>
                     </asp:TemplateField>
                 </Columns>
