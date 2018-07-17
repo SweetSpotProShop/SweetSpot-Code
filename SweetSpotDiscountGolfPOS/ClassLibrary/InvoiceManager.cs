@@ -611,6 +611,7 @@ namespace SweetSpotDiscountGolfPOS
             };
             ExecuteNonReturnCall(sqlCmd, parms);
         }
+	//used in new POS
         public int ReturnNextInvoiceNumber()
         {
             string sqlCmd = "SELECT invoiceNum FROM tbl_InvoiceNumbers";
@@ -621,6 +622,7 @@ namespace SweetSpotDiscountGolfPOS
             //Returns the next invoiceNum
             return nextInvoiceNum;
         }
+	//used in new POS
         private void CreateInvoiceNum(int invNum)
         {
             string sqlCmd = "UPDATE tbl_InvoiceNumbers SET invoiceNum = @invNum";
