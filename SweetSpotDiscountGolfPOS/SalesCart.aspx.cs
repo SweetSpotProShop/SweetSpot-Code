@@ -542,11 +542,9 @@ namespace SweetSpotDiscountGolfPOS
                     }
                 }
                 int currentQty = Convert.ToInt32(((Label)grdInventorySearched.Rows[index].Cells[2].FindControl("QuantityInOrder")).Text);
-                if (quantity > currentQty)
+                if (quantity > currentQty || quantity < 1)
                 {
                     lblInvalidQty.Visible = true;
-                    lblInvalidQty.Text = "Quantity Exceeds the Remaining Inventory";
-                    lblInvalidQty.ForeColor = System.Drawing.Color.Red;
                 }
                 else
                 {

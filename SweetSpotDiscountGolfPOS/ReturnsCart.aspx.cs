@@ -151,11 +151,9 @@ namespace SweetSpotDiscountGolfPOS
                             returnQuantity = Convert.ToInt32(quantityForReturn);
                         }
                     }
-                    if (returnQuantity > quantitySold)
+                    if (returnQuantity > quantitySold || returnQuantity < 1)
                     {
                         lblInvalidQty.Visible = true;
-                        lblInvalidQty.Text = "Quantity Exceeds the Quantity Sold";
-                        lblInvalidQty.ForeColor = System.Drawing.Color.Red;
                     }
                     else
                     {
