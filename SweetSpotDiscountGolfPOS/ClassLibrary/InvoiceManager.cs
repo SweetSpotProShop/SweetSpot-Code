@@ -277,7 +277,7 @@ namespace SweetSpotDiscountGolfPOS
                 + "CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END AS governmentTax, "
                 + "CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END AS provincialTax, "
                 + "balanceDue, transactionType, comments, chargeGST, chargePST FROM tbl_currentSalesInvoice "
-                + "WHERE locationID = @locID";
+                + "WHERE locationID = @locID AND transactionType = 1";
 
             object[][] parms = 
             {

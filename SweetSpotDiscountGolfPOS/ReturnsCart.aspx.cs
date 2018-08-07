@@ -51,6 +51,7 @@ namespace SweetSpotDiscountGolfPOS
                             I.balanceDue = 0;
                             I.location = CU.location;
                             I.employee = CU.emp;
+                            I.transactionType = 2;
                             IM.CreateInitialTotalsForTable(I);
                         }
                         lblCustomerDisplay.Text = I.customer.firstName.ToString() + " " + I.customer.lastName.ToString();
