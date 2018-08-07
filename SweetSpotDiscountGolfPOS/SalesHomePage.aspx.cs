@@ -135,6 +135,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Check to see if there are sales first
                 if (indicator == 0)
                 {
+                    R.removeUnprocessedReturns(CU.location.locationID, calSearchDate.SelectedDate);
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                     nameValues.Set("dtm", calSearchDate.SelectedDate.ToShortDateString());
                     nameValues.Set("location", CU.location.locationID.ToString());

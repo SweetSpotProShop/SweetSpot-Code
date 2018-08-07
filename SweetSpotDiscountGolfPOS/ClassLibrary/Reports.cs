@@ -191,7 +191,18 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             return bolOT;
         }
-
+        public void removeUnprocessedReturns(int location, DateTime dtm)
+        {
+            string sqlCmd = "DELETE tbl_currentSalesInvoice WHERE invoiceDate BETWEEN @startDate AND @endDate "
+                        + "AND locationID = @locationID";
+            object[][] parms =
+            {
+                new object[] { "@startDate", dtm.ToString("yyyy-MM-dd") },
+                new object[] { "@endDate", dtm.ToString("yyyy-MM-dd") },
+                new object[] { "@locationID", location }
+            };
+            dbc.executeInsertQuery(sqlCmd, parms);
+        }
 
         //This method connects to the database and gets the totals for the MOPs based on location and dates
         public List<Mops> SumOfMOPSBasedOnLocationAndDateRange(object[] repInfo)
