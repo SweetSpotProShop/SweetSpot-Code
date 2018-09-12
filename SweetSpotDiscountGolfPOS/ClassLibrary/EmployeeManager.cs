@@ -82,31 +82,40 @@ namespace SweetShop
         public List<Employee> ReturnEmployeeBasedOnText(string searchText)
         {
             ArrayList strText = new ArrayList();
+            ArrayList parms = new ArrayList();
             string sqlCmd = "";
             for (int i = 0; i < searchText.Split(' ').Length; i++)
             {
-                strText.Add(searchText.Split(' ')[i]);
+                strText.Add("%" + searchText.Split(' ')[i] + "%");
                 if (i == 0)
                 {
                     sqlCmd = "SELECT empID, firstName, lastName, jobID, locationID, email, primaryContactINT, "
                         + "secondaryContactINT, primaryAddress, secondaryAddress, city, provStateID, countryID, "
-                        + "postZip FROM tbl_employee WHERE CAST(empID AS VARCHAR) LIKE '%" + strText[i]
-                        + "%' OR CONCAT(firstName, lastName) LIKE '%" + strText[i]
-                        + "%' OR CONCAT(primaryContactINT, secondaryContactINT) LIKE '%" + strText[i]
-                        + "%' OR email LIKE '%" + strText[i] + "%'";
+                        + "postZip FROM tbl_employee WHERE CAST(empID AS VARCHAR) LIKE @parm1" + i
+                        + " OR CONCAT(firstName, lastName) LIKE @parm2" + i
+                        + " OR CONCAT(primaryContactINT, secondaryContactINT) LIKE @parm3" + i
+                        + " OR email LIKE @parm4" + i + "";
+                    parms.Add("@parm1" + i);
+                    parms.Add("@parm2" + i);
+                    parms.Add("@parm3" + i);
+                    parms.Add("@parm4" + i);
                 }
                 else
                 {
                     sqlCmd += " INTERSECT (SELECT empID, firstName, lastName, jobID, locationID, email, primaryContactINT, "
                         + "secondaryContactINT, primaryAddress, secondaryAddress, city, provStateID, countryID, postZip "
-                        + "FROM tbl_employee WHERE CAST(empID AS VARCHAR) LIKE '%" + strText[i]
-                        + "%' OR CONCAT(firstName, lastName) LIKE '%" + strText[i]
-                        + "%' OR CONCAT(primaryContactINT, secondaryContactINT) LIKE '%" + strText[i]
-                        + "%' OR email LIKE '%" + strText[i] + "%')";
+                        + "FROM tbl_employee WHERE CAST(empID AS VARCHAR) LIKE @parm1" + i
+                        + " OR CONCAT(firstName, lastName) LIKE @parm2" + i
+                        + " OR CONCAT(primaryContactINT, secondaryContactINT) LIKE @parm3" + i
+                        + " OR email LIKE @parm4" + i + ")";
+                    parms.Add("@parm1" + i);
+                    parms.Add("@parm2" + i);
+                    parms.Add("@parm3" + i);
+                    parms.Add("@parm4" + i);
                 }
             }
-            sqlCmd += " order by firstName asc";
-            List<Employee> employee = ConvertFromDataTableToEmployee(dbc.returnDataTableData(sqlCmd));
+            sqlCmd += " ORDER BY firstName ASC";
+            List<Employee> employee = ConvertFromDataTableToEmployee(dbc.returnDataTableDataFromArrayLists(sqlCmd, parms, strText));
             return employee;
         }
         public int AddEmployee(Employee em)

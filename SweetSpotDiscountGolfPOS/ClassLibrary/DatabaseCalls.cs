@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
@@ -95,6 +96,35 @@ namespace SweetSpotDiscountGolfPOS
             con.Open();
             cmd.ExecuteNonQuery();
             con.Close();
+        }
+        //search has a 0 and 1
+        //parms has 0,1,2,3 and 4,5,6,7
+        public System.Data.DataTable returnDataTableDataFromArrayLists(string sqlCmd, ArrayList parms, ArrayList search)
+        {
+            System.Data.DataTable dt = new System.Data.DataTable();
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandText = sqlCmd;
+            int searchTimes = 0;
+            int parmsTimes = 0;
+            while (search.Count > searchTimes)
+            {
+                cmd.Parameters.AddWithValue(parms[parmsTimes].ToString(), search[searchTimes]);
+                parmsTimes++;
+                cmd.Parameters.AddWithValue(parms[parmsTimes].ToString(), search[searchTimes]);
+                parmsTimes++;
+                cmd.Parameters.AddWithValue(parms[parmsTimes].ToString(), search[searchTimes]);
+                parmsTimes++;
+                cmd.Parameters.AddWithValue(parms[parmsTimes].ToString(), search[searchTimes]);
+                parmsTimes++;
+                searchTimes++;
+            }
+            cmd.Connection = con;
+
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            da.Fill(dt);
+            //Returns a datatable
+            return dt;
         }
     }
 }

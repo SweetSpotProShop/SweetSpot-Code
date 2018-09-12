@@ -114,6 +114,7 @@
     <Content Include="ReportsCostOfInventory.aspx" />
     <Content Include="ReportsDiscounts.aspx" />
     <Content Include="ReportsCashOut.aspx" />
+    <Content Include="ReportsSpecificApparel.aspx" />
     <Content Include="ReportsStoreStats.aspx" />
     <Content Include="SalesCashOut.aspx" />
     <Content Include="ReportsExtensiveInvoice.aspx" />
@@ -293,6 +294,13 @@
     </Compile>
     <Compile Include="ReportsCashOut.aspx.designer.cs">
       <DependentUpon>ReportsCashOut.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ReportsSpecificApparel.aspx.cs">
+      <DependentUpon>ReportsSpecificApparel.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ReportsSpecificApparel.aspx.designer.cs">
+      <DependentUpon>ReportsSpecificApparel.aspx</DependentUpon>
     </Compile>
     <Compile Include="ReportsStoreStats.aspx.cs">
       <DependentUpon>ReportsStoreStats.aspx</DependentUpon>
