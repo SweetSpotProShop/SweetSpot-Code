@@ -47,6 +47,26 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             connectionString = ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString;
         }
 
+        //Report Tracking
+        public void CallReportLogger(object[] reportLog)
+        {
+            logReportCall(reportLog);
+        }
+        private void logReportCall(object[] reportLog)
+        {
+            string sqlCmd = "INSERT INTO tbl_reportView VALUES(@reportID, "
+                + "@dateClicked, @timeClicked, @employeeID, @locationID)";
+            object[][] parms =
+            {
+                new object[] { "@reportID", Convert.ToInt32(reportLog[0]) },
+                new object[] { "@dateClicked", DateTime.Now.ToString("yyyy-MM-dd") },
+                new object[] { "@timeClicked", DateTime.Now.ToString("HH:mm:ss") },
+                new object[] { "@employeeID", Convert.ToInt32(reportLog[1]) },
+                new object[] { "@locationID", Convert.ToInt32(reportLog[2]) }
+            };
+            dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms);
+        }
+
         //*******************HOME PAGE SALES*******************************************************
         //Nathan built for home page sales display
         public System.Data.DataTable getInvoiceBySaleDate(DateTime startDate, DateTime endDate, int locationID)
@@ -535,16 +555,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //                        "select top 10 sku as 'tempSKU', amountSold as 'tempAmountSold' from #temp order by amountSold desc; " +
             //                        "drop table #temp; ";
 
-            string query = "SELECT TOP (10) II.sku, SUM(II.quantity) AS 'amount sold' FROM tbl_invoiceItem II "
+            string query = "SELECT TOP (10) II.sku, SUM(II.quantity) AS amountSold FROM tbl_invoiceItem II "
                 + "JOIN tbl_invoice I ON I.invoiceNum = II.invoiceNum AND I.invoiceSubNum = II.invoiceSubNum "
                 + "WHERE II.sku NOT IN(SELECT sku FROM tbl_tempTradeInCartSkus) AND "
                 + "I.invoiceDate BETWEEN @startDate AND @endDate AND I.locationID = @locationID "
-                + "GROUP BY sku ORDER BY 'amount sold' DESC";
+                + "GROUP BY sku ORDER BY amountSold DESC";
 
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
             //Creating the datatable
-            System.Data.DataTable dt = new System.Data.DataTable(); dt.Columns.Add("sku"); dt.Columns.Add("amountSold");
+            System.Data.DataTable dt = new System.Data.DataTable();
             using (cmd = new SqlCommand(query, con))
             using (var da = new SqlDataAdapter(cmd))
             {
@@ -554,14 +574,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 //Filling the table with what is found
                 da.Fill(dt);
             }
-
-
-            System.Data.DataTable data = new System.Data.DataTable(); data.Columns.Add("sku"); data.Columns.Add("amountSold");
-            foreach (DataRow row in dt.Rows)
-            {
-                data.Rows.Add(row[2].ToString(), row[3].ToString());
-            }
-            return data;
+            return dt;
         }
         public System.Data.DataTable mostSoldBrandsReport(DateTime startDate, DateTime endDate, int locationID)
         {
@@ -634,7 +647,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 + "(SELECT modelName FROM tbl_model WHERE modelID = (SELECT modelID FROM tbl_clubs WHERE sku = IIT.sku)) WHEN(SELECT modelName FROM tbl_model WHERE modelID = (SELECT modelID FROM tbl_accessories WHERE sku = IIT.sku)) IS NOT NULL THEN "
                 + "(SELECT modelName FROM tbl_model WHERE modelID = (SELECT modelID FROM tbl_accessories WHERE sku = IIT.sku)) ELSE '' END AS 'model' FROM tbl_invoiceItem IIT "
                 + "JOIN tbl_invoice I ON I.invoiceNum = IIT.invoiceNum AND I.invoiceSubNum = IIT.invoiceSubNum) M ON M.invoiceNum = II.invoiceNum AND M.invoiceSubNum = II.invoiceSubNum "
-                + "WHERE II.sku NOT IN(SELECT sku FROM tbl_tempTradeInCartSkus) AND I.invoiceDate BETWEEN '2018-06-14' AND '2018-06-14' AND I.locationID = 0 GROUP BY model ORDER BY 'amount sold' DESC";
+                + "WHERE II.sku NOT IN(SELECT sku FROM tbl_tempTradeInCartSkus) AND I.invoiceDate BETWEEN @startDate AND @endDate AND I.locationID = @locationID GROUP BY model ORDER BY 'amount sold' DESC";
 
             System.Data.DataTable dt = new System.Data.DataTable();
             dt.Columns.Add("model");
@@ -779,43 +792,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
 
         //******************COGS and PM REPORTING*******************************************************
+        //Clean SQL command so it's not here and in the correct DBC
         public List<Invoice> returnInvoicesForCOGS(DateTime startDate, DateTime endDate, int locationID)
         {
             //This method returns a type of invoice for a report
             List<Invoice> inv = new List<Invoice>();
             SqlConnection con = new SqlConnection(connectionString);
             SqlCommand cmd = new SqlCommand();
-            //cmd.CommandText = "select " +
-            //                    "Concat(tbl_invoiceItem.invoiceNum, '-', tbl_invoiceItem.invoiceSubNum) as 'invoice', " +
-            //                    "SUM(tbl_invoiceItem.itemCost) as 'totalCost', SUM(tbl_invoiceItem.itemDiscount) as 'totalDiscount', " +
-            //                    "tbl_invoiceItem.percentage, SUM(tbl_invoiceItem.itemPrice) as 'totalPrice',  " +
-            //                    "CASE WHEN percentage = 1 then sum(((tbl_invoiceItem.itemPrice - (tbl_invoiceItem.itemPrice * tbl_invoiceItem.itemDiscount) / 100)) - tbl_invoiceItem.itemCost) " +
-            //                    "ELSE sum((tbl_invoiceItem.itemPrice - tbl_invoiceItem.itemDiscount) - tbl_invoiceItem.itemCost) " +
-            //                    "END as 'totalProfit' from tbl_invoiceItem inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum " +
-            //                    "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns) " +
-            //                    "and tbl_invoice.locationID = @locationID and tbl_invoice.invoiceDate between @startDate and @endDate " +
-            //                    "group by tbl_invoiceItem.invoiceNum,  tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.percentage order by tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum";
-            //cmd.CommandText = "Select " +
-            //                    "Concat(tbl_invoiceItem.invoiceNum, '-', tbl_invoiceItem.invoiceSubNum) as 'invoice', " +
-            //                    "SUM(tbl_invoiceItem.price) as 'totalPrice',  " +
-            //                    "SUM(tbl_invoiceItem.cost) as 'totalCost', " +
-            //                    "SUM(tbl_invoiceItem.itemDiscount) as 'totalDiscount', " +
-            //                    "tbl_invoiceItem.percentage, " +
-            //                    "CASE " +
-            //                    "    WHEN percentage = 1 and SUM(tbl_invoiceItem.price) <> 0 then " +
-            //                    "        sum(((tbl_invoiceItem.price - (tbl_invoiceItem.price * tbl_invoiceItem.itemDiscount) / 100)) - tbl_invoiceItem.cost) / SUM(tbl_invoiceItem.price) * 100 " +
-            //                    "    WHEN percentage = 0 and SUM(tbl_invoiceItem.price) <> 0 then " +
-            //                    "        sum((tbl_invoiceItem.price - tbl_invoiceItem.itemDiscount) - tbl_invoiceItem.cost) / SUM(tbl_invoiceItem.price) * 100 " +
-            //                    "    WHEN percentage = 1 and SUM(tbl_invoiceItem.price) = 0 then " +
-            //                    "        sum(((tbl_invoice.subTotal - (tbl_invoice.subTotal * tbl_invoiceItem.itemDiscount) / 100)) - tbl_invoiceItem.cost) " +
-            //                    "    WHEN percentage = 0 and SUM(tbl_invoiceItem.price) = 0 then " +
-            //                    "        sum((tbl_invoice.subTotal - tbl_invoiceItem.itemDiscount) - tbl_invoiceItem.cost) " +
-            //                    "END as 'totalProfit' " +
-            //                    "from tbl_invoiceItem inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum " +
-            //                    "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns) " +
-            //                    "and tbl_invoice.locationID = @locationID and tbl_invoice.invoiceDate between @startDate and @endDate " +
-            //                    "group by tbl_invoiceItem.invoiceNum,  tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.percentage, tbl_invoice.subTotal " +
-            //                    "order by tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum ";
             cmd.CommandText = "SELECT CONCAT(I.invoiceNum, '-', I.invoiceSubNum) AS 'invoice', II.totalPrice, II.totalCost, II.totalDiscount, II.percentage, "
                 + "CASE WHEN II.percentage = 1 AND II.totalPrice <> 0 THEN CAST(ROUND((((II.totalPrice - (II.totalPrice * II.totalDiscount) / 100) - II.totalCost) / II.totalPrice) * 100, 2) AS varchar) "
                 + "WHEN II.percentage = 0 AND II.totalPrice <> 0 THEN CAST(ROUND(((II.totalPrice - II.totalDiscount - II.totalCost) / II.totalPrice) * 100, 2) AS varchar) "
@@ -841,87 +824,33 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             con.Close();
             return inv;
         }
-        public double returnCOGSCost(DateTime startDate, DateTime endDate, int locationID)
+        public int verifyInvoicesCompleted(object[] repInfo)
         {
-            //This method returns the total cost of the inventory sold
-            double tCost = 0;
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-
-            cmd.CommandText = "select sum(tbl_invoiceItem.cost) as 'cost' from tbl_invoiceItem " +
-                                "inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum " +
-                                "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) " +
-                                "and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns) " +
-                                "and tbl_invoice.locationID = @locationID and tbl_invoice.invoiceDate between @startDate and @endDate ";
-            cmd.Parameters.AddWithValue("@startDate", startDate);
-            cmd.Parameters.AddWithValue("@endDate", endDate);
-            cmd.Parameters.AddWithValue("@locationID", locationID);
-            cmd.Connection = con;
-            con.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
+            int indicator = 0;
+            if (!invoicesCompleted(repInfo))
             {
-                tCost = Convert.ToDouble(reader["cost"]);
+                indicator = 1;
             }
-            con.Close();
-            return tCost;
+            return indicator;
         }
-        public double returnCOGSPrice(DateTime startDate, DateTime endDate, int locationID)
+        private bool invoicesCompleted(object[] repInfo)
         {
-            //This method returns the total price/sold at of the inventory sold
-            double tPrice = 0;
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
+            bool bolData = false;
+            DateTime[] dtm = (DateTime[])repInfo[0];
 
-            cmd.CommandText = "select sum(tbl_invoiceItem.price) as 'price' from tbl_invoiceItem " +
-                                "inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum " +
-                                "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) " +
-                                "and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns) " +
-                                "and tbl_invoice.locationID = @locationID and tbl_invoice.invoiceDate between @startDate and @endDate ";
-            cmd.Parameters.AddWithValue("@startDate", startDate);
-            cmd.Parameters.AddWithValue("@endDate", endDate);
-            cmd.Parameters.AddWithValue("@locationID", locationID);
-            cmd.Connection = con;
-            con.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
+            string sqlCmd = "SELECT COUNT(invoiceNum) FROM tbl_invoice WHERE locationID "
+                + "= @locationID AND (invoiceDate BETWEEN @dtmStartDate AND @dtmEndDate)";
+            object[][] parms =
             {
-                tPrice = Convert.ToDouble(reader["price"]);
-            }
-            con.Close();
-            return tPrice;
-        }
-        public double returnCOGSProfitMargin(DateTime startDate, DateTime endDate, int locationID)
-        {
-            //This method returns the total price/sold at of the inventory sold
-            double pm = 0;
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-
-            cmd.CommandText = "create table #temp(invoiceNum int, math float, CONSTRAINT PK_key PRIMARY KEY (invoiceNum, math)) " +
-                                "insert into #temp  " +
-                                "select tbl_invoiceItem.invoiceNum,  " +
-                                "CASE WHEN tbl_invoiceItem.percentage = 1 then sum(((tbl_invoiceItem.price -(tbl_invoiceItem.price * tbl_invoiceItem.itemDiscount) / 100)) -tbl_invoiceItem.cost)   " +
-                                "ELSE sum((tbl_invoiceItem.price -tbl_invoiceItem.itemDiscount) -tbl_invoiceItem.cost) END AS 'math' from tbl_invoiceItem  " +
-                                "inner join tbl_invoice on tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum  " +
-                                "where tbl_invoiceItem.sku not in (select sku from tbl_tempTradeInCartSkus) and tbl_invoiceItem.invoiceNum not in(select invoiceNum from tbl_invoiceItemReturns)  " +
-                                "and tbl_invoice.locationID = @locationID and tbl_invoice.invoiceDate between @startDate and @endDate  " +
-                                "group by tbl_invoiceItem.invoiceNum, tbl_invoiceItem.invoiceSubNum, tbl_invoiceItem.sku, tbl_invoiceItem.cost, tbl_invoiceItem.price, tbl_invoiceItem.itemDiscount, tbl_invoiceItem.percentage  " +
-                                "order by tbl_invoiceItem.invoiceNum  " +
-                                "select sum(math) as 'total' from #temp   " +
-                                "drop table #temp  ";
-            cmd.Parameters.AddWithValue("@startDate", startDate);
-            cmd.Parameters.AddWithValue("@endDate", endDate);
-            cmd.Parameters.AddWithValue("@locationID", locationID);
-            cmd.Connection = con;
-            con.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
+                new object[] { "@dtmStartDate", dtm[0] },
+                new object[] { "@dtmEndDate", dtm[1] },
+                new object[] { "@locationID", Convert.ToInt32(repInfo[1]) }
+            };
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
             {
-                pm = Convert.ToDouble(reader["total"]);
+                bolData = true;
             }
-            con.Close();
-            return pm;
+            return bolData;
         }
 
         //******************Sales by Date Report*******************************************************
@@ -2473,6 +2402,35 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             con.Close();
             return tr;
         }
+        public int verifyTaxesCharged(object[] repInfo)
+        {
+            int indicator = 0;
+            if (!taxesAvailable(repInfo))
+            {
+                indicator = 1;
+            }
+            return indicator;
+        }
+        private bool taxesAvailable(object[] repInfo)
+        {
+            bool bolData = false;
+            DateTime[] dtm = (DateTime[])repInfo[0];
+
+            string sqlCmd = "SELECT COUNT(invoiceNum) FROM tbl_invoice WHERE (invoiceDate "
+                + "BETWEEN @dtmStartDate AND @dtmEndDate) AND ((chargeGST = 1 AND governmentTax "
+                + "> 0) OR(chargePST = 1 AND provincialTax > 0))";
+            object[][] parms =
+            {
+                new object[] { "@dtmStartDate", dtm[0] },
+                new object[] { "@dtmEndDate", dtm[1] }
+            };
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            {
+                bolData = true;
+            }
+            return bolData;
+        }
+
 
         //******************ITEMS SOLD REPORTING*******************************************************
         public System.Data.DataTable returnItemsSold(DateTime startDate, DateTime endDate, int locationID)
@@ -2614,8 +2572,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return cashout;
         }
 
-
-
         //******************STORE STATS REPORT***********************
         public System.Data.DataTable returnStoreStats(DateTime startDate, DateTime endDate, int timeFrame)
         {
@@ -2706,23 +2662,88 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             return stats;
         }
+        public int verifyStatsAvailable(object[] repInfo)
+        {
+            int indicator = 0;
+            if (!statsAvailable(repInfo))
+            {
+                indicator = 1;
+            }
+            return indicator;
+        }
+        public bool statsAvailable(object[] repInfo)
+        {
+            bool bolTA = false;
+            DateTime[] dtm = (DateTime[])repInfo[0];
+            string sqlCmd = "SELECT COUNT(invoiceNum) FROM tbl_invoice "
+                        + "WHERE invoiceDate BETWEEN @startDate AND @endDate ";
+            object[][] parms =
+            {
+                new object[] { "@startDate", dtm[0] },
+                new object[] { "@endDate", dtm[1] }
+            };
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            {
+                bolTA = true;
+            }
+            return bolTA;
+        }
+
+        //*************Specific Apparel Report********* w/CORRECT profit margin calculation
+        public System.Data.DataTable returnSpecificApparelDataTableForReport(DateTime dtmStartDate, DateTime dtmEndDate)
+        {
+            string sqlCmd = "SELECT L.locationName, FQ.sku, FQ.description, SUM(FQ.quantity) AS overallQuantity, "
+                + "SUM(FQ.totalCost) AS overallCost, SUM(FQ.totalPrice) AS overallPrice FROM(SELECT I.locationID, "
+                + "SA.sku, II.description, (SUM(II.quantity) - ISNULL(SUM(IIR.quantity), 0)) * II.cost AS totalCost, "
+                + "(SUM(II.quantity) - ISNULL(SUM(IIR.quantity), 0)) * ROUND(CASE WHEN II.percentage = 1 THEN II.price "
+                + "- ((II.itemDiscount / 100) * II.price) ELSE II.price - II.itemDiscount END, 2) AS totalPrice, "
+                + "SUM(II.quantity) - ISNULL(SUM(IIR.quantity), 0) AS quantity FROM tbl_invoiceItem II LEFT JOIN(SELECT "
+                + "r.invoiceNum, o.locationID, s.sku, r.cost, r.price, SUM(r.quantity) AS quantity FROM tbl_invoiceItemReturns "
+                + "r JOIN tbl_invoice o ON o.invoiceNum = r.invoiceNum AND o.invoiceSubNum = r.invoiceSubNum JOIN "
+                + "tbl_specificApparel s ON s.sku = r.sku WHERE o.invoiceDate BETWEEN @dtmStartDate AND @dtmEndDate GROUP BY "
+                + "r.invoiceNum, o.locationID, s.sku, r.cost, r.price) IIR ON IIR.invoiceNum = II.invoiceNum JOIN "
+                + "tbl_invoice I ON I.invoiceNum = II.invoiceNum AND I.invoiceSubNum = II.invoiceSubNum JOIN "
+                + "tbl_specificApparel SA ON SA.sku = II.sku WHERE I.invoiceDate BETWEEN @dtmStartDate AND @dtmEndDate "
+                + "GROUP BY SA.sku, I.locationID, II.description, II.cost, II.price, II.percentage, II.itemDiscount) "
+                + "FQ JOIN tbl_location L ON L.locationID = FQ.locationID GROUP BY FQ.sku, L.locationName, FQ.description";
+            object[][] parms =
+            {
+                new object[] { "@dtmStartDate", dtmStartDate },
+                new object[] { "@dtmEndDate", dtmEndDate }
+            };
+            return dbc.returnDataTableData(sqlCmd, parms);
+        }
+        public int verifySpecificApparel(object[] repInfo)
+        {
+            int indicator = 0;
+            if (!specificApparelAvailable(repInfo))
+            {
+                indicator = 1;
+            }
+            return indicator;
+        }
+        private bool specificApparelAvailable(object[] repInfo)
+        {
+            bool bolData = false;
+            DateTime[] dtm = (DateTime[])repInfo[0];
+
+            string sqlCmd = "SELECT SUM(II.quantity) overallQuantity FROM tbl_invoiceItem II "
+                + "JOIN tbl_invoice I ON I.invoiceNum = II.invoiceNum AND I.invoiceSubNum = "
+                + "II.invoiceSubNum JOIN tbl_specificApparel SA ON SA.sku = II.sku WHERE "
+                + "I.invoiceDate BETWEEN @startDate AND @endDate";
+            object[][] parms =
+            {
+                new object[] { "@startDate", dtm[0] },
+                new object[] { "@endDate", dtm[1] }
+            };
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            {
+                bolData = true;
+            }
+            return bolData;
+        }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
 
         public System.Data.DataTable ReturnCashoutsForSelectedDates(object[] passing)
         {

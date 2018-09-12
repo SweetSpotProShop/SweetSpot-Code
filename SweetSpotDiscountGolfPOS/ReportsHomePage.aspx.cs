@@ -24,6 +24,8 @@ namespace SweetSpotDiscountGolfPOS
         LocationManager LM = new LocationManager();
         Reports R = new Reports();
 
+        //Add counter to record how many times each report gets viewed.
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -109,6 +111,7 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
+
         //This is the Cashout Report
         protected void btnCashOutReport_Click(object sender, EventArgs e)
         {
@@ -116,9 +119,6 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnCashOutReport_Click";
             try
             {
-                ////NEED TO UPDATE THIS FOR NEW CASHOUT REPORTING
-                ////THIS WILL SHOW A LIST OF THE CASHOUTS THAT CAN THEN BE
-                ////EDITED AND THEN FINALIZED
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
@@ -149,6 +149,8 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
+
+        //Displays purchases made
         protected void btnPurchasesReport_Click(object sendr, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -157,7 +159,7 @@ namespace SweetSpotDiscountGolfPOS
             {
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
-                Object[] repInfo = new Object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
+                object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
                 int indicator = R.verifyPurchasesMade(repInfo);
                 //Check to see if there are sales first
                 if (indicator == 0)
@@ -167,7 +169,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (indicator == 1)
                 {
-                    MessageBox.ShowMessage("No purchases have been processed for selected dates.", this);
+                    MessageBox.ShowMessage("No purchases have been completed for selected dates.", this);
                 }
             }
             //Exception catch
@@ -183,7 +185,8 @@ namespace SweetSpotDiscountGolfPOS
             }
 
         }
-        //Change to add Error checking to this page prior to opening report
+
+        //Displays taxes charged
         protected void btnTaxReport_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -191,9 +194,17 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
-                Object[] passing = new Object[2] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                Session["reportInfo"] = passing;
-                Response.Redirect("ReportsTaxes.aspx", false);
+                object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
+                int indicator = R.verifyTaxesCharged(repInfo);
+                if (indicator == 0)
+                {
+                    Session["reportInfo"] = repInfo;
+                    Response.Redirect("ReportsTaxes.aspx", false);
+                }
+                else if (indicator == 1)
+                {
+                    MessageBox.ShowMessage("Taxes have not been charged for selected dates.", this);
+                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -207,7 +218,8 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        //Change to add Error checking to this page prior to opening report
+
+        //Displays Cost of Sold Items and a Profit margin calulation
         protected void btnCOGSvsPMReport_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -215,10 +227,17 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
-                Object[] passing = new Object[2] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                Session["reportInfo"] = passing;
-
-                Response.Redirect("ReportsCOGSvsPM.aspx", false);
+                object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
+                int indicator = R.verifyInvoicesCompleted(repInfo);
+                if (indicator == 0)
+                {
+                    Session["reportInfo"] = repInfo;
+                    Response.Redirect("ReportsCOGSvsPM.aspx", false);
+                }
+                else if (indicator == 1)
+                {
+                    MessageBox.ShowMessage("No sales have been completed for selected dates.", this);
+                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -232,7 +251,8 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        //Change to add Error checking to this page prior to opening report
+
+        //Almost identical to the COGSvsPM Report, instead of PM shows profit in dollars
         protected void btnItemsSold_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -240,9 +260,17 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
-                Object[] passing = new Object[2] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                Session["reportInfo"] = passing;
-                Response.Redirect("ReportsItemsSold.aspx", false);
+                object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
+                int indicator = R.verifyInvoicesCompleted(repInfo);
+                if (indicator == 0)
+                {
+                    Session["reportInfo"] = repInfo;
+                    Response.Redirect("ReportsItemsSold.aspx", false);
+                }
+                else if (indicator == 1)
+                {
+                    MessageBox.ShowMessage("No sales have been completed for selected dates.", this);
+                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -256,7 +284,8 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        //Change to add Error checking to this page prior to opening report
+
+        //Displays the Top 10 SKUs, Brands, and Models sold
         protected void btnMostSold_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -264,9 +293,17 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
-                Object[] passing = new Object[2] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                Session["reportInfo"] = passing;
-                Response.Redirect("ReportsMostSold.aspx", false);
+                object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
+                int indicator = R.verifyInvoicesCompleted(repInfo);
+                if (indicator == 0)
+                {
+                    Session["reportInfo"] = repInfo;
+                    Response.Redirect("ReportsMostSold.aspx", false);
+                }
+                else if (indicator == 1)
+                {
+                    MessageBox.ShowMessage("No sales have been completed for selected dates.", this);
+                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -280,7 +317,8 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        //Change to add Error checking to this page prior to opening report
+
+        //Displays the Discounts given
         protected void btnDiscountReport_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -289,10 +327,17 @@ namespace SweetSpotDiscountGolfPOS
             {
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
-                Object[] passing = new Object[2] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                Session["reportInfo"] = passing;
-                //Changes to the Reports Cash Out page
-                Response.Redirect("ReportsDiscounts.aspx", false);
+                object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
+                int indicator = R.verifyInvoicesCompleted(repInfo);
+                if (indicator == 0)
+                {
+                    Session["reportInfo"] = repInfo;
+                    Response.Redirect("ReportsDiscounts.aspx", false);
+                }
+                else if (indicator == 1)
+                {
+                    MessageBox.ShowMessage("No Discounts have been given for selected dates.", this);
+                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -306,6 +351,8 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
+
+        //Displays sales totals grouped by date
         protected void btnSalesByDate_Click(object sendr, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -314,7 +361,7 @@ namespace SweetSpotDiscountGolfPOS
             {
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
-                Object[] repInfo = new Object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
+                object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
                 int indicator = R.verifySalesHaveBeenMade(repInfo);
                 //Check to see if there are sales first
                 if (indicator == 0)
@@ -324,7 +371,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (indicator == 1)
                 {
-                    MessageBox.ShowMessage("No Sales have been processed for selected dates.", this);
+                    MessageBox.ShowMessage("No Sales have been completed for selected dates.", this);
                 }
             }
             //Exception catch
@@ -339,6 +386,8 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
+
+        //Displays the totals for accepted payment methods
         protected void btnPaymentsByDateReport_Click(object sendr, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -347,7 +396,7 @@ namespace SweetSpotDiscountGolfPOS
             {
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
-                Object[] repInfo = new Object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
+                object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
                 int indicator = R.verifySalesHaveBeenMade(repInfo);
                 //Check to see if there are sales first
                 if (indicator == 0)
@@ -357,7 +406,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (indicator == 1)
                 {
-                    MessageBox.ShowMessage("No Sales have been processed for selected dates.", this);
+                    MessageBox.ShowMessage("No Sales have been completed for selected dates.", this);
                 }
             }
             //Exception catch
@@ -372,6 +421,8 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
+
+        //Displays dollar value of trade ins accepted
         protected void btnTradeInsByDateReport_Click(object sendr, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -381,7 +432,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 int loc = Convert.ToInt32(ddlLocation.SelectedValue);
-                Object[] repInfo = new Object[] { dtm, loc };
+                object[] repInfo = new object[] { dtm, loc };
                 int indicator = R.verifyTradeInsHaveBeenMade(repInfo);
                 //Check to see if there are sales first
                 if (indicator == 0)
@@ -408,59 +459,17 @@ namespace SweetSpotDiscountGolfPOS
                 //Server.Transfer(prevPage, false);
             }
         }
-        protected void btnTesting_Click(object sender, EventArgs e)
-        {
-            //Collects current method for error tracking
-            string method = "btnTesting_Click";
-            //Method currently not used
-            try
-            {
-                //string variable = " ";
-                //Response.Write("<script>Request.QueryString("variable")</script>");
-                //Label1.Text = variable;
-                //ErrorReporting er = new ErrorReporting();
-                //er.sendError("This is a test");        
 
-                //string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-                //string pathDownload = (pathUser + "\\Downloads\\");
-                //FileInfo newFile = new FileInfo(pathDownload + "mynewfile.xlsx");
-                //using (ExcelPackage xlPackage = new ExcelPackage(newFile))
-                //{
-                //    ExcelWorksheet worksheet = xlPackage.Workbook.Worksheets.Add("Test Sheet");
-                //    // write to sheet
-                //    worksheet.Cells[1, 1].Value = "Test";
-                //    //xlPackage.SaveAs(aFile);
-
-                //    Response.Clear();
-                //    Response.AddHeader("content-disposition", "attachment; filename=test.xlsx");
-                //    Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                //    Response.BinaryWrite(xlPackage.GetAsByteArray());
-                //    Response.End();
-                //}
-            }
-            //Exception catch
-            catch (ThreadAbortException tae) { }
-            catch (Exception ex)
-            {
-                //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-                //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator.", this);
-            }
-        }
+        //Similar to the COGSvsPM report with a little more detail
         protected void btnExtensiveInvoice_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
             string method = "btnExtensiveInvoice_Click";
             try
             {
-
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
-
                 int loc = Convert.ToInt32(ddlLocation.SelectedValue);
-                Object[] repInfo = new Object[] { dtm, loc };
+                object[] repInfo = new object[] { dtm, loc };
                 int indicator = R.verifySalesHaveBeenMade(repInfo);
                 //Check to see if there are sales first
                 if (indicator == 0)
@@ -487,6 +496,8 @@ namespace SweetSpotDiscountGolfPOS
                 //Server.Transfer(prevPage, false);
             }
         }
+
+        //Displays the total cost of currently stocked inventory
         protected void btnCostOfInventory_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -510,6 +521,7 @@ namespace SweetSpotDiscountGolfPOS
             }
         }       
 
+        //Another report similar to COGSvsPM and Extensive Invoice, can be broken out by month, week, or day.
         protected void btnStoreStatsReport_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -517,9 +529,17 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
-                Object[] passing = new Object[2] { dtm, ddlDatePeriod.SelectedItem.Text.ToString() };
-                Session["reportInfo"] = passing;
-                Response.Redirect("ReportsStoreStats.aspx", false);
+                object[] repInfo = new object[] { dtm, ddlDatePeriod.SelectedItem.Text.ToString() };
+                int indicator = R.verifyStatsAvailable(repInfo);
+                if (indicator == 0)
+                {
+                    Session["reportInfo"] = repInfo;
+                    Response.Redirect("ReportsStoreStats.aspx", false);
+                }
+                else if (indicator == 1)
+                {
+                    MessageBox.ShowMessage("No sales have been processed for selected dates.", this);
+                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -533,6 +553,41 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
+
+        //Displays specific apparel skus sold, their average cost, average price, and profit margin
+        protected void btnSpecificApparelReport_Click(object sender, EventArgs e)
+        {
+            //Collects current method and page for error tracking
+            string method = "btnStoreStatsReport";
+            try
+            {
+                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
+                object[] repInfo = new object[] { dtm };
+                int indicator = R.verifySpecificApparel(repInfo);
+                //Check to see if there are sales first
+                if (indicator == 0)
+                {
+                    Session["reportInfo"] = repInfo;
+                    Response.Redirect("ReportsSpecificApparel.aspx", false);
+                }
+                else if (indicator == 1)
+                {
+                    MessageBox.ShowMessage("No sales of Specific Apparel Items for selected dates.", this);
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+
         protected DateTime[] getDateRange(DateTime startDate, DateTime endDate)
         {
             if (ddlDatePeriod.SelectedItem.Text.Equals("Day"))

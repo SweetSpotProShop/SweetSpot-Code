@@ -91,31 +91,41 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public List<Customer> ReturnCustomerBasedOnText(string searchText)
         {
             ArrayList strText = new ArrayList();
+            ArrayList parms = new ArrayList();
             string sqlCmd = "";
             for (int i = 0; i < searchText.Split(' ').Length; i++)
             {
-                strText.Add(searchText.Split(' ')[i]);
+                strText.Add("%" + searchText.Split(' ')[i] + "%");
                 if (i == 0)
                 {
                     sqlCmd = "SELECT custID, firstName, lastName, primaryAddress, secondaryAddress, "
                         + "primaryPhoneINT, secondaryPhoneINT, email, city, provStateID, country, postZip, "
-                        + "marketingEmail FROM tbl_customers WHERE CAST(custID AS VARCHAR) LIKE '%" + strText[i]
-                        + "%' OR CONCAT(firstName,lastName) LIKE '%" + strText[i]
-                        + "%' OR CONCAT(primaryPhoneINT,secondaryPhoneINT) LIKE '%" + strText[i]
-                        + "%' OR email LIKE '%" + strText[i] + "%'";
+                        + "marketingEmail FROM tbl_customers WHERE CAST(custID AS VARCHAR) LIKE @parm1" + i
+                        + " OR CONCAT(firstName,lastName) LIKE @parm2" + i
+                        + " OR CONCAT(primaryPhoneINT,secondaryPhoneINT) LIKE @parm3" + i
+                        + " OR email LIKE @parm4" + i + "";
+                    parms.Add("@parm1" + i);
+                    parms.Add("@parm2" + i);
+                    parms.Add("@parm3" + i);
+                    parms.Add("@parm4" + i);
                 }
                 else
                 {
                     sqlCmd += " INTERSECT (SELECT custID, firstName, lastName, primaryAddress, secondaryAddress, "
                         + "primaryPhoneINT, secondaryPhoneINT, email, city, provStateID, country, postZip, "
-                        + "marketingEmail FROM tbl_customers WHERE CAST(custID AS VARCHAR) LIKE '%" + strText[i]
-                        + "%' OR CONCAT(firstName,lastName) LIKE '%" + strText[i]
-                        + "%' OR CONCAT(primaryPhoneINT,secondaryPhoneINT) LIKE '%" + strText[i]
-                        + "%' OR email LIKE '%" + strText[i] + "%')";
+                        + "marketingEmail FROM tbl_customers WHERE CAST(custID AS VARCHAR) LIKE @parm1" + i
+                        + " OR CONCAT(firstName,lastName) LIKE @parm2" + i
+                        + " OR CONCAT(primaryPhoneINT,secondaryPhoneINT) LIKE @parm3" + i
+                        + " OR email LIKE @parm4" + i + ")";
+                    parms.Add("@parm1" + i);
+                    parms.Add("@parm2" + i);
+                    parms.Add("@parm3" + i);
+                    parms.Add("@parm4" + i);
                 }
             }
-            sqlCmd += " order by firstName asc";
-            List<Customer> customer = ConvertFromDataTableToCustomer(dbc.returnDataTableData(sqlCmd));
+            sqlCmd += " ORDER BY firstName ASC";
+
+            List<Customer> customer = ConvertFromDataTableToCustomer(dbc.returnDataTableDataFromArrayLists(sqlCmd, parms, strText));
             return customer;
         }
         //Add Customer Nathan and Tyler created. Returns customer ID
