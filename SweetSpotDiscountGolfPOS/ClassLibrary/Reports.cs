@@ -64,7 +64,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@employeeID", Convert.ToInt32(reportLog[1]) },
                 new object[] { "@locationID", Convert.ToInt32(reportLog[2]) }
             };
-            dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms);
+            dbc.executeInsertQuery(sqlCmd, parms);
         }
 
         //*******************HOME PAGE SALES*******************************************************

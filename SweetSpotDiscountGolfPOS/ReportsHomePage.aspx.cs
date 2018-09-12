@@ -119,6 +119,8 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnCashOutReport_Click";
             try
             {
+                object[] reportLog = { 1, CU.emp.employeeID, CU.location.locationID };
+                R.CallReportLogger(reportLog);
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
@@ -157,6 +159,8 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnPurchasesReport_Click";
             try
             {
+                object[] reportLog = { 2, CU.emp.employeeID, CU.location.locationID };
+                R.CallReportLogger(reportLog);
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
@@ -193,6 +197,8 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnTesting_Click";
             try
             {
+                object[] reportLog = { 3, CU.emp.employeeID, CU.location.locationID };
+                R.CallReportLogger(reportLog);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
                 int indicator = R.verifyTaxesCharged(repInfo);
@@ -226,6 +232,8 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnCOGSvsPMReport_Click";
             try
             {
+                object[] reportLog = { 4, CU.emp.employeeID, CU.location.locationID };
+                R.CallReportLogger(reportLog);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
                 int indicator = R.verifyInvoicesCompleted(repInfo);
@@ -259,6 +267,8 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnItemsSold_Click";
             try
             {
+                object[] reportLog = { 5, CU.emp.employeeID, CU.location.locationID };
+                R.CallReportLogger(reportLog);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
                 int indicator = R.verifyInvoicesCompleted(repInfo);
@@ -292,6 +302,8 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnMostSold_Click";
             try
             {
+                object[] reportLog = { 8, CU.emp.employeeID, CU.location.locationID };
+                R.CallReportLogger(reportLog);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
                 int indicator = R.verifyInvoicesCompleted(repInfo);
@@ -325,6 +337,8 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnDiscountReport_Click";
             try
             {
+                object[] reportLog = { 6, CU.emp.employeeID, CU.location.locationID };
+                R.CallReportLogger(reportLog);
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
@@ -359,6 +373,8 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnSalesByDate_Click";
             try
             {
+                object[] reportLog = { 7, CU.emp.employeeID, CU.location.locationID };
+                R.CallReportLogger(reportLog);
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
@@ -394,6 +410,8 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnPaymentsByDateReport_Click";
             try
             {
+                object[] reportLog = { 9, CU.emp.employeeID, CU.location.locationID };
+                R.CallReportLogger(reportLog);
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
@@ -429,6 +447,8 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnTradeInsByDateReport_Click";
             try
             {
+                object[] reportLog = { 10, CU.emp.employeeID, CU.location.locationID };
+                R.CallReportLogger(reportLog);
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 int loc = Convert.ToInt32(ddlLocation.SelectedValue);
@@ -467,6 +487,8 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnExtensiveInvoice_Click";
             try
             {
+                object[] reportLog = { 11, CU.emp.employeeID, CU.location.locationID };
+                R.CallReportLogger(reportLog);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 int loc = Convert.ToInt32(ddlLocation.SelectedValue);
                 object[] repInfo = new object[] { dtm, loc };
@@ -504,6 +526,8 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnCostOfInventory_Click";
             try
             {
+                object[] reportLog = { 12, CU.emp.employeeID, CU.location.locationID };
+                R.CallReportLogger(reportLog);
                 Server.Transfer("ReportsCostOfInventory.aspx", false);
             }
             //Exception catch
@@ -528,6 +552,8 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnStoreStatsReport";
             try
             {
+                object[] reportLog = { 13, CU.emp.employeeID, CU.location.locationID };
+                R.CallReportLogger(reportLog);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, ddlDatePeriod.SelectedItem.Text.ToString() };
                 int indicator = R.verifyStatsAvailable(repInfo);
@@ -561,6 +587,8 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnStoreStatsReport";
             try
             {
+                object[] reportLog = { 14, CU.emp.employeeID, CU.location.locationID };
+                R.CallReportLogger(reportLog);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm };
                 int indicator = R.verifySpecificApparel(repInfo);
