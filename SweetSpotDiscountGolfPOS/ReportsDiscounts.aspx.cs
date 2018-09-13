@@ -4,6 +4,7 @@ using SweetSpotDiscountGolfPOS.ClassLibrary;
 using SweetSpotProShop;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -30,7 +31,7 @@ namespace SweetSpotDiscountGolfPOS
         ItemDataUtilities idu = new ItemDataUtilities();
         double tDiscount;
         double tBalance;
-        List<Invoice> discounts = new List<Invoice>();
+        DataTable discounts = new DataTable();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -65,22 +66,9 @@ namespace SweetSpotDiscountGolfPOS
                         lblReportDate.Text = "Discount Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + lm.locationName(locID);
                     }
                     discounts = R.returnDiscountsBetweenDates(startDate, endDate, locID);
-                    if (discounts.Count == 0)
-                    {
-                        if (startDate == endDate)
-                        {
-                            lblReportDate.Text = "There are no invoices with discounts on: " + startDate.ToString("d");
-                        }
-                        else
-                        {
-                            lblReportDate.Text = "There are no invoices with discounts betweeen: " + startDate.ToString("d") + " to " + endDate.ToString("d");
-                        }
-                    }
-                    else
-                    {
-                        grdInvoiceDisplay.DataSource = discounts;
-                        grdInvoiceDisplay.DataBind();
-                    }
+                    grdInvoiceDisplay.DataSource = discounts;
+                    grdInvoiceDisplay.DataBind();
+
                 }
             }
             //Exception catch
@@ -149,14 +137,14 @@ namespace SweetSpotDiscountGolfPOS
                     discountsExport.Cells[2, 4].Value = "Discount";
                     discountsExport.Cells[2, 5].Value = "Employee Name";
                     int recordIndex = 3;
-                    List<Items> items = new List<Items>();
-                    foreach (Invoice i in discounts)
+                    //List<Items> items = new List<Items>();
+                    foreach (DataRow i in discounts.Rows)
                     {
-                        discountsExport.Cells[recordIndex, 1].Value = i.invoiceNum + "-" + i.invoiceSub;
-                        discountsExport.Cells[recordIndex, 2].Value = i.invoiceDate.ToString("d");
-                        discountsExport.Cells[recordIndex, 3].Value = i.customerName;
-                        discountsExport.Cells[recordIndex, 4].Value = "$" + i.discountAmount;
-                        discountsExport.Cells[recordIndex, 5].Value = i.employeeName;
+                        discountsExport.Cells[recordIndex, 1].Value = i[0].ToString() + "-" + i[1].ToString();
+                        discountsExport.Cells[recordIndex, 2].Value = i[2].ToString();
+                        discountsExport.Cells[recordIndex, 3].Value = i[3].ToString();
+                        discountsExport.Cells[recordIndex, 4].Value = "$" + i[5].ToString();
+                        discountsExport.Cells[recordIndex, 5].Value = i[4].ToString();
                         recordIndex++;
                     }
                     Response.Clear();
