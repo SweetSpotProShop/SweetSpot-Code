@@ -28,9 +28,9 @@ namespace SweetSpotDiscountGolfPOS
         DateTime startDate;
         DateTime endDate;
 
-        System.Data.DataTable items = new System.Data.DataTable();
-        System.Data.DataTable models = new System.Data.DataTable();
-        System.Data.DataTable brands = new System.Data.DataTable();
+        DataTable items = new DataTable();
+        DataTable models = new DataTable();
+        DataTable brands = new DataTable();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -63,39 +63,17 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         lblDates.Text = "Items sold for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
                     }
-
-                    items.Columns.Add("sku");
-                    items.Columns.Add("amountSold");
-                    brands.Columns.Add("brand");
-                    brands.Columns.Add("amountSold");
-                    models.Columns.Add("models");
-                    models.Columns.Add("amountSold");
-
                     //Binding the gridview
                     items = R.mostSoldItemsReport(startDate, endDate, locationID);
                     brands = R.mostSoldBrandsReport(startDate, endDate, locationID);
                     models = R.mostSoldModelsReport(startDate, endDate, locationID);
                     //Checking if there are any values
-                    if (items.Rows.Count > 0 && brands.Rows.Count > 0 && models.Rows.Count > 0)
-                    {
-                        grdItems.DataSource = items;
-                        grdItems.DataBind();
-                        grdBrands.DataSource = brands;
-                        grdBrands.DataBind();
-                        grdModels.DataSource = models;
-                        grdModels.DataBind();
-                    }
-                    else
-                    {
-                        if (startDate == endDate)
-                        {
-                            lblDates.Text = "There is no data for: " + startDate.ToString("d") + " for " + l.locationName(locationID);
-                        }
-                        else
-                        {
-                            lblDates.Text = "There is no data for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
-                        }
-                    }
+                    grdItems.DataSource = items;
+                    grdItems.DataBind();
+                    grdBrands.DataSource = brands;
+                    grdBrands.DataBind();
+                    grdModels.DataSource = models;
+                    grdModels.DataBind();
                 }
             }
             //Exception catch
@@ -133,11 +111,11 @@ namespace SweetSpotDiscountGolfPOS
                     itemsPage.Cells[2, 1].Value = "Items"; modelsPage.Cells[2, 1].Value = "Models"; brandsPage.Cells[2, 1].Value = "Brands";
                     itemsPage.Cells[3, 1].Value = "SKU"; itemsPage.Cells[3, 2].Value = "Amount Sold";
                     modelsPage.Cells[3, 1].Value = "Model"; modelsPage.Cells[3, 2].Value = "Times Sold";
-                    brandsPage.Cells[3, 1].Value = "Brand"; brandsPage.Cells[3, 2].Value = "Times Sold"; 
+                    brandsPage.Cells[3, 1].Value = "Brand"; brandsPage.Cells[3, 2].Value = "Times Sold";
                     int recordIndexItems = 4;
                     if (items.Rows.Count > 0)
                     {
-                        foreach (DataRow i in items.Rows) 
+                        foreach (DataRow i in items.Rows)
                         {
                             itemsPage.Cells[recordIndexItems, 1].Value = i[0];
                             itemsPage.Cells[recordIndexItems, 2].Value = i[1];
@@ -147,7 +125,7 @@ namespace SweetSpotDiscountGolfPOS
                     int recordIndexModels = 4;
                     if (models.Rows.Count > 0)
                     {
-                        foreach (DataRow m in models.Rows) 
+                        foreach (DataRow m in models.Rows)
                         {
                             modelsPage.Cells[recordIndexModels, 1].Value = m[0];
                             modelsPage.Cells[recordIndexModels, 2].Value = m[1];
@@ -157,7 +135,7 @@ namespace SweetSpotDiscountGolfPOS
                     int recordIndexBrands = 4;
                     if (brands.Rows.Count > 0)
                     {
-                        foreach (DataRow b in brands.Rows) 
+                        foreach (DataRow b in brands.Rows)
                         {
                             brandsPage.Cells[recordIndexBrands, 1].Value = b[0];
                             brandsPage.Cells[recordIndexBrands, 2].Value = b[1];

@@ -21,8 +21,6 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU;
         Reports R = new Reports();
-
-
         LocationManager l = new LocationManager();
         SweetShopManager ssm = new SweetShopManager();
         double totalPurchAmount = 0;
@@ -55,7 +53,8 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     lblPurchasesMadeDate.Text = "Purchases Made Between: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
                     //Creating a cashout list and calling a method that grabs all mops and amounts paid
-                    grdPurchasesMade.DataSource = R.returnPurchasesDuringDates(startDate, endDate, locationID);
+                    purch = R.returnPurchasesDuringDates(startDate, endDate, locationID);
+                    grdPurchasesMade.DataSource = purch;
                     grdPurchasesMade.DataBind();
                     foreach (GridViewRow row in grdPurchasesMade.Rows)
                     {
@@ -183,7 +182,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
-                Object[] passing = (Object[])Session["reportInfo"];
+                object[] passing = (object[])Session["reportInfo"];
                 string loc = l.locationName(Convert.ToInt32(passing[1]));
                 string fileName = "Purchases Report - " + loc + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);

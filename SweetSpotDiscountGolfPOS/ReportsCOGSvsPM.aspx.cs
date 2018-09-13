@@ -31,7 +31,7 @@ namespace SweetSpotDiscountGolfPOS
         int locationID;
         double tCost;
         double tPrice;
-        List<Invoice> inv = new List<Invoice>();
+        DataTable inv = new DataTable();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -66,24 +66,8 @@ namespace SweetSpotDiscountGolfPOS
                     }
                     //Binding the gridview
                     inv = R.returnInvoicesForCOGS(startDate, endDate, locationID);
-                    //Checking if there are any values
-                    if (inv.Count > 0)
-                    {
-                        grdInvoiceSelection.DataSource = inv;
-                        grdInvoiceSelection.DataBind();
-                    }
-                    else
-                    {
-                        if (startDate == endDate)
-                        {
-                            lblDates.Text = "There are no invoices for: " + startDate.ToString("d");
-                        }
-                        else
-                        {
-                            lblDates.Text = "There are no invoices for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
-                        }
-                        grdInvoiceSelection.Visible = false;
-                    }
+                    grdInvoiceSelection.DataSource = inv;
+                    grdInvoiceSelection.DataBind();
                 }
             }
             //Exception catch
@@ -174,7 +158,7 @@ namespace SweetSpotDiscountGolfPOS
                         lblProfit.ForeColor = System.Drawing.Color.Red;
                     }
                     tCost += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "totalCost"));
-                    tPrice += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "balanceDue"));
+                    tPrice += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "totalPrice"));
                 }
                 else if (e.Row.RowType == DataControlRowType.Footer)
                 {
@@ -199,7 +183,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method for error tracking
             string method = "btnDownload_Click";
             try
-            {                
+            {
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
@@ -218,26 +202,26 @@ namespace SweetSpotDiscountGolfPOS
                     cogsExport.Cells[2, 4].Value = "Total Discount";
                     cogsExport.Cells[2, 5].Value = "Profit Margin";
                     int recordIndex = 3;
-                    foreach (Invoice i in inv)
+                    foreach (DataRow i in inv.Rows)
                     {
-                        cogsExport.Cells[recordIndex, 1].Value = i.invoice;
-                        cogsExport.Cells[recordIndex, 2].Value = i.totalCost;
-                        cogsExport.Cells[recordIndex, 3].Value = i.balanceDue;
-                        if (i.percentage == true)
+                        cogsExport.Cells[recordIndex, 1].Value = i[0].ToString();
+                        cogsExport.Cells[recordIndex, 2].Value = i[2].ToString();
+                        cogsExport.Cells[recordIndex, 3].Value = i[1].ToString();
+                        if (Convert.ToInt32(i[4]) == 1)
                         {
-                            cogsExport.Cells[recordIndex, 4].Value = i.discountAmount + "%";
+                            cogsExport.Cells[recordIndex, 4].Value = i[3].ToString() + "%";
                         }
                         else
                         {
-                            cogsExport.Cells[recordIndex, 4].Value = "$" + i.discountAmount;
+                            cogsExport.Cells[recordIndex, 4].Value = "$" + i[3].ToString();
                         }
                         cogsExport.Cells[recordIndex, 4].Style.Numberformat.Format = "0.0";
 
 
-                        cogsExport.Cells[recordIndex, 5].Value = i.totalProfit.ToString() + "%";
+                        cogsExport.Cells[recordIndex, 5].Value = i[5].ToString() + "%";
                         recordIndex++;
-                    }                 
-                    
+                    }
+
                     Response.Clear();
                     Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
                     Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";

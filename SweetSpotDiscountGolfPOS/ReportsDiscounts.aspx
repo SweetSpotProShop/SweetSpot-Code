@@ -41,7 +41,7 @@
                 <Columns>
                     <asp:TemplateField HeaderText="Invoice Number" HeaderStyle-Width="16.6666666667%">
                         <ItemTemplate>
-                            <asp:Label ID="lblInvoiceNum" runat="server" Text='<%#Eval("invoiceNum") + "-" + Eval("invoiceSub") %>'></asp:Label>
+                            <asp:Label ID="lblInvoiceNum" runat="server" Text='<%#Eval("invoiceNum") + "-" + Eval("invoiceSubNum") %>'></asp:Label>
                         </ItemTemplate>
                         <FooterTemplate>
                             <asp:Label ID="lblTotal" runat="server" Text="Totals:"></asp:Label>

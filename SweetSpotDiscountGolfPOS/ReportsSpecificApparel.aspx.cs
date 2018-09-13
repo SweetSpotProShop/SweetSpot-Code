@@ -83,13 +83,13 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Sets path and file name to download report to
-                string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-                string pathDownload = (pathUser + "\\Downloads\\");
-                object[] passing = (object[])Session["reportInfo"];
-                string type = (string)passing[1];
-                string todayDate = ""; //make this todays date in year month day format
-                string fileName = "Specific_Apparel_Report-" + type + todayDate + ".xlsx";
-                FileInfo newFile = new FileInfo(pathDownload + fileName);
+                //string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                //string pathDownload = (pathUser + "\\Downloads\\");
+                //object[] passing = (object[])Session["reportInfo"];
+                //string type = (string)passing[1];
+                //string todayDate = ""; //make this todays date in year month day format
+                //string fileName = "Specific_Apparel_Report-" + type + todayDate + ".xlsx";
+                //FileInfo newFile = new FileInfo(pathDownload + fileName);
 
                 MessageBox.ShowMessage("Download for this report is currently not available.", this);
 
