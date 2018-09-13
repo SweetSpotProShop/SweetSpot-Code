@@ -96,45 +96,51 @@ namespace SweetSpotDiscountGolfPOS
 
         protected void grdStats_RowDataBound(object sender, GridViewRowEventArgs e)
         {            
-            Label lblGovTax = (Label)e.Row.FindControl("lblGovTax");
-            Label lblProvTax = (Label)e.Row.FindControl("lblProvTax");
-            Label lblCOGS = (Label)e.Row.FindControl("lblCOGS");
-            Label lblAverageProfitMargin = (Label)e.Row.FindControl("lblAverageProfitMargin");
-            Label lblSalesPreTax = (Label)e.Row.FindControl("lblSalesPreTax");
-            Label lblSalesPostTax = (Label)e.Row.FindControl("lblSalesPostTax");
+            //Label lblGovTax = (Label)e.Row.FindControl("lblGovTax");
+            //Label lblProvTax = (Label)e.Row.FindControl("lblProvTax");
+            //Label lblCOGS = (Label)e.Row.FindControl("lblCOGS");
+            //Label lblAverageProfitMargin = (Label)e.Row.FindControl("lblAverageProfitMargin");
+            //Label lblSalesPreTax = (Label)e.Row.FindControl("lblSalesPreTax");
+            //Label lblSalesPostTax = (Label)e.Row.FindControl("lblSalesPostTax");
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                if (lblGovTax.Text.isNumber())
-                {
-                    gTax += Convert.ToDouble(lblGovTax.Text);
-                    lblGovTax.Text = "$" + lblGovTax.Text;
-                }
-                if (lblProvTax.Text.isNumber())
-                {
-                    pTax += Convert.ToDouble(lblProvTax.Text);
-                    lblProvTax.Text = "$" + lblProvTax.Text;
-                }
-                if (lblCOGS.Text.isNumber())
-                {
-                    cogs += Convert.ToDouble(lblCOGS.Text);
-                    lblCOGS.Text = "$" + lblCOGS.Text;
-                }
-                if (lblAverageProfitMargin.Text.isNumber())
-                {
-                    pm += Convert.ToDouble(lblAverageProfitMargin.Text);
-                    lblAverageProfitMargin.Text = lblAverageProfitMargin.Text + "%";
-                    counter++;
-                }
-                if (lblSalesPreTax.Text.isNumber())
-                {
-                    salesPrT += Convert.ToDouble(lblSalesPreTax.Text);
-                    lblSalesPreTax.Text = "$" + lblSalesPreTax.Text;
-                }
-                if (lblSalesPostTax.Text.isNumber())
-                {
-                    salesPoT += Convert.ToDouble(lblSalesPostTax.Text);
-                    lblSalesPostTax.Text = "$" + lblSalesPostTax.Text;
-                }
+                //if (lblGovTax.Text.isNumber())
+                //{
+                //gTax += Convert.ToDouble(lblGovTax.Text);
+                gTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "governmentTax"));
+                //lblGovTax.Text = lblGovTax.Text;
+                //}
+                //if (lblProvTax.Text.isNumber())
+                //{
+                //pTax += Convert.ToDouble(lblProvTax.Text);
+                pTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "provincialTax"));
+                //lblProvTax.Text = lblProvTax.Text;
+                //}
+                //if (lblCOGS.Text.isNumber())
+                //{
+                //cogs += Convert.ToDouble(lblCOGS.Text);
+                cogs += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "totalCOGS"));
+                //lblCOGS.Text = lblCOGS.Text;
+                //}
+                //if (lblAverageProfitMargin.Text.isNumber())
+                //{
+                //pm += Convert.ToDouble(lblAverageProfitMargin.Text);
+                pm += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "averageProfitMargin"));
+                //lblAverageProfitMargin.Text = lblAverageProfitMargin.Text;
+                //counter++;
+                //}
+                //if (lblSalesPreTax.Text.isNumber())
+                //{
+                //salesPrT += Convert.ToDouble(lblSalesPreTax.Text);
+                salesPrT += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "salespretax"));
+                //lblSalesPreTax.Text = lblSalesPreTax.Text;
+                //}
+                //if (lblSalesPostTax.Text.isNumber())
+                //{
+                //salesPoT += Convert.ToDouble(lblSalesPostTax.Text);
+                salesPoT += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "salesposttax"));
+                //lblSalesPostTax.Text = lblSalesPostTax.Text;
+                //}
             }
             else if (e.Row.RowType == DataControlRowType.Footer)
             {
@@ -145,13 +151,13 @@ namespace SweetSpotDiscountGolfPOS
                 Label lblSalesPreTaxTotal = (Label)e.Row.FindControl("lblSalesPreTaxTotal");
                 Label lblSalesPostTaxTotal = (Label)e.Row.FindControl("lblSalesPostTaxTotal");
 
-                lblGovTaxTotal.Text = "$" + Math.Round(gTax, 2).ToString();
-                lblProvTaxTotal.Text = "$" + Math.Round(pTax, 2).ToString();
-                lblCOGSTotal.Text = "$" + Math.Round(cogs, 2).ToString();
-                avp = (pm / counter);
-                lblAverageProfitMarginTotal.Text = Math.Round(avp, 2).ToString() + "%";
-                lblSalesPreTaxTotal.Text = "$" + Math.Round(salesPrT, 2).ToString();
-                lblSalesPostTaxTotal.Text = "$" + Math.Round(salesPoT, 2).ToString();
+                lblGovTaxTotal.Text = Math.Round(gTax, 2).ToString("C");
+                lblProvTaxTotal.Text = Math.Round(pTax, 2).ToString("C");
+                lblCOGSTotal.Text = Math.Round(cogs, 2).ToString("C");
+                avp = ((salesPrT-cogs) / salesPrT);
+                lblAverageProfitMarginTotal.Text = String.Format("{0:P}", avp);
+                lblSalesPreTaxTotal.Text = Math.Round(salesPrT, 2).ToString("C");
+                lblSalesPostTaxTotal.Text = Math.Round(salesPoT, 2).ToString("C");
             }
         }
         protected void btnDownload_Click(object sender, EventArgs e)
