@@ -2132,9 +2132,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                             "UNION ALL SELECT i.invoiceDate, i.locationID, ROUND(SUM(IR.cost * IR.quantity), 2) AS returnCogs, 0 AS ret FROM tbl_invoice i JOIN tbl_invoiceItemReturns IR ON IR.invoiceNum = i.invoiceNum AND IR.invoiceSubNum = i.invoiceSubNum GROUP BY i.invoiceDate, i.locationID) AS G " +
                                             "GROUP BY locationID, YEAR(G.invoiceDate),G.invoiceDate) AS cogs " +
                                             "WHERE cogs.locationID = tbl_invoice.locationID AND cogs.invoiceYear = YEAR(tbl_invoice.invoiceDate) AND cogs.invoiceDay = tbl_invoice.invoiceDate) AS totalCOGS, " +
-                                        "(Select ROUND(AVG(pm.pm), 2) from(SELECT ROUND(((((tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount)) - (select sum(cost * quantity) from tbl_invoiceItem where tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum)) / (NULLIF(tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount), 0))) *100),2)  " +
+                                        "(Select ROUND(AVG(pm.pm), 4) from(SELECT ROUND(((((tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount)) - (select sum(cost * quantity) from tbl_invoiceItem where tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum)) / (NULLIF(tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount), 0)))  ),4)  " +
                                             "AS pm, tbl_invoice.invoiceDate as iDate, YEAR(tbl_invoice.invoiceDate) as iYear, tbl_invoice.locationID, tbl_invoice.invoiceDate FROM tbl_invoice " +
-                                            "UNION ALL SELECT ROUND(((((tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount)) - (select sum(cost * quantity) from tbl_invoiceItemReturns where tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum)) / (NULLIF(tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount), 0))) *100),2) " +
+                                            "UNION ALL SELECT ROUND(((((tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount)) - (select sum(cost * quantity) from tbl_invoiceItemReturns where tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum)) / (NULLIF(tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount), 0)))  ),4) " +
                                             "AS pm, tbl_invoice.invoiceDate, YEAR(tbl_invoice.invoiceDate), tbl_invoice.locationID, tbl_invoice.invoiceDate FROM tbl_invoice) AS pm WHERE pm.locationID = tbl_invoice.locationID AND pm.iYear = YEAR(tbl_invoice.invoiceDate) AND pm.iDate = tbl_invoice.invoiceDate " +
                                             "Group by pm.invoiceDate, YEAR(pm.invoiceDate), pm.locationID) AS averageProfitMargin, " +
                                     "ROUND(SUM(tbl_invoice.subTotal + (tradeInAmount * -1)), 2) as salespretax, " +
@@ -2158,9 +2158,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                             "UNION ALL SELECT i.invoiceDate, i.locationID, ROUND(SUM(IR.cost * IR.quantity), 2) AS returnCogs, 0 AS ret FROM tbl_invoice i JOIN tbl_invoiceItemReturns IR ON IR.invoiceNum = i.invoiceNum AND IR.invoiceSubNum = i.invoiceSubNum GROUP BY i.invoiceDate, i.locationID) AS G " +
                                             "GROUP BY DATEPART(wk, G.invoiceDate), locationID, YEAR(G.invoiceDate), MONTH(G.invoiceDate)) AS cogs " +
                                             "WHERE cogs.invoiceWeek = DATEPART(wk, tbl_invoice.invoiceDate) AND cogs.locationID = tbl_invoice.locationID AND cogs.invoiceYear = YEAR(tbl_invoice.invoiceDate) AND cogs.invoiceMonth = MONTH(tbl_invoice.invoiceDate)) AS totalCOGS, " +
-                                        "(Select ROUND(AVG(pm.pm), 2) from(SELECT ROUND(((((tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount)) - (select sum(cost * quantity) from tbl_invoiceItem where tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum)) / (NULLIF(tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount), 0))) *100),2) " +
+                                        "(Select ROUND(AVG(pm.pm), 2) from(SELECT ROUND(((((tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount)) - (select sum(cost * quantity) from tbl_invoiceItem where tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum)) / (NULLIF(tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount), 0)))  ),4) " +
                                             "AS pm, DATEPART(wk, tbl_invoice.invoiceDate) as iWeek, MONTH(tbl_invoice.invoiceDate) as iMonth, YEAR(tbl_invoice.invoiceDate) as iYear, tbl_invoice.locationID, tbl_invoice.invoiceDate FROM tbl_invoice " +
-                                            "UNION ALL SELECT ROUND(((((tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount)) - (select sum(cost * quantity) from tbl_invoiceItemReturns where tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum)) / (NULLIF(tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount), 0))) *100),2) " +
+                                            "UNION ALL SELECT ROUND(((((tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount)) - (select sum(cost * quantity) from tbl_invoiceItemReturns where tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum)) / (NULLIF(tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount), 0)))  ),4) " +
                                             "AS pm, DATEPART(wk, tbl_invoice.invoiceDate), MONTH(tbl_invoice.invoiceDate), YEAR(tbl_invoice.invoiceDate), tbl_invoice.locationID, tbl_invoice.invoiceDate FROM tbl_invoice) AS pm WHERE pm.iWeek = DATEPART(wk, tbl_invoice.invoiceDate) AND pm.locationID = tbl_invoice.locationID AND pm.iYear = YEAR(tbl_invoice.invoiceDate) AND pm.iMonth = MONTH(tbl_invoice.invoiceDate) Group by DATEPART(wk, pm.invoiceDate), MONTH(pm.invoiceDate), YEAR(pm.invoiceDate), pm.locationID) AS averageProfitMargin, " +
                                     "ROUND(SUM(tbl_invoice.subTotal + (tradeInAmount * -1)), 2) as salespretax, " +
                                     "ROUND(SUM(tbl_invoice.balanceDue + (CASE WHEN tbl_invoice.chargeGST = 1 THEN tbl_invoice.governmentTax ELSE 0 END) + (CASE WHEN tbl_invoice.chargePST = 1 THEN tbl_invoice.provincialTax ELSE 0 END) +(tradeInAmount * -1)),2) as salesposttax " +
@@ -2184,9 +2184,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                         "UNION ALL SELECT i.invoiceDate, i.locationID, ROUND(SUM(IR.cost * IR.quantity), 2) AS returnCogs, 0 AS ret FROM tbl_invoice i JOIN tbl_invoiceItemReturns IR ON IR.invoiceNum = i.invoiceNum AND IR.invoiceSubNum = i.invoiceSubNum GROUP BY i.invoiceDate, i.locationID) AS G " +
                                         "GROUP BY locationID, YEAR(G.invoiceDate), MONTH(G.invoiceDate)) AS cogs " +
                                         "WHERE cogs.locationID = tbl_invoice.locationID AND cogs.invoiceYear = YEAR(tbl_invoice.invoiceDate) AND cogs.invoiceMonth = MONTH(tbl_invoice.invoiceDate)) AS totalCOGS, " +
-                                    "(Select ROUND(AVG(pm.pm), 2) from(SELECT ROUND(((((tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount)) - (select sum(cost * quantity) from tbl_invoiceItem where tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum)) / (NULLIF(tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount), 0))) *100),2) " +
+                                    "(Select ROUND(AVG(pm.pm), 2) from(SELECT ROUND(((((tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount)) - (select sum(cost * quantity) from tbl_invoiceItem where tbl_invoiceItem.invoiceNum = tbl_invoice.invoiceNum and tbl_invoiceItem.invoiceSubNum = tbl_invoice.invoiceSubNum)) / (NULLIF(tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount), 0)))  ),4) " +
                                         "AS pm, MONTH(tbl_invoice.invoiceDate) as iMonth, YEAR(tbl_invoice.invoiceDate) as iYear, tbl_invoice.locationID, tbl_invoice.invoiceDate FROM tbl_invoice " +
-                                        "UNION ALL SELECT ROUND(((((tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount)) - (select sum(cost * quantity) from tbl_invoiceItemReturns where tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum)) / (NULLIF(tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount), 0))) *100),2) " +
+                                        "UNION ALL SELECT ROUND(((((tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount)) - (select sum(cost * quantity) from tbl_invoiceItemReturns where tbl_invoiceItemReturns.invoiceNum = tbl_invoice.invoiceNum and tbl_invoiceItemReturns.invoiceSubNum = tbl_invoice.invoiceSubNum)) / (NULLIF(tbl_invoice.subTotal + (-1 * tbl_invoice.tradeinAmount), 0)))  ),4) " +
                                         "AS pm, MONTH(tbl_invoice.invoiceDate), YEAR(tbl_invoice.invoiceDate), tbl_invoice.locationID, tbl_invoice.invoiceDate FROM tbl_invoice) AS pm WHERE pm.locationID = tbl_invoice.locationID AND pm.iYear = YEAR(tbl_invoice.invoiceDate) AND pm.iMonth = MONTH(tbl_invoice.invoiceDate) " +
                                         "Group by MONTH(pm.invoiceDate), YEAR(pm.invoiceDate), pm.locationID) AS averageProfitMargin, " +
                                     "ROUND(SUM(tbl_invoice.subTotal + (tradeInAmount * -1)), 2) as salespretax, " +
@@ -2772,6 +2772,39 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 + "AS itemType, 0 AS 'isTradeIn' FROM tbl_clothing";
             object[][] parms = { };
             return dbc.returnDataTableData(sqlCmd, parms);
+        }
+
+        //New return queries for reports
+
+
+        private string QueryBuilder(object[] selections)
+        {
+            string strSelect = "SELECT ";
+            string strFrom = "FROM ";
+            string strJoin = "JOIN ";
+            string strWhere = "WHERE ";
+            string strGroupBy = "GROUP BY ";
+            string strOrderBy = "ORDER BY ";
+
+            return strSelect + strFrom + strJoin + strWhere + strGroupBy + strOrderBy;
+
+        }
+        //Returns Trade Ins
+        private string[] returnTradeInDuringDateRnageAndLocatio()
+        {
+            string strSelect = "I.invoiceDate, TI.invoiceNum, TI.invoiceSubNum, I.locationID, TI.sku, "
+                + "TI.cost ";
+
+            string strFrom = "tbl_invoice I ";
+
+            string strJoin = "(SELECT II.invoiceNum, II.invoiceSubNum, T.locationID, "
+                + "T.sku, T.cost FROM tbl_tempTradeInCartSkus T JOIN tbl_invoiceItem II ON II.sku = T.sku) "
+                + "TI ON TI.invoiceNum = I.invoiceNum AND TI.invoiceSubNum = I.invoiceSubNum ";
+
+            string strWhere = "I.invoiceDate BETWEEN @dtmStartDate AND @dtmEndDate AND I.locationID = @locationID ";
+
+            string[] query = { strSelect, strFrom, strJoin, strWhere };
+            return query;
         }
     }
 }
