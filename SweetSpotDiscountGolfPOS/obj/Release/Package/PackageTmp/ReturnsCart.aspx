@@ -70,7 +70,7 @@
             </div>
             <h3>Available Items</h3>
             <hr />
-            <asp:Label ID="lblInvalidQty" runat="server" Visible="false" Text="Label" />
+            <asp:Label ID="lblInvalidQty" runat="server" Visible="false" Text="Invalid Quantity Entered" ForeColor="Red" />
             <asp:GridView ID="grdInvoicedItems" runat="server" AutoGenerateColumns="false" OnRowDeleting="grdInvoicedItems_RowDeleting" RowStyle-HorizontalAlign="Center" >
                 <Columns>
                     <asp:TemplateField HeaderText="Return Item">

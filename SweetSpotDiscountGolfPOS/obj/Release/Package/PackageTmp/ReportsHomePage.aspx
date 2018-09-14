@@ -132,6 +132,9 @@
                         <asp:TableCell>
                             <asp:Button ID="btnStoreStatsReport" runat="server" Text="Store Stats Report" Width="200px" OnClick="btnStoreStatsReport_Click" />
                         </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:Button ID="btnSpecificApparelReport" runat="server" Text="Specific Apparel Report" Width="200px" OnClick="btnSpecificApparelReport_Click" />
+                        </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>
             </div>
