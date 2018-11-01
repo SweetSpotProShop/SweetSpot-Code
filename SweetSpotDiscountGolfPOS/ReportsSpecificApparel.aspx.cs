@@ -25,7 +25,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "Page_Load";
-            Session["currPage"] = "ReportsStoreStats";
+            Session["currPage"] = "ReportsSpecificApparel";
             try
             {
                 //checks if the user has logged in
@@ -43,8 +43,8 @@ namespace SweetSpotDiscountGolfPOS
                     DateTime startDate = reportDates[0];
                     DateTime endDate = reportDates[1];
                     //Builds string to display in label
-                    if (startDate == endDate) { lblDates.Text = "Store stats for: " + startDate.ToString("d"); }
-                    else { lblDates.Text = "Store stats for: " + startDate.ToString("d") + " to " + endDate.ToString("d"); }
+                    if (startDate == endDate) { lblDates.Text = "Apparel sold through: " + startDate.ToString("d"); }
+                    else { lblDates.Text = "Apparel sold through: " + startDate.ToString("d") + " to " + endDate.ToString("d"); }
                     grdStats.DataSource = R.returnSpecificApparelDataTableForReport(startDate, endDate);
                     grdStats.DataBind();
                 }

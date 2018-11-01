@@ -2279,7 +2279,59 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return bolData;
         }
 
+        //*************Specific Grip Report********* w/CORRECT profit margin calculation
+        public System.Data.DataTable returnSpecificGripDataTableForReport(DateTime dtmStartDate, DateTime dtmEndDate)
+        {
+            string sqlCmd = "SELECT L.locationName, FQ.sku, FQ.description, SUM(FQ.quantity) AS overallQuantity, "
+                + "SUM(FQ.totalCost) AS overallCost, SUM(FQ.totalPrice) AS overallPrice FROM(SELECT I.locationID, "
+                + "SG.sku, II.description, (SUM(II.quantity) - ISNULL(SUM(IIR.quantity), 0)) * II.cost AS totalCost, "
+                + "(SUM(II.quantity) - ISNULL(SUM(IIR.quantity), 0)) * ROUND(CASE WHEN II.percentage = 1 THEN II.price "
+                + "- ((II.itemDiscount / 100) * II.price) ELSE II.price - II.itemDiscount END, 2) AS totalPrice, "
+                + "SUM(II.quantity) - ISNULL(SUM(IIR.quantity), 0) AS quantity FROM tbl_invoiceItem II LEFT JOIN(SELECT "
+                + "r.invoiceNum, o.locationID, s.sku, r.cost, r.price, SUM(r.quantity) AS quantity FROM tbl_invoiceItemReturns "
+                + "r JOIN tbl_invoice o ON o.invoiceNum = r.invoiceNum AND o.invoiceSubNum = r.invoiceSubNum JOIN "
+                + "tbl_specificGrip s ON s.sku = r.sku WHERE o.invoiceDate BETWEEN @dtmStartDate AND @dtmEndDate GROUP BY "
+                + "r.invoiceNum, o.locationID, s.sku, r.cost, r.price) IIR ON IIR.invoiceNum = II.invoiceNum JOIN "
+                + "tbl_invoice I ON I.invoiceNum = II.invoiceNum AND I.invoiceSubNum = II.invoiceSubNum JOIN "
+                + "tbl_specificGrip SG ON SG.sku = II.sku WHERE I.invoiceDate BETWEEN @dtmStartDate AND @dtmEndDate "
+                + "GROUP BY SG.sku, I.locationID, II.description, II.cost, II.price, II.percentage, II.itemDiscount) "
+                + "FQ JOIN tbl_location L ON L.locationID = FQ.locationID GROUP BY FQ.sku, L.locationName, FQ.description";
+            object[][] parms =
+            {
+                new object[] { "@dtmStartDate", dtmStartDate },
+                new object[] { "@dtmEndDate", dtmEndDate }
+            };
+            return dbc.returnDataTableData(sqlCmd, parms);
+        }
+        public int verifySpecificGrip(object[] repInfo)
+        {
+            int indicator = 0;
+            if (!specificGripAvailable(repInfo))
+            {
+                indicator = 1;
+            }
+            return indicator;
+        }
+        private bool specificGripAvailable(object[] repInfo)
+        {
+            bool bolData = false;
+            DateTime[] dtm = (DateTime[])repInfo[0];
 
+            string sqlCmd = "SELECT SUM(II.quantity) overallQuantity FROM tbl_invoiceItem II "
+                + "JOIN tbl_invoice I ON I.invoiceNum = II.invoiceNum AND I.invoiceSubNum = "
+                + "II.invoiceSubNum JOIN tbl_specificGrip SG ON SG.sku = II.sku WHERE "
+                + "I.invoiceDate BETWEEN @startDate AND @endDate";
+            object[][] parms =
+            {
+                new object[] { "@startDate", dtm[0] },
+                new object[] { "@endDate", dtm[1] }
+            };
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            {
+                bolData = true;
+            }
+            return bolData;
+        }
 
         public System.Data.DataTable ReturnCashoutsForSelectedDates(object[] passing)
         {

@@ -584,7 +584,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnSpecificApparelReport_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "btnStoreStatsReport";
+            string method = "btnSpecificApparelReport";
             try
             {
                 object[] reportLog = { 14, CU.emp.employeeID, CU.location.locationID };
@@ -601,6 +601,42 @@ namespace SweetSpotDiscountGolfPOS
                 else if (indicator == 1)
                 {
                     MessageBox.ShowMessage("No sales of Specific Apparel Items for selected dates.", this);
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+
+        //Displays specific apparel skus sold, their average cost, average price, and profit margin
+        protected void btnSpecificGripReport_Click(object sender, EventArgs e)
+        {
+            //Collects current method and page for error tracking
+            string method = "btnSpecificGripReport";
+            try
+            {
+                object[] reportLog = { 14, CU.emp.employeeID, CU.location.locationID };
+                R.CallReportLogger(reportLog);
+                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
+                object[] repInfo = new object[] { dtm };
+                int indicator = R.verifySpecificGrip(repInfo);
+                //Check to see if there are sales first
+                if (indicator == 0)
+                {
+                    Session["reportInfo"] = repInfo;
+                    Response.Redirect("ReportsSpecificgrip.aspx", false);
+                }
+                else if (indicator == 1)
+                {
+                    MessageBox.ShowMessage("No sales of Specific Grip Items for selected dates.", this);
                 }
             }
             //Exception catch
