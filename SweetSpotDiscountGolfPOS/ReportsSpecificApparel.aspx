@@ -21,7 +21,7 @@
         <h2>Specific Apparel Report</h2>
         <hr />
         <div>
-            <asp:Label ID="lblDates" runat="server" Text="lblDates" Font-Bold="true"></asp:Label>
+            <asp:Label ID="lblDates" runat="server" Text="lblDates" Font-Bold="true" />
         </div>
         <div>
             <asp:GridView ID="grdStats" runat="server" AutoGenerateColumns="false" ShowFooter="true" RowStyle-HorizontalAlign="Center" OnRowDataBound="grdStats_RowDataBound">
@@ -84,8 +84,4 @@
                 </asp:TableCell>
             </asp:TableRow>
         </asp:Table>
-
-
-
-
 </asp:Content>

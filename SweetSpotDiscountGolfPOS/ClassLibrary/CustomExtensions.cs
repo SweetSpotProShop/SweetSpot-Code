@@ -14,7 +14,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
         public static bool isNumber(this string val)
         {
-            Double result;
+            double result;
             return double.TryParse(val, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.CurrentCulture, out result);
         }
         //Start and end of week
@@ -36,9 +36,5 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             DateTime monthStart = new DateTime(date.Year, date.Month, 1);
             return monthStart.AddMonths(1).AddDays(-1);
         }
-
-
-
-
     }
 }

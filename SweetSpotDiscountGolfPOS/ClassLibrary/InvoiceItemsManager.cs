@@ -81,7 +81,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         + "+ ' ' + C.shaftSpec + ' ' + C.shaftFlex + ' ' + C.dexterity AS description "
                         + "FROM tbl_tempTradeInCartSkus C JOIN tbl_brand B ON C.brandID = B.brandID JOIN "
                         + "tbl_model M ON C.modelID = M.modelID WHERE sku = @sku";
-                    Object[][] parms2 =
+                    object[][] parms2 =
                     {
                         new object[] { "@sku", ii.sku }
                     };
@@ -98,7 +98,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         + "+ ' ' + A.comments AS description "
                         + "FROM tbl_accessories A JOIN tbl_brand B ON A.brandID = B.brandID JOIN tbl_model M ON "
                         + "A.modelID = M.modelID WHERE sku = @sku";
-                    Object[][] parms3 =
+                    object[][] parms3 =
                     {
                         new object[] { "@sku", ii.sku }
                     };
@@ -115,7 +115,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         + "+ ' ' + C.style + ' ' + C.comments AS description "
                         + "FROM tbl_clothing C JOIN tbl_brand B ON C.brandID = B.brandID "
                         + "WHERE sku = @sku";
-                    Object[][] parms4 =
+                    object[][] parms4 =
                     {
                         new object[] { "@sku", ii.sku }
                     };

@@ -64,7 +64,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 + "primaryPhoneINT, secondaryPhoneINT, email, city, provStateID, country, postZip, "
                 + "marketingEmail FROM tbl_customers WHERE custID = @custID";
 
-            Object[][] parms =
+            object[][] parms =
             {
                  new object[] { "@custID", cust },
             };
@@ -79,7 +79,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 + "primaryPhoneINT, secondaryPhoneINT, email, city, provStateID, country, postZip, "
                 + "marketingEmail FROM tbl_customers WHERE custID = @custID";
 
-            Object[][] parms =
+            object[][] parms =
             {
                  new object[] { "@custID", cust },
             };
@@ -138,7 +138,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 + " @secondaryAddress, @primaryPhoneNumber, @secondaryPhoneNumber, @marketingEmail,"
                 + " @Email, @City, @Province, @Country, @PostalCode)";
 
-            Object[][] parms =
+            object[][] parms =
             {
                  new object[] { "@FirstName", c.firstName },
                  new object[] { "@LastName", c.lastName },
@@ -166,7 +166,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 + " marketingEmail = @marketingEmail, email = @Email, city = @City, provStateID = @Province, country = @Country,"
                 + " postZip = @PostalCode WHERE custID = @CustomerID";
 
-            Object[][] parms =
+            object[][] parms =
             {
                 new object[] { "CustomerID", c.customerId },
                 new object[] { "FirstName", c.firstName },

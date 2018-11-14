@@ -71,7 +71,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string sqlCmd = "SELECT ID, invoiceNum, invoiceSubNum, mopType, amountPaid, tender, change "
                 + "FROM tbl_invoiceMOP WHERE invoiceNum = @invoiceNum AND invoiceSubNum = @invoiceSubNum";
 
-            Object[][] parms =
+            object[][] parms =
             {
                  new object[] { "@invoiceNum", Convert.ToInt32(invoice.Split('-')[0]) },
                  new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[1]) }
