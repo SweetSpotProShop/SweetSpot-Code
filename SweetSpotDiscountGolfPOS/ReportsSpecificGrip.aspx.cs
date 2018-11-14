@@ -17,8 +17,9 @@ namespace SweetSpotDiscountGolfPOS
     public partial class ReportsSpecificGrip : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU;
         Reports R = new Reports();
+        CurrentUser CU;
+
         double pmCost;
         double pmPrice;
         int pmQuantity;

@@ -531,7 +531,7 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 lblInvalidQty.Visible = false;
-                int index = ((GridViewRow)(((LinkButton)e.CommandSource).NamingContainer)).RowIndex;
+                int index = ((GridViewRow)((LinkButton)e.CommandSource).NamingContainer).RowIndex;
                 int quantity = 1;
                 string qty = ((TextBox)grdInventorySearched.Rows[index].Cells[2].FindControl("quantityToAdd")).Text;
                 if (qty != "")

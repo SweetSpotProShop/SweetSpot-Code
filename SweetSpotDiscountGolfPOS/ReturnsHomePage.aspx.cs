@@ -18,9 +18,7 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU;
         InvoiceManager IM = new InvoiceManager();
-
-        SweetShopManager ssm = new SweetShopManager();
-
+        
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking

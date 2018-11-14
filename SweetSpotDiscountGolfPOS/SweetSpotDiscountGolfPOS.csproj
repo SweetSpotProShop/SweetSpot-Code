@@ -171,7 +171,6 @@
     <Compile Include="ClassLibrary\LocationManager.cs" />
     <Compile Include="ClassLibrary\MessageBox.cs" />
     <Compile Include="ClassLibrary\Reports.cs" />
-    <Compile Include="ClassLibrary\SweetShopManager.cs" />
     <Compile Include="ClassLibrary\Tax.cs" />
     <Compile Include="ClassLibrary\TaxManager.cs" />
     <Compile Include="ClassLibrary\TaxReport.cs" />

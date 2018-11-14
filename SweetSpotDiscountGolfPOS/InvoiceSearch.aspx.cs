@@ -127,23 +127,9 @@ namespace SweetSpotDiscountGolfPOS
             {
                 //Sets the string of the command argument(invoice number
                 string strInvoice = Convert.ToString(e.CommandArgument);
-                ////Splits the invoice string into numbers
-                //int invNum = Convert.ToInt32(strInvoice.Split('-')[0]);
-                int invSNum = Convert.ToInt32(strInvoice.Split('-')[1]);
                 //Checks that the command name is return invoice
                 if (e.CommandName == "returnInvoice")
                 {
-                    //determines the table to use for queries
-                    //string table = "";
-                    int tran = 3;
-                    if (invSNum > 1)
-                    {
-                        //table = "Returns";
-                        tran = 4;
-                    }
-                    //Stores required info into Sessions
-                    Session["useInvoice"] = true;
-                    Session["TranType"] = tran;
                     //Changes to printable invoice page
                     Response.Redirect("PrintableInvoice.aspx?inv=" + strInvoice, false);
                 }

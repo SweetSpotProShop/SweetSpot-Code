@@ -21,8 +21,8 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU;
         Reports R = new Reports();
-        LocationManager l = new LocationManager();
-        SweetShopManager ssm = new SweetShopManager();
+        LocationManager LM = new LocationManager();
+
         double totalPurchAmount = 0;
         int totalPurchases = 0;
         int totalCheques = 0;
@@ -45,13 +45,13 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     CU = (CurrentUser)Session["currentUser"];
                     //Gathering the start and end dates
-                    Object[] repInfo = (Object[])Session["reportInfo"];
+                    object[] repInfo = (object[])Session["reportInfo"];
                     DateTime[] reportDates = (DateTime[])repInfo[0];
                     DateTime startDate = reportDates[0];
                     DateTime endDate = reportDates[1];
                     int locationID = (int)repInfo[1];
                     //Builds string to display in label
-                    lblPurchasesMadeDate.Text = "Purchases Made Between: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
+                    lblPurchasesMadeDate.Text = "Purchases Made Between: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locationID);
                     //Creating a cashout list and calling a method that grabs all mops and amounts paid
                     purch = R.returnPurchasesDuringDates(startDate, endDate, locationID);
                     grdPurchasesMade.DataSource = purch;
@@ -137,29 +137,11 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 LinkButton btn = sender as LinkButton;
-                //Object[] o = new Object[3];
-                //o = ssm.getSingleReceipt(Convert.ToInt32(btn.Text));
-
-                //Invoice receipt = (Invoice)o[0];
-                //List<Cart> rItems = (List<Cart>)o[1];
-                //List<Mops> rOut = (List<Mops>)o[2];
-
-                //Session["key"] = receipt.customerID;
-                //Session["Invoice"] = receipt.invoiceNum;
-                //Session["strDate"] = receipt.invoiceDate;
-                //Session["TranType"] = 6;
-                //Session["ItemsInCart"] = rItems;
-                //Session["CheckOutTotals"] = new CheckoutManager(receipt.balanceDue);
-                //Session["MethodsofPayment"] = rOut;
-
                 //Changes to the Reports Cash Out page
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("receipt", btn.Text);
                 //Changes page to printable invoice
                 Response.Redirect("PrintableReceipt.aspx?" + nameValues, false);
-
-
-                //Server.Transfer("PrintableReceipt.aspx", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -183,7 +165,7 @@ namespace SweetSpotDiscountGolfPOS
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
                 object[] passing = (object[])Session["reportInfo"];
-                string loc = l.locationName(Convert.ToInt32(passing[1]));
+                string loc = LM.ReturnLocationName(Convert.ToInt32(passing[1]));
                 string fileName = "Purchases Report - " + loc + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))

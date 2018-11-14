@@ -1607,9 +1607,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string sqlCmd = "SELECT cashoutDate, saleTradeIn, saleGiftCard, saleCash, "
                 + "saleDebit, saleMasterCard, saleVisa, receiptTradeIn, receiptGiftCard, "
                 + "receiptCash, receiptDebit, receiptMasterCard, receiptVisa, preTax, "
-                + "CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END AS governmentTax, "
-                + "CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END AS provincialTax, "
-                + "overShort FROM tbl_cashout WHERE "
+                + "governmentTax, provincialTax, overShort FROM tbl_cashout WHERE "
                 + "cashoutDate = @cashoutDate AND locationID = @locationID";
             object[][] parms =
             {

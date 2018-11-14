@@ -17,9 +17,9 @@ namespace SweetSpotDiscountGolfPOS
     public partial class ReportsCashOut : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU;
+        LocationManager LM = new LocationManager();
         Reports R = new Reports();
-        LocationManager L = new LocationManager();
+        CurrentUser CU;
 
         DataTable dt = new DataTable();
 
@@ -47,7 +47,7 @@ namespace SweetSpotDiscountGolfPOS
                         DateTime[] rptDate = { startDate, endDate };
                         int locationID = Convert.ToInt32(Request.QueryString["location"].ToString());
                         object[] passing = { rptDate, locationID };
-                        lblDates.Text = "Cashout report for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + L.locationName(locationID);
+                        lblDates.Text = "Cashout report for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locationID);
                         dt = R.ReturnCashoutsForSelectedDates(passing);
                         grdCashoutByDate.DataSource = dt;
                         grdCashoutByDate.DataBind();
@@ -83,7 +83,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
-                string loc = L.locationName(Convert.ToInt32(Request.QueryString["location"].ToString()));
+                string loc = LM.ReturnLocationName(Convert.ToInt32(Request.QueryString["location"].ToString()));
                 string fileName = "CashOut Report by Date - " + loc + ".xlsx";
 
                 FileInfo newFile = new FileInfo(pathDownload + fileName);

@@ -14,8 +14,8 @@ namespace SweetSpotDiscountGolfPOS
     public partial class CustomerHomePage : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU;
         CustomerManager CM = new CustomerManager();
+        CurrentUser CU;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -106,14 +106,6 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (e.CommandName == "StartSale")
                 {
-                    //Session["ItemsInCart"] = null;
-                    ////Sets transaction type to sale
-                    //Session["TranType"] = 1;
-                    ////Sets customer id to guest cust
-                    //Session["key"] = Convert.ToInt32(e.CommandArgument.ToString());
-                    ////Open the Sales Cart page
-                    //Response.Redirect("SalesCart.aspx?cust=" + e.CommandArgument.ToString(), false);
-
                     InvoiceManager IM = new InvoiceManager();
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                     nameValues.Set("cust", e.CommandArgument.ToString());

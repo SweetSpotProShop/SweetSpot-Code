@@ -16,13 +16,12 @@ namespace SweetSpotDiscountGolfPOS
     public partial class ReportsTaxes : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU;
+        LocationManager LM = new LocationManager();
         Reports R = new Reports();
-
+        CurrentUser CU;
 
 
         List<TaxReport> tr = new List<TaxReport>();
-        LocationManager l = new LocationManager();
         double colGST;
         double colPST;
         double retGST;
@@ -50,12 +49,12 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     CU = (CurrentUser)Session["currentUser"];
                     //Gathering the start and end dates
-                    Object[] passing = (Object[])Session["reportInfo"];
+                    object[] passing = (object[])Session["reportInfo"];
                     DateTime[] reportDates = (DateTime[])passing[0];
                     DateTime startDate = reportDates[0];
                     DateTime endDate = reportDates[1];
                     //Builds string to display in label
-                    lblTaxDate.Text = "Taxes Through: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(Convert.ToInt32(passing[1]));
+                    lblTaxDate.Text = "Taxes Through: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(Convert.ToInt32(passing[1]));
                     //Creating a cashout list and calling a method that grabs all mops and amounts paid
                     tr = R.returnTaxReportDetails(startDate, endDate);
 
@@ -232,8 +231,8 @@ namespace SweetSpotDiscountGolfPOS
             {
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
-                Object[] passing = (Object[])Session["reportInfo"];
-                string loc = l.locationName(Convert.ToInt32(passing[1]));
+                object[] passing = (object[])Session["reportInfo"];
+                string loc = LM.ReturnLocationName(Convert.ToInt32(passing[1]));
                 string fileName = "Taxes Report - " + loc + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))

@@ -17,17 +17,14 @@ namespace SweetSpotDiscountGolfPOS
     public partial class ReportsStoreStats : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU;
         Reports R = new Reports();
-        SweetShopManager ssm = new SweetShopManager();
-        ItemDataUtilities idu = new ItemDataUtilities();
-        LocationManager l = new LocationManager();
+        CurrentUser CU;
+
         double gTax = 0;
         double pTax = 0;
         double cogs = 0;
         double salesPrT = 0;
         double salesPoT = 0;
-        int counter = 0;
         double pm = 0;
         double avp = 0;
         string timeFrame;
@@ -50,7 +47,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     CU = (CurrentUser)Session["currentUser"];
                     //Gathering the start and end dates
-                    Object[] passing = (Object[])Session["reportInfo"];
+                    object[] passing = (object[])Session["reportInfo"];
                     DateTime[] reportDates = (DateTime[])passing[0];
                     DateTime startDate = reportDates[0];
                     DateTime endDate = reportDates[1];
@@ -96,51 +93,15 @@ namespace SweetSpotDiscountGolfPOS
 
         protected void grdStats_RowDataBound(object sender, GridViewRowEventArgs e)
         {            
-            //Label lblGovTax = (Label)e.Row.FindControl("lblGovTax");
-            //Label lblProvTax = (Label)e.Row.FindControl("lblProvTax");
-            //Label lblCOGS = (Label)e.Row.FindControl("lblCOGS");
-            //Label lblAverageProfitMargin = (Label)e.Row.FindControl("lblAverageProfitMargin");
-            //Label lblSalesPreTax = (Label)e.Row.FindControl("lblSalesPreTax");
-            //Label lblSalesPostTax = (Label)e.Row.FindControl("lblSalesPostTax");
+
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                //if (lblGovTax.Text.isNumber())
-                //{
-                //gTax += Convert.ToDouble(lblGovTax.Text);
                 gTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "governmentTax"));
-                //lblGovTax.Text = lblGovTax.Text;
-                //}
-                //if (lblProvTax.Text.isNumber())
-                //{
-                //pTax += Convert.ToDouble(lblProvTax.Text);
                 pTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "provincialTax"));
-                //lblProvTax.Text = lblProvTax.Text;
-                //}
-                //if (lblCOGS.Text.isNumber())
-                //{
-                //cogs += Convert.ToDouble(lblCOGS.Text);
                 cogs += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "totalCOGS"));
-                //lblCOGS.Text = lblCOGS.Text;
-                //}
-                //if (lblAverageProfitMargin.Text.isNumber())
-                //{
-                //pm += Convert.ToDouble(lblAverageProfitMargin.Text);
                 pm += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "averageProfitMargin"));
-                //lblAverageProfitMargin.Text = lblAverageProfitMargin.Text;
-                //counter++;
-                //}
-                //if (lblSalesPreTax.Text.isNumber())
-                //{
-                //salesPrT += Convert.ToDouble(lblSalesPreTax.Text);
                 salesPrT += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "salespretax"));
-                //lblSalesPreTax.Text = lblSalesPreTax.Text;
-                //}
-                //if (lblSalesPostTax.Text.isNumber())
-                //{
-                //salesPoT += Convert.ToDouble(lblSalesPostTax.Text);
                 salesPoT += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "salesposttax"));
-                //lblSalesPostTax.Text = lblSalesPostTax.Text;
-                //}
             }
             else if (e.Row.RowType == DataControlRowType.Footer)
             {
@@ -169,7 +130,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
-                Object[] passing = (Object[])Session["reportInfo"];
+                object[] passing = (object[])Session["reportInfo"];
                 string type = (string)passing[1];
                 string fileName = "Store Stats Report - " + type + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);

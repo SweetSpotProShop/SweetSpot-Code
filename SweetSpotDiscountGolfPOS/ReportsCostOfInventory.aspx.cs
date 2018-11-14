@@ -15,8 +15,8 @@ namespace SweetSpotDiscountGolfPOS
     public partial class ReportsCostOfInventory : System.Web.UI.Page
     {
         ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU;
         Reports R = new Reports();
+        CurrentUser CU;
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking

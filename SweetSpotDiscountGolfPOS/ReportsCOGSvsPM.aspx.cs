@@ -21,13 +21,8 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU;
         Reports R = new Reports();
-
-
-        SweetShopManager ssm = new SweetShopManager();
-        ItemDataUtilities idu = new ItemDataUtilities();
-        LocationManager l = new LocationManager();
-        DateTime startDate;
-        DateTime endDate;
+        LocationManager LM = new LocationManager();
+        
         int locationID;
         double tCost;
         double tPrice;
@@ -50,19 +45,19 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     CU = (CurrentUser)Session["currentUser"];
                     //Gathering the start and end dates
-                    Object[] passing = (Object[])Session["reportInfo"];
+                    object[] passing = (object[])Session["reportInfo"];
                     DateTime[] reportDates = (DateTime[])passing[0];
-                    startDate = reportDates[0];
-                    endDate = reportDates[1];
+                    DateTime startDate = reportDates[0];
+                    DateTime endDate = reportDates[1];
                     locationID = (int)passing[1];
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("d") + " for " + l.locationName(locationID);
+                        lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("d") + " for " + LM.ReturnLocationName(locationID);
                     }
                     else
                     {
-                        lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + l.locationName(locationID);
+                        lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locationID);
                     }
                     //Binding the gridview
                     inv = R.returnInvoicesForCOGS(startDate, endDate, locationID);
@@ -91,29 +86,8 @@ namespace SweetSpotDiscountGolfPOS
                 //Text of the linkbutton
                 LinkButton btn = sender as LinkButton;
                 string invoice = btn.Text;
-                //Parsing into invoiceNum and invoiceSubNum
-                char[] splitchar = { '-' };
-                string[] invoiceSplit = invoice.Split(splitchar);
-                int invNum = Convert.ToInt32(invoiceSplit[0]);
-                int invSNum = Convert.ToInt32(invoiceSplit[1]);
-                //determines the table to use for queries
-                string table = "";
-                int tran = 3;
-                if (invSNum > 1)
-                {
-                    table = "Returns";
-                    tran = 4;
-                }
-                //Stores required info into Sessions
-                Invoice rInvoice = ssm.getSingleInvoice(invNum, invSNum);
-                Session["actualInvoiceInfo"] = rInvoice;
-                Session["useInvoice"] = true;
-                Session["ItemsInCart"] = ssm.invoice_getItems(invNum, invSNum, "tbl_invoiceItem" + table);
-                Session["CheckOutTotals"] = ssm.invoice_getCheckoutTotals(invNum, invSNum, "tbl_invoice");
-                Session["MethodsOfPayment"] = ssm.invoice_getMOP(invNum, invSNum, "tbl_invoiceMOP");
-                Session["TranType"] = tran;
                 //Changes page to display a printable invoice
-                Server.Transfer("PrintableInvoice.aspx?inv=" + invNum + "-" + invSNum, false);
+                Server.Transfer("PrintableInvoice.aspx?inv=" + invoice, false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -187,7 +161,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
-                string loc = l.locationName(locationID);
+                string loc = LM.ReturnLocationName(locationID);
                 string fileName = "COGS and PM Report - " + loc + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))

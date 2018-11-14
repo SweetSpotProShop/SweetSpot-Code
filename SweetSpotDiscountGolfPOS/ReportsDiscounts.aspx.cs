@@ -19,16 +19,8 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU;
         Reports R = new Reports();
+        LocationManager LM = new LocationManager();
 
-
-
-        SweetShopManager ssm = new SweetShopManager();
-        LocationManager lm = new LocationManager();
-        DateTime startDate;
-        DateTime endDate;
-        Employee e;
-        LocationManager l = new LocationManager();
-        ItemDataUtilities idu = new ItemDataUtilities();
         double tDiscount;
         double tBalance;
         DataTable discounts = new DataTable();
@@ -51,19 +43,19 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     CU = (CurrentUser)Session["currentUser"];
                     //Gathering the start and end dates
-                    Object[] repInfo = (Object[])Session["reportInfo"];
+                    object[] repInfo = (object[])Session["reportInfo"];
                     DateTime[] reportDates = (DateTime[])repInfo[0];
-                    startDate = reportDates[0];
-                    endDate = reportDates[1];
+                    DateTime startDate = reportDates[0];
+                    DateTime endDate = reportDates[1];
                     int locID = Convert.ToInt32(repInfo[1]);
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("d") + " for " + lm.locationName(locID);
+                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("d") + " for " + LM.ReturnLocationName(locID);
                     }
                     else
                     {
-                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + lm.locationName(locID);
+                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locID);
                     }
                     discounts = R.returnDiscountsBetweenDates(startDate, endDate, locID);
                     grdInvoiceDisplay.DataSource = discounts;
@@ -121,8 +113,8 @@ namespace SweetSpotDiscountGolfPOS
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
-                Object[] passing = (Object[])Session["reportInfo"];
-                string loc = l.locationName(Convert.ToInt32(passing[1]));
+                object[] passing = (object[])Session["reportInfo"];
+                string loc = LM.ReturnLocationName(Convert.ToInt32(passing[1]));
                 string fileName = "Discount Report - " + loc + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))

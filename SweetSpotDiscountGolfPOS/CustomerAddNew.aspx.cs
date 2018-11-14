@@ -295,14 +295,6 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnStartSale_Click";
             try
             {
-                //Session["ItemsInCart"] = null;
-                ////Sets transaction type to sale
-                //Session["TranType"] = 1;
-                ////Sets customer id to guest cust
-                //Session["key"] = Convert.ToInt32(Request.QueryString["cust"].ToString());
-                ////opens the sales cart page
-                //Response.Redirect("SalesCart.aspx?cust=" + Request.QueryString["cust"].ToString(), false);
-
                 InvoiceManager IM = new InvoiceManager();
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("cust", Request.QueryString["cust"].ToString());

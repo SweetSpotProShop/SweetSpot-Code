@@ -71,5 +71,21 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             };
             DBC.executeInsertQuery(sqlCmd, parms);
         }
+        //public void logErrorAdditionalInfo(Exception er, object[] passedErrorItems )
+        //{
+        //    string sqlCmd = "INSERT INTO tbl_error VALUES(@employeeID, @date, @time, "
+        //        + "@errorPage, @errorMethod, @errorCode, @errorText)";
+        //    object[][] parms =
+        //    {
+        //        new object[] { "@employeeID", Convert.ToInt32(passedErrorItems[0]) },
+        //        new object[] { "@date", DateTime.Now.ToString("yyyy-MM-dd") },
+        //        new object[] { "@time", DateTime.Now.ToString("HH:mm:ss") },
+        //        new object[] { "@errorPage", er.Source + " - " + passedErrorItems[1].ToString() },
+        //        new object[] { "@errorMethod", passedErrorItems[2].ToString() },
+        //        new object[] { "@errorCode", er.HResult },
+        //        new object[] { "@errorText", er.Message + ": " + passedErrorItems[3].ToString() }
+        //    };
+        //    DBC.executeInsertQuery(sqlCmd, parms);
+        //}
     }
 }

@@ -20,15 +20,8 @@ namespace SweetSpotDiscountGolfPOS
         CurrentUser CU;
         ErrorReporting ER = new ErrorReporting();
         Reports R = new Reports();
+        LocationManager LM = new LocationManager();
 
-
-        SweetShopManager ssm = new SweetShopManager();
-        LocationManager lm = new LocationManager();
-        DateTime startDate;
-        DateTime endDate;
-        Employee e;
-        LocationManager l = new LocationManager();
-        ItemDataUtilities idu = new ItemDataUtilities();
         DataTable invoices = new DataTable();
         double shipping;
         double discount;
@@ -42,9 +35,6 @@ namespace SweetSpotDiscountGolfPOS
         double payment;
         int marginCounter;
         double tradein;
-
-        //Counter for rows
-        int counter = 0;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -63,19 +53,19 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     CU = (CurrentUser)Session["currentUser"];
                     //Gathering the start and end dates
-                    Object[] repInfo = (Object[])Session["reportInfo"];
+                    object[] repInfo = (object[])Session["reportInfo"];
                     DateTime[] reportDates = (DateTime[])repInfo[0];
-                    startDate = reportDates[0];
-                    endDate = reportDates[1];
+                    DateTime startDate = reportDates[0];
+                    DateTime endDate = reportDates[1];
                     int locID = Convert.ToInt32(repInfo[1]);
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " for " + lm.locationName(locID);
+                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " for " + LM.ReturnLocationName(locID);
                     }
                     else
                     {
-                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + lm.locationName(locID);
+                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locID);
                     }
                     invoices = R.returnExtensiveInvoices(startDate, endDate, locID);
                     grdInvoices.DataSource = invoices;
@@ -220,8 +210,8 @@ namespace SweetSpotDiscountGolfPOS
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
-                Object[] passing = (Object[])Session["reportInfo"];
-                string loc = l.locationName(Convert.ToInt32(passing[1]));
+                object[] passing = (object[])Session["reportInfo"];
+                string loc = LM.ReturnLocationName(Convert.ToInt32(passing[1]));
                 string fileName = "Extensive Invoice Report - " + loc + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
@@ -281,8 +271,6 @@ namespace SweetSpotDiscountGolfPOS
 
                     double profitMargin = (revenue / preTax) * 100;
                     invoicesExport.Cells[recordIndex + 1, 11].Value = profitMargin.ToString();
-
-
                     invoicesExport.Cells[recordIndex + 1, 12].Value = payment.ToString();
 
                     Response.Clear();
@@ -313,30 +301,6 @@ namespace SweetSpotDiscountGolfPOS
                 //Text of the linkbutton
                 LinkButton btn = sender as LinkButton;
                 string invoice = btn.Text;
-                //Parsing into invoiceNum and invoiceSubNum
-                char[] splitchar = { '-' };
-                string[] invoiceSplit = invoice.Split(splitchar);
-                int invNum = Convert.ToInt32(invoiceSplit[0]);
-                int invSNum = Convert.ToInt32(invoiceSplit[1]);
-                //determines the table to use for queries
-                string table = "";
-                int tran = 3;
-                if (invSNum > 1)
-                {
-                    table = "Returns";
-                    tran = 4;
-                }
-                //Stores required info into Sessions
-                Invoice rInvoice = ssm.getSingleInvoice(invNum, invSNum);
-                //Session["key"] = rInvoice.customerID;
-                //Session["Invoice"] = invoice;
-                Session["actualInvoiceInfo"] = rInvoice;
-                Session["useInvoice"] = true;
-                //Session["strDate"] = rInvoice.invoiceDate;
-                Session["ItemsInCart"] = ssm.invoice_getItems(invNum, invSNum, "tbl_invoiceItem" + table);
-                Session["CheckOutTotals"] = ssm.invoice_getCheckoutTotals(invNum, invSNum, "tbl_invoice");
-                Session["MethodsOfPayment"] = ssm.invoice_getMOP(invNum, invSNum, "tbl_invoiceMOP");
-                Session["TranType"] = tran;
                 //Changes page to display a printable invoice
                 Response.Redirect("PrintableInvoice.aspx?inv=" + invoice, false);
             }

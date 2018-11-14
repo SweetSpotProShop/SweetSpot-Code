@@ -12,11 +12,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
     public class LocationManager
     {
         DatabaseCalls dbc = new DatabaseCalls();
-        private string connectionString;
-        public LocationManager()
-        {
-            connectionString = ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString;
-        }
+        public LocationManager() { }
         private List<Location> ConvertFromDataTableToLocation(DataTable dt)
         {
             List<Location> location = dt.AsEnumerable().Select(row =>
@@ -123,28 +119,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string sqlCmd = "SELECT countryID, countryDesc FROM tbl_country";
             object[][] parms = { };
             return dbc.returnDataTableData(sqlCmd, parms);
-        }
-
-        ////Location name based on location ID
-        public string locationName(int locationID)
-        {
-            SqlConnection conn = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-
-            cmd.Connection = conn;
-            cmd.CommandText = "Select locationName from tbl_location where locationID = " + locationID;
-
-            conn.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            string locationN = null;
-            while (reader.Read())
-            {
-                string name = reader["locationName"].ToString();
-                locationN = name;
-            }
-            conn.Close();
-            //Returns location name
-            return locationN;
         }
     }
 }
