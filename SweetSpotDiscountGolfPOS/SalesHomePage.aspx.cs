@@ -25,6 +25,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "SalesHomePage.aspx";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -40,7 +41,7 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         calSearchDate.SelectedDate = DateTime.Today;
                         //Binds invoice list to the grid view
-                        grdCurrentOpenSales.DataSource = IM.ReturnCurrentOpenInvoices(CU.location.locationID);
+                        grdCurrentOpenSales.DataSource = IM.ReturnCurrentOpenInvoices(CU.location.locationID, objPageDetails);
                         grdCurrentOpenSales.DataBind();
                     }
                 }
@@ -62,11 +63,12 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnQuickSale_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("cust", "1");
-                string invoice = CU.locationName + "-" + IM.ReturnNextInvoiceNumber() + "-1";
+                string invoice = CU.locationName + "-" + IM.ReturnNextInvoiceNumber(objPageDetails) + "-1";
                 nameValues.Set("inv", invoice);
                 //Changes page to Sales Cart
                 Response.Redirect("SalesCart.aspx?" + nameValues, false);
@@ -87,6 +89,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnReturns_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Changes page to Returns Home Page
@@ -108,6 +111,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnInvoiceSearch_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 Response.Redirect("InvoiceSearch.aspx", false);
@@ -128,14 +132,15 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnProcessCashOut_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 Reports R = new Reports();
-                int indicator = R.verifyCashoutCanBeProcessed(CU.location.locationID, calSearchDate.SelectedDate);
+                int indicator = R.verifyCashoutCanBeProcessed(CU.location.locationID, calSearchDate.SelectedDate, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
                 {
-                    R.removeUnprocessedReturns(CU.location.locationID, calSearchDate.SelectedDate);
+                    R.removeUnprocessedReturns(CU.location.locationID, calSearchDate.SelectedDate, objPageDetails);
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                     nameValues.Set("dtm", calSearchDate.SelectedDate.ToShortDateString());
                     nameValues.Set("location", CU.location.locationID.ToString());
@@ -172,6 +177,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "grdCurrentOpenSales_RowCommand";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
@@ -200,6 +206,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void calSearchDate_SelectionChanged(object sender, EventArgs e)
         {
             string method = "calSearchDate_SelectionChanged";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try { }
             catch (ThreadAbortException tae) { }
             catch (Exception ex)

@@ -1,16 +1,11 @@
 ﻿using OfficeOpenXml;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using SweetShop;
 using SweetSpotDiscountGolfPOS.ClassLibrary;
 using SweetSpotProShop;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace SweetSpotDiscountGolfPOS
@@ -41,6 +36,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "ReportsExtensiveInvoice.aspx";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -61,19 +57,19 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " for " + LM.ReturnLocationName(locID);
+                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " for " + LM.ReturnLocationName(locID, objPageDetails);
                     }
                     else
                     {
-                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locID);
+                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locID, objPageDetails);
                     }
-                    invoices = R.returnExtensiveInvoices(startDate, endDate, locID);
+                    invoices = R.returnExtensiveInvoices(startDate, endDate, locID, objPageDetails);
                     grdInvoices.DataSource = invoices;
                     grdInvoices.DataBind();
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -86,139 +82,156 @@ namespace SweetSpotDiscountGolfPOS
         }
         protected void grdInvoices_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-
-            Label lblShipping = (Label)e.Row.FindControl("lblShipping");
-            Label lblTradeIn = (Label)e.Row.FindControl("lblTradeIn");
-            Label lblDiscount = (Label)e.Row.FindControl("lblDiscount");
-            Label lblPreTax = (Label)e.Row.FindControl("lblPreTax");
-            Label lblGovTax = (Label)e.Row.FindControl("lblGovernmentTax");
-            Label lblProvTax = (Label)e.Row.FindControl("lblProvincialTax");
-            Label lblPostTax = (Label)e.Row.FindControl("lblPostTax");
-            Label lblCOGS = (Label)e.Row.FindControl("lblCOGS");
-            Label lblRevenue = (Label)e.Row.FindControl("lblRevenue");
-            Label lblProfitMargin = (Label)e.Row.FindControl("lblProfitMargin");
-            Label lblDate = (Label)e.Row.FindControl("lblDate");
-            Label lblPayment = (Label)e.Row.FindControl("lblPayment");
-            if (e.Row.RowType == DataControlRowType.DataRow)
+            //Collects current method for error tracking
+            string method = "grdInvoices_RowDataBound";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
             {
-                //Shipping
-                if (lblShipping.Text.isNumber())
+                Label lblShipping = (Label)e.Row.FindControl("lblShipping");
+                Label lblTradeIn = (Label)e.Row.FindControl("lblTradeIn");
+                Label lblDiscount = (Label)e.Row.FindControl("lblDiscount");
+                Label lblPreTax = (Label)e.Row.FindControl("lblPreTax");
+                Label lblGovTax = (Label)e.Row.FindControl("lblGovernmentTax");
+                Label lblProvTax = (Label)e.Row.FindControl("lblProvincialTax");
+                Label lblPostTax = (Label)e.Row.FindControl("lblPostTax");
+                Label lblCOGS = (Label)e.Row.FindControl("lblCOGS");
+                Label lblRevenue = (Label)e.Row.FindControl("lblRevenue");
+                Label lblProfitMargin = (Label)e.Row.FindControl("lblProfitMargin");
+                Label lblDate = (Label)e.Row.FindControl("lblDate");
+                Label lblPayment = (Label)e.Row.FindControl("lblPayment");
+                if (e.Row.RowType == DataControlRowType.DataRow)
                 {
-                    shipping += Convert.ToDouble(lblShipping.Text);
-                    lblShipping.Text = "$" + lblShipping.Text;
+                    //Shipping
+                    if (lblShipping.Text.isNumber())
+                    {
+                        shipping += Convert.ToDouble(lblShipping.Text);
+                        lblShipping.Text = "$" + lblShipping.Text;
+                    }
+                    //TradeIn
+                    if (lblTradeIn.Text.isNumber())
+                    {
+                        tradein += Convert.ToDouble(lblTradeIn.Text);
+                        lblTradeIn.Text = "$" + lblTradeIn.Text;
+                    }
+                    //Discount
+                    if (lblDiscount.Text.isNumber())
+                    {
+                        discount += Convert.ToDouble(lblDiscount.Text);
+                        lblDiscount.Text = "$" + lblDiscount.Text;
+                    }
+                    //Pre-Tax
+                    if (lblPreTax.Text.isNumber())
+                    {
+                        preTax += Convert.ToDouble(lblPreTax.Text);
+                        lblPreTax.Text = "$" + lblPreTax.Text;
+                    }
+                    //Gov Tax
+                    if (lblGovTax.Text.isNumber())
+                    {
+                        govTax += Convert.ToDouble(lblGovTax.Text);
+                        lblGovTax.Text = "$" + lblGovTax.Text;
+                    }
+                    //Prov Tax
+                    if (lblProvTax.Text.isNumber())
+                    {
+                        proTax += Convert.ToDouble(lblProvTax.Text);
+                        lblProvTax.Text = "$" + lblProvTax.Text;
+                    }
+                    //Post-Tax
+                    if (lblPostTax.Text.isNumber())
+                    {
+                        postTax += Convert.ToDouble(lblPostTax.Text);
+                        lblPostTax.Text = "$" + lblPostTax.Text;
+                    }
+                    //COGS
+                    if (lblCOGS.Text.isNumber())
+                    {
+                        cogs += Convert.ToDouble(lblCOGS.Text);
+                        lblCOGS.Text = "$" + lblCOGS.Text;
+                    }
+                    //Revenue
+                    if (lblRevenue.Text.isNumber())
+                    {
+                        revenue += Convert.ToDouble(lblRevenue.Text);
+                        lblRevenue.Text = "$" + lblRevenue.Text;
+                    }
+                    //Payment
+                    if (lblPayment.Text.isNumber())
+                    {
+                        payment += Convert.ToDouble(lblPayment.Text);
+                        lblPayment.Text = "$" + lblPayment.Text;
+                    }
+                    //Profit Margin
+                    if (lblProfitMargin.Text.isNumber())
+                    {
+                        margin += Convert.ToDouble(lblProfitMargin.Text);
+                        marginCounter++;
+                        lblProfitMargin.Text = lblProfitMargin.Text + "%";
+                    }
+                    //Removing the time from the date
+                    string date = lblDate.Text; //Error object reference not set
+                    DateTime invoiceDate = Convert.ToDateTime(date);
+                    lblDate.Text = invoiceDate.ToString("dd-MM-yyyy");
                 }
-                //TradeIn
-                if (lblTradeIn.Text.isNumber())
+                else if (e.Row.RowType == DataControlRowType.Footer)
                 {
-                    tradein += Convert.ToDouble(lblTradeIn.Text);
-                    lblTradeIn.Text = "$" + lblTradeIn.Text;
-                }
-                //Discount
-                if (lblDiscount.Text.isNumber())
-                {
-                    discount += Convert.ToDouble(lblDiscount.Text);
-                    lblDiscount.Text = "$" + lblDiscount.Text;
-                }
-                //Pre-Tax
-                if (lblPreTax.Text.isNumber())
-                {
-                    preTax += Convert.ToDouble(lblPreTax.Text);
-                    lblPreTax.Text = "$" + lblPreTax.Text;
-                }
-                //Gov Tax
-                if (lblGovTax.Text.isNumber())
-                {
-                    govTax += Convert.ToDouble(lblGovTax.Text);
-                    lblGovTax.Text = "$" + lblGovTax.Text;
-                }
-                //Prov Tax
-                if (lblProvTax.Text.isNumber())
-                {
-                    proTax += Convert.ToDouble(lblProvTax.Text);
-                    lblProvTax.Text = "$" + lblProvTax.Text;
-                }
-                //Post-Tax
-                if (lblPostTax.Text.isNumber())
-                {
-                    postTax += Convert.ToDouble(lblPostTax.Text);
-                    lblPostTax.Text = "$" + lblPostTax.Text;
-                }
-                //COGS
-                if (lblCOGS.Text.isNumber())
-                {
-                    cogs += Convert.ToDouble(lblCOGS.Text);
-                    lblCOGS.Text = "$" + lblCOGS.Text;
-                }
-                //Revenue
-                if (lblRevenue.Text.isNumber())
-                {
-                    revenue += Convert.ToDouble(lblRevenue.Text);
-                    lblRevenue.Text = "$" + lblRevenue.Text;
-                }
-                //Payment
-                if (lblPayment.Text.isNumber())
-                {
-                    payment += Convert.ToDouble(lblPayment.Text);
-                    lblPayment.Text = "$" + lblPayment.Text;
-                }
-                //Profit Margin
-                if (lblProfitMargin.Text.isNumber())
-                {
-                    margin += Convert.ToDouble(lblProfitMargin.Text);
-                    marginCounter++;
-                    lblProfitMargin.Text = lblProfitMargin.Text + "%";
-                }
-                //Removing the time from the date
-                string date = lblDate.Text; //Error object reference not set
-                DateTime invoiceDate = Convert.ToDateTime(date);
-                lblDate.Text = invoiceDate.ToString("dd-MM-yyyy");
-            }
-            else if (e.Row.RowType == DataControlRowType.Footer)
-            {                
-                Label lblShippingTotal = (Label)e.Row.FindControl("lblShippingTotal");
-                Label lblTradeinTotal = (Label)e.Row.FindControl("lblTradeInTotal");
-                Label lblDiscountTotal = (Label)e.Row.FindControl("lblDiscountTotal");
-                Label lblPreTaxTotal = (Label)e.Row.FindControl("lblPreTaxTotal");
-                Label lblGovTaxTotal = (Label)e.Row.FindControl("lblGovernmentTaxTotal");
-                Label lblProvTaxTotal = (Label)e.Row.FindControl("lblProvincialTaxTotal");
-                Label lblPostTaxTotal = (Label)e.Row.FindControl("lblPostTaxTotal");
-                Label lblCOGSTotal = (Label)e.Row.FindControl("lblCOGSTotal");
-                Label lblRevenueTotal = (Label)e.Row.FindControl("lblRevenueTotal");
-                Label lblProfitMarginTotal = (Label)e.Row.FindControl("lblProfitMarginTotal");
-                Label lblPaymentTotal = (Label)e.Row.FindControl("lblPaymentTotal");
+                    Label lblShippingTotal = (Label)e.Row.FindControl("lblShippingTotal");
+                    Label lblTradeinTotal = (Label)e.Row.FindControl("lblTradeInTotal");
+                    Label lblDiscountTotal = (Label)e.Row.FindControl("lblDiscountTotal");
+                    Label lblPreTaxTotal = (Label)e.Row.FindControl("lblPreTaxTotal");
+                    Label lblGovTaxTotal = (Label)e.Row.FindControl("lblGovernmentTaxTotal");
+                    Label lblProvTaxTotal = (Label)e.Row.FindControl("lblProvincialTaxTotal");
+                    Label lblPostTaxTotal = (Label)e.Row.FindControl("lblPostTaxTotal");
+                    Label lblCOGSTotal = (Label)e.Row.FindControl("lblCOGSTotal");
+                    Label lblRevenueTotal = (Label)e.Row.FindControl("lblRevenueTotal");
+                    Label lblProfitMarginTotal = (Label)e.Row.FindControl("lblProfitMarginTotal");
+                    Label lblPaymentTotal = (Label)e.Row.FindControl("lblPaymentTotal");
 
-                lblShippingTotal.Text = String.Format("{0:C}", shipping);
-                lblTradeinTotal.Text = String.Format("{0:C}", tradein);
-                lblDiscountTotal.Text = String.Format("{0:C}", discount);
-                lblPreTaxTotal.Text = String.Format("{0:C}", preTax);
-                lblGovTaxTotal.Text = String.Format("{0:C}", govTax);
-                lblProvTaxTotal.Text = String.Format("{0:C}", proTax);
-                lblPostTaxTotal.Text = String.Format("{0:C}", postTax);
-                lblCOGSTotal.Text = String.Format("{0:C}", cogs);
-                lblRevenueTotal.Text = String.Format("{0:C}", revenue);
-                lblPaymentTotal.Text = String.Format("{0:C}", payment);
-                double profitMargin = (revenue / preTax) * 100;
-                lblProfitMarginTotal.Text = profitMargin.ToString("#.##") + "%";
+                    lblShippingTotal.Text = String.Format("{0:C}", shipping);
+                    lblTradeinTotal.Text = String.Format("{0:C}", tradein);
+                    lblDiscountTotal.Text = String.Format("{0:C}", discount);
+                    lblPreTaxTotal.Text = String.Format("{0:C}", preTax);
+                    lblGovTaxTotal.Text = String.Format("{0:C}", govTax);
+                    lblProvTaxTotal.Text = String.Format("{0:C}", proTax);
+                    lblPostTaxTotal.Text = String.Format("{0:C}", postTax);
+                    lblCOGSTotal.Text = String.Format("{0:C}", cogs);
+                    lblRevenueTotal.Text = String.Format("{0:C}", revenue);
+                    lblPaymentTotal.Text = String.Format("{0:C}", payment);
+                    double profitMargin = (revenue / preTax) * 100;
+                    lblProfitMarginTotal.Text = profitMargin.ToString("#.##") + "%";
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                                + "If you continue to receive this message please contact "
+                                + "your system administrator.", this);
             }
         }
         protected void btnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "btnDownload_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
                 object[] passing = (object[])Session["reportInfo"];
-                string loc = LM.ReturnLocationName(Convert.ToInt32(passing[1]));
+                string loc = LM.ReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
                 string fileName = "Extensive Invoice Report - " + loc + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
                     //Creates a seperate sheet for each data table
-                    ExcelWorksheet invoicesExport = xlPackage.Workbook.Worksheets.Add("Invoices"); 
-                                                                                                   // write to sheet   
+                    ExcelWorksheet invoicesExport = xlPackage.Workbook.Worksheets.Add("Invoices");
+                    // write to sheet   
                     invoicesExport.Cells[1, 1].Value = lblDates.Text;
                     invoicesExport.Cells[2, 1].Value = "Invoice";
                     invoicesExport.Cells[2, 2].Value = "Shipping";
@@ -281,7 +294,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -296,6 +309,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "lbtnInvoiceNumber_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Text of the linkbutton
@@ -305,7 +319,7 @@ namespace SweetSpotDiscountGolfPOS
                 Response.Redirect("PrintableInvoice.aspx?inv=" + invoice, false);
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table

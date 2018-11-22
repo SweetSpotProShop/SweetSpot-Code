@@ -28,6 +28,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "ReportsSpecificApparel";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -47,7 +48,7 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     if (startDate == endDate) { lblDates.Text = "Apparel sold through: " + startDate.ToString("d"); }
                     else { lblDates.Text = "Apparel sold through: " + startDate.ToString("d") + " to " + endDate.ToString("d"); }
-                    grdStats.DataSource = R.returnSpecificApparelDataTableForReport(startDate, endDate);
+                    grdStats.DataSource = R.returnSpecificApparelDataTableForReport(startDate, endDate, objPageDetails);
                     grdStats.DataBind();
                 }
             }
@@ -65,26 +66,44 @@ namespace SweetSpotDiscountGolfPOS
         }
 
         protected void grdStats_RowDataBound(object sender, GridViewRowEventArgs e)
-        {            
-            if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            //Collects current method for error tracking
+            string method = "grdStats_RowDataBound";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
             {
-                pmPrice += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem,"overallPrice"));
-                pmCost += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "overallCost"));
-                pmQuantity += Convert.ToInt32(DataBinder.Eval(e.Row.DataItem, "overallQuantity"));
+                if (e.Row.RowType == DataControlRowType.DataRow)
+                {
+                    pmPrice += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "overallPrice"));
+                    pmCost += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "overallCost"));
+                    pmQuantity += Convert.ToInt32(DataBinder.Eval(e.Row.DataItem, "overallQuantity"));
+                }
+                else if (e.Row.RowType == DataControlRowType.Footer)
+                {
+                    e.Row.Cells[3].Text = String.Format("{0:N0}", pmQuantity);
+                    e.Row.Cells[4].Text = String.Format("{0:C}", pmCost / pmQuantity);
+                    e.Row.Cells[5].Text = String.Format("{0:C}", pmPrice / pmQuantity);
+                    e.Row.Cells[6].Text = String.Format("{0:C}", pmCost);
+                    e.Row.Cells[7].Text = String.Format("{0:P2}", (pmPrice - pmCost) / pmPrice);
+                }
             }
-            else if (e.Row.RowType == DataControlRowType.Footer)
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
             {
-                e.Row.Cells[3].Text = String.Format("{0:N0}", pmQuantity);
-                e.Row.Cells[4].Text = String.Format("{0:C}", pmCost / pmQuantity);
-                e.Row.Cells[5].Text = String.Format("{0:C}", pmPrice /pmQuantity);
-                e.Row.Cells[6].Text = String.Format("{0:C}", pmCost);
-                e.Row.Cells[7].Text = String.Format("{0:P2}", (pmPrice - pmCost) / pmPrice);
+                //Log all info into error table
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
             }
         }
         protected void btnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "btnDownload_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 MessageBox.ShowMessage("Download for this report is currently not available.", this);

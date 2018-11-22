@@ -25,6 +25,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "CustomerAddNew.aspx";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -42,7 +43,7 @@ namespace SweetSpotDiscountGolfPOS
                         if (!IsPostBack)
                         {
                             //Create customer class and fill page with all info based in the customer number 
-                            Customer customer = CM.ReturnCustomerWithInvoiceList(Convert.ToInt32(Request.QueryString["cust"].ToString()))[0];
+                            Customer customer = CM.ReturnCustomerWithInvoiceList(Convert.ToInt32(Request.QueryString["cust"].ToString()), objPageDetails)[0];
 
                             txtFirstName.Text = customer.firstName.ToString();
                             txtLastName.Text = customer.lastName.ToString();
@@ -55,12 +56,12 @@ namespace SweetSpotDiscountGolfPOS
                             ddlProvince.SelectedValue = customer.province.ToString();
                             ddlCountry.SelectedValue = customer.country.ToString();
 
-                            ddlCountry.DataSource = LM.ReturnCountryDropDown();
+                            ddlCountry.DataSource = LM.ReturnCountryDropDown(objPageDetails);
                             ddlCountry.DataTextField = "countryDesc";
                             ddlCountry.DataValueField = "countryID";
                             ddlCountry.DataBind();
                             ddlCountry.SelectedValue = customer.country.ToString();
-                            ddlProvince.DataSource = LM.ReturnProvinceDropDown(customer.country);
+                            ddlProvince.DataSource = LM.ReturnProvinceDropDown(customer.country, objPageDetails);
                             ddlProvince.DataTextField = "provName";
                             ddlProvince.DataValueField = "provStateID";
                             ddlProvince.SelectedValue = customer.province.ToString();
@@ -79,7 +80,7 @@ namespace SweetSpotDiscountGolfPOS
                         //no cust number
                         if (!IsPostBack)
                         {
-                            ddlCountry.DataSource = LM.ReturnCountryDropDown();
+                            ddlCountry.DataSource = LM.ReturnCountryDropDown(objPageDetails);
                             ddlCountry.DataTextField = "countryDesc";
                             ddlCountry.DataValueField = "countryID";
                             ddlCountry.DataBind();
@@ -87,7 +88,7 @@ namespace SweetSpotDiscountGolfPOS
 
                             ddlProvince.DataTextField = "provName";
                             ddlProvince.DataValueField = "provStateID";
-                            ddlProvince.DataSource = LM.ReturnProvinceDropDown(0);
+                            ddlProvince.DataSource = LM.ReturnProvinceDropDown(0, objPageDetails);
                             ddlProvince.DataBind();
                         }
                         //Displays text boxes instead of label for customer creation info
@@ -130,6 +131,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnAddCustomer_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Collects new customer data to add to database
@@ -148,7 +150,7 @@ namespace SweetSpotDiscountGolfPOS
                 c.postalCode = txtPostalCode.Text;
 
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                nameValues.Set("cust", CM.addCustomer(c).ToString());
+                nameValues.Set("cust", CM.addCustomer(c, objPageDetails).ToString());
                 Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
             }
             //Exception catch
@@ -167,6 +169,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnEditCustomer_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //transfers data from label into textbox for editing
@@ -207,6 +210,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnSaveCustomer_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Collects customer data to add to database
@@ -225,7 +229,7 @@ namespace SweetSpotDiscountGolfPOS
                 c.country = Convert.ToInt32(ddlCountry.SelectedValue);
                 c.postalCode = txtPostalCode.Text;
                 //updates the customer info in tables
-                CM.updateCustomer(c);
+                CM.updateCustomer(c, objPageDetails);
                 //changes all text boxes and dropdowns to labels
                 txtFirstName.Enabled = false;
                 txtLastName.Enabled = false;
@@ -271,6 +275,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnCancel_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //no chnages saved and moves to customer home page
@@ -293,12 +298,13 @@ namespace SweetSpotDiscountGolfPOS
             //****Still need this updated with new process****
             //Collects current method and page for error tracking
             string method = "btnStartSale_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 InvoiceManager IM = new InvoiceManager();
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("cust", Request.QueryString["cust"].ToString());
-                string invoice = CU.locationName + "-" + IM.ReturnNextInvoiceNumber() + "-1";
+                string invoice = CU.locationName + "-" + IM.ReturnNextInvoiceNumber(objPageDetails) + "-1";
                 nameValues.Set("inv", invoice);
                 //Changes page to Sales Cart
                 Response.Redirect("SalesCart.aspx?" + nameValues, false);
@@ -319,6 +325,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "btnBackToSearch_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //opens the Customer home page
@@ -340,6 +347,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "grdInvoiceSelection_RowCommand";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Sets the string of the command argument(invoice number
@@ -364,11 +372,12 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "ddlCountry_SelectedIndexChanged";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 ddlProvince.DataTextField = "provName";
                 ddlProvince.DataValueField = "provStateID";
-                ddlProvince.DataSource = LM.ReturnProvinceDropDown(Convert.ToInt32(ddlCountry.SelectedValue));
+                ddlProvince.DataSource = LM.ReturnProvinceDropDown(Convert.ToInt32(ddlCountry.SelectedValue), objPageDetails);
                 ddlProvince.DataBind();
             }
             //Exception catch

@@ -21,23 +21,24 @@ namespace SweetSpotDiscountGolfPOS
         {
             string method = "Page_Load";
             Session["currPage"] = "TradeINEntry.aspx";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 CU = (CurrentUser)Session["currentUser"];
                 if (!IsPostBack)
                 {
-                    lblSKUDisplay.Text = IM.ReserveTradeInSKU(CU.location.locationID).ToString();
-                    ddlBrand.DataSource = IM.ReturnDropDownForBrand();
+                    lblSKUDisplay.Text = IM.ReserveTradeInSKU(CU.location.locationID, objPageDetails).ToString();
+                    ddlBrand.DataSource = IM.ReturnDropDownForBrand(objPageDetails);
                     ddlBrand.DataTextField = "brandName";
                     ddlBrand.DataValueField = "brandID";
                     ddlBrand.DataBind();
 
-                    ddlClubType.DataSource = IM.ReturnDropDownForClubType();
+                    ddlClubType.DataSource = IM.ReturnDropDownForClubType(objPageDetails);
                     ddlClubType.DataTextField = "typeName";
                     ddlClubType.DataValueField = "typeID";
                     ddlClubType.DataBind();
 
-                    ddlModel.DataSource = IM.ReturnDropDownForModel();
+                    ddlModel.DataSource = IM.ReturnDropDownForModel(objPageDetails);
                     ddlModel.DataTextField = "modelName";
                     ddlModel.DataValueField = "modelID";
                     ddlModel.DataBind();
@@ -58,6 +59,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnCancel_Click(object sender, EventArgs e)
         {
             string method = "btnCancel_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 string redirect = "<script>window.close('TradeINEntry.aspx');</script>";
@@ -76,6 +78,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnAddTradeIN_Click(object sender, EventArgs e)
         {
             string method = "btnAddTradeIN_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 CU = (CurrentUser)Session["currentUser"];
@@ -90,7 +93,7 @@ namespace SweetSpotDiscountGolfPOS
                 tradeIN.brandID = Convert.ToInt32(ddlBrand.SelectedValue);
                 tradeIN.modelID = Convert.ToInt32(ddlModel.SelectedValue);
                 tradeIN.quantity = Convert.ToInt32(txtQuantity.Text);
-                tradeIN.clubType = IM.GetClubTypeName(Convert.ToInt32(ddlClubType.SelectedValue));
+                tradeIN.clubType = IM.GetClubTypeName(Convert.ToInt32(ddlClubType.SelectedValue), objPageDetails);
                 tradeIN.shaft = txtShaft.Text;
                 tradeIN.clubSpec = txtClubSpec.Text;
                 tradeIN.shaftFlex = txtShaftFlex.Text;
@@ -102,7 +105,7 @@ namespace SweetSpotDiscountGolfPOS
                 tradeIN.itemlocation = CU.location.locationID;
 
                 //this adds to the temp tradeIncart
-                IM.AddTradeInItemToTempTable(tradeIN);
+                IM.AddTradeInItemToTempTable(tradeIN, objPageDetails);
 
                 //change cost and price for cart
                 InvoiceItemsManager IIM = new InvoiceItemsManager();
@@ -111,7 +114,7 @@ namespace SweetSpotDiscountGolfPOS
                 selectedTradeIn.invoiceSubNum = Convert.ToInt32((Request.QueryString["inv"]).Split('-')[2]);
                 selectedTradeIn.sku = tradeIN.sku;
                 selectedTradeIn.quantity = tradeIN.quantity;
-                selectedTradeIn.description = IM.ReturnBrandlNameFromBrandID(tradeIN.brandID) + " " + IM.ReturnModelNameFromModelID(tradeIN.modelID) + " " + tradeIN.clubSpec + " " + tradeIN.clubType + " " + tradeIN.shaftSpec + " " + tradeIN.shaftFlex + " " + tradeIN.dexterity;
+                selectedTradeIn.description = IM.ReturnBrandlNameFromBrandID(tradeIN.brandID, objPageDetails) + " " + IM.ReturnModelNameFromModelID(tradeIN.modelID, objPageDetails) + " " + tradeIN.clubSpec + " " + tradeIN.clubType + " " + tradeIN.shaftSpec + " " + tradeIN.shaftFlex + " " + tradeIN.dexterity;
                 selectedTradeIn.cost = 0;
                 selectedTradeIn.price = tradeIN.cost * (-1);
                 selectedTradeIn.itemDiscount = 0;
@@ -120,7 +123,7 @@ namespace SweetSpotDiscountGolfPOS
                 selectedTradeIn.isTradeIn = true;
                 selectedTradeIn.typeID = 1;
 
-                IIM.InsertItemIntoSalesCart(selectedTradeIn);
+                IIM.InsertItemIntoSalesCart(selectedTradeIn, objPageDetails);
                 //Closing the trade in information window
                 string redirect = "<script>window.close('TradeINEntry.aspx');</script>";
                 Response.Write(redirect);

@@ -24,6 +24,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "SalesHomePage.aspx";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -56,9 +57,10 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnSearch_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                grdInvoiceSelection.DataSource = IM.ReturnInvoicesBasedOnSearchForReturns(txtInvoiceSearch.Text, calSearchDate.SelectedDate);
+                grdInvoiceSelection.DataSource = IM.ReturnInvoicesBasedOnSearchForReturns(txtInvoiceSearch.Text, calSearchDate.SelectedDate, objPageDetails);
                 grdInvoiceSelection.DataBind();
             }
             //Exception catch
@@ -77,15 +79,16 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "grdInvoiceSelection_RowCommand";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Checks that the command name is return invoice
                 if (e.CommandName == "returnInvoice")
                 {
                     //Retrieves all the invoices that were searched
-                    Invoice RI = IM.ReturnInvoice(Convert.ToString(e.CommandArgument))[0];
+                    Invoice RI = IM.ReturnInvoice(Convert.ToString(e.CommandArgument), objPageDetails)[0];
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                    string invoice = CU.locationName + "-" + RI.invoiceNum + "-" + IM.CalculateNextInvoiceSubNum(RI.invoiceNum);
+                    string invoice = CU.locationName + "-" + RI.invoiceNum + "-" + IM.CalculateNextInvoiceSubNum(RI.invoiceNum, objPageDetails);
                     nameValues.Set("inv", invoice);
                     //Changes to Returns cart
                     Response.Redirect("ReturnsCart.aspx?" + nameValues, false);
@@ -106,6 +109,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void calSearchDate_SelectionChanged(object sender, EventArgs e)
         {
             string method = "calSearchDate_SelectionChanged";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try { }
             catch (ThreadAbortException tae) { }
             catch (Exception ex)

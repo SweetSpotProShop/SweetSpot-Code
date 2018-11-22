@@ -69,7 +69,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@errorCode", er.HResult },
                 new object[] { "@errorText", er.Message }
             };
-            DBC.executeInsertQuery(sqlCmd, parms);
+            DBC.executeErrorInsertQuery(sqlCmd, parms);
         }
         //public void logErrorAdditionalInfo(Exception er, object[] passedErrorItems )
         //{

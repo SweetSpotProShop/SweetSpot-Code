@@ -33,6 +33,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "ReportsCOGSvsPM";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -53,14 +54,14 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("d") + " for " + LM.ReturnLocationName(locationID);
+                        lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("d") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     }
                     else
                     {
-                        lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locationID);
+                        lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     }
                     //Binding the gridview
-                    inv = R.returnInvoicesForCOGS(startDate, endDate, locationID);
+                    inv = R.returnInvoicesForCOGS(startDate, endDate, locationID, objPageDetails);
                     grdInvoiceSelection.DataSource = inv;
                     grdInvoiceSelection.DataBind();
                 }
@@ -81,6 +82,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "lbtnInvoiceNumber_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Text of the linkbutton
@@ -104,6 +106,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void grdInvoiceSelection_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             string method = "grdInvoiceSelection_RowDataBound";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
@@ -156,12 +159,13 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnDownload_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
-                string loc = LM.ReturnLocationName(locationID);
+                string loc = LM.ReturnLocationName(locationID, objPageDetails);
                 string fileName = "COGS and PM Report - " + loc + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))

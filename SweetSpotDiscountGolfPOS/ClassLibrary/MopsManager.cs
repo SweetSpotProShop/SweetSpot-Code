@@ -21,9 +21,10 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
 
         //Returns list of InvoiceItems based on an Invoice Number
-        public List<Mops> ReturnMopsFromCmdAndParams(string sqlCmd, object[][] parms)
+        public List<Mops> ReturnMopsFromCmdAndParams(string sqlCmd, object[][] parms, object[] objPageDetails)
         {
-            return ConvertFromDataTableToMops(dbc.returnDataTableData(sqlCmd, parms));
+            string strQueryName = "ReturnMopsFromCmdAndParams";
+            return ConvertFromDataTableToMops(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
     }
 }

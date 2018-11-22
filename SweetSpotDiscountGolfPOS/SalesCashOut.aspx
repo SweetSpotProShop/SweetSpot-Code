@@ -131,7 +131,7 @@
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtTradeIn" Text="0.00" runat="server" Width="80" />
+                            <asp:TextBox ID="txtTradeIn" Text="0.00" runat="server" AutoComplete="off" Width="80" />
                             <asp:RegularExpressionValidator ID="revTradeIn"
                                 ControlToValidate="txtTradeIn"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -141,7 +141,7 @@
                                 runat="server" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtGiftCard" Text="0.00" runat="server" Width="80" />
+                            <asp:TextBox ID="txtGiftCard" Text="0.00" runat="server" AutoComplete="off" Width="80" />
                             <asp:RegularExpressionValidator ID="revGiftCard"
                                 ControlToValidate="txtGiftCard"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -151,7 +151,7 @@
                                 runat="server" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtCash" Text="0.00" runat="server" Width="80" />
+                            <asp:TextBox ID="txtCash" Text="0.00" runat="server" AutoComplete="off" Width="80" />
                             <asp:RegularExpressionValidator ID="revCash"
                                 ControlToValidate="txtCash"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -161,7 +161,7 @@
                                 runat="server" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtDebit" Text="0.00" runat="server" Width="80" />
+                            <asp:TextBox ID="txtDebit" Text="0.00" runat="server" AutoComplete="off" Width="80" />
                             <asp:RegularExpressionValidator ID="revDebit"
                                 ControlToValidate="txtDebit"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -171,7 +171,7 @@
                                 runat="server" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtMasterCard" Text="0.00" runat="server" Width="80" />
+                            <asp:TextBox ID="txtMasterCard" Text="0.00" runat="server" AutoComplete="off" Width="80" />
                             <asp:RegularExpressionValidator ID="revMasterCard"
                                 ControlToValidate="txtMasterCard"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -181,7 +181,7 @@
                                 runat="server" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtVisa" Text="0.00" runat="server" Width="80" />
+                            <asp:TextBox ID="txtVisa" Text="0.00" runat="server" AutoComplete="off" Width="80" />
                             <asp:RegularExpressionValidator ID="revVisa"
                                 ControlToValidate="txtVisa"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"

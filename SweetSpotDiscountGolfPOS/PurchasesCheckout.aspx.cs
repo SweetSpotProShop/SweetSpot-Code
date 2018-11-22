@@ -2,9 +2,6 @@
 using SweetSpotDiscountGolfPOS.ClassLibrary;
 using SweetSpotProShop;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.UI;
@@ -42,6 +39,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "PurchasesCheckout.aspx";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -91,7 +89,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -107,6 +105,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "mopCash_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Checks that string is not empty
@@ -117,7 +116,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -133,6 +132,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "mopCheque_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Checks that string is not empty
@@ -144,7 +144,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -160,6 +160,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "mopDebit_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Checks that string is not empty
@@ -170,7 +171,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -186,6 +187,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "mopGiftCard_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Checks that string is not empty
@@ -196,7 +198,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -212,19 +214,20 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "populateGridviewMOP";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                if(amountPaid > 0)
+                if (amountPaid > 0)
                 {
                     amountPaid = amountPaid * -1;
                 }
                 InvoiceMOPsManager IMM = new InvoiceMOPsManager();
-                IMM.AddNewMopToReceiptList(Request.QueryString["receipt"].ToString(), amountPaid, methodOfPayment, chequeNumber);
+                IMM.AddNewMopToReceiptList(Request.QueryString["receipt"].ToString(), amountPaid, methodOfPayment, chequeNumber, objPageDetails);
                 //Center the mop grid view
                 UpdatePageTotals();
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -241,6 +244,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "OnRowDeleting";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Retrieves index of selected row
@@ -261,7 +265,7 @@ namespace SweetSpotDiscountGolfPOS
                 //}
                 //else
                 InvoiceMOPsManager IMM = new InvoiceMOPsManager();
-                IMM.RemoveMopFromPurchaseList(mopRemovingID, Request.QueryString["receipt"].ToString());
+                IMM.RemoveMopFromPurchaseList(mopRemovingID, Request.QueryString["receipt"].ToString(), objPageDetails);
                 //{
                 //Add removed mops paid amount back into the remaining balance
                 ////ckm.dblRemainingBalance += paidAmount;
@@ -282,7 +286,7 @@ namespace SweetSpotDiscountGolfPOS
                 UpdatePageTotals();
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -295,32 +299,49 @@ namespace SweetSpotDiscountGolfPOS
         }
         protected void UpdatePageTotals()
         {
-            Invoice R = IM.ReturnCurrentPurchaseInvoice(Request.QueryString["receipt"].ToString() + "-1")[0];
-            lblTotalPurchaseAmount.Text = "$ " + R.subTotal.ToString("#0.00");
-
-            double dblAmountPaid = 0;
-            foreach (var mop in R.usedMops)
+            string method = "UpdatePageTotals";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
             {
-                //Adds the total amount paid fropm each mop type
-                dblAmountPaid += mop.amountPaid;
+                Invoice R = IM.ReturnCurrentPurchaseInvoice(Request.QueryString["receipt"].ToString() + "-1", objPageDetails)[0];
+                lblTotalPurchaseAmount.Text = "$ " + R.subTotal.ToString("#0.00");
+
+                double dblAmountPaid = 0;
+                foreach (var mop in R.usedMops)
+                {
+                    //Adds the total amount paid fropm each mop type
+                    dblAmountPaid += mop.amountPaid;
+                }
+                gvCurrentMOPs.DataSource = R.usedMops;
+                gvCurrentMOPs.DataBind();
+
+
+                lblRemainingPurchaseDueDisplay.Text = "$ " + (R.balanceDue - dblAmountPaid).ToString("#0.00");
+                //Updates the amount paying with the remaining balance
+                txtPurchaseAmount.Text = (R.balanceDue - dblAmountPaid).ToString("#0.00");
+                buttonDisable(R.balanceDue - dblAmountPaid);
             }
-            gvCurrentMOPs.DataSource = R.usedMops;
-            gvCurrentMOPs.DataBind();
-
-
-            lblRemainingPurchaseDueDisplay.Text = "$ " + (R.balanceDue - dblAmountPaid).ToString("#0.00");
-            //Updates the amount paying with the remaining balance
-            txtPurchaseAmount.Text = (R.balanceDue - dblAmountPaid).ToString("#0.00");
-            buttonDisable(R.balanceDue - dblAmountPaid);
+            //Exception catch
+            catch (ThreadAbortException) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
         }
         private void buttonDisable(double rb)
         {
             string method = "buttonDisable";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (rb >= -.001 && rb <= 0.001)
                 {
-                    if (IM.VerifyPurchaseMOPHasBeenAdded(Request.QueryString["receipt"].ToString()))
+                    if (IM.VerifyPurchaseMOPHasBeenAdded(Request.QueryString["receipt"].ToString(), objPageDetails))
                     {
                         mopCash.Enabled = false;
                     }
@@ -342,7 +363,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -358,14 +379,15 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnCancelPurchase_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                IM.CancellingReceipt(IM.ReturnCurrentPurchaseInvoice(Request.QueryString["receipt"].ToString())[0]);
+                IM.CancellingReceipt(IM.ReturnCurrentPurchaseInvoice(Request.QueryString["receipt"].ToString(), objPageDetails)[0], objPageDetails);
                 //Change to Home Page
                 Response.Redirect("HomePage.aspx", false);
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -380,6 +402,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnReturnToPurchaseCart_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
@@ -388,7 +411,7 @@ namespace SweetSpotDiscountGolfPOS
                 Response.Redirect("PurchasesCart.aspx?" + nameValues, false);
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -403,6 +426,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnFinalizePurchase_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 CU = (CurrentUser)Session["currentUser"];
@@ -414,10 +438,10 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    if (IM.VerifyPurchaseMOPHasBeenAdded(Request.QueryString["receipt"].ToString()))
+                    if (IM.VerifyPurchaseMOPHasBeenAdded(Request.QueryString["receipt"].ToString(), objPageDetails))
                     {
                         //Stores all the Sales data to the database
-                        IM.FinalizeReceipt(IM.ReturnCurrentPurchaseInvoice(Request.QueryString["receipt"].ToString())[0], txtComments.Text, "tbl_receiptItem");
+                        IM.FinalizeReceipt(IM.ReturnCurrentPurchaseInvoice(Request.QueryString["receipt"].ToString(), objPageDetails)[0], txtComments.Text, "tbl_receiptItem", objPageDetails);
                         string printableInvoiceNum = Request.QueryString["receipt"].ToString().Split('-')[1];
                         var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                         nameValues.Set("receipt", printableInvoiceNum);
@@ -432,7 +456,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table

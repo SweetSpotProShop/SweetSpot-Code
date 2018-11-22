@@ -35,6 +35,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "ReportsStoreStats";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -56,9 +57,9 @@ namespace SweetSpotDiscountGolfPOS
                     if (startDate == endDate) { lblDates.Text = "Store stats for: " + startDate.ToString("d"); }
                     else { lblDates.Text = "Store stats for: " + startDate.ToString("d") + " to " + endDate.ToString("d"); }
                     //Binding the gridview
-                    if (timeFrame.Equals("Day") || timeFrame.Equals("Default")){ stats = R.returnStoreStats(startDate, endDate, 1); }
-                    else if (timeFrame.Equals("Week")){ stats = R.returnStoreStats(startDate, endDate, 2);}
-                    else if (timeFrame.Equals("Month")){ stats = R.returnStoreStats(startDate, endDate, 3);}                    
+                    if (timeFrame.Equals("Day") || timeFrame.Equals("Default")){ stats = R.returnStoreStats(startDate, endDate, 1, objPageDetails); }
+                    else if (timeFrame.Equals("Week")){ stats = R.returnStoreStats(startDate, endDate, 2, objPageDetails); }
+                    else if (timeFrame.Equals("Month")){ stats = R.returnStoreStats(startDate, endDate, 3, objPageDetails); }
                     //Checking if there are any values
                     if (stats.Rows.Count > 0)
                     {
@@ -92,39 +93,55 @@ namespace SweetSpotDiscountGolfPOS
         }
 
         protected void grdStats_RowDataBound(object sender, GridViewRowEventArgs e)
-        {            
-
-            if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            string method = "grdStats_RowDataBound";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
             {
-                gTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "governmentTax"));
-                pTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "provincialTax"));
-                cogs += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "totalCOGS"));
-                pm += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "averageProfitMargin"));
-                salesPrT += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "salespretax"));
-                salesPoT += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "salesposttax"));
+                if (e.Row.RowType == DataControlRowType.DataRow)
+                {
+                    gTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "governmentTax"));
+                    pTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "provincialTax"));
+                    cogs += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "totalCOGS"));
+                    pm += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "averageProfitMargin"));
+                    salesPrT += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "salespretax"));
+                    salesPoT += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "salesposttax"));
+                }
+                else if (e.Row.RowType == DataControlRowType.Footer)
+                {
+                    Label lblGovTaxTotal = (Label)e.Row.FindControl("lblGovTaxTotal");
+                    Label lblProvTaxTotal = (Label)e.Row.FindControl("lblProvTaxTotal");
+                    Label lblCOGSTotal = (Label)e.Row.FindControl("lblCOGSTotal");
+                    Label lblAverageProfitMarginTotal = (Label)e.Row.FindControl("lblAverageProfitMarginTotal");
+                    Label lblSalesPreTaxTotal = (Label)e.Row.FindControl("lblSalesPreTaxTotal");
+                    Label lblSalesPostTaxTotal = (Label)e.Row.FindControl("lblSalesPostTaxTotal");
+
+                    lblGovTaxTotal.Text = Math.Round(gTax, 2).ToString("C");
+                    lblProvTaxTotal.Text = Math.Round(pTax, 2).ToString("C");
+                    lblCOGSTotal.Text = Math.Round(cogs, 2).ToString("C");
+                    avp = ((salesPrT - cogs) / salesPrT);
+                    lblAverageProfitMarginTotal.Text = String.Format("{0:P}", avp);
+                    lblSalesPreTaxTotal.Text = Math.Round(salesPrT, 2).ToString("C");
+                    lblSalesPostTaxTotal.Text = Math.Round(salesPoT, 2).ToString("C");
+                }
             }
-            else if (e.Row.RowType == DataControlRowType.Footer)
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
             {
-                Label lblGovTaxTotal = (Label)e.Row.FindControl("lblGovTaxTotal");
-                Label lblProvTaxTotal = (Label)e.Row.FindControl("lblProvTaxTotal");
-                Label lblCOGSTotal = (Label)e.Row.FindControl("lblCOGSTotal");
-                Label lblAverageProfitMarginTotal = (Label)e.Row.FindControl("lblAverageProfitMarginTotal");
-                Label lblSalesPreTaxTotal = (Label)e.Row.FindControl("lblSalesPreTaxTotal");
-                Label lblSalesPostTaxTotal = (Label)e.Row.FindControl("lblSalesPostTaxTotal");
-
-                lblGovTaxTotal.Text = Math.Round(gTax, 2).ToString("C");
-                lblProvTaxTotal.Text = Math.Round(pTax, 2).ToString("C");
-                lblCOGSTotal.Text = Math.Round(cogs, 2).ToString("C");
-                avp = ((salesPrT-cogs) / salesPrT);
-                lblAverageProfitMarginTotal.Text = String.Format("{0:P}", avp);
-                lblSalesPreTaxTotal.Text = Math.Round(salesPrT, 2).ToString("C");
-                lblSalesPostTaxTotal.Text = Math.Round(salesPoT, 2).ToString("C");
+                //Log all info into error table
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
             }
         }
         protected void btnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "btnDownload_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Sets path and file name to download report to

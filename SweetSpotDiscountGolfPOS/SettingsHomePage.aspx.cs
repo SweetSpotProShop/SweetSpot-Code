@@ -43,6 +43,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "SettingsHomePage.aspx";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -67,12 +68,12 @@ namespace SweetSpotDiscountGolfPOS
                     }
                     if (!IsPostBack)
                     {
-                        ddlProvince.DataSource = LM.ReturnProvinceDropDown(0);
+                        ddlProvince.DataSource = LM.ReturnProvinceDropDown(0, objPageDetails);
                         ddlProvince.DataTextField = "provName";
                         ddlProvince.DataValueField = "provStateID";
                         ddlProvince.DataBind();
                         ddlProvince.SelectedValue = "1";
-                        ddlTax.DataSource = TM.ReturnTaxListBasedOnDateAndProvinceForUpdate(1, Convert.ToDateTime(lblCurrentDate.Text));
+                        ddlTax.DataSource = TM.ReturnTaxListBasedOnDateAndProvinceForUpdate(1, Convert.ToDateTime(lblCurrentDate.Text), objPageDetails);
                         ddlTax.DataTextField = "taxName";
                         ddlTax.DataValueField = "taxID";
                         ddlTax.DataBind();
@@ -95,6 +96,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnAddNewEmployee_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Change to Employee add new page
@@ -116,6 +118,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "grdEmployeesSearched_RowCommand";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Checks if the string is view profile
@@ -141,11 +144,12 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnEmployeeSearch_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 grdEmployeesSearched.Visible = true;
                 //Binds the employee list to grid view
-                grdEmployeesSearched.DataSource = EM.ReturnEmployeeBasedOnText(txtSearch.Text);
+                grdEmployeesSearched.DataSource = EM.ReturnEmployeeBasedOnText(txtSearch.Text, objPageDetails);
                 grdEmployeesSearched.DataBind();
             }
             //Exception catch
@@ -168,6 +172,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnLoadItems_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 int error = 0;
@@ -310,6 +315,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnImportCustomers_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Verifies file has been selected
@@ -338,6 +344,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnExportAll_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Sets path and file name to save the export to 
@@ -346,7 +353,7 @@ namespace SweetSpotDiscountGolfPOS
                 string filename = "AllItems - " + DateTime.Now.ToString("dd.MM.yyyy") + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + "TotalInventory.xlsx");
                 //With the craeted file do all intenal code
-                R.itemExports("all", newFile, filename);
+                R.itemExports("all", newFile, filename, objPageDetails);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -364,6 +371,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnExportClubs_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Sets path and file name to save the export to 
@@ -372,7 +380,7 @@ namespace SweetSpotDiscountGolfPOS
                 string filename = "AllClubs - " + DateTime.Now.ToString("dd.MM.yyyy") + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + filename);
                 //With the craeted file do all intenal code
-                R.itemExports("clubs", newFile, filename);
+                R.itemExports("clubs", newFile, filename, objPageDetails);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -390,6 +398,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnExportClothing_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Sets path and file name to save the export to 
@@ -398,7 +407,7 @@ namespace SweetSpotDiscountGolfPOS
                 string filename = "AllClothing - " + DateTime.Now.ToString("dd.MM.yyyy") + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + filename);
                 //With the created file do all intenal code
-                R.itemExports("clothing", newFile, filename);
+                R.itemExports("clothing", newFile, filename, objPageDetails);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -416,6 +425,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnExportAccessories_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Sets path and file name to save the export to 
@@ -424,8 +434,7 @@ namespace SweetSpotDiscountGolfPOS
                 string filename = "AllAccessories - " + DateTime.Now.ToString("dd.MM.yyyy") + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + filename);
                 //With the craeted file do all intenal code
-                R.itemExports("accessories", newFile, filename);
-
+                R.itemExports("accessories", newFile, filename, objPageDetails);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -443,6 +452,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnExportInvoices_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Sets up database connection
@@ -557,9 +567,10 @@ namespace SweetSpotDiscountGolfPOS
         protected void ddlProvince_SelectedIndexChanged(object sender, EventArgs e)
         {
             string method = "ddlProvince_SelectedIndexChanged";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                ddlTax.DataSource = TM.ReturnTaxListBasedOnDateAndProvinceForUpdate(Convert.ToInt32(ddlProvince.SelectedValue), Convert.ToDateTime(lblCurrentDate.Text));
+                ddlTax.DataSource = TM.ReturnTaxListBasedOnDateAndProvinceForUpdate(Convert.ToInt32(ddlProvince.SelectedValue), Convert.ToDateTime(lblCurrentDate.Text), objPageDetails);
                 ddlTax.DataBind();
             }
             catch (ThreadAbortException tae) { }
@@ -576,9 +587,10 @@ namespace SweetSpotDiscountGolfPOS
         protected void ddlTax_SelectedIndexChanged(object sender, EventArgs e)
         {
             string method = "ddlTax_SelectedIndexChanged";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                List<Tax> t = TM.ReturnTaxListBasedOnDate(Convert.ToDateTime(lblCurrentDate.Text), Convert.ToInt32(ddlProvince.SelectedValue));
+                List<Tax> t = TM.ReturnTaxListBasedOnDate(Convert.ToDateTime(lblCurrentDate.Text), Convert.ToInt32(ddlProvince.SelectedValue), objPageDetails);
                 foreach (var tax in t)
                 {
                     if (tax.taxID == Convert.ToInt32(ddlTax.SelectedValue))
@@ -602,9 +614,10 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnSaveTheTax_Click(object sender, EventArgs e)
         {
             string method = "btnSaveTheTax_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                TM.InsertNewTaxRate(Convert.ToInt32(ddlProvince.SelectedValue), Convert.ToInt32(ddlTax.SelectedValue), Convert.ToDateTime(txtDate.Text), Convert.ToDouble(txtNewRate.Text));
+                TM.InsertNewTaxRate(Convert.ToInt32(ddlProvince.SelectedValue), Convert.ToInt32(ddlTax.SelectedValue), Convert.ToDateTime(txtDate.Text), Convert.ToDouble(txtNewRate.Text), objPageDetails);
                 txtDate.Text = "";
                 txtNewRate.Text = "";
             }
@@ -624,6 +637,7 @@ namespace SweetSpotDiscountGolfPOS
         public void callJS()
         {
             string method = "callJS";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 Page.ClientScript.RegisterStartupScript(GetType(), "upl", "UpdateProgressLabel();", true);
@@ -644,6 +658,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnExportEmails_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Sets up database connection
@@ -707,6 +722,8 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnAddModel_Click";
+            string strQueryName = "btnAddModel_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (txtModelOne.Text != "" && txtModelTwo.Text != "")
@@ -726,7 +743,7 @@ namespace SweetSpotDiscountGolfPOS
                         {
                             new object[] {"@modelName", txtModelOne.Text}
                         };
-                        dbc.executeInsertQuery(sqlCmd, parms);
+                        dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
                     }
                     else
                     {
@@ -755,6 +772,8 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnAddBrand_Click";
+            string strQueryName = "btnAddBrand_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (txtBrandOne.Text != "" && txtBrandTwo.Text != "")
@@ -774,7 +793,7 @@ namespace SweetSpotDiscountGolfPOS
                         {
                             new object[] {"@brandName", txtBrandOne.Text}
                         };
-                        dbc.executeInsertQuery(sqlCmd, parms);
+                        dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
                     }
                     else
                     {

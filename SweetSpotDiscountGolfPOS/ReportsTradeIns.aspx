@@ -34,7 +34,7 @@
         <h2>Trade Ins Report By Date</h2>
         <hr />
         <div>
-            <asp:Label ID="lblDates" runat="server" Font-Bold="true" Text="lblDates"></asp:Label>
+            <asp:Label ID="lblDates" runat="server" Font-Bold="true" Text="lblDates" />
         </div>
         <hr />
         <div>
@@ -42,15 +42,15 @@
                 <Columns>
                     <asp:TemplateField HeaderText="Date">
                         <ItemTemplate>
-                            <asp:Label ID="lblDate" runat="server" Text='<%#Eval("invoiceDate","{0:d}")%>'></asp:Label>
+                            <asp:Label ID="lblDate" runat="server" Text='<%#Eval("invoiceDate","{0:d}")%>' />
                         </ItemTemplate>
                         <FooterTemplate>
-                            <asp:Label ID="lblTotal" runat="server" Text="Totals:"></asp:Label>
+                            <asp:Label ID="lblTotal" runat="server" Text="Totals:" />
                         </FooterTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Trade In Dollars">
                         <ItemTemplate>
-                            <asp:Label ID="lblTradeInDollars" runat="server" Text='<%#Eval("totalTradeIns","{0:C}") %>'></asp:Label>
+                            <asp:Label ID="lblTradeInDollars" runat="server" Text='<%#Eval("totalTradeIns","{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>

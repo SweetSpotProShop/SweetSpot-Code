@@ -23,6 +23,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "ReturnsCheckout.aspx";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -38,14 +39,14 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         List<Tax> t = new List<Tax>();
                         TaxManager TM = new TaxManager();
-                        Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                        Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0];
                         //Retrieve taxes based on current location
                         string gTax = "Do Nothing";
                         string pTax = "Do Nothing";
                         if (I.governmentTax != 0) { gTax = "Add GST"; }
                         if (I.provincialTax != 0) { pTax = "Add PST"; }
                         object[] taxText = { gTax, pTax };
-                        object[] results = TM.ReturnChargedTaxForSale(I, taxText);
+                        object[] results = TM.ReturnChargedTaxForSale(I, taxText, objPageDetails);
                         I = (Invoice)results[0];
                         object[] taxStatus = (object[])results[1];
                         if (Convert.ToBoolean(taxStatus[0]))
@@ -86,6 +87,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "mopCash_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (txtAmountRefunding.Text != "")
@@ -111,6 +113,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "mopMasterCard_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (txtAmountRefunding.Text != "")
@@ -136,6 +139,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "mopDebit_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (txtAmountRefunding.Text != "")
@@ -161,6 +165,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "mopVisa_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (txtAmountRefunding.Text != "")
@@ -186,6 +191,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "mopGiftCard_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (txtAmountRefunding.Text != "")
@@ -211,11 +217,12 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "OnRowDeleting";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 int mopRemovingID = Convert.ToInt32(((Label)gvCurrentMOPs.Rows[e.RowIndex].Cells[3].FindControl("lblTableID")).Text);
                 InvoiceMOPsManager IMM = new InvoiceMOPsManager();
-                IMM.RemoveMopFromList(mopRemovingID, Request.QueryString["inv"].ToString());
+                IMM.RemoveMopFromList(mopRemovingID, Request.QueryString["inv"].ToString(), objPageDetails);
                 //Clear the row index
                 gvCurrentMOPs.EditIndex = -1;
                 UpdatePageTotals();
@@ -238,11 +245,12 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnCancelSale_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 InvoiceItemsManager IIM = new InvoiceItemsManager();
-                IIM.LoopThroughTheItemsToReturnToInventory(Request.QueryString["inv"].ToString());
-                IIM.RemoveInitialTotalsForTable(Request.QueryString["inv"].ToString());
+                IIM.LoopThroughTheItemsToReturnToInventory(Request.QueryString["inv"].ToString(), objPageDetails);
+                IIM.RemoveInitialTotalsForTable(Request.QueryString["inv"].ToString(), objPageDetails);
                 //Change page to the Home Page
                 Response.Redirect("HomePage.aspx", false);
             }
@@ -262,9 +270,10 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnReturnToCart_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0];
                 //Changes page to Returns Cart page
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("inv", Request.QueryString["inv"].ToString());
@@ -286,6 +295,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnFinalize_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 CU = (CurrentUser)Session["currentUser"];
@@ -297,9 +307,9 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    if (IM.VerifyMOPHasBeenAdded(Request.QueryString["inv"].ToString()))
+                    if (IM.VerifyMOPHasBeenAdded(Request.QueryString["inv"].ToString(), objPageDetails))
                     {
-                        IM.FinalizeInvoice(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0], txtComments.Text, "tbl_invoiceItemReturns");
+                        IM.FinalizeInvoice(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0], txtComments.Text, "tbl_invoiceItemReturns", objPageDetails);
                         string printableInvoiceNum = Request.QueryString["inv"].ToString().Split('-')[1] + "-" + Request.QueryString["inv"].ToString().Split('-')[2];
                         var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                         nameValues.Set("inv", printableInvoiceNum);
@@ -330,10 +340,11 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "populateGridviewMOP";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 InvoiceMOPsManager IMM = new InvoiceMOPsManager();
-                IMM.AddNewMopToList(Request.QueryString["inv"].ToString(), amountPaid, methodOfPayment, amounts);
+                IMM.AddNewMopToList(Request.QueryString["inv"].ToString(), amountPaid, methodOfPayment, amounts, objPageDetails);
                 UpdatePageTotals();
             }
             //Exception catch
@@ -351,6 +362,7 @@ namespace SweetSpotDiscountGolfPOS
         public void buttonDisable(double rb)
         {
             string method = "buttonDisable";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (rb >= -.001 && rb <= 0.001)
@@ -385,9 +397,10 @@ namespace SweetSpotDiscountGolfPOS
         private void UpdatePageTotals()
         {
             string method = "UpdatePageTotals";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0];
                 //Loops through each mop
                 double dblAmountPaid = 0;
                 foreach (var mop in I.usedMops)

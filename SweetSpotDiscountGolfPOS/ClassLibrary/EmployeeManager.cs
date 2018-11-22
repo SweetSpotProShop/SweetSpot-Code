@@ -25,7 +25,7 @@ namespace SweetShop
 
         LocationManager LM = new LocationManager();
         DatabaseCalls dbc = new DatabaseCalls();
-        private List<Employee> ConvertFromDataTableToEmployee(DataTable dt)
+        private List<Employee> ConvertFromDataTableToEmployee(DataTable dt, object[] objPageDetails)
         {
             List<Employee> employee = dt.AsEnumerable().Select(row =>
             new Employee
@@ -34,7 +34,7 @@ namespace SweetShop
                 firstName = row.Field<string>("firstName"),
                 lastName = row.Field<string>("lastName"),
                 jobID = row.Field<int>("jobID"),
-                location = LM.ReturnLocation(row.Field<int>("locationID"))[0],
+                location = LM.ReturnLocation(row.Field<int>("locationID"), objPageDetails)[0],
                 emailAddress = row.Field<string>("email"),
                 primaryContactNumber = row.Field<string>("primaryContactINT"),
                 secondaryContactNumber = row.Field<string>("secondaryContactINT"),
@@ -48,14 +48,14 @@ namespace SweetShop
             }).ToList();
             return employee;
         }
-        private List<CurrentUser> ConvertFromDataTableToCurrentUser(DataTable dt)
+        private List<CurrentUser> ConvertFromDataTableToCurrentUser(DataTable dt, object[] objPageDetails)
         {
             List<CurrentUser> currentUser = dt.AsEnumerable().Select(row =>
             new CurrentUser
             {
-                emp = ReturnEmployee(row.Field<int>("empID"))[0],
+                emp = ReturnEmployee(row.Field<int>("empID"), objPageDetails)[0],
                 jobID = row.Field<int>("jobID"),
-                location = LM.ReturnLocation(row.Field<int>("locationID"))[0],
+                location = LM.ReturnLocation(row.Field<int>("locationID"), objPageDetails)[0],
                 locationName = row.Field<string>("city"),
                 password = row.Field<int>("password")
             }).ToList();
@@ -63,8 +63,9 @@ namespace SweetShop
         }
 
         //Returns list of custoemrs based on an customer ID
-        public List<Employee> ReturnEmployee(int emp)
+        public List<Employee> ReturnEmployee(int emp, object[] objPageDetails)
         {
+            string strQueryName = "ReturnEmployee";
             string sqlCmd = "SELECT empID, firstName, lastName, jobID, locationID, email, "
                 + "primaryContactINT, secondaryContactINT, primaryAddress, secondaryAddress, "
                 + "city, provStateID, countryID, postZip "
@@ -75,12 +76,13 @@ namespace SweetShop
                  new object[] { "@empID", emp },
             };
 
-            List<Employee> employee = ConvertFromDataTableToEmployee(dbc.returnDataTableData(sqlCmd, parms));
+            List<Employee> employee = ConvertFromDataTableToEmployee(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
             return employee;
         }
         //Returns list of custoemrs based on an search text
-        public List<Employee> ReturnEmployeeBasedOnText(string searchText)
+        public List<Employee> ReturnEmployeeBasedOnText(string searchText, object[] objPageDetails)
         {
+            string strQueryName = "ReturnEmployeeBasedOnText";
             ArrayList strText = new ArrayList();
             ArrayList parms = new ArrayList();
             string sqlCmd = "";
@@ -115,11 +117,12 @@ namespace SweetShop
                 }
             }
             sqlCmd += " ORDER BY firstName ASC";
-            List<Employee> employee = ConvertFromDataTableToEmployee(dbc.returnDataTableDataFromArrayLists(sqlCmd, parms, strText));
+            List<Employee> employee = ConvertFromDataTableToEmployee(dbc.returnDataTableDataFromArrayLists(sqlCmd, parms, strText, objPageDetails, strQueryName), objPageDetails);
             return employee;
         }
-        public int AddEmployee(Employee em)
+        public int AddEmployee(Employee em, object[] objPageDetails)
         {
+            string strQueryName = "AddEmployee";
             string sqlCmd = "INSERT INTO tbl_employee (firstName, lastName, jobID, locationID, "
                 + "email, primaryContactINT, secondaryContactINT, primaryAddress, secondaryAddress, "
                 + "city, provStateID, countryID, postZip) VALUES (@firstName, @lastName, @jobID, "
@@ -142,13 +145,14 @@ namespace SweetShop
                 new object[] { "@countryID", em.country },
                 new object[] { "@postZip", em.postZip }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
-            List<Employee> employee = ReturnEmployeeIDFromEmployeeStats(parms);
+            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            List<Employee> employee = ReturnEmployeeIDFromEmployeeStats(parms, objPageDetails);
             return employee[0].employeeID;
         }
         //Update Employee Nathan and Tyler Created
-        public int UpdateEmployee(Employee em)
+        public int UpdateEmployee(Employee em, object[] objPageDetails)
         {
+            string strQueryName = "UpdateEmployee";
             string sqlCmd = "UPDATE tbl_employee SET firstName = @firstName, "
                 + "lastName = @lastName, jobID = @jobID, locationID = @locationID, "
                 + "email = @email, primaryContactINT = @primaryContactINT, "
@@ -174,11 +178,12 @@ namespace SweetShop
                 new object[] { "@countryID", em.country },
                 new object[] { "@postZip", em.postZip }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
             return em.employeeID;
         }
-        public List<Employee> ReturnEmployeeIDFromEmployeeStats(object[][] parms)
+        public List<Employee> ReturnEmployeeIDFromEmployeeStats(object[][] parms, object[] objPageDetails)
         {
+            string strQueryName = "ReturnEmployeeIDFromEmployeeStats";
             string sqlCmd = "SELECT empID, firstName, lastName, jobID, locationID, "
                 + "email, primaryContactINT, secondaryContactINT, primaryAddress, "
                 + "secondaryAddress, city, provStateID, countryID, postZip "
@@ -189,11 +194,12 @@ namespace SweetShop
                 + "secondaryAddress = @secondaryAddress AND city = @city AND "
                 + "provStateID = @provStateID AND countryID = @countryID AND "
                 + "postZip = @postZip";
-            return ConvertFromDataTableToEmployee(dbc.returnDataTableData(sqlCmd, parms));
+            return ConvertFromDataTableToEmployee(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         //Save new password into user_info
-        public bool saveNewPassword(int empID, int pWord)
+        public bool saveNewPassword(int empID, int pWord, object[] objPageDetails)
         {
+            string strQueryName = "saveNewPassword";
             bool bolAdded = false;
             //First check if the password is in use by another user.
             string sqlCmd = "Select empID from tbl_userInfo where password = @pWord";
@@ -203,7 +209,7 @@ namespace SweetShop
             };
 
             //Checks to see if the password is already in use
-            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) < 0)
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) < 0)
             {
 
                 //When password not in use check if the employee is already in the user info table
@@ -213,7 +219,7 @@ namespace SweetShop
                     new object [] { "@empID", empID }
                 };
 
-                if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms1) > -10)
+                if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms1, objPageDetails, strQueryName) > -10)
                 {
                     //Employee is in the userInfo table update password
                     sqlCmd = "Update tbl_userInfo SET password = @pWord Where empID = @empID";
@@ -229,14 +235,15 @@ namespace SweetShop
                     new object[] { "@pWord", pWord }
                 };
 
-                dbc.executeInsertQuery(sqlCmd, parms2);
+                dbc.executeInsertQuery(sqlCmd, parms2, objPageDetails, strQueryName);
                 bolAdded = true;
             }
 
             return bolAdded;
         }
-        public List<CurrentUser> ReturnCurrentUserFromPassword(string password)
+        public List<CurrentUser> ReturnCurrentUserFromPassword(string password, object[] objPageDetails)
         {
+            string strQueryName = "ReturnCurrentUserFromPassword";
             string sqlCmd = "SELECT E.empID, E.jobID, E.locationID, L.city, U.password "
                 + "FROM tbl_employee E JOIN tbl_location L ON E.locationID = L.locationID "
                 + "JOIN tbl_userInfo U ON E.empID = U.empID WHERE U.password = @password";
@@ -244,20 +251,21 @@ namespace SweetShop
             {
                 new object[] { "@password", password }
             };
-            return ConvertFromDataTableToCurrentUser(dbc.returnDataTableData(sqlCmd, parms));
+            return ConvertFromDataTableToCurrentUser(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         //Password check to complete a Sale
-        public bool returnCanEmployeeMakeSale(string empPassword)
+        public bool returnCanEmployeeMakeSale(string empPassword, object[] objPageDetails)
         {
             bool bolValid = false;
 
-            int jobID = ExecuteJobIDCheck(empPassword);
+            int jobID = ExecuteJobIDCheck(empPassword, objPageDetails);
 
             if (jobID > 0) { bolValid = true; }
             return bolValid;
         }
-        private int ExecuteJobIDCheck(string empPassword)
+        private int ExecuteJobIDCheck(string empPassword, object[] objPageDetails)
         {
+            string strQueryName = "ExecuteJobIDCheck";
             string sqlCmd = "SELECT E.jobID FROM tbl_employee E JOIN tbl_userInfo U "
                 + "ON E.empID = U.empID WHERE U.password = @password";
 
@@ -265,35 +273,11 @@ namespace SweetShop
             {
                 new object[] { "@password", empPassword }
             };
-            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms);
+            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
         }
-
-        ////Returns the job name when given a job ID
-        //public string jobName(int jobNum)
-        //{
-        //    //Variable to store the employee ID
-        //    string job = "";
-        //    //Creating a table to store the results
-        //    DataTable table = new DataTable();
-        //    SqlConnection con = new SqlConnection("");// connectionString);
-        //    using (var cmd = new SqlCommand("getJobName", con)) //Calling the SP   
-        //    using (var da = new SqlDataAdapter(cmd))
-        //    {
-        //        //Adding the parameter
-        //        cmd.Parameters.AddWithValue("@jobID", jobNum);
-        //        //Executing the SP
-        //        cmd.CommandType = CommandType.StoredProcedure;
-        //        da.Fill(table);
-        //    }
-        //    foreach (DataRow row in table.Rows)
-        //    {
-        //        job = row["title"].ToString();
-        //    }
-        //    //Returns the job name
-        //    return job;
-        //}
-        public List<Employee> returnEmployeeFromPassword(int empPassword)
+        public List<Employee> returnEmployeeFromPassword(int empPassword, object[] objPageDetails)
         {
+            string strQueryName = "returnEmployeeFromPassword";
             string sqlCmd = "SELECT e.empID, e.firstName, e.lastName, e.jobID, e.locationID, e.email, "
                 + "e.primaryContactINT, e.secondaryContactINT, e.primaryAddress, e.secondaryAddress, "
                 + "e.city, e.provStateID, e.countryID, e.postZip FROM tbl_employee e JOIN tbl_userInfo u "
@@ -303,7 +287,7 @@ namespace SweetShop
                 new object[] { "empPassword", empPassword }
             };
 
-            return ConvertFromDataTableToEmployee(dbc.returnDataTableData(sqlCmd, parms));
+            return ConvertFromDataTableToEmployee(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
     }
 }

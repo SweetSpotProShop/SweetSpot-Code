@@ -24,6 +24,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "EmployeeAddNew.aspx";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -46,7 +47,7 @@ namespace SweetSpotDiscountGolfPOS
                         if (!IsPostBack)
                         {
                             //Create an employee class
-                            Employee employee = EM.ReturnEmployee(Convert.ToInt32(Request.QueryString["emp"].ToString()))[0];
+                            Employee employee = EM.ReturnEmployee(Convert.ToInt32(Request.QueryString["emp"].ToString()), objPageDetails)[0];
                             //Fill asll lables with current selected employee info
                             txtFirstName.Text = employee.firstName.ToString();
                             txtLastName.Text = employee.lastName.ToString();
@@ -63,7 +64,7 @@ namespace SweetSpotDiscountGolfPOS
                             ddlCountry.SelectedValue = employee.country.ToString();
                             ddlProvince.DataTextField = "provName";
                             ddlProvince.DataValueField = "provStateID";
-                            ddlProvince.DataSource = LM.ReturnProvinceDropDown(employee.country);
+                            ddlProvince.DataSource = LM.ReturnProvinceDropDown(employee.country, objPageDetails);
                             ddlProvince.DataBind();
                         }
                     }
@@ -74,7 +75,7 @@ namespace SweetSpotDiscountGolfPOS
                             ddlLocation.SelectedValue = CU.location.locationID.ToString();
                             ddlProvince.DataTextField = "provName";
                             ddlProvince.DataValueField = "provStateID";
-                            ddlProvince.DataSource = LM.ReturnProvinceDropDown(0);
+                            ddlProvince.DataSource = LM.ReturnProvinceDropDown(0, objPageDetails);
                             ddlProvince.DataBind();
                         }
                         //With no employee selected display text boxes and drop downs to add employee
@@ -119,6 +120,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnAddEmployee_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Collects new employee data to add to database
@@ -126,7 +128,7 @@ namespace SweetSpotDiscountGolfPOS
                 em.firstName = txtFirstName.Text;
                 em.lastName = txtLastName.Text;
                 em.jobID = Convert.ToInt32(ddlJob.SelectedValue);
-                em.location = LM.ReturnLocation(Convert.ToInt32(ddlLocation.SelectedValue))[0];
+                em.location = LM.ReturnLocation(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails)[0];
                 em.emailAddress = txtEmail.Text;
                 em.primaryContactNumber = txtPrimaryPhoneNumber.Text;
                 em.secondaryContactNumber = txtSecondaryPhoneNumber.Text;
@@ -138,7 +140,7 @@ namespace SweetSpotDiscountGolfPOS
                 em.country = Convert.ToInt32(ddlCountry.SelectedValue);
 
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                nameValues.Set("emp", EM.AddEmployee(em).ToString());
+                nameValues.Set("emp", EM.AddEmployee(em, objPageDetails).ToString());
                 Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
             }
             //Exception catch
@@ -157,6 +159,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnEditEmployee_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //transfers data from label into textbox for editing
@@ -205,6 +208,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnSaveEmployee_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Collects employee data to add to database
@@ -213,7 +217,7 @@ namespace SweetSpotDiscountGolfPOS
                 em.firstName = txtFirstName.Text;
                 em.lastName = txtLastName.Text;
                 em.jobID = Convert.ToInt32(ddlJob.SelectedValue);
-                em.location = LM.ReturnLocation(Convert.ToInt32(ddlLocation.SelectedValue))[0];
+                em.location = LM.ReturnLocation(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails)[0];
                 em.emailAddress = txtEmail.Text;
                 em.primaryContactNumber = txtPrimaryPhoneNumber.Text;
                 em.secondaryContactNumber = txtSecondaryPhoneNumber.Text;
@@ -255,7 +259,7 @@ namespace SweetSpotDiscountGolfPOS
 
                 //reloads current page
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                nameValues.Set("emp", EM.UpdateEmployee(em).ToString());
+                nameValues.Set("emp", EM.UpdateEmployee(em, objPageDetails).ToString());
                 Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
             }
             //Exception catch
@@ -274,6 +278,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnCancel_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //no changes saved, refreshes current page
@@ -295,6 +300,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnBackToSearch_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Changes page to the settings page
@@ -315,13 +321,14 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnSavePassword_Click(object sender, EventArgs e)
         {
             string method = "btnSavePassword_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Compare the 2 passwords entered to make sure they are identical
                 if(Convert.ToInt32(txtNewPassword.Text) == Convert.ToInt32(txtNewPassword2.Text))
                 {
                     //Call method to add the new password
-                    bool bolAdded = EM.saveNewPassword(Convert.ToInt32(Request.QueryString["emp"].ToString()), Convert.ToInt32(txtNewPassword.Text));
+                    bool bolAdded = EM.saveNewPassword(Convert.ToInt32(Request.QueryString["emp"].ToString()), Convert.ToInt32(txtNewPassword.Text), objPageDetails);
                     //Check if the password was added or not
                     if (!bolAdded)
                     {
@@ -359,11 +366,12 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "ddlCountry_SelectedIndexChanged";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 ddlProvince.DataTextField = "provName";
                 ddlProvince.DataValueField = "provStateID";
-                ddlProvince.DataSource = LM.ReturnProvinceDropDown(Convert.ToInt32(ddlCountry.SelectedValue));
+                ddlProvince.DataSource = LM.ReturnProvinceDropDown(Convert.ToInt32(ddlCountry.SelectedValue), objPageDetails);
                 ddlProvince.DataBind();
             }
             //Exception catch

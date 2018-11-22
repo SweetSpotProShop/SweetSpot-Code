@@ -30,17 +30,17 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }).ToList();
             return items;
         }
-        private int ConvertFromDataTableToInt(string sqlCmd, object[][] parms)
+        private int ConvertFromDataTableToInt(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
         {
-            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms);
+            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private string ConvertFromDataTableToString(string sqlCmd, object[][] parms)
+        private string ConvertFromDataTableToString(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
         {
-            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
+            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private void ExecuteNonReturnQuery(string sqlCmd, object[][] parms)
+        private void ExecuteNonReturnQuery(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
         {
-            dbc.executeInsertQuery(sqlCmd, parms);
+            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //Search results
@@ -153,87 +153,100 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
 
         //Returning the list of items
-        public List<Items> ReturnInvoiceItemsFromSearchStringAndQuantity(string searchText, bool zeroQuantity)
+        public List<Items> ReturnInvoiceItemsFromSearchStringAndQuantity(string searchText, bool zeroQuantity, object[] objPageDetails)
         {
+            string strQueryName = "ReturnInvoiceItemsFromSearchStringAndQuantity";
             int quantity = 0;
             if (zeroQuantity)
             {
                 quantity = -1;
             }
             string sqlCmd = ReturnItemsFromSearchString(searchText, quantity);
-            return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd));
+            object[][] parms = { };
+            return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
-        public List<Items> ReturnInvoiceItemsFromSearchStringForSale(string searchText)
+        public List<Items> ReturnInvoiceItemsFromSearchStringForSale(string searchText, object[] objPageDetails)
         {
+            string strQueryName = "ReturnInvoiceItemsFromSearchStringForSale";
             string sqlCmd = ReturnItemsFromSearchString(searchText, -1);
-            return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd));
+            object[][] parms = { };
+            return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
-        public List<Items> ReturnTradeInSku()
+        public List<Items> ReturnTradeInSku(object[] objPageDetails)
         {
+            string strQueryName = "ReturnTradeInSku";
             string sqlCmd = "SELECT C.sku, (SELECT B.brandName + ' ' + M.modelName + ' ' + CLU.clubSpec + ' ' + "
                        + "CLU.clubType + ' ' + CLU.shaftSpec + ' ' + CLU.shaftFlex + ' ' + CLU.dexterity AS description "
                        + "FROM tbl_clubs CLU JOIN tbl_brand B ON CLU.brandID = B.brandID JOIN tbl_model M ON CLU.modelID = "
                        + "M.modelID  WHERE CLU.sku = C.sku) AS description, (SELECT L.city FROM tbl_clubs "
                        + "CLU JOIN tbl_location L ON CLU.locationID = L.locationID WHERE CLU.sku = C.sku) AS locationName, "
                        + "C.quantity,	C.price, C.cost, C.typeID, C.isTradeIn, C.comments FROM tbl_clubs C WHERE C.sku = 100000";
-            return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd));
+            object[][] parms = { };
+            return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
 
         //DropDownList insertion
-        public DataTable ReturnDropDownForBrand()
+        public DataTable ReturnDropDownForBrand(object[] objPageDetails)
         {
+            string strQueryName = "ReturnDropDownForBrand";
             string sqlCmd = "SELECT brandID, brandName FROM "
                 + "tbl_brand ORDER BY brandName";
             object[][] parms = { };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public DataTable ReturnDropDownForModel()
+        public DataTable ReturnDropDownForModel(object[] objPageDetails)
         {
+            string strQueryName = "ReturnDropDownForModel";
             string sqlCmd = "SELECT modelID, modelName FROM "
                 + "tbl_model ORDER BY modelName";
             object[][] parms = { };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public DataTable ReturnDropDownForItemType()
+        public DataTable ReturnDropDownForItemType(object[] objPageDetails)
         {
+            string strQueryName = "ReturnDropDownForItemType";
             string sqlCmd = "SELECT typeID, typeDescription FROM "
                 + "tbl_itemType ORDER BY typeDescription";
             object[][] parms = { };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public DataTable ReturnDropDownForClubType()
+        public DataTable ReturnDropDownForClubType(object[] objPageDetails)
         {
+            string strQueryName = "ReturnDropDownForClubType";
             string sqlCmd = "SELECT typeID, typeName FROM tbl_clubType ORDER BY typeName";
             object[][] parms = { };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //TradeIn Criteria
-        public int ReserveTradeInSKU(int location)
+        public int ReserveTradeInSKU(int location, object[] objPageDetails)
         {
+            string strQueryName = "ReserveTradeInSKU";
             string sqlCmd = "UPDATE tbl_tradeInSkusForCart SET currentSKU = @sku "
                 + "WHERE locationID = @locationID";
-            int newSKU = TradeInSKU(location) + 1;
+            int newSKU = TradeInSKU(location, objPageDetails) + 1;
             object[][] parms =
             {
                 new object[] { "@sku", newSKU },
                 new object[] { "@locationID", location }
             };
-            ExecuteNonReturnQuery(sqlCmd, parms);
+            ExecuteNonReturnQuery(sqlCmd, parms, objPageDetails, strQueryName);
             return newSKU;
         }
-        private int TradeInSKU(int location)
+        private int TradeInSKU(int location, object[] objPageDetails)
         {
+            string strQueryName = "TradeInSKU";
             string sqlCmd = "SELECT currentSKU FROM tbl_tradeInSkusForCart WHERE locationID = @locationID";
 
             object[][] parms =
             {
                 new object[] { "@locationID", location }
             };
-            return ConvertFromDataTableToInt(sqlCmd, parms);
+            return ConvertFromDataTableToInt(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public string GetClubTypeName(int typeID)
+        public string GetClubTypeName(int typeID, object[] objPageDetails)
         {
+            string strQueryName = "GetClubTypeName";
             string sqlCmd = "SELECT typeName FROM tbl_clubType WHERE typeID = @typeID";
 
             object[][] parms =
@@ -241,10 +254,11 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@typeID", typeID }
         };
             //Returns the name of the club type
-            return ConvertFromDataTableToString(sqlCmd, parms);
+            return ConvertFromDataTableToString(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public void AddTradeInItemToTempTable(Clubs T)
+        public void AddTradeInItemToTempTable(Clubs T, object[] objPageDetails)
         {
+            string strQueryName = "AddTradeInItemToTempTable";
             string sqlCmd = "INSERT INTO tbl_tempTradeInCartSkus VALUES(@sku, @brandID, @modelID, "
                 + "@clubType, @shaft, @numberOfClubs, @premium, @cost, @price, @quantity, @clubSpec, "
                 + "@shaftSpec, @shaftFlex, @dexterity, @typeID, @locationID, @isTradeIn, @comments)";
@@ -271,26 +285,28 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "comments", T.comments }
             };
 
-            ExecuteNonReturnQuery(sqlCmd, parms);
+            ExecuteNonReturnQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
-        public string ReturnModelNameFromModelID(int modelID)
+        public string ReturnModelNameFromModelID(int modelID, object[] objPageDetails)
         {
+            string strQueryName = "ReturnModelNameFromModelID";
             string sqlCmd = "SELECT modelName FROM tbl_model WHERE modelID = @modelID";
             object[][] parms =
             {
                 new object[] { "@modelID", modelID }
             };
-            return ConvertFromDataTableToString(sqlCmd, parms);
+            return ConvertFromDataTableToString(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public string ReturnBrandlNameFromBrandID(int brandID)
+        public string ReturnBrandlNameFromBrandID(int brandID, object[] objPageDetails)
         {
+            string strQueryName = "ReturnBrandlNameFromBrandID";
             string sqlCmd = "SELECT brandName FROM tbl_brand WHERE brandID = @brandID";
             object[][] parms =
             {
                 new object[] { "@brandID", brandID }
             };
-            return ConvertFromDataTableToString(sqlCmd, parms);
+            return ConvertFromDataTableToString(sqlCmd, parms, objPageDetails, strQueryName);
         }
     }
 }

@@ -24,6 +24,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "InventoryAddNew.aspx";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -46,20 +47,20 @@ namespace SweetSpotDiscountGolfPOS
                         if (!IsPostBack)
                         {
                             //Grabs a list of objects that match the sku in query string. There should only ever be 1 that is returned
-                            List<Object> o = IDU.ReturnListOfObjectsFromThreeTables(Convert.ToInt32(Request.QueryString["sku"].ToString()));
-                            ddlBrand.DataSource = IM.ReturnDropDownForBrand();
+                            List<Object> o = IDU.ReturnListOfObjectsFromThreeTables(Convert.ToInt32(Request.QueryString["sku"].ToString()), objPageDetails);
+                            ddlBrand.DataSource = IM.ReturnDropDownForBrand(objPageDetails);
                             ddlBrand.DataTextField = "brandName";
                             ddlBrand.DataValueField = "brandID";
                             ddlBrand.DataBind();
-                            ddlLocation.DataSource = LM.ReturnLocationDropDown();
+                            ddlLocation.DataSource = LM.ReturnLocationDropDown(objPageDetails);
                             ddlLocation.DataTextField = "city";
                             ddlLocation.DataValueField = "locationID";
                             ddlLocation.DataBind();
-                            ddlType.DataSource = IM.ReturnDropDownForItemType();
+                            ddlType.DataSource = IM.ReturnDropDownForItemType(objPageDetails);
                             ddlType.DataTextField = "typeDescription";
                             ddlType.DataValueField = "typeID";
                             ddlType.DataBind();
-                            ddlModel.DataSource = IM.ReturnDropDownForModel();
+                            ddlModel.DataSource = IM.ReturnDropDownForModel(objPageDetails);
                             ddlModel.DataTextField = "modelName";
                             ddlModel.DataValueField = "modelID";
                             ddlModel.DataBind();
@@ -168,19 +169,19 @@ namespace SweetSpotDiscountGolfPOS
                         btnCreateSimilar.Visible = false;
                         if (!IsPostBack)
                         {
-                            ddlBrand.DataSource = IM.ReturnDropDownForBrand();
+                            ddlBrand.DataSource = IM.ReturnDropDownForBrand(objPageDetails);
                             ddlBrand.DataTextField = "brandName";
                             ddlBrand.DataValueField = "brandID";
                             ddlBrand.DataBind();
-                            ddlLocation.DataSource = LM.ReturnLocationDropDownAll();
+                            ddlLocation.DataSource = LM.ReturnLocationDropDownAll(objPageDetails);
                             ddlLocation.DataTextField = "locationName";
                             ddlLocation.DataValueField = "locationID";
                             ddlLocation.DataBind();
-                            ddlType.DataSource = IM.ReturnDropDownForItemType();
+                            ddlType.DataSource = IM.ReturnDropDownForItemType(objPageDetails);
                             ddlType.DataTextField = "typeDescription";
                             ddlType.DataValueField = "typeID";
                             ddlType.DataBind();
-                            ddlModel.DataSource = IM.ReturnDropDownForModel();
+                            ddlModel.DataSource = IM.ReturnDropDownForModel(objPageDetails);
                             ddlModel.DataTextField = "modelName";
                             ddlModel.DataValueField = "modelID";
                             ddlModel.DataBind();
@@ -334,6 +335,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnAddItem_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Retrieves the type of item that is getting added
@@ -343,7 +345,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     Clubs c = new Clubs();
                     //Transfers all info into Club class
-                    c.sku = IDU.ReturnMaxSku(typeID);
+                    c.sku = IDU.ReturnMaxSku(typeID, objPageDetails);
                     c.cost = Convert.ToDouble(txtCost.Text);
                     c.brandID = Convert.ToInt32(ddlBrand.SelectedValue);
                     c.price = Convert.ToDouble(txtPrice.Text);
@@ -367,7 +369,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     Accessories a = new Accessories();
                     //Transfers all info into Accessory class
-                    a.sku = IDU.ReturnMaxSku(typeID);
+                    a.sku = IDU.ReturnMaxSku(typeID, objPageDetails);
                     a.brandID = Convert.ToInt32(ddlBrand.SelectedValue);
                     a.modelID = Convert.ToInt32(ddlModel.SelectedValue);
                     a.cost = Convert.ToDouble(txtCost.Text);
@@ -386,7 +388,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     Clothing cl = new Clothing();
                     //Transfers all info into Clothing class
-                    cl.sku = IDU.ReturnMaxSku(typeID);
+                    cl.sku = IDU.ReturnMaxSku(typeID, objPageDetails);
                     cl.brandID = Convert.ToInt32(ddlBrand.SelectedValue);
                     cl.cost = Convert.ToDouble(txtCost.Text);
                     cl.price = Convert.ToDouble(txtPrice.Text);
@@ -403,7 +405,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
 
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                nameValues.Set("sku", IDU.AddNewItemToDatabase(o).ToString());
+                nameValues.Set("sku", IDU.AddNewItemToDatabase(o, objPageDetails).ToString());
                 //Refreshes current page
                 Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
             }
@@ -423,6 +425,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnEditItem_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 txtCost.Enabled = true;
@@ -479,6 +482,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnSaveItem_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 txtCost.Enabled = false;
@@ -575,7 +579,7 @@ namespace SweetSpotDiscountGolfPOS
                 btnCreateSimilar.Visible = true;
 
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                nameValues.Set("sku", IDU.UpdateItemInDatabase(o).ToString());
+                nameValues.Set("sku", IDU.UpdateItemInDatabase(o, objPageDetails).ToString());
                 //Refreshes current page
                 Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
             }
@@ -595,6 +599,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnCancel_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //no changes saved, refreshes current page
@@ -616,6 +621,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnBackToSearch_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Changes page to the inventory home page
@@ -637,6 +643,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "ddlType_SelectedIndexChanged";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
             }
@@ -656,6 +663,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnCreateSimilar_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Retrieves the type of item that is getting added
@@ -665,7 +673,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     Clubs c = new Clubs();
                     //Transfers all info into Club class
-                    c.sku = IDU.ReturnMaxSku(typeID);
+                    c.sku = IDU.ReturnMaxSku(typeID, objPageDetails);
                     c.cost = Convert.ToDouble(txtCost.Text);
                     c.brandID = Convert.ToInt32(ddlBrand.SelectedValue);
                     c.price = Convert.ToDouble(txtPrice.Text);
@@ -689,7 +697,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     Accessories a = new Accessories();
                     //Transfers all info into Accessory class
-                    a.sku = IDU.ReturnMaxSku(typeID);
+                    a.sku = IDU.ReturnMaxSku(typeID, objPageDetails);
                     a.brandID = Convert.ToInt32(ddlBrand.SelectedValue);
                     a.cost = Convert.ToDouble(txtCost.Text);
                     a.price = Convert.ToDouble(txtPrice.Text);
@@ -708,7 +716,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     Clothing cl = new Clothing();
                     //Transfers all info into Clothing class
-                    cl.sku = IDU.ReturnMaxSku(typeID);
+                    cl.sku = IDU.ReturnMaxSku(typeID, objPageDetails);
                     cl.brandID = Convert.ToInt32(ddlBrand.SelectedValue);
                     cl.cost = Convert.ToDouble(txtCost.Text);
                     cl.price = Convert.ToDouble(txtPrice.Text);
@@ -725,7 +733,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
 
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                nameValues.Set("sku", IDU.AddNewItemToDatabase(o).ToString());
+                nameValues.Set("sku", IDU.AddNewItemToDatabase(o, objPageDetails).ToString());
                 //Refreshes current page
                 Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
             }

@@ -88,8 +88,9 @@ namespace SweetSpotProShop
             return clubs;
         }
 
-        public List<object> ReturnListOfObjectsFromThreeTables(int sku)
+        public List<object> ReturnListOfObjectsFromThreeTables(int sku, object[] objPageDetails)
         {
+            string strQueryName = "ReturnListOfObjectsFromThreeTables";
             string sqlCmd = "SELECT sku, brandID, modelID, clubType, shaft, numberOfClubs, "
                 + "premium, cost, price, quantity, clubSpec, shaftSpec, shaftFlex, dexterity, "
                 + "typeID, locationID, isTradeIn, comments FROM tbl_clubs WHERE sku = @sku";
@@ -99,17 +100,17 @@ namespace SweetSpotProShop
                  new object[] { "@sku", sku }
             };
 
-            List<Clubs> c = ConvertFromDataTableToClubs(dbc.returnDataTableData(sqlCmd, parms));
+            List<Clubs> c = ConvertFromDataTableToClubs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
 
             sqlCmd = "SELECT sku, size, colour, gender, style, price, cost, brandID, quantity, "
                 + "typeID, locationID, comments FROM tbl_clothing WHERE sku = @sku";
 
-            List<Clothing> cl = ConvertFromDataTableToClothing(dbc.returnDataTableData(sqlCmd, parms));
+            List<Clothing> cl = ConvertFromDataTableToClothing(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
 
             sqlCmd = "SELECT sku, size, colour, price, cost, brandID, modelID, accessoryType, "
                 + "quantity, typeID, locationID, comments FROM tbl_accessories WHERE sku = @sku";
 
-            List<Accessories> a = ConvertFromDataTableToAccessories(dbc.returnDataTableData(sqlCmd, parms));
+            List<Accessories> a = ConvertFromDataTableToAccessories(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
 
             List<object> o = new List<object>();
             o.AddRange(a);
@@ -118,8 +119,9 @@ namespace SweetSpotProShop
             return o;
         }
         //Return Model string created by Nathan and Tyler **getModelName
-        public string ReturnModelNameFromModelID(int modelID)
+        public string ReturnModelNameFromModelID(int modelID, object[] objPageDetails)
         {
+            string strQueryName = "ReturnModelNameFromModelID";
             string sqlCmd = "Select modelName from tbl_model where modelID = @modelID";
 
             object[][] parms =
@@ -127,36 +129,39 @@ namespace SweetSpotProShop
                  new object[] { "@modelID", modelID }
             };
             //Returns the model name
-            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
+            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
         }
         //Return Brand string created by Nathan and Tyler **getBrandName
-        public string ReturnBrandNameFromBrandID(int brandID)
+        public string ReturnBrandNameFromBrandID(int brandID, object[] objPageDetails)
         {
+            string strQueryName = "ReturnBrandNameFromBrandID";
             string sqlCmd = "SELECT brandName FROM tbl_brand WHERE brandID = @brandID";
             object[][] parms =
             {
                  new object[] { "@brandID", brandID }
             };
             //Returns the brand name
-            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
+            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
         }
         //Returns max sku from the skuNumber table based on itemType and directs code to store it
-        public int ReturnMaxSku(int itemType)
+        public int ReturnMaxSku(int itemType, object[] objPageDetails)
         {
+            string strQueryName = "ReturnMaxSku";
             string sqlCmd = "SELECT sku FROM tbl_skuNumbers WHERE itemType = @itemType";
             object[][] parms =
             {
                  new object[] { "@itemType", itemType }
             };
 
-            int maxSku = dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) + 1;
-            StoreMaxSku(maxSku, itemType);
+            int maxSku = dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) + 1;
+            StoreMaxSku(maxSku, itemType, objPageDetails);
             //Returns the new max sku
             return maxSku;
         }
         //Stores the max sku in the skuNumber table
-        public void StoreMaxSku(int sku, int itemType)
+        public void StoreMaxSku(int sku, int itemType, object[] objPageDetails)
         {
+            string strQueryName = "StoreMaxSku";
             //This method stores the max sku along with its item type
             string sqlCmd = "UPDATE tbl_skuNumbers SET sku = @sku WHERE itemType = @itemType";
             object[][] parms =
@@ -164,40 +169,40 @@ namespace SweetSpotProShop
                  new object[] { "@sku", sku },
                  new object[] { "@itemType", itemType }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //**Add Item**
         //Adds new Item to tables Nathan created
-        public int AddNewItemToDatabase(object o)
+        public int AddNewItemToDatabase(object o, object[] objPageDetails)
         {
             //This method checks to see what type the object o is, and sends it to the proper method for insertion
             int sku = -10;
             if (o is Clubs)
             {
                 Clubs c = o as Clubs;
-                AddClubToDatabase(c);
+                AddClubToDatabase(c, objPageDetails);
                 sku = c.sku;
             }
             else if (o is Accessories)
             {
                 Accessories a = o as Accessories;
-                AddAccessoryToDatabase(a);
+                AddAccessoryToDatabase(a, objPageDetails);
                 sku = a.sku;
             }
             else if (o is Clothing)
             {
                 Clothing cl = o as Clothing;
-                AddClothingToDatabase(cl);
+                AddClothingToDatabase(cl, objPageDetails);
                 sku = cl.sku;
             }
             //Returns the sku of the new item
             return sku;
         }
         //These three actully add the item to specific tables Nathan created
-        private void AddClubToDatabase(Clubs c)
+        private void AddClubToDatabase(Clubs c, object[] objPageDetails)
         {
-            
+            string strQueryName = "AddClubToDatabase";
             string sqlCmd = "Insert Into tbl_clubs (sku, brandID, modelID, clubType, shaft, numberOfClubs,"
                     + " premium, cost, price, quantity, clubSpec, shaftSpec, shaftFlex, dexterity, typeID, locationID, isTradeIn, comments)"
                     + " Values (@sku, @brandID, @modelID, @clubType, @shaft, @numberOfClubs, @premium, @cost, @price,"
@@ -224,10 +229,11 @@ namespace SweetSpotProShop
                  new object[] { "@isTradeIn", c.isTradeIn },
                  new object[] { "@comments", c.comments }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private void AddAccessoryToDatabase(Accessories a)
+        private void AddAccessoryToDatabase(Accessories a, object[] objPageDetails)
         {
+            string strQueryName = "AddAccessoryToDatabase";
             string sqlCmd = "Insert Into tbl_accessories (sku, size, colour, price, cost, brandID, modelID, accessoryType, quantity, typeID, locationID, comments)"
                 + " Values (@sku, @size, @colour, @price, @cost, @brandID, @modelID, @accessoryType, @quantity, @typeID, @locationID, @comments)";
 
@@ -246,10 +252,11 @@ namespace SweetSpotProShop
                  new object[] { "@locationID", a.locID },
                  new object[] { "@comments", a.comments }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private void AddClothingToDatabase(Clothing cl)
+        private void AddClothingToDatabase(Clothing cl, object[] objPageDetails)
         {
+            string strQueryName = "AddClothingToDatabase";
             string sqlCmd = "Insert Into tbl_clothing (sku, size, colour, gender, style, price, cost, brandID, quantity, typeID, locationID, comments)"
                 + " Values (@sku, @size, @colour, @gender, @style, @price, @cost, @brandID, @quantity, @typeID, @locationID, @comments)";
 
@@ -268,38 +275,39 @@ namespace SweetSpotProShop
                  new object[] { "@locationID", cl.locID },
                  new object[] { "@comments", cl.comments }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //**Update Item**
-        public int UpdateItemInDatabase(object o)
+        public int UpdateItemInDatabase(object o, object[] objPageDetails)
         {
             //This method checks to see what type the object o is, and sends it to the proper method for insertion
             int sku = -10;
             if (o is Clubs)
             {
                 Clubs c = o as Clubs;
-                UpdateClubInDatabase(c);
+                UpdateClubInDatabase(c, objPageDetails);
                 sku = c.sku;
             }
             else if (o is Accessories)
             {
                 Accessories a = o as Accessories;
-                UpdateAccessoryInDatabase(a);
+                UpdateAccessoryInDatabase(a, objPageDetails);
                 sku = a.sku;
             }
             else if (o is Clothing)
             {
                 Clothing cl = o as Clothing;
-                UpdateClothingInDatabase(cl);
+                UpdateClothingInDatabase(cl, objPageDetails);
                 sku = cl.sku;
             }
             //Returns the sku of the new item
             return sku;
         }
         //These three actully update the item in their specific tables Nathan created
-        private void UpdateClubInDatabase(Clubs c)
+        private void UpdateClubInDatabase(Clubs c, object[] objPageDetails)
         {
+            string strQueryName = "UpdateClubInDatabase";
             string sqlCmd = "UPDATE tbl_clubs SET brandID = @brandID, modelID = @modelID, clubType = @clubType, shaft = @shaft,"
                 + " numberOfClubs = @numberOfClubs, premium = @premium, cost = @cost, price = @price, quantity = @quantity,"
                 + " clubSpec = @clubSpec, shaftSpec = @shaftSpec, shaftFlex = @shaftFlex, dexterity = @dexterity,"
@@ -325,10 +333,11 @@ namespace SweetSpotProShop
                  new object[] { "@isTradeIn", c.isTradeIn },
                  new object[] { "@comments", c.comments }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private void UpdateAccessoryInDatabase(Accessories a)
+        private void UpdateAccessoryInDatabase(Accessories a, object[] objPageDetails)
         {
+            string strQueryName = "UpdateAccessoryInDatabase";
             string sqlCmd = "UPDATE tbl_accessories SET size = @size, colour = @colour, price = @price, cost = @cost, brandID = @brandID,"
                 + "modelID = @modelID, accessoryType = @accessoryType, quantity = @quantity, locationID = @locationID, comments = @comments WHERE sku = @sku";
 
@@ -346,10 +355,11 @@ namespace SweetSpotProShop
                  new object[] { "@locationID", a.locID },
                  new object[] { "@comments", a.comments }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private void UpdateClothingInDatabase(Clothing cl)
+        private void UpdateClothingInDatabase(Clothing cl, object[] objPageDetails)
         {
+            string strQueryName = "UpdateClothingInDatabase";
             string sqlCmd = "UPDATE tbl_clothing SET size = @size, colour = @colour, gender = @gender, style = @style,"
                 + " price = @price, cost = @cost, brandID = @brandID, quantity = @quantity, locationID = @locationID, comments = @comments WHERE sku = @sku";
 
@@ -367,7 +377,7 @@ namespace SweetSpotProShop
                  new object[] { "@locationID", cl.locID },
                  new object[] { "@comments", cl.comments }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //**OLD CODE**

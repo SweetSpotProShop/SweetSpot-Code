@@ -27,12 +27,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public Reports() {}
 
         //Report Tracking
-        public void CallReportLogger(object[] reportLog)
+        public void CallReportLogger(object[] reportLog, object[] objPageDetails)
         {
-            logReportCall(reportLog);
+            logReportCall(reportLog, objPageDetails);
         }
-        private void logReportCall(object[] reportLog)
+        private void logReportCall(object[] reportLog, object[] objPageDetails)
         {
+            string strQueryName = "logReportCall";
             string sqlCmd = "INSERT INTO tbl_reportView VALUES(@reportID, "
                 + "@dateClicked, @timeClicked, @employeeID, @locationID)";
             object[][] parms =
@@ -43,13 +44,14 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@employeeID", Convert.ToInt32(reportLog[1]) },
                 new object[] { "@locationID", Convert.ToInt32(reportLog[2]) }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //*******************HOME PAGE SALES*******************************************************
         //Nathan built for home page sales display
-        public System.Data.DataTable getInvoiceBySaleDate(DateTime startDate, DateTime endDate, int locationID)
+        public System.Data.DataTable getInvoiceBySaleDate(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
         {
+            string strQueryName = "getInvoiceBySaleDate";
             //Gets a list of all invoices based on date and location. Stores in a list
             string sqlCmd = "SELECT tbl_invoice.invoiceNum, tbl_invoice.invoiceSubNum, custID, empID, subTotal, discountAmount, "
                 + "tradeinAmount, CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END AS governmentTax, "
@@ -64,12 +66,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@endDate", endDate },
                  new object[] { "@locationID", locationID }
             };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //******************COST OF INVENTORY REPORTING*******************************************************
-        public System.Data.DataTable costOfInventoryReport()
+        public System.Data.DataTable costOfInventoryReport(object[] objPageDetails)
         {
+            string strQueryName = "costOfInventoryReport";
             string sqlCmd = "SELECT TOP (1) (SELECT SUM(cost * quantity) FROM tbl_clubs "
                 + "WHERE locationID = 1) AS cMJ, (SELECT SUM(cost * quantity) FROM "
                 + "tbl_clubs WHERE locationID = 2) AS cCAL, (SELECT SUM(cost * quantity) "
@@ -83,21 +86,21 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 + "WHERE locationID = 8) AS clEDM FROM tbl_clubs";
 
             object[][] parms = { };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //*******************CASHOUT UTILITIES*******************************************************
         //Matches new Database Calls
-        public int verifyCashoutCanBeProcessed(int location, DateTime dtm)
+        public int verifyCashoutCanBeProcessed(int location, DateTime dtm, object[] objPageDetails)
         {
             int indicator = 0;
-            if (transactionsAvailable(location, dtm))
+            if (transactionsAvailable(location, dtm, objPageDetails))
             {
-                if (openTransactions(location,dtm))
+                if (openTransactions(location, dtm, objPageDetails))
                 {
                     indicator = 2;
                 }
-                else if(cashoutAlreadyDone(location, dtm))
+                else if(cashoutAlreadyDone(location, dtm, objPageDetails))
                 {
                     indicator = 3;
                 }
@@ -105,8 +108,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             else { indicator = 1; }
             return indicator;
         }
-        public bool transactionsAvailable(int location, DateTime dtm)
+        public bool transactionsAvailable(int location, DateTime dtm, object[] objPageDetails)
         {
+            string strQueryName = "transactionsAvailable";
             bool bolTA = false;
             string sqlCmd = "SELECT COUNT(invoiceNum) FROM tbl_invoice "
                         + "WHERE invoiceDate BETWEEN @startDate AND @endDate "
@@ -118,14 +122,15 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@locationID", location }
             };
 
-            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) > 0)
             {
                 bolTA = true;
             }
             return bolTA;
         }
-        public bool cashoutAlreadyDone(int location, DateTime dtm)
+        public bool cashoutAlreadyDone(int location, DateTime dtm, object[] objPageDetails)
         {
+            string strQueryName = "cashoutAlreadyDone";
             bool bolCAD = false;
             string sqlCmd = "SELECT COUNT(cashoutDate) from tbl_cashout "
                         + "WHERE cashoutDate BETWEEN @startDate AND @endDate "
@@ -136,14 +141,15 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@endDate", dtm.ToString("yyyy-MM-dd") },
                 new object[] { "@locationID", location }
             };
-            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) > 0)
             {
                 bolCAD = true;
             }
             return bolCAD;
         }
-        private bool openTransactions(int location, DateTime dtm)
+        private bool openTransactions(int location, DateTime dtm, object[] objPageDetails)
         {
+            string strQueryName = "openTransactions";
             bool bolOT = false;
             string sqlCmd = "SELECT COUNT(invoiceNum) FROM tbl_currentSalesInvoice "
                         + "WHERE transactionType = 1 AND locationID = @locationID "
@@ -153,14 +159,15 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@locationID", location },
                 new object[] { "@invoiceDate", dtm.ToString("yyyy-MM-dd")}
             };
-            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) > 0)
             {
                 bolOT = true;
             }
             return bolOT;
         }
-        public void removeUnprocessedReturns(int location, DateTime dtm)
+        public void removeUnprocessedReturns(int location, DateTime dtm, object[] objPageDetails)
         {
+            string strQueryName = "removeUnprocessedReturns";
             string sqlCmd = "DELETE tbl_currentSalesInvoice WHERE invoiceDate BETWEEN @startDate AND @endDate "
                         + "AND locationID = @locationID";
             object[][] parms =
@@ -169,18 +176,18 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@endDate", dtm.ToString("yyyy-MM-dd") },
                 new object[] { "@locationID", location }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
-        public Cashout CreateNewCashout(DateTime startDate, int locationID)
+        public Cashout CreateNewCashout(DateTime startDate, int locationID, object[] objPageDetails)
         {
             ////Now need to account for anything in Layaway status
             ////These queries will need to be updated
             //Return PivotTable of a list of Mops
-            System.Data.DataTable dt1 = ReturnListOfMOPS(startDate, locationID);
+            System.Data.DataTable dt1 = ReturnListOfMOPS(startDate, locationID, objPageDetails);
 
             //Gather remaining Totals (taxes, subtotal(including shipping), tradein)
-            System.Data.DataTable dt2 = ReturnAdditionTotalsForCashout(startDate, locationID);
+            System.Data.DataTable dt2 = ReturnAdditionTotalsForCashout(startDate, locationID, objPageDetails);
 
             //Save all into a cashout and return
             Cashout C = new Cashout();
@@ -197,8 +204,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
             return C;
         }
-        private System.Data.DataTable ReturnListOfMOPS(DateTime startDate, int locationID)
+        private System.Data.DataTable ReturnListOfMOPS(DateTime startDate, int locationID, object[] objPageDetails)
         {
+            string strQueryName = "ReturnListOfMOPS";
             string sqlCmd = "SELECT invoiceDate, ISNULL([Cash],0) AS Cash, ISNULL([Debit],0) AS Debit, "
                 + "ISNULL([Gift Card],0) AS GiftCard, ISNULL([MasterCard],0) AS Mastercard, ISNULL([Visa],0) AS Visa "
                 + "FROM(SELECT i.invoiceDate, m.mopType, SUM(amountPaid) AS totalPaid "
@@ -211,10 +219,11 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@startDate", startDate },
                 new object[] { "@locationID", locationID }
             };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private System.Data.DataTable ReturnAdditionTotalsForCashout(DateTime startDate, int locationID)
+        private System.Data.DataTable ReturnAdditionTotalsForCashout(DateTime startDate, int locationID, object[] objPageDetails)
         {
+            string strQueryName = "ReturnAdditionTotalsForCashout";
             string sqlCmd = "SELECT SUM(tradeinAmount) AS tradeinTotal, "
                 + "SUM(subTotal) + SUM(shippingAmount) AS subTotal, "
                 + "SUM(CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END) AS gTax, "
@@ -226,12 +235,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@startDate", startDate },
                 new object[] { "@locationID", locationID }
             };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
         
         //Insert the cashout into the database
-        public void insertCashout(Cashout cas)
+        public void insertCashout(Cashout cas, object[] objPageDetails)
         {
+            string strQueryName = "insertCashout";
             string sqlCmd = "INSERT INTO tbl_cashout VALUES(@cashoutDate, @cashoutTime, "
                 + "@saleTradeIn, @saleGiftCard, @saleCash, @saleDebit, @saleMasterCard, "
                 + "@saleVisa, @receiptTradeIn, @receiptGiftCard, @receiptCash, "
@@ -262,22 +272,23 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@locID", cas.locationID },
                 new object[] { "@empID", cas.empID }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //******************PURCHASES REPORTING*******************************************************
         //Matches new Database Calls
-        public int verifyPurchasesMade(object[] repInfo)
+        public int verifyPurchasesMade(object[] repInfo, object[] objPageDetails)
         {
             int indicator = 0;
-            if (!purchasesAvailable(repInfo))
+            if (!purchasesAvailable(repInfo, objPageDetails))
             {
                 indicator = 1;
             }
             return indicator;
         }
-        public bool purchasesAvailable(object[] repInfo)
+        public bool purchasesAvailable(object[] repInfo, object[] objPageDetails)
         {
+            string strQueryName = "purchasesAvailable";
             bool bolTA = false;
             DateTime[] dtm = (DateTime[])repInfo[0];
 
@@ -291,7 +302,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@locationID", Convert.ToInt32(repInfo[1]) }
             };
 
-            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) > 0)
             {
                 bolTA = true;
             }
@@ -299,8 +310,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return bolTA;
         }
 
-        public bool tradeinsHaveBeenProcessed(object[] repInfo)
+        public bool tradeinsHaveBeenProcessed(object[] repInfo, object[] objPageDetails)
         {
+            string strQueryName = "tradeinsHaveBeenProcessed";
             bool bolTI = false;
             DateTime[] dtm = (DateTime[])repInfo[0];
             string sqlCmd = "SELECT COUNT(invoiceNum) FROM tbl_invoice "
@@ -312,15 +324,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@endDate", dtm[1] },
                 new object[] { "@locationID", Convert.ToInt32(repInfo[1]) }
             };
-            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) > 0)
             {
                 bolTI = true;
             }
             return bolTI;
         }
 
-        public List<Purchases> returnPurchasesDuringDates(DateTime startDate, DateTime endDate, int locationID)
+        public List<Purchases> returnPurchasesDuringDates(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
         {
+            string strQueryName = "returnPurchasesDuringDates";
             string sqlCmd = "SELECT R.receiptNumber, R.receiptDate, D.methodDesc, M.chequeNum, "
                 + "M.amountPaid FROM tbl_receipt R INNER JOIN tbl_receiptMOP M ON R.receiptNumber "
                 + "= M.receiptNum INNER JOIN tbl_methodOfPayment D ON M.mopType = D.methodID WHERE "
@@ -332,7 +345,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@locationID", locationID }
             };
             
-            return returnPurchasesFromDataTable(dbc.returnDataTableData(sqlCmd, parms));
+            return returnPurchasesFromDataTable(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
         private List<Purchases> returnPurchasesFromDataTable(System.Data.DataTable dt)
         {
@@ -348,8 +361,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return purchase;
         }
         //******************MARKETING REPORTING*******************************************************
-        public System.Data.DataTable mostSoldItemsReport(DateTime startDate, DateTime endDate, int locationID)
+        public System.Data.DataTable mostSoldItemsReport(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
         {
+            string strQueryName = "mostSoldItemsReport";
             string sqlCmd = "SELECT TOP (10) II.sku, SUM(II.quantity) AS amountSold FROM tbl_invoiceItem II "
                 + "JOIN tbl_invoice I ON I.invoiceNum = II.invoiceNum AND I.invoiceSubNum = II.invoiceSubNum "
                 + "WHERE II.sku NOT IN(SELECT sku FROM tbl_tempTradeInCartSkus) AND "
@@ -362,10 +376,11 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@endDate", endDate },
                 new object[] { "@locationID", locationID }
             };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public System.Data.DataTable mostSoldBrandsReport(DateTime startDate, DateTime endDate, int locationID)
+        public System.Data.DataTable mostSoldBrandsReport(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
         {
+            string strQueryName = "mostSoldBrandsReport";
             string sqlCmd = "SELECT TOP(10) BB.brand, SUM(II.quantity) AS amountSold FROM "
                 + "tbl_invoiceItem II JOIN tbl_invoice I ON I.invoiceNum = II.invoiceNum "
                 + "AND I.invoiceSubNum = II.invoiceSubNum JOIN(SELECT A.sku, (SELECT "
@@ -386,10 +401,11 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@dtmEndDate", endDate },
                 new object[] { "@locationID", locationID }
             };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public System.Data.DataTable mostSoldModelsReport(DateTime startDate, DateTime endDate, int locationID)
+        public System.Data.DataTable mostSoldModelsReport(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
         {
+            string strQueryName = "mostSoldModelsReport";
             string sqlCmd = "SELECT TOP (10) MM.model, SUM(II.quantity) AS amountSold FROM "
                 + "tbl_invoiceItem II JOIN tbl_invoice I ON I.invoiceNum = II.invoiceNum AND "
                 + "I.invoiceSubNum = II.invoiceSubNum JOIN(SELECT A.sku, (SELECT M.modelName "
@@ -407,13 +423,14 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@dtmEndDate", endDate },
                 new object[] { "@locationID", locationID }
             };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
 
         //******************COGS and PM REPORTING*******************************************************
-        public System.Data.DataTable returnInvoicesForCOGS(DateTime startDate, DateTime endDate, int locationID)
+        public System.Data.DataTable returnInvoicesForCOGS(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
         {
+            string strQueryName = "returnInvoicesForCOGS";
             //This method returns a type of invoice for a report
             string sqlCmd = "SELECT CONCAT(I.invoiceNum, '-', I.invoiceSubNum) AS 'invoice', II.totalPrice, II.totalCost, II.totalDiscount, II.percentage, "
                 + "CASE WHEN II.percentage = 1 AND II.totalPrice <> 0 THEN CAST(ROUND((((II.totalPrice - (II.totalPrice * II.totalDiscount) / 100) - II.totalCost) / II.totalPrice) * 100, 2) AS varchar) "
@@ -430,19 +447,20 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@endDate", endDate },
                 new object[] { "@locationID", locationID }
             };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public int verifyInvoicesCompleted(object[] repInfo)
+        public int verifyInvoicesCompleted(object[] repInfo, object[] objPageDetails)
         {
             int indicator = 0;
-            if (!invoicesCompleted(repInfo))
+            if (!invoicesCompleted(repInfo, objPageDetails))
             {
                 indicator = 1;
             }
             return indicator;
         }
-        private bool invoicesCompleted(object[] repInfo)
+        private bool invoicesCompleted(object[] repInfo, object[] objPageDetails)
         {
+            string strQueryName = "invoicesCompleted";
             bool bolData = false;
             DateTime[] dtm = (DateTime[])repInfo[0];
 
@@ -454,7 +472,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@dtmEndDate", dtm[1] },
                 new object[] { "@locationID", Convert.ToInt32(repInfo[1]) }
             };
-            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) > 0)
             {
                 bolData = true;
             }
@@ -463,17 +481,18 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
         //******************Sales by Date Report*******************************************************
         //Matches new Database Calls
-        public int verifySalesHaveBeenMade(object[] repInfo)
+        public int verifySalesHaveBeenMade(object[] repInfo, object[] objPageDetails)
         {
             int indicator = 0;
-            if (!transactionsAvailableOverMultipleDates(repInfo))
+            if (!transactionsAvailableOverMultipleDates(repInfo, objPageDetails))
             {
                 indicator = 1;
             }
             return indicator;
         }
-        public bool transactionsAvailableOverMultipleDates(object[] repInfo)
+        public bool transactionsAvailableOverMultipleDates(object[] repInfo, object[] objPageDetails)
         {
+            string strQueryName = "transactionsAvailableOverMultipleDates";
             bool bolTA = false;
             DateTime[] dtm = (DateTime[])repInfo[0];
             string sqlCmd = "SELECT COUNT(invoiceNum) FROM tbl_invoice "
@@ -485,14 +504,15 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@endDate", dtm[1] },
                 new object[] { "@locationID", Convert.ToInt32(repInfo[1]) }
             };
-            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) > 0)
             {
                 bolTA = true;
             }
             return bolTA;
         }
-        public System.Data.DataTable returnSalesForSelectedDate(object[] repInfo)
+        public System.Data.DataTable returnSalesForSelectedDate(object[] repInfo, object[] objPageDetails)
         {
+            string strQueryName = "returnSalesForSelectedDate";
             DateTime[] dtm = (DateTime[])repInfo[0];
             string sqlCmd = "SELECT invoiceDate, SUM(subTotal) AS totalSales FROM "
                 + "tbl_invoice WHERE invoiceDate BETWEEN @startDate AND @endDate "
@@ -503,21 +523,22 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@endDate", dtm[1] },
                 new object[] { "@locationID", Convert.ToInt32(repInfo[1]) }
             };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //******************Trade Ins by Date Report*******************************************************
-        public int verifyTradeInsHaveBeenMade(object[] repInfo)
+        public int verifyTradeInsHaveBeenMade(object[] repInfo, object[] objPageDetails)
         {
             int indicator = 0;
-            if (!tradeinsHaveBeenProcessed(repInfo))
+            if (!tradeinsHaveBeenProcessed(repInfo, objPageDetails))
             {
                 indicator = 1;
             }
             return indicator;
         }
-        public System.Data.DataTable returnTradeInsForSelectedDate(object[] repInfo)
+        public System.Data.DataTable returnTradeInsForSelectedDate(object[] repInfo, object[] objPageDetails)
         {
+            string strQueryName = "returnTradeInsForSelectedDate";
             DateTime[] dtm = (DateTime[])repInfo[0];
             string sqlCmd = "SELECT invoiceDate, SUM(tradeInAmount) AS totalTradeIns "
                 + "FROM tbl_invoice WHERE invoiceDate BETWEEN @startDate AND @endDate "
@@ -528,12 +549,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@endDate", dtm[1] },
                 new object[] { "@locationID", Convert.ToInt32(repInfo[1]) }
             };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //******************Sales by Payment Type By Date Report***************************************
-        public System.Data.DataTable returnSalesByPaymentTypeForSelectedDate(object[] repInfo)
+        public System.Data.DataTable returnSalesByPaymentTypeForSelectedDate(object[] repInfo, object[] objPageDetails)
         {
+            string strQueryName = "returnSalesByPaymentTypeForSelectedDate";
             DateTime[] dtm = (DateTime[])repInfo[0];
             string sqlCmd = "SELECT invoiceDate, ISNULL([Cash],0) AS Cash, "
                 + "ISNULL([Debit],0) AS Debit, ISNULL([Gift Card],0) AS GiftCard, "
@@ -550,7 +572,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@endDate", dtm[1] },
                 new object[] { "@locationID", Convert.ToInt32(repInfo[1]) }
             };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //********************IMPORTING***************************************************************
@@ -1109,8 +1131,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
 
         //******************COGS and PM REPORTING*******************************************************
-        public System.Data.DataTable returnExtensiveInvoices(DateTime startDate, DateTime endDate, int locationID)
+        public System.Data.DataTable returnExtensiveInvoices(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
         {
+            string strQueryName = "returnExtensiveInvoices";
             //This method returns a collection of relevant data to be used in the forming of an extensive invoice
             string sqlCmd = "SELECT CONCAT(tbl_invoice.invoiceNum, '-', tbl_invoice.invoiceSubNum) AS 'Invoice', "
                 + "tbl_invoice.shippingAmount, (tbl_invoice.tradeinAmount * -1) AS 'tradeinAmount', CASE WHEN "
@@ -1179,12 +1202,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@endDate", endDate },
                 new object[] { "@locationID", locationID }
             };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //*******GST and PST totals********
-        public List<TaxReport> returnTaxReportDetails(DateTime dtmStartDate, DateTime dtmEndDate)
+        public List<TaxReport> returnTaxReportDetails(DateTime dtmStartDate, DateTime dtmEndDate, object[] objPageDetails)
         {
+            string strQueryName = "returnTaxReportDetails";
             string sqlCmd = "SELECT invoiceDate, locationID, SUM(subTotal) AS subTotal, SUM(shippingAmount) AS shippingAmount, "
                             + "SUM(discountAmount) AS discountAmount, SUM(tradeInAmount) AS tradeInAmount, "
                             + "SUM(CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END) AS governmentTax, "
@@ -1197,7 +1221,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@dtmStartDate", dtmStartDate },
                 new object[] { "@dtmEndDate", dtmEndDate }
             };
-            return convertTaxReportFromDataTable(dbc.returnDataTableData(sqlCmd, parms));
+            return convertTaxReportFromDataTable(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
         private List<TaxReport> convertTaxReportFromDataTable(System.Data.DataTable dt)
         {
@@ -1217,17 +1241,18 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }).ToList();
             return taxReport;
         }
-        public int verifyTaxesCharged(object[] repInfo)
+        public int verifyTaxesCharged(object[] repInfo, object[] objPageDetails)
         {
             int indicator = 0;
-            if (!taxesAvailable(repInfo))
+            if (!taxesAvailable(repInfo, objPageDetails))
             {
                 indicator = 1;
             }
             return indicator;
         }
-        private bool taxesAvailable(object[] repInfo)
+        private bool taxesAvailable(object[] repInfo, object[] objPageDetails)
         {
+            string strQueryName = "taxesAvailable";
             bool bolData = false;
             DateTime[] dtm = (DateTime[])repInfo[0];
             string sqlCmd = "SELECT COUNT(invoiceNum) FROM tbl_invoice WHERE (invoiceDate "
@@ -1238,7 +1263,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@dtmStartDate", dtm[0] },
                 new object[] { "@dtmEndDate", dtm[1] }
             };
-            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) > 0)
             {
                 bolData = true;
             }
@@ -1247,8 +1272,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
 
         //******************ITEMS SOLD REPORTING*******************************************************
-        public System.Data.DataTable returnItemsSold(DateTime startDate, DateTime endDate, int locationID)
+        public System.Data.DataTable returnItemsSold(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
         {
+            string strQueryName = "returnItemsSold";
             string sqlCmd = "SELECT CONCAT(I.invoiceNum, '-', I.invoiceSubNum) AS 'invoice', II.sku, II.totalCost AS cost, "
                 + "II.totalPrice AS price, II.totalDiscount AS itemDiscount, II.percentage, CASE WHEN II.percentage = 1 "
                 + "THEN II.totalPrice - ((II.totalPrice * (II.totalDiscount / 100)) + II.totalCost) ELSE II.totalPrice "
@@ -1266,12 +1292,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@endDate", endDate },
                 new object[] { "@locationID", locationID }
             };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //******************DISCOUNT REPORTING*******************************************************
-        public System.Data.DataTable returnDiscountsBetweenDates(DateTime startDate, DateTime endDate, int locID)
+        public System.Data.DataTable returnDiscountsBetweenDates(DateTime startDate, DateTime endDate, int locID, object[] objPageDetails)
         {
+            string strQueryName = "returnDiscountsBetweenDates";
             //This method returns all invoices with discounts between two dates
             string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, "
                 + "(SELECT CONCAT(firstName, ' ', lastName) FROM tbl_customers "
@@ -1287,7 +1314,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@endDate", endDate },
                 new object[] { "@locID", locID }
             };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //******************CASHOUT REPORTING*******************************************************
@@ -1318,8 +1345,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
 
         //******************STORE STATS REPORT***********************
-        public System.Data.DataTable returnStoreStats(DateTime startDate, DateTime endDate, int timeFrame)
+        public System.Data.DataTable returnStoreStats(DateTime startDate, DateTime endDate, int timeFrame, object[] objPageDetails)
         {
+            string strQueryName = "returnStoreStats";
             System.Data.DataTable stats = new System.Data.DataTable();
 
             object[][] parms =
@@ -1351,7 +1379,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                     "from tbl_invoice where tbl_invoice.invoiceDate BETWEEN @startDate AND @endDate " +
                                     "group by tbl_invoice.invoiceDate, YEAR(tbl_invoice.invoiceDate), tbl_invoice.locationID " +
                                     "order by invoiceYear asc";
-                stats = dbc.returnDataTableData(dailyStats, parms);
+                stats = dbc.returnDataTableData(dailyStats, parms, objPageDetails, strQueryName);
             }
             else if( timeFrame == 2)
             {
@@ -1376,7 +1404,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                     "from tbl_invoice where tbl_invoice.invoiceDate BETWEEN @startDate AND @endDate " +
                                     "group by DatePart(wk, tbl_invoice.invoiceDate), MONTH(tbl_invoice.invoiceDate), YEAR(tbl_invoice.invoiceDate), tbl_invoice.locationID " +
                                     "order by date asc, CityName asc";
-                stats = dbc.returnDataTableData(weeklyStats, parms);
+                stats = dbc.returnDataTableData(weeklyStats, parms, objPageDetails, strQueryName);
             }
             else
             {
@@ -1403,21 +1431,22 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                                     "from tbl_invoice where tbl_invoice.invoiceDate BETWEEN @startDate AND @endDate " +
                                     "group by MONTH(tbl_invoice.invoiceDate), YEAR(tbl_invoice.invoiceDate), tbl_invoice.locationID " +
                                     "order by invoiceYear asc";
-                stats = dbc.returnDataTableData(monthlyStats, parms);
+                stats = dbc.returnDataTableData(monthlyStats, parms, objPageDetails, strQueryName);
             }
             return stats;
         }
-        public int verifyStatsAvailable(object[] repInfo)
+        public int verifyStatsAvailable(object[] repInfo, object[] objPageDetails)
         {
             int indicator = 0;
-            if (!statsAvailable(repInfo))
+            if (!statsAvailable(repInfo, objPageDetails))
             {
                 indicator = 1;
             }
             return indicator;
         }
-        public bool statsAvailable(object[] repInfo)
+        public bool statsAvailable(object[] repInfo, object[] objPageDetails)
         {
+            string strQueryName = "statsAvailable";
             bool bolTA = false;
             DateTime[] dtm = (DateTime[])repInfo[0];
             string sqlCmd = "SELECT COUNT(invoiceNum) FROM tbl_invoice "
@@ -1427,7 +1456,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@startDate", dtm[0] },
                 new object[] { "@endDate", dtm[1] }
             };
-            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) > 0)
             {
                 bolTA = true;
             }
@@ -1435,8 +1464,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
 
         //*************Specific Apparel Report********* w/CORRECT profit margin calculation
-        public System.Data.DataTable returnSpecificApparelDataTableForReport(DateTime dtmStartDate, DateTime dtmEndDate)
+        public System.Data.DataTable returnSpecificApparelDataTableForReport(DateTime dtmStartDate, DateTime dtmEndDate, object[] objPageDetails)
         {
+            string strQueryName = "returnSpecificApparelDataTableForReport";
             string sqlCmd = "SELECT L.locationName, FQ.sku, FQ.description, SUM(FQ.quantity) AS overallQuantity, "
                 + "SUM(FQ.totalCost) AS overallCost, SUM(FQ.totalPrice) AS overallPrice FROM(SELECT I.locationID, "
                 + "SA.sku, II.description, (SUM(II.quantity) - ISNULL(SUM(IIR.quantity), 0)) * II.cost AS totalCost, "
@@ -1456,19 +1486,20 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@dtmStartDate", dtmStartDate },
                 new object[] { "@dtmEndDate", dtmEndDate }
             };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public int verifySpecificApparel(object[] repInfo)
+        public int verifySpecificApparel(object[] repInfo, object[] objPageDetails)
         {
             int indicator = 0;
-            if (!specificApparelAvailable(repInfo))
+            if (!specificApparelAvailable(repInfo, objPageDetails))
             {
                 indicator = 1;
             }
             return indicator;
         }
-        private bool specificApparelAvailable(object[] repInfo)
+        private bool specificApparelAvailable(object[] repInfo, object[] objPageDetails)
         {
+            string strQueryName = "specificApparelAvailable";
             bool bolData = false;
             DateTime[] dtm = (DateTime[])repInfo[0];
 
@@ -1481,7 +1512,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@startDate", dtm[0] },
                 new object[] { "@endDate", dtm[1] }
             };
-            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) > 0)
             {
                 bolData = true;
             }
@@ -1489,8 +1520,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
 
         //*************Specific Grip Report********* w/CORRECT profit margin calculation
-        public System.Data.DataTable returnSpecificGripDataTableForReport(DateTime dtmStartDate, DateTime dtmEndDate)
+        public System.Data.DataTable returnSpecificGripDataTableForReport(DateTime dtmStartDate, DateTime dtmEndDate, object[] objPageDetails)
         {
+            string strQueryName = "returnSpecificGripDataTableForReport";
             string sqlCmd = "SELECT L.locationName, FQ.sku, FQ.description, SUM(FQ.quantity) AS overallQuantity, "
                 + "SUM(FQ.totalCost) AS overallCost, SUM(FQ.totalPrice) AS overallPrice FROM(SELECT I.locationID, "
                 + "SG.sku, II.description, (SUM(II.quantity) - ISNULL(SUM(IIR.quantity), 0)) * II.cost AS totalCost, "
@@ -1510,19 +1542,20 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@dtmStartDate", dtmStartDate },
                 new object[] { "@dtmEndDate", dtmEndDate }
             };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public int verifySpecificGrip(object[] repInfo)
+        public int verifySpecificGrip(object[] repInfo, object[] objPageDetails)
         {
             int indicator = 0;
-            if (!specificGripAvailable(repInfo))
+            if (!specificGripAvailable(repInfo, objPageDetails))
             {
                 indicator = 1;
             }
             return indicator;
         }
-        private bool specificGripAvailable(object[] repInfo)
+        private bool specificGripAvailable(object[] repInfo, object[] objPageDetails)
         {
+            string strQueryName = "specificGripAvailable";
             bool bolData = false;
             DateTime[] dtm = (DateTime[])repInfo[0];
 
@@ -1535,15 +1568,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@startDate", dtm[0] },
                 new object[] { "@endDate", dtm[1] }
             };
-            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) > 0)
             {
                 bolData = true;
             }
             return bolData;
         }
 
-        public System.Data.DataTable ReturnCashoutsForSelectedDates(object[] passing)
+        public System.Data.DataTable ReturnCashoutsForSelectedDates(object[] passing, object[] objPageDetails)
         {
+            string strQueryName = "ReturnCashoutsForSelectedDates";
             string sqlCmd = "SELECT cashoutDate, locationID, saleTradeIn, receiptTradeIn, saleGiftCard, "
                 + "receiptGiftCard, saleCash, receiptCash, saleDebit, receiptDebit, saleMasterCard, "
                 + "receiptMasterCard, saleVisa, receiptVisa, overShort, processed, finalized FROM "
@@ -1556,19 +1590,20 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@endDate", dtm[1] },
                 new object[] { "@locationID", passing[1] }
             };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public int CashoutsProcessed(object[] repInfo)
+        public int CashoutsProcessed(object[] repInfo, object[] objPageDetails)
         {
             int indicator = 0;
-            if (!CashotInDateRange(repInfo))
+            if (!CashoutInDateRange(repInfo, objPageDetails))
             {
                 indicator = 1;
             }
             return indicator;
         }
-        private bool CashotInDateRange(object[] repInfo)
+        private bool CashoutInDateRange(object[] repInfo, object[] objPageDetails)
         {
+            string strQueryName = "CashoutInDateRange";
             bool bolCIDR = false;
             DateTime[] dtm = (DateTime[])repInfo[0];
             string sqlCmd = "SELECT COUNT(cashoutDate) FROM tbl_cashout "
@@ -1580,14 +1615,15 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@endDate", dtm[1] },
                 new object[] { "@locationID", Convert.ToInt32(repInfo[1]) }
             };
-            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) > 0)
             {
                 bolCIDR = true;
             }
             return bolCIDR;
         }
-        public void FinalizeCashout(string args)
+        public void FinalizeCashout(string args, object[] objPageDetails)
         {
+            string strQueryName = "FinalizeCashout";
             DateTime dtm = DateTime.Parse(args.Split(' ')[0]);
             int location = Convert.ToInt32(args.Split(' ')[1]);
             string sqlCmd = "UPDATE tbl_cashout SET finalized = 1 "
@@ -1599,11 +1635,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@cashoutDate", dtm },
                 new object[] { "@locationID", location }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
-        public List<Cashout> ReturnSelectedCashout(object[] args)
+        public List<Cashout> ReturnSelectedCashout(object[] args, object[] objPageDetails)
         {
+            string strQueryName = "ReturnSelectedCashout";
             string sqlCmd = "SELECT cashoutDate, saleTradeIn, saleGiftCard, saleCash, "
                 + "saleDebit, saleMasterCard, saleVisa, receiptTradeIn, receiptGiftCard, "
                 + "receiptCash, receiptDebit, receiptMasterCard, receiptVisa, preTax, "
@@ -1615,10 +1652,11 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@locationID", Convert.ToInt32(args[1]) }
             };
 
-            return ReturnCashoutFromDataTable(dbc.returnDataTableData(sqlCmd, parms));
+            return ReturnCashoutFromDataTable(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
-        public bool CashoutExists(object[] args)
+        public bool CashoutExists(object[] args, object[] objPageDetails)
         {
+            string strQueryName = "CashoutExists";
             bool exists = false;
             string sqlCmd = "SELECT COUNT(cashoutDate) FROM tbl_cashout "
                 + "WHERE cashoutDate = @cashoutDate AND locationID = @locationID";
@@ -1628,14 +1666,15 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@cashoutDate", (DateTime)args[0] },
                 new object[] { "@locationID", Convert.ToInt32(args[1]) }
             };
-            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) > 0)
             {
                 exists = true;
             }
             return exists;
         }
-        public void UpdateCashout(Cashout cas)
+        public void UpdateCashout(Cashout cas, object[] objPageDetails)
         {
+            string strQueryName = "UpdateCashout";
             string sqlCmd = "UPDATE tbl_cashout SET cashoutTime = @cashoutTime, "
                 + "saleTradeIn = @saleTradeIn, saleGiftCard = @saleGiftCard, saleCash = @saleCash, "
                 + "saleDebit = @saleDebit, saleMasterCard = @saleMasterCard, saleVisa = @saleVisa, "
@@ -1671,7 +1710,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@locID", cas.locationID },
                 new object[] { "@empID", cas.empID }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //********************EXPORTING***************************************************************
@@ -1848,27 +1887,27 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         //    }
         //    conn.Close();
         //}
-        public void itemExports(string selection, FileInfo newFile, string fileName)
+        public void itemExports(string selection, FileInfo newFile, string fileName, object[] objPageDetails)
         {
             //This is the table that has all of the information lined up the way Caspio needs it to be
             System.Data.DataTable exportTable = new System.Data.DataTable();
             if (selection.Equals("all"))
             {
-                exportTable = exportAllInventory();
+                exportTable = exportAllInventory(objPageDetails);
             }
             else if (selection.Equals("clubs"))
             {
-                exportTable = exportAllAdd_Clubs();
+                exportTable = exportAllAdd_Clubs(objPageDetails);
             }
             else if (selection.Equals("accessories"))
             {
-                exportTable = exportAllAdd_Accessories();
+                exportTable = exportAllAdd_Accessories(objPageDetails);
             }
             else if (selection.Equals("clothing"))
             {
-                exportTable = exportAllAdd_Clothing();
+                exportTable = exportAllAdd_Clothing(objPageDetails);
             }
-            String[] itemExportColumns = { "Vendor", "Store_ID", "ItemNumber", "Shipment_Date", "Brand", "Model", "Club_Type", "Shaft",
+            string[] itemExportColumns = { "Vendor", "Store_ID", "ItemNumber", "Shipment_Date", "Brand", "Model", "Club_Type", "Shaft",
                     "Number_of_Clubs", "Tradein_Price", "Premium", "WE PAY", "QUANTITY", "Ext'd Price", "RetailPrice", "Comments",
                     "Image", "Club_Spec", "Shaft_Spec", "Shaft_Flex", "Dexterity", "Destination", "Received", "Paid", "ItemType", "isTradeIn"};
             using (ExcelPackage xlPackage = new ExcelPackage(newFile))
@@ -1921,8 +1960,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
         }
         //Puts the clubs in the export table
-        public System.Data.DataTable exportAllAdd_Clubs()
+        public System.Data.DataTable exportAllAdd_Clubs(object[] objPageDetails)
         {
+            string strQueryName = "exportAllAdd_Clubs";
             string sqlCmd = "SELECT '' AS 'vendor', (SELECT tbl_location.locationName FROM "
                 + "tbl_location WHERE tbl_location.locationID = tbl_clubs.locationID) AS locationName, "
                 + "tbl_clubs.sku, '' AS 'shipmentDate', (SELECT tbl_brand.brandName FROM tbl_brand "
@@ -1938,11 +1978,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 + "WHERE tbl_itemType.typeID = tbl_clubs.typeID) AS itemType, tbl_clubs.isTradeIn "
                 + "FROM tbl_clubs";
             object[][] parms = { };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
         //Puts the accessories in the export table
-        public System.Data.DataTable exportAllAdd_Accessories()
+        public System.Data.DataTable exportAllAdd_Accessories(object[] objPageDetails)
         {
+            string strQueryName = "exportAllAdd_Accessories";
             string sqlCmd = "SELECT '' AS 'vendor', (SELECT tbl_location.locationName FROM "
                 + "tbl_location WHERE tbl_location.locationID = tbl_accessories.locationID) "
                 + "AS locationName, tbl_accessories.sku, '' AS 'shipmentDate', (SELECT "
@@ -1959,11 +2000,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 + "tbl_itemType.typeDescription FROM tbl_itemType WHERE tbl_itemType.typeID = "
                 + "tbl_accessories.typeID) AS itemType, 0 AS 'isTradeIn' FROM tbl_accessories";
             object[][] parms = { };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
         //Puts the clothing in the export table
-        public System.Data.DataTable exportAllAdd_Clothing()
+        public System.Data.DataTable exportAllAdd_Clothing(object[] objPageDetails)
         {
+            string strQueryName = "exportAllAdd_Clothing";
             string sqlCmd = "SELECT '' AS 'vendor', (SELECT tbl_location.locationName "
                 + "FROM tbl_location WHERE tbl_location.locationID = "
                 + "tbl_clothing.locationID) AS locationName, tbl_clothing.sku, '' AS "
@@ -1980,10 +2022,11 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 + "FROM tbl_itemType WHERE tbl_itemType.typeID = tbl_clothing.typeID) "
                 + "AS itemType, 0 AS 'isTradeIn' FROM tbl_clothing";
             object[][] parms = { };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public System.Data.DataTable exportAllInventory()
+        public System.Data.DataTable exportAllInventory(object[] objPageDetails)
         {
+            string strQueryName = "exportAllInventory";
             string sqlCmd = "SELECT '' AS 'vendor', (SELECT tbl_location.locationName FROM "
                 + "tbl_location WHERE tbl_location.locationID = tbl_clubs.locationID) AS locationName, "
                 + "tbl_clubs.sku, '' AS 'shipmentDate', (SELECT tbl_brand.brandName FROM tbl_brand "
@@ -2030,7 +2073,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 + "FROM tbl_itemType WHERE tbl_itemType.typeID = tbl_clothing.typeID) "
                 + "AS itemType, 0 AS 'isTradeIn' FROM tbl_clothing";
             object[][] parms = { };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
     }
 }

@@ -47,10 +47,10 @@
                 <Columns>
                     <asp:TemplateField HeaderText="Receipt Number" HeaderStyle-Width="20%">
                         <ItemTemplate>
-                            <asp:LinkButton ID="lbtnReceiptNumber" runat="server" Text='<%#Eval("receiptNumber") %>' OnClick="lbtnReceiptNumber_Click"></asp:LinkButton>
+                            <asp:LinkButton ID="lbtnReceiptNumber" runat="server" Text='<%#Eval("receiptNumber") %>' OnClick="lbtnReceiptNumber_Click" />
                         </ItemTemplate>
                         <FooterTemplate>
-                            <asp:Label ID="lblTotals" runat="server" Text="Totals:"></asp:Label>
+                            <asp:Label ID="lblTotals" runat="server" Text="Totals:" />
                         </FooterTemplate>
                     </asp:TemplateField>
                     <asp:BoundField HeaderText="Receipt Date" HeaderStyle-Width="20%" DataField="receiptDate" DataFormatString="{0:d}" />

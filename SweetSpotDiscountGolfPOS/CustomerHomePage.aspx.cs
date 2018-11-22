@@ -22,6 +22,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "CustomerHomePage";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -51,13 +52,14 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "btnCustomerSearch_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Looks through database and returns a list of customers
                 //based on the search criteria entered
                 //Binds the results to the gridview
                 grdCustomersSearched.Visible = true;
-                grdCustomersSearched.DataSource = CM.ReturnCustomerBasedOnText(txtSearch.Text);
+                grdCustomersSearched.DataSource = CM.ReturnCustomerBasedOnText(txtSearch.Text, objPageDetails);
                 grdCustomersSearched.DataBind();
             }
             //Exception catch
@@ -76,6 +78,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "btnAddNewCustomer_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Opens the page to add a new customer
@@ -97,6 +100,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "grdCustomersSearched_RowCommand";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (e.CommandName == "ViewProfile")
@@ -109,7 +113,7 @@ namespace SweetSpotDiscountGolfPOS
                     InvoiceManager IM = new InvoiceManager();
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                     nameValues.Set("cust", e.CommandArgument.ToString());
-                    string invoice = CU.locationName + "-" + IM.ReturnNextInvoiceNumber() + "-1";
+                    string invoice = CU.locationName + "-" + IM.ReturnNextInvoiceNumber(objPageDetails) + "-1";
                     nameValues.Set("inv", invoice);
                     Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
                     //Changes page to Sales Cart
@@ -132,6 +136,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "grdCustomersSearched_PageIndexChanging";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 grdCustomersSearched.PageIndex = e.NewPageIndex;
@@ -139,7 +144,7 @@ namespace SweetSpotDiscountGolfPOS
                 //based on the search criteria entered
                 //Binds the results to the gridview
                 grdCustomersSearched.Visible = true;
-                grdCustomersSearched.DataSource = CM.ReturnCustomerBasedOnText(txtSearch.Text);
+                grdCustomersSearched.DataSource = CM.ReturnCustomerBasedOnText(txtSearch.Text, objPageDetails);
                 grdCustomersSearched.DataBind();
             }
             //Exception catch

@@ -30,6 +30,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "ReportsMostSold";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -50,16 +51,16 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "Items sold for: " + startDate.ToString("d") + " for " + LM.ReturnLocationName(locationID);
+                        lblDates.Text = "Items sold for: " + startDate.ToString("d") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     }
                     else
                     {
-                        lblDates.Text = "Items sold for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locationID);
+                        lblDates.Text = "Items sold for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     }
                     //Binding the gridview
-                    items = R.mostSoldItemsReport(startDate, endDate, locationID);
-                    brands = R.mostSoldBrandsReport(startDate, endDate, locationID);
-                    models = R.mostSoldModelsReport(startDate, endDate, locationID);
+                    items = R.mostSoldItemsReport(startDate, endDate, locationID, objPageDetails);
+                    brands = R.mostSoldBrandsReport(startDate, endDate, locationID, objPageDetails);
+                    models = R.mostSoldModelsReport(startDate, endDate, locationID, objPageDetails);
                     grdItems.DataSource = items;
                     grdItems.DataBind();
                     grdBrands.DataSource = brands;
@@ -84,12 +85,13 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnDownload_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
                 object[] passing = (object[])Session["reportInfo"];
-                string loc = LM.ReturnLocationName(Convert.ToInt32(passing[1]));
+                string loc = LM.ReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
                 string fileName = "Top Selling Report - " + loc + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))

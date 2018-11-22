@@ -16,18 +16,20 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class LoginPage : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
         EmployeeManager EM = new EmployeeManager();
         protected void Page_Load(object sender, EventArgs e)
         {
+            Session["currPage"] = "LoginPage.aspx";
             //Sets focus on the pasword text box
             txtPasswordEntry.Focus();
         }
         //test
         protected void btnLogin_Click(object sender, EventArgs e)
         {
+            string method = "btnLogin_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             //Connectes to the database and returns the employee id based on the password used
-            List<CurrentUser> CU = EM.ReturnCurrentUserFromPassword(txtPasswordEntry.Text);
+            List<CurrentUser> CU = EM.ReturnCurrentUserFromPassword(txtPasswordEntry.Text, objPageDetails);
             if (CU.Count > 0)
             {
                 Session["currentUser"] = CU[0];

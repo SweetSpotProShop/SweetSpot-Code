@@ -25,6 +25,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "ReturnsCart.aspx";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 lblInvalidQty.Visible = false;
@@ -39,9 +40,9 @@ namespace SweetSpotDiscountGolfPOS
                     CU = (CurrentUser)Session["currentUser"];
                     if (!Page.IsPostBack)
                     {
-                        Invoice I = IM.ReturnInvoiceForReturns(Request.QueryString["inv"].ToString());
+                        Invoice I = IM.ReturnInvoiceForReturns(Request.QueryString["inv"].ToString(), objPageDetails);
 
-                        if (!IM.ReturnBolInvoiceExists(Request.QueryString["inv"].ToString()))
+                        if (!IM.ReturnBolInvoiceExists(Request.QueryString["inv"].ToString(), objPageDetails))
                         {
                             I.invoiceSub = Convert.ToInt32((Request.QueryString["inv"].ToString()).Split('-')[2]);
                             I.shippingAmount = 0;
@@ -52,20 +53,20 @@ namespace SweetSpotDiscountGolfPOS
                             I.location = CU.location;
                             I.employee = CU.emp;
                             I.transactionType = 2;
-                            IM.CreateInitialTotalsForTable(I);
+                            IM.CreateInitialTotalsForTable(I, objPageDetails);
                         }
                         lblCustomerDisplay.Text = I.customer.firstName.ToString() + " " + I.customer.lastName.ToString();
                         lblInvoiceNumberDisplay.Text = Request.QueryString["inv"].ToString();
                         lblDateDisplay.Text = DateTime.Today.ToString("yyyy-MM-dd");
                         //binds items in cart to gridview
-                        grdInvoicedItems.DataSource = IIM.ReturnInvoiceItemsFromProcessedSalesForReturn(Request.QueryString["inv"].ToString());
+                        grdInvoicedItems.DataSource = IIM.ReturnInvoiceItemsFromProcessedSalesForReturn(Request.QueryString["inv"].ToString(), objPageDetails);
                         grdInvoicedItems.DataBind();
 
-                        grdReturningItems.DataSource = IIM.ReturnItemsInTheReturnCart(Request.QueryString["inv"].ToString());
+                        grdReturningItems.DataSource = IIM.ReturnItemsInTheReturnCart(Request.QueryString["inv"].ToString(), objPageDetails);
                         grdReturningItems.DataBind();
 
-                        IM.CalculateNewInvoiceReturnTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0]);
-                        I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                        IM.CalculateNewInvoiceReturnTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0], objPageDetails);
+                        I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0];
                         lblReturnSubtotalDisplay.Text = "$ " + I.subTotal.ToString("#0.00");
                     }
                 }
@@ -86,11 +87,12 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnCancelSale_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 lblInvalidQty.Visible = false;
-                IIM.LoopThroughTheItemsToReturnToInventory(Request.QueryString["inv"].ToString());
-                IIM.RemoveInitialTotalsForTable(Request.QueryString["inv"].ToString());
+                IIM.LoopThroughTheItemsToReturnToInventory(Request.QueryString["inv"].ToString(), objPageDetails);
+                IIM.RemoveInitialTotalsForTable(Request.QueryString["inv"].ToString(), objPageDetails);
                 Response.Redirect("HomePage.aspx", false);
             }
             //Exception catch
@@ -109,6 +111,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnProceedToCheckout_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 lblInvalidQty.Visible = false;
@@ -133,13 +136,14 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "grdInvoicedItems_RowDeleting";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 lblInvalidQty.Visible = false;
                 //Stores the info about the item in that index
-                InvoiceItems selectedSku = IIM.ReturnInvoiceItemForReturnProcess(Convert.ToInt32(grdInvoicedItems.Rows[e.RowIndex].Cells[1].Text), Request.QueryString["inv"].ToString());
+                InvoiceItems selectedSku = IIM.ReturnInvoiceItemForReturnProcess(Convert.ToInt32(grdInvoicedItems.Rows[e.RowIndex].Cells[1].Text), Request.QueryString["inv"].ToString(), objPageDetails);
                 selectedSku.invoiceSubNum = Convert.ToInt32(Request.QueryString["inv"].Split('-')[2].ToString());
-                if (!IIM.ItemAlreadyInCart(selectedSku))
+                if (!IIM.ItemAlreadyInCart(selectedSku, objPageDetails))
                 {
                     int currentQTY = selectedSku.quantity;
                     string quantityForReturn = ((TextBox)grdInvoicedItems.Rows[e.RowIndex].Cells[2].FindControl("quantityToReturn")).Text;
@@ -167,23 +171,23 @@ namespace SweetSpotDiscountGolfPOS
                                 returnDollars = Convert.ToDouble(returnAmount);
                             }
                         }
-                        IIM.RemoveQTYFromInventoryWithSKU(selectedSku.sku, selectedSku.typeID, (currentQTY + returnQuantity));
+                        IIM.RemoveQTYFromInventoryWithSKU(selectedSku.sku, selectedSku.typeID, (currentQTY + returnQuantity), objPageDetails);
                         selectedSku.quantity = returnQuantity;
                         selectedSku.itemRefund = -1 * returnDollars;
                         selectedSku.cost = selectedSku.cost * -1;
-                        IIM.InsertItemIntoSalesCart(selectedSku);
+                        IIM.InsertItemIntoSalesCart(selectedSku, objPageDetails);
                         //deselect the indexed item
                         grdInvoicedItems.EditIndex = -1;
                         //store items available for return in session
-                        grdInvoicedItems.DataSource = IIM.ReturnInvoiceItemsFromProcessedSalesForReturn(Request.QueryString["inv"].ToString());
+                        grdInvoicedItems.DataSource = IIM.ReturnInvoiceItemsFromProcessedSalesForReturn(Request.QueryString["inv"].ToString(), objPageDetails);
                         grdInvoicedItems.DataBind();
 
-                        grdReturningItems.DataSource = IIM.ReturnItemsInTheReturnCart(Request.QueryString["inv"].ToString());
+                        grdReturningItems.DataSource = IIM.ReturnItemsInTheReturnCart(Request.QueryString["inv"].ToString(), objPageDetails);
                         grdReturningItems.DataBind();
 
                         //recalculate the return total
-                        IM.CalculateNewInvoiceReturnTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0]);
-                        Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                        IM.CalculateNewInvoiceReturnTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0], objPageDetails);
+                        Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0];
                         lblReturnSubtotalDisplay.Text = "$ " + I.subTotal.ToString("#0.00");
                     }
                 }
@@ -209,6 +213,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "grdReturningItems_RowDeleting";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 lblInvalidQty.Visible = false;
@@ -216,22 +221,22 @@ namespace SweetSpotDiscountGolfPOS
                 int index = e.RowIndex;
                 //Stores the info about the item in that index
                 int sku = Convert.ToInt32(grdReturningItems.Rows[index].Cells[1].Text);
-                InvoiceItems selectedSku = IIM.ReturnSkuFromCurrentSalesUsingSKU(sku, Request.QueryString["inv"].ToString());
+                InvoiceItems selectedSku = IIM.ReturnSkuFromCurrentSalesUsingSKU(sku, Request.QueryString["inv"].ToString(), objPageDetails);
 
                 //add item to table and remove the added qty from current inventory
-                IIM.DoNotReturnTheItemOnReturn(selectedSku);
-                IIM.RemoveQTYFromInventoryWithSKU(selectedSku.sku, selectedSku.typeID, (IIM.ReturnCurrentQuantityOfItem(selectedSku) - selectedSku.quantity));
+                IIM.DoNotReturnTheItemOnReturn(selectedSku, objPageDetails);
+                IIM.RemoveQTYFromInventoryWithSKU(selectedSku.sku, selectedSku.typeID, (IIM.ReturnCurrentQuantityOfItem(selectedSku, objPageDetails) - selectedSku.quantity), objPageDetails);
                 //deselect the indexed item
                 grdReturningItems.EditIndex = -1;
                 //Check if the marked for returns cart has any items in it
-                grdInvoicedItems.DataSource = IIM.ReturnInvoiceItemsFromProcessedSalesForReturn(Request.QueryString["inv"].ToString());
+                grdInvoicedItems.DataSource = IIM.ReturnInvoiceItemsFromProcessedSalesForReturn(Request.QueryString["inv"].ToString(), objPageDetails);
                 grdInvoicedItems.DataBind();
-                grdReturningItems.DataSource = IIM.ReturnItemsInTheReturnCart(Request.QueryString["inv"].ToString());
+                grdReturningItems.DataSource = IIM.ReturnItemsInTheReturnCart(Request.QueryString["inv"].ToString(), objPageDetails);
                 grdReturningItems.DataBind();
 
                 //recalculate the return total
-                IM.CalculateNewInvoiceReturnTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0]);
-                Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                IM.CalculateNewInvoiceReturnTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0], objPageDetails);
+                Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0];
                 lblReturnSubtotalDisplay.Text = "$ " + I.subTotal.ToString("#0.00");
             }
             //Exception catch

@@ -22,28 +22,6 @@
             <%--Start Calendar--%>
             <asp:Table runat="server">
                 <asp:TableRow>
-                    <asp:TableCell Width="33%">
-                        <%--<asp:Label runat="server" Text="Start Date:" />--%>
-                    </asp:TableCell>
-                    <asp:TableCell Width="33%">
-                        <%--<asp:Label runat="server" Text="End Date:" />--%>
-                    </asp:TableCell>
-                    <%--<asp:TableCell Width="33%">
-                        <asp:Label runat="server" Text="Inovice Number:" />
-                    </asp:TableCell>--%>
-                </asp:TableRow>
-                <asp:TableRow>
-                    <asp:TableCell>
-                        <%--<asp:TextBox ID="txtStartDate" ReadOnly="true" Width="195px" placeholder="Please select a starting date." Text="" runat="server" />--%>
-                    </asp:TableCell>
-                    <asp:TableCell>
-                        <%--<asp:TextBox ID="txtEndDate" ReadOnly="true" Width="195px" placeholder="Please select a ending date." Text="" runat="server" />--%>
-                    </asp:TableCell>
-                    <%--<asp:TableCell>
-                        <asp:TextBox ID="txtInvoiceNum" Width="195px" placeholder="Please enter an invoice number" Text="" runat="server" />
-                    </asp:TableCell>--%>
-                </asp:TableRow>
-                <asp:TableRow>
                     <asp:TableCell>
                         <asp:Label runat="server" Text="Select date type:"/>                        
                     </asp:TableCell>

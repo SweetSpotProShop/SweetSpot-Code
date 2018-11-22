@@ -33,7 +33,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }).ToList();
             return customer;
         }
-        private List<Customer> ConvertFromDataTableToCustomerWithInvoices(DataTable dt)
+        private List<Customer> ConvertFromDataTableToCustomerWithInvoices(DataTable dt, object[] objPageDetails)
         {
             InvoiceManager IM = new InvoiceManager();
             List<Customer> customer = dt.AsEnumerable().Select(row =>
@@ -51,15 +51,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 province = row.Field<int>("provStateID"),
                 country = row.Field<int>("country"),
                 postalCode = row.Field<string>("postZip"),
-                invoices = IM.ReturnInvoiceByCustomers(row.Field<int>("custID")),
+                invoices = IM.ReturnInvoiceByCustomers(row.Field<int>("custID"), objPageDetails),
                 emailList = row.Field<bool>("marketingEmail")
             }).ToList();
             return customer;
         }
 
         //Returns list of customers based on an customer ID
-        public List<Customer> ReturnCustomer(int cust)
+        public List<Customer> ReturnCustomer(int cust, object[] objPageDetails)
         {
+            string strQueryName = "ReturnCustomer";
             string sqlCmd = "SELECT custID, firstName, lastName, primaryAddress, secondaryAddress, "
                 + "primaryPhoneINT, secondaryPhoneINT, email, city, provStateID, country, postZip, "
                 + "marketingEmail FROM tbl_customers WHERE custID = @custID";
@@ -69,12 +70,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@custID", cust },
             };
 
-            List<Customer> customer = ConvertFromDataTableToCustomer(dbc.returnDataTableData(sqlCmd, parms));
+            List<Customer> customer = ConvertFromDataTableToCustomer(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
             return customer;
         }
         //Returns list of custoemrs based on an customer ID
-        public List<Customer> ReturnCustomerWithInvoiceList(int cust)
+        public List<Customer> ReturnCustomerWithInvoiceList(int cust, object[] objPageDetails)
         {
+            string strQueryName = "ReturnCustomerWithInvoiceList";
             string sqlCmd = "SELECT custID, firstName, lastName, primaryAddress, secondaryAddress, "
                 + "primaryPhoneINT, secondaryPhoneINT, email, city, provStateID, country, postZip, "
                 + "marketingEmail FROM tbl_customers WHERE custID = @custID";
@@ -84,12 +86,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@custID", cust },
             };
 
-            List<Customer> customer = ConvertFromDataTableToCustomerWithInvoices(dbc.returnDataTableData(sqlCmd, parms));
+            List<Customer> customer = ConvertFromDataTableToCustomerWithInvoices(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
             return customer;
         }
         //Returns list of custoemrs based on an search text
-        public List<Customer> ReturnCustomerBasedOnText(string searchText)
+        public List<Customer> ReturnCustomerBasedOnText(string searchText, object[] objPageDetails)
         {
+            string strQueryName = "ReturnCustomerBasedOnText";
             ArrayList strText = new ArrayList();
             ArrayList parms = new ArrayList();
             string sqlCmd = "";
@@ -124,19 +127,20 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 }
             }
             sqlCmd += " ORDER BY firstName ASC";
-
-            List<Customer> customer = ConvertFromDataTableToCustomer(dbc.returnDataTableDataFromArrayLists(sqlCmd, parms, strText));
+            List<Customer> customer = ConvertFromDataTableToCustomer(dbc.returnDataTableDataFromArrayLists(sqlCmd, parms, strText, objPageDetails, strQueryName));
             return customer;
         }
         //Add Customer Nathan and Tyler created. Returns customer ID
-        public int addCustomer(Customer c)
+        public int addCustomer(Customer c, object[] objPageDetails)
         {
+            string strQueryName = "addCustomer";
             //New command
-            string sqlCmd = "INSERT INTO tbl_customers (firstName, lastName, primaryAddress,"
-                + " secondaryAddress, primaryPhoneINT, secondaryPhoneINT, marketingEmail, email,"
-                + " city, provStateID, country, postZip) VALUES (@FirstName, @LastName, @primaryAddress,"
-                + " @secondaryAddress, @primaryPhoneNumber, @secondaryPhoneNumber, @marketingEmail,"
-                + " @Email, @City, @Province, @Country, @PostalCode)";
+            string sqlCmd = "INSERT INTO tbl_customers (firstName, lastName, primaryAddress, "
+                + "secondaryAddress, primaryPhoneINT, secondaryPhoneINT, billingAddress, "
+                + "marketingEmail, email, city, provStateID, country, postZip) VALUES "
+                + "(@FirstName, @LastName, @primaryAddress, @secondaryAddress, "
+                + "@primaryPhoneNumber, @secondaryPhoneNumber, @billingAddress, "
+                + "@marketingEmail, @Email, @City, @Province, @Country, @PostalCode)";
 
             object[][] parms =
             {
@@ -146,6 +150,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@secondaryAddress", c.secondaryAddress },
                  new object[] { "@marketingEmail", c.emailList },
                  new object[] { "@City", c.city },
+                 new object[] { "@billingAddress", "" },
                  new object[] { "@PostalCode", c.postalCode },
                  new object[] { "@Province", c.province },
                  new object[] { "@Country", c.country },
@@ -154,12 +159,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@Email", c.email }
             };
 
-            dbc.executeInsertQuery(sqlCmd, parms);
-            List<Customer> customer = ReturnCustomerIDFromCustomerStats(parms);
+            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            List<Customer> customer = ReturnCustomerIDFromCustomerStats(parms, objPageDetails);
             return customer[0].customerId;
         }
-        public void updateCustomer(Customer c)
+        public void updateCustomer(Customer c, object[] objPageDetails)
         {
+            string strQueryName = "updateCustomer";
             //New command
             string sqlCmd = "UPDATE tbl_customers SET firstName = @FirstName, lastName = @LastName, primaryAddress = @primaryAddress,"
                 + " secondaryAddress = @secondaryAddress, primaryPhoneINT = @primaryPhoneNumber, secondaryPhoneINT = @secondaryPhoneNumber,"
@@ -182,10 +188,11 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "Country", c.country },
                 new object[] { "PostalCode", c.postalCode }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public List<Customer> ReturnCustomerIDFromCustomerStats(object[][] parms)
+        public List<Customer> ReturnCustomerIDFromCustomerStats(object[][] parms, object[] objPageDetails)
         {
+            string strQueryName = "ReturnCustomerIDFromCustomerStats";
             string sqlCmd = "SELECT custID, firstName, lastName, primaryAddress, secondaryAddress, primaryPhoneINT, "
                 + "secondaryPhoneINT, marketingEmail, email, city, provStateID, country, postZip "
                 + "FROM tbl_customers WHERE firstName = @FirstName and lastName = @LastName and "
@@ -193,7 +200,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 + "@primaryPhoneNumber and secondaryPhoneINT = @secondaryPhoneNumber and "
                 + "marketingEmail = @marketingEmail and email = @Email and city = @City and provStateID = @Province "
                 + "and country = @Country and postZip = @PostalCode";
-            return ConvertFromDataTableToCustomer(dbc.returnDataTableData(sqlCmd, parms));
+            return ConvertFromDataTableToCustomer(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
     }
 }

@@ -38,12 +38,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return Math.Round(totalDiscount, 2);
         }
         //This method returns the total trade in amount for the cart
-        private double returnTradeInAmount(List<InvoiceItems> itemsSold, int loc)
+        private double returnTradeInAmount(List<InvoiceItems> itemsSold, int loc, object[] objPageDetails)
         {
             double singleTradeInAmount = 0;
             double totalTradeinAmount = 0;
             //Checks the range of trade in sku's by location
-            int[] range = tradeInSkuRange(loc);
+            int[] range = tradeInSkuRange(loc, objPageDetails);
             //Loops through the cart and pulls each item
             foreach (var cart in itemsSold)
             {
@@ -60,10 +60,10 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return totalTradeinAmount;
         }
         //This method returns the total total amount of the cart
-        private double returnTotalAmount(List<InvoiceItems> itemsSold, int loc)
+        private double returnTotalAmount(List<InvoiceItems> itemsSold, int loc, object[] objPageDetails)
         {
             //Checks the range of trade in sku's by location
-            int[] range = tradeInSkuRange(loc);
+            int[] range = tradeInSkuRange(loc, objPageDetails);
             double singleTotalAmount = 0;
             double totalTotalAmount = 0;
             //Loops through the cart and pulls each item
@@ -80,15 +80,15 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return totalTotalAmount;
         }
         //This method returns the total subtotal amount for the cart
-        private double returnSubtotalAmount(List<InvoiceItems> itemsSold, int loc)
+        private double returnSubtotalAmount(List<InvoiceItems> itemsSold, int loc, object[] objPageDetails)
         {
             double totalSubtotalAmount = 0;
             //Gets the total discount value of the cart
             double totalDiscountAmount = returnDiscount(itemsSold);
             //Gets the total trade in value of the cart
-            double totalTradeInAmount = returnTradeInAmount(itemsSold, loc);
+            double totalTradeInAmount = returnTradeInAmount(itemsSold, loc, objPageDetails);
             //Gets the total total value of the cart
-            double totalTotalAmount = returnTotalAmount(itemsSold, loc);
+            double totalTotalAmount = returnTotalAmount(itemsSold, loc, objPageDetails);
             //Calculations using the above three methods to determine the total subtotal value
             totalSubtotalAmount = totalSubtotalAmount + totalTotalAmount;
             totalSubtotalAmount = totalSubtotalAmount - totalDiscountAmount;
@@ -136,8 +136,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //Returns the total amount of the cart
             return totalPurchaseAmount * -1;
         }
-        public double returnRefundSubtotalAmount(string invoice)
+        public double returnRefundSubtotalAmount(string invoice, object[] objPageDetails)
         {
+            string strQueryName = "returnRefundSubtotalAmount";
             string sqlCmd = "SELECT (CASE WHEN SUM(itemRefund * quantity) IS NULL OR "
                 + "SUM(itemRefund * quantity) = '' THEN 0 ELSE SUM(itemRefund * quantity) END) "
                 + "AS totalRefund FROM tbl_currentSalesItems WHERE invoiceNum = @invoiceNum "
@@ -150,12 +151,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             };
             //Returns the total refund subtotal of the cart
             DatabaseCalls dbc = new DatabaseCalls();
-            return dbc.MakeDataBaseCallToReturnDouble(sqlCmd, parms);
+            return dbc.MakeDataBaseCallToReturnDouble(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //Finds and returns an array containing the upper and lower range for the trade in skus
-        private int[] tradeInSkuRange(int location)
+        private int[] tradeInSkuRange(int location, object[] objPageDetails)
         {
+            string strQueryName = "tradeInSkuRange";
             int[] range = new int[2];
             string sqlCmd = "Select skuStartAt, skuStopAt from tbl_tradeInSkusForCart where locationID = @locationID";
 
@@ -164,7 +166,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@locationID", location }
             };
             DatabaseCalls dbc = new DatabaseCalls();
-            DataTable dt = dbc.returnDataTableData(sqlCmd, parms);
+            DataTable dt = dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
             //Setting the values in the array
             range[0] = dt.Rows[0].Field<int>("skuStartAt");
             range[1] = dt.Rows[0].Field<int>("skuStopAt");
@@ -172,11 +174,11 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //Returns the range
             return range;
         }
-        public Invoice SaveAllInvoiceTotals(Invoice I)
+        public Invoice SaveAllInvoiceTotals(Invoice I, object[] objPageDetails)
         {
-            I.subTotal = returnSubtotalAmount(I.soldItems, I.location.locationID);
+            I.subTotal = returnSubtotalAmount(I.soldItems, I.location.locationID, objPageDetails);
             I.discountAmount = returnDiscount(I.soldItems);
-            I.tradeinAmount = returnTradeInAmount(I.soldItems, I.location.locationID);
+            I.tradeinAmount = returnTradeInAmount(I.soldItems, I.location.locationID, objPageDetails);
             I.balanceDue = I.subTotal;
             return I;
         }

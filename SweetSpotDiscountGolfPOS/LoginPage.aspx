@@ -33,7 +33,7 @@
                         <asp:Label ID="lblPassword" runat="server" Text="Password:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtPasswordEntry" runat="server" TextMode="Password" />
+                        <asp:TextBox ID="txtPasswordEntry" runat="server" AutoComplete="off" TextMode="Password" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:RequiredFieldValidator ID="rfvTxtPasswordEntry" runat="server" ControlToValidate="txtPasswordEntry" ErrorMessage="Please enter a password" ForeColor="Red" />

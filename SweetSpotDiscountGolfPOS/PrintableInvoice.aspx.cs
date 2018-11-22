@@ -23,6 +23,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "PrintableInvoice.aspx";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -36,12 +37,12 @@ namespace SweetSpotDiscountGolfPOS
                     CU = (CurrentUser)Session["currentUser"];
                     if (!IsPostBack)
                     {
-                        Invoice invoices = IM.ReturnInvoice(Request.QueryString["inv"])[0];
+                        Invoice invoices = IM.ReturnInvoice(Request.QueryString["inv"], objPageDetails)[0];
 
                         //display information on receipt
                         lblCustomerName.Text = invoices.customer.firstName.ToString() + " " + invoices.customer.lastName.ToString();
                         lblStreetAddress.Text = invoices.customer.primaryAddress.ToString();
-                        lblPostalAddress.Text = invoices.customer.city.ToString() + ", " + LM.ReturnProvinceName(invoices.customer.province) + " " + invoices.customer.postalCode.ToString();
+                        lblPostalAddress.Text = invoices.customer.city.ToString() + ", " + LM.ReturnProvinceName(invoices.customer.province, objPageDetails) + " " + invoices.customer.postalCode.ToString();
                         lblPhone.Text = invoices.customer.primaryPhoneNumber.ToString();
                         lblinvoiceNum.Text = invoices.invoiceNum.ToString() + "-" + invoices.invoiceSub.ToString();
                         lblDate.Text = invoices.invoiceDate.ToShortDateString();
@@ -50,7 +51,7 @@ namespace SweetSpotDiscountGolfPOS
                         //Display the location information
                         lblSweetShopName.Text = invoices.location.locationName.ToString();
                         lblSweetShopStreetAddress.Text = invoices.location.address.ToString();
-                        lblSweetShopPostalAddress.Text = invoices.location.city.ToString() + ", " + LM.ReturnProvinceName(invoices.location.provID) + " " + invoices.location.postal.ToString();
+                        lblSweetShopPostalAddress.Text = invoices.location.city.ToString() + ", " + LM.ReturnProvinceName(invoices.location.provID, objPageDetails) + " " + invoices.location.postal.ToString();
                         lblSweetShopPhone.Text = invoices.location.primaryPhone.ToString();
                         lblTaxNum.Text = invoices.location.taxNumber.ToString();
 
@@ -102,6 +103,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnHome_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Change to the Home Page

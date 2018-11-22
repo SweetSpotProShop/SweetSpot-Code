@@ -28,6 +28,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "ReportsCashOut";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -47,8 +48,8 @@ namespace SweetSpotDiscountGolfPOS
                         DateTime[] rptDate = { startDate, endDate };
                         int locationID = Convert.ToInt32(Request.QueryString["location"].ToString());
                         object[] passing = { rptDate, locationID };
-                        lblDates.Text = "Cashout report for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locationID);
-                        dt = R.ReturnCashoutsForSelectedDates(passing);
+                        lblDates.Text = "Cashout report for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
+                        dt = R.ReturnCashoutsForSelectedDates(passing, objPageDetails);
                         grdCashoutByDate.DataSource = dt;
                         grdCashoutByDate.DataBind();
                     }
@@ -70,6 +71,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnDownload_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Gathering the start and end dates
@@ -78,12 +80,12 @@ namespace SweetSpotDiscountGolfPOS
                 DateTime[] rptDate = { startDate, endDate };
                 int locationID = Convert.ToInt32(Request.QueryString["location"].ToString());
                 object[] passing = { rptDate, locationID };
-                dt = R.ReturnCashoutsForSelectedDates(passing);
+                dt = R.ReturnCashoutsForSelectedDates(passing, objPageDetails);
 
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
-                string loc = LM.ReturnLocationName(Convert.ToInt32(Request.QueryString["location"].ToString()));
+                string loc = LM.ReturnLocationName(Convert.ToInt32(Request.QueryString["location"].ToString()), objPageDetails);
                 string fileName = "CashOut Report by Date - " + loc + ".xlsx";
 
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
@@ -187,6 +189,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "grdCashoutByDate_RowCommand";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (e.CommandName == "EditCashout")
@@ -200,13 +203,13 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (e.CommandName == "FinalizeCashout")
                 {
-                    R.FinalizeCashout(e.CommandArgument.ToString());
+                    R.FinalizeCashout(e.CommandArgument.ToString(), objPageDetails);
                     DateTime startDate = DateTime.Parse(Request.QueryString["from"].ToString());
                     DateTime endDate = DateTime.Parse(Request.QueryString["to"].ToString());
                     DateTime[] rptDate = { startDate, endDate };
                     int locationID = Convert.ToInt32(Request.QueryString["location"].ToString());
                     object[] passing = { rptDate, locationID };
-                    dt = R.ReturnCashoutsForSelectedDates(passing);
+                    dt = R.ReturnCashoutsForSelectedDates(passing, objPageDetails);
                     grdCashoutByDate.DataSource = dt;
                     grdCashoutByDate.DataBind();
                 }
@@ -227,6 +230,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "grdCashoutByDate_RowDataBound";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)

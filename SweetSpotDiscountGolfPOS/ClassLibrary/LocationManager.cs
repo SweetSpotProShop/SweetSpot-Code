@@ -33,11 +33,11 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }).ToList();
             return location;
         }
-        private Nullable<int> MakeDataBaseCallToReturnInt(string sqlCmd, object[][] parms)
+        private Nullable<int> MakeDataBaseCallToReturnInt(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
         {
             try
             {
-                int returnInt = Convert.ToInt32(dbc.returnDataTableData(sqlCmd, parms).Rows[0][0]);
+                int returnInt = Convert.ToInt32(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName).Rows[0][0]);
                 return returnInt;
             }
             catch (Exception e)
@@ -47,8 +47,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
 
         //Returns list of locations based on a location ID
-        public List<Location> ReturnLocation(int loc)
+        public List<Location> ReturnLocation(int loc, object[] objPageDetails)
         {
+            string strQueryName = "ReturnLocation";
             string sqlCmd = "SELECT locationID, locationName, primaryPhoneINT, secondaryPhoneINT, "
                 + "email, address,city, provStateID, country, postZip, secondaryIdentifier, "
                 + "taxNumber FROM tbl_location WHERE locationID = @locationID";
@@ -58,12 +59,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@locationID", loc }
             };
 
-            List<Location> location = ConvertFromDataTableToLocation(dbc.returnDataTableData(sqlCmd, parms));
+            List<Location> location = ConvertFromDataTableToLocation(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
             return location;
         }
         //Provinve/State Name based on Province/State ID
-        public string ReturnProvinceName(int provID)
+        public string ReturnProvinceName(int provID, object[] objPageDetails)
         {
+            string strQueryName = "ReturnProvinceName";
             string sqlCmd = "SELECT provName FROM tbl_provState WHERE provStateID = @provStateID";
 
             object[][] parms =
@@ -71,10 +73,11 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@provStateID", provID }
             };
 
-            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
+            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public string ReturnCountryName(int countryID)
+        public string ReturnCountryName(int countryID, object[] objPageDetails)
         {
+            string strQueryName = "ReturnCountryName";
             string sqlCmd = "SELECT countryDesc FROM tbl_country WHERE countryID = @countryID";
 
             object[][] parms =
@@ -82,10 +85,11 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@countryID", countryID }
             };
             
-            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
+            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public string ReturnLocationName(int locationID)
+        public string ReturnLocationName(int locationID, object[] objPageDetails)
         {
+            string strQueryName = "ReturnLocationName";
             string sqlCmd = "SELECT locationName FROM tbl_location WHERE locationID = @locationID";
 
             object[][] parms =
@@ -93,32 +97,36 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@locationID", locationID }
             };
 
-            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
+            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
-        public DataTable ReturnLocationDropDown()
+        public DataTable ReturnLocationDropDown(object[] objPageDetails)
         {
+            string strQueryName = "ReturnLocationDropDown";
             string sqlCmd = "SELECT locationID, city FROM tbl_location WHERE isRetailStore = 1";
             object[][] parms = { };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public DataTable ReturnLocationDropDownAll()
+        public DataTable ReturnLocationDropDownAll(object[] objPageDetails)
         {
+            string strQueryName = "ReturnLocationDropDownAll";
             string sqlCmd = "SELECT locationID, locationName FROM tbl_location";
             object[][] parms = { };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public DataTable ReturnProvinceDropDown(int countryID)
+        public DataTable ReturnProvinceDropDown(int countryID, object[] objPageDetails)
         {
+            string strQueryName = "ReturnProvinceDropDown";
             string sqlCmd = "SELECT provStateID, provName FROM tbl_provSTate WHERE countryID = @countryID";
             object[][] parms = { new object[] { "@countryID", countryID} };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public DataTable ReturnCountryDropDown()
+        public DataTable ReturnCountryDropDown(object[] objPageDetails)
         {
+            string strQueryName = "ReturnCountryDropDown";
             string sqlCmd = "SELECT countryID, countryDesc FROM tbl_country";
             object[][] parms = { };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
     }
 }

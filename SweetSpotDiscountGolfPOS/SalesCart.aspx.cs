@@ -30,6 +30,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "SalesCart.aspx";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -45,20 +46,20 @@ namespace SweetSpotDiscountGolfPOS
                     if (!Page.IsPostBack)
                     {
                         txtSearch.Focus();
-                        Customer C = CM.ReturnCustomer(Convert.ToInt32(Request.QueryString["cust"].ToString()))[0];
+                        Customer C = CM.ReturnCustomer(Convert.ToInt32(Request.QueryString["cust"].ToString()), objPageDetails)[0];
                         //Set name in text box
                         txtCustomer.Text = C.firstName + " " + C.lastName;
                         lblDateDisplay.Text = DateTime.Today.ToString("yyyy-MM-dd");
                         lblInvoiceNumberDisplay.Text = Request.QueryString["inv"].ToString();
                         Invoice I = new Invoice(Convert.ToInt32(Request.QueryString["inv"].ToString().Split('-')[1]), Convert.ToInt32(Request.QueryString["inv"].ToString().Split('-')[2]), DateTime.Now, DateTime.Now, C, CU.emp, CU.location, 0, 0, 0, 0, 0, 0, 0, 1, "");
-                        if (!IM.ReturnBolInvoiceExists(Request.QueryString["inv"].ToString()))
+                        if (!IM.ReturnBolInvoiceExists(Request.QueryString["inv"].ToString(), objPageDetails))
                         {
-                            IM.CreateInitialTotalsForTable(I);
+                            IM.CreateInitialTotalsForTable(I, objPageDetails);
                         }
                         //change to gather the items from table
-                        grdCartItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["inv"].ToString());
+                        grdCartItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["inv"].ToString(), objPageDetails);
                         grdCartItems.DataBind();
-                        I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                        I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0];
                         txtShippingAmount.Text = I.shippingAmount.ToString();
                         lblSubtotalDisplay.Text = "$ " + I.subTotal.ToString("#0.00");
                     }
@@ -80,10 +81,11 @@ namespace SweetSpotDiscountGolfPOS
         protected void txtShippingAmount_TextChanged(object sender, EventArgs e)
         {
             string method = "txtShippingAmount_TextChanged";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //call the invoice totals
-                List<Invoice> i = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString());
+                List<Invoice> i = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails);
                 //change the needed elements
                 double shipAmount = 0;
                 rdbShipping.Checked = false;
@@ -97,7 +99,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 i[0].shippingAmount = shipAmount;
                 //send back to update
-                IM.UpdateCurrentInvoice(i[0]);
+                IM.UpdateCurrentInvoice(i[0], objPageDetails);
             }
             //Exception catch
             catch(ThreadAbortException tae) { }
@@ -115,6 +117,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnCustomerSelect_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (btnCustomerSelect.Text == "Cancel")
@@ -125,7 +128,7 @@ namespace SweetSpotDiscountGolfPOS
                 else
                 {
                     grdCustomersSearched.Visible = true;
-                    grdCustomersSearched.DataSource = CM.ReturnCustomerBasedOnText(txtCustomer.Text);
+                    grdCustomersSearched.DataSource = CM.ReturnCustomerBasedOnText(txtCustomer.Text, objPageDetails);
                     grdCustomersSearched.DataBind();
                     if (grdCustomersSearched.Rows.Count > 0)
                     {
@@ -148,10 +151,11 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnSearchCustomers_Click(object sender, EventArgs e)
         {
             string method = "btnSearchCustomers_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 grdCustomersSearched.Visible = true;
-                grdCustomersSearched.DataSource = CM.ReturnCustomerBasedOnText(txtCustomer.Text);
+                grdCustomersSearched.DataSource = CM.ReturnCustomerBasedOnText(txtCustomer.Text, objPageDetails);
                 grdCustomersSearched.DataBind();
             }
             //Exception catch
@@ -169,9 +173,10 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnAddCustomer_Click(object sender, EventArgs e)
         {
             string method = "btnAddCustomer_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                Location L = LM.ReturnLocation(CU.location.locationID)[0];
+                Location L = LM.ReturnLocation(CU.location.locationID, objPageDetails)[0];
                 Customer c = new Customer();
                 c.firstName = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtFirstName")).Text;
                 c.lastName = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtLastName")).Text;
@@ -185,11 +190,11 @@ namespace SweetSpotDiscountGolfPOS
                 c.province = L.provID;
                 c.country = L.countryID;
                 c.postalCode = "";
-                int custNum = CM.addCustomer(c);
-                List<Invoice> i = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString());
+                int custNum = CM.addCustomer(c, objPageDetails);
+                List<Invoice> i = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails);
                 c.customerId = custNum;
                 i[0].customer = c;
-                IM.UpdateCurrentInvoice(i[0]);
+                IM.UpdateCurrentInvoice(i[0], objPageDetails);
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("inv", Request.QueryString["inv"].ToString());
                 nameValues.Set("cust", custNum.ToString());
@@ -210,11 +215,12 @@ namespace SweetSpotDiscountGolfPOS
         protected void grdCustomersSearched_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             string method = "grdCustomersSearched_PageIndexChanging";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 grdCustomersSearched.PageIndex = e.NewPageIndex;
                 grdCustomersSearched.Visible = true;
-                grdCustomersSearched.DataSource = CM.ReturnCustomerBasedOnText(txtCustomer.Text);
+                grdCustomersSearched.DataSource = CM.ReturnCustomerBasedOnText(txtCustomer.Text, objPageDetails);
                 grdCustomersSearched.DataBind();
             }
             //Exception catch
@@ -233,15 +239,16 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "grdCustomersSearched_RowCommand";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //grabs the command argument for the command pressed 
                 if (e.CommandName == "SwitchCustomer")
                 {
-                    Customer C = CM.ReturnCustomer(Convert.ToInt32(e.CommandArgument.ToString()))[0];
-                    Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                    Customer C = CM.ReturnCustomer(Convert.ToInt32(e.CommandArgument.ToString()), objPageDetails)[0];
+                    Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0];
                     I.customer = C;
-                    IM.UpdateCurrentInvoice(I);
+                    IM.UpdateCurrentInvoice(I, objPageDetails);
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                     nameValues.Set("cust", C.customerId.ToString());
                     nameValues.Set("receipt", Request.QueryString["inv"].ToString());
@@ -264,17 +271,18 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnInventorySearch_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (txtSearch.Text != "")
                 {
                     if (txtSearch.Text.Equals("100000"))
                     {
-                        grdInventorySearched.DataSource = ITM.ReturnTradeInSku();
+                        grdInventorySearched.DataSource = ITM.ReturnTradeInSku(objPageDetails);
                     }
                     else
                     {
-                        grdInventorySearched.DataSource = ITM.ReturnInvoiceItemsFromSearchStringForSale(txtSearch.Text);
+                        grdInventorySearched.DataSource = ITM.ReturnInvoiceItemsFromSearchStringForSale(txtSearch.Text, objPageDetails);
                     }
                     lblInvalidQty.Visible = false;
                     //Binds list to the grid view
@@ -301,19 +309,20 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "OnRowDeleting";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 lblInvalidQty.Visible = false;
                 int sku = Convert.ToInt32(grdCartItems.Rows[e.RowIndex].Cells[2].Text);
-                IIM.ReturnQTYToInventory(sku, Request.QueryString["inv"].ToString());
+                IIM.ReturnQTYToInventory(sku, Request.QueryString["inv"].ToString(), objPageDetails);
                 //Remove the indexed pointer
                 grdCartItems.EditIndex = -1;
                 //bind items back to grid view
-                grdCartItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["inv"].ToString());
+                grdCartItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["inv"].ToString(), objPageDetails);
                 grdCartItems.DataBind();
                 //Calculate new subtotal
-                IM.CalculateNewInvoiceTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0]);
-                Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                IM.CalculateNewInvoiceTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0], objPageDetails);
+                Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0];
                 lblSubtotalDisplay.Text = "$ " + I.subTotal.ToString("#0.00");
             }
             //Exception catch
@@ -333,10 +342,11 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "OnRowEditing";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 lblInvalidQty.Visible = false;
-                grdCartItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["inv"].ToString());
+                grdCartItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["inv"].ToString(), objPageDetails);
                 grdCartItems.EditIndex = e.NewEditIndex;
                 grdCartItems.DataBind();
             }
@@ -357,13 +367,14 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "ORowCanceling";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 lblInvalidQty.Visible = false;
                 //Clears the indexed row
                 grdCartItems.EditIndex = -1;
                 //Binds gridview to Session items in cart
-                grdCartItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["inv"].ToString());
+                grdCartItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["inv"].ToString(), objPageDetails);
                 grdCartItems.DataBind();
             }
             //Exception catch
@@ -383,6 +394,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "OnRowUpdating";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 lblInvalidQty.Visible = false;
@@ -396,7 +408,7 @@ namespace SweetSpotDiscountGolfPOS
                 newItemInfo.percentage = ((CheckBox)grdCartItems.Rows[e.RowIndex].Cells[6].FindControl("ckbPercentageEdit")).Checked;
                 newItemInfo.typeID = Convert.ToInt32(((Label)grdCartItems.Rows[e.RowIndex].Cells[8].FindControl("lblTypeID")).Text);
 
-                if (!IIM.ValidQTY(newItemInfo))
+                if (!IIM.ValidQTY(newItemInfo, objPageDetails))
                 {
                     //if it is less than 0 then there is not enough in invenmtory to sell
                     lblInvalidQty.Visible = true;
@@ -406,7 +418,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    IIM.UpdateItemFromCurrentSalesTable(newItemInfo);
+                    IIM.UpdateItemFromCurrentSalesTable(newItemInfo, objPageDetails);
                 }
                 
                 //Clears the indexed row
@@ -431,10 +443,11 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnCancelSale_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                IIM.LoopThroughTheItemsToReturnToInventory(Request.QueryString["inv"].ToString());
-                IIM.RemoveInitialTotalsForTable(Request.QueryString["inv"].ToString());
+                IIM.LoopThroughTheItemsToReturnToInventory(Request.QueryString["inv"].ToString(), objPageDetails);
+                IIM.RemoveInitialTotalsForTable(Request.QueryString["inv"].ToString(), objPageDetails);
                 Response.Redirect("HomePage.aspx", false);
             }
             //Exception catch
@@ -453,11 +466,12 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnExitSale_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0];
                 I.transactionType = 1;
-                IM.UpdateCurrentInvoice(I);
+                IM.UpdateCurrentInvoice(I, objPageDetails);
                 Response.Redirect("HomePage.aspx", false);
             }
             //Exception catch
@@ -476,11 +490,12 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnLayaway_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0];
                 I.transactionType = 6;
-                IM.UpdateCurrentInvoice(I);
+                IM.UpdateCurrentInvoice(I, objPageDetails);
                 Response.Redirect("HomePage.aspx", false);
             }
             //Exception catch
@@ -500,6 +515,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnProceedToCheckout_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 UpdateInvoiceTotal();
@@ -528,6 +544,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "grdInventorySearched_RowCommand";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 lblInvalidQty.Visible = false;
@@ -552,7 +569,7 @@ namespace SweetSpotDiscountGolfPOS
                     selectedSku.sku = Convert.ToInt32(grdInventorySearched.Rows[index].Cells[1].Text);
                     selectedSku.invoiceNum = Convert.ToInt32((Request.QueryString["inv"].ToString()).Split('-')[1]);
                     selectedSku.invoiceSubNum = Convert.ToInt32((Request.QueryString["inv"].ToString()).Split('-')[2]);
-                    if (!IIM.ItemAlreadyInCart(selectedSku))
+                    if (!IIM.ItemAlreadyInCart(selectedSku, objPageDetails))
                     {
                         if (selectedSku.sku == 100000)
                         {
@@ -584,12 +601,12 @@ namespace SweetSpotDiscountGolfPOS
                             selectedSku.quantity = quantity;
 
                             //add item to table and remove the added qty from current inventory
-                            IIM.InsertItemIntoSalesCart(selectedSku);
-                            IIM.RemoveQTYFromInventoryWithSKU(selectedSku.sku, selectedSku.typeID, (currentQty - quantity));
+                            IIM.InsertItemIntoSalesCart(selectedSku, objPageDetails);
+                            IIM.RemoveQTYFromInventoryWithSKU(selectedSku.sku, selectedSku.typeID, (currentQty - quantity), objPageDetails);
                             //Process an update of totals
 
                             //refresh the cart grd from table
-                            grdCartItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["inv"].ToString());
+                            grdCartItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["inv"].ToString(), objPageDetails);
                             grdCartItems.DataBind();
                             //Set an empty variable to bind to the searched items grid view so it is empty
                             List<Cart> nullGrid = new List<Cart>();
@@ -597,8 +614,8 @@ namespace SweetSpotDiscountGolfPOS
                             grdInventorySearched.DataSource = nullGrid;
                             grdInventorySearched.DataBind();
                             //Recalculate the new subtotal
-                            IM.CalculateNewInvoiceTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0]);
-                            Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                            IM.CalculateNewInvoiceTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0], objPageDetails);
+                            Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0];
                             lblSubtotalDisplay.Text = "$ " + I.subTotal.ToString("#0.00");
                         }
                     }
@@ -625,6 +642,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnJumpToInventory_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Inventory screen in new window/tab
@@ -646,12 +664,13 @@ namespace SweetSpotDiscountGolfPOS
         protected void UpdateInvoiceTotal()
         {
             string method = "UpdateInvoiceTotal";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                grdCartItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["inv"].ToString());
+                grdCartItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["inv"].ToString(), objPageDetails);
                 grdCartItems.DataBind();
-                IM.CalculateNewInvoiceTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0]);
-                Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString())[0];
+                IM.CalculateNewInvoiceTotalsToUpdate(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0], objPageDetails);
+                Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0];
                 lblSubtotalDisplay.Text = "$ " + I.subTotal.ToString("#0.00");
             }
             //Exception catch
@@ -669,6 +688,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnRefreshCart_Click(object sender, EventArgs e)
         {
             string method = "btnRefreshCart_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 btnRefreshCart.Visible = false;
@@ -689,6 +709,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnClearSearch_Click(object sender, EventArgs e)
         {
             string method = "btnClearSearch_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 grdInventorySearched.DataSource = null;

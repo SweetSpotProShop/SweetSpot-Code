@@ -62,7 +62,7 @@
                                     <asp:Label ID="lblRefundAmount" runat="server" Text="Refund Amount:" Width="163px" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:TextBox ID="txtAmountRefunding" runat="server" Width="159px" />
+                                    <asp:TextBox ID="txtAmountRefunding" runat="server" AutoComplete="off" Width="159px" />
                                 </asp:TableCell>
                             </asp:TableRow>
                         </asp:Table>
@@ -151,7 +151,7 @@
             <p>
                 Comments:
                <br />
-                <asp:TextBox ID="txtComments" runat="server" TextMode="MultiLine" />
+                <asp:TextBox ID="txtComments" runat="server" TextMode="MultiLine" AutoComplete="off" />
             </p>
         </asp:Panel>
     </div>

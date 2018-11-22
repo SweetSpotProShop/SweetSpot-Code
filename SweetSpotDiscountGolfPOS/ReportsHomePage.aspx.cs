@@ -2,18 +2,8 @@
 using SweetSpotDiscountGolfPOS.ClassLibrary;
 using SweetSpotProShop;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using OfficeOpenXml;
-using System.IO;
-using OfficeOpenXml.FormulaParsing;
-using System.Data.SqlClient;
-using System.Data;
-using System.Configuration;
 using System.Threading;
+using System.Web;
 
 namespace SweetSpotDiscountGolfPOS
 {
@@ -31,6 +21,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "ReportsHomePage";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -47,7 +38,7 @@ namespace SweetSpotDiscountGolfPOS
                         //Sets the calendar and text boxes start and end dates
                         calStartDate.SelectedDate = DateTime.Today;
                         calEndDate.SelectedDate = DateTime.Today;
-                        ddlLocation.DataSource = LM.ReturnLocationDropDown();
+                        ddlLocation.DataSource = LM.ReturnLocationDropDown(objPageDetails);
                         ddlLocation.DataTextField = "city";
                         ddlLocation.DataValueField = "locationID";
                         ddlLocation.DataBind();
@@ -66,7 +57,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -81,9 +72,10 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "calStart_SelectionChanged";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try { }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -98,9 +90,10 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "calEnd_SelectionChanged";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try { }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -117,14 +110,15 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnCashOutReport_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 object[] reportLog = { 1, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog);
+                R.CallReportLogger(reportLog, objPageDetails);
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                int indicator = R.CashoutsProcessed(repInfo);
+                int indicator = R.CashoutsProcessed(repInfo, objPageDetails);
                 ////Check to see if there are sales first
                 if (indicator == 0)
                 {
@@ -140,7 +134,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -157,14 +151,15 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "btnPurchasesReport_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 object[] reportLog = { 2, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog);
+                R.CallReportLogger(reportLog, objPageDetails);
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                int indicator = R.verifyPurchasesMade(repInfo);
+                int indicator = R.verifyPurchasesMade(repInfo, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
                 {
@@ -177,7 +172,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -195,13 +190,14 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnTesting_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 object[] reportLog = { 3, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog);
+                R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                int indicator = R.verifyTaxesCharged(repInfo);
+                int indicator = R.verifyTaxesCharged(repInfo, objPageDetails);
                 if (indicator == 0)
                 {
                     Session["reportInfo"] = repInfo;
@@ -213,7 +209,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -230,13 +226,14 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "btnCOGSvsPMReport_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 object[] reportLog = { 4, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog);
+                R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                int indicator = R.verifyInvoicesCompleted(repInfo);
+                int indicator = R.verifyInvoicesCompleted(repInfo, objPageDetails);
                 if (indicator == 0)
                 {
                     Session["reportInfo"] = repInfo;
@@ -248,7 +245,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -265,13 +262,14 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "btnItemsSold_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 object[] reportLog = { 5, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog);
+                R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                int indicator = R.verifyInvoicesCompleted(repInfo);
+                int indicator = R.verifyInvoicesCompleted(repInfo, objPageDetails);
                 if (indicator == 0)
                 {
                     Session["reportInfo"] = repInfo;
@@ -283,7 +281,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -300,13 +298,14 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "btnMostSold_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 object[] reportLog = { 8, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog);
+                R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                int indicator = R.verifyInvoicesCompleted(repInfo);
+                int indicator = R.verifyInvoicesCompleted(repInfo, objPageDetails);
                 if (indicator == 0)
                 {
                     Session["reportInfo"] = repInfo;
@@ -318,7 +317,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -335,14 +334,15 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnDiscountReport_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 object[] reportLog = { 6, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog);
+                R.CallReportLogger(reportLog, objPageDetails);
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                int indicator = R.verifyInvoicesCompleted(repInfo);
+                int indicator = R.verifyInvoicesCompleted(repInfo, objPageDetails);
                 if (indicator == 0)
                 {
                     Session["reportInfo"] = repInfo;
@@ -354,7 +354,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -371,14 +371,15 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "btnSalesByDate_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 object[] reportLog = { 7, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog);
+                R.CallReportLogger(reportLog, objPageDetails);
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                int indicator = R.verifySalesHaveBeenMade(repInfo);
+                int indicator = R.verifySalesHaveBeenMade(repInfo, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
                 {
@@ -391,7 +392,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -408,14 +409,15 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "btnPaymentsByDateReport_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 object[] reportLog = { 9, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog);
+                R.CallReportLogger(reportLog, objPageDetails);
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                int indicator = R.verifySalesHaveBeenMade(repInfo);
+                int indicator = R.verifySalesHaveBeenMade(repInfo, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
                 {
@@ -428,7 +430,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -445,15 +447,16 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "btnTradeInsByDateReport_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 object[] reportLog = { 10, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog);
+                R.CallReportLogger(reportLog, objPageDetails);
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 int loc = Convert.ToInt32(ddlLocation.SelectedValue);
                 object[] repInfo = new object[] { dtm, loc };
-                int indicator = R.verifyTradeInsHaveBeenMade(repInfo);
+                int indicator = R.verifyTradeInsHaveBeenMade(repInfo, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
                 {
@@ -466,7 +469,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -485,14 +488,15 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "btnExtensiveInvoice_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 object[] reportLog = { 11, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog);
+                R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 int loc = Convert.ToInt32(ddlLocation.SelectedValue);
                 object[] repInfo = new object[] { dtm, loc };
-                int indicator = R.verifySalesHaveBeenMade(repInfo);
+                int indicator = R.verifySalesHaveBeenMade(repInfo, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
                 {
@@ -505,7 +509,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -524,14 +528,15 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "btnCostOfInventory_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 object[] reportLog = { 12, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog);
+                R.CallReportLogger(reportLog, objPageDetails);
                 Server.Transfer("ReportsCostOfInventory.aspx", false);
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -543,20 +548,21 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
                 //Server.Transfer(prevPage, false);
             }
-        }       
+        }
 
         //Another report similar to COGSvsPM and Extensive Invoice, can be broken out by month, week, or day.
         protected void btnStoreStatsReport_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
             string method = "btnStoreStatsReport";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 object[] reportLog = { 13, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog);
+                R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, ddlDatePeriod.SelectedItem.Text.ToString() };
-                int indicator = R.verifyStatsAvailable(repInfo);
+                int indicator = R.verifyStatsAvailable(repInfo, objPageDetails);
                 if (indicator == 0)
                 {
                     Session["reportInfo"] = repInfo;
@@ -568,7 +574,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -585,13 +591,14 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "btnSpecificApparelReport";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 object[] reportLog = { 14, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog);
+                R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm };
-                int indicator = R.verifySpecificApparel(repInfo);
+                int indicator = R.verifySpecificApparel(repInfo, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
                 {
@@ -604,7 +611,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -621,13 +628,14 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "btnSpecificGripReport";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 object[] reportLog = { 14, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog);
+                R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm };
-                int indicator = R.verifySpecificGrip(repInfo);
+                int indicator = R.verifySpecificGrip(repInfo, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
                 {
@@ -640,7 +648,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -655,13 +663,22 @@ namespace SweetSpotDiscountGolfPOS
         protected DateTime[] getDateRange(DateTime startDate, DateTime endDate)
         {
             if (ddlDatePeriod.SelectedItem.Text.Equals("Day"))
-            { return new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate }; }
+            {
+                return new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+            }
             else if (ddlDatePeriod.SelectedItem.Text.Equals("Default"))
-            { return new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate }; }
+            {
+                return new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+            }
             else if (ddlDatePeriod.SelectedItem.Text.Equals("Week"))
-            { return new DateTime[2] { calStartDate.SelectedDate.GetWeekStart(), calEndDate.SelectedDate.GetWeekEnd() }; }
+            {
+                return new DateTime[2] { calStartDate.SelectedDate.GetWeekStart(), calEndDate.SelectedDate.GetWeekEnd() };
+            }
             else
-            { return new DateTime[2] { calStartDate.SelectedDate.GetMonthStart(), calEndDate.SelectedDate.GetMonthEnd() }; }
+            {
+                return new DateTime[2] { calStartDate.SelectedDate.GetMonthStart(), calEndDate.SelectedDate.GetMonthEnd() };
+            }
+
         }
     }
 }

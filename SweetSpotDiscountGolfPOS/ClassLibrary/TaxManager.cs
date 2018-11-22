@@ -31,12 +31,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }).ToList();
             return t;
         }
-        public List<Tax> ReturnTaxListBasedOnDate(DateTime selectedDate, int provinceID)
+        public List<Tax> ReturnTaxListBasedOnDate(DateTime selectedDate, int provinceID, object[] objPageDetails)
         {
-            return ConvertFromDataTableToTax(ReturnTaxListBasedOnDateAndProvinceForUpdate(provinceID, selectedDate));
+            return ConvertFromDataTableToTax(ReturnTaxListBasedOnDateAndProvinceForUpdate(provinceID, selectedDate, objPageDetails));
         }
-        public DataTable ReturnTaxListBasedOnDateAndProvinceForUpdate (int prov, DateTime currentDate)
+        public DataTable ReturnTaxListBasedOnDateAndProvinceForUpdate (int prov, DateTime currentDate, object[] objPageDetails)
         {
+            string strQueryName = "ReturnTaxListBasedOnDateAndProvinceForUpdate";
             string sqlCmd = "SELECT TR.taxID, TR.taxRate, TT.taxName FROM tbl_taxRate AS TR "
                 + "INNER JOIN tbl_taxType TT ON TR.taxID = TT.taxID INNER JOIN(SELECT taxID, "
                 + "MAX(taxDate) AS MTD FROM tbl_taxRate WHERE (taxDate <= @currentDate) AND "
@@ -47,11 +48,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@currentDate", currentDate },
                 new object[] { "@prov", prov }
             };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
-        private List<Tax> getTaxes(int provStateID, DateTime recDate)
+        private List<Tax> getTaxes(int provStateID, DateTime recDate, object[] objPageDetails)
         {
+            string strQueryName = "getTaxes";
             //New command
             string sqlCmd = "SELECT TR.taxRate, TT.taxName from tbl_taxRate TR INNER JOIN tbl_taxType TT ON "
                 + "TR.taxID = TT.taxID INNER JOIN (SELECT taxID, MAX(taxDate) AS MTD FROM tbl_taxRate WHERE "
@@ -64,30 +66,31 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@recDate", recDate }
             };
             //Returns the list of taxes
-            return ReturnListOfTaxes(dbc.returnDataTableData(sqlCmd, parms));
+            return ReturnListOfTaxes(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
 
-        public void InsertNewTaxRate(int provinceID, int taxID, DateTime selectedDate, double taxRate)
+        public void InsertNewTaxRate(int provinceID, int taxID, DateTime selectedDate, double taxRate, object[] objPageDetails)
         {
+            string strQueryName = "InsertNewTaxRate";
             string sqlCmd = "INSERT INTO tbl_taxRate VALUES(@provID, "
                 + "@taxDate, @taxID, @taxRate)";
-            Object[][] parms =
+            object[][] parms =
             {
                 new object[] { "@provID", provinceID },
                 new object[] { "@taxDate", selectedDate },
                 new object[] { "@taxID", taxID },
                 new object[] { "@taxRate", taxRate }
             };
-            dbc.executeInsertQuery(sqlCmd,parms);
+            dbc.executeInsertQuery(sqlCmd,parms, objPageDetails, strQueryName);
         }
-        public object[] ReturnChargedTaxForSale(Invoice I, object[] btnRequirements)
+        public object[] ReturnChargedTaxForSale(Invoice I, object[] btnRequirements, object[] objPageDetails)
         {
             int prov = I.location.provID;
             if (I.shippingAmount > 0)
             {
                 prov = I.customer.province;
             }
-            List<Tax> t = getTaxes(prov, I.invoiceDate);
+            List<Tax> t = getTaxes(prov, I.invoiceDate, objPageDetails);
             
             double totalTax = 0;
             bool bolGSTDisplay = false;
@@ -210,7 +213,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
             object[] btnParms = { bolGSTDisplay, gstText, bolPSTDisplay, pstText };
             InvoiceManager IM = new InvoiceManager();
-            IM.UpdateCurrentInvoice(I);
+            IM.UpdateCurrentInvoice(I, objPageDetails);
             object[] results = { I, btnParms };
             return results;
         }
@@ -226,11 +229,11 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //Returns the gst amount 
             return TaxAmount;
         }
-        public void TaxCorrectionOnReturnInvoice(Invoice I)
+        public void TaxCorrectionOnReturnInvoice(Invoice I, object[] objPageDetails)
         {
             I.balanceDue = I.balanceDue - (I.governmentTax + I.provincialTax);
             InvoiceManager IM = new InvoiceManager();
-            IM.CalculateNewInvoiceReturnTotalsToUpdate(I);
+            IM.CalculateNewInvoiceReturnTotalsToUpdate(I, objPageDetails);
         }
     }
 }

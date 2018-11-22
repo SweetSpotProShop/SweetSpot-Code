@@ -31,6 +31,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "ReportsDiscounts.aspx";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -51,13 +52,13 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("d") + " for " + LM.ReturnLocationName(locID);
+                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("d") + " for " + LM.ReturnLocationName(locID, objPageDetails);
                     }
                     else
                     {
-                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locID);
+                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locID, objPageDetails);
                     }
-                    discounts = R.returnDiscountsBetweenDates(startDate, endDate, locID);
+                    discounts = R.returnDiscountsBetweenDates(startDate, endDate, locID, objPageDetails);
                     grdInvoiceDisplay.DataSource = discounts;
                     grdInvoiceDisplay.DataBind();
 
@@ -79,6 +80,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "grdInvoiceDisplay_RowDataBound";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
@@ -108,13 +110,14 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnDownload_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
                 object[] passing = (object[])Session["reportInfo"];
-                string loc = LM.ReturnLocationName(Convert.ToInt32(passing[1]));
+                string loc = LM.ReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
                 string fileName = "Discount Report - " + loc + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))

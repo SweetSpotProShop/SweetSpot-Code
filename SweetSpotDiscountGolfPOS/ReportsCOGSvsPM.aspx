@@ -35,42 +35,42 @@
     <div id="print">
         <h2>Cost of Goods Sold and Profit Margin</h2>
         <hr />
-        <asp:Label ID="lblDates" runat="server" Font-Bold="true" Text="lblDates"></asp:Label>
+        <asp:Label ID="lblDates" runat="server" Font-Bold="true" Text="lblDates" />
         <hr />
 
         <asp:GridView ID="grdInvoiceSelection" runat="server" AutoGenerateColumns="false" ShowFooter="true" Width="100%" RowStyle-HorizontalAlign="Center" OnRowDataBound="grdInvoiceSelection_RowDataBound">
             <Columns>
                 <asp:TemplateField HeaderText="Invoice Number" HeaderStyle-Width="20%">
                     <ItemTemplate>
-                        <asp:LinkButton ID="lbtnInvoiceNumber" runat="server" Text='<%#Eval("invoice")%>' OnClick="lbtnInvoiceNumber_Click"></asp:LinkButton>
+                        <asp:LinkButton ID="lbtnInvoiceNumber" runat="server" Text='<%#Eval("invoice")%>' OnClick="lbtnInvoiceNumber_Click" />
                     </ItemTemplate>
                     <FooterTemplate>
-                        <asp:Label ID="lblTotal" runat="server" Text="Totals:"></asp:Label>
+                        <asp:Label ID="lblTotal" runat="server" Text="Totals:" />
                     </FooterTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Total Price" HeaderStyle-Width="20%">
                     <ItemTemplate>
-                        <asp:Label ID="lblTotalPrice" runat="server" Text='<%#Eval("totalPrice","{0:C}") %>'></asp:Label>
+                        <asp:Label ID="lblTotalPrice" runat="server" Text='<%#Eval("totalPrice","{0:C}") %>' />
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Total Cost" HeaderStyle-Width="20%">
                     <ItemTemplate>
-                        <asp:Label ID="lblTotalCost" runat="server" Text='<%#Eval("totalCost","{0:C}") %>'></asp:Label>
+                        <asp:Label ID="lblTotalCost" runat="server" Text='<%#Eval("totalCost","{0:C}") %>' />
                     </ItemTemplate>
                 </asp:TemplateField>                
                 <asp:TemplateField HeaderText="Total Discount" HeaderStyle-Width="20%">
                     <ItemTemplate>
-                        <asp:Label ID="lblTotalDiscount" runat="server" Text='<%#Eval("totalDiscount") %>'></asp:Label>
+                        <asp:Label ID="lblTotalDiscount" runat="server" Text='<%#Eval("totalDiscount") %>' />
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Discount as Percent" Visible="false" HeaderStyle-Width="20%">
                     <ItemTemplate>
-                        <asp:Label ID="lblPercentage" runat="server" Text='<%#Eval("percentage") %>'></asp:Label>
+                        <asp:Label ID="lblPercentage" runat="server" Text='<%#Eval("percentage") %>' />
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Profit Margin" HeaderStyle-Width="20%">
                     <ItemTemplate>
-                        <asp:Label ID="lblTotalProfit" runat="server" Text='<%#string.Concat(Eval("totalProfit","{0:f2}"), "%") %>'></asp:Label>
+                        <asp:Label ID="lblTotalProfit" runat="server" Text='<%#string.Concat(Eval("totalProfit","{0:f2}"), "%") %>' />
                     </ItemTemplate>
                 </asp:TemplateField>
             </Columns>

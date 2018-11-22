@@ -22,6 +22,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "ReportsCostOfInventory";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -35,7 +36,7 @@ namespace SweetSpotDiscountGolfPOS
                     CU = (CurrentUser)Session["currentUser"];
                     //Binding the gridview
                     DataTable list = new DataTable();
-                    list = R.costOfInventoryReport();
+                    list = R.costOfInventoryReport(objPageDetails);
                     //Checking if there are any values
                     if (list.Rows.Count > 0)
                     {

@@ -37,6 +37,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "ReportsTaxes.aspx";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -54,9 +55,9 @@ namespace SweetSpotDiscountGolfPOS
                     DateTime startDate = reportDates[0];
                     DateTime endDate = reportDates[1];
                     //Builds string to display in label
-                    lblTaxDate.Text = "Taxes Through: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(Convert.ToInt32(passing[1]));
+                    lblTaxDate.Text = "Taxes Through: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
                     //Creating a cashout list and calling a method that grabs all mops and amounts paid
-                    tr = R.returnTaxReportDetails(startDate, endDate);
+                    tr = R.returnTaxReportDetails(startDate, endDate, objPageDetails);
 
                     foreach (var item in tr)
                     {
@@ -120,6 +121,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void grdTaxesCollected_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             string method = "grdTaxesCollected_RowDataBound";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 // check row type
@@ -149,6 +151,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void grdTaxesReturned_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             string method = "grdTaxesReturned_RowDataBound";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 // check row type
@@ -178,6 +181,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void grdTaxesOverall_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             string method = "grdTaxesOverall_RowDataBound";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 // check row type
@@ -208,6 +212,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "printReport";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             //Current method does nothing
             try
             { }
@@ -227,12 +232,13 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnDownload_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
                 object[] passing = (object[])Session["reportInfo"];
-                string loc = LM.ReturnLocationName(Convert.ToInt32(passing[1]));
+                string loc = LM.ReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
                 string fileName = "Taxes Report - " + loc + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))

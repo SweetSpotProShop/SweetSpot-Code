@@ -25,6 +25,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "InvoiceSearch.aspx";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -41,7 +42,7 @@ namespace SweetSpotDiscountGolfPOS
                         //Sets the calendar and text boxes start and end dates
                         calStartDate.SelectedDate = DateTime.Today;
                         calEndDate.SelectedDate = DateTime.Today;
-                        ddlLocation.DataSource = LM.ReturnLocationDropDown();
+                        ddlLocation.DataSource = LM.ReturnLocationDropDown(objPageDetails);
                         ddlLocation.DataTextField = "city";
                         ddlLocation.DataValueField = "locationID";
                         ddlLocation.DataBind();
@@ -65,7 +66,8 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "calStart_SelectionChanged";
-            try{}
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try {}
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
@@ -82,7 +84,8 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "calEnd_SelectionChanged";
-            try{}
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try {}
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
@@ -99,10 +102,11 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnInvoiceSearch_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Binds invoice list to the grid view
-                grdInvoiceSelection.DataSource = IM.ReturnInvoicesBasedOnSearchCriteria(calStartDate.SelectedDate, calEndDate.SelectedDate, txtInvoiceNum.Text, Convert.ToInt32(ddlLocation.SelectedValue));
+                grdInvoiceSelection.DataSource = IM.ReturnInvoicesBasedOnSearchCriteria(calStartDate.SelectedDate, calEndDate.SelectedDate, txtInvoiceNum.Text, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
                 grdInvoiceSelection.DataBind();
             }
             //Exception catch
@@ -123,6 +127,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "grdInvoiceSelection_RowCommand";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Sets the string of the command argument(invoice number

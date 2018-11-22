@@ -25,6 +25,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "SalesCashOut.aspx";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -42,10 +43,10 @@ namespace SweetSpotDiscountGolfPOS
                         DateTime startDate = DateTime.Parse(Request.QueryString["dtm"].ToString());
                         int loc = Convert.ToInt32(Request.QueryString["location"]);
                         object[] args = { startDate, loc };
-                        lblCashoutDate.Text = "Cashout on: " + startDate.ToString("d") + " for " + LM.ReturnLocationName(loc);
-                        if (R.CashoutExists(args))
+                        lblCashoutDate.Text = "Cashout on: " + startDate.ToString("d") + " for " + LM.ReturnLocationName(loc, objPageDetails);
+                        if (R.CashoutExists(args, objPageDetails))
                         {
-                            Cashout C = R.ReturnSelectedCashout(args)[0];
+                            Cashout C = R.ReturnSelectedCashout(args, objPageDetails)[0];
 
                             lblTradeInDisplay.Text = C.saleTradeIn.ToString("C");
                             lblGiftCardDisplay.Text = C.saleGiftCard.ToString("C");
@@ -73,7 +74,7 @@ namespace SweetSpotDiscountGolfPOS
                         else
                         {
                             //Creating a cashout list and calling a method that grabs all mops and amounts paid
-                            Cashout C = R.CreateNewCashout(startDate, loc);
+                            Cashout C = R.CreateNewCashout(startDate, loc, objPageDetails);
                             lblVisaDisplay.Text = C.saleVisa.ToString("C");
                             lblMasterCardDisplay.Text = C.saleMasterCard.ToString("C");
                             lblCashDisplay.Text = C.saleCash.ToString("C");
@@ -105,6 +106,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnCalculate_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 calculteMethod();
@@ -126,6 +128,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnClear_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Blanking the textboxes
@@ -152,6 +155,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnProcessReport_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 calculteMethod();
@@ -170,13 +174,13 @@ namespace SweetSpotDiscountGolfPOS
                     double.Parse(lblPSTDisplay.Text, NumberStyles.Currency), double.Parse(lblOverShortFinal.Text, NumberStyles.Currency), false, true, loc, CU.emp.employeeID);
 
                 //Processes as done
-                if (R.CashoutExists(args))
+                if (R.CashoutExists(args, objPageDetails))
                 {
-                    R.UpdateCashout(cas);
+                    R.UpdateCashout(cas, objPageDetails);
                 }
                 else
                 {
-                    R.insertCashout(cas);
+                    R.insertCashout(cas, objPageDetails);
                 }
                 MessageBox.ShowMessage("Cashout has been processed", this);
                 btnPrint.Enabled = true;
@@ -198,6 +202,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "calculateMethod";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //If nothing is entered, setting text to 0.00 and the total to 0

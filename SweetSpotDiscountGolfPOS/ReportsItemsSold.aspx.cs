@@ -32,6 +32,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "ReportsItemsSold";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -52,15 +53,15 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "Items sold on: " + startDate.ToString("d") + " for " + LM.ReturnLocationName(locationID);
+                        lblDates.Text = "Items sold on: " + startDate.ToString("d") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     }
                     else
                     {
-                        lblDates.Text = "Items sold on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locationID);
+                        lblDates.Text = "Items sold on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     }
 
                     //Binding the gridview
-                    items = R.returnItemsSold(startDate, endDate, locationID);
+                    items = R.returnItemsSold(startDate, endDate, locationID, objPageDetails);
                     //Checking if there are any values
                     if (items.Rows.Count > 0)
                     {
@@ -95,6 +96,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void grdItems_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             string method = "grdItems_RowDataBound";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
@@ -149,6 +151,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "lbtnInvoiceNumber_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Text of the linkbutton
@@ -173,13 +176,14 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnDownload_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
                 object[] passing = (object[])Session["reportInfo"];
-                string loc = LM.ReturnLocationName(Convert.ToInt32(passing[1]));
+                string loc = LM.ReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
                 string fileName = "Items Sold Report - " + loc + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))

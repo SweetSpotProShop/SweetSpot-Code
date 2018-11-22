@@ -32,12 +32,12 @@
                 <Columns>
                     <asp:TemplateField HeaderText="SKU" ControlStyle-Width="300px">
                         <ItemTemplate>
-                            <asp:Label ID="lblSku" runat="server" Text='<%#Eval("sku")%>'></asp:Label>
+                            <asp:Label ID="lblSku" runat="server" Text='<%#Eval("sku")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Amount Sold" ControlStyle-Width="300px">
                         <ItemTemplate>
-                            <asp:Label ID="lblAmountSold" runat="server" Text='<%#Eval("amountSold")%>'></asp:Label>
+                            <asp:Label ID="lblAmountSold" runat="server" Text='<%#Eval("amountSold")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -50,12 +50,12 @@
                 <Columns>
                     <asp:TemplateField HeaderText="Brand" ControlStyle-Width="300px">
                         <ItemTemplate>
-                            <asp:Label ID="lblBrand" runat="server" Text='<%#Eval("brand")%>'></asp:Label>
+                            <asp:Label ID="lblBrand" runat="server" Text='<%#Eval("brand")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Times Sold" ControlStyle-Width="300px">
                         <ItemTemplate>
-                            <asp:Label ID="lblTimesSold" runat="server" Text='<%#Eval("amountSold")%>'></asp:Label>
+                            <asp:Label ID="lblTimesSold" runat="server" Text='<%#Eval("amountSold")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -68,12 +68,12 @@
                 <Columns>
                     <asp:TemplateField HeaderText="Model" ControlStyle-Width="300px">
                         <ItemTemplate>
-                            <asp:Label ID="lblModel" runat="server" Text='<%#Eval("model")%>'></asp:Label>
+                            <asp:Label ID="lblModel" runat="server" Text='<%#Eval("model")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Times Sold" ControlStyle-Width="300px">
                         <ItemTemplate>
-                            <asp:Label ID="lblTimesSold" runat="server" Text='<%#Eval("amountSold")%>'></asp:Label>
+                            <asp:Label ID="lblTimesSold" runat="server" Text='<%#Eval("amountSold")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>

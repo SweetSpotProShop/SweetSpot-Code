@@ -56,10 +56,14 @@
             <asp:Table ID="tblPartiesInvolved" runat="server" Width="100%">
                 <asp:TableRow>
                     <asp:TableCell CssClass="leftSide">
-                        <h3><asp:Label ID="lblCustomerName" runat="server" Text="" /></h3>
+                        <h3>
+                            <asp:Label ID="lblCustomerName" runat="server" Text="" />
+                        </h3>
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSide">
-                        <h3><asp:Label ID="lblSweetShopName" runat="server" Text="Sweet Spot Discount Golf" /></h3>
+                        <h3>
+                            <asp:Label ID="lblSweetShopName" runat="server" Text="Sweet Spot Discount Golf" />
+                        </h3>
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>

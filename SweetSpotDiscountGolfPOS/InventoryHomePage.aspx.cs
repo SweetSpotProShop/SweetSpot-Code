@@ -26,6 +26,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "InventoryHomePage";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -60,12 +61,13 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnInventorySearch_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 string[] headers = { "SKU", "Description ▼", "Store ▼", "Quantity ▼", "Price ▼", "Cost ▼", "Comments ▼" };
                 ViewState["headers"] = headers;
 
-                searched = IM.ReturnInvoiceItemsFromSearchStringAndQuantity(txtSearch.Text, chkIncludeZero.Checked);
+                searched = IM.ReturnInvoiceItemsFromSearchStringAndQuantity(txtSearch.Text, chkIncludeZero.Checked, objPageDetails);
                 ViewState["listItems"] = searched;
                 populateGridview(searched);
                 grdInventorySearched.PageIndex = 0;
@@ -94,6 +96,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnAddNewInventory_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Changes page to the inventory add new page
@@ -117,11 +120,12 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnMakePurchase_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("cust", "1");
-                string receipt = CU.locationName + "-" + InM.ReturnNextReceiptNumber() + "-1";
+                string receipt = CU.locationName + "-" + InM.ReturnNextReceiptNumber(objPageDetails) + "-1";
                 nameValues.Set("receipt", receipt);
                 Response.Redirect("PurchasesCart.aspx?" + nameValues, false);
             }
@@ -142,6 +146,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "err_grdInventorySearched_RowCommand";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (e.CommandName == "viewItem")
@@ -165,6 +170,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void grdInventorySearched_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             string method = "grdInventorySearched_PageIndexChanging";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 grdInventorySearched.PageIndex = e.NewPageIndex;
@@ -186,6 +192,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void populateGridview(List<Items> list)
         {
             string method = "populateGridview";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 grdInventorySearched.Visible = true;
@@ -209,6 +216,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void lbtnSKU_Click(object sender, EventArgs e)
         {
             string method = "lbtnSKU_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Grabbing the list
@@ -269,6 +277,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnDescription_Click(object sender, EventArgs e)
         {
             string method = "btnDescription_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Grabbing the list
@@ -329,6 +338,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnStore_Click(object sender, EventArgs e)
         {
             string method = "btnStore_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Grabbing the list
@@ -389,6 +399,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnQuantity_Click(object sender, EventArgs e)
         {
             string method = "btnQuantity_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Grabbing the list
@@ -449,6 +460,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnPrice_Click(object sender, EventArgs e)
         {
             string method = "btnPrice_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Grabbing the list
@@ -509,6 +521,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnCost_Click(object sender, EventArgs e)
         {
             string method = "btnCost_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Grabbing the list
@@ -569,6 +582,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnComments_Click(object sender, EventArgs e)
         {
             string method = "btnComments_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Grabbing the list
@@ -629,6 +643,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void updateButtonText(string[] headers)
         {
             string method = "updateButtonText";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 (grdInventorySearched.HeaderRow.FindControl("btnSKU") as Button).Text = headers[0];
@@ -656,6 +671,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "btnDownload_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {                
                 if (ViewState["listItems"] != null)

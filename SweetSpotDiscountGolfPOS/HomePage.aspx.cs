@@ -21,7 +21,6 @@ namespace SweetSpotDiscountGolfPOS
         Reports R = new Reports();
         CurrentUser CU;
 
-
         int totalSales = 0;
         double totalDiscounts = 0;
         double totalTradeIns = 0;
@@ -34,12 +33,12 @@ namespace SweetSpotDiscountGolfPOS
         string newInvoice = string.Empty;
         int currentRow = 0;
 
-
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "HomePage.aspx";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -53,7 +52,7 @@ namespace SweetSpotDiscountGolfPOS
                     CU = (CurrentUser)Session["currentUser"];
                     if (!IsPostBack)
                     {
-                        ddlLocation.DataSource = LM.ReturnLocationDropDown();
+                        ddlLocation.DataSource = LM.ReturnLocationDropDown(objPageDetails);
                         ddlLocation.DataTextField = "city";
                         ddlLocation.DataValueField = "locationID";
                         ddlLocation.DataBind();
@@ -71,7 +70,7 @@ namespace SweetSpotDiscountGolfPOS
                         ddlLocation.Enabled = false;
                     }
                     //populate gridview with todays sales
-                    grdSameDaySales.DataSource = R.getInvoiceBySaleDate(DateTime.Today, DateTime.Today, Convert.ToInt32(ddlLocation.SelectedValue));
+                    grdSameDaySales.DataSource = R.getInvoiceBySaleDate(DateTime.Today, DateTime.Today, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
                     grdSameDaySales.DataBind();
                 }
             }
@@ -91,6 +90,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "lbtnInvoiceNumber_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Text of the linkbutton
@@ -117,6 +117,7 @@ namespace SweetSpotDiscountGolfPOS
             //Problems with looping 
             //Collects current method for error tracking
             string method = "grdSameDaySales_RowDataBound";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             //Current method does nothing
             try
             {
@@ -188,6 +189,7 @@ namespace SweetSpotDiscountGolfPOS
         private void MergeRows(GridView gridView)
         {
             string method = "MergeRows";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 for (int rowIndex = gridView.Rows.Count - 2; rowIndex >= 0; rowIndex--)

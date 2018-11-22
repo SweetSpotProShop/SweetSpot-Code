@@ -62,7 +62,7 @@
                                     <asp:Label ID="lblAmountPaid" runat="server" Text="Owing:" Width="163px" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:TextBox ID="txtAmountPaying" runat="server" Width="159px" />
+                                    <asp:TextBox ID="txtAmountPaying" runat="server" AutoComplete="off" Width="159px" />
                                 </asp:TableCell>
                             </asp:TableRow>
                         </asp:Table>
@@ -166,31 +166,46 @@
                     <asp:TableCell ColumnSpan="2">
                         <hr />
                         <asp:Label ID="lblRemainingBalanceDue" runat="server" Text="Remaining Balance Due" />
-                    </asp:TableCell><asp:TableCell ColumnSpan="2">
+                    </asp:TableCell>
+                    <asp:TableCell ColumnSpan="2">
                         <hr />
                         <asp:Label ID="lblRemainingBalanceDueDisplay" runat="server" />
-                    </asp:TableCell></asp:TableRow><asp:TableRow>
+                    </asp:TableCell>
+                </asp:TableRow>
+                <asp:TableRow>
                     <asp:TableCell>
                         <asp:Button ID="btnCancelSale" runat="server" Text="Void Transaction" OnClick="btnCancelSale_Click" Width="163px" CausesValidation="false" />
-                    </asp:TableCell><asp:TableCell>
+                    </asp:TableCell>
+                    <asp:TableCell>
                         <asp:Button ID="btnExitSale" runat="server" Text="Hold Sale" OnClick="btnExitSale_Click" Width="163px" CausesValidation="false" />
-                    </asp:TableCell><asp:TableCell>
+                    </asp:TableCell>
+                    <asp:TableCell>
                         <asp:Button ID="btnLayaway" runat="server" Text="Layaway" OnClick="btnLayaway_Click" Width="163px" CausesValidation="false" Visible="false" />
-                    </asp:TableCell><asp:TableCell>
+                    </asp:TableCell>
+                    <asp:TableCell>
                         <asp:Button ID="btnReturnToCart" runat="server" Text="Sales Cart" OnClick="btnReturnToCart_Click" Width="163px" CausesValidation="false" />
-                    </asp:TableCell><asp:TableCell>
+                    </asp:TableCell>
+                    <asp:TableCell>
                         <asp:Button ID="btnFinalize" runat="server" Text="Process Sale" OnClick="btnFinalize_Click" Width="163px" CausesValidation="true" />
-                    </asp:TableCell></asp:TableRow><asp:TableRow>
+                    </asp:TableCell>
+                </asp:TableRow>
+                <asp:TableRow>
                     <asp:TableCell>
                         <asp:Label ID="lblConfirmEmployee" runat="server" Text="Enter Employee Passcode:" />
-                    </asp:TableCell><asp:TableCell>
-                        <asp:TextBox ID="txtEmployeePasscode" runat="server" TextMode="Password" />
-                    </asp:TableCell><asp:TableCell>
+                    </asp:TableCell>
+                    <asp:TableCell>
+                        <asp:TextBox ID="txtEmployeePasscode" runat="server" TextMode="Password" AutoComplete="off" />
+                    </asp:TableCell>
+                    <asp:TableCell>
                          <asp:RequiredFieldValidator ID="valEmployeePasscode" runat="server" ForeColor="red" ErrorMessage="Must Enter Passcode" ControlToValidate="txtEmployeePasscode" />
-                    </asp:TableCell></asp:TableRow></asp:Table><p>
-                Comments: <br /><asp:TextBox ID="txtComments" runat="server" TextMode="MultiLine" />
-                        <asp:HiddenField ID="hdnTender" runat="server" Value="0" />
-                        <asp:HiddenField ID="hdnChange" runat="server" value="0" />
+                    </asp:TableCell>
+                </asp:TableRow>
+            </asp:Table>
+            <p>
+                Comments: <br />
+                <asp:TextBox ID="txtComments" runat="server" TextMode="MultiLine" AutoComplete="off" />
+                <asp:HiddenField ID="hdnTender" runat="server" Value="0" />
+                <asp:HiddenField ID="hdnChange" runat="server" value="0" />
             </p>
         </asp:Panel>
     </div>
