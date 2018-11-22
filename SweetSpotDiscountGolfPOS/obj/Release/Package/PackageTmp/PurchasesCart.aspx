@@ -38,7 +38,6 @@
             padding: 3px;
         }
     </style>
-    <%--<asp:Label ID="lblLocationID" runat="server" Text="Temp locaiton id label"></asp:Label>--%>
     <div id="menu_simple">
         <ul>
             <li><a>HOME</a></li>
@@ -59,7 +58,7 @@
         <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnAddPurchase" >
             <asp:Label ID="lblCustomer" runat="server" Text="Customer Name:" />
             <asp:Label ID="lblCustomerDisplay" runat="server" Text="" Visible="false" />
-            <asp:TextBox ID="txtCustomer" runat="server" />
+            <asp:TextBox ID="txtCustomer" runat="server" AutoComplete="off" />
             <asp:Button ID="btnCustomerSelect" runat="server" Text="Select Different Customer" OnClick="btnCustomerSelect_Click" CausesValidation="false" />
             <div>
                 <br />
@@ -80,10 +79,10 @@
                                 </ItemTemplate>
                                 <FooterTemplate>
                                     <div>
-                                        <asp:TextBox ID="txtFirstName" runat="server" placeholder="First Name" ToolTip="First Name" />
+                                        <asp:TextBox ID="txtFirstName" runat="server" placeholder="First Name" ToolTip="First Name" AutoComplete="off" />
                                     </div>
                                     <div>
-                                        <asp:TextBox ID="txtLastName" runat="server" placeholder="Last Name" ToolTip="Last Name" />
+                                        <asp:TextBox ID="txtLastName" runat="server" placeholder="Last Name" ToolTip="Last Name" AutoComplete="off" />
                                     </div>
                                 </FooterTemplate>
                             </asp:TemplateField>
@@ -101,7 +100,7 @@
                                 </ItemTemplate>
                                 <FooterTemplate>
                                     <div>
-                                        <asp:TextBox ID="txtEmail" runat="server" placeholder="Email" ToolTip="Email" />
+                                        <asp:TextBox ID="txtEmail" runat="server" placeholder="Email" ToolTip="Email" AutoComplete="off" />
                                     </div>     
                                     <div>
                                         <asp:CheckBox ID="chkMarketingEnrollment" runat="server" Text="Marketing Enrollment" />

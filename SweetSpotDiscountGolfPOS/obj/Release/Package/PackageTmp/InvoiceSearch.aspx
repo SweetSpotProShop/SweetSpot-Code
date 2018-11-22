@@ -19,13 +19,17 @@
                 <asp:TableRow>
                     <asp:TableCell>
                         <asp:Label ID="lblSelectLocation" runat="server" Text="Select Location:" />
-                    </asp:TableCell><asp:TableCell>
-                        <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="True" />
-                    </asp:TableCell><asp:TableCell>
+                    </asp:TableCell>
+                    <asp:TableCell>
+                        <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="false" />
+                    </asp:TableCell>
+                    <asp:TableCell>
                         <asp:Label ID="lblInvoiceNum" runat="server" Text="Enter Invoice Number or SKU:" />
-                    </asp:TableCell><asp:TableCell>
-                        <asp:TextBox ID="txtInvoiceNum" runat="server" Text="" />
-                    </asp:TableCell><asp:TableCell>
+                    </asp:TableCell>
+                    <asp:TableCell>
+                        <asp:TextBox ID="txtInvoiceNum" runat="server" AutoComplete="off" Text="" />
+                    </asp:TableCell>
+                    <asp:TableCell>
                         <asp:Button ID="btnInvoiceSearch" runat="server" Text="Search for Invoices" OnClick="btnInvoiceSearch_Click" />
                     </asp:TableCell>
                 </asp:TableRow>

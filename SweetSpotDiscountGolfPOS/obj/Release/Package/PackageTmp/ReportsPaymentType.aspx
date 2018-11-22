@@ -42,35 +42,35 @@
                 <Columns>
                     <asp:TemplateField HeaderText="Date">
                         <ItemTemplate>
-                            <asp:Label ID="lblDate" runat="server" Text='<%#Eval("invoiceDate","{0:d}")%>'></asp:Label>
+                            <asp:Label ID="lblDate" runat="server" Text='<%#Eval("invoiceDate","{0:d}")%>' />
                         </ItemTemplate>
                         <FooterTemplate>
-                            <asp:Label ID="lblTotal" runat="server" Text="Totals:"></asp:Label>
+                            <asp:Label ID="lblTotal" runat="server" Text="Totals:" />
                         </FooterTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Cash">
                         <ItemTemplate>
-                            <asp:Label ID="lblCashPayments" runat="server" Text='<%#Eval("Cash","{0:C}") %>'></asp:Label>
+                            <asp:Label ID="lblCashPayments" runat="server" Text='<%#Eval("Cash","{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Debit">
                         <ItemTemplate>
-                            <asp:Label ID="lblDebitPayments" runat="server" Text='<%#Eval("Debit","{0:C}") %>'></asp:Label>
+                            <asp:Label ID="lblDebitPayments" runat="server" Text='<%#Eval("Debit","{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Gift Card">
                         <ItemTemplate>
-                            <asp:Label ID="lblGiftCardPayments" runat="server" Text='<%#Eval("GiftCard","{0:C}") %>'></asp:Label>
+                            <asp:Label ID="lblGiftCardPayments" runat="server" Text='<%#Eval("GiftCard","{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Mastercard">
                         <ItemTemplate>
-                            <asp:Label ID="lblMastercardPayments" runat="server" Text='<%#Eval("Mastercard","{0:C}") %>'></asp:Label>
+                            <asp:Label ID="lblMastercardPayments" runat="server" Text='<%#Eval("Mastercard","{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Visa">
                         <ItemTemplate>
-                            <asp:Label ID="lblVisaPayments" runat="server" Text='<%#Eval("Visa","{0:C}") %>'></asp:Label>
+                            <asp:Label ID="lblVisaPayments" runat="server" Text='<%#Eval("Visa","{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>

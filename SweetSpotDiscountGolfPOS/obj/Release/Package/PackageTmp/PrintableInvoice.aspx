@@ -87,24 +87,37 @@
                 <asp:TableRow>
                     <asp:TableCell CssClass="leftSide">
                         <asp:Label ID="lblCustomerName" runat="server" Text="" />
-                    </asp:TableCell><asp:TableCell CssClass="rightSide">
+                    </asp:TableCell>
+                    <asp:TableCell CssClass="rightSide">
                         <asp:Label ID="lblSweetShopName" runat="server" Text="Sweet Spot Discount Golf" />
-                    </asp:TableCell></asp:TableRow><asp:TableRow>
+                    </asp:TableCell>
+                </asp:TableRow>
+                <asp:TableRow>
                     <asp:TableCell CssClass="leftSide">
-                        <asp:Label ID="lblStreetAddress" runat="server" Text=""></asp:Label>
-                    </asp:TableCell><asp:TableCell CssClass="rightSide">
-                        <asp:Label ID="lblSweetShopStreetAddress" runat="server" Text="644 Main St. N"></asp:Label>
-                    </asp:TableCell></asp:TableRow><asp:TableRow>
+                        <asp:Label ID="lblStreetAddress" runat="server" Text="" />
+                    </asp:TableCell>
+                    <asp:TableCell CssClass="rightSide">
+                        <asp:Label ID="lblSweetShopStreetAddress" runat="server" Text="644 Main St. N" />
+                    </asp:TableCell>
+                </asp:TableRow>
+                <asp:TableRow>
                     <asp:TableCell CssClass="leftSide">
-                        <asp:Label ID="lblPostalAddress" runat="server" Text=""></asp:Label>
-                    </asp:TableCell><asp:TableCell CssClass="rightSide">
-                        <asp:Label ID="lblSweetShopPostalAddress" runat="server" Text="Moose Jaw, Saskatchewan S6H 3K4"></asp:Label>
-                    </asp:TableCell></asp:TableRow><asp:TableRow>
+                        <asp:Label ID="lblPostalAddress" runat="server" Text="" />
+                    </asp:TableCell>
+                    <asp:TableCell CssClass="rightSide">
+                        <asp:Label ID="lblSweetShopPostalAddress" runat="server" Text="Moose Jaw, Saskatchewan S6H 3K4" />
+                    </asp:TableCell>
+                </asp:TableRow>
+                <asp:TableRow>
                     <asp:TableCell CssClass="leftSide">
-                        <asp:Label ID="lblPhone" runat="server" Text=""></asp:Label>
-                    </asp:TableCell><asp:TableCell CssClass="rightSide">
-                        <asp:Label ID="lblSweetShopPhone" runat="server" Text="(306) 692-8337"></asp:Label>
-                    </asp:TableCell></asp:TableRow></asp:Table><hr />
+                        <asp:Label ID="lblPhone" runat="server" Text="" />
+                    </asp:TableCell>
+                    <asp:TableCell CssClass="rightSide">
+                        <asp:Label ID="lblSweetShopPhone" runat="server" Text="(306) 692-8337" />
+                    </asp:TableCell>
+                </asp:TableRow>
+            </asp:Table>
+            <hr />
 
             <asp:GridView ID="grdItemsSoldList" runat="server" CellPadding="4" Width="100%" AutoGenerateColumns="False" RowStyle-HorizontalAlign="Center">
                 <Columns>
@@ -148,7 +161,8 @@
             <hr />
         </div>
         <div id="paymentDetails" class="yesPrint">
-            <h3>Payment Details</h3><asp:Table ID="tblSummary" runat="server" Width="70%">
+            <h3>Payment Details</h3>
+            <asp:Table ID="tblSummary" runat="server" Width="70%">
                 <asp:TableRow>
                     <asp:TableCell CssClass="leftFirst">
                         <asp:Label ID="lblDiscounts" runat="server" Text="Discounts:" />
@@ -190,14 +204,12 @@
                     <asp:TableCell CssClass="rightSecond">
                         <asp:Label ID="lblPSTDisplay" runat="server" Text="" DataFormatString="{0:C}" />
                     </asp:TableCell>
-
                     <asp:TableCell CssClass="rightFirst">
                         <asp:Label ID="lblTender" runat="server" Text="Tender:" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSecond">
                         <asp:Label ID="lblTenderDisplay" runat="server" Text="" DataFormatString="{0:C}" />
                     </asp:TableCell>
-
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell CssClass="leftFirst">
@@ -212,14 +224,12 @@
                     <asp:TableCell CssClass="rightSecond">
                         <asp:Label ID="lblTotalPaidDisplay" runat="server" Text="" DataFormatString="{0:C}" />
                     </asp:TableCell>
-
                     <asp:TableCell CssClass="rightFirst">
                         <asp:Label ID="lblChange" runat="server" Text="Change:" Visible="true"/>
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSecond">
                         <asp:Label ID="lblChangeDisplay" runat="server" Text="" DataFormatString="{0:C}" Visible="true"/>
                     </asp:TableCell>
-
                 </asp:TableRow>
             </asp:Table>
             <p>

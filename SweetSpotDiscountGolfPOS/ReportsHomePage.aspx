@@ -17,7 +17,7 @@
             <h2>Reports Selection</h2>
             <br />
             <asp:Label runat="server" Text="Select Location:" />
-            <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="True" Visible="true" />
+            <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="false" Visible="true" />
             <hr />
             <%--Start Calendar--%>
             <asp:Table runat="server">
@@ -26,7 +26,7 @@
                         <asp:Label runat="server" Text="Select date type:"/>                        
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlDatePeriod" runat="server" AutoPostBack="true">
+                        <asp:DropDownList ID="ddlDatePeriod" runat="server" AutoPostBack="false">
                             <asp:ListItem Text="Default" Value="0" Selected="True" />
                             <asp:ListItem Text="Day" Value="1" />
                             <asp:ListItem Text="Week" Value="2" />
@@ -36,7 +36,9 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:Calendar ID="calStartDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest" Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="184px" Width="200px" OnSelectionChanged="calStart_SelectionChanged">
+                        <asp:Calendar ID="calStartDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest"
+                            Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="184px" Width="200px" AutoPostBack="false"
+                            OnSelectionChanged="calStart_SelectionChanged">
                             <DayHeaderStyle BackColor="#5FD367" Font-Bold="True" Font-Size="7pt" />
                             <NextPrevStyle VerticalAlign="Bottom" />
                             <OtherMonthDayStyle ForeColor="#808080" />
@@ -48,7 +50,9 @@
                         </asp:Calendar>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Calendar ID="calEndDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest" Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="182px" Width="200px" OnSelectionChanged="calEnd_SelectionChanged">
+                        <asp:Calendar ID="calEndDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest"
+                            Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="182px" Width="200px"
+                            OnSelectionChanged="calEnd_SelectionChanged">
                             <DayHeaderStyle BackColor="#5FD367" Font-Bold="True" Font-Size="7pt" />
                             <NextPrevStyle VerticalAlign="Bottom" />
                             <OtherMonthDayStyle ForeColor="#808080" />

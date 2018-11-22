@@ -11,12 +11,11 @@
         <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnEmployeeSearch">
             <h2>Employee Management</h2>
             <hr />
-
             <%--Enter search text to find matching Employees information--%>
             <asp:Table ID="tblEmployee" runat="server">
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtSearch" runat="server" />
+                        <asp:TextBox ID="txtSearch" runat="server" AutoComplete="off" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Button ID="btnEmployeeSearch" runat="server" Width="150" Text="Employee Search" OnClick="btnEmployeeSearch_Click" />
@@ -105,10 +104,10 @@
                             <asp:Label ID="lblCurrentDisplay" runat="server" Text="" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtNewRate" runat="server" />
+                            <asp:TextBox ID="txtNewRate" runat="server" AutoComplete="off" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtDate" runat="server" Text="" />
+                            <asp:TextBox ID="txtDate" runat="server" Text="" AutoComplete="off" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
@@ -132,20 +131,20 @@
                         <asp:TableCell>
                             <asp:Label ID="lblModel" runat="server" Text="Model" />
                             <div>
-                                <asp:TextBox ID="txtModelOne" runat="server" placeholder="Model"></asp:TextBox>
+                                <asp:TextBox ID="txtModelOne" runat="server" placeholder="Model" AutoComplete="off" />
                             </div>
                             <div>
-                                <asp:TextBox ID="txtModelTwo" runat="server" placeholder="Confirm Model"></asp:TextBox>
+                                <asp:TextBox ID="txtModelTwo" runat="server" placeholder="Confirm Model" AutoComplete="off" />
                             </div>
                             <asp:Button ID="btnAddModel" runat="server" Width="150" Text="Add Model" OnClick="btnAddModel_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label ID="lblBrand" runat="server" Text="Brand" />
                             <div>
-                                <asp:TextBox ID="txtBrandOne" runat="server" placeholder="Brand"></asp:TextBox>
+                                <asp:TextBox ID="txtBrandOne" runat="server" placeholder="Brand" AutoComplete="off" />
                             </div>
                             <div>
-                                <asp:TextBox ID="txtBrandTwo" runat="server" placeholder="Confirm Brand"></asp:TextBox>
+                                <asp:TextBox ID="txtBrandTwo" runat="server" placeholder="Confirm Brand" AutoComplete="off" />
                             </div>
                             <asp:Button ID="btnAddBrand" runat="server" Width="150" Text="Add Brand" OnClick="btnAddBrand_Click" />
                         </asp:TableCell>
@@ -157,8 +156,6 @@
             <h2>Import Files From Excel</h2>
             <hr />
             <div>
-
-
                 <asp:Table runat="server" GridLines="Both" BorderStyle="Solid" BorderWidth="1px" BorderColor="Black">
                     <asp:TableRow>
                         <asp:TableCell>
@@ -179,11 +176,7 @@
                         </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>
-
-
             </div>
-            <%--<asp:Button ID="btnLoadCustomers" runat="server" Width="150" Text="Load Customers" OnClick="btnLoadCustomers_Click" />
-            <asp:Button ID="btnLoadEmployees" runat="server" Width="150" Text="Load Employees" OnClick="btnLoadEmployee_Click" />--%>
             <br />
             <hr />
             <h2>Export Items To Excel</h2>
@@ -205,12 +198,6 @@
                     var img = document.getElementById('imgLoadingItemImport');
                     img.style.visibility = 'visible';
                 }
-
-
-
-
-
-
             </script>
         </asp:Panel>
     </div>

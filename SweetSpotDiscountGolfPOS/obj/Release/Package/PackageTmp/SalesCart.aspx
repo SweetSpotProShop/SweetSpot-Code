@@ -58,7 +58,7 @@
         <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnInventorySearch">
             <asp:Label ID="lblCustomer" runat="server" Text="Customer Name:" />
             <asp:Label ID="lblCustomerDisplay" runat="server" Text="" Visible="false" />
-            <asp:TextBox ID="txtCustomer" runat="server" />
+            <asp:TextBox ID="txtCustomer" runat="server" AutoComplete="off" />
             <asp:Button ID="btnCustomerSelect" runat="server" Text="Change Customer" OnClick="btnCustomerSelect_Click" CausesValidation="false" />
             <div>
                 <br />
@@ -79,10 +79,10 @@
                                 </ItemTemplate>
                                 <FooterTemplate>
                                     <div>
-                                        <asp:TextBox ID="txtFirstName" runat="server" placeholder="First Name" ToolTip="First Name" />
+                                        <asp:TextBox ID="txtFirstName" runat="server" AutoComplete="off" placeholder="First Name" ToolTip="First Name" />
                                     </div>
                                     <div>
-                                        <asp:TextBox ID="txtLastName" runat="server" placeholder="Last Name" ToolTip="Last Name" />
+                                        <asp:TextBox ID="txtLastName" runat="server" AutoComplete="off" placeholder="Last Name" ToolTip="Last Name" />
                                     </div>
                                 </FooterTemplate>
                             </asp:TemplateField>
@@ -92,7 +92,7 @@
                                 </ItemTemplate>
                                 <FooterTemplate>
                                     <div>
-                                        <asp:TextBox ID="txtPhoneNumber" runat="server" placeholder="Phone Number" ToolTip="Phone Number" />
+                                        <asp:TextBox ID="txtPhoneNumber" runat="server" AutoComplete="off" placeholder="Phone Number" ToolTip="Phone Number" />
                                     </div>
                                 </FooterTemplate>
                             </asp:TemplateField>
@@ -102,7 +102,7 @@
                                 </ItemTemplate>
                                 <FooterTemplate>
                                     <div>
-                                        <asp:TextBox ID="txtEmail" runat="server" placeholder="Email" ToolTip="Email" />
+                                        <asp:TextBox ID="txtEmail" runat="server" AutoComplete="off" placeholder="Email" ToolTip="Email" />
                                     </div>
                                     <div>
                                         <asp:CheckBox ID="chkMarketingEnrollment" runat="server" Text="Marketing Enrollment" />
@@ -118,7 +118,7 @@
             <asp:RadioButton ID="rdbInStorePurchase" runat="server" Text="In Store" Checked="True" Enabled="false" GroupName="rgSales" />
             <asp:RadioButton ID="rdbShipping" runat="server" Text="Shipping" GroupName="rgSales" Enabled="false" />
             <asp:Label ID="lblShipping" runat="server" Text="Amount:" />
-            <asp:TextBox ID="txtShippingAmount" runat="server" OnTextChanged="txtShippingAmount_TextChanged" AutoPostBack="true" Text="0" />
+            <asp:TextBox ID="txtShippingAmount" runat="server" AutoComplete="off" OnTextChanged="txtShippingAmount_TextChanged" AutoPostBack="true" Text="0" />
             <asp:Label ID="lblShippingWarning" runat="server" Visible="false" />
             <div>
                 <asp:Button ID="btnJumpToInventory" Text="Jump to Inventory" OnClick="btnJumpToInventory_Click" runat="server" />
@@ -133,7 +133,7 @@
                 <hr />
             </div>
             <div>
-                <asp:TextBox ID="txtSearch" runat="server" />
+                <asp:TextBox ID="txtSearch" runat="server" AutoComplete="off" />
                 <asp:Button ID="btnInventorySearch" runat="server" Width="150" Text="Inventory Search" OnClick="btnInventorySearch_Click" />
                 <asp:Button ID="btnClearSearch" runat="server" Width="150" Text="Clear Search Results" OnClick="btnClearSearch_Click"/>
                 <asp:Button ID="btnRefreshCart" runat="server" Text="Refresh Cart" Width="150" OnClick="btnRefreshCart_Click" Visible="false"/>
@@ -150,7 +150,7 @@
                     <asp:TemplateField HeaderText="In Stock">
                         <ItemTemplate>
                             <div>
-                                <asp:TextBox ID="quantityToAdd" runat="server" placeholder="Enter Quantity To Add" />
+                                <asp:TextBox ID="quantityToAdd" runat="server" AutoComplete="off" placeholder="Enter Quantity To Add" />
                             </div>
                             <div>
                                 <asp:Label ID="QuantityInOrder" Text='<%#Eval("quantity")%>' runat="server" />
@@ -178,7 +178,7 @@
                                 <asp:CheckBox ID="chkDiscountPercent" runat="server" Text="Discount by Percent" />
                             </div>
                             <div>
-                                <asp:TextBox ID="txtAmountDiscount" runat="server" placeholder="Enter Amount" />
+                                <asp:TextBox ID="txtAmountDiscount" runat="server" AutoComplete="off" placeholder="Enter Amount" />
                             </div>
                         </ItemTemplate>
                     </asp:TemplateField>
@@ -194,7 +194,6 @@
                     </asp:TemplateField>
                 </Columns>
             </asp:GridView>
-
             <hr />
             <h3>Cart</h3>
             <hr />
@@ -238,7 +237,7 @@
                         <EditItemTemplate>
                             <asp:CheckBox ID="ckbPercentageEdit" Checked='<%# Convert.ToBoolean(Eval("percentage")) %>' runat="server" Text="Discount by Percent" Enabled="true" />
                             <div id="divAmountEdit" class="txt" runat="server">
-                                <asp:TextBox ID="txtAmnt" runat="server" Text='<%# Eval("itemDiscount") %>' Enabled="true" />
+                                <asp:TextBox ID="txtAmnt" runat="server" Text='<%# Eval("itemDiscount") %>' AutoComplete="off" Enabled="true" />
                             </div>
                         </EditItemTemplate>
                     </asp:TemplateField>

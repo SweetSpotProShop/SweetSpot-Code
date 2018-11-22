@@ -31,7 +31,7 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtInvoiceSearch" runat="server" />
+                        <asp:TextBox ID="txtInvoiceSearch" runat="server" AutoComplete="off" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>

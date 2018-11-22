@@ -16,15 +16,13 @@
                         <asp:Label ID="lblFirstName" runat="server" Text="First Name:" />
                     </asp:TableCell>
                     <asp:TableCell Width="25%">
-                        <asp:TextBox ID="txtFirstName" runat="server" ValidateRequestMode="Enabled" ViewStateMode="Enabled" Enabled="false" />
-                        <%--<asp:Label ID="lblFirstNameDisplay" runat="server" Text="" Visible="true" />--%>
+                        <asp:TextBox ID="txtFirstName" runat="server" AutoComplete="off" ValidateRequestMode="Enabled" ViewStateMode="Enabled" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell Width="25%">
                         <asp:Label ID="lblLastName" runat="server" Text="Last Name:" />
                     </asp:TableCell>
                     <asp:TableCell Width="25%">
-                        <asp:TextBox ID="txtLastName" runat="server" ValidateRequestMode="Enabled" ViewStateMode="Enabled" Enabled="false" />
-                        <%--<asp:Label ID="lblLastNameDisplay" runat="server" Text="" Visible="true" />--%>
+                        <asp:TextBox ID="txtLastName" runat="server" AutoComplete="off" ValidateRequestMode="Enabled" ViewStateMode="Enabled" Enabled="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -32,15 +30,13 @@
                         <asp:Label ID="lblPrimaryPhoneNumber" runat="server" Text="Primary Phone Number:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtPrimaryPhoneNumber" runat="server" ValidateRequestMode="Enabled" Enabled="false" />
-                        <%--<asp:Label ID="lblPrimaryPhoneNumberDisplay" runat="server" Text="" Visible="true" />--%>
+                        <asp:TextBox ID="txtPrimaryPhoneNumber" runat="server" AutoComplete="off" ValidateRequestMode="Enabled" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lbSecondaryPhoneNumber" runat="server" Text="Secondary Phone Number:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtSecondaryPhoneNumber" runat="server" ValidateRequestMode="Enabled" Enabled="false" />
-                        <%--<asp:Label ID="lblSecondaryPhoneNumberDisplay" runat="server" Text="" Visible="true" />--%>
+                        <asp:TextBox ID="txtSecondaryPhoneNumber" runat="server" AutoComplete="off" ValidateRequestMode="Enabled" Enabled="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -60,8 +56,7 @@
                         <asp:Label ID="lblEmail" runat="server" Text="Email:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtEmail" runat="server" Enabled="false" />
-                        <%--<asp:Label ID="lblEmailDisplay" runat="server" Text="" Visible="true" />--%>
+                        <asp:TextBox ID="txtEmail" runat="server" AutoComplete="off" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                     </asp:TableCell>
@@ -79,15 +74,13 @@
                         <asp:Label ID="lblPrimaryAddress" runat="server" Text="Primary Address:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtPrimaryAddress" runat="server" Enabled="false" />
-                        <%--<asp:Label ID="lblPrimaryAddressDisplay" runat="server" Text="" Visible="true" />--%>
+                        <asp:TextBox ID="txtPrimaryAddress" runat="server" AutoComplete="off" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblSecondaryAddress" runat="server" Text="Secondary Address:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtSecondaryAddress" runat="server" Enabled="false" />
-                        <%--<asp:Label ID="lblSecondaryAddressDisplay" runat="server" Text="" Visible="true" />--%>
+                        <asp:TextBox ID="txtSecondaryAddress" runat="server" AutoComplete="off" Enabled="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -103,15 +96,13 @@
                         <asp:Label ID="lblCity" runat="server" Text="City:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtCity" runat="server" Enabled="false" />
-                        <%--<asp:Label ID="lblCityDisplay" runat="server" Text="" Visible="true" />--%>
+                        <asp:TextBox ID="txtCity" runat="server" AutoComplete="off" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblPostalCode" runat="server" Text="PostalCode:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtPostalCode" runat="server" Enabled="false" />
-                        <%--<asp:Label ID="lblPostalCodeDisplay" runat="server" Text="" Visible="true" />--%>
+                        <asp:TextBox ID="txtPostalCode" runat="server" AutoComplete="off" Enabled="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -119,15 +110,13 @@
                         <asp:Label ID="lblProvince" runat="server" Text="Province:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlProvince" AutoPostBack="true" runat="server" Enabled="false" />
-                        <%--<asp:Label ID="lblProvinceDisplay" runat="server" Text="" Visible="true" />--%>
+                        <asp:DropDownList ID="ddlProvince" AutoPostBack="false" runat="server" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblCountry" runat="server" Text="Country:" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:DropDownList ID="ddlCountry" runat="server" AutoPostBack="True" Enabled="false" OnSelectedIndexChanged="ddlCountry_SelectedIndexChanged" />
-                        <%--<asp:Label ID="lblCountryDisplay" runat="server" Text="" Visible="true" />--%>
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -135,25 +124,6 @@
                         <hr />
                     </asp:TableCell>
                 </asp:TableRow>
-                <%--<asp:TableRow>
-                    <asp:TableCell>
-                        <asp:Label ID="lblAccount" runat="server" Text="Account Number:" />
-                    </asp:TableCell>
-                    <asp:TableCell>
-                        <asp:Label ID="lblAccountNumber" runat="server" Text="" />
-                    </asp:TableCell>
-                    <asp:TableCell>
-                        <asp:Label ID="lblBalance" runat="server" Text="Account Balance:" />
-                    </asp:TableCell>
-                    <asp:TableCell>
-                        <asp:Label ID="lblAccountBalance" runat="server" Text="" />
-                    </asp:TableCell>
-                </asp:TableRow>
-                <asp:TableRow>
-                    <asp:TableCell ColumnSpan="4">
-                        <hr />
-                    </asp:TableCell>
-                </asp:TableRow>--%>
                 <asp:TableRow>
                     <asp:TableCell>
                         <asp:Button ID="btnAddCustomer" runat="server" Text="Add Customer" OnClick="btnAddCustomer_Click" Visible="false" CausesValidation="true"/>

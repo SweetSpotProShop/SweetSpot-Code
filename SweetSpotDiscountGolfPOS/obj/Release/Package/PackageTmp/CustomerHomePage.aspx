@@ -14,7 +14,7 @@
             <asp:Table ID="tblCustomerRow" runat="server">
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtSearch" runat="server"></asp:TextBox>
+                        <asp:TextBox ID="txtSearch" runat="server" AutoComplete="off" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Button ID="btnCustomerSearch" runat="server" Width="150" Text="Customer Search" OnClick="btnCustomerSearch_Click" />
@@ -29,43 +29,42 @@
                 <Columns>
                     <asp:TemplateField HeaderText="Sale">
                         <ItemTemplate>
-                            <asp:LinkButton ID="lbtnStartSale" CommandName="StartSale" CommandArgument='<%#Eval("CustomerId") %>' Text="Start Sale" runat="server">Start Sale</asp:LinkButton>
+                            <asp:LinkButton ID="lbtnStartSale" CommandName="StartSale" CommandArgument='<%#Eval("CustomerId") %>' Text="Start Sale" runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="View Profile">
                         <ItemTemplate>
-                            <asp:LinkButton ID="lbtnViewCustomer" CommandName="ViewProfile" CommandArgument='<%#Eval("CustomerId") %>' Text="View Profile" runat="server">View Profile</asp:LinkButton>
+                            <asp:LinkButton ID="lbtnViewCustomer" CommandName="ViewProfile" CommandArgument='<%#Eval("CustomerId") %>' Text="View Profile" runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
-
                     <asp:TemplateField HeaderText="Customer Number">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("CustomerId") %>' ID="key"></asp:Label>
+                            <asp:Label runat="server" Text='<%#Eval("CustomerId") %>' ID="key" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Customer Name">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("firstName") + " " + Eval("lastName") %>'></asp:Label>
+                            <asp:Label runat="server" Text='<%#Eval("firstName") + " " + Eval("lastName") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Customer Address">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("primaryAddress") %>'></asp:Label>
+                            <asp:Label runat="server" Text='<%#Eval("primaryAddress") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Phone Number">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("primaryPhoneNumber") %>'></asp:Label>
+                            <asp:Label runat="server" Text='<%#Eval("primaryPhoneNumber") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Email Address">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("email") %>'></asp:Label>
+                            <asp:Label runat="server" Text='<%#Eval("email") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="City">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("city") %>'></asp:Label>
+                            <asp:Label runat="server" Text='<%#Eval("city") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>

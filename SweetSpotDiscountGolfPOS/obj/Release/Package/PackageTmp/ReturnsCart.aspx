@@ -85,7 +85,7 @@
                                 <asp:Label ID="quantitySold" runat="server" Text='<%#Eval("quantity") %>' />
                             </div>
                             <div>
-                                <asp:TextBox ID="quantityToReturn" runat="server" placeholder="Enter Quantity To Return" />
+                                <asp:TextBox ID="quantityToReturn" runat="server" AutoComplete="off" placeholder="Enter Quantity To Return" />
                             </div>
                         </ItemTemplate>
                     </asp:TemplateField>
@@ -110,7 +110,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Amount to Refund">
                         <ItemTemplate>
-                            <asp:TextBox ID="txtReturnAmount" Text='<%# Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("price")))-(Convert.ToDouble(Eval("itemDiscount")))).ToString("#0.00") : ((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("price"))))).ToString("#0.00") %>' runat="server" />
+                            <asp:TextBox ID="txtReturnAmount" AutoComplete="off" Text='<%# Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("price")))-(Convert.ToDouble(Eval("itemDiscount")))).ToString("#0.00") : ((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("price"))))).ToString("#0.00") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>

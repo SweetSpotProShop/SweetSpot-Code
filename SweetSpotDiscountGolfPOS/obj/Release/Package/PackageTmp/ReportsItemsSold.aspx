@@ -34,7 +34,7 @@
     <h2>Items Sold</h2>
     <hr />
     <div>
-        <asp:Label ID="lblDates" runat="server" Font-Bold="true" Text="lblDates"></asp:Label>
+        <asp:Label ID="lblDates" runat="server" Font-Bold="true" Text="lblDates" />
     </div>
     <hr />
     <div>
@@ -42,40 +42,40 @@
             <Columns>
                 <asp:TemplateField HeaderText="Invoice Number">
                     <ItemTemplate>
-                        <asp:LinkButton ID="lbtnInvoiceNumber" runat="server" Text='<%#Eval("invoice")%>' OnClick="lbtnInvoiceNumber_Click"></asp:LinkButton>
+                        <asp:LinkButton ID="lbtnInvoiceNumber" runat="server" Text='<%#Eval("invoice")%>' OnClick="lbtnInvoiceNumber_Click" />
                     </ItemTemplate>
                     <FooterTemplate>
-                        <asp:Label ID="lblTotal" runat="server" Text="Totals:"></asp:Label>
+                        <asp:Label ID="lblTotal" runat="server" Text="Totals:" />
                     </FooterTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="SKU">
                     <ItemTemplate>
-                        <asp:Label ID="lblSku" runat="server" Text='<%#Eval("sku")%>'></asp:Label>
+                        <asp:Label ID="lblSku" runat="server" Text='<%#Eval("sku")%>' />
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Item Cost">
                     <ItemTemplate>
-                        <asp:Label ID="lblItemCost" runat="server" Text='<%#Eval("cost","{0:C}") %>'></asp:Label>
+                        <asp:Label ID="lblItemCost" runat="server" Text='<%#Eval("cost","{0:C}") %>' />
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Item Price">
                     <ItemTemplate>
-                        <asp:Label ID="lblItemPrice" runat="server" Text='<%#Eval("price","{0:C}") %>'></asp:Label>
+                        <asp:Label ID="lblItemPrice" runat="server" Text='<%#Eval("price","{0:C}") %>' />
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Item Discount">
                     <ItemTemplate>
-                        <asp:Label ID="lblTotalDiscount" runat="server" Text='<%#Eval("itemDiscount") %>'></asp:Label>
+                        <asp:Label ID="lblTotalDiscount" runat="server" Text='<%#Eval("itemDiscount") %>' />
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Discount as Percent" Visible="false">
                     <ItemTemplate>
-                        <asp:Label ID="lblPercentage" runat="server" Text='<%#Eval("percentage") %>'></asp:Label>
+                        <asp:Label ID="lblPercentage" runat="server" Text='<%#Eval("percentage") %>' />
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Item Profit">
                     <ItemTemplate>
-                        <asp:Label ID="lblTotalProfit" runat="server" Text='<%#Eval("profit","{0:C}") %>'></asp:Label>
+                        <asp:Label ID="lblTotalProfit" runat="server" Text='<%#Eval("profit","{0:C}") %>' />
                     </ItemTemplate>
                 </asp:TemplateField>
             </Columns>
