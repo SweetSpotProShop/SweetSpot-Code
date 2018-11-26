@@ -116,7 +116,8 @@
                         <asp:Label ID="lblCountry" runat="server" Text="Country:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlCountry" runat="server" AutoPostBack="True" Enabled="false" OnSelectedIndexChanged="ddlCountry_SelectedIndexChanged" />
+                        <asp:DropDownList ID="ddlCountry" runat="server" AutoPostBack="true" Enabled="false" 
+                            OnSelectedIndexChanged="ddlCountry_SelectedIndexChanged" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
