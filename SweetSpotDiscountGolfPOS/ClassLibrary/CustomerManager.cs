@@ -70,8 +70,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@custID", cust },
             };
 
-            List<Customer> customer = ConvertFromDataTableToCustomer(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
-            return customer;
+            return ConvertFromDataTableToCustomer(dbc.returnDataTableData(sqlCmd, parms));
+            //return ConvertFromDataTableToCustomer(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
         //Returns list of custoemrs based on an customer ID
         public List<Customer> ReturnCustomerWithInvoiceList(int cust, object[] objPageDetails)
@@ -86,8 +86,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@custID", cust },
             };
 
-            List<Customer> customer = ConvertFromDataTableToCustomerWithInvoices(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
-            return customer;
+            return ConvertFromDataTableToCustomerWithInvoices(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
+            //return ConvertFromDataTableToCustomerWithInvoices(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         //Returns list of custoemrs based on an search text
         public List<Customer> ReturnCustomerBasedOnText(string searchText, object[] objPageDetails)
@@ -127,8 +127,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 }
             }
             sqlCmd += " ORDER BY firstName ASC";
-            List<Customer> customer = ConvertFromDataTableToCustomer(dbc.returnDataTableDataFromArrayLists(sqlCmd, parms, strText, objPageDetails, strQueryName));
-            return customer;
+
+            return ConvertFromDataTableToCustomer(dbc.returnDataTableDataFromArrayLists(sqlCmd, parms, strText));
+            //return ConvertFromDataTableToCustomer(dbc.returnDataTableDataFromArrayLists(sqlCmd, parms, strText, objPageDetails, strQueryName));
         }
         //Add Customer Nathan and Tyler created. Returns customer ID
         public int addCustomer(Customer c, object[] objPageDetails)
@@ -159,9 +160,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@Email", c.email }
             };
 
-            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
-            List<Customer> customer = ReturnCustomerIDFromCustomerStats(parms, objPageDetails);
-            return customer[0].customerId;
+            dbc.executeInsertQuery(sqlCmd, parms);
+            //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            return ReturnCustomerIDFromCustomerStats(parms, objPageDetails)[0].customerId;
         }
         public void updateCustomer(Customer c, object[] objPageDetails)
         {
@@ -188,7 +189,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "Country", c.country },
                 new object[] { "PostalCode", c.postalCode }
             };
-            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            dbc.executeInsertQuery(sqlCmd, parms);
+            //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public List<Customer> ReturnCustomerIDFromCustomerStats(object[][] parms, object[] objPageDetails)
         {
@@ -200,7 +202,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 + "@primaryPhoneNumber and secondaryPhoneINT = @secondaryPhoneNumber and "
                 + "marketingEmail = @marketingEmail and email = @Email and city = @City and provStateID = @Province "
                 + "and country = @Country and postZip = @PostalCode";
-            return ConvertFromDataTableToCustomer(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
+
+            return ConvertFromDataTableToCustomer(dbc.returnDataTableData(sqlCmd, parms));
+            //return ConvertFromDataTableToCustomer(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
     }
 }

@@ -13,11 +13,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
     public class ErrorReporting
     {
         DatabaseCalls DBC = new DatabaseCalls();
-        //private String connectionString;
-        public ErrorReporting()
-        {
-            //connectionString = ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString;
-        }
+        public ErrorReporting() {}
+
         //This methods intended use was to send an automatic email when an error occurred.
         //May revisit at a later point
         //public void sendError(string errorMessage)
@@ -37,26 +34,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         //    mail.Body = errorMessage;
         //    SmtpServer.Send(mail);
         //}
+
+
         //This method is used to log errors in the database
         public void logError(Exception er, int employeeID, string page, string method, System.Web.UI.Page webPage)
         {
             string date = DateTime.Now.ToString("yyyy-MM-dd");
             string time = DateTime.Now.ToString("HH:mm:ss");
-            //SqlConnection conn = new SqlConnection(connectionString);
-            //SqlCommand cmd = new SqlCommand();
-            //cmd.Connection = conn;
-            //cmd.CommandText = "Insert into tbl_error values(@employeeID, @date, @time, "
-            //    + "@errorPage, @errorMethod, @errorCode, @errorText)";
-            //cmd.Parameters.AddWithValue("employeeID", employeeID);
-            //cmd.Parameters.AddWithValue("date", date);
-            //cmd.Parameters.AddWithValue("time", time);
-            //cmd.Parameters.AddWithValue("errorPage", er.Source + " - " + page);
-            //cmd.Parameters.AddWithValue("errorMethod", method);
-            //cmd.Parameters.AddWithValue("errorCode", er.HResult);
-            //cmd.Parameters.AddWithValue("errorText", er.Message);
-            //conn.Open();
-            //SqlDataReader reader = cmd.ExecuteReader();
-            //conn.Close();
             string sqlCmd = "INSERT INTO tbl_error VALUES(@employeeID, @date, @time, "
                 + "@errorPage, @errorMethod, @errorCode, @errorText)";
             object[][] parms =
@@ -71,21 +55,5 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             };
             DBC.executeErrorInsertQuery(sqlCmd, parms);
         }
-        //public void logErrorAdditionalInfo(Exception er, object[] passedErrorItems )
-        //{
-        //    string sqlCmd = "INSERT INTO tbl_error VALUES(@employeeID, @date, @time, "
-        //        + "@errorPage, @errorMethod, @errorCode, @errorText)";
-        //    object[][] parms =
-        //    {
-        //        new object[] { "@employeeID", Convert.ToInt32(passedErrorItems[0]) },
-        //        new object[] { "@date", DateTime.Now.ToString("yyyy-MM-dd") },
-        //        new object[] { "@time", DateTime.Now.ToString("HH:mm:ss") },
-        //        new object[] { "@errorPage", er.Source + " - " + passedErrorItems[1].ToString() },
-        //        new object[] { "@errorMethod", passedErrorItems[2].ToString() },
-        //        new object[] { "@errorCode", er.HResult },
-        //        new object[] { "@errorText", er.Message + ": " + passedErrorItems[3].ToString() }
-        //    };
-        //    DBC.executeInsertQuery(sqlCmd, parms);
-        //}
     }
 }

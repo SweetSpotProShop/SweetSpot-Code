@@ -45,7 +45,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
         private void ExecuteNonReturnQuery(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
         {
-            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            dbc.executeInsertQuery(sqlCmd, parms);
+            //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //Returns list of InvoiceItems based on an Invoice Number
@@ -71,7 +72,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[1]) }
             };
 
-            List<InvoiceItems> invoiceItems = ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
+            List<InvoiceItems> invoiceItems = ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms));
+            //List<InvoiceItems> invoiceItems = ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
 
             foreach (InvoiceItems ii in invoiceItems)
             {
@@ -86,7 +88,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                     {
                         new object[] { "@sku", ii.sku }
                     };
-                    ii.description = dbc.MakeDataBaseCallToReturnString(sqlCmd, parms2, objPageDetails, strQueryName);
+                    ii.description = dbc.MakeDataBaseCallToReturnString(sqlCmd, parms2);
+                    //ii.description = dbc.MakeDataBaseCallToReturnString(sqlCmd, parms2, objPageDetails, strQueryName);
                 }
             }
 
@@ -102,7 +105,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                     {
                         new object[] { "@sku", ii.sku }
                     };
-                    ii.description = dbc.MakeDataBaseCallToReturnString(sqlCmd, parms3, objPageDetails, strQueryName);
+                    ii.description = dbc.MakeDataBaseCallToReturnString(sqlCmd, parms3);
+                    //ii.description = dbc.MakeDataBaseCallToReturnString(sqlCmd, parms3, objPageDetails, strQueryName);
                 }
             }
 
@@ -119,7 +123,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                     {
                         new object[] { "@sku", ii.sku }
                     };
-                    ii.description = dbc.MakeDataBaseCallToReturnString(sqlCmd, parms4, objPageDetails, strQueryName);
+                    ii.description = dbc.MakeDataBaseCallToReturnString(sqlCmd, parms4);
+                    //ii.description = dbc.MakeDataBaseCallToReturnString(sqlCmd, parms4, objPageDetails, strQueryName);
                 }
             }
             return invoiceItems;
@@ -140,7 +145,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@invoiceSubNum", sub }
             };
             
-            return ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
+            return ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms));
+            //return ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
         public List<InvoiceItems> ReturnInvoiceItemsReceipt(string receipt, object[] objPageDetails)
         {
@@ -153,7 +159,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@receiptNum", Convert.ToInt32(receipt) }
             };
 
-            return ConvertFromDataTableToReceiptItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
+            return ConvertFromDataTableToReceiptItems(dbc.returnDataTableData(sqlCmd, parms));
+            //return ConvertFromDataTableToReceiptItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
         public string ReturnStringSearchForAccessories(ArrayList array)
         {
@@ -268,7 +275,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@typeID", typeID }
             };
 
-            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
+            //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public DataTable ReturnItemsInTheCart(string invoice, object[] objPageDetails)
         {
@@ -283,7 +291,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@invoiceSubNum", invoice.Split('-')[2] }
             };
 
-            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
+            return dbc.returnDataTableData(sqlCmd, parms);
+            //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public DataTable ReturnItemsInTheReturnCart(string invoice, object[] objPageDetails)
         {
@@ -298,7 +307,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@invoiceSubNum", invoice.Split('-')[2] }
             };
 
-            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
+            return dbc.returnDataTableData(sqlCmd, parms);
+            //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public void ReturnQTYToInventory(int sku, string invoice, object[] objPageDetails)
         {
@@ -410,7 +420,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@sku", sku }
             };   
             //Returns the quantity of the searched item
-            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
+            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms);
+            //return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
         }
         private List<InvoiceItems> ReturnItemDetailsFromCurrentSaleTable(int sku, string invoice, object[] objPageDetails)
         {
@@ -426,7 +437,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@sku", sku }
             };
 
-            return ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
+            return ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms));
+            //return ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
         private void AddInventoryBackIntoStock(InvoiceItems ii, object[] objPageDetails)
         {
@@ -479,7 +491,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@invoiceNum", invoice.Split('-')[1] }
             };
 
-            return ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
+            return ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms));
+            //return ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
         public InvoiceItems ReturnInvoiceItemForReturnProcess(int sku, string invoice, object[] objPageDetails)
         {
@@ -495,7 +508,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@sku", sku }
             };
 
-            InvoiceItems II = ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName))[0];
+            InvoiceItems II = ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms))[0];
+            //InvoiceItems II = ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName))[0];
             II.quantity = ReturnQTYofItem(II.sku, "tbl_" + ReturnTableNameFromTypeID(II.typeID, objPageDetails), "quantity", objPageDetails);
             return II;
         }
@@ -527,8 +541,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@sku", ii.sku }
             };
 
-            DataTable dt = dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
-            if(dt.Rows.Count > 0)
+            DataTable dt = dbc.returnDataTableData(sqlCmd, parms);
+            //DataTable dt = dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
+            if (dt.Rows.Count > 0)
             {
                 itemInCart = true;
             }

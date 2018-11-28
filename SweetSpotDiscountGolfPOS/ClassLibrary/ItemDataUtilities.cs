@@ -100,17 +100,20 @@ namespace SweetSpotProShop
                  new object[] { "@sku", sku }
             };
 
-            List<Clubs> c = ConvertFromDataTableToClubs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
+            List<Clubs> c = ConvertFromDataTableToClubs(dbc.returnDataTableData(sqlCmd, parms));
+            //List<Clubs> c = ConvertFromDataTableToClubs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
 
             sqlCmd = "SELECT sku, size, colour, gender, style, price, cost, brandID, quantity, "
                 + "typeID, locationID, comments FROM tbl_clothing WHERE sku = @sku";
 
-            List<Clothing> cl = ConvertFromDataTableToClothing(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
+            List<Clothing> cl = ConvertFromDataTableToClothing(dbc.returnDataTableData(sqlCmd, parms));
+            //List<Clothing> cl = ConvertFromDataTableToClothing(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
 
             sqlCmd = "SELECT sku, size, colour, price, cost, brandID, modelID, accessoryType, "
                 + "quantity, typeID, locationID, comments FROM tbl_accessories WHERE sku = @sku";
 
-            List<Accessories> a = ConvertFromDataTableToAccessories(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
+            List<Accessories> a = ConvertFromDataTableToAccessories(dbc.returnDataTableData(sqlCmd, parms));
+            //List<Accessories> a = ConvertFromDataTableToAccessories(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
 
             List<object> o = new List<object>();
             o.AddRange(a);
@@ -129,7 +132,8 @@ namespace SweetSpotProShop
                  new object[] { "@modelID", modelID }
             };
             //Returns the model name
-            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
+            //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
         }
         //Return Brand string created by Nathan and Tyler **getBrandName
         public string ReturnBrandNameFromBrandID(int brandID, object[] objPageDetails)
@@ -141,7 +145,8 @@ namespace SweetSpotProShop
                  new object[] { "@brandID", brandID }
             };
             //Returns the brand name
-            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
+            //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
         }
         //Returns max sku from the skuNumber table based on itemType and directs code to store it
         public int ReturnMaxSku(int itemType, object[] objPageDetails)
@@ -153,7 +158,8 @@ namespace SweetSpotProShop
                  new object[] { "@itemType", itemType }
             };
 
-            int maxSku = dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) + 1;
+            int maxSku = dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) + 1;
+            //int maxSku = dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) + 1;
             StoreMaxSku(maxSku, itemType, objPageDetails);
             //Returns the new max sku
             return maxSku;
@@ -169,7 +175,8 @@ namespace SweetSpotProShop
                  new object[] { "@sku", sku },
                  new object[] { "@itemType", itemType }
             };
-            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            dbc.executeInsertQuery(sqlCmd, parms);
+            //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //**Add Item**
@@ -229,7 +236,8 @@ namespace SweetSpotProShop
                  new object[] { "@isTradeIn", c.isTradeIn },
                  new object[] { "@comments", c.comments }
             };
-            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            dbc.executeInsertQuery(sqlCmd, parms);
+            //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         private void AddAccessoryToDatabase(Accessories a, object[] objPageDetails)
         {
@@ -252,7 +260,8 @@ namespace SweetSpotProShop
                  new object[] { "@locationID", a.locID },
                  new object[] { "@comments", a.comments }
             };
-            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            dbc.executeInsertQuery(sqlCmd, parms);
+            //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         private void AddClothingToDatabase(Clothing cl, object[] objPageDetails)
         {
@@ -275,7 +284,8 @@ namespace SweetSpotProShop
                  new object[] { "@locationID", cl.locID },
                  new object[] { "@comments", cl.comments }
             };
-            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            dbc.executeInsertQuery(sqlCmd, parms);
+            //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //**Update Item**
@@ -333,7 +343,8 @@ namespace SweetSpotProShop
                  new object[] { "@isTradeIn", c.isTradeIn },
                  new object[] { "@comments", c.comments }
             };
-            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            dbc.executeInsertQuery(sqlCmd, parms);
+            //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         private void UpdateAccessoryInDatabase(Accessories a, object[] objPageDetails)
         {
@@ -355,7 +366,8 @@ namespace SweetSpotProShop
                  new object[] { "@locationID", a.locID },
                  new object[] { "@comments", a.comments }
             };
-            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            dbc.executeInsertQuery(sqlCmd, parms);
+            //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         private void UpdateClothingInDatabase(Clothing cl, object[] objPageDetails)
         {
@@ -377,7 +389,8 @@ namespace SweetSpotProShop
                  new object[] { "@locationID", cl.locID },
                  new object[] { "@comments", cl.comments }
             };
-            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            dbc.executeInsertQuery(sqlCmd, parms);
+            //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //**OLD CODE**

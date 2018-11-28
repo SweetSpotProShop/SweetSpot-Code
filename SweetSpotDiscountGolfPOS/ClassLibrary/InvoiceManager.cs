@@ -15,11 +15,13 @@ namespace SweetSpotDiscountGolfPOS
 
         private void ExecuteNonReturnCall(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
         {
-            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            dbc.executeInsertQuery(sqlCmd, parms);
+            //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         private int ReturnInt(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
         {
-            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
+            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms);
+            //return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
         }
         private List<Invoice> ConvertFromDataTableToInvoice(DataTable dt, object[] objPageDetails)
         {
@@ -210,8 +212,8 @@ namespace SweetSpotDiscountGolfPOS
                  new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[1]) }
             };
 
-            List<Invoice> i = ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
-            return i;
+            return ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
+            //return ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         public List<Invoice> ReturnPurchaseInvoice(string receipt, object[] objPageDetails)
         {
@@ -225,8 +227,8 @@ namespace SweetSpotDiscountGolfPOS
                  new object[] { "@receiptNumber", Convert.ToInt32(receipt.Split('-')[0]) }
             };
 
-            List<Invoice> i = ConvertFromDataTableToReceipt(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
-            return i;
+            return ConvertFromDataTableToReceipt(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
+            //return ConvertFromDataTableToReceipt(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         public Invoice ReturnInvoiceForReturns(string invoice, object[] objPageDetails)
         {
@@ -251,8 +253,8 @@ namespace SweetSpotDiscountGolfPOS
                  new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[2]) }
             };
 
-            List<Invoice> i = ConvertFromDataTableToCurrentInvoice(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
-            return i;
+            return ConvertFromDataTableToCurrentInvoice(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
+            //return ConvertFromDataTableToCurrentInvoice(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         public List<Invoice> ReturnCurrentPurchaseInvoice(string invoice, object[] objPageDetails)
         {
@@ -270,8 +272,8 @@ namespace SweetSpotDiscountGolfPOS
                  new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[2]) }
             };
 
-            List<Invoice> i = ConvertFromDataTableToPurchaseInvoice(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
-            return i;
+            return ConvertFromDataTableToPurchaseInvoice(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
+            //return ConvertFromDataTableToPurchaseInvoice(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         public List<Invoice> ReturnCurrentOpenInvoices(int locID, object[] objPageDetails)
         {
@@ -288,8 +290,9 @@ namespace SweetSpotDiscountGolfPOS
             {
                 new object[] { "@locID", locID }
             };
-            List<Invoice> i = ConvertFromDataTableToCurrentInvoice(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
-            return i;
+
+            return ConvertFromDataTableToCurrentInvoice(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
+            //return ConvertFromDataTableToCurrentInvoice(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         //Returns list of invoices based on an invoice string
         public List<Invoice> ReturnInvoiceByCustomers(int custNum, object[] objPageDetails)
@@ -306,8 +309,8 @@ namespace SweetSpotDiscountGolfPOS
                  new object[] { "@custID", custNum }
             };
 
-            List<Invoice> i = ConvertFromDataTableInvoiceListByCustomer(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
-            return i;
+            return ConvertFromDataTableInvoiceListByCustomer(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
+            //return ConvertFromDataTableInvoiceListByCustomer(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         //Returns list of invoices based on search criteria and date range
         public List<Invoice> ReturnInvoicesBasedOnSearchCriteria(DateTime stDate, DateTime endDate, string searchTxt, int locationID, object[] objPageDetails)
@@ -344,7 +347,8 @@ namespace SweetSpotDiscountGolfPOS
             {
                 new object[] { "locationID", locationID }
             };
-            return ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
+            return ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
+            //return ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         public List<Invoice> ReturnInvoicesBasedOnSearchForReturns(string txtSearch, DateTime selectedDate, object[] objPageDetails)
         {
@@ -364,7 +368,8 @@ namespace SweetSpotDiscountGolfPOS
             {
                  new object[] { "@selectedDate", selectedDate }
             };
-            return ConvertFromDataTableToInvoiceForReturns(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
+            return ConvertFromDataTableToInvoiceForReturns(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
+            //return ConvertFromDataTableToInvoiceForReturns(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
 
         public int CalculateNextInvoiceSubNum(int invoiceNum, object[] objPageDetails)
@@ -662,7 +667,8 @@ namespace SweetSpotDiscountGolfPOS
             {
                 new object[] { "@tranType", tranType }
             };
-            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
+            //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public bool VerifyMOPHasBeenAdded(string invoice, object[] objPageDetails)
         {
@@ -715,8 +721,8 @@ namespace SweetSpotDiscountGolfPOS
                  new object[] { "@receiptNum", Convert.ToInt32(invoice.Split('-')[1]) }
             };
 
-            List<Invoice> i = ConvertFromDataTableToReceipt(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
-            return i;
+            return ConvertFromDataTableToReceipt(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
+            //return ConvertFromDataTableToReceipt(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         public int ReturnNextReceiptNumber(object[] objPageDetails)
         {
