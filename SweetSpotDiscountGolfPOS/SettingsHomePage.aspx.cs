@@ -743,7 +743,8 @@ namespace SweetSpotDiscountGolfPOS
                         {
                             new object[] {"@modelName", txtModelOne.Text}
                         };
-                        dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+                        dbc.executeInsertQuery(sqlCmd, parms);
+                        //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
                     }
                     else
                     {
@@ -793,7 +794,8 @@ namespace SweetSpotDiscountGolfPOS
                         {
                             new object[] {"@brandName", txtBrandOne.Text}
                         };
-                        dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+                        dbc.executeInsertQuery(sqlCmd, parms);
+                        //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
                     }
                     else
                     {

@@ -34,7 +34,7 @@
         <h2>Trade Ins Report By Date</h2>
         <hr />
         <div>
-            <asp:Label ID="lblDates" runat="server" Font-Bold="true" Text="lblDates" />
+            <asp:Label ID="lblDates" runat="server" Font-Bold="true" />
         </div>
         <hr />
         <div>
@@ -70,4 +70,3 @@
         </asp:TableRow>
     </asp:Table>
 </asp:Content>
-

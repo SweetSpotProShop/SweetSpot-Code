@@ -1,9 +1,5 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="TradeINEntry.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.TradeINEntry" %>
-
-
-
 <!DOCTYPE html>
-
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title></title>
@@ -19,13 +15,13 @@
                             <asp:Label ID="lblSKU" runat="server" Text="SKU:" />
                         </asp:TableCell>
                         <asp:TableCell Width="25%">
-                            <asp:Label ID="lblSKUDisplay" runat="server" Text="" />
+                            <asp:Label ID="lblSKUDisplay" runat="server" />
                         </asp:TableCell>
                         <asp:TableCell Width="25%">
                             <asp:Label ID="lblCost" runat="server" Text="Cost:" />
                         </asp:TableCell>
                         <asp:TableCell Width="25%">
-                            <asp:TextBox ID="txtCost" runat="server" Visible="true" AutoComplete="off" Text="0" />
+                            <asp:TextBox ID="txtCost" runat="server" AutoComplete="off" Visible="true" Text="0.00" />
                             <asp:RequiredFieldValidator ID="rfvCost"
                                 runat="server" ControlToValidate="txtCost"
                                 ErrorMessage="Cost Required"
@@ -54,7 +50,7 @@
                             <asp:Label ID="lblPrice" runat="server" Text="Price:" />                            
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtPrice" runat="server" Visible="true" AutoComplete="off" Text="0" />
+                            <asp:TextBox ID="txtPrice" runat="server" AutoComplete="off" Visible="true" Text="0.00" />
                             <asp:RegularExpressionValidator ID="revPrice"
                                 ControlToValidate="txtPrice"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -69,7 +65,7 @@
                             <asp:Label ID="lblQuantity" runat="server" Text="Quantity:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtQuantity" runat="server" Visible="True" AutoComplete="off" Text="1" />
+                            <asp:TextBox ID="txtQuantity" runat="server" AutoComplete="off" Visible="True" Text="1" />
                             <asp:RequiredFieldValidator ID="rfvQuantity"
                                 runat="server" ControlToValidate="txtQuantity"
                                 ErrorMessage="Quantity Required"
@@ -115,13 +111,13 @@
                             <asp:Label ID="lblShaft" runat="server" Text="Shaft:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtShaft" runat="server" Visible="True" AutoComplete="off" />
+                            <asp:TextBox ID="txtShaft" runat="server" AutoComplete="off" Visible="True" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label ID="lblNumberofClubs" runat="server" Text="Number of Clubs:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtNumberofClubs" runat="server" Visible="True" AutoComplete="off" />
+                            <asp:TextBox ID="txtNumberofClubs" runat="server" AutoComplete="off" Visible="True" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
@@ -129,13 +125,13 @@
                             <asp:Label ID="lblClubSpec" runat="server" Text="Club Spec:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtClubSpec" runat="server" Visible="True" AutoComplete="off" />
+                            <asp:TextBox ID="txtClubSpec" runat="server" AutoComplete="off" Visible="True" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label ID="lblShaftSpec" runat="server" Text="Shaft Spec:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtShaftSpec" runat="server" Visible="True" AutoComplete="off" />
+                            <asp:TextBox ID="txtShaftSpec" runat="server" AutoComplete="off" Visible="True" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
@@ -143,13 +139,13 @@
                             <asp:Label ID="lblShaftFlex" runat="server" Text="ShaftFlex:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtShaftFlex" runat="server" Visible="True" AutoComplete="off" />
+                            <asp:TextBox ID="txtShaftFlex" runat="server"AutoComplete="off"  Visible="True" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label ID="lblDexterity" runat="server" Text="Dexterity:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtDexterity" runat="server" Visible="True" AutoComplete="off" />
+                            <asp:TextBox ID="txtDexterity" runat="server" AutoComplete="off" Visible="True" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
@@ -167,7 +163,7 @@
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell ColumnSpan="4">
-                            <asp:TextBox Height="30px" Width="100%" ID="txtComments" runat="server" Visible="true" AutoComplete="off" />
+                            <asp:TextBox ID="txtComments" runat="server"  AutoComplete="off"Visible="true" Height="30px" Width="100%" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>

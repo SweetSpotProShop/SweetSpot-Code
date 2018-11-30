@@ -20,13 +20,13 @@
                         <asp:Label ID="lblSKU" runat="server" Text="SKU:" />
                     </asp:TableCell>
                     <asp:TableCell Width="25%">
-                        <asp:Label ID="lblSKUDisplay" runat="server" Text="" />
+                        <asp:Label ID="lblSKUDisplay" runat="server" />
                     </asp:TableCell>
                     <asp:TableCell Width="25%">
                         <asp:Label ID="lblCost" runat="server" Text="Cost:  $" />
                     </asp:TableCell>
                     <asp:TableCell Width="25%">
-                        <asp:TextBox ID="txtCost" runat="server" Enabled="false" AutoComplete="off" Text="0" />
+                        <asp:TextBox ID="txtCost" runat="server" AutoComplete="off" Enabled="false" Text="0.00" />
                         <asp:RegularExpressionValidator ID="revCost"
                                 ControlToValidate="txtCost"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -47,7 +47,7 @@
                         <asp:Label ID="lblPrice" runat="server" Text="Price:  $" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtPrice" runat="server" Enabled="false" AutoComplete="off" Text="0" />
+                        <asp:TextBox ID="txtPrice" runat="server" AutoComplete="off" Enabled="false" Text="0.00" />
                         <asp:RegularExpressionValidator ID="revPrice"
                                 ControlToValidate="txtPrice"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"

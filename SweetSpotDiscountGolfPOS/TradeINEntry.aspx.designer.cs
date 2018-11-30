@@ -310,15 +310,6 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblShaftFlex;
         
         /// <summary>
-        /// txtShaftFlex control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtShaftFlex;
-        
-        /// <summary>
         /// lblDexterity control.
         /// </summary>
         /// <remarks>
@@ -353,15 +344,6 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkUsed;
-        
-        /// <summary>
-        /// txtComments control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtComments;
         
         /// <summary>
         /// btnAddItem control.

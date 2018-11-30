@@ -34,7 +34,7 @@
         <h2>Sales Report By Date</h2>
         <hr />
         <div>
-            <asp:Label ID="lblDates" runat="server" Font-Bold="true" Text="lblDates"></asp:Label>
+            <asp:Label ID="lblDates" runat="server" Font-Bold="true" />
         </div>
         <hr />
         <div>

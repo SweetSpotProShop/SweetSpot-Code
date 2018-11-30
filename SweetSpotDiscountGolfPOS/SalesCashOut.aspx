@@ -30,7 +30,7 @@
             <%--Payment Breakdown--%>
 
             <div class="CashoutTable">
-                <asp:Label ID="lblCashoutDate" Font-Bold="true" runat="server"></asp:Label>
+                <asp:Label ID="lblCashoutDate" Font-Bold="true" runat="server" />
                 <hr />
                 <h3>Balancing</h3>
                 <br />
@@ -131,7 +131,7 @@
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtTradeIn" Text="0.00" runat="server" AutoComplete="off" Width="80" />
+                            <asp:TextBox ID="txtTradeIn" runat="server" AutoComplete="off" Text="0.00" Width="80" />
                             <asp:RegularExpressionValidator ID="revTradeIn"
                                 ControlToValidate="txtTradeIn"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -141,7 +141,7 @@
                                 runat="server" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtGiftCard" Text="0.00" runat="server" AutoComplete="off" Width="80" />
+                            <asp:TextBox ID="txtGiftCard" runat="server" AutoComplete="off" Text="0.00" Width="80" />
                             <asp:RegularExpressionValidator ID="revGiftCard"
                                 ControlToValidate="txtGiftCard"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -151,7 +151,7 @@
                                 runat="server" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtCash" Text="0.00" runat="server" AutoComplete="off" Width="80" />
+                            <asp:TextBox ID="txtCash" runat="server" AutoComplete="off" Text="0.00" Width="80" />
                             <asp:RegularExpressionValidator ID="revCash"
                                 ControlToValidate="txtCash"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -161,7 +161,7 @@
                                 runat="server" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtDebit" Text="0.00" runat="server" AutoComplete="off" Width="80" />
+                            <asp:TextBox ID="txtDebit" runat="server" AutoComplete="off" Text="0.00" Width="80" />
                             <asp:RegularExpressionValidator ID="revDebit"
                                 ControlToValidate="txtDebit"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -171,7 +171,7 @@
                                 runat="server" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtMasterCard" Text="0.00" runat="server" AutoComplete="off" Width="80" />
+                            <asp:TextBox ID="txtMasterCard" runat="server" AutoComplete="off" Text="0.00" Width="80" />
                             <asp:RegularExpressionValidator ID="revMasterCard"
                                 ControlToValidate="txtMasterCard"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -181,7 +181,7 @@
                                 runat="server" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtVisa" Text="0.00" runat="server" AutoComplete="off" Width="80" />
+                            <asp:TextBox ID="txtVisa" runat="server" AutoComplete="off" Text="0.00" Width="80" />
                             <asp:RegularExpressionValidator ID="revVisa"
                                 ControlToValidate="txtVisa"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -209,23 +209,25 @@
             <div class="yesPrint" id="summary">
                 <asp:Table ID="tblSumm" runat="server" GridLines="none" CellSpacing="10">
                     <asp:TableRow>
-                        <asp:TableCell Text="Receipts:"></asp:TableCell>
+                        <asp:TableCell Text="Receipts:">
+                        </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label ID="lblReceiptsFinal" CssClass="Underline" runat="server"></asp:Label>
+                            <asp:Label ID="lblReceiptsFinal" CssClass="Underline" runat="server" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
-                        <asp:TableCell Text="Less Total Sales:"></asp:TableCell>
+                        <asp:TableCell Text="Less Total Sales:">
+                        </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label ID="lblTotalFinal" CssClass="Underline" runat="server"></asp:Label>
+                            <asp:Label ID="lblTotalFinal" CssClass="Underline" runat="server" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:Label ID="lblOverShort" runat="server" Text="Over(Short):"></asp:Label>
+                            <asp:Label ID="lblOverShort" runat="server" Text="Over(Short):" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label ID="lblOverShortFinal" CssClass="Underline2" runat="server"></asp:Label>
+                            <asp:Label ID="lblOverShortFinal" CssClass="Underline2" runat="server" />
                         </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>

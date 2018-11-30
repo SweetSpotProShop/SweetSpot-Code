@@ -33,7 +33,7 @@
                         <asp:TextBox ID="txtPrimaryPhoneNumber" runat="server" AutoComplete="off" ValidateRequestMode="Enabled" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Label ID="lbSecondaryPhoneNumber" runat="server" Text="Secondary Phone Number:" />
+                        <asp:Label ID="lblSecondaryPhoneNumber" runat="server" Text="Secondary Phone Number:" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:TextBox ID="txtSecondaryPhoneNumber" runat="server" AutoComplete="off" ValidateRequestMode="Enabled" Enabled="false" />
@@ -110,13 +110,15 @@
                         <asp:Label ID="lblProvince" runat="server" Text="Province:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlProvince" AutoPostBack="false" runat="server" Enabled="false" />
+                        <asp:DropDownList ID="ddlProvince" AutoPostBack="false" runat="server"
+                            DataTextField = "provName" DataValueField = "provStateID" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblCountry" runat="server" Text="Country:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlCountry" runat="server" AutoPostBack="true" Enabled="false" 
+                        <asp:DropDownList ID="ddlCountry" runat="server" AutoPostBack="true"
+                            DataTextField = "countryDesc" DataValueField = "countryID" Enabled="false" 
                             OnSelectedIndexChanged="ddlCountry_SelectedIndexChanged" />
                     </asp:TableCell>
                 </asp:TableRow>

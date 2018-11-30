@@ -1,15 +1,23 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="ReportsHomePage.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.ReportsHomePage" %>
 
-<%--<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+<asp:Content ID="Content1" runat="server" ContentPlaceHolderID="head">
+    <style type="text/css">
+        .auto-style1 {
+            position: relative;
+            left: 300px;
+            top: -10px;
+            width: 207px;
+            height: 228px;
+        }
+    </style>
 </asp:Content>
-<asp:Content ID="Content2" ContentPlaceHolderID="SPMaster" runat="server">
+<%--<asp:Content ID="Content2" ContentPlaceHolderID="SPMaster" runat="server">
 </asp:Content>--%>
 
 <asp:Content ID="ReportsPageContent" ContentPlaceHolderID="IndividualPageContent" runat="server">
     <div id="Reports">
         <div style="text-align: left">
             <asp:Label ID="lblReport" runat="server" Visible="false" Text="Report Access" />
-
             <asp:Label ID="lbldate" runat="server" Visible="false" Text="Select a date" />
 
         </div>
@@ -129,15 +137,3 @@
         </asp:Panel>
     </div>
 </asp:Content>
-<asp:Content ID="Content1" runat="server" ContentPlaceHolderID="head">
-    <style type="text/css">
-        .auto-style1 {
-            position: relative;
-            left: 300px;
-            top: -10px;
-            width: 207px;
-            height: 228px;
-        }
-    </style>
-</asp:Content>
-

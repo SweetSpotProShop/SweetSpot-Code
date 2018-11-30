@@ -53,17 +53,13 @@ namespace SweetSpotDiscountGolfPOS
                             txtSecondaryPhoneNumber.Text = customer.secondaryPhoneNumber.ToString();
                             txtEmail.Text = customer.email.ToString();
                             txtCity.Text = customer.city.ToString();
-                            ddlProvince.SelectedValue = customer.province.ToString();
-                            ddlCountry.SelectedValue = customer.country.ToString();
+                            //ddlProvince.SelectedValue = customer.province.ToString();
+                            //ddlCountry.SelectedValue = customer.country.ToString();
 
                             ddlCountry.DataSource = LM.ReturnCountryDropDown(objPageDetails);
-                            ddlCountry.DataTextField = "countryDesc";
-                            ddlCountry.DataValueField = "countryID";
                             ddlCountry.DataBind();
                             ddlCountry.SelectedValue = customer.country.ToString();
                             ddlProvince.DataSource = LM.ReturnProvinceDropDown(customer.country, objPageDetails);
-                            ddlProvince.DataTextField = "provName";
-                            ddlProvince.DataValueField = "provStateID";
                             ddlProvince.SelectedValue = customer.province.ToString();
                             ddlProvince.DataBind();
 
@@ -81,13 +77,9 @@ namespace SweetSpotDiscountGolfPOS
                         if (!IsPostBack)
                         {
                             ddlCountry.DataSource = LM.ReturnCountryDropDown(objPageDetails);
-                            ddlCountry.DataTextField = "countryDesc";
-                            ddlCountry.DataValueField = "countryID";
                             ddlCountry.DataBind();
-                            ddlCountry.SelectedValue = 0.ToString();
+                            ddlCountry.SelectedValue = CU.location.countryID.ToString();
 
-                            ddlProvince.DataTextField = "provName";
-                            ddlProvince.DataValueField = "provStateID";
                             ddlProvince.DataSource = LM.ReturnProvinceDropDown(0, objPageDetails);
                             ddlProvince.DataBind();
                         }

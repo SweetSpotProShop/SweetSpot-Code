@@ -290,5 +290,14 @@ namespace SweetShop
             return ConvertFromDataTableToEmployee(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
             //return ConvertFromDataTableToEmployee(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
+        public DataTable ReturnJobPosition(object[] objPageDetails)
+        {
+            string strQueryName = "ReturnJobPosition";
+            string sqlCmd = "SELECT jobID, title FROM tbl_jobPosition ORDER BY title";
+            object[][] parms = { };
+
+            return dbc.returnDataTableData(sqlCmd, parms);
+            //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
+        }
     }
 }

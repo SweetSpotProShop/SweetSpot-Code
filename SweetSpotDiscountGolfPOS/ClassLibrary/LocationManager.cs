@@ -115,7 +115,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public DataTable ReturnLocationDropDownAll(object[] objPageDetails)
         {
             string strQueryName = "ReturnLocationDropDownAll";
-            string sqlCmd = "SELECT locationID, locationName FROM tbl_location";
+            string sqlCmd = "SELECT locationID, locationName FROM tbl_location "
+                + "ORDER BY locationName";
             object[][] parms = { };
             return dbc.returnDataTableData(sqlCmd, parms);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);

@@ -1,8 +1,17 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="InvoiceSearch.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.InvoiceSearch" %>
 
-<%--<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+<asp:Content ID="Content1" runat="server" ContentPlaceHolderID="head">
+    <style type="text/css">
+        .auto-style1 {
+            position: relative;
+            left: 300px;
+            top: -10px;
+            width: 207px;
+            height: 228px;
+        }
+    </style>
 </asp:Content>
-<asp:Content ID="Content2" ContentPlaceHolderID="SPMaster" runat="server">
+<%--<asp:Content ID="Content2" ContentPlaceHolderID="SPMaster" runat="server">
 </asp:Content>--%>
 
 <asp:Content ID="salesPageContent" ContentPlaceHolderID="IndividualPageContent" runat="server">
@@ -46,7 +55,9 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:Calendar ID="calStartDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest" Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="184px" Width="200px" OnSelectionChanged="calStart_SelectionChanged">
+                        <asp:Calendar ID="calStartDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4"
+                            DayNameFormat="Shortest" Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" 
+                            Height="184px" Width="200px" OnSelectionChanged="calStart_SelectionChanged">
                             <DayHeaderStyle BackColor="#5FD367" Font-Bold="True" Font-Size="7pt" />
                             <NextPrevStyle VerticalAlign="Bottom" />
                             <OtherMonthDayStyle ForeColor="#808080" />
@@ -58,7 +69,9 @@
                         </asp:Calendar>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Calendar ID="calEndDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest" Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="182px" Width="200px" OnSelectionChanged="calEnd_SelectionChanged">
+                        <asp:Calendar ID="calEndDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" 
+                            DayNameFormat="Shortest" Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" 
+                            Height="182px" Width="200px" OnSelectionChanged="calEnd_SelectionChanged">
                             <DayHeaderStyle BackColor="#5FD367" Font-Bold="True" Font-Size="7pt" />
                             <NextPrevStyle VerticalAlign="Bottom" />
                             <OtherMonthDayStyle ForeColor="#808080" />
@@ -131,15 +144,4 @@
             <hr />
         </asp:Panel>
     </div>
-</asp:Content>
-<asp:Content ID="Content1" runat="server" ContentPlaceHolderID="head">
-    <style type="text/css">
-        .auto-style1 {
-            position: relative;
-            left: 300px;
-            top: -10px;
-            width: 207px;
-            height: 228px;
-        }
-    </style>
 </asp:Content>

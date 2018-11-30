@@ -7,10 +7,10 @@
     <h2>Today's Transactions</h2>
     <%--REMEMBER TO SET DEFAULT BUTTON--%>
     <asp:Label ID="lblLoc" runat="server" Text="Location :" />
-    <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="true" />
-    <asp:Label ID="lblLocation" runat="server" Visible="false" Text="Loc" />
+    <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="true"
+        DataTextField="city" DataValueField="locationID" Enabled="false" />
     <div style="text-align: right">
-        <asp:Label ID="lbluser" runat="server" Visible="false" Text="UserName" />
+        <asp:Label ID="lbluser" runat="server" Visible="false" Text="You have Admin Access" />
     </div>
     <hr />
     <asp:GridView ID="grdSameDaySales" runat="server" AutoGenerateColumns="False" Width="100%" ShowFooter="true" OnRowDataBound="grdSameDaySales_RowDataBound" RowStyle-HorizontalAlign="Center">

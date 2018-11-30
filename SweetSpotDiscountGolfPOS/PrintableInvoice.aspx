@@ -81,39 +81,42 @@
                         &nbsp;&nbsp;&nbsp;
                         <asp:Label ID="lblTime" runat="server" Text="" />
                     </div>
-                </asp:TableCell></asp:TableRow></asp:Table><hr />
+                </asp:TableCell>
+            </asp:TableRow>
+        </asp:Table>
+        <hr />
         <div id="finalInvoice" class="yesPrint">
             <asp:Table ID="tblPartiesInvolved" runat="server" Width="100%">
                 <asp:TableRow>
                     <asp:TableCell CssClass="leftSide">
-                        <asp:Label ID="lblCustomerName" runat="server" Text="" />
+                        <asp:Label ID="lblCustomerName" runat="server" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSide">
-                        <asp:Label ID="lblSweetShopName" runat="server" Text="Sweet Spot Discount Golf" />
+                        <asp:Label ID="lblSweetShopName" runat="server" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell CssClass="leftSide">
-                        <asp:Label ID="lblStreetAddress" runat="server" Text="" />
+                        <asp:Label ID="lblStreetAddress" runat="server" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSide">
-                        <asp:Label ID="lblSweetShopStreetAddress" runat="server" Text="644 Main St. N" />
+                        <asp:Label ID="lblSweetShopStreetAddress" runat="server" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell CssClass="leftSide">
-                        <asp:Label ID="lblPostalAddress" runat="server" Text="" />
+                        <asp:Label ID="lblPostalAddress" runat="server" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSide">
-                        <asp:Label ID="lblSweetShopPostalAddress" runat="server" Text="Moose Jaw, Saskatchewan S6H 3K4" />
+                        <asp:Label ID="lblSweetShopPostalAddress" runat="server" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell CssClass="leftSide">
-                        <asp:Label ID="lblPhone" runat="server" Text="" />
+                        <asp:Label ID="lblPhone" runat="server" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSide">
-                        <asp:Label ID="lblSweetShopPhone" runat="server" Text="(306) 692-8337" />
+                        <asp:Label ID="lblSweetShopPhone" runat="server" />
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
@@ -248,13 +251,17 @@
         <br />
         <asp:Button ID="btnHome" runat="server" Text="Home" Width="100px" OnClick="btnHome_Click" />
         <br />
-        <%--<p><b>PLEASE NOTE: </b>All used equipment is sold as is and it is understood that its' condition</p>
-                <p>and usability may reflect prior use. The Sweet Spot Discount Golf assumes no responsibility</p>
-                <p>beyond the point of sale. <b>ALL SALES FINAL</b> Thank you for shopping at the Sweet Spot.</p>--%>
     </div>
     <div id="disclaimer">
         <h6>
             <p>
-                <b>PLEASE NOTE: </b>All used equipment is sold as is and it is understood that its' condition
-        and usability may reflect prior use. The Sweet Spot Discount Golf assumes no responsibility
-        beyond the point of sale. <b>ALL SALES FINAL</b> Thank you for shopping at the Sweet Spot. </p></h6></div></asp:Content>
+                <b>PLEASE NOTE: </b>
+                All used equipment is sold as is and it is understood that its' condition
+                and usability may reflect prior use. The Sweet Spot Discount Golf assumes no responsibility
+                beyond the point of sale. 
+                <b>ALL SALES FINAL</b> 
+                Thank you for shopping at the Sweet Spot. 
+            </p>
+        </h6>
+    </div>
+</asp:Content>

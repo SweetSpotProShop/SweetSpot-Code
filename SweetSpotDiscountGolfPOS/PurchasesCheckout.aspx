@@ -1,7 +1,12 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="PurchasesCheckout.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.PurchasesCheckout" %>
 
-<%--<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
-</asp:Content>--%>
+<asp:Content ID="Content1" runat="server" ContentPlaceHolderID="head">
+    <style type="text/css">
+        .auto-style1 {
+            height: 152px;
+        }
+    </style>
+</asp:Content>
 
 <asp:Content ID="NonActive" ContentPlaceHolderID="SPMaster" runat="server">
     <div id="menu_simple">
@@ -57,7 +62,7 @@
                                     <asp:Label ID="lblPurchaseAmount" runat="server" Text="Purchase Amount:" Width="163px" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:TextBox ID="txtPurchaseAmount" runat="server" Width="159px" AutoComplete="off" />
+                                    <asp:TextBox ID="txtPurchaseAmount" runat="server" AutoComplete="off" Width="159px" />
                                 </asp:TableCell>
                             </asp:TableRow>
                         </asp:Table>
@@ -69,7 +74,7 @@
                                     <asp:Label ID="lblChequeNumber" runat="server" Text="Enter Cheque Number:" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:TextBox ID="txtChequeNumber" runat="server" Text="0000" AutoComplete="off" />
+                                    <asp:TextBox ID="txtChequeNumber" runat="server" AutoComplete="off" Text="0000" />
                                     <asp:RegularExpressionValidator ID="revChequeNumber"
                                         ControlToValidate="txtChequeNumber"
                                         ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -84,7 +89,7 @@
                                     <asp:Label ID="lblTotalPurchase" runat="server" Text="Total Purchases:" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:Label ID="lblTotalPurchaseAmount" runat="server" Text="" />
+                                    <asp:Label ID="lblTotalPurchaseAmount" runat="server" />
                                 </asp:TableCell>
                             </asp:TableRow>
                         </asp:Table>
@@ -118,7 +123,7 @@
                     </asp:TableCell>
                     <asp:TableCell ColumnSpan="2">
                         <hr />
-                        <asp:Label ID="lblRemainingPurchaseDueDisplay" runat="server" Text="" />
+                        <asp:Label ID="lblRemainingPurchaseDueDisplay" runat="server" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -136,15 +141,8 @@
             <p>
                 Comments: 
                 <br />
-                <asp:TextBox ID="txtComments" runat="server" TextMode="MultiLine" AutoComplete="off" />
+                <asp:TextBox ID="txtComments" runat="server" AutoComplete="off" TextMode="MultiLine" />
             </p>
         </asp:Panel>
     </div>
-</asp:Content>
-<asp:Content ID="Content1" runat="server" ContentPlaceHolderID="head">
-    <style type="text/css">
-        .auto-style1 {
-            height: 152px;
-        }
-    </style>
 </asp:Content>

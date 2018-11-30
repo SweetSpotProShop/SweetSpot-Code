@@ -51,8 +51,15 @@ namespace SweetSpotDiscountGolfPOS
                             //Fill asll lables with current selected employee info
                             txtFirstName.Text = employee.firstName.ToString();
                             txtLastName.Text = employee.lastName.ToString();
+
+                            ddlJob.DataSource = EM.ReturnJobPosition(objPageDetails);
+                            ddlJob.DataBind();
                             ddlJob.SelectedValue = employee.jobID.ToString();
+
+                            ddlLocation.DataSource = LM.ReturnLocationDropDownAll(objPageDetails);
+                            ddlLocation.DataBind();
                             ddlLocation.SelectedValue = employee.location.locationID.ToString();
+
                             txtEmail.Text = employee.emailAddress.ToString();
                             txtPrimaryPhoneNumber.Text = employee.primaryContactNumber.ToString();
                             txtSecondaryPhoneNumber.Text = employee.secondaryContactNumber.ToString();
@@ -62,8 +69,8 @@ namespace SweetSpotDiscountGolfPOS
                             txtPostalCode.Text = employee.postZip.ToString();
                             ddlProvince.SelectedValue = employee.provState.ToString();
                             ddlCountry.SelectedValue = employee.country.ToString();
-                            ddlProvince.DataTextField = "provName";
-                            ddlProvince.DataValueField = "provStateID";
+                            ddlCountry.DataSource = LM.ReturnCountryDropDown(objPageDetails);
+                            ddlCountry.DataBind();
                             ddlProvince.DataSource = LM.ReturnProvinceDropDown(employee.country, objPageDetails);
                             ddlProvince.DataBind();
                         }
@@ -72,11 +79,21 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         if (!IsPostBack)
                         {
+                            ddlJob.DataSource = EM.ReturnJobPosition(objPageDetails);
+                            ddlJob.DataBind();
+                            ddlJob.SelectedValue = CU.jobID.ToString();
+
+                            ddlLocation.DataSource = LM.ReturnLocationDropDownAll(objPageDetails);
+                            ddlLocation.DataBind();
                             ddlLocation.SelectedValue = CU.location.locationID.ToString();
-                            ddlProvince.DataTextField = "provName";
-                            ddlProvince.DataValueField = "provStateID";
+                            
+                            ddlCountry.DataSource = LM.ReturnCountryDropDown(objPageDetails);
+                            ddlCountry.DataBind();
+                            ddlCountry.SelectedValue = CU.location.countryID.ToString();
+
                             ddlProvince.DataSource = LM.ReturnProvinceDropDown(0, objPageDetails);
                             ddlProvince.DataBind();
+                            ddlProvince.SelectedValue = CU.location.provID.ToString();
                         }
                         //With no employee selected display text boxes and drop downs to add employee
                         txtFirstName.Enabled = true;
