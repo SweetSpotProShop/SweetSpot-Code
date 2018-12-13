@@ -25,7 +25,8 @@
             <h2>Reports Selection</h2>
             <br />
             <asp:Label runat="server" Text="Select Location:" />
-            <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="false" Visible="true" />
+            <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="false"
+                DataTextField="city" DataValueField="locationID" Visible="true" />
             <hr />
             <%--Start Calendar--%>
             <asp:Table runat="server">

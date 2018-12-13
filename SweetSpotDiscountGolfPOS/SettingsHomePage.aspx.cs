@@ -55,10 +55,10 @@ namespace SweetSpotDiscountGolfPOS
                 else
                 {
                     CU = (CurrentUser)Session["currentUser"];
-                    lblCurrentDate.Text = DateTime.Today.ToString("yyyy-MM-dd");
+                    lblCurrentDate.Text = DateTime.Today.ToString("dd/MMM/yy");
                     if (txtDate.Text == "")
                     {
-                        txtDate.Text = DateTime.Today.ToString("yyyy-MM-dd");
+                        txtDate.Text = DateTime.Today.ToString("dd/MMM/yy");
                     }
                     //Checks if the user is an Admin
                     if (CU.jobID != 0)
@@ -69,13 +69,9 @@ namespace SweetSpotDiscountGolfPOS
                     if (!IsPostBack)
                     {
                         ddlProvince.DataSource = LM.ReturnProvinceDropDown(0, objPageDetails);
-                        ddlProvince.DataTextField = "provName";
-                        ddlProvince.DataValueField = "provStateID";
                         ddlProvince.DataBind();
-                        ddlProvince.SelectedValue = "1";
+                        ddlProvince.SelectedValue = CU.location.provID.ToString();
                         ddlTax.DataSource = TM.ReturnTaxListBasedOnDateAndProvinceForUpdate(1, Convert.ToDateTime(lblCurrentDate.Text), objPageDetails);
-                        ddlTax.DataTextField = "taxName";
-                        ddlTax.DataValueField = "taxID";
                         ddlTax.DataBind();
                     }
                 }

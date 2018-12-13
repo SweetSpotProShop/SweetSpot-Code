@@ -62,7 +62,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Invoice Date">
                             <ItemTemplate>
-                                <asp:Label ID="lblInvoiceDate" runat="server" Text='<%#Eval("invoiceDate","{0: MM/dd/yy}") %>' />
+                                <asp:Label ID="lblInvoiceDate" runat="server" Text='<%#Eval("invoiceDate","{0: dd/MMM/yy}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Customer Name">

@@ -74,7 +74,9 @@
                             <asp:Label ID="lblProvince" runat="server" Text="Province:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:DropDownList ID="ddlProvince" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlProvince_SelectedIndexChanged" />
+                            <asp:DropDownList ID="ddlProvince" runat="server" AutoPostBack="true" 
+                                DataTextField="provName" DataValueField="provStateID" 
+                                OnSelectedIndexChanged="ddlProvince_SelectedIndexChanged" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
@@ -82,7 +84,10 @@
                             <asp:Label ID="lblTax" runat="server" Text="Tax:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:DropDownList ID="ddlTax" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlTax_SelectedIndexChanged" OnPreRender="ddlTax_SelectedIndexChanged" />
+                            <asp:DropDownList ID="ddlTax" runat="server" AutoPostBack="true" 
+                                DataTextField="taxName" DataValueField="taxID" 
+                                OnSelectedIndexChanged="ddlTax_SelectedIndexChanged" 
+                                OnPreRender="ddlTax_SelectedIndexChanged" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label ID="lblCurrentDate" runat="server" Visible="false" />

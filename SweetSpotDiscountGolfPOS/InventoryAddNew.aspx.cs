@@ -49,20 +49,12 @@ namespace SweetSpotDiscountGolfPOS
                             //Grabs a list of objects that match the sku in query string. There should only ever be 1 that is returned
                             List<Object> o = IDU.ReturnListOfObjectsFromThreeTables(Convert.ToInt32(Request.QueryString["sku"].ToString()), objPageDetails);
                             ddlBrand.DataSource = IM.ReturnDropDownForBrand(objPageDetails);
-                            ddlBrand.DataTextField = "brandName";
-                            ddlBrand.DataValueField = "brandID";
                             ddlBrand.DataBind();
                             ddlLocation.DataSource = LM.ReturnLocationDropDown(objPageDetails);
-                            ddlLocation.DataTextField = "city";
-                            ddlLocation.DataValueField = "locationID";
                             ddlLocation.DataBind();
                             ddlType.DataSource = IM.ReturnDropDownForItemType(objPageDetails);
-                            ddlType.DataTextField = "typeDescription";
-                            ddlType.DataValueField = "typeID";
                             ddlType.DataBind();
                             ddlModel.DataSource = IM.ReturnDropDownForModel(objPageDetails);
-                            ddlModel.DataTextField = "modelName";
-                            ddlModel.DataValueField = "modelID";
                             ddlModel.DataBind();
                             if (o[0] is Clubs)
                             {
@@ -170,20 +162,12 @@ namespace SweetSpotDiscountGolfPOS
                         if (!IsPostBack)
                         {
                             ddlBrand.DataSource = IM.ReturnDropDownForBrand(objPageDetails);
-                            ddlBrand.DataTextField = "brandName";
-                            ddlBrand.DataValueField = "brandID";
                             ddlBrand.DataBind();
                             ddlLocation.DataSource = LM.ReturnLocationDropDownAll(objPageDetails);
-                            ddlLocation.DataTextField = "locationName";
-                            ddlLocation.DataValueField = "locationID";
                             ddlLocation.DataBind();
                             ddlType.DataSource = IM.ReturnDropDownForItemType(objPageDetails);
-                            ddlType.DataTextField = "typeDescription";
-                            ddlType.DataValueField = "typeID";
                             ddlType.DataBind();
                             ddlModel.DataSource = IM.ReturnDropDownForModel(objPageDetails);
-                            ddlModel.DataTextField = "modelName";
-                            ddlModel.DataValueField = "modelID";
                             ddlModel.DataBind();
                             ddlLocation.SelectedValue = CU.location.locationID.ToString();
                             ddlType.SelectedValue = "1";
@@ -495,7 +479,7 @@ namespace SweetSpotDiscountGolfPOS
                 txtShaft.Enabled = false;
                 txtComments.Enabled = false;
 
-                Object o = new Object();
+                object o = new object();
                 if (Convert.ToInt32(ddlType.SelectedValue) == 1)
                 {
                     Clubs c = new Clubs();
@@ -516,7 +500,7 @@ namespace SweetSpotDiscountGolfPOS
                     c.dexterity = txtDexterity.Text;
                     c.comments = txtComments.Text;
                     c.isTradeIn = chkUsed.Checked;
-                    o = c as Object;
+                    o = c as object;
 
                     //changes all text boxes and dropdowns to labels
                     ddlModel.Enabled = false;
@@ -542,7 +526,7 @@ namespace SweetSpotDiscountGolfPOS
                     a.accessoryType = txtNumberofClubs.Text;
                     a.modelID = Convert.ToInt32(ddlModel.SelectedValue);
                     a.comments = txtComments.Text;
-                    o = a as Object;
+                    o = a as object;
 
                     //changes all text boxes and dropdowns to labels
                     ddlModel.Enabled = false;
@@ -563,7 +547,7 @@ namespace SweetSpotDiscountGolfPOS
                     cl.gender = txtClubSpec.Text;
                     cl.style = txtShaftFlex.Text;
                     cl.comments = txtComments.Text;
-                    o = cl as Object;
+                    o = cl as object;
 
                     //changes all text boxes and dropdowns to labels
                     txtClubSpec.Enabled = false;

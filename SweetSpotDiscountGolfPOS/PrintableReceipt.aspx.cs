@@ -45,7 +45,7 @@ namespace SweetSpotDiscountGolfPOS
                         lblPostalAddress.Text = I.customer.city.ToString() + ", " + LM.ReturnProvinceName(I.customer.province, objPageDetails) + " " + I.customer.postalCode.ToString();
                         lblPhone.Text = I.customer.primaryPhoneNumber.ToString();
                         lblinvoiceNum.Text = I.invoiceNum.ToString();
-                        lblDate.Text = I.invoiceDate.ToShortDateString();
+                        lblDate.Text = I.invoiceDate.ToString("dd/MMM/yy");
                         //Gather transaction type from Session
                         //Display the location information
                         lblSweetShopName.Text = I.location.locationName.ToString();

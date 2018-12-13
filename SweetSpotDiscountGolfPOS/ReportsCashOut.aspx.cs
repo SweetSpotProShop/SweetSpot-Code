@@ -48,7 +48,7 @@ namespace SweetSpotDiscountGolfPOS
                         DateTime[] rptDate = { startDate, endDate };
                         int locationID = Convert.ToInt32(Request.QueryString["location"].ToString());
                         object[] passing = { rptDate, locationID };
-                        lblDates.Text = "Cashout report for: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
+                        lblDates.Text = "Cashout report for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
                         dt = R.ReturnCashoutsForSelectedDates(passing, objPageDetails);
                         grdCashoutByDate.DataSource = dt;
                         grdCashoutByDate.DataBind();

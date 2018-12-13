@@ -386,8 +386,6 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                ddlProvince.DataTextField = "provName";
-                ddlProvince.DataValueField = "provStateID";
                 ddlProvince.DataSource = LM.ReturnProvinceDropDown(Convert.ToInt32(ddlCountry.SelectedValue), objPageDetails);
                 ddlProvince.DataBind();
             }

@@ -12,7 +12,8 @@
             <h2>New Inventory Item</h2>
             <br />
             <h3>
-                <asp:DropDownList ID="ddlType" runat="server" AutoPostBack="True" Enabled="false" />
+                <asp:DropDownList ID="ddlType" runat="server" AutoPostBack="True" 
+                    DataTextField="typeDescription" DataValueField="typeID" Enabled="false" />
             </h3>
             <asp:Table ID="Table1" runat="server" Width="100%">
                 <asp:TableRow>
@@ -41,7 +42,8 @@
                         <asp:Label ID="lblBrand" runat="server" Text="Brand Name:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlBrand" runat="server" AutoPostBack="false" Enabled="false" />
+                        <asp:DropDownList ID="ddlBrand" runat="server" AutoPostBack="false" 
+                            DataTextField="brandName" DataValueField="brandID" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblPrice" runat="server" Text="Price:  $" />
@@ -75,7 +77,8 @@
                         <asp:Label ID="lblLocation" runat="server" Text="Location:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="false" Enabled="false" />
+                        <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="false" 
+                            DataTextField="city" DataValueField="locationID" Enabled="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -94,7 +97,8 @@
                         <asp:Label ID="lblModel" runat="server" Text="Model:" Visible="true" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlModel" runat="server" AutoPostBack="false" Enabled="false" /> 
+                        <asp:DropDownList ID="ddlModel" runat="server" AutoPostBack="false"
+                            DataTextField="modelName" DataValueField="modelID" Enabled="false" /> 
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>

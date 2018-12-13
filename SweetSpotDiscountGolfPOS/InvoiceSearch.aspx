@@ -30,7 +30,8 @@
                         <asp:Label ID="lblSelectLocation" runat="server" Text="Select Location:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="false" />
+                        <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="false"
+                            DataTextField="city" DataValueField="locationID" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblInvoiceNum" runat="server" Text="Enter Invoice Number or SKU:" />
@@ -95,7 +96,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Invoice Date">
                             <ItemTemplate>
-                                <asp:Label ID="lblInvoiceDate" runat="server" Text='<%#Eval("invoiceDate","{0: MM/dd/yy}") %>' />
+                                <asp:Label ID="lblInvoiceDate" runat="server" Text='<%#Eval("invoiceDate","{0: dd/MMM/yy}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Customer Name">

@@ -54,8 +54,8 @@ namespace SweetSpotDiscountGolfPOS
                     DateTime endDate = reportDates[1];
                     timeFrame = (string)passing[1];
                     //Builds string to display in label
-                    if (startDate == endDate) { lblDates.Text = "Store stats for: " + startDate.ToString("d"); }
-                    else { lblDates.Text = "Store stats for: " + startDate.ToString("d") + " to " + endDate.ToString("d"); }
+                    if (startDate == endDate) { lblDates.Text = "Store stats for: " + startDate.ToString("dd/MMM/yy"); }
+                    else { lblDates.Text = "Store stats for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy"); }
                     //Binding the gridview
                     if (timeFrame.Equals("Day") || timeFrame.Equals("Default")){ stats = R.returnStoreStats(startDate, endDate, 1, objPageDetails); }
                     else if (timeFrame.Equals("Week")){ stats = R.returnStoreStats(startDate, endDate, 2, objPageDetails); }
@@ -74,8 +74,8 @@ namespace SweetSpotDiscountGolfPOS
                     }
                     else
                     {
-                        if (startDate == endDate) { lblDates.Text = "There are no stats for: " + startDate.ToString("d"); }
-                        else { lblDates.Text = "There are no states for: " + startDate.ToString("d") + " to " + endDate.ToString("d"); }
+                        if (startDate == endDate) { lblDates.Text = "There are no stats for: " + startDate.ToString("dd/MMM/yy"); }
+                        else { lblDates.Text = "There are no states for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy"); }
                     }
                 }
             }

@@ -29,18 +29,12 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     lblSKUDisplay.Text = IM.ReserveTradeInSKU(CU.location.locationID, objPageDetails).ToString();
                     ddlBrand.DataSource = IM.ReturnDropDownForBrand(objPageDetails);
-                    ddlBrand.DataTextField = "brandName";
-                    ddlBrand.DataValueField = "brandID";
                     ddlBrand.DataBind();
 
                     ddlClubType.DataSource = IM.ReturnDropDownForClubType(objPageDetails);
-                    ddlClubType.DataTextField = "typeName";
-                    ddlClubType.DataValueField = "typeID";
                     ddlClubType.DataBind();
 
                     ddlModel.DataSource = IM.ReturnDropDownForModel(objPageDetails);
-                    ddlModel.DataTextField = "modelName";
-                    ddlModel.DataValueField = "modelID";
                     ddlModel.DataBind();
 
                 }

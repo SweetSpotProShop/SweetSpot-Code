@@ -41,7 +41,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="C3">
                         <ItemTemplate>
-                            <asp:Label ID="lblC3" runat="server" Text='<%#Eval("date", "{0:d}")%>' />
+                            <asp:Label ID="lblC3" runat="server" Text='<%#Eval("date", "{0: dd/MMM/yy}")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="City Name">

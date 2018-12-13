@@ -53,8 +53,6 @@ namespace SweetSpotDiscountGolfPOS
                             txtSecondaryPhoneNumber.Text = customer.secondaryPhoneNumber.ToString();
                             txtEmail.Text = customer.email.ToString();
                             txtCity.Text = customer.city.ToString();
-                            //ddlProvince.SelectedValue = customer.province.ToString();
-                            //ddlCountry.SelectedValue = customer.country.ToString();
 
                             ddlCountry.DataSource = LM.ReturnCountryDropDown(objPageDetails);
                             ddlCountry.DataBind();
@@ -236,18 +234,14 @@ namespace SweetSpotDiscountGolfPOS
                 ddlCountry.Enabled = false;
                 txtPostalCode.Enabled = false;
                 //hides and displays the proper buttons for access
-                btnSaveCustomer.Visible = false;
-                btnEditCustomer.Visible = true;
-                btnCancel.Visible = false;
-                btnAddCustomer.Visible = false;
-                btnBackToSearch.Visible = true;
-                btnSaveCustomer.Visible = false;
-                btnEditCustomer.Visible = true;
                 pnlDefaultButton.DefaultButton = "btnEditCustomer";
-                btnCancel.Visible = false;
-                btnStartSale.Visible = true;
                 btnAddCustomer.Visible = false;
                 btnBackToSearch.Visible = true;
+                btnCancel.Visible = false;
+                btnEditCustomer.Visible = true;
+                btnSaveCustomer.Visible = false;
+                btnStartSale.Visible = true;
+                
                 //reloads current page
                 Response.Redirect(Request.RawUrl, false);
             }
@@ -367,8 +361,6 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                ddlProvince.DataTextField = "provName";
-                ddlProvince.DataValueField = "provStateID";
                 ddlProvince.DataSource = LM.ReturnProvinceDropDown(Convert.ToInt32(ddlCountry.SelectedValue), objPageDetails);
                 ddlProvince.DataBind();
             }

@@ -46,8 +46,8 @@ namespace SweetSpotDiscountGolfPOS
                     DateTime startDate = reportDates[0];
                     DateTime endDate = reportDates[1];
                     //Builds string to display in label
-                    if (startDate == endDate) { lblDates.Text = "Apparel sold through: " + startDate.ToString("d"); }
-                    else { lblDates.Text = "Apparel sold through: " + startDate.ToString("d") + " to " + endDate.ToString("d"); }
+                    if (startDate == endDate) { lblDates.Text = "Apparel sold through: " + startDate.ToString("dd/MMM/yy"); }
+                    else { lblDates.Text = "Apparel sold through: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy"); }
                     grdStats.DataSource = R.returnSpecificApparelDataTableForReport(startDate, endDate, objPageDetails);
                     grdStats.DataBind();
                 }

@@ -50,11 +50,11 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "Items sold on: " + startDate.ToString("d") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
+                        lblDates.Text = "Items sold on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     }
                     else
                     {
-                        lblDates.Text = "Items sold on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
+                        lblDates.Text = "Items sold on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     }
                     dt = R.returnTradeInsForSelectedDate(passing, objPageDetails);
                     grdTradeInsByDate.DataSource = dt;

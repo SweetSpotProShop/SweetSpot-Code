@@ -40,7 +40,8 @@
                             <asp:Label ID="lblBrand" runat="server" Text="Brand Name:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:DropDownList ID="ddlBrand" runat="server" AutoPostBack="false" Visible="true" />
+                            <asp:DropDownList ID="ddlBrand" runat="server" AutoPostBack="false"
+                                DataTextField="brandName" DataValueField="brandID" Visible="true" />
                             <asp:RequiredFieldValidator ID="rfvBrand"
                                 runat="server" ControlToValidate="ddlBrand"
                                 ErrorMessage="Brand Required"
@@ -89,7 +90,8 @@
                             <asp:Label ID="lblClubType" runat="server" Text="Club Type:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:DropDownList ID="ddlClubType" runat="server" AutoPostBack="false" Visible="True" />
+                            <asp:DropDownList ID="ddlClubType" runat="server" AutoPostBack="false"
+                                DataTextField="typeName" DataValueField="typeID" Visible="True" />
                             <asp:RequiredFieldValidator ID="rfvClubType"
                                 runat="server" ControlToValidate="ddlClubType"
                                 ErrorMessage="Club Type Required"
@@ -99,7 +101,8 @@
                             <asp:Label ID="lblModel" runat="server" Text="Model:" Visible="true" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:DropDownList ID="ddlModel" runat="server" AutoPostBack="false" Visible="True" />
+                            <asp:DropDownList ID="ddlModel" runat="server" AutoPostBack="false"
+                                DataTextField="modelName" DataValueField="modelID" Visible="True" />
                             <asp:RequiredFieldValidator ID="rfvModel"
                                 runat="server" ControlToValidate="ddlModel"
                                 ErrorMessage="Model Required"
@@ -139,7 +142,7 @@
                             <asp:Label ID="lblShaftFlex" runat="server" Text="ShaftFlex:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtShaftFlex" runat="server"AutoComplete="off"  Visible="True" />
+                            <asp:TextBox ID="txtShaftFlex" runat="server" AutoComplete="off" Visible="True" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label ID="lblDexterity" runat="server" Text="Dexterity:" />
@@ -163,7 +166,7 @@
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell ColumnSpan="4">
-                            <asp:TextBox ID="txtComments" runat="server"  AutoComplete="off"Visible="true" Height="30px" Width="100%" />
+                            <asp:TextBox ID="txtComments" runat="server" AutoComplete="off" Visible="true" Height="30px" Width="100%" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>

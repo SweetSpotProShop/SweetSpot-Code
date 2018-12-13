@@ -54,12 +54,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         {
             string strQueryName = "getInvoiceBySaleDate";
             //Gets a list of all invoices based on date and location. Stores in a list
-            string sqlCmd = "SELECT tbl_invoice.invoiceNum, tbl_invoice.invoiceSubNum, custID, empID, subTotal, discountAmount, "
-                + "tradeinAmount, CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END AS governmentTax, "
-                + "CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END AS provincialTax, "
-                + "(balanceDue + CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END + CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END) AS balanceDue, "
-                + "mopType, amountPaid FROM tbl_invoice INNER JOIN tbl_invoiceMOP ON tbl_invoice.invoiceNum = tbl_invoiceMOP.invoiceNum "
-                + "AND tbl_invoiceMOP.invoiceSubNum = tbl_invoice.invoiceSubNum WHERE invoiceDate BETWEEN @startDate AND @endDate AND locationID = @locationID";
+            string sqlCmd = "SELECT I.invoiceNum, I.invoiceSubNum, custID, CONCAT(E.lastName, "
+                + "', ', E.firstName) AS employeeName, subTotal, discountAmount, tradeinAmount, "
+                + "CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END AS governmentTax, CASE "
+                + "WHEN chargePST = 1 THEN provincialTax ELSE 0 END AS provincialTax, (balanceDue "
+                + "+ CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END + CASE WHEN chargePST "
+                + "= 1 THEN provincialTax ELSE 0 END) AS balanceDue, mopType, amountPaid FROM "
+                + "tbl_invoice I JOIN tbl_employee E ON E.empID = I.empID INNER JOIN "
+                + "tbl_invoiceMOP IM ON IM.invoiceNum = I.invoiceNum AND IM.invoiceSubNum = "
+                + "I.invoiceSubNum WHERE invoiceDate BETWEEN @startDate AND @endDate AND "
+                + "I.locationID = @locationID";
 
             object[][] parms =
             {

@@ -24,7 +24,7 @@
                 </FooterTemplate>
             </asp:TemplateField>
             <asp:BoundField DataField="custID" ReadOnly="true" HeaderText="Customer" />
-            <asp:BoundField DataField="empID" ReadOnly="true" HeaderText="Employee" />
+            <asp:BoundField DataField="employeeName" ReadOnly="true" HeaderText="Employee" />
             <asp:BoundField DataField="discountAmount" ReadOnly="true" HeaderText="Discount" DataFormatString="{0:C}" />
             <asp:BoundField DataField="tradeinAmount" ReadOnly="true" HeaderText="Trade In" DataFormatString="{0:C}" />
             <asp:BoundField DataField="subTotal" ReadOnly="true" HeaderText="Subtotal" DataFormatString="{0:C}" />
