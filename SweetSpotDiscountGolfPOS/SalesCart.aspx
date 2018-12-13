@@ -57,13 +57,14 @@
     <div id="Cart">
         <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnInventorySearch">
             <asp:Label ID="lblCustomer" runat="server" Text="Customer Name:" />
-            <asp:Label ID="lblCustomerDisplay" runat="server" Text="" Visible="false" />
             <asp:TextBox ID="txtCustomer" runat="server" AutoComplete="off" />
             <asp:Button ID="btnCustomerSelect" runat="server" Text="Change Customer" OnClick="btnCustomerSelect_Click" CausesValidation="false" />
             <div>
                 <br />
                 <div>
-                    <asp:GridView ID="grdCustomersSearched" runat="server" AutoGenerateColumns="false" ShowFooter="true" OnRowCommand="grdCustomersSearched_RowCommand" AllowPaging="True" PageSize="5" OnPageIndexChanging="grdCustomersSearched_PageIndexChanging">
+                    <asp:GridView ID="grdCustomersSearched" runat="server" AutoGenerateColumns="false" ShowFooter="true" 
+                        OnRowCommand="grdCustomersSearched_RowCommand" AllowPaging="True" PageSize="5" 
+                        OnPageIndexChanging="grdCustomersSearched_PageIndexChanging">
                         <Columns>
                             <asp:TemplateField HeaderText="Switch Customer">
                                 <ItemTemplate>
@@ -118,7 +119,7 @@
             <asp:RadioButton ID="rdbInStorePurchase" runat="server" Text="In Store" Checked="True" Enabled="false" GroupName="rgSales" />
             <asp:RadioButton ID="rdbShipping" runat="server" Text="Shipping" GroupName="rgSales" Enabled="false" />
             <asp:Label ID="lblShipping" runat="server" Text="Amount:" />
-            <asp:TextBox ID="txtShippingAmount" runat="server" AutoComplete="off" OnTextChanged="txtShippingAmount_TextChanged" AutoPostBack="true" Text="0" />
+            <asp:TextBox ID="txtShippingAmount" runat="server" AutoComplete="off" OnTextChanged="txtShippingAmount_TextChanged" AutoPostBack="true" Text="0.00" />
             <asp:Label ID="lblShippingWarning" runat="server" Visible="false" />
             <div>
                 <asp:Button ID="btnJumpToInventory" Text="Jump to Inventory" OnClick="btnJumpToInventory_Click" runat="server" />
@@ -198,7 +199,9 @@
             <h3>Cart</h3>
             <hr />
             <asp:Label ID="lblInvalidQty" runat="server" Visible="false" Text="Invalid Quantity Entered" ForeColor="Red" />
-            <asp:GridView ID="grdCartItems" EmptyDataText=" No Records Found" runat="server" AutoGenerateColumns="false" Style="margin-right: 0px" OnRowEditing="OnRowEditing" OnRowUpdating="OnRowUpdating" OnRowCancelingEdit="ORowCanceling" OnRowDeleting="OnRowDeleting" RowStyle-HorizontalAlign="Center" >
+            <asp:GridView ID="grdCartItems" EmptyDataText=" No Records Found" runat="server" AutoGenerateColumns="false" 
+                Style="margin-right: 0px" OnRowEditing="OnRowEditing" OnRowUpdating="OnRowUpdating" 
+                OnRowCancelingEdit="ORowCanceling" OnRowDeleting="OnRowDeleting" RowStyle-HorizontalAlign="Center" >
                 <Columns>
                     <asp:TemplateField HeaderText="Remove Item">
                         <ItemTemplate>
@@ -237,7 +240,7 @@
                         <EditItemTemplate>
                             <asp:CheckBox ID="ckbPercentageEdit" Checked='<%# Convert.ToBoolean(Eval("percentage")) %>' runat="server" Text="Discount by Percent" Enabled="true" />
                             <div id="divAmountEdit" class="txt" runat="server">
-                                <asp:TextBox ID="txtAmnt" runat="server" Text='<%# Eval("itemDiscount") %>' AutoComplete="off" Enabled="true" />
+                                <asp:TextBox ID="txtAmnt" runat="server" AutoComplete="off" Text='<%# Eval("itemDiscount") %>' Enabled="true" />
                             </div>
                         </EditItemTemplate>
                     </asp:TemplateField>

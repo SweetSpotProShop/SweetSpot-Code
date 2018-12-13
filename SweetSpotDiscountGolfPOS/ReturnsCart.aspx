@@ -57,7 +57,7 @@
     <div id="ReturnCart">
         <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnProceedToReturnCheckout">
             <asp:Label ID="lblCustomer" runat="server" Text="Customer Name:" />
-            <asp:Label ID="lblCustomerDisplay" runat="server" Text="" />
+            <asp:Label ID="lblCustomerDisplay" runat="server" />
             <br />
             <br />
             <div style="text-align: right">
@@ -65,7 +65,7 @@
                 <asp:Label ID="lblInvoiceNumberDisplay" runat="server" />
                 <br />
                 <asp:Label ID="lblDate" runat="server" Text="Date:" />
-                <asp:Label ID="lblDateDisplay" runat="server" Text="" />
+                <asp:Label ID="lblDateDisplay" runat="server" />
                 <hr />
             </div>
             <h3>Available Items</h3>
@@ -110,7 +110,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Amount to Refund">
                         <ItemTemplate>
-                            <asp:TextBox ID="txtReturnAmount" AutoComplete="off" Text='<%# Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("price")))-(Convert.ToDouble(Eval("itemDiscount")))).ToString("#0.00") : ((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("price"))))).ToString("#0.00") %>' runat="server" />
+                            <asp:TextBox ID="txtReturnAmount" runat="server" AutoComplete="off" Text='<%# Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("price")))-(Convert.ToDouble(Eval("itemDiscount")))).ToString("#0.00") : ((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("price"))))).ToString("#0.00") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -146,7 +146,7 @@
             </asp:GridView>
             <hr />
             <asp:Label ID="lblReturnSubtotal" runat="server" Text="Return Subtotal:" />
-            <asp:Label ID="lblReturnSubtotalDisplay" runat="server" Text="" />
+            <asp:Label ID="lblReturnSubtotalDisplay" runat="server" />
             <hr />
             <asp:Button ID="btnCancelReturn" runat="server" Text="Void Transaction" OnClick="btnCancelReturn_Click" CausesValidation="false" />
             <asp:Button ID="btnProceedToReturnCheckout" runat="server" Text="Checkout" OnClick="btnProceedToReturnCheckout_Click" CausesValidation="false" />

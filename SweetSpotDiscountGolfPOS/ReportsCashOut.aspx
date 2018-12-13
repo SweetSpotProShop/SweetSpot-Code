@@ -33,15 +33,16 @@
         <h2>Cashouts Listed By Date</h2>
         <hr />
         <div>
-            <asp:Label ID="lblDates" runat="server" Font-Bold="true" Text="lblDates" />
+            <asp:Label ID="lblDates" runat="server" Font-Bold="true" />
         </div>
         <hr />
         <div>
-            <asp:GridView ID="grdCashoutByDate" runat="server" AutoGenerateColumns="false" Width="100%" RowStyle-HorizontalAlign="Center" OnRowCommand="grdCashoutByDate_RowCommand" OnRowDataBound="grdCashoutByDate_RowDataBound" >
+            <asp:GridView ID="grdCashoutByDate" runat="server" AutoGenerateColumns="false" Width="100%" RowStyle-HorizontalAlign="Center" 
+                OnRowCommand="grdCashoutByDate_RowCommand" OnRowDataBound="grdCashoutByDate_RowDataBound" >
                 <Columns>
                     <asp:TemplateField HeaderText="Date">
                         <ItemTemplate>
-                            <asp:Label ID="lblDate" runat="server" Text='<%#Eval("cashoutDate","{0:d}")%>' />
+                            <asp:Label ID="lblDate" runat="server" Text='<%#Eval("cashoutDate", "{0: dd/MMM/yy}")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField>

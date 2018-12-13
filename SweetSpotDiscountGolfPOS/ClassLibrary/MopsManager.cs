@@ -20,11 +20,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return mops;
         }
 
-        //Returns list of InvoiceItems based on an Invoice Number
+        //Returns list of InvoiceMopss based on an Invoice Number
         public List<Mops> ReturnMopsFromCmdAndParams(string sqlCmd, object[][] parms, object[] objPageDetails)
         {
             string strQueryName = "ReturnMopsFromCmdAndParams";
-            return ConvertFromDataTableToMops(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
+            return ConvertFromDataTableToMops(dbc.returnDataTableData(sqlCmd, parms));
+            //return ConvertFromDataTableToMops(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
     }
 }

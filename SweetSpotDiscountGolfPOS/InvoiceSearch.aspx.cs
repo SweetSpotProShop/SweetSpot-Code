@@ -43,8 +43,6 @@ namespace SweetSpotDiscountGolfPOS
                         calStartDate.SelectedDate = DateTime.Today;
                         calEndDate.SelectedDate = DateTime.Today;
                         ddlLocation.DataSource = LM.ReturnLocationDropDown(objPageDetails);
-                        ddlLocation.DataTextField = "city";
-                        ddlLocation.DataValueField = "locationID";
                         ddlLocation.DataBind();
                         ddlLocation.SelectedValue = CU.location.locationID.ToString();
                     }

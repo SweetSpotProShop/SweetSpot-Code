@@ -44,7 +44,7 @@ namespace SweetSpotDiscountGolfPOS
                         txtCustomer.Text = C.firstName + " " + C.lastName;
                         //display system time in Sales Page
                         DateTime today = DateTime.Today;
-                        lblDateDisplay.Text = today.ToString("yyyy-MM-dd");
+                        lblDateDisplay.Text = today.ToString("dd/MMM/yy");
                         lblReceiptNumberDisplay.Text = Request.QueryString["receipt"].ToString();
 
                         Invoice R = new Invoice(Convert.ToInt32(Request.QueryString["receipt"].ToString().Split('-')[1]), 1, DateTime.Now, DateTime.Now, C, CU.emp, CU.location, 0, 0, 0, 0, 0, 0, 0, 5, "");

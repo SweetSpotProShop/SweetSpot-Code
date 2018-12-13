@@ -57,7 +57,7 @@ namespace SweetSpotDiscountGolfPOS
                         }
                         lblCustomerDisplay.Text = I.customer.firstName.ToString() + " " + I.customer.lastName.ToString();
                         lblInvoiceNumberDisplay.Text = Request.QueryString["inv"].ToString();
-                        lblDateDisplay.Text = DateTime.Today.ToString("yyyy-MM-dd");
+                        lblDateDisplay.Text = DateTime.Today.ToString("dd/MMM/yy");
                         //binds items in cart to gridview
                         grdInvoicedItems.DataSource = IIM.ReturnInvoiceItemsFromProcessedSalesForReturn(Request.QueryString["inv"].ToString(), objPageDetails);
                         grdInvoicedItems.DataBind();

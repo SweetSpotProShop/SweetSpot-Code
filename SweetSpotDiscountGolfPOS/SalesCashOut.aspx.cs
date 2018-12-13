@@ -43,7 +43,7 @@ namespace SweetSpotDiscountGolfPOS
                         DateTime startDate = DateTime.Parse(Request.QueryString["dtm"].ToString());
                         int loc = Convert.ToInt32(Request.QueryString["location"]);
                         object[] args = { startDate, loc };
-                        lblCashoutDate.Text = "Cashout on: " + startDate.ToString("d") + " for " + LM.ReturnLocationName(loc, objPageDetails);
+                        lblCashoutDate.Text = "Cashout on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(loc, objPageDetails);
                         if (R.CashoutExists(args, objPageDetails))
                         {
                             Cashout C = R.ReturnSelectedCashout(args, objPageDetails)[0];

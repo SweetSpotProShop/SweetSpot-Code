@@ -49,7 +49,7 @@ namespace SweetSpotDiscountGolfPOS
                         Customer C = CM.ReturnCustomer(Convert.ToInt32(Request.QueryString["cust"].ToString()), objPageDetails)[0];
                         //Set name in text box
                         txtCustomer.Text = C.firstName + " " + C.lastName;
-                        lblDateDisplay.Text = DateTime.Today.ToString("yyyy-MM-dd");
+                        lblDateDisplay.Text = DateTime.Today.ToString("dd/MMM/yy");
                         lblInvoiceNumberDisplay.Text = Request.QueryString["inv"].ToString();
                         Invoice I = new Invoice(Convert.ToInt32(Request.QueryString["inv"].ToString().Split('-')[1]), Convert.ToInt32(Request.QueryString["inv"].ToString().Split('-')[2]), DateTime.Now, DateTime.Now, C, CU.emp, CU.location, 0, 0, 0, 0, 0, 0, 0, 1, "");
                         if (!IM.ReturnBolInvoiceExists(Request.QueryString["inv"].ToString(), objPageDetails))

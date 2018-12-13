@@ -85,13 +85,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.TextBox txtPrimaryPhoneNumber;
         
         /// <summary>
-        /// lbSecondaryPhoneNumber control.
+        /// lblSecondaryPhoneNumber control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lbSecondaryPhoneNumber;
+        protected global::System.Web.UI.WebControls.Label lblSecondaryPhoneNumber;
         
         /// <summary>
         /// txtSecondaryPhoneNumber control.

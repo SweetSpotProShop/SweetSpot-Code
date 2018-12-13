@@ -53,21 +53,14 @@ namespace SweetSpotDiscountGolfPOS
                     if (!IsPostBack)
                     {
                         ddlLocation.DataSource = LM.ReturnLocationDropDown(objPageDetails);
-                        ddlLocation.DataTextField = "city";
-                        ddlLocation.DataValueField = "locationID";
                         ddlLocation.DataBind();
                         ddlLocation.SelectedValue = CU.location.locationID.ToString();
                     }
                     //Checks user for admin status
                     if (CU.jobID == 0)
                     {
-                        lbluser.Text = "You have Admin Access";
                         lbluser.Visible = true;
-                    }
-                    else
-                    {
-                        //If no admin status shows location as label instead of drop down
-                        ddlLocation.Enabled = false;
+                        ddlLocation.Enabled = true;
                     }
                     //populate gridview with todays sales
                     grdSameDaySales.DataSource = R.getInvoiceBySaleDate(DateTime.Today, DateTime.Today, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);

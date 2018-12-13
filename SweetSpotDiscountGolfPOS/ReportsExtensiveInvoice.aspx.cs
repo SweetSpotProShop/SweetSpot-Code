@@ -57,11 +57,11 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " for " + LM.ReturnLocationName(locID, objPageDetails);
+                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locID, objPageDetails);
                     }
                     else
                     {
-                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locID, objPageDetails);
+                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locID, objPageDetails);
                     }
                     invoices = R.returnExtensiveInvoices(startDate, endDate, locID, objPageDetails);
                     grdInvoices.DataSource = invoices;

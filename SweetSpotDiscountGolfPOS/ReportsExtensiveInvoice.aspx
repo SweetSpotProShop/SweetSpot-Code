@@ -5,7 +5,7 @@
         <h2>Extensive Invoice Report</h2>
         <hr />
         <div>
-            <asp:Label ID="lblDates" runat="server" Text="lblDates" Font-Bold="true"></asp:Label>
+            <asp:Label ID="lblDates" runat="server" Font-Bold="true" />
         </div>
         <hr />
 
@@ -119,7 +119,7 @@
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Date">
                     <ItemTemplate>
-                        <asp:Label ID="lblDate" runat="server" Text='<%#Eval("invoiceDate")%>' />
+                        <asp:Label ID="lblDate" runat="server" Text='<%#Eval("invoiceDate") %>' />
                     </ItemTemplate>
                 </asp:TemplateField>
             </Columns>
@@ -156,6 +156,5 @@
             WinPrint.close();
             return false;
         }
-
     </script>
 </asp:Content>

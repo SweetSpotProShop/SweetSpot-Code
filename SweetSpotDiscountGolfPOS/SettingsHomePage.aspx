@@ -74,7 +74,9 @@
                             <asp:Label ID="lblProvince" runat="server" Text="Province:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:DropDownList ID="ddlProvince" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlProvince_SelectedIndexChanged" />
+                            <asp:DropDownList ID="ddlProvince" runat="server" AutoPostBack="true" 
+                                DataTextField="provName" DataValueField="provStateID" 
+                                OnSelectedIndexChanged="ddlProvince_SelectedIndexChanged" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
@@ -82,10 +84,13 @@
                             <asp:Label ID="lblTax" runat="server" Text="Tax:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:DropDownList ID="ddlTax" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlTax_SelectedIndexChanged" OnPreRender="ddlTax_SelectedIndexChanged" />
+                            <asp:DropDownList ID="ddlTax" runat="server" AutoPostBack="true" 
+                                DataTextField="taxName" DataValueField="taxID" 
+                                OnSelectedIndexChanged="ddlTax_SelectedIndexChanged" 
+                                OnPreRender="ddlTax_SelectedIndexChanged" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label ID="lblCurrentDate" runat="server" Text="" Visible="false" />
+                            <asp:Label ID="lblCurrentDate" runat="server" Visible="false" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
@@ -101,13 +106,13 @@
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:Label ID="lblCurrentDisplay" runat="server" Text="" />
+                            <asp:Label ID="lblCurrentDisplay" runat="server" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:TextBox ID="txtNewRate" runat="server" AutoComplete="off" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtDate" runat="server" Text="" AutoComplete="off" />
+                            <asp:TextBox ID="txtDate" runat="server" AutoComplete="off" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
@@ -131,20 +136,20 @@
                         <asp:TableCell>
                             <asp:Label ID="lblModel" runat="server" Text="Model" />
                             <div>
-                                <asp:TextBox ID="txtModelOne" runat="server" placeholder="Model" AutoComplete="off" />
+                                <asp:TextBox ID="txtModelOne" runat="server" AutoComplete="off" placeholder="Model" />
                             </div>
                             <div>
-                                <asp:TextBox ID="txtModelTwo" runat="server" placeholder="Confirm Model" AutoComplete="off" />
+                                <asp:TextBox ID="txtModelTwo" runat="server" AutoComplete="off" placeholder="Confirm Model" />
                             </div>
                             <asp:Button ID="btnAddModel" runat="server" Width="150" Text="Add Model" OnClick="btnAddModel_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label ID="lblBrand" runat="server" Text="Brand" />
                             <div>
-                                <asp:TextBox ID="txtBrandOne" runat="server" placeholder="Brand" AutoComplete="off" />
+                                <asp:TextBox ID="txtBrandOne" runat="server" AutoComplete="off" placeholder="Brand" />
                             </div>
                             <div>
-                                <asp:TextBox ID="txtBrandTwo" runat="server" placeholder="Confirm Brand" AutoComplete="off" />
+                                <asp:TextBox ID="txtBrandTwo" runat="server"  AutoComplete="off" placeholder="Confirm Brand" />
                             </div>
                             <asp:Button ID="btnAddBrand" runat="server" Width="150" Text="Add Brand" OnClick="btnAddBrand_Click" />
                         </asp:TableCell>

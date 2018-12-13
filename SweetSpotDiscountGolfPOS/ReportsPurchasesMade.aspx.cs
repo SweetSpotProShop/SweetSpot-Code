@@ -52,7 +52,7 @@ namespace SweetSpotDiscountGolfPOS
                     DateTime endDate = reportDates[1];
                     int locationID = (int)repInfo[1];
                     //Builds string to display in label
-                    lblPurchasesMadeDate.Text = "Purchases Made Between: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
+                    lblPurchasesMadeDate.Text = "Purchases Made Between: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     //Creating a cashout list and calling a method that grabs all mops and amounts paid
                     purch = R.returnPurchasesDuringDates(startDate, endDate, locationID, objPageDetails);
                     grdPurchasesMade.DataSource = purch;

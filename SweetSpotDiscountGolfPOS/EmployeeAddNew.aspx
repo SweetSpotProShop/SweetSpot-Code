@@ -10,23 +10,19 @@
         <h2>New Employee</h2>
         <%--REMEMBER TO SET DEFAULT BUTTON--%>
         <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnSaveEmployee">
-            <asp:SqlDataSource ID="sqlCountrySource" runat="server" ConnectionString="<%$ ConnectionStrings:SweetSpotDevConnectionString %>" SelectCommand="SELECT * FROM [tbl_country] ORDER BY [countryDesc]"></asp:SqlDataSource>
-            <asp:SqlDataSource ID="SqlJobSource" runat="server" ConnectionString="<%$ ConnectionStrings:SweetSpotDevConnectionString %>" SelectCommand="SELECT * FROM [tbl_jobPosition] ORDER BY [title]"></asp:SqlDataSource>
-            <asp:SqlDataSource ID="SqlLocationSource" runat="server" ConnectionString="<%$ ConnectionStrings:SweetSpotDevConnectionString %>" SelectCommand="SELECT locationID, locationName FROM [tbl_location] ORDER BY [locationName]"></asp:SqlDataSource>
-
             <asp:Table ID="Table1" runat="server" Width="100%">
                 <asp:TableRow>
                     <asp:TableCell Width="25%">
                         <asp:Label ID="lblFirstName" runat="server" Text="First Name:" />
                     </asp:TableCell>
                     <asp:TableCell Width="25%">
-                        <asp:TextBox ID="txtFirstName" runat="server" ValidateRequestMode="Enabled" ViewStateMode="Enabled" AutoComplete="off" Enabled="false" />
+                        <asp:TextBox ID="txtFirstName" runat="server" AutoComplete="off" ValidateRequestMode="Enabled" ViewStateMode="Enabled" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell Width="25%">
                         <asp:Label ID="lblLastName" runat="server" Text="Last Name:" />
                     </asp:TableCell>
                     <asp:TableCell Width="25%">
-                        <asp:TextBox ID="txtLastName" runat="server" ValidateRequestMode="Enabled" ViewStateMode="Enabled" AutoComplete="off" Enabled="false" />
+                        <asp:TextBox ID="txtLastName" runat="server" AutoComplete="off" ValidateRequestMode="Enabled" ViewStateMode="Enabled" Enabled="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -46,13 +42,15 @@
                         <asp:Label ID="lblJob" runat="server" Text="Job:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlJob" runat="server" AutoPostBack="false" DataSourceID="sqlJobSource" DataTextField="title" DataValueField="jobID" Enabled="false" />
+                        <asp:DropDownList ID="ddlJob" runat="server" AutoPostBack="false" 
+                            DataTextField="title" DataValueField="jobID" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblLocation" runat="server" Text="Location:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="false" DataSourceID="sqlLocationSource" DataTextField="locationName" DataValueField="locationID" Enabled="false" />
+                        <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="false"
+                            DataTextField="locationName" DataValueField="locationID" Enabled="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -73,13 +71,13 @@
                         <asp:Label ID="lblPrimaryPhoneNumber" runat="server" Text="Primary Phone Number:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtPrimaryPhoneNumber" runat="server" ValidateRequestMode="Enabled" AutoComplete="off" Enabled="false" />
+                        <asp:TextBox ID="txtPrimaryPhoneNumber" runat="server" AutoComplete="off" ValidateRequestMode="Enabled" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lbSecondaryPhoneNumber" runat="server" Text="Secondary Phone Number:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtSecondaryPhoneNumber" runat="server" ValidateRequestMode="Enabled" AutoComplete="off" Enabled="false" />
+                        <asp:TextBox ID="txtSecondaryPhoneNumber" runat="server" AutoComplete="off" ValidateRequestMode="Enabled" Enabled="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -115,13 +113,16 @@
                         <asp:Label ID="lblProvince" runat="server" Text="Province:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlProvince" AutoPostBack="false" runat="server" Enabled="false" />
+                        <asp:DropDownList ID="ddlProvince" runat="server" AutoPostBack="false" 
+                            DataTextField="provName" DataValueField="provStateID" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblCountry" runat="server" Text="Country:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlCountry" runat="server" AutoPostBack="True" DataSourceID="sqlCountrySource" DataTextField="countryDesc" DataValueField="countryID" Enabled="false" OnSelectedIndexChanged="ddlCountry_SelectedIndexChanged" />
+                        <asp:DropDownList ID="ddlCountry" runat="server" AutoPostBack="True" 
+                            DataTextField="countryDesc" DataValueField="countryID" Enabled="false" 
+                            OnSelectedIndexChanged="ddlCountry_SelectedIndexChanged" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -134,7 +135,7 @@
                         <asp:Label ID="lblNewPassword" runat="server" Text="Enter New Password" Visible="false" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtNewPassword" TextMode="Password" runat="server" Text="" AutoComplete="off" Visible="false" />
+                        <asp:TextBox ID="txtNewPassword" TextMode="Password" runat="server" AutoComplete="off" Visible="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblPasswordFormat" runat="server" Text="Passwords are only Numeric" Visible="false" />
@@ -145,7 +146,7 @@
                         <asp:Label ID="lblNewPassword2" runat="server" Text="Retype New Password" Visible="false" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtNewPassword2" TextMode="Password" runat="server" Text="" AutoComplete="off" Visible="false" />
+                        <asp:TextBox ID="txtNewPassword2" TextMode="Password" runat="server" AutoComplete="off" Visible="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Button ID="btnSavePassword" runat="server" Text="Save New Password" Visible="false" OnClick="btnSavePassword_Click" CausesValidation="false" />

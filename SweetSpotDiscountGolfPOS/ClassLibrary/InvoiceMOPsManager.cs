@@ -78,8 +78,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[1]) }
             };
 
-            List<InvoiceMOPs> invoiceMOPs = ConvertFromDataTableToInvoiceMOPs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
-            return invoiceMOPs;
+            return ConvertFromDataTableToInvoiceMOPs(dbc.returnDataTableData(sqlCmd, parms));
+            //return ConvertFromDataTableToInvoiceMOPs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
 
         //Returns list of MOPs based on an Invoice number in currentSales Table
@@ -95,7 +95,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[2]) }
             };
 
-            return ConvertFromDataTableToCurrentInvoiceMOPs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
+            return ConvertFromDataTableToCurrentInvoiceMOPs(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
+            //return ConvertFromDataTableToCurrentInvoiceMOPs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         public List<InvoiceMOPs> ReturnPurchaseMOPsCurrentSale(string invoice, object[] objPageDetails)
         {
@@ -108,7 +109,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@invoiceNum", Convert.ToInt32(invoice.Split('-')[1]) }
             };
 
-            return ConvertFromDataTableToCurrentPurchaseMOPs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
+            return ConvertFromDataTableToCurrentPurchaseMOPs(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
+            //return ConvertFromDataTableToCurrentPurchaseMOPs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         public List<InvoiceMOPs> ReturnReceiptMOPsPurchase(string receipt, object[] objPageDetails)
         {
@@ -121,7 +123,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@receiptNum", Convert.ToInt32(receipt) }
             };
 
-            return ConvertFromDataTableToReceiptPurchaseMOPs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
+            return ConvertFromDataTableToReceiptPurchaseMOPs(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
+            //return ConvertFromDataTableToReceiptPurchaseMOPs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         public void AddNewMopToList(string invoice, double amountPaid, string method, object[] amounts, object[] objPageDetails)
         {
@@ -138,7 +141,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@tender", Convert.ToDouble(amounts[0]) },
                 new object[] { "@change", Convert.ToDouble(amounts[1]) }
             };
-            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            dbc.executeInsertQuery(sqlCmd, parms);
+            //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public void AddNewMopToReceiptList(string invoice, double amountPaid, string method, int chequeNumber, object[] objPageDetails)
         {
@@ -153,7 +157,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@chequeNum", chequeNumber },
                 new object[] { "@amountPaid", amountPaid }
             };
-            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            dbc.executeInsertQuery(sqlCmd, parms);
+            //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public void RemoveMopFromList(int mopID, string invoice, object[] objPageDetails)
         {
@@ -167,7 +172,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[2].ToString()) },
                 new object[] { "@mopID", mopID }
             };
-            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            dbc.executeInsertQuery(sqlCmd, parms);
+            //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public void RemoveMopFromPurchaseList(int mopID, string invoice, object[] objPageDetails)
         {
@@ -180,7 +186,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@receiptNum", Convert.ToInt32(invoice.Split('-')[1].ToString()) },
                 new object[] { "@mopID", mopID }
             };
-            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            dbc.executeInsertQuery(sqlCmd, parms);
+            //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         private int ReturnMOPInt(string mopName, object[] objPageDetails)
         {
@@ -190,7 +197,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             {
                 new object[] { "@mopName", mopName }
             };
-            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
+            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms);
+            //return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
         }
         private string ReturnMOPString(int mopID, object[] objPageDetails)
         {
@@ -200,7 +208,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             {
                 new object[] { "@mopID", mopID }
             };
-            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
+            //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public int ReturnMopIntForTable(string mopName, object[] objPageDetails)
         {

@@ -23,7 +23,7 @@
         <h2>Top Selling Items Report</h2>
         <hr />
         <div>
-            <asp:Label ID="lblDates" runat="server" Text="lblDates" Font-Bold="true"></asp:Label>
+            <asp:Label ID="lblDates" runat="server" Font-Bold="true" />
         </div>
         <hr />
         <h3>Most Sold Items</h3>
@@ -92,6 +92,4 @@
                 </asp:TableCell>
             </asp:TableRow>
         </asp:Table>
-    
 </asp:Content>
-

@@ -45,7 +45,7 @@ namespace SweetSpotDiscountGolfPOS
                         lblPostalAddress.Text = invoices.customer.city.ToString() + ", " + LM.ReturnProvinceName(invoices.customer.province, objPageDetails) + " " + invoices.customer.postalCode.ToString();
                         lblPhone.Text = invoices.customer.primaryPhoneNumber.ToString();
                         lblinvoiceNum.Text = invoices.invoiceNum.ToString() + "-" + invoices.invoiceSub.ToString();
-                        lblDate.Text = invoices.invoiceDate.ToShortDateString();
+                        lblDate.Text = invoices.invoiceDate.ToString("dd/MMM/yy");
                         lblTime.Text = invoices.invoiceTime.ToString("h:mm tt");
 
                         //Display the location information

@@ -48,7 +48,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@currentDate", currentDate },
                 new object[] { "@prov", prov }
             };
-            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
+            return dbc.returnDataTableData(sqlCmd, parms);
+            //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         private List<Tax> getTaxes(int provStateID, DateTime recDate, object[] objPageDetails)
@@ -66,7 +67,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@recDate", recDate }
             };
             //Returns the list of taxes
-            return ReturnListOfTaxes(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
+            return ReturnListOfTaxes(dbc.returnDataTableData(sqlCmd, parms));
+            //return ReturnListOfTaxes(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
 
         public void InsertNewTaxRate(int provinceID, int taxID, DateTime selectedDate, double taxRate, object[] objPageDetails)
@@ -81,7 +83,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@taxID", taxID },
                 new object[] { "@taxRate", taxRate }
             };
-            dbc.executeInsertQuery(sqlCmd,parms, objPageDetails, strQueryName);
+            dbc.executeInsertQuery(sqlCmd,parms);
+            //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public object[] ReturnChargedTaxForSale(Invoice I, object[] btnRequirements, object[] objPageDetails)
         {

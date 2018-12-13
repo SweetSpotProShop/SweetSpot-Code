@@ -55,7 +55,7 @@ namespace SweetSpotDiscountGolfPOS
                     DateTime startDate = reportDates[0];
                     DateTime endDate = reportDates[1];
                     //Builds string to display in label
-                    lblTaxDate.Text = "Taxes Through: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
+                    lblTaxDate.Text = "Taxes Through: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
                     //Creating a cashout list and calling a method that grabs all mops and amounts paid
                     tr = R.returnTaxReportDetails(startDate, endDate, objPageDetails);
 

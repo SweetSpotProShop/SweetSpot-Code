@@ -32,15 +32,18 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
         private int ConvertFromDataTableToInt(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
         {
-            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
+            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms);
+            //return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
         }
         private string ConvertFromDataTableToString(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
         {
-            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
+            //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
         }
         private void ExecuteNonReturnQuery(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
         {
-            dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            dbc.executeInsertQuery(sqlCmd, parms);
+            //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //Search results
@@ -163,14 +166,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             string sqlCmd = ReturnItemsFromSearchString(searchText, quantity);
             object[][] parms = { };
-            return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
+            return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms));
+            //return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
         public List<Items> ReturnInvoiceItemsFromSearchStringForSale(string searchText, object[] objPageDetails)
         {
             string strQueryName = "ReturnInvoiceItemsFromSearchStringForSale";
             string sqlCmd = ReturnItemsFromSearchString(searchText, -1);
             object[][] parms = { };
-            return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
+            return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms));
+            //return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
         public List<Items> ReturnTradeInSku(object[] objPageDetails)
         {
@@ -182,7 +187,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                        + "CLU JOIN tbl_location L ON CLU.locationID = L.locationID WHERE CLU.sku = C.sku) AS locationName, "
                        + "C.quantity,	C.price, C.cost, C.typeID, C.isTradeIn, C.comments FROM tbl_clubs C WHERE C.sku = 100000";
             object[][] parms = { };
-            return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
+            return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms));
+            //return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
 
         //DropDownList insertion
@@ -192,7 +198,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string sqlCmd = "SELECT brandID, brandName FROM "
                 + "tbl_brand ORDER BY brandName";
             object[][] parms = { };
-            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
+            return dbc.returnDataTableData(sqlCmd, parms);
+            //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public DataTable ReturnDropDownForModel(object[] objPageDetails)
         {
@@ -200,7 +207,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string sqlCmd = "SELECT modelID, modelName FROM "
                 + "tbl_model ORDER BY modelName";
             object[][] parms = { };
-            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
+            return dbc.returnDataTableData(sqlCmd, parms);
+            //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public DataTable ReturnDropDownForItemType(object[] objPageDetails)
         {
@@ -208,14 +216,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string sqlCmd = "SELECT typeID, typeDescription FROM "
                 + "tbl_itemType ORDER BY typeDescription";
             object[][] parms = { };
-            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
+            return dbc.returnDataTableData(sqlCmd, parms);
+            //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public DataTable ReturnDropDownForClubType(object[] objPageDetails)
         {
             string strQueryName = "ReturnDropDownForClubType";
             string sqlCmd = "SELECT typeID, typeName FROM tbl_clubType ORDER BY typeName";
             object[][] parms = { };
-            return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
+            return dbc.returnDataTableData(sqlCmd, parms);
+            //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
         //TradeIn Criteria

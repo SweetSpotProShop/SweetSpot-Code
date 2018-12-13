@@ -35,7 +35,7 @@
     <div id="print">
         <h2>Cost of Goods Sold and Profit Margin</h2>
         <hr />
-        <asp:Label ID="lblDates" runat="server" Font-Bold="true" Text="lblDates" />
+        <asp:Label ID="lblDates" runat="server" Font-Bold="true" />
         <hr />
 
         <asp:GridView ID="grdInvoiceSelection" runat="server" AutoGenerateColumns="false" ShowFooter="true" Width="100%" RowStyle-HorizontalAlign="Center" OnRowDataBound="grdInvoiceSelection_RowDataBound">

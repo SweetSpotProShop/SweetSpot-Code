@@ -52,11 +52,11 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("d") + " for " + LM.ReturnLocationName(locID, objPageDetails);
+                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locID, objPageDetails);
                     }
                     else
                     {
-                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("d") + " to " + endDate.ToString("d") + " for " + LM.ReturnLocationName(locID, objPageDetails);
+                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locID, objPageDetails);
                     }
                     discounts = R.returnDiscountsBetweenDates(startDate, endDate, locID, objPageDetails);
                     grdInvoiceDisplay.DataSource = discounts;
