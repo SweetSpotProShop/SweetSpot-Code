@@ -34,7 +34,7 @@
     <h2>Items Sold</h2>
     <hr />
     <div>
-        <asp:Label ID="lblDates" runat="server" Font-Bold="true" Text="lblDates" />
+        <asp:Label ID="lblDates" runat="server" Font-Bold="true" />
     </div>
     <hr />
     <div>
@@ -94,9 +94,4 @@
             </asp:TableCell>
         </asp:TableRow>
     </asp:Table>
-    <%--<script>
-        function printReport(printable) {
-            window.print();
-        }
-    </script>--%>
 </asp:Content>

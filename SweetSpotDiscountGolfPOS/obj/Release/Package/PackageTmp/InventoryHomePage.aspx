@@ -52,7 +52,10 @@
                         <Columns>
                             <asp:TemplateField HeaderText="View Item">
                                 <ItemTemplate>
-                                    <asp:LinkButton ID="lbtnView" CommandName="viewItem" CommandArgument='<%#Eval("sku") %>' Text="View Item" runat="server">View Item</asp:LinkButton></ItemTemplate></asp:TemplateField><asp:TemplateField HeaderText="SKU">
+                                    <asp:LinkButton ID="lbtnView" CommandName="viewItem" CommandArgument='<%#Eval("sku") %>' Text="View Item" runat="server" />
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                            <asp:TemplateField HeaderText="SKU">
                                 <HeaderTemplate>
                                     <asp:Button ID="btnSKU" runat="server" OnClick="lbtnSKU_Click" Width="100px" Text="SKU" />
                                 </HeaderTemplate>

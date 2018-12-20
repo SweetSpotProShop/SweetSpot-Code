@@ -7,10 +7,10 @@
     <h2>Today's Transactions</h2>
     <%--REMEMBER TO SET DEFAULT BUTTON--%>
     <asp:Label ID="lblLoc" runat="server" Text="Location :" />
-    <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="true" />
-    <asp:Label ID="lblLocation" runat="server" Visible="false" Text="Loc" />
+    <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="true"
+        DataTextField="city" DataValueField="locationID" Enabled="false" />
     <div style="text-align: right">
-        <asp:Label ID="lbluser" runat="server" Visible="false" Text="UserName" />
+        <asp:Label ID="lbluser" runat="server" Visible="false" Text="You have Admin Access" />
     </div>
     <hr />
     <asp:GridView ID="grdSameDaySales" runat="server" AutoGenerateColumns="False" Width="100%" ShowFooter="true" OnRowDataBound="grdSameDaySales_RowDataBound" RowStyle-HorizontalAlign="Center">
@@ -24,7 +24,7 @@
                 </FooterTemplate>
             </asp:TemplateField>
             <asp:BoundField DataField="custID" ReadOnly="true" HeaderText="Customer" />
-            <asp:BoundField DataField="empID" ReadOnly="true" HeaderText="Employee" />
+            <asp:BoundField DataField="employeeName" ReadOnly="true" HeaderText="Employee" />
             <asp:BoundField DataField="discountAmount" ReadOnly="true" HeaderText="Discount" DataFormatString="{0:C}" />
             <asp:BoundField DataField="tradeinAmount" ReadOnly="true" HeaderText="Trade In" DataFormatString="{0:C}" />
             <asp:BoundField DataField="subTotal" ReadOnly="true" HeaderText="Subtotal" DataFormatString="{0:C}" />

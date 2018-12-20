@@ -53,7 +53,7 @@
                             <asp:Label ID="lblTotals" runat="server" Text="Totals:" />
                         </FooterTemplate>
                     </asp:TemplateField>
-                    <asp:BoundField HeaderText="Receipt Date" HeaderStyle-Width="20%" DataField="receiptDate" DataFormatString="{0:d}" />
+                    <asp:BoundField HeaderText="Receipt Date" HeaderStyle-Width="20%" DataField="receiptDate" DataFormatString="{0: dd/MMM/yy}" />
                     <asp:BoundField HeaderText="Purchase Method" HeaderStyle-Width="20%" DataField="mopDescription" />
                     <asp:BoundField HeaderText="Cheque Number" HeaderStyle-Width="20%" DataField="chequeNumber" />
                     <asp:BoundField HeaderText="Purchase Amount" HeaderStyle-Width="20%" DataField="amountPaid" DataFormatString="{0:C}" />

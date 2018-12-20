@@ -74,7 +74,7 @@
                                     <asp:Label ID="lblRefundSubTotal" runat="server" Text="Refund Subtotal:" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:Label ID="lblRefundSubTotalAmount" runat="server" Text="" />
+                                    <asp:Label ID="lblRefundSubTotalAmount" runat="server" />
                                 </asp:TableCell>
                             </asp:TableRow>
                             <asp:TableRow>
@@ -82,7 +82,7 @@
                                     <asp:Label ID="lblGovernment" runat="server" Text="GST:" Visible="false" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:Label ID="lblGovernmentAmount" runat="server" Text="" Visible="false" />
+                                    <asp:Label ID="lblGovernmentAmount" runat="server" Visible="false" />
                                 </asp:TableCell>
                             </asp:TableRow>
                             <asp:TableRow>
@@ -90,7 +90,7 @@
                                     <asp:Label ID="lblProvincial" runat="server" Text="PST:" Visible="false" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:Label ID="lblProvincialAmount" runat="server" Text="" Visible="false" />
+                                    <asp:Label ID="lblProvincialAmount" runat="server" Visible="false" />
                                 </asp:TableCell>
                             </asp:TableRow>
                             <asp:TableRow>
@@ -98,7 +98,7 @@
                                     <asp:Label ID="lblRefundBalance" runat="server" Text="Total Refund Amount:" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:Label ID="lblRefundBalanceAmount" runat="server" Text="" />
+                                    <asp:Label ID="lblRefundBalanceAmount" runat="server" />
                                 </asp:TableCell>
                             </asp:TableRow>
                         </asp:Table>
@@ -131,7 +131,7 @@
                     </asp:TableCell>
                     <asp:TableCell ColumnSpan="2">
                         <hr />
-                        <asp:Label ID="lblRemainingRefundDisplay" runat="server" Text=""></asp:Label>
+                        <asp:Label ID="lblRemainingRefundDisplay" runat="server" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -151,7 +151,7 @@
             <p>
                 Comments:
                <br />
-                <asp:TextBox ID="txtComments" runat="server" TextMode="MultiLine" AutoComplete="off" />
+                <asp:TextBox ID="txtComments" runat="server" AutoComplete="off" TextMode="MultiLine" />
             </p>
         </asp:Panel>
     </div>

@@ -1,7 +1,12 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="SalesCheckout.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.SalesCheckout" %>
 
-<%--<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
-</asp:Content>--%>
+<asp:Content ID="Content1" runat="server" ContentPlaceHolderID="head">
+    <style type="text/css">
+        .auto-style1 {
+            height: 152px;
+        }
+    </style>
+</asp:Content>
 
 <asp:Content ID="NonActive" ContentPlaceHolderID="SPMaster" runat="server">
     <div id="menu_simple">
@@ -29,7 +34,7 @@
                     <asp:TableCell ColumnSpan="2" CssClass="auto-style1">
                         <asp:Table runat="server">
                             <asp:TableRow>
-                                <asp:TableCell ColumnSpan="2" style="text-align: center">Methods of Payment</asp:TableCell>
+                                <asp:TableCell ColumnSpan="2" style="text-align: center" Text="Methods of Payment" />
                             </asp:TableRow>
                             <asp:TableRow>
                                 <asp:TableCell>
@@ -114,7 +119,7 @@
                                     <asp:Label ID="lblGovernment" runat="server" Text="GST:" Visible="false" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:Label ID="lblGovernmentAmount" runat="server" Visible="false" Text="0" />
+                                    <asp:Label ID="lblGovernmentAmount" runat="server" Visible="false" Text="0.00" />
                                 </asp:TableCell>
                                 <asp:TableCell>
                                     <asp:Button ID="btnRemoveGov" runat="server" Text="Remove GST" Width="163px" OnClick="btnRemoveGovTax" Visible="false" CausesValidation="false" />
@@ -125,7 +130,7 @@
                                     <asp:Label ID="lblProvincial" runat="server" Text="PST:" Visible="false" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:Label ID="lblProvincialAmount" runat="server" Visible="false" Text="0" />
+                                    <asp:Label ID="lblProvincialAmount" runat="server" Visible="false" Text="0.00" />
                                 </asp:TableCell>
                                 <asp:TableCell>
                                     <asp:Button ID="btnRemoveProv" runat="server" Text="Remove PST" Width="163px" OnClick="btnRemoveProvTax" Visible="false" CausesValidation="false" />
@@ -194,7 +199,7 @@
                         <asp:Label ID="lblConfirmEmployee" runat="server" Text="Enter Employee Passcode:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtEmployeePasscode" runat="server" TextMode="Password" AutoComplete="off" />
+                        <asp:TextBox ID="txtEmployeePasscode" runat="server" AutoComplete="off" TextMode="Password" />
                     </asp:TableCell>
                     <asp:TableCell>
                          <asp:RequiredFieldValidator ID="valEmployeePasscode" runat="server" ForeColor="red" ErrorMessage="Must Enter Passcode" ControlToValidate="txtEmployeePasscode" />
@@ -224,11 +229,4 @@
             }
         }
     </script>
-</asp:Content>
-<asp:Content ID="Content1" runat="server" ContentPlaceHolderID="head">
-    <style type="text/css">
-        .auto-style1 {
-            height: 152px;
-        }
-    </style>
 </asp:Content>
