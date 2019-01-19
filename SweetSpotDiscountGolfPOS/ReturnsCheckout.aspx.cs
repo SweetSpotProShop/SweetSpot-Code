@@ -3,8 +3,6 @@ using SweetSpotDiscountGolfPOS.ClassLibrary;
 using SweetSpotProShop;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.UI;
@@ -71,7 +69,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -97,7 +95,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -123,7 +121,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -149,7 +147,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -175,7 +173,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -201,7 +199,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -228,7 +226,7 @@ namespace SweetSpotDiscountGolfPOS
                 UpdatePageTotals();
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -255,7 +253,7 @@ namespace SweetSpotDiscountGolfPOS
                 Response.Redirect("HomePage.aspx", false);
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -280,7 +278,7 @@ namespace SweetSpotDiscountGolfPOS
                 Response.Redirect("ReturnsCart.aspx?" + nameValues, false);
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -299,31 +297,40 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 CU = (CurrentUser)Session["currentUser"];
-                //Checks to make sure total is 0
-                if (!txtAmountRefunding.Text.Equals("0.00"))
+                EmployeeManager EM = new EmployeeManager();
+                if (EM.returnCanEmployeeMakeSale(txtEmployeePasscode.Text, objPageDetails))
                 {
-                    //Displays message box that refund will need to = 0
-                    MessageBox.ShowMessage("Remaining Refund Does NOT Equal 0.", this);
-                }
-                else
-                {
-                    if (IM.VerifyMOPHasBeenAdded(Request.QueryString["inv"].ToString(), objPageDetails))
+                    //Checks to make sure total is 0
+                    if (!txtAmountRefunding.Text.Equals("0.00"))
                     {
-                        IM.FinalizeInvoice(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0], txtComments.Text, "tbl_invoiceItemReturns", objPageDetails);
-                        string printableInvoiceNum = Request.QueryString["inv"].ToString().Split('-')[1] + "-" + Request.QueryString["inv"].ToString().Split('-')[2];
-                        var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                        nameValues.Set("inv", printableInvoiceNum);
-                        Response.Redirect("PrintableInvoice.aspx?" + nameValues, false);
+                        //Displays message box that refund will need to = 0
+                        MessageBox.ShowMessage("Remaining Refund Does NOT Equal 0.", this);
                     }
                     else
                     {
-                        MessageBox.ShowMessage("At least one method of payment "
-                            + "is required even for a $0.00 return.", this);
+                        if (IM.VerifyMOPHasBeenAdded(Request.QueryString["inv"].ToString(), objPageDetails))
+                        {
+                            IM.FinalizeInvoice(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0], txtComments.Text, "tbl_invoiceItemReturns", objPageDetails);
+                            string printableInvoiceNum = Request.QueryString["inv"].ToString().Split('-')[1] + "-" + Request.QueryString["inv"].ToString().Split('-')[2];
+                            var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                            nameValues.Set("inv", printableInvoiceNum);
+                            Response.Redirect("PrintableInvoice.aspx?" + nameValues, false);
+                        }
+                        else
+                        {
+                            MessageBox.ShowMessage("At least one method of payment "
+                                + "is required even for a $0.00 return.", this);
+                        }
                     }
+                }
+                else
+                {
+                    MessageBox.ShowMessage("Invalid employee passcode entered. "
+                    + "Please try again.", this);
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -348,7 +355,7 @@ namespace SweetSpotDiscountGolfPOS
                 UpdatePageTotals();
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -383,7 +390,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
+            catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
@@ -426,8 +433,8 @@ namespace SweetSpotDiscountGolfPOS
                 buttonDisable((I.balanceDue + tx) - dblAmountPaid);
             }
             //Exception catch
-            catch (ThreadAbortException tae) { }
-            catch(Exception ex)
+            catch (ThreadAbortException) { }
+            catch (Exception ex)
             {
                 //Log all info into error table
                 ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);

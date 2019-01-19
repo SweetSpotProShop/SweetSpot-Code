@@ -220,6 +220,33 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Button btnFinalize;
         
         /// <summary>
+        /// lblConfirmEmployee control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblConfirmEmployee;
+        
+        /// <summary>
+        /// txtEmployeePasscode control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtEmployeePasscode;
+        
+        /// <summary>
+        /// valEmployeePasscode control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator valEmployeePasscode;
+        
+        /// <summary>
         /// txtComments control.
         /// </summary>
         /// <remarks>
