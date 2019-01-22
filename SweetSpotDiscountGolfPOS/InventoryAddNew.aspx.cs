@@ -194,7 +194,7 @@ namespace SweetSpotDiscountGolfPOS
                         {
                             ddlBrand.DataSource = IM.ReturnDropDownForBrand(objPageDetails);
                             ddlBrand.DataBind();
-                            ddlLocation.DataSource = LM.ReturnLocationDropDownAll(objPageDetails);
+                            ddlLocation.DataSource = LM.ReturnLocationDropDown(objPageDetails);
                             ddlLocation.DataBind();
                             ddlType.DataSource = IM.ReturnDropDownForItemType(objPageDetails);
                             ddlType.DataBind();

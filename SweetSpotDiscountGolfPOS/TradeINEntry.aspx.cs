@@ -36,6 +36,7 @@ namespace SweetSpotDiscountGolfPOS
 
                     ddlModel.DataSource = IM.ReturnDropDownForModel(objPageDetails);
                     ddlModel.DataBind();
+                    ddlModel.SelectedValue = "2624";
 
                 }
             }

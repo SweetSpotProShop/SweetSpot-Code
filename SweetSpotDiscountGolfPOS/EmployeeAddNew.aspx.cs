@@ -56,7 +56,7 @@ namespace SweetSpotDiscountGolfPOS
                             ddlJob.DataBind();
                             ddlJob.SelectedValue = employee.jobID.ToString();
 
-                            ddlLocation.DataSource = LM.ReturnLocationDropDownAll(objPageDetails);
+                            ddlLocation.DataSource = LM.ReturnLocationDropDown(objPageDetails);
                             ddlLocation.DataBind();
                             ddlLocation.SelectedValue = employee.location.locationID.ToString();
 
@@ -83,7 +83,7 @@ namespace SweetSpotDiscountGolfPOS
                             ddlJob.DataBind();
                             ddlJob.SelectedValue = CU.jobID.ToString();
 
-                            ddlLocation.DataSource = LM.ReturnLocationDropDownAll(objPageDetails);
+                            ddlLocation.DataSource = LM.ReturnLocationDropDown(objPageDetails);
                             ddlLocation.DataBind();
                             ddlLocation.SelectedValue = CU.location.locationID.ToString();
                             
