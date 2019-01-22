@@ -36,7 +36,7 @@ namespace SweetSpotDiscountGolfPOS
 
                     ddlModel.DataSource = IM.ReturnDropDownForModel(objPageDetails);
                     ddlModel.DataBind();
-                    ddlModel.SelectedValue = "2624";
+                    ddlModel.SelectedValue = "2624"; //"2426"; // is the testing value for 'Customer Trade'
 
                 }
             }
