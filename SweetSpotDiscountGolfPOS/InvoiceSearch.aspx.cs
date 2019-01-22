@@ -20,6 +20,9 @@ namespace SweetSpotDiscountGolfPOS
         LocationManager LM = new LocationManager();
         CurrentUser CU;
 
+        string oldInvoice = string.Empty;
+        string newInvoice = string.Empty;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -135,6 +138,58 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     //Changes to printable invoice page
                     Response.Redirect("PrintableInvoice.aspx?inv=" + strInvoice, false);
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+
+        protected void grdInvoiceSelection_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            //Problems with looping
+            //Collects current method for error tracking
+            string method = "grdSameDaySales_RowDataBound";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //Current method does nothing
+            try
+            {
+                LinkButton lb = (LinkButton)e.Row.FindControl("lkbInvoiceNum");
+                if (lb != null)
+                {
+                    oldInvoice = lb.Text;
+                    if (oldInvoice == newInvoice)
+                    {
+                        //Setting the contents of the cells to be blank and to remove them                        
+                        for (int l = 2; l < 9; l++)
+                        {
+                            if (l == 8)
+                            {
+                                e.Row.Cells[l + 2].Visible = false;
+                                e.Row.Cells[l + 2].Text = "";
+                            }
+                            else
+                            {
+                                e.Row.Cells[l].Visible = false;
+                                e.Row.Cells[l].Text = "";
+                            }
+                        }
+                        e.Row.Cells[0].Text = "";
+                        e.Row.Cells[1].Text = "";
+                        e.Row.Cells[1].ColumnSpan = 7;
+                    }
+                    else
+                    {
+                        newInvoice = oldInvoice;
+                    }
                 }
             }
             //Exception catch

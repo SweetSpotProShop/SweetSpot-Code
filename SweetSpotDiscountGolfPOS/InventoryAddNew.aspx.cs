@@ -15,6 +15,7 @@ namespace SweetSpotDiscountGolfPOS
     {
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU;
+        ChangeItem changeItem;
         ItemDataUtilities IDU = new ItemDataUtilities();
         ItemsManager IM = new ItemsManager();
         LocationManager LM = new LocationManager();
@@ -46,6 +47,7 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         if (!IsPostBack)
                         {
+                            ChangeItem tempItem = new ChangeItem();
                             //Grabs a list of objects that match the sku in query string. There should only ever be 1 that is returned
                             List<Object> o = IDU.ReturnListOfObjectsFromThreeTables(Convert.ToInt32(Request.QueryString["sku"].ToString()), objPageDetails);
                             ddlBrand.DataSource = IM.ReturnDropDownForBrand(objPageDetails);
@@ -78,6 +80,16 @@ namespace SweetSpotDiscountGolfPOS
                                 txtDexterity.Text = c.dexterity.ToString();
                                 chkUsed.Checked = c.isTradeIn;
                                 txtComments.Text = c.comments.ToString();
+
+                                tempItem.sku = c.sku;
+                                tempItem.dblOriginalCost = c.cost;
+                                tempItem.dblOriginalPrice = c.price;
+                                tempItem.intOriginalQuantity = c.quantity;
+                                tempItem.strOriginalDescription = "Location ID: " + c.itemlocation.ToString() + "; Item Type: " + c.typeID.ToString()
+                                    + "; Brand ID: " + c.brandID.ToString() + "; Model ID: " + c.modelID.ToString() + "; Club Type: " + c.clubType.ToString()
+                                    + "; Shaft: " + c.shaft.ToString() + ";  Number of Clubs: " + c.numberOfClubs.ToString() + "; Club Spec: "
+                                    + c.clubSpec.ToString() + "; Shaft Spec: " + c.shaftSpec.ToString() + "; Shaft Flex: " + c.shaftFlex.ToString()
+                                    + "; Dexterity: " + c.dexterity.ToString() + "; Used: " + c.isTradeIn.ToString() + "; Comments: " + c.comments.ToString();
                             }
                             else if (o[0] is Accessories)
                             {
@@ -109,6 +121,15 @@ namespace SweetSpotDiscountGolfPOS
                                 lblDexterity.Visible = false;
                                 txtDexterity.Visible = false;
                                 chkUsed.Visible = false;
+
+                                tempItem.sku = a.sku;
+                                tempItem.dblOriginalCost = a.cost;
+                                tempItem.dblOriginalPrice = a.price;
+                                tempItem.intOriginalQuantity = a.quantity;
+                                tempItem.strOriginalDescription = "Location ID: " + a.locID.ToString() + "; Item Type: " + a.typeID.ToString()
+                                    + "; Brand ID: " + a.brandID.ToString() + "; Model ID: " + a.modelID.ToString() + "; Size: " + a.size.ToString()
+                                    + "; Colour: " + a.colour.ToString() + ";  Accessory Type: " + a.accessoryType.ToString() + "; Comments: "
+                                    + a.comments.ToString();
                             }
                             else if (o[0] is Clothing)
                             {
@@ -140,8 +161,18 @@ namespace SweetSpotDiscountGolfPOS
                                 lblDexterity.Visible = false;
                                 txtDexterity.Visible = false;
                                 chkUsed.Visible = false;
+
+                                tempItem.sku = cl.sku;
+                                tempItem.dblOriginalCost = cl.cost;
+                                tempItem.dblOriginalPrice = cl.price;
+                                tempItem.intOriginalQuantity = cl.quantity;
+                                tempItem.strOriginalDescription = "Location ID: " + cl.locID.ToString() + "; Item Type: " + cl.typeID.ToString()
+                                    + "; Brand ID: " + cl.brandID.ToString() + "; Size: " + cl.size.ToString() + "; Colour: " + cl.colour.ToString()
+                                    + ";  Gender: " + cl.gender.ToString() + "; Style: " + cl.style.ToString() + "; Comments: " + cl.comments.ToString();
                             }
                             btnCreateSimilar.Visible = true;
+                            changeItem = tempItem;
+                            Session["changer"] = changeItem;
                         }
                     }
                     else
@@ -478,7 +509,7 @@ namespace SweetSpotDiscountGolfPOS
                 txtClubType.Enabled = false;
                 txtShaft.Enabled = false;
                 txtComments.Enabled = false;
-
+                changeItem = (ChangeItem)Session["changer"];
                 object o = new object();
                 if (Convert.ToInt32(ddlType.SelectedValue) == 1)
                 {
@@ -502,6 +533,15 @@ namespace SweetSpotDiscountGolfPOS
                     c.isTradeIn = chkUsed.Checked;
                     o = c as object;
 
+                    changeItem.dblNewCost = c.cost;
+                    changeItem.dblNewPrice = c.price;
+                    changeItem.intNewQuantity = c.quantity;
+                    changeItem.strNewDescription = "Location ID: " + c.itemlocation.ToString() + "; Item Type: " + c.typeID.ToString()
+                        + "; Brand ID: " + c.brandID.ToString() + "; Model ID: " + c.modelID.ToString() + "; Club Type: " + c.clubType.ToString()
+                        + "; Shaft: " + c.shaft.ToString() + ";  Number of Clubs: " + c.numberOfClubs.ToString() + "; Club Spec: "
+                        + c.clubSpec.ToString() + "; Shaft Spec: " + c.shaftSpec.ToString() + "; Shaft Flex: " + c.shaftFlex.ToString()
+                        + "; Dexterity: " + c.dexterity.ToString() + "; Used: " + c.isTradeIn.ToString() + "; Comments: " + c.comments.ToString(); ;
+                    
                     //changes all text boxes and dropdowns to labels
                     ddlModel.Enabled = false;
                     txtNumberofClubs.Enabled = false;
@@ -528,6 +568,14 @@ namespace SweetSpotDiscountGolfPOS
                     a.comments = txtComments.Text;
                     o = a as object;
 
+                    changeItem.dblNewCost = a.cost;
+                    changeItem.dblNewPrice = a.price;
+                    changeItem.intNewQuantity = a.quantity;
+                    changeItem.strNewDescription = "Location ID: " + a.locID.ToString() + "; Item Type: " + a.typeID.ToString()
+                        + "; Brand ID: " + a.brandID.ToString() + "; Model ID: " + a.modelID.ToString() + "; Size: " + a.size.ToString()
+                        + "; Colour: " + a.colour.ToString() + ";  Accessory Type: " + a.accessoryType.ToString() + "; Comments: "
+                        + a.comments.ToString();
+
                     //changes all text boxes and dropdowns to labels
                     ddlModel.Enabled = false;
                     txtNumberofClubs.Enabled = false;
@@ -549,6 +597,13 @@ namespace SweetSpotDiscountGolfPOS
                     cl.comments = txtComments.Text;
                     o = cl as object;
 
+                    changeItem.dblNewCost = cl.cost;
+                    changeItem.dblNewPrice = cl.price;
+                    changeItem.intNewQuantity = cl.quantity;
+                    changeItem.strNewDescription = "Location ID: " + cl.locID.ToString() + "; Item Type: " + cl.typeID.ToString()
+                        + "; Brand ID: " + cl.brandID.ToString() + "; Size: " + cl.size.ToString() + "; Colour: " + cl.colour.ToString()
+                        + ";  Gender: " + cl.gender.ToString() + "; Style: " + cl.style.ToString() + "; Comments: " + cl.comments.ToString();
+
                     //changes all text boxes and dropdowns to labels
                     txtClubSpec.Enabled = false;
                     txtShaftFlex.Enabled = false;
@@ -561,6 +616,9 @@ namespace SweetSpotDiscountGolfPOS
                 btnAddItem.Visible = false;
                 btnBackToSearch.Visible = true;
                 btnCreateSimilar.Visible = true;
+
+                object[] extra = { CU.emp.employeeID, CU.location.locationID };
+                IDU.SaveInventoryChanges(changeItem, extra);
 
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("sku", IDU.UpdateItemInDatabase(o, objPageDetails).ToString());

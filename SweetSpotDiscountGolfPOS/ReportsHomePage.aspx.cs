@@ -143,46 +143,7 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-
-        //Displays purchases made
-        protected void btnPurchasesReport_Click(object sendr, EventArgs e)
-        {
-            //Collects current method and page for error tracking
-            string method = "btnPurchasesReport_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
-            try
-            {
-                object[] reportLog = { 2, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog, objPageDetails);
-                //Stores report dates into Session
-                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
-                object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                int indicator = R.verifyPurchasesMade(repInfo, objPageDetails);
-                //Check to see if there are sales first
-                if (indicator == 0)
-                {
-                    Session["reportInfo"] = repInfo;
-                    Response.Redirect("ReportsPurchasesMade.aspx", false);
-                }
-                else if (indicator == 1)
-                {
-                    MessageBox.ShowMessage("No purchases have been completed for selected dates.", this);
-                }
-            }
-            //Exception catch
-            catch (ThreadAbortException) { }
-            catch (Exception ex)
-            {
-                //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-                //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator.", this);
-            }
-
-        }
-
+        
         //Displays taxes charged
         protected void btnTaxReport_Click(object sender, EventArgs e)
         {
@@ -204,114 +165,6 @@ namespace SweetSpotDiscountGolfPOS
                 else if (indicator == 1)
                 {
                     MessageBox.ShowMessage("Taxes have not been charged for selected dates.", this);
-                }
-            }
-            //Exception catch
-            catch (ThreadAbortException) { }
-            catch (Exception ex)
-            {
-                //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-                //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator.", this);
-            }
-        }
-
-        //Displays Cost of Sold Items and a Profit margin calulation
-        protected void btnCOGSvsPMReport_Click(object sender, EventArgs e)
-        {
-            //Collects current method and page for error tracking
-            string method = "btnCOGSvsPMReport_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
-            try
-            {
-                object[] reportLog = { 4, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog, objPageDetails);
-                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
-                object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                int indicator = R.verifyInvoicesCompleted(repInfo, objPageDetails);
-                if (indicator == 0)
-                {
-                    Session["reportInfo"] = repInfo;
-                    Response.Redirect("ReportsCOGSvsPM.aspx", false);
-                }
-                else if (indicator == 1)
-                {
-                    MessageBox.ShowMessage("No sales have been completed for selected dates.", this);
-                }
-            }
-            //Exception catch
-            catch (ThreadAbortException) { }
-            catch (Exception ex)
-            {
-                //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-                //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator.", this);
-            }
-        }
-
-        //Almost identical to the COGSvsPM Report, instead of PM shows profit in dollars
-        protected void btnItemsSold_Click(object sender, EventArgs e)
-        {
-            //Collects current method and page for error tracking
-            string method = "btnItemsSold_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
-            try
-            {
-                object[] reportLog = { 5, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog, objPageDetails);
-                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
-                object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                int indicator = R.verifyInvoicesCompleted(repInfo, objPageDetails);
-                if (indicator == 0)
-                {
-                    Session["reportInfo"] = repInfo;
-                    Response.Redirect("ReportsItemsSold.aspx", false);
-                }
-                else if (indicator == 1)
-                {
-                    MessageBox.ShowMessage("No sales have been completed for selected dates.", this);
-                }
-            }
-            //Exception catch
-            catch (ThreadAbortException) { }
-            catch (Exception ex)
-            {
-                //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-                //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator.", this);
-            }
-        }
-
-        //Displays the Top 10 SKUs, Brands, and Models sold
-        protected void btnMostSold_Click(object sender, EventArgs e)
-        {
-            //Collects current method and page for error tracking
-            string method = "btnMostSold_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
-            try
-            {
-                object[] reportLog = { 8, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog, objPageDetails);
-                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
-                object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                int indicator = R.verifyInvoicesCompleted(repInfo, objPageDetails);
-                if (indicator == 0)
-                {
-                    Session["reportInfo"] = repInfo;
-                    Response.Redirect("ReportsMostSold.aspx", false);
-                }
-                else if (indicator == 1)
-                {
-                    MessageBox.ShowMessage("No sales have been completed for selected dates.", this);
                 }
             }
             //Exception catch
@@ -402,85 +255,6 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
 
-        //Displays the totals for accepted payment methods
-        protected void btnPaymentsByDateReport_Click(object sendr, EventArgs e)
-        {
-            //Collects current method and page for error tracking
-            string method = "btnPaymentsByDateReport_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
-            try
-            {
-                object[] reportLog = { 9, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog, objPageDetails);
-                //Stores report dates into Session
-                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
-                object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                int indicator = R.verifySalesHaveBeenMade(repInfo, objPageDetails);
-                //Check to see if there are sales first
-                if (indicator == 0)
-                {
-                    Session["reportInfo"] = repInfo;
-                    Response.Redirect("ReportsPaymentType.aspx", false);
-                }
-                else if (indicator == 1)
-                {
-                    MessageBox.ShowMessage("No Sales have been completed for selected dates.", this);
-                }
-            }
-            //Exception catch
-            catch (ThreadAbortException) { }
-            catch (Exception ex)
-            {
-                //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-                //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator.", this);
-            }
-        }
-
-        //Displays dollar value of trade ins accepted
-        protected void btnTradeInsByDateReport_Click(object sendr, EventArgs e)
-        {
-            //Collects current method and page for error tracking
-            string method = "btnTradeInsByDateReport_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
-            try
-            {
-                object[] reportLog = { 10, CU.emp.employeeID, CU.location.locationID };
-                R.CallReportLogger(reportLog, objPageDetails);
-                //Stores report dates into Session
-                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
-                int loc = Convert.ToInt32(ddlLocation.SelectedValue);
-                object[] repInfo = new object[] { dtm, loc };
-                int indicator = R.verifyTradeInsHaveBeenMade(repInfo, objPageDetails);
-                //Check to see if there are sales first
-                if (indicator == 0)
-                {
-                    Session["reportInfo"] = repInfo;
-                    Server.Transfer("ReportsTradeIns.aspx", false);
-                }
-                else if (indicator == 1)
-                {
-                    MessageBox.ShowMessage("No Trade Ins have been processed for selected dates.", this);
-                }
-            }
-            //Exception catch
-            catch (ThreadAbortException) { }
-            catch (Exception ex)
-            {
-                //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
-                //string prevPage = Convert.ToString(Session["prevPage"]);
-                //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator.", this);
-                //Server.Transfer(prevPage, false);
-            }
-        }
-
         //Similar to the COGSvsPM report with a little more detail
         protected void btnExtensiveInvoice_Click(object sender, EventArgs e)
         {
@@ -552,7 +326,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnStoreStatsReport_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "btnStoreStatsReport";
+            string method = "btnStoreStatsReport_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -584,11 +358,48 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
 
+        //Displays chnages made to inventory items in a date range
+        protected void btnInventoryChangeReport_Click(object sender, EventArgs e)
+        {
+            //Collects current method and page for error tracking
+            string method = "btnInventoryChangeReport_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
+            {
+                object[] reportLog = { 16, CU.emp.employeeID, CU.location.locationID };
+                R.CallReportLogger(reportLog, objPageDetails);
+                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
+                object[] repInfo = new object[] { dtm };
+                int indicator = R.verifyInventoryChange(repInfo, objPageDetails);
+                //Check to see if there are sales first
+                if (indicator == 0)
+                {
+                    Session["reportInfo"] = repInfo;
+                    Response.Redirect("ReportsInventoryChange.aspx", false);
+                }
+                else if (indicator == 1)
+                {
+                    MessageBox.ShowMessage("No changes to Invnetory for selected dates.", this);
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+
         //Displays specific apparel skus sold, their average cost, average price, and profit margin
         protected void btnSpecificApparelReport_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "btnSpecificApparelReport";
+            string method = "btnSpecificApparelReport_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -625,11 +436,11 @@ namespace SweetSpotDiscountGolfPOS
         protected void btnSpecificGripReport_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "btnSpecificGripReport";
+            string method = "btnSpecificGripReport_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                object[] reportLog = { 14, CU.emp.employeeID, CU.location.locationID };
+                object[] reportLog = { 15, CU.emp.employeeID, CU.location.locationID };
                 R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm };
@@ -678,5 +489,227 @@ namespace SweetSpotDiscountGolfPOS
             }
 
         }
+
+
+        ////Displays Cost of Sold Items and a Profit margin calulation
+        //protected void btnCOGSvsPMReport_Click(object sender, EventArgs e)
+        //{
+        //    //Collects current method and page for error tracking
+        //    string method = "btnCOGSvsPMReport_Click";
+        //    object[] objPageDetails = { Session["currPage"].ToString(), method };
+        //    try
+        //    {
+        //        object[] reportLog = { 4, CU.emp.employeeID, CU.location.locationID };
+        //        R.CallReportLogger(reportLog, objPageDetails);
+        //        DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
+        //        object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
+        //        int indicator = R.verifyInvoicesCompleted(repInfo, objPageDetails);
+        //        if (indicator == 0)
+        //        {
+        //            Session["reportInfo"] = repInfo;
+        //            Response.Redirect("ReportsCOGSvsPM.aspx", false);
+        //        }
+        //        else if (indicator == 1)
+        //        {
+        //            MessageBox.ShowMessage("No sales have been completed for selected dates.", this);
+        //        }
+        //    }
+        //    //Exception catch
+        //    catch (ThreadAbortException) { }
+        //    catch (Exception ex)
+        //    {
+        //        //Log all info into error table
+        //        ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+        //        //Display message box
+        //        MessageBox.ShowMessage("An Error has occurred and been logged. "
+        //            + "If you continue to receive this message please contact "
+        //            + "your system administrator.", this);
+        //    }
+        //}
+        ////Almost identical to the COGSvsPM Report, instead of PM shows profit in dollars
+        //protected void btnItemsSold_Click(object sender, EventArgs e)
+        //{
+        //    //Collects current method and page for error tracking
+        //    string method = "btnItemsSold_Click";
+        //    object[] objPageDetails = { Session["currPage"].ToString(), method };
+        //    try
+        //    {
+        //        object[] reportLog = { 5, CU.emp.employeeID, CU.location.locationID };
+        //        R.CallReportLogger(reportLog, objPageDetails);
+        //        DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
+        //        object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
+        //        int indicator = R.verifyInvoicesCompleted(repInfo, objPageDetails);
+        //        if (indicator == 0)
+        //        {
+        //            Session["reportInfo"] = repInfo;
+        //            Response.Redirect("ReportsItemsSold.aspx", false);
+        //        }
+        //        else if (indicator == 1)
+        //        {
+        //            MessageBox.ShowMessage("No sales have been completed for selected dates.", this);
+        //        }
+        //    }
+        //    //Exception catch
+        //    catch (ThreadAbortException) { }
+        //    catch (Exception ex)
+        //    {
+        //        //Log all info into error table
+        //        ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+        //        //Display message box
+        //        MessageBox.ShowMessage("An Error has occurred and been logged. "
+        //            + "If you continue to receive this message please contact "
+        //            + "your system administrator.", this);
+        //    }
+        //}
+        ////Displays purchases made
+        //protected void btnPurchasesReport_Click(object sendr, EventArgs e)
+        //{
+        //    //Collects current method and page for error tracking
+        //    string method = "btnPurchasesReport_Click";
+        //    object[] objPageDetails = { Session["currPage"].ToString(), method };
+        //    try
+        //    {
+        //        object[] reportLog = { 2, CU.emp.employeeID, CU.location.locationID };
+        //        R.CallReportLogger(reportLog, objPageDetails);
+        //        //Stores report dates into Session
+        //        DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
+        //        object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
+        //        int indicator = R.verifyPurchasesMade(repInfo, objPageDetails);
+        //        //Check to see if there are sales first
+        //        if (indicator == 0)
+        //        {
+        //            Session["reportInfo"] = repInfo;
+        //            Response.Redirect("ReportsPurchasesMade.aspx", false);
+        //        }
+        //        else if (indicator == 1)
+        //        {
+        //            MessageBox.ShowMessage("No purchases have been completed for selected dates.", this);
+        //        }
+        //    }
+        //    //Exception catch
+        //    catch (ThreadAbortException) { }
+        //    catch (Exception ex)
+        //    {
+        //        //Log all info into error table
+        //        ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+        //        //Display message box
+        //        MessageBox.ShowMessage("An Error has occurred and been logged. "
+        //            + "If you continue to receive this message please contact "
+        //            + "your system administrator.", this);
+        //    }
+
+        //}
+        ////Displays the totals for accepted payment methods
+        //protected void btnPaymentsByDateReport_Click(object sendr, EventArgs e)
+        //{
+        //    //Collects current method and page for error tracking
+        //    string method = "btnPaymentsByDateReport_Click";
+        //    object[] objPageDetails = { Session["currPage"].ToString(), method };
+        //    try
+        //    {
+        //        object[] reportLog = { 9, CU.emp.employeeID, CU.location.locationID };
+        //        R.CallReportLogger(reportLog, objPageDetails);
+        //        //Stores report dates into Session
+        //        DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
+        //        object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
+        //        int indicator = R.verifySalesHaveBeenMade(repInfo, objPageDetails);
+        //        //Check to see if there are sales first
+        //        if (indicator == 0)
+        //        {
+        //            Session["reportInfo"] = repInfo;
+        //            Response.Redirect("ReportsPaymentType.aspx", false);
+        //        }
+        //        else if (indicator == 1)
+        //        {
+        //            MessageBox.ShowMessage("No Sales have been completed for selected dates.", this);
+        //        }
+        //    }
+        //    //Exception catch
+        //    catch (ThreadAbortException) { }
+        //    catch (Exception ex)
+        //    {
+        //        //Log all info into error table
+        //        ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+        //        //Display message box
+        //        MessageBox.ShowMessage("An Error has occurred and been logged. "
+        //            + "If you continue to receive this message please contact "
+        //            + "your system administrator.", this);
+        //    }
+        //}
+        ////Displays dollar value of trade ins accepted
+        //protected void btnTradeInsByDateReport_Click(object sendr, EventArgs e)
+        //{
+        //    //Collects current method and page for error tracking
+        //    string method = "btnTradeInsByDateReport_Click";
+        //    object[] objPageDetails = { Session["currPage"].ToString(), method };
+        //    try
+        //    {
+        //        object[] reportLog = { 10, CU.emp.employeeID, CU.location.locationID };
+        //        R.CallReportLogger(reportLog, objPageDetails);
+        //        //Stores report dates into Session
+        //        DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
+        //        int loc = Convert.ToInt32(ddlLocation.SelectedValue);
+        //        object[] repInfo = new object[] { dtm, loc };
+        //        int indicator = R.verifyTradeInsHaveBeenMade(repInfo, objPageDetails);
+        //        //Check to see if there are sales first
+        //        if (indicator == 0)
+        //        {
+        //            Session["reportInfo"] = repInfo;
+        //            Server.Transfer("ReportsTradeIns.aspx", false);
+        //        }
+        //        else if (indicator == 1)
+        //        {
+        //            MessageBox.ShowMessage("No Trade Ins have been processed for selected dates.", this);
+        //        }
+        //    }
+        //    //Exception catch
+        //    catch (ThreadAbortException) { }
+        //    catch (Exception ex)
+        //    {
+        //        //Log all info into error table
+        //        ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+        //        //string prevPage = Convert.ToString(Session["prevPage"]);
+        //        //Display message box
+        //        MessageBox.ShowMessage("An Error has occurred and been logged. "
+        //            + "If you continue to receive this message please contact "
+        //            + "your system administrator.", this);
+        //        //Server.Transfer(prevPage, false);
+        //    }
+        //}
+        ////Displays the Top 10 SKUs, Brands, and Models sold
+        //protected void btnMostSold_Click(object sender, EventArgs e)
+        //{
+        //    //Collects current method and page for error tracking
+        //    string method = "btnMostSold_Click";
+        //    object[] objPageDetails = { Session["currPage"].ToString(), method };
+        //    try
+        //    {
+        //        object[] reportLog = { 8, CU.emp.employeeID, CU.location.locationID };
+        //        R.CallReportLogger(reportLog, objPageDetails);
+        //        DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
+        //        object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
+        //        int indicator = R.verifyInvoicesCompleted(repInfo, objPageDetails);
+        //        if (indicator == 0)
+        //        {
+        //            Session["reportInfo"] = repInfo;
+        //            Response.Redirect("ReportsMostSold.aspx", false);
+        //        }
+        //        else if (indicator == 1)
+        //        {
+        //            MessageBox.ShowMessage("No sales have been completed for selected dates.", this);
+        //        }
+        //    }
+        //    //Exception catch
+        //    catch (ThreadAbortException) { }
+        //    catch (Exception ex)
+        //    {
+        //        //Log all info into error table
+        //        ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+        //        //Display message box
+        //        MessageBox.ShowMessage("An Error has occurred and been logged. "
+        //            + "If you continue to receive this message please contact "
+        //            + "your system administrator.", this);
+        //    }
+        //}
     }
 }

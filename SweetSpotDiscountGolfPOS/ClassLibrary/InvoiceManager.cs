@@ -313,17 +313,19 @@ namespace SweetSpotDiscountGolfPOS
             //return ConvertFromDataTableInvoiceListByCustomer(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         //Returns list of invoices based on search criteria and date range
-        public List<Invoice> ReturnInvoicesBasedOnSearchCriteria(DateTime stDate, DateTime endDate, string searchTxt, int locationID, object[] objPageDetails)
+        public DataTable ReturnInvoicesBasedOnSearchCriteria(DateTime stDate, DateTime endDate, string searchTxt, int locationID, object[] objPageDetails)
         {
             string strQueryName = "ReturnInvoicesBasedOnSearchCriteria";
             InvoiceItemsManager IIM = new InvoiceItemsManager();
             ArrayList strText = new ArrayList();
 
-            string sqlCmd = "SELECT invoiceNum, invoiceSubNum, invoiceDate, CAST(invoiceTime AS DATETIME) AS invoiceTime, "
-                + "custID, empID, locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, "
-                + "CASE WHEN chargeGST = 1 THEN governmentTax ELSE 0 END AS governmentTax, "
-                + "CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END AS provincialTax, "
-                + "balanceDue, transactionType, comments, chargeGST, chargePST FROM tbl_invoice WHERE (";
+            string sqlCmd = "SELECT I.invoiceNum, I.invoiceSubNum, invoiceDate, CAST(invoiceTime AS DATETIME) AS invoiceTime, "
+                + "CONCAT(C.lastName, ', ', C.firstName) AS customerName, CONCAT(E.lastName, ', ', E.firstName) AS employeeName, "
+                + "I.locationID, subTotal, shippingAmount, discountAmount, tradeinAmount, CASE WHEN chargeGST = "
+                + "1 THEN governmentTax ELSE 0 END AS governmentTax, CASE WHEN chargePST = 1 THEN provincialTax ELSE 0 END AS "
+                + "provincialTax, IM.mopType, IM.amountPaid, balanceDue, transactionType, comments, chargeGST, chargePST FROM "
+                + "tbl_invoice I JOIN tbl_invoiceMOP IM ON IM.invoiceNum = I.invoiceNum AND IM.invoiceSubNum = "
+                + "I.invoiceSubNum JOIN tbl_customers C ON C.custID = I.custID JOIN tbl_employee E ON E.empID = I.empID WHERE (";
 
             if (searchTxt != "")
             {
@@ -337,17 +339,17 @@ namespace SweetSpotDiscountGolfPOS
                 sqlCmd += " UNION ";
                 sqlCmd += IIM.ReturnStringSearchForClothing(strText);
                 sqlCmd += " UNION ";
-                sqlCmd += IIM.ReturnStringSearchForClubs(strText) + "))) AND locationID = @locationID";
+                sqlCmd += IIM.ReturnStringSearchForClubs(strText) + "))) AND I.locationID = @locationID";
             }
             else
             {
-                sqlCmd += " invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "') AND locationID = @locationID";
+                sqlCmd += " invoiceDate BETWEEN '" + stDate + "' AND '" + endDate + "') AND I.locationID = @locationID";
             }            
             object[][] parms =
             {
-                new object[] { "locationID", locationID }
+                new object[] { "@locationID", locationID }
             };
-            return ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
+            return dbc.returnDataTableData(sqlCmd, parms);
             //return ConvertFromDataTableToInvoice(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         public List<Invoice> ReturnInvoicesBasedOnSearchForReturns(string txtSearch, DateTime selectedDate, object[] objPageDetails)

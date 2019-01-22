@@ -1766,6 +1766,58 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
+
+        //************Change Inventory Reort***********************
+        public System.Data.DataTable returnChangedInventoryForDateRange(DateTime dtmStartDate, DateTime dtmEndDate, object[] objPageDetails)
+        {
+            string strQueryName = "returnChangedInventoryForDateRange";
+            string sqlCmd = "SELECT ICT.dtmChangeDate, ICT.dtmChangeTime, CONCAT(E.firstName, ', ', "
+                + "E.lastName) AS employeeName, L.city, ICT.intSku, ICT.originalCost, ICT.newCost, "
+                + "ICT.originalPrice, ICT.newPrice, ICT.originalQuantity, ICT.newQuantity, "
+                + "ICT.originalDescription, ICT.newDescription FROM tbl_itemChangeTracking ICT "
+                + "JOIN tbl_employee E ON E.empID = ICT.intEmployeeID JOIN tbl_location L ON "
+                + "L.locationID = ICT.intLocationID WHERE ICT.dtmChangeDate BETWEEN @dtmStartDate "
+                + "AND @dtmEndDate";
+            object[][] parms =
+            {
+                new object[] { "@dtmStartDate", dtmStartDate },
+                new object[] { "@dtmEndDate", dtmEndDate }
+            };
+            return dbc.returnDataTableData(sqlCmd, parms);
+            //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
+        }
+        public int verifyInventoryChange(object[] repInfo, object[] objPageDetails)
+        {
+            int indicator = 0;
+            if (!inventoryChangeAvailable(repInfo, objPageDetails))
+            {
+                indicator = 1;
+            }
+            return indicator;
+        }
+        private bool inventoryChangeAvailable(object[] repInfo, object[] objPageDetails)
+        {
+            string strQueryName = "inventoryChangeAvailable";
+            bool bolData = false;
+            DateTime[] dtm = (DateTime[])repInfo[0];
+
+            string sqlCmd = "SELECT COUNT(ICT.dtmChangeDate) changeCount FROM "
+                + "tbl_itemChangeTracking ICT WHERE ICT.dtmChangeDate BETWEEN "
+                + "@startDate AND @endDate";
+            object[][] parms =
+            {
+                new object[] { "@startDate", dtm[0] },
+                new object[] { "@endDate", dtm[1] }
+            };
+
+            if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms) > 0)
+            //if (dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) > 0)
+            {
+                bolData = true;
+            }
+            return bolData;
+        }
+
         //********************EXPORTING***************************************************************
         //Export ALL sales/invoices to excel
         //public void exportAllSalesToExcel()

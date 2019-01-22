@@ -116,6 +116,7 @@
     <Content Include="ReportsCashOut.aspx" />
     <Content Include="ReportsSpecificGrip.aspx" />
     <Content Include="ReportsSpecificApparel.aspx" />
+    <Content Include="ReportsInventoryChange.aspx" />
     <Content Include="ReportsStoreStats.aspx" />
     <Content Include="SalesCashOut.aspx" />
     <Content Include="ReportsExtensiveInvoice.aspx" />
@@ -142,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClassLibrary\Accessories.cs" />
+    <Compile Include="ClassLibrary\ChangeItem.cs" />
     <Compile Include="ClassLibrary\Checkout.cs" />
     <Compile Include="ClassLibrary\CustomerManager.cs" />
     <Compile Include="ClassLibrary\InvoiceItemsManager.cs" />
@@ -308,6 +310,13 @@
     </Compile>
     <Compile Include="ReportsSpecificApparel.aspx.designer.cs">
       <DependentUpon>ReportsSpecificApparel.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ReportsInventoryChange.aspx.cs">
+      <DependentUpon>ReportsInventoryChange.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ReportsInventoryChange.aspx.designer.cs">
+      <DependentUpon>ReportsInventoryChange.aspx</DependentUpon>
     </Compile>
     <Compile Include="ReportsStoreStats.aspx.cs">
       <DependentUpon>ReportsStoreStats.aspx</DependentUpon>

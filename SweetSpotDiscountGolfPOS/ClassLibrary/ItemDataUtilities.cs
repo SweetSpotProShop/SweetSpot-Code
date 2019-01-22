@@ -393,6 +393,37 @@ namespace SweetSpotProShop
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
+        public void SaveInventoryChanges(ChangeItem changeItem, object[] extra)
+        {
+            StoreNewAndOldInventoryChanges(changeItem, extra);
+        }
+
+        private void StoreNewAndOldInventoryChanges(ChangeItem changeItem, object[] extra)
+        {
+            string sqlCmd = "INSERT INTO tbl_itemChangeTracking (dtmChangeDate, dtmChangeTime, "
+                + "intEmployeeID, intLocationID, intSku, originalCost, newCost, originalPrice, "
+                + "newPrice, originalQuantity, newQuantity, originalDescription, newDescription) "
+                + "VALUES(@dtmChangeDate, @dtmChangeTime, @intEmployeeID, @intLocationID, "
+                + "@intSku, @originalCost, @newCost, @originalPrice, @newPrice, @originalQuantity, "
+                + "@newQuantity, @originalDescription, @newDescription)";
+            object[][] parms =
+            {
+                new object[] { "@dtmChangeDate", DateTime.Now },
+                new object[] { "@dtmChangeTime", DateTime.Now },
+                new object[] { "@intEmployeeID", extra[0] },
+                new object[] { "@intLocationID", extra[1] },
+                new object[] { "@intSku", changeItem.sku },
+                new object[] { "@originalCost", changeItem.dblOriginalCost },
+                new object[] { "@newCost", changeItem.dblNewCost },
+                new object[] { "@originalPrice", changeItem.dblOriginalPrice },
+                new object[] { "@newPrice", changeItem.dblNewPrice },
+                new object[] { "@originalQuantity", changeItem.intOriginalQuantity },
+                new object[] { "@newQuantity", changeItem.intNewQuantity },
+                new object[] { "@originalDescription", changeItem.strOriginalDescription },
+                new object[] { "@newDescription", changeItem.strNewDescription }
+            };
+            dbc.executeInsertQuery(sqlCmd, parms);
+        }
         //**OLD CODE**
         //**Used in Reports.importItems
         public int modelName(string modelN)

@@ -87,11 +87,13 @@
             </asp:Table>
             <hr />
             <div>
-                <asp:GridView ID="grdInvoiceSelection" runat="server" AutoGenerateColumns="false" Width="100%" OnRowCommand="grdInvoiceSelection_RowCommand" RowStyle-HorizontalAlign="Center" >
+                <asp:GridView ID="grdInvoiceSelection" runat="server" AutoGenerateColumns="false" Width="100%" 
+					OnRowCommand="grdInvoiceSelection_RowCommand" RowStyle-HorizontalAlign="Center"
+					OnRowDataBound="grdInvoiceSelection_RowDataBound" >
                     <Columns>
                         <asp:TemplateField HeaderText="View Invoice">
                             <ItemTemplate>
-                                <asp:LinkButton ID="lkbInvoiceNum" runat="server" CommandName="returnInvoice" CommandArgument='<%#Eval("invoiceNum") + "-" + Eval("invoiceSub")%>' Text='<%#Eval("invoiceNum") + "-" + Eval("invoiceSub") %>' />
+                                <asp:LinkButton ID="lkbInvoiceNum" runat="server" CommandName="returnInvoice" CommandArgument='<%#Eval("invoiceNum") + "-" + Eval("invoiceSubNum")%>' Text='<%#Eval("invoiceNum") + "-" + Eval("invoiceSubNum") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Invoice Date">
@@ -101,7 +103,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Customer Name">
                             <ItemTemplate>
-                                <asp:Label ID="lblCustomerName" runat="server" Text='<%#Eval("customer.firstName") + " " + Eval("customer.lastName") %>' />
+                                <asp:Label ID="lblCustomerName" runat="server" Text='<%#Eval("customerName") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Discount">
@@ -129,14 +131,21 @@
                                 <asp:Label ID="lblPSTAmount" runat="server" Text='<%#Eval("provincialTax","{0:C}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
+
+						<asp:TemplateField HeaderText="Payment">
+                            <ItemTemplate>
+                                <asp:Label ID="lblPaymentName" runat="server" Text='<%#Eval("mopType") %>' />
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
                         <asp:TemplateField HeaderText="Total">
                             <ItemTemplate>
-                                <asp:Label ID="lblAmountPaid" runat="server" Text='<%#(Convert.ToDouble(Eval("balanceDue")) + Convert.ToDouble(Eval("governmentTax")) + Convert.ToDouble(Eval("provincialTax"))).ToString("C") %>' />
+                                <asp:Label ID="lblAmountPaid" runat="server" Text='<%#Eval("amountPaid","{0:C}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name">
                             <ItemTemplate>
-                                <asp:Label ID="lblEmployeeName" runat="server" Text='<%#Eval("employee.firstName") + " " + Eval("employee.lastName") %>' />
+                                <asp:Label ID="lblEmployeeName" runat="server" Text='<%#Eval("employeeName") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>
