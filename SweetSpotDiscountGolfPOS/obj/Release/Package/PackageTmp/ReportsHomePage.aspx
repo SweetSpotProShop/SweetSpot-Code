@@ -82,59 +82,60 @@
                             <asp:Button ID="btnCashOutReport" runat="server" Text="CashOut Report" Width="200px" OnClick="btnCashOutReport_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Button ID="btnPurchasesReport" runat="server" Text="Purchases Report" Width="200px" OnClick="btnPurchasesReport_Click" />
+                            <asp:Button ID="btnDiscountReport" runat="server" Text="Discount Report" Width="200px" OnClick="btnDiscountReport_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Button ID="btnTaxReport" runat="server" Text="Tax Report" Width="200px" OnClick="btnTaxReport_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Button ID="btnCOGSvsPMReport" runat="server" Text="COGS & Profit Margin Report" Width="200px" OnClick="btnCOGSvsPMReport_Click" />
-                        </asp:TableCell>
-                    </asp:TableRow>
-                    <asp:TableRow>
-                        <asp:TableCell>
-                            <asp:Button ID="btnItemsSold" runat="server" Text="Items Sold" Width="200px" Onclick="btnItemsSold_Click" />
-                        </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Button ID="btnDiscountReport" runat="server" Text="Discount Report" Width="200px" OnClick="btnDiscountReport_Click" />
-                        </asp:TableCell>
-                        <asp:TableCell>
                             <asp:Button ID="btnSalesByDateReport" runat="server" Text="Sales By Date Report" Width="200px" OnClick="btnSalesByDate_Click" />
                         </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Button ID="btnMostSold" runat="server" Text="Top Selling Items Report" Width="200px" Onclick="btnMostSold_Click" />
-                        </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
-                        <asp:TableCell>
-                            <asp:Button ID="btnPaymentsByDateReport" runat="server" Text="Payments By Date" Width="200px" Onclick="btnPaymentsByDateReport_Click" />
-                        </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Button ID="btnTradeInsByDateReport" runat="server" Text="Trade Ins By Date" Width="200px" Onclick="btnTradeInsByDateReport_Click" />
-                        </asp:TableCell>
                         <asp:TableCell>
                             <asp:Button ID="btnExtensiveInvoice" runat="server" Text="Extensive Invoice" Width="200px" Onclick="btnExtensiveInvoice_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Button ID="btnCostOfInventory" runat="server" Text="Cost of Inventory" Width="200px" OnClick="btnCostOfInventory_Click" />
                         </asp:TableCell>
-                    </asp:TableRow>
-                    <asp:TableRow>
                         <asp:TableCell>
                             <asp:Button ID="btnStoreStatsReport" runat="server" Text="Store Stats Report" Width="200px" OnClick="btnStoreStatsReport_Click" />
                         </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:Button ID="btnInvnetoryChangeReport" runat="server" Text="Inventory Change Report" Width="200px" OnClick="btnInventoryChangeReport_Click" />
+                        </asp:TableCell>
+                    </asp:TableRow>
+                    <asp:TableRow>
                         <asp:TableCell>
                             <asp:Button ID="btnSpecificApparelReport" runat="server" Text="Specific Apparel Report" Width="200px" OnClick="btnSpecificApparelReport_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Button ID="btnSpecificGripReport" runat="server" Text="Specific Grip Report" Width="200px" OnClick="btnSpecificGripReport_Click" />
                         </asp:TableCell>
+                        <asp:TableCell>
+                            
+                        </asp:TableCell>
+                        <asp:TableCell>
+                            
+                        </asp:TableCell>
                     </asp:TableRow>
+                    <%--<asp:TableRow>
+                        <asp:TableCell>
+							<asp:Button ID="btnCOGSvsPMReport" runat="server" Text="COGS & Profit Margin Report" Width="200px" OnClick="btnCOGSvsPMReport_Click" />
+							<asp:Button ID="btnItemsSold" runat="server" Text="Items Sold" Width="200px" Onclick="btnItemsSold_Click" />
+                        </asp:TableCell>
+                        <asp:TableCell>
+							<asp:Button ID="btnTradeInsByDateReport" runat="server" Text="Trade Ins By Date" Width="200px" Onclick="btnTradeInsByDateReport_Click" />
+							<asp:Button ID="btnPurchasesReport" runat="server" Text="Purchases Report" Width="200px" OnClick="btnPurchasesReport_Click" />
+                        </asp:TableCell>
+                        <asp:TableCell>
+							<asp:Button ID="btnPaymentsByDateReport" runat="server" Text="Payments By Date" Width="200px" Onclick="btnPaymentsByDateReport_Click" />
+							<asp:Button ID="btnMostSold" runat="server" Text="Top Selling Items Report" Width="200px" Onclick="btnMostSold_Click" />
+                        </asp:TableCell>
+                    </asp:TableRow>--%>
                 </asp:Table>
             </div>
             <hr />
-            <div>
-            </div>
         </asp:Panel>
     </div>
 </asp:Content>

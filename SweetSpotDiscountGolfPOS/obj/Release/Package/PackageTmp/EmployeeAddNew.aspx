@@ -50,7 +50,7 @@
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="false"
-                            DataTextField="locationName" DataValueField="locationID" Enabled="false" />
+                            DataTextField="city" DataValueField="locationID" Enabled="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
