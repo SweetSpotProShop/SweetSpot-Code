@@ -333,7 +333,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     strText.Add(searchTxt.Split(' ')[i]);
                 }
-                sqlCmd += " invoiceNum IN (SELECT DISTINCT invoiceNum FROM tbl_invoiceItem WHERE "
+                sqlCmd += " I.invoiceNum IN (SELECT DISTINCT invoiceNum FROM tbl_invoiceItem WHERE "
                     + "CAST(invoiceNum AS VARCHAR) LIKE '%" + searchTxt + "%' OR sku IN (";
                 sqlCmd += IIM.ReturnStringSearchForAccessories(strText);
                 sqlCmd += " UNION ";
