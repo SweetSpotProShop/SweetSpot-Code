@@ -85,11 +85,11 @@ namespace SweetSpotDiscountGolfPOS
                                 tempItem.dblOriginalCost = c.cost;
                                 tempItem.dblOriginalPrice = c.price;
                                 tempItem.intOriginalQuantity = c.quantity;
-                                tempItem.strOriginalDescription = "Location ID: " + c.itemlocation.ToString() + "; Item Type: " + c.typeID.ToString()
-                                    + "; Brand ID: " + c.brandID.ToString() + "; Model ID: " + c.modelID.ToString() + "; Club Type: " + c.clubType.ToString()
-                                    + "; Shaft: " + c.shaft.ToString() + ";  Number of Clubs: " + c.numberOfClubs.ToString() + "; Club Spec: "
-                                    + c.clubSpec.ToString() + "; Shaft Spec: " + c.shaftSpec.ToString() + "; Shaft Flex: " + c.shaftFlex.ToString()
-                                    + "; Dexterity: " + c.dexterity.ToString() + "; Used: " + c.isTradeIn.ToString() + "; Comments: " + c.comments.ToString();
+                                tempItem.strOriginalDescription = "Location ID: " + c.itemlocation.ToString() + "; Brand ID: " + c.brandID.ToString()
+                                    + "; Model ID: " + c.modelID.ToString() + "; Club Type: " + c.clubType.ToString() + "; Shaft: " + c.shaft.ToString()
+                                    + ";  Number of Clubs: " + c.numberOfClubs.ToString() + "; Club Spec: " + c.clubSpec.ToString() + "; Shaft Spec: " 
+                                    + c.shaftSpec.ToString() + "; Shaft Flex: " + c.shaftFlex.ToString() + "; Dexterity: " + c.dexterity.ToString()
+                                    + "; Used: " + c.isTradeIn.ToString() + "; Comments: " + c.comments.ToString();
                             }
                             else if (o[0] is Accessories)
                             {
@@ -126,10 +126,9 @@ namespace SweetSpotDiscountGolfPOS
                                 tempItem.dblOriginalCost = a.cost;
                                 tempItem.dblOriginalPrice = a.price;
                                 tempItem.intOriginalQuantity = a.quantity;
-                                tempItem.strOriginalDescription = "Location ID: " + a.locID.ToString() + "; Item Type: " + a.typeID.ToString()
-                                    + "; Brand ID: " + a.brandID.ToString() + "; Model ID: " + a.modelID.ToString() + "; Size: " + a.size.ToString()
-                                    + "; Colour: " + a.colour.ToString() + ";  Accessory Type: " + a.accessoryType.ToString() + "; Comments: "
-                                    + a.comments.ToString();
+                                tempItem.strOriginalDescription = "Location ID: " + a.locID.ToString() + "; Brand ID: " + a.brandID.ToString()
+                                    + "; Model ID: " + a.modelID.ToString() + "; Size: " + a.size.ToString() + "; Colour: " + a.colour.ToString()
+                                    + ";  Accessory Type: " + a.accessoryType.ToString() + "; Comments: " + a.comments.ToString();
                             }
                             else if (o[0] is Clothing)
                             {
@@ -166,9 +165,9 @@ namespace SweetSpotDiscountGolfPOS
                                 tempItem.dblOriginalCost = cl.cost;
                                 tempItem.dblOriginalPrice = cl.price;
                                 tempItem.intOriginalQuantity = cl.quantity;
-                                tempItem.strOriginalDescription = "Location ID: " + cl.locID.ToString() + "; Item Type: " + cl.typeID.ToString()
-                                    + "; Brand ID: " + cl.brandID.ToString() + "; Size: " + cl.size.ToString() + "; Colour: " + cl.colour.ToString()
-                                    + ";  Gender: " + cl.gender.ToString() + "; Style: " + cl.style.ToString() + "; Comments: " + cl.comments.ToString();
+                                tempItem.strOriginalDescription = "Location ID: " + cl.locID.ToString() + "; Brand ID: " + cl.brandID.ToString()
+                                    + "; Size: " + cl.size.ToString() + "; Colour: " + cl.colour.ToString() + ";  Gender: " + cl.gender.ToString()
+                                    + "; Style: " + cl.style.ToString() + "; Comments: " + cl.comments.ToString();
                             }
                             btnCreateSimilar.Visible = true;
                             changeItem = tempItem;
@@ -536,11 +535,10 @@ namespace SweetSpotDiscountGolfPOS
                     changeItem.dblNewCost = c.cost;
                     changeItem.dblNewPrice = c.price;
                     changeItem.intNewQuantity = c.quantity;
-                    changeItem.strNewDescription = "Location ID: " + c.itemlocation.ToString() + "; Item Type: " + c.typeID.ToString()
-                        + "; Brand ID: " + c.brandID.ToString() + "; Model ID: " + c.modelID.ToString() + "; Club Type: " + c.clubType.ToString()
-                        + "; Shaft: " + c.shaft.ToString() + ";  Number of Clubs: " + c.numberOfClubs.ToString() + "; Club Spec: "
-                        + c.clubSpec.ToString() + "; Shaft Spec: " + c.shaftSpec.ToString() + "; Shaft Flex: " + c.shaftFlex.ToString()
-                        + "; Dexterity: " + c.dexterity.ToString() + "; Used: " + c.isTradeIn.ToString() + "; Comments: " + c.comments.ToString(); ;
+                    changeItem.strNewDescription = "Location ID: " + c.itemlocation.ToString() + "; Brand ID: " + c.brandID.ToString() + "; Model ID: "
+                        + c.modelID.ToString() + "; Club Type: " + c.clubType.ToString() + "; Shaft: " + c.shaft.ToString() + ";  Number of Clubs: " 
+                        + c.numberOfClubs.ToString() + "; Club Spec: " + c.clubSpec.ToString() + "; Shaft Spec: " + c.shaftSpec.ToString() + "; Shaft Flex: " 
+                        + c.shaftFlex.ToString() + "; Dexterity: " + c.dexterity.ToString() + "; Used: " + c.isTradeIn.ToString() + "; Comments: " + c.comments.ToString();
                     
                     //changes all text boxes and dropdowns to labels
                     ddlModel.Enabled = false;
@@ -571,10 +569,9 @@ namespace SweetSpotDiscountGolfPOS
                     changeItem.dblNewCost = a.cost;
                     changeItem.dblNewPrice = a.price;
                     changeItem.intNewQuantity = a.quantity;
-                    changeItem.strNewDescription = "Location ID: " + a.locID.ToString() + "; Item Type: " + a.typeID.ToString()
-                        + "; Brand ID: " + a.brandID.ToString() + "; Model ID: " + a.modelID.ToString() + "; Size: " + a.size.ToString()
-                        + "; Colour: " + a.colour.ToString() + ";  Accessory Type: " + a.accessoryType.ToString() + "; Comments: "
-                        + a.comments.ToString();
+                    changeItem.strNewDescription = "Location ID: " + a.locID.ToString() + "; Brand ID: " + a.brandID.ToString() + "; Model ID: "
+                        + a.modelID.ToString() + "; Size: " + a.size.ToString() + "; Colour: " + a.colour.ToString() + ";  Accessory Type: "
+                        + a.accessoryType.ToString() + "; Comments: " + a.comments.ToString();
 
                     //changes all text boxes and dropdowns to labels
                     ddlModel.Enabled = false;
@@ -600,9 +597,9 @@ namespace SweetSpotDiscountGolfPOS
                     changeItem.dblNewCost = cl.cost;
                     changeItem.dblNewPrice = cl.price;
                     changeItem.intNewQuantity = cl.quantity;
-                    changeItem.strNewDescription = "Location ID: " + cl.locID.ToString() + "; Item Type: " + cl.typeID.ToString()
-                        + "; Brand ID: " + cl.brandID.ToString() + "; Size: " + cl.size.ToString() + "; Colour: " + cl.colour.ToString()
-                        + ";  Gender: " + cl.gender.ToString() + "; Style: " + cl.style.ToString() + "; Comments: " + cl.comments.ToString();
+                    changeItem.strNewDescription = "Location ID: " + cl.locID.ToString() + "; Brand ID: " + cl.brandID.ToString() + "; Size: "
+                        + cl.size.ToString() + "; Colour: " + cl.colour.ToString() + ";  Gender: " + cl.gender.ToString() + "; Style: " 
+                        + cl.style.ToString() + "; Comments: " + cl.comments.ToString();
 
                     //changes all text boxes and dropdowns to labels
                     txtClubSpec.Enabled = false;

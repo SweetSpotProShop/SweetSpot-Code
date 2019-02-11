@@ -188,6 +188,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public Invoice SaveAllInvoiceTotalsForReturn(Invoice I)
         {
             I.subTotal = returnSubtotalReturnAmount(I);
+            I.tradeinAmount = returnTradeInReturnAmount(I);
             I.balanceDue = I.subTotal;
             return I;
         }
@@ -199,22 +200,50 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
         private double returnSubtotalReturnAmount(Invoice I)
         {
-            return returnTotalAmountForReturn(I.soldItems, I.locationID);
+            double totalSubtotalAmount = 0;
+            double totalTotalAmount = returnTotalAmountForReturn(I);
+            double totalTradeInAmount = returnTradeInReturnAmount(I);
+            totalSubtotalAmount = totalSubtotalAmount + totalTotalAmount;
+            totalSubtotalAmount = totalSubtotalAmount - (totalTradeInAmount * (-1));
+            return totalSubtotalAmount;
         }
-        private double returnTotalAmountForReturn(List<InvoiceItems> itemsSold, int loc)
+        private double returnTotalAmountForReturn(Invoice I)
         {
             //Checks the range of trade in sku's by location
             double singleTotalAmount = 0;
             double totalTotalAmount = 0;
             //Loops through the cart and pulls each item
-            foreach (var cart in itemsSold)
+            foreach (var cart in I.soldItems)
             {
-                //Checks if the sku is outside of the range for the trade in sku's
-                singleTotalAmount = cart.quantity * cart.itemRefund;
-                totalTotalAmount += singleTotalAmount;
+                if (!cart.isTradeIn)
+                {
+                    //Checks if the sku is outside of the range for the trade in sku's
+                    singleTotalAmount = cart.quantity * cart.itemRefund;
+                    totalTotalAmount += singleTotalAmount;
+                }
             }
             //Returns the total amount value of the cart
             return totalTotalAmount;
         }
+        private double returnTradeInReturnAmount(Invoice I)
+        {
+            double singleTradeInAmount = 0;
+            double totalTradeinAmount = 0;
+            //Loops through the cart and pulls each item
+            foreach (var cart in I.soldItems)
+            {
+                //Checking the sku and seeing if it falls in the trade in range.
+                //If it does, the item is a trade in
+                if (cart.isTradeIn)
+                {
+                    //Adding the trade in value to the total trade in amount
+                    singleTradeInAmount = cart.quantity * cart.itemRefund;
+                    totalTradeinAmount += singleTradeInAmount;
+                }
+            }
+            //Returns the total trade in amount for the cart
+            return totalTradeinAmount;
+        }
+
     }
 }

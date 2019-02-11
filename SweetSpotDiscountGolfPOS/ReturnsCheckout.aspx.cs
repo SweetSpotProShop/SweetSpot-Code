@@ -310,7 +310,9 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         if (IM.VerifyMOPHasBeenAdded(Request.QueryString["inv"].ToString(), objPageDetails))
                         {
-                            IM.FinalizeInvoice(IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0], txtComments.Text, "tbl_invoiceItemReturns", objPageDetails);
+                            Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0];
+                            I.employee = EM.returnEmployeeFromPassword(Convert.ToInt32(txtEmployeePasscode.Text), objPageDetails)[0];
+                            IM.FinalizeInvoice(I, txtComments.Text, "tbl_invoiceItemReturns", objPageDetails);
                             string printableInvoiceNum = Request.QueryString["inv"].ToString().Split('-')[1] + "-" + Request.QueryString["inv"].ToString().Split('-')[2];
                             var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                             nameValues.Set("inv", printableInvoiceNum);
