@@ -37,14 +37,11 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    if (!IsPostBack)
+                    CU = (CurrentUser)Session["currentUser"];
+                    if (CU.employee.intJobID != 0)
                     {
-                        CU = (CurrentUser)Session["currentUser"];
-                        if (CU.employee.intJobID != 0)
-                        {
-                            //If user is not an admin then disable the add new item button
-                            btnAddNewInventory.Enabled = false;
-                        }                        
+                        //If user is not an admin then disable the add new item button
+                        btnAddNewInventory.Enabled = false;
                     }
                 }
             }
@@ -73,7 +70,7 @@ namespace SweetSpotDiscountGolfPOS
                 searched = IM.ReturnInventoryFromSearchStringAndQuantity(txtSearch.Text, chkIncludeZero.Checked, objPageDetails);
                 ViewState["listItems"] = searched;
                 populateGridview(searched);
-                //grdInventorySearched.PageIndex = 0;
+                grdInventorySearched.PageIndex = 0;
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -202,7 +199,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Binds returned items to gridview for display
                 grdInventorySearched.DataSource = list;
                 grdInventorySearched.DataBind();
-                grdInventorySearched.PageIndex = 0;
+                //grdInventorySearched.PageIndex = 0;
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -677,7 +674,7 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnDownload_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
-            {                
+            {
                 if (ViewState["listItems"] != null)
                 {
                     searched = ViewState["listItems"] as List<InvoiceItems>;
@@ -719,7 +716,7 @@ namespace SweetSpotDiscountGolfPOS
                         Response.End();
                     }
                 }
-                
+
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

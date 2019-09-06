@@ -46,8 +46,8 @@
                         </ProgressTemplate>
                     </asp:UpdateProgress>
                     <hr />
-                    <asp:GridView ID="grdInventorySearched" runat="server" AutoGenerateColumns="false" OnRowCommand="grdInventorySearched_RowCommand" 
-						AllowPaging="true" PageSize="50" OnPageIndexChanging="grdInventorySearched_PageIndexChanging" Visible="true" >
+                    <asp:GridView ID="grdInventorySearched" runat="server" AutoGenerateColumns="False" OnRowCommand="grdInventorySearched_RowCommand" 
+						AllowPaging="True" PageSize="50" OnPageIndexChanging="grdInventorySearched_PageIndexChanging" >
                         <Columns>
                             <asp:TemplateField HeaderText="View Item">
                                 <ItemTemplate>
