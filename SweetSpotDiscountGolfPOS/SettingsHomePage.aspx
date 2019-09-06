@@ -30,32 +30,32 @@
                 <Columns>
                     <asp:TemplateField HeaderText="View Profile">
                         <ItemTemplate>
-                            <asp:LinkButton ID="lbtnViewEmployee" CommandName="ViewProfile" CommandArgument='<%#Eval("employeeID") %>' Text="View Profile" runat="server" />
+                            <asp:LinkButton ID="lbtnViewEmployee" CommandName="ViewProfile" CommandArgument='<%#Eval("intEmployeeID") %>' Text="View Profile" runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Employee Number">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("employeeID") %>' ID="key" />
+                            <asp:Label runat="server" Text='<%#Eval("intEmployeeID") %>' ID="key" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Employee Name">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("firstName") + " " + Eval("lastName") %>' />
+                            <asp:Label runat="server" Text='<%#Eval("varFirstName") + " " + Eval("varLastName") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Employee Address">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("primaryAddress") %>' />
+                            <asp:Label runat="server" Text='<%#Eval("varAddress") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Phone Number">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("primaryContactNumber") %>' />
+                            <asp:Label runat="server" Text='<%#Eval("varContactNumber") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="City">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("city") %>' />
+                            <asp:Label runat="server" Text='<%#Eval("varCityName") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -75,7 +75,7 @@
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:DropDownList ID="ddlProvince" runat="server" AutoPostBack="true" 
-                                DataTextField="provName" DataValueField="provStateID" 
+                                DataTextField="varProvinceName" DataValueField="intProvinceID" 
                                 OnSelectedIndexChanged="ddlProvince_SelectedIndexChanged" />
                         </asp:TableCell>
                     </asp:TableRow>
@@ -85,7 +85,7 @@
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:DropDownList ID="ddlTax" runat="server" AutoPostBack="true" 
-                                DataTextField="taxName" DataValueField="taxID" 
+                                DataTextField="varTaxName" DataValueField="intTaxID" 
                                 OnSelectedIndexChanged="ddlTax_SelectedIndexChanged" 
                                 OnPreRender="ddlTax_SelectedIndexChanged" />
                         </asp:TableCell>

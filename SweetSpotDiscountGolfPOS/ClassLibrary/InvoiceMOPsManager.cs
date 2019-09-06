@@ -9,18 +9,18 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
     public class InvoiceMOPsManager
     {
         DatabaseCalls dbc = new DatabaseCalls();
-        private List<InvoiceMOPs> ConvertFromDataTableToInvoiceMOPs(DataTable dt)
+        private List<InvoiceMOPs> ConvertFromDataTableToInvoiceMOPs(DataTable dt, object[] objPageDetails)
         {
             List<InvoiceMOPs> invoiceMOPs = dt.AsEnumerable().Select(row =>
             new InvoiceMOPs
             {
-                id = row.Field<int>("ID"),
-                invoiceNum = row.Field<int>("invoiceNum"),
-                invoiceSubNum = row.Field<int>("invoiceSubNum"),
-                mopType = row.Field<string>("mopType"),
-                amountPaid = row.Field<double>("amountPaid"),
-                tender = row.Field<double>("tender"),
-                change = row.Field<double>("change")
+                intInvoicePaymentID = row.Field<int>("intInvoicePaymentID"),
+                intInvoiceID = row.Field<int>("intInvoiceID"),
+                intPaymentID = row.Field<int>("intPaymentID"),
+                varPaymentName = ReturnMOPString(row.Field<int>("intPaymentID"), objPageDetails),
+                fltAmountPaid = row.Field<double>("fltAmountPaid"),
+                fltTenderedAmount = row.Field<double>("fltTenderedAmount"),
+                fltCustomerChange = row.Field<double>("fltCustomerChange")
             }).ToList();
             return invoiceMOPs;
         }
@@ -29,13 +29,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             List<InvoiceMOPs> invoiceMOPs = dt.AsEnumerable().Select(row =>
             new InvoiceMOPs
             {
-                id = row.Field<int>("currentSalesMID"),
-                invoiceNum = row.Field<int>("invoiceNum"),
-                invoiceSubNum = row.Field<int>("invoiceSubNum"),
-                mopType = ReturnMOPString(row.Field<int>("mopType"), objPageDetails),
-                amountPaid = row.Field<double>("amountPaid"),
-                tender = row.Field<double>("tender"),
-                change = row.Field<double>("change")
+                intInvoicePaymentID = row.Field<int>("intInvoicePaymentID"),
+                intInvoiceID = row.Field<int>("intInvoiceID"),
+                intPaymentID = row.Field<int>("intPaymentID"),
+                varPaymentName = ReturnMOPString(row.Field<int>("intPaymentID"), objPageDetails),
+                fltAmountPaid = row.Field<double>("fltAmountPaid"),
+                fltTenderedAmount = row.Field<double>("fltTenderedAmount"),
+                fltCustomerChange = row.Field<double>("fltCustomerChange")
             }).ToList();
             return invoiceMOPs;
         }
@@ -44,11 +44,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             List<InvoiceMOPs> invoiceMOPs = dt.AsEnumerable().Select(row =>
             new InvoiceMOPs
             {
-                id = row.Field<int>("currentPurchaseMID"),
-                invoiceNum = row.Field<int>("receiptNum"),
-                mopType = ReturnMOPString(row.Field<int>("mopType"), objPageDetails),
-                cheque = row.Field<int>("chequeNum"),
-                amountPaid = row.Field<double>("amountPaid")
+                intInvoicePaymentID = row.Field<int>("intReceiptPaymentID"),
+                intInvoiceID = row.Field<int>("intReceiptID"),
+                intPaymentID = row.Field<int>("intPaymentID"),
+                varPaymentName = ReturnMOPString(row.Field<int>("intPaymentID"), objPageDetails),
+                intChequeNumber = row.Field<int>("intChequeNumber"),
+                fltAmountPaid = row.Field<double>("fltAmountPaid")
             }).ToList();
             return invoiceMOPs;
         }
@@ -57,134 +58,127 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             List<InvoiceMOPs> invoiceMOPs = dt.AsEnumerable().Select(row =>
             new InvoiceMOPs
             {
-                id = row.Field<int>("ID"),
-                invoiceNum = row.Field<int>("receiptNum"),
-                mopType = ReturnMOPString(row.Field<int>("mopType"), objPageDetails),
-                cheque = row.Field<int>("chequeNum"),
-                amountPaid = row.Field<double>("amountPaid")
+                intInvoicePaymentID = row.Field<int>("intReceiptPaymentID"),
+                intInvoiceID = row.Field<int>("intReceiptID"),
+                intPaymentID = row.Field<int>("intPaymentID"),
+                varPaymentName = ReturnMOPString(row.Field<int>("intPaymentID"), objPageDetails),
+                intChequeNumber = row.Field<int>("intChequeNumber"),
+                fltAmountPaid = row.Field<double>("fltAmountPaid")
             }).ToList();
             return invoiceMOPs;
         }
         //Returns list of MOPs based on an Invoice number
-        public List<InvoiceMOPs> ReturnInvoiceMOPs(string invoice, object[] objPageDetails)
+        public List<InvoiceMOPs> ReturnInvoiceMOPs(int invoiceID, object[] objPageDetails)
         {
             string strQueryName = "ReturnInvoiceMOPs";
-            string sqlCmd = "SELECT ID, invoiceNum, invoiceSubNum, mopType, amountPaid, tender, change "
-                + "FROM tbl_invoiceMOP WHERE invoiceNum = @invoiceNum AND invoiceSubNum = @invoiceSubNum";
+            string sqlCmd = "SELECT intInvoicePaymentID, intInvoiceID, intPaymentID, fltAmountPaid, fltTenderedAmount, fltCustomerChange "
+                + "FROM tbl_invoiceMOP WHERE intInvoiceID = @intInvoiceID";
 
             object[][] parms =
             {
-                 new object[] { "@invoiceNum", Convert.ToInt32(invoice.Split('-')[0]) },
-                 new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[1]) }
+                 new object[] { "@intInvoiceID", invoiceID }
             };
 
-            return ConvertFromDataTableToInvoiceMOPs(dbc.returnDataTableData(sqlCmd, parms));
+            return ConvertFromDataTableToInvoiceMOPs(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
             //return ConvertFromDataTableToInvoiceMOPs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
 
         //Returns list of MOPs based on an Invoice number in currentSales Table
-        public List<InvoiceMOPs> ReturnInvoiceMOPsCurrentSale(string invoice, object[] objPageDetails)
+        public List<InvoiceMOPs> ReturnInvoiceMOPsCurrentSale(int invoiceID, object[] objPageDetails)
         {
             string strQueryName = "ReturnInvoiceMOPsCurrentSale";
-            string sqlCmd = "SELECT currentSalesMID, invoiceNum, invoiceSubNum, mopType, amountPaid, tender, change "
-                + "FROM tbl_currentSalesMops WHERE invoiceNum = @invoiceNum AND invoiceSubNum = @invoiceSubNum";
+            string sqlCmd = "SELECT intInvoicePaymentID, intInvoiceID, intPaymentID, fltAmountPaid, fltTenderedAmount, fltCustomerChange FROM "
+                + "tbl_currentSalesMops WHERE intInvoiceID = @intInvoiceID";
 
             object[][] parms =
             {
-                 new object[] { "@invoiceNum", Convert.ToInt32(invoice.Split('-')[1]) },
-                 new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[2]) }
+                 new object[] { "@intInvoiceID", invoiceID }
             };
 
             return ConvertFromDataTableToCurrentInvoiceMOPs(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
             //return ConvertFromDataTableToCurrentInvoiceMOPs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
-        public List<InvoiceMOPs> ReturnPurchaseMOPsCurrentSale(string invoice, object[] objPageDetails)
+        public List<InvoiceMOPs> ReturnPurchaseMOPsCurrentSale(int receiptID, object[] objPageDetails)
         {
             string strQueryName = "ReturnPurchaseMOPsCurrentSale";
-            string sqlCmd = "SELECT currentPurchaseMID, receiptNum, mopType, chequeNum, amountPaid "
-                + "FROM tbl_currentPurchaseMops WHERE receiptNum = @invoiceNum";
+            string sqlCmd = "SELECT intReceiptPaymentID, intReceiptID, intPaymentID, intChequeNumber, fltAmountPaid FROM tbl_currentPurchaseMops "
+                + "WHERE intReceiptID = @intReceiptID";
 
             object[][] parms =
             {
-                 new object[] { "@invoiceNum", Convert.ToInt32(invoice.Split('-')[1]) }
+                 new object[] { "@intReceiptID", receiptID }
             };
 
             return ConvertFromDataTableToCurrentPurchaseMOPs(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
             //return ConvertFromDataTableToCurrentPurchaseMOPs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
-        public List<InvoiceMOPs> ReturnReceiptMOPsPurchase(string receipt, object[] objPageDetails)
+        public List<InvoiceMOPs> ReturnReceiptMOPsPurchase(int receiptID, object[] objPageDetails)
         {
             string strQueryName = "ReturnReceiptMOPsPurchase";
-            string sqlCmd = "SELECT ID, receiptNum, mopType, chequeNum, amountPaid "
-                + "FROM tbl_receiptMOP WHERE receiptNum = @receiptNum";
+            string sqlCmd = "SELECT intReceiptPaymentID, intReceiptID, intPaymentID, intChequeNumber, fltAmountPaid FROM tbl_receiptMOP "
+                + "WHERE intReceiptID = @intReceiptID";
 
             object[][] parms =
             {
-                 new object[] { "@receiptNum", Convert.ToInt32(receipt) }
+                 new object[] { "@intReceiptID", receiptID }
             };
 
             return ConvertFromDataTableToReceiptPurchaseMOPs(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
             //return ConvertFromDataTableToReceiptPurchaseMOPs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
-        public void AddNewMopToList(string invoice, double amountPaid, string method, object[] amounts, object[] objPageDetails)
+        public void AddNewMopToList(InvoiceMOPs invoicePayment, object[] objPageDetails)
         {
             string strQueryName = "AddNewMopToList";
-            string sqlCmd = "INSERT INTO tbl_currentSalesMops VALUES(@invoiceNum, @invoiceSubNum, "
-                + "@mopType, @amountPaid, @tender, @change)";
+            string sqlCmd = "INSERT INTO tbl_currentSalesMops VALUES(@intInvoiceID, @intPaymentID, @fltAmountPaid, @fltTenderedAmount, "
+                + "@fltCustomerChange)";
 
             object[][] parms =
             {
-                new object[] { "@invoiceNum", Convert.ToInt32(invoice.Split('-')[1].ToString()) },
-                new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[2].ToString()) },
-                new object[] { "@mopType", ReturnMOPInt(method, objPageDetails) },
-                new object[] { "@amountPaid", amountPaid },
-                new object[] { "@tender", Convert.ToDouble(amounts[0]) },
-                new object[] { "@change", Convert.ToDouble(amounts[1]) }
+                new object[] { "@intInvoiceID", invoicePayment.intInvoiceID },
+                new object[] { "@intPaymentID", invoicePayment.intPaymentID },
+                new object[] { "@fltAmountPaid", invoicePayment.fltAmountPaid },
+                new object[] { "@fltTenderedAmount", invoicePayment.fltTenderedAmount },
+                new object[] { "@fltCustomerChange", invoicePayment.fltCustomerChange }
             };
             dbc.executeInsertQuery(sqlCmd, parms);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public void AddNewMopToReceiptList(string invoice, double amountPaid, string method, int chequeNumber, object[] objPageDetails)
+        public void AddNewMopToReceiptList(InvoiceMOPs payment, object[] objPageDetails)
         {
             string strQueryName = "AddNewMopToReceiptList";
-            string sqlCmd = "INSERT INTO tbl_currentPurchaseMops VALUES(@receiptNum, @mopType, "
-                + "@chequeNum, @amountPaid)";
+            string sqlCmd = "INSERT INTO tbl_currentPurchaseMops VALUES(@intReceiptID, @intPaymentID, @intChequeNumber, @fltAmountPaid)";
 
             object[][] parms =
             {
-                new object[] { "@receiptNum", Convert.ToInt32(invoice.Split('-')[1].ToString()) },
-                new object[] { "@mopType", ReturnMOPInt(method, objPageDetails) },
-                new object[] { "@chequeNum", chequeNumber },
-                new object[] { "@amountPaid", amountPaid }
+                new object[] { "@intReceiptID", payment.intInvoiceID },
+                new object[] { "@intPaymentID", payment.intPaymentID },
+                new object[] { "@intChequeNumber", payment.intChequeNumber },
+                new object[] { "@fltAmountPaid", payment.fltAmountPaid }
             };
             dbc.executeInsertQuery(sqlCmd, parms);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public void RemoveMopFromList(int mopID, string invoice, object[] objPageDetails)
+        public void RemoveMopFromList(int invoicePaymentID, object[] objPageDetails)
         {
             string strQueryName = "RemoveMopFromList";
-            string sqlCmd = "DELETE tbl_currentSalesMops WHERE invoiceNum = @invoiceNum AND "
-                + "invoiceSubNum = @invoiceSubNum AND currentSalesMID = @mopID";
+            string sqlCmd = "DELETE tbl_currentSalesMops WHERE intInvoicePaymentID = @intInvoicePaymentID";
 
             object[][] parms =
             {
-                new object[] { "@invoiceNum", Convert.ToInt32(invoice.Split('-')[1].ToString()) },
-                new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[2].ToString()) },
-                new object[] { "@mopID", mopID }
+                new object[] { "@intInvoicePaymentID", invoicePaymentID }
             };
             dbc.executeInsertQuery(sqlCmd, parms);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public void RemoveMopFromPurchaseList(int mopID, string invoice, object[] objPageDetails)
+        public void RemoveMopFromPurchaseList(int receiptPaymentID, int receiptID, object[] objPageDetails)
         {
             string strQueryName = "RemoveMopFromPurchaseList";
-            string sqlCmd = "DELETE tbl_currentPurchaseMops WHERE receiptNum = @receiptNum AND "
-                + "currentPurchaseMID = @mopID";
+            string sqlCmd = "DELETE tbl_currentPurchaseMops WHERE intReceiptID = @intReceiptID AND intReceiptPaymentID = @intReceiptPaymentID";
 
             object[][] parms =
             {
-                new object[] { "@receiptNum", Convert.ToInt32(invoice.Split('-')[1].ToString()) },
-                new object[] { "@mopID", mopID }
+                new object[] { "@intReceiptID", receiptID },
+                new object[] { "@intReceiptPaymentID", receiptPaymentID }
             };
             dbc.executeInsertQuery(sqlCmd, parms);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
@@ -200,13 +194,13 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms);
             //return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private string ReturnMOPString(int mopID, object[] objPageDetails)
+        private string ReturnMOPString(int paymentID, object[] objPageDetails)
         {
             string strQueryName = "ReturnMOPString";
-            string sqlCmd = "SELECT methodDesc FROM tbl_methodOfPayment WHERE methodID = @mopID";
+            string sqlCmd = "SELECT varPaymentName FROM tbl_methodOfPayment WHERE intPaymentID = @intPaymentID";
             object[][] parms =
             {
-                new object[] { "@mopID", mopID }
+                new object[] { "@intPaymentID", paymentID }
             };
             return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
             //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);

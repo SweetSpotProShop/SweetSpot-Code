@@ -28,7 +28,7 @@
                 <Columns>
                     <asp:TemplateField HeaderText="Store">
                         <ItemTemplate>
-                            <asp:Label ID="lblYear" runat="server" Text='<%#Eval("locationName")%>'/>
+                            <asp:Label ID="lblYear" runat="server" Text='<%#Eval("varLocationName")%>'/>
                         </ItemTemplate>
                         <FooterTemplate>
                             <asp:Label ID="lblTotals" runat="server" Text="Totals:" />
@@ -36,37 +36,37 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="SKU">
                         <ItemTemplate>
-                            <asp:Label ID="lblSKU" runat="server" Text='<%#Eval("sku")%>'/>
+                            <asp:Label ID="lblSKU" runat="server" Text='<%#Eval("varSku")%>'/>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Description">
                         <ItemTemplate>
-                            <asp:Label ID="lblDescription" runat="server" Text='<%#Eval("description")%>'/>
+                            <asp:Label ID="lblDescription" runat="server" Text='<%#Eval("varItemDescription")%>'/>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Quantity">
                         <ItemTemplate>
-                            <asp:Label ID="lblQuantity" runat="server" Text='<%#Eval("overallQuantity")%>'/>
+                            <asp:Label ID="lblQuantity" runat="server" Text='<%#Eval("intOverallQuantity")%>'/>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Average Cost">
                         <ItemTemplate>
-                            <asp:Label ID="lblAverageCost" runat="server" Text='<%#(Convert.ToDouble(Eval("overallCost")) / Convert.ToDouble(Eval("overallQuantity"))).ToString("C")%>'/>
+                            <asp:Label ID="lblAverageCost" runat="server" Text='<%#(Convert.ToDouble(Eval("fltOverallCost")) / Convert.ToDouble(Eval("intOverallQuantity"))).ToString("C")%>'/>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Average Price">
                         <ItemTemplate>
-                            <asp:Label ID="lblAveragePrice" runat="server" Text='<%#(Convert.ToDouble(Eval("overallPrice")) / Convert.ToDouble(Eval("overallQuantity"))).ToString("C")%>'/>
+                            <asp:Label ID="lblAveragePrice" runat="server" Text='<%#(Convert.ToDouble(Eval("fltOverallPrice")) / Convert.ToDouble(Eval("intOverallQuantity"))).ToString("C")%>'/>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Cost of Goods Sold">
                         <ItemTemplate>
-                            <asp:Label ID="lblCostGoodsSold" runat="server" Text='<%#(Convert.ToDouble(Eval("overallCost"))).ToString("C")%>'/>
+                            <asp:Label ID="lblCostGoodsSold" runat="server" Text='<%#(Convert.ToDouble(Eval("fltOverallCost"))).ToString("C")%>'/>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Profit Margin">
                         <ItemTemplate>
-                            <asp:Label ID="lblProfitMargin" runat="server" Text='<%#(((Convert.ToDouble(Eval("overallPrice")) * Convert.ToDouble(Eval("overallQuantity"))) - (Convert.ToDouble(Eval("overallQuantity")) * Convert.ToDouble(Eval("overallCost")))) / (Convert.ToDouble(Eval("overallPrice")) * Convert.ToDouble(Eval("overallQuantity")))).ToString("P") %>'/>
+                            <asp:Label ID="lblProfitMargin" runat="server" Text='<%#(((Convert.ToDouble(Eval("fltOverallPrice")) * Convert.ToDouble(Eval("intOverallQuantity"))) - (Convert.ToDouble(Eval("intOverallQuantity")) * Convert.ToDouble(Eval("fltOverallCost")))) / (Convert.ToDouble(Eval("fltOverallPrice")) * Convert.ToDouble(Eval("intOverallQuantity")))).ToString("P") %>'/>
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>

@@ -37,11 +37,12 @@
             <hr />
             <asp:Label ID="lblReportDate" runat="server" Font-Bold="true" Text="Date" />
             <hr />
-            <asp:GridView ID="grdInvoiceDisplay" runat="server" AutoGenerateColumns="false" Width="100%" ShowFooter="true" RowStyle-HorizontalAlign="Center" OnRowDataBound="grdInvoiceDisplay_RowDataBound">
+            <asp:GridView ID="grdInvoiceDisplay" runat="server" AutoGenerateColumns="false" Width="100%" ShowFooter="true" 
+				RowStyle-HorizontalAlign="Center" OnRowDataBound="grdInvoiceDisplay_RowDataBound">
                 <Columns>
                     <asp:TemplateField HeaderText="Invoice Number" HeaderStyle-Width="18%">
                         <ItemTemplate>
-                            <asp:Label ID="lblInvoiceNum" runat="server" Text='<%#Eval("invoiceNum") + "-" + Eval("invoiceSubNum") %>' />
+                            <asp:Label ID="lblInvoiceNum" runat="server" Text='<%#Eval("varInvoiceNumber") + "-" + Eval("intInvoiceSubNumber") %>' />
                         </ItemTemplate>
                         <FooterTemplate>
                             <asp:Label ID="lblTotal" runat="server" Text="Totals:" />
@@ -49,7 +50,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Invoice Date" HeaderStyle-Width="18%">
                         <ItemTemplate>
-                            <asp:Label ID="lblInvoiceDate" runat="server" Text='<%#Eval("invoiceDate", "{0: dd/MMM/yy}") %>' />
+                            <asp:Label ID="lblInvoiceDate" runat="server" Text='<%#Eval("dtmInvoiceDate", "{0: dd/MMM/yy}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Customer Name" HeaderStyle-Width="18%">
@@ -59,12 +60,12 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Discount" HeaderStyle-Width="17%">
                         <ItemTemplate>
-                            <asp:Label ID="lblDiscountAmount" runat="server" Text='<%#Eval("discountAmount","{0:C}") %>' />
+                            <asp:Label ID="lblDiscountAmount" runat="server" Text='<%#Eval("fltTotalDiscount","{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Balance Due" HeaderStyle-Width="17%">
                         <ItemTemplate>
-                            <asp:Label ID="lblBalanceDue" runat="server" Text='<%#Eval("balanceDue","{0:C}") %>' />
+                            <asp:Label ID="lblBalanceDue" runat="server" Text='<%#Eval("fltBalanceDue","{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Employee Name" HeaderStyle-Width="18%">

@@ -42,7 +42,7 @@
                 <Columns>
                     <asp:TemplateField HeaderText="Date">
                         <ItemTemplate>
-                            <asp:Label ID="lblDate" runat="server" Text='<%#Eval("cashoutDate", "{0: dd/MMM/yy}")%>' />
+                            <asp:Label ID="lblDate" runat="server" Text='<%#Eval("dtmCashoutDate", "{0: dd/MMM/yy}")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField>
@@ -52,11 +52,11 @@
                             Sales
                         </HeaderTemplate>
                         <ItemTemplate>
-                            <asp:Label ID="lblTradeInReceipts" runat="server" Text='<%#Eval("receiptTradeIn","{0:C}") %>' />
+                            <asp:Label ID="lblTradeInReceipts" runat="server" Text='<%#Eval("fltManuallyCountedBasedOnReceiptsTradeIn","{0:C}") %>' />
                             <br />
-                            <asp:Label ID="lblTradeInSales" runat="server" Text='<%#Eval("saleTradeIn","{0:C}") %>' />
+                            <asp:Label ID="lblTradeInSales" runat="server" Text='<%#Eval("fltSystemCountedBasedOnSystemTradeIn","{0:C}") %>' />
                             <br />
-                            <asp:Label ID="lblTradeInBalance" runat="server" ForeColor="Green" Text='<%# Convert.ToDouble(Eval("receiptTradeIn")) == Convert.ToDouble(Eval("saleTradeIn")) ? "Balanced" : "Discrepancy" %>' />
+                            <asp:Label ID="lblTradeInBalance" runat="server" ForeColor="Green" Text='<%# Convert.ToDouble(Eval("fltManuallyCountedBasedOnReceiptsTradeIn")) == Convert.ToDouble(Eval("fltSystemCountedBasedOnSystemTradeIn")) ? "Balanced" : "Discrepancy" %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField>
@@ -66,11 +66,11 @@
                             Sales
                         </HeaderTemplate>
                         <ItemTemplate>
-                            <asp:Label ID="lblGiftCardReceipts" runat="server" Text='<%#Eval("receiptGiftCard","{0:C}") %>' />
+                            <asp:Label ID="lblGiftCardReceipts" runat="server" Text='<%#Eval("fltManuallyCountedBasedOnReceiptsGiftCard","{0:C}") %>' />
                             <br />
-                            <asp:Label ID="lblGiftCardSales" runat="server" Text='<%#Eval("saleGiftCard","{0:C}") %>' />
+                            <asp:Label ID="lblGiftCardSales" runat="server" Text='<%#Eval("fltSystemCountedBasedOnSystemGiftCard","{0:C}") %>' />
                             <br />
-                            <asp:Label ID="lblGiftCardBalance" runat="server" ForeColor="Green" Text='<%# Convert.ToDouble(Eval("receiptGiftCard")) == Convert.ToDouble(Eval("saleGiftCard")) ? "Balanced" : "Discrepancy" %>' />
+                            <asp:Label ID="lblGiftCardBalance" runat="server" ForeColor="Green" Text='<%# Convert.ToDouble(Eval("fltManuallyCountedBasedOnReceiptsGiftCard")) == Convert.ToDouble(Eval("fltSystemCountedBasedOnSystemGiftCard")) ? "Balanced" : "Discrepancy" %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField>
@@ -80,11 +80,11 @@
                             Sales
                         </HeaderTemplate>
                         <ItemTemplate>
-                            <asp:Label ID="lblCashReceipts" runat="server" Text='<%#Eval("receiptCash","{0:C}") %>' />
+                            <asp:Label ID="lblCashReceipts" runat="server" Text='<%#Eval("fltManuallyCountedBasedOnReceiptsCash","{0:C}") %>' />
                             <br />
-                            <asp:Label ID="lblCashSales" runat="server" Text='<%#Eval("saleCash","{0:C}") %>' />
+                            <asp:Label ID="lblCashSales" runat="server" Text='<%#Eval("fltSystemCountedBasedOnSystemCash","{0:C}") %>' />
                             <br />
-                            <asp:Label ID="lblCashBalance" runat="server" ForeColor="Green" Text='<%# Convert.ToDouble(Eval("receiptCash")) == Convert.ToDouble(Eval("saleCash")) ? "Balanced" : "Discrepancy" %>' />
+                            <asp:Label ID="lblCashBalance" runat="server" ForeColor="Green" Text='<%# Convert.ToDouble(Eval("fltManuallyCountedBasedOnReceiptsCash")) == Convert.ToDouble(Eval("fltSystemCountedBasedOnSystemCash")) ? "Balanced" : "Discrepancy" %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField>
@@ -94,11 +94,11 @@
                             Sales
                         </HeaderTemplate>
                         <ItemTemplate>
-                            <asp:Label ID="lblDebitReceipts" runat="server" Text='<%#Eval("receiptDebit","{0:C}") %>' />
+                            <asp:Label ID="lblDebitReceipts" runat="server" Text='<%#Eval("fltManuallyCountedBasedOnReceiptsDebit","{0:C}") %>' />
                             <br />
-                            <asp:Label ID="lblDebitSales" runat="server" Text='<%#Eval("saleDebit","{0:C}") %>' />
+                            <asp:Label ID="lblDebitSales" runat="server" Text='<%#Eval("fltSystemCountedBasedOnSystemDebit","{0:C}") %>' />
                             <br />
-                            <asp:Label ID="lblDebitBalance" runat="server" ForeColor="Green" Text='<%# Convert.ToDouble(Eval("receiptDebit")) == Convert.ToDouble(Eval("saleDebit")) ? "Balanced" : "Discrepancy" %>' />
+                            <asp:Label ID="lblDebitBalance" runat="server" ForeColor="Green" Text='<%# Convert.ToDouble(Eval("fltManuallyCountedBasedOnReceiptsDebit")) == Convert.ToDouble(Eval("fltSystemCountedBasedOnSystemDebit")) ? "Balanced" : "Discrepancy" %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField>
@@ -108,11 +108,11 @@
                             Sales
                         </HeaderTemplate>
                         <ItemTemplate>
-                            <asp:Label ID="lblMasterCardReceipts" runat="server" Text='<%#Eval("receiptMasterCard","{0:C}") %>' />
+                            <asp:Label ID="lblMasterCardReceipts" runat="server" Text='<%#Eval("fltManuallyCountedBasedOnReceiptsMasterCard","{0:C}") %>' />
                             <br />
-                            <asp:Label ID="lblMasterCardSales" runat="server" Text='<%#Eval("saleMasterCard","{0:C}") %>' />
+                            <asp:Label ID="lblMasterCardSales" runat="server" Text='<%#Eval("fltSystemCountedBasedOnSystemMasterCard","{0:C}") %>' />
                             <br />
-                            <asp:Label ID="lblMasterCardBalance" runat="server" ForeColor="Green" Text='<%# Convert.ToDouble(Eval("receiptMasterCard")) == Convert.ToDouble(Eval("saleMasterCard")) ? "Balanced" : "Discrepancy" %>' />
+                            <asp:Label ID="lblMasterCardBalance" runat="server" ForeColor="Green" Text='<%# Convert.ToDouble(Eval("fltManuallyCountedBasedOnReceiptsMasterCard")) == Convert.ToDouble(Eval("fltSystemCountedBasedOnSystemMasterCard")) ? "Balanced" : "Discrepancy" %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField>
@@ -122,32 +122,32 @@
                             Sales
                         </HeaderTemplate>
                         <ItemTemplate>
-                            <asp:Label ID="lblVisaReceipts" runat="server" Text='<%#Eval("receiptVisa","{0:C}") %>' />
+                            <asp:Label ID="lblVisaReceipts" runat="server" Text='<%#Eval("fltManuallyCountedBasedOnReceiptsVisa","{0:C}") %>' />
                             <br />
-                            <asp:Label ID="lblVisaSales" runat="server" Text='<%#Eval("saleVisa","{0:C}") %>' />
+                            <asp:Label ID="lblVisaSales" runat="server" Text='<%#Eval("fltSystemCountedBasedOnSystemVisa","{0:C}") %>' />
                             <br />
-                            <asp:Label ID="lblVisaBalance" runat="server" ForeColor="Green" Text='<%# Convert.ToDouble(Eval("receiptVisa")) == Convert.ToDouble(Eval("saleVisa")) ? "Balanced" : "Discrepancy" %>' />
+                            <asp:Label ID="lblVisaBalance" runat="server" ForeColor="Green" Text='<%# Convert.ToDouble(Eval("fltManuallyCountedBasedOnReceiptsVisa")) == Convert.ToDouble(Eval("fltSystemCountedBasedOnSystemVisa")) ? "Balanced" : "Discrepancy" %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Over/Short">
                         <ItemTemplate>
-                            <asp:Label ID="lblOverShort" runat="server" Text='<%#Eval("overShort","{0:C}")%>' />
+                            <asp:Label ID="lblOverShort" runat="server" Text='<%#Eval("fltCashDrawerOverShort","{0:C}")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Processed">
                         <ItemTemplate>
-                            <asp:Label ID="lblProcessed" runat="server" Text='<%# Convert.ToDouble(Eval("processed")) == 1 ? "TRUE" : "FALSE" %>' />
+                            <asp:Label ID="lblProcessed" runat="server" Text='<%# Convert.ToDouble(Eval("bitIsCashoutProcessed")) == 1 ? "TRUE" : "FALSE" %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Finalized">
                         <ItemTemplate>
-                            <asp:Label ID="lblFinalized" runat="server" Text='<%# Convert.ToDouble(Eval("finalized")) == 1 ? "TRUE" : "FALSE" %>' />
+                            <asp:Label ID="lblFinalized" runat="server" Text='<%# Convert.ToDouble(Eval("bitIsCashoutFinalized")) == 1 ? "TRUE" : "FALSE" %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Action">
                         <ItemTemplate>
-                            <asp:Button ID="btnEdit" runat="server" Text="Edit" CausesValidation="false" CommandName="EditCashout" CommandArgument='<%#Eval("cashoutDate","{0:d}") + " " + Eval("locationID")%>' />
-                            <asp:Button ID="btnFinalize" runat="server" Text="Finalize" CausesValidation="false" CommandName="FinalizeCashout" CommandArgument='<%#Eval("cashoutDate","{0:d}") + " " + Eval("locationID")%>' />
+                            <asp:Button ID="btnEdit" runat="server" Text="Edit" CausesValidation="false" CommandName="EditCashout" CommandArgument='<%#Eval("dtmCashoutDate","{0:d}") + " " + Eval("intLocationID")%>' />
+                            <asp:Button ID="btnFinalize" runat="server" Text="Finalize" CausesValidation="false" CommandName="FinalizeCashout" CommandArgument='<%#Eval("dtmCashoutDate","{0:d}") + " " + Eval("intLocationID")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>

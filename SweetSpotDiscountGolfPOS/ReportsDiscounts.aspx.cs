@@ -48,17 +48,17 @@ namespace SweetSpotDiscountGolfPOS
                     DateTime[] reportDates = (DateTime[])repInfo[0];
                     DateTime startDate = reportDates[0];
                     DateTime endDate = reportDates[1];
-                    int locID = Convert.ToInt32(repInfo[1]);
+                    int locationID = Convert.ToInt32(repInfo[1]);
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locID, objPageDetails);
+                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     }
                     else
                     {
-                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locID, objPageDetails);
+                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     }
-                    discounts = R.returnDiscountsBetweenDates(startDate, endDate, locID, objPageDetails);
+                    discounts = R.returnDiscountsBetweenDates(repInfo, objPageDetails);
                     grdInvoiceDisplay.DataSource = discounts;
                     grdInvoiceDisplay.DataBind();
 
@@ -69,7 +69,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -85,8 +85,8 @@ namespace SweetSpotDiscountGolfPOS
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
                 {
-                    tDiscount += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "discountAmount"));
-                    tBalance += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "balanceDue"));
+                    tDiscount += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltTotalDiscount"));
+                    tBalance += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltBalanceDue"));
                 }
                 else if (e.Row.RowType == DataControlRowType.Footer)
                 {
@@ -99,7 +99,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -154,7 +154,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

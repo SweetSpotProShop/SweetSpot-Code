@@ -41,17 +41,17 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         {
             string date = DateTime.Now.ToString("yyyy-MM-dd");
             string time = DateTime.Now.ToString("HH:mm:ss");
-            string sqlCmd = "INSERT INTO tbl_error VALUES(@employeeID, @date, @time, "
-                + "@errorPage, @errorMethod, @errorCode, @errorText)";
+            string sqlCmd = "INSERT INTO tbl_error VALUES(@intEmployeeID, @dtmErrorDate, @dtmErrorTime, @varErrorPage, @varErrorMethod, "
+                + "@intErrorCode, @varErrorText)";
             object[][] parms =
             {
-                new object[] { "@employeeID", employeeID },
-                new object[] { "@date", date },
-                new object[] { "@time", time },
-                new object[] { "@errorPage", er.Source + " - " + page },
-                new object[] { "@errorMethod", method },
-                new object[] { "@errorCode", er.HResult },
-                new object[] { "@errorText", er.Message }
+                new object[] { "@intEmployeeID", employeeID },
+                new object[] { "@dtmErrorDate", date },
+                new object[] { "@dtmErrorTime", time },
+                new object[] { "@varErrorPage", er.Source + " - " + page },
+                new object[] { "@varErrorMethod", method },
+                new object[] { "@intErrorCode", er.HResult },
+                new object[] { "@varErrorText", er.Message }
             };
             DBC.executeErrorInsertQuery(sqlCmd, parms);
         }

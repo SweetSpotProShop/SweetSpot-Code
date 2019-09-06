@@ -13,7 +13,6 @@
 </asp:Content>
 <%--<asp:Content ID="Content2" ContentPlaceHolderID="SPMaster" runat="server">
 </asp:Content>--%>
-
 <asp:Content ID="returnsPageContent" ContentPlaceHolderID="IndividualPageContent" runat="server">
     <div id="Sales">
         <%--REMEMBER TO SET DEFAULT BUTTON--%>
@@ -57,27 +56,27 @@
                     <Columns>
                         <asp:TemplateField HeaderText="Invoice Number">
                             <ItemTemplate>
-                                <asp:LinkButton ID="lkbInvoiceNum" runat="server" CommandName="returnInvoice" CommandArgument='<%#Eval("invoiceNum") + "-" + Eval("invoiceSub")%>' Text='<%#Eval("invoiceNum") + "-" + Eval("invoiceSub") %>' />
+                                <asp:LinkButton ID="lkbInvoiceNum" runat="server" CommandName="returnInvoice" CommandArgument='<%#Eval("intInvoiceID")%>' Text='<%#Eval("varInvoiceNumber") + "-" + Eval("intInvoiceSubNumber") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Invoice Date">
                             <ItemTemplate>
-                                <asp:Label ID="lblInvoiceDate" runat="server" Text='<%#Eval("invoiceDate","{0: dd/MMM/yy}") %>' />
+                                <asp:Label ID="lblInvoiceDate" runat="server" Text='<%#Eval("dtmInvoiceDate","{0: dd/MMM/yy}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Customer Name">
                             <ItemTemplate>
-                                <asp:Label ID="lblCustomerName" runat="server" Text='<%#Eval("customer.firstName") + " " + Eval("customer.lastName") %>' />
+                                <asp:Label ID="lblCustomerName" runat="server" Text='<%#Eval("customer.varFirstName") + " " + Eval("customer.varLastName") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Total">
                             <ItemTemplate>
-                                <asp:Label ID="lblAmountPaid" runat="server" Text='<%#Eval("balanceDue","{0:C}") %>' />
+                                <asp:Label ID="lblAmountPaid" runat="server" Text='<%#Eval("fltBalanceDue","{0:C}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Store">
                             <ItemTemplate>
-                                <asp:Label ID="lblLocation" runat="server" Text='<%#Eval("location.locationName") %>' />
+                                <asp:Label ID="lblLocation" runat="server" Text='<%#Eval("location.varLocationName") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>

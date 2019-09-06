@@ -90,12 +90,7 @@
                             <asp:Label ID="lblClubType" runat="server" Text="Club Type:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:DropDownList ID="ddlClubType" runat="server" AutoPostBack="false"
-                                DataTextField="typeName" DataValueField="typeID" Visible="True" />
-                            <asp:RequiredFieldValidator ID="rfvClubType"
-                                runat="server" ControlToValidate="ddlClubType"
-                                ErrorMessage="Club Type Required"
-                                ForeColor="Red" />
+                            <asp:TextBox ID="txtClubType" runat="server" AutoComplete="off" Visible="True" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label ID="lblModel" runat="server" Text="Model:" Visible="true" />

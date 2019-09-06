@@ -126,37 +126,37 @@
                 <Columns>
                     <asp:TemplateField HeaderText="SKU #">
                         <ItemTemplate>
-                            <asp:Label ID="sku" Text='<%#Eval("sku")%>' runat="server" />
+                            <asp:Label ID="sku" Text='<%#Eval("varSku")%>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Description">
                         <ItemTemplate>
-                            <asp:Label ID="itemDescription" Text='<%# Eval("description")%>' runat="server" />
+                            <asp:Label ID="itemDescription" Text='<%# Eval("varItemDescription")%>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Retail Price">
                         <ItemTemplate>
-                            <asp:Label ID="itemPrice" Text='<%# Convert.ToInt32(Request.QueryString["inv"].Split(Convert.ToChar("-"))[1]) == 1 ? Eval("price","{0:C}") : (Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("price"))) - Convert.ToDouble(Eval("itemDiscount"))).ToString("C") : ((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("price"))))).ToString("C")) %>' runat="server" />
+                            <asp:Label ID="itemPrice" Text='<%# Eval("fltItemPrice", "{0:C}") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Discounts/Bonus Applied">
                         <ItemTemplate>
-                            <asp:Label ID="discount" Text='<%# Convert.ToInt32(Request.QueryString["inv"].Split(Convert.ToChar("-"))[1]) == 1 ? Convert.ToBoolean(Eval("percentage")) == false ? (Eval("itemDiscount","{0:C}")).ToString() : ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("price"))).ToString("C") : ((Convert.ToDouble(Eval("price")) + Convert.ToDouble(Eval("itemRefund"))) * Convert.ToDouble(Eval("quantity"))).ToString("C") %>' runat="server" />
+                            <asp:Label ID="discount" Text='<%# Convert.ToBoolean(Eval("bitIsDiscountPercent")) == false ? (Eval("fltItemDiscount","{0:C}")).ToString() : ((Convert.ToDouble(Eval("fltItemDiscount")) / 100) * Convert.ToDouble(Eval("fltItemPrice"))).ToString("C") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Quantity">
                         <ItemTemplate>
-                            <asp:Label ID="itemQuantity" Text='<%#Eval("quantity")%>' runat="server" />
+                            <asp:Label ID="itemQuantity" Text='<%#Eval("intItemQuantity")%>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Sale Price">
                         <ItemTemplate>
-                            <asp:Label ID="salePrice" Text='<%# Convert.ToInt32(Request.QueryString["inv"].Split(Convert.ToChar("-"))[1]) == 1 ? Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("price")))-(Convert.ToDouble(Eval("itemDiscount")))).ToString("C") : ((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("price"))))).ToString("C") : Eval("itemRefund", "{0:C}") %>' runat="server" />
+                            <asp:Label ID="salePrice" Text='<%# Convert.ToBoolean(Eval("bitIsDiscountPercent")) == false ? ((Convert.ToDouble(Eval("fltItemPrice")))-(Convert.ToDouble(Eval("fltItemDiscount")))).ToString("C") : ((Convert.ToDouble(Eval("fltItemPrice")) - ((Convert.ToDouble(Eval("fltItemDiscount")) / 100) * Convert.ToDouble(Eval("fltItemPrice"))))).ToString("C") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Extended Price">
                         <ItemTemplate>
-                            <asp:Label ID="extended" Text='<%# Convert.ToInt32(Request.QueryString["inv"].Split(Convert.ToChar("-"))[1]) == 1 ? Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("price"))-Convert.ToDouble(Eval("itemDiscount")))*Convert.ToDouble(Eval("quantity"))).ToString("C") : ((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("price"))))*Convert.ToDouble(Eval("quantity"))).ToString("C") : (Convert.ToDouble(Eval("itemRefund")) * Convert.ToDouble(Eval("quantity"))).ToString("C") %>' runat="server" />
+                            <asp:Label ID="extended" Text='<%# Convert.ToBoolean(Eval("bitIsDiscountPercent")) == false ? ((Convert.ToDouble(Eval("fltItemPrice"))-Convert.ToDouble(Eval("fltItemDiscount")))*Convert.ToDouble(Eval("intItemQuantity"))).ToString("C") : ((Convert.ToDouble(Eval("fltItemPrice")) - ((Convert.ToDouble(Eval("fltItemDiscount")) / 100) * Convert.ToDouble(Eval("fltItemPrice"))))*Convert.ToDouble(Eval("intItemQuantity"))).ToString("C") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -238,8 +238,8 @@
             <p>
                 <asp:GridView ID="grdMOPS" runat="server" CellPadding="4" Width="70%" AutoGenerateColumns="false" RowStyle-HorizontalAlign="Center">
                     <Columns>
-                        <asp:BoundField DataField="mopType" ReadOnly="true" HeaderText="Payment Type" />
-                        <asp:BoundField DataField="amountPaid" ReadOnly="true" HeaderText="Amount Paid" DataFormatString="{0:C}" />
+                        <asp:BoundField DataField="varPaymentName" ReadOnly="true" HeaderText="Payment Type" />
+                        <asp:BoundField DataField="fltAmountPaid" ReadOnly="true" HeaderText="Amount Paid" DataFormatString="{0:C}" />
                     </Columns>
                 </asp:GridView>
             </p>

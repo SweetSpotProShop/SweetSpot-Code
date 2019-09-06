@@ -18,6 +18,7 @@ namespace SweetSpotDiscountGolfPOS
         InvoiceManager IM = new InvoiceManager();
         LocationManager LM = new LocationManager();
         ItemsManager ItM = new ItemsManager();
+        private static Invoice receipt;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -38,20 +39,33 @@ namespace SweetSpotDiscountGolfPOS
                     CU = (CurrentUser)Session["currentUser"];
                     if (!Page.IsPostBack)
                     {
+                        if (!IM.ReturnBolInvoiceExists(Convert.ToInt32(Request.QueryString["receipt"].ToString()), objPageDetails))
+                        {
+                            receipt.varInvoiceNumber = IM.ReturnNextReceiptNumber(CU, objPageDetails);
+                            receipt.intInvoiceSubNumber = 1;
+                            receipt.customer = CM.ReturnCustomer(Convert.ToInt32(Request.QueryString["customer"].ToString()), objPageDetails)[0];
+                            receipt.employee = CU.employee;
+                            receipt.location = CU.location;
+                            receipt.fltGovernmentTaxAmount = 0;
+                            receipt.fltProvincialTaxAmount = 0;
+                            receipt.intTransactionTypeID = 5;
+                            receipt.bitChargeGST = false;
+                            receipt.bitChargePST = false;
+                            IM.CreateInitialTotalsForTable(receipt, objPageDetails);
+                        }
+                        else
+                        {
+                            receipt = IM.ReturnCurrentPurchaseInvoice(Convert.ToInt32(Request.QueryString["receipt"]), objPageDetails)[0];
+                        }
+
                         //Checks if there is a Customer Number stored in the Session
-                        Customer C = CM.ReturnCustomer(Convert.ToInt32(Request.QueryString["cust"].ToString()), objPageDetails)[0];
+
                         //Set name in text box
-                        txtCustomer.Text = C.firstName + " " + C.lastName;
+                        txtCustomer.Text = receipt.customer.varFirstName + " " + receipt.customer.varLastName;
                         //display system time in Sales Page
                         DateTime today = DateTime.Today;
                         lblDateDisplay.Text = today.ToString("dd/MMM/yy");
-                        lblReceiptNumberDisplay.Text = Request.QueryString["receipt"].ToString();
-
-                        Invoice R = new Invoice(Convert.ToInt32(Request.QueryString["receipt"].ToString().Split('-')[1]), 1, DateTime.Now, DateTime.Now, C, CU.emp, CU.location, 0, 0, 0, 0, 0, 0, 0, 5, "");
-                        if (!IM.ReturnBolInvoiceExists(Request.QueryString["receipt"].ToString(), objPageDetails))
-                        {
-                            IM.CreateInitialTotalsForTable(R, objPageDetails);
-                        }
+                        lblReceiptNumberDisplay.Text = receipt.varInvoiceNumber.ToString();
                         UpdateReceiptTotal();
                     }
                 }
@@ -61,7 +75,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -79,9 +93,9 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     btnCustomerSelect.Text = "Change Customer";
                     grdCustomersSearched.Visible = false;
-                    Customer C = CM.ReturnCustomer(Convert.ToInt32(Request.QueryString["cust"].ToString()), objPageDetails)[0];
+                    Customer C = CM.ReturnCustomer(Convert.ToInt32(Request.QueryString["customer"].ToString()), objPageDetails)[0];
                     //Set name in text box
-                    txtCustomer.Text = C.firstName + " " + C.lastName;
+                    txtCustomer.Text = C.varFirstName + " " + C.varLastName;
                 }
                 else
                 {
@@ -99,7 +113,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -112,29 +126,27 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                Location L = LM.ReturnLocation(CU.location.locationID, objPageDetails)[0];
                 Customer C = new Customer
                 {
-                    firstName = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtFirstName")).Text,
-                    lastName = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtLastName")).Text,
-                    primaryAddress = "",
+                    varFirstName = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtFirstName")).Text,
+                    varLastName = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtLastName")).Text,
+                    varAddress = "",
                     secondaryAddress = "",
-                    primaryPhoneNumber = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtPhoneNumber")).Text,
+                    varContactNumber = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtPhoneNumber")).Text,
                     secondaryPhoneNumber = "",
-                    emailList = ((CheckBox)grdCustomersSearched.FooterRow.FindControl("chkMarketingEnrollment")).Checked,
-                    email = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtEmail")).Text,
-                    city = "",
-                    province = L.provID,
-                    country = L.countryID,
-                    postalCode = ""
+                    bitSendMarketing = ((CheckBox)grdCustomersSearched.FooterRow.FindControl("chkMarketingEnrollment")).Checked,
+                    varEmailAddress = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtEmail")).Text,
+                    varCityName = "",
+                    intProvinceID = CU.location.intProvinceID,
+                    intCountryID = CU.location.intCountryID,
+                    varPostalCode = ""
                 };
-                C.customerId = CM.addCustomer(C, objPageDetails);
-                Invoice R = IM.ReturnCurrentInvoice(Request.QueryString["receipt"].ToString(), objPageDetails)[0];
-                R.customer = C;
-                IM.UpdateCurrentInvoice(R, objPageDetails);
+                C.intCustomerID = CM.addCustomer(C, objPageDetails);
+                receipt.customer = C;
+                IM.UpdateCurrentInvoice(receipt, objPageDetails);
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                nameValues.Set("receipt", Request.QueryString["receipt"].ToString());
-                nameValues.Set("cust", R.customer.customerId.ToString());
+                nameValues.Set("receipt", receipt.intInvoiceID.ToString());
+                nameValues.Set("customer", receipt.customer.intCustomerID.ToString());
                 Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
             }
             //Exception catch
@@ -142,7 +154,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -165,7 +177,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -183,13 +195,12 @@ namespace SweetSpotDiscountGolfPOS
                 if (e.CommandName == "SwitchCustomer")
                 {
                     //if command argument is SwitchCustomer, set the new key
-                    Customer C = CM.ReturnCustomer(Convert.ToInt32(e.CommandArgument.ToString()), objPageDetails)[0];
-                    Invoice R = IM.ReturnCurrentInvoice(Request.QueryString["receipt"].ToString() + "-1", objPageDetails)[0];
-                    R.customer = C;
-                    IM.UpdateCurrentInvoice(R, objPageDetails);
+                    receipt = IM.ReturnCurrentInvoice(receipt.intInvoiceID, objPageDetails)[0];
+                    receipt.customer = CM.ReturnCustomer(Convert.ToInt32(e.CommandArgument.ToString()), objPageDetails)[0];
+                    IM.UpdateCurrentInvoice(receipt, objPageDetails);
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                    nameValues.Set("cust", C.customerId.ToString());
-                    nameValues.Set("receipt", Request.QueryString["receipt"].ToString());
+                    nameValues.Set("customer", receipt.customer.intCustomerID.ToString());
+                    nameValues.Set("receipt", receipt.intInvoiceID.ToString());
                     Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
                 }
                 btnCustomerSelect.Text = "Change Customer";
@@ -199,7 +210,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -216,18 +227,17 @@ namespace SweetSpotDiscountGolfPOS
             {
                 InvoiceItems purchItem = new InvoiceItems
                 {
-                    sku = ItM.ReserveTradeInSKU(CU.location.locationID, objPageDetails),
-                    quantity = 1,
-                    description = "",
-                    cost = 0.00,
-                    invoiceNum = Convert.ToInt32((Request.QueryString["receipt"].ToString()).Split('-')[1]),
-                    invoiceSubNum = Convert.ToInt32((Request.QueryString["receipt"].ToString()).Split('-')[2]),
-                    itemDiscount = 0,
-                    itemRefund = 0,
-                    price = 0,
-                    percentage = false,
-                    isTradeIn = false,
-                    typeID = 1
+                    varSku = ItM.ReserveTradeInSKU(CU, objPageDetails),
+                    intItemQuantity = 1,
+                    varItemDescription = "",
+                    fltItemCost = 0.00,
+                    intInvoiceID = receipt.intInvoiceID,                   
+                    fltItemDiscount = 0,
+                    fltItemRefund = 0,
+                    fltItemPrice = 0,
+                    bitIsDiscountPercent = false,
+                    bitIsClubTradeIn = false,
+                    intItemTypeID = 1
                 };
 
                 IIM.InsertItemIntoSalesCart(purchItem, objPageDetails);
@@ -239,7 +249,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -255,7 +265,7 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //it's available columns
-                grdPurchasedItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["receipt"].ToString() + "-1", objPageDetails);
+                grdPurchasedItems.DataSource = receipt.invoiceItems;
                 grdPurchasedItems.EditIndex = e.NewEditIndex;
                 grdPurchasedItems.DataBind();
                 //Recalculates subtotal
@@ -266,7 +276,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -284,7 +294,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Clears the indexed row
                 grdPurchasedItems.EditIndex = -1;
                 //Binds gridview to Session items in cart
-                grdPurchasedItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["receipt"].ToString() + "-1", objPageDetails);
+                grdPurchasedItems.DataSource = receipt.invoiceItems;
                 grdPurchasedItems.DataBind();
                 //Recalcluate subtotal
                 //lblPurchaseAmountDisplay.Text = "$ " + scm.returnPurchaseAmount((List<Cart>)Session["ItemsInCart"]).ToString("#0.00");
@@ -294,7 +304,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -312,11 +322,10 @@ namespace SweetSpotDiscountGolfPOS
                 //creates a temp item with the new updates
                 InvoiceItems purchItem = new InvoiceItems
                 {
-                    invoiceNum = Convert.ToInt32((Request.QueryString["receipt"].ToString()).Split('-')[1]),
-                    invoiceSubNum = Convert.ToInt32((Request.QueryString["receipt"].ToString()).Split('-')[2]),
-                    sku = Convert.ToInt32(grdPurchasedItems.Rows[e.RowIndex].Cells[1].Text),
-                    cost = Convert.ToDouble(((TextBox)grdPurchasedItems.Rows[e.RowIndex].Cells[3].Controls[0]).Text),
-                    description = ((TextBox)grdPurchasedItems.Rows[e.RowIndex].Cells[2].Controls[0]).Text
+                    intInvoiceID = receipt.intInvoiceID,
+                    intInvoiceItemID = Convert.ToInt32(((Label)grdPurchasedItems.Rows[e.RowIndex].Cells[0].FindControl("lblInvoiceItemID")).Text),
+                    fltItemCost = Convert.ToDouble(((TextBox)grdPurchasedItems.Rows[e.RowIndex].Cells[3].Controls[0]).Text),
+                    varItemDescription = ((TextBox)grdPurchasedItems.Rows[e.RowIndex].Cells[2].Controls[0]).Text
                 };
 
                 IIM.UpdateItemFromCurrentSalesTableActualQueryForPurchases(purchItem, objPageDetails);
@@ -331,7 +340,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -345,7 +354,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                IM.CancellingReceipt(IM.ReturnCurrentInvoice(Request.QueryString["receipt"].ToString() + "-1", objPageDetails)[0], objPageDetails);
+                IM.CancellingReceipt(IM.ReturnCurrentInvoice(receipt.intInvoiceID, objPageDetails)[0], objPageDetails);
                 //Change to Home Page
                 Response.Redirect("HomePage.aspx", false);
             }
@@ -354,7 +363,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -369,8 +378,8 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                nameValues.Set("receipt", Request.QueryString["receipt"].ToString());
-                nameValues.Set("cust", Request.QueryString["cust"].ToString());
+                nameValues.Set("receipt", receipt.intInvoiceID.ToString());
+                nameValues.Set("customer", receipt.customer.intCustomerID.ToString());
                 //Changes to Sales Checkout page
                 Response.Redirect("PurchasesCheckout.aspx?" + nameValues, false);
             }
@@ -379,7 +388,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -392,19 +401,19 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                IM.CalculateNewReceiptTotalsToUpdate(IM.ReturnCurrentPurchaseInvoice(Request.QueryString["receipt"].ToString(), objPageDetails)[0], objPageDetails);
-                Invoice R = IM.ReturnCurrentPurchaseInvoice(Request.QueryString["receipt"].ToString(), objPageDetails)[0];
-                grdPurchasedItems.DataSource = IIM.ReturnItemsInTheCart(Request.QueryString["receipt"].ToString(), objPageDetails);
+                IM.CalculateNewReceiptTotalsToUpdate(IM.ReturnCurrentPurchaseInvoice(receipt.intInvoiceID, objPageDetails)[0], objPageDetails);
+                receipt = IM.ReturnCurrentPurchaseInvoice(receipt.intInvoiceID, objPageDetails)[0];
+                grdPurchasedItems.DataSource = receipt.invoiceItems;
                 grdPurchasedItems.DataBind();
                 //Recalculates the new subtotal
-                lblPurchaseAmountDisplay.Text = "$ " + R.subTotal.ToString("#0.00");
+                lblPurchaseAmountDisplay.Text = "$ " + receipt.fltSubTotal.ToString("#0.00");
             }
             //Exception catch
             catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

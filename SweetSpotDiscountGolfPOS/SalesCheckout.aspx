@@ -156,11 +156,11 @@
                                         <asp:LinkButton Text="Remove MOP" runat="server" CommandName="Delete" OnClientClick="return confirm('Are you sure you want to remove this Method of Payment?');" CausesValidation="false" />
                                     </ItemTemplate>
                                 </asp:TemplateField>
-                                <asp:BoundField DataField="mopType" ReadOnly="true" HeaderText="Payment Type" />
-                                <asp:BoundField DataField="amountPaid" ReadOnly="true" HeaderText="Amount Paid" DataFormatString="{0:C}" />
+                                <asp:BoundField DataField="varPaymentName" ReadOnly="true" HeaderText="Payment Type" />
+                                <asp:BoundField DataField="fltAmountPaid" ReadOnly="true" HeaderText="Amount Paid" DataFormatString="{0:C}" />
                                 <asp:TemplateField HeaderText="Table ID" Visible="false" >
                                     <ItemTemplate>
-                                        <asp:Label ID="mopID" Text='<%# Eval("id") %>' runat="server" />
+                                        <asp:Label ID="mopID" Text='<%# Eval("intInvoicePaymentID") %>' runat="server" />
                                     </ItemTemplate>
                                 </asp:TemplateField>
                             </Columns>

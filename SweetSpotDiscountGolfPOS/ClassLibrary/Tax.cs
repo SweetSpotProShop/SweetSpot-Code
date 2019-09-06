@@ -9,19 +9,19 @@ namespace SweetShop
     //Used to define and create a tax
     public class Tax
     {
-        public double taxRate { get; set; }
-        public string taxName { get; set; }
-        public int taxID { get; set; }
+        public int intTaxID { get; set; }
+        public double fltTaxRate { get; set; }
+        public string varTaxName { get; set; }        
         public Tax() { }
-        public Tax(string tName, double tRate)
-        {
-            taxName = tName;
-            taxRate = tRate;
-        }
-        public Tax(int tID, double tRate)
-        {
-            taxID = tID;
-            taxRate = tRate;
-        }
+    }
+    public class TaxTypePerInventoryItem
+    {
+        public int intInventoryID { get; set; }
+        public int intTaxID { get; set; }
+        public string varTaxName { get; set; }
+        public double fltTaxRate { get; set; }
+        public bool bitChargeTax { get; set; }
+
+        public TaxTypePerInventoryItem() { }
     }
 }

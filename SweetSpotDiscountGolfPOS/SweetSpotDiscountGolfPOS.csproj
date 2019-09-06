@@ -106,6 +106,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="PrintableInvoiceReturn.aspx" />
     <Content Include="PrintableInvoice.aspx" />
     <Content Include="PrintableReceipt.aspx" />
     <Content Include="PurchasesCart.aspx" />
@@ -114,10 +115,12 @@
     <Content Include="ReportsCostOfInventory.aspx" />
     <Content Include="ReportsDiscounts.aspx" />
     <Content Include="ReportsCashOut.aspx" />
+    <Content Include="LoungeSims.aspx" />
     <Content Include="ReportsSpecificGrip.aspx" />
     <Content Include="ReportsSpecificApparel.aspx" />
     <Content Include="ReportsInventoryChange.aspx" />
     <Content Include="ReportsStoreStats.aspx" />
+    <Content Include="LoungeSalesCart.aspx" />
     <Content Include="SalesCashOut.aspx" />
     <Content Include="ReportsExtensiveInvoice.aspx" />
     <Content Include="ReportsHomePage.aspx" />
@@ -143,8 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClassLibrary\Accessories.cs" />
-    <Compile Include="ClassLibrary\ChangeItem.cs" />
-    <Compile Include="ClassLibrary\Checkout.cs" />
+    <Compile Include="ClassLibrary\ItemChangeTracking.cs" />
     <Compile Include="ClassLibrary\CustomerManager.cs" />
     <Compile Include="ClassLibrary\InvoiceItemsManager.cs" />
     <Compile Include="ClassLibrary\InvoiceMOPsManager.cs" />
@@ -168,7 +170,7 @@
     <Compile Include="ClassLibrary\InvoiceItems.cs" />
     <Compile Include="ClassLibrary\InvoiceMOPs.cs" />
     <Compile Include="ClassLibrary\ItemDataUtilities.cs" />
-    <Compile Include="ClassLibrary\Items.cs" />
+    <Compile Include="ClassLibrary\Inventory.cs" />
     <Compile Include="ClassLibrary\Location.cs" />
     <Compile Include="ClassLibrary\LocationManager.cs" />
     <Compile Include="ClassLibrary\MessageBox.cs" />
@@ -234,6 +236,13 @@
     <Compile Include="MasterPage.Master.designer.cs">
       <DependentUpon>MasterPage.Master</DependentUpon>
     </Compile>
+    <Compile Include="PrintableInvoiceReturn.aspx.cs">
+      <DependentUpon>PrintableInvoiceReturn.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PrintableInvoiceReturn.aspx.designer.cs">
+      <DependentUpon>PrintableInvoiceReturn.aspx</DependentUpon>
+    </Compile>
     <Compile Include="PrintableInvoice.aspx.cs">
       <DependentUpon>PrintableInvoice.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -297,6 +306,13 @@
     <Compile Include="ReportsCashOut.aspx.designer.cs">
       <DependentUpon>ReportsCashOut.aspx</DependentUpon>
     </Compile>
+    <Compile Include="LoungeSims.aspx.cs">
+      <DependentUpon>LoungeSims.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LoungeSims.aspx.designer.cs">
+      <DependentUpon>LoungeSims.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ReportsSpecificGrip.aspx.cs">
       <DependentUpon>ReportsSpecificGrip.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -324,6 +340,13 @@
     </Compile>
     <Compile Include="ReportsStoreStats.aspx.designer.cs">
       <DependentUpon>ReportsStoreStats.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="LoungeSalesCart.aspx.cs">
+      <DependentUpon>LoungeSalesCart.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LoungeSalesCart.aspx.designer.cs">
+      <DependentUpon>LoungeSalesCart.aspx</DependentUpon>
     </Compile>
     <Compile Include="SalesCashOut.aspx.cs">
       <DependentUpon>SalesCashOut.aspx</DependentUpon>

@@ -337,6 +337,24 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.CheckBox chkUsed;
         
         /// <summary>
+        /// lblTaxesChargedAtSale control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblTaxesChargedAtSale;
+        
+        /// <summary>
+        /// grdInventoryTaxes control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView grdInventoryTaxes;
+        
+        /// <summary>
         /// txtComments control.
         /// </summary>
         /// <remarks>

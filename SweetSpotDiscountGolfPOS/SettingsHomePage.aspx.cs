@@ -61,7 +61,7 @@ namespace SweetSpotDiscountGolfPOS
                         txtDate.Text = DateTime.Today.ToString("dd/MMM/yy");
                     }
                     //Checks if the user is an Admin
-                    if (CU.jobID != 0)
+                    if (CU.employee.intJobID != 0)
                     {
                         btnAddNewEmployee.Enabled = false;
                         btnLoadItems.Enabled = false;
@@ -70,8 +70,8 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         ddlProvince.DataSource = LM.ReturnProvinceDropDown(0, objPageDetails);
                         ddlProvince.DataBind();
-                        ddlProvince.SelectedValue = CU.location.provID.ToString();
-                        ddlTax.DataSource = TM.ReturnTaxListBasedOnDateAndProvinceForUpdate(1, Convert.ToDateTime(lblCurrentDate.Text), objPageDetails);
+                        ddlProvince.SelectedValue = CU.location.intProvinceID.ToString();
+                        ddlTax.DataSource = TM.ReturnTaxListBasedOnDateAndProvinceForUpdate(CU.location.intProvinceID, Convert.ToDateTime(lblCurrentDate.Text), objPageDetails);
                         ddlTax.DataBind();
                     }
                 }
@@ -81,7 +81,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -96,14 +96,14 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Change to Employee add new page
-                Response.Redirect("EmployeeAddNew.aspx?emp=-10", false);
+                Response.Redirect("EmployeeAddNew.aspx?employee=-10", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -121,7 +121,7 @@ namespace SweetSpotDiscountGolfPOS
                 if (e.CommandName == "ViewProfile")
                 {
                     //Changes page to Employee Add New
-                    Response.Redirect("EmployeeAddNew.aspx?emp=" + e.CommandArgument.ToString(), false);
+                    Response.Redirect("EmployeeAddNew.aspx?employee=" + e.CommandArgument.ToString(), false);
                 }
             }
             //Exception catch
@@ -129,7 +129,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -153,15 +153,13 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-
-      
 
         //Importing
         protected void btnLoadItems_Click(object sender, EventArgs e)
@@ -299,7 +297,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -328,7 +326,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -356,7 +354,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -383,7 +381,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -410,7 +408,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -437,7 +435,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -553,7 +551,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -573,7 +571,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -586,12 +584,12 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                List<Tax> t = TM.ReturnTaxListBasedOnDate(Convert.ToDateTime(lblCurrentDate.Text), Convert.ToInt32(ddlProvince.SelectedValue), objPageDetails);
-                foreach (var tax in t)
+                List<Tax> taxes = TM.ReturnTaxListBasedOnDate(Convert.ToDateTime(lblCurrentDate.Text), Convert.ToInt32(ddlProvince.SelectedValue), objPageDetails);
+                foreach (var tax in taxes)
                 {
-                    if (tax.taxID == Convert.ToInt32(ddlTax.SelectedValue))
+                    if (tax.intTaxID == Convert.ToInt32(ddlTax.SelectedValue))
                     {
-                        lblCurrentDisplay.Text = tax.taxRate.ToString("#0.00");
+                        lblCurrentDisplay.Text = tax.fltTaxRate.ToString("#0.00");
                     }
                 }
             }
@@ -600,7 +598,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -622,7 +620,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -643,7 +641,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -707,7 +705,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -726,20 +724,22 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     if (txtModelOne.Text.Equals(txtModelTwo.Text))
                     {
-                        string sqlCmd = "if exists((select top 1 tbl_model.modelID from tbl_model where tbl_model.modelName = @modelName)) " +
-                                            "begin " +
-                                                "print '1'; " +
-                                            "end " +
-                                        "else " +
-                                            "begin " +
-                                                "Insert into tbl_model values(@modelName) " +
-                                                "print '0'; " +
-                                             "end";
+                        string sqlCmd = "IF EXISTS((SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName)) " +
+                                            "BEGIN " +
+                                                "PRINT '1'; " +
+                                            "END " +
+                                        "ELSE " +
+                                            "BEGIN " +
+                                                "INSERT INTO tbl_model VALUES(@varModelName) " +
+                                                "PRINT '0'; " +
+                                             "END";
                         object[][] parms =
                         {
-                            new object[] {"@modelName", txtModelOne.Text}
+                            new object[] {"@varModelName", txtModelOne.Text}
                         };
                         dbc.executeInsertQuery(sqlCmd, parms);
+                        txtModelOne.Text = "";
+                        txtModelTwo.Text = "";
                         //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
                     }
                     else
@@ -758,7 +758,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -777,21 +777,23 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     if (txtBrandOne.Text.Equals(txtBrandTwo.Text))
                     {
-                        string sqlCmd = "if exists((select top 1 tbl_brand.brandID from tbl_brand where tbl_brand.brandName = @brandName)) " +
-                                            "begin " +
-                                                "print '1'; " +
-                                            "end " +
-                                        "else " +
-                                            "begin " +
-                                                "Insert into tbl_brand values(@brandName) " +
-                                                "print '0'; " +
-                                             "end";
+                        string sqlCmd = "IF EXISTS((SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName)) " +
+                                            "BEGIN " +
+                                                "PRINT '1'; " +
+                                            "END " +
+                                        "ELSE " +
+                                            "BEGIN " +
+                                                "INSERT INTO tbl_brand VALUES(@varBrandName) " +
+                                                "PRINT '0'; " +
+                                             "END";
                         object[][] parms =
                         {
-                            new object[] {"@brandName", txtBrandOne.Text}
+                            new object[] {"@varBrandName", txtBrandOne.Text}
                         };
                         dbc.executeInsertQuery(sqlCmd, parms);
                         //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+                        txtBrandOne.Text = "";
+                        txtBrandTwo.Text = "";
                     }
                     else
                     {
@@ -809,7 +811,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

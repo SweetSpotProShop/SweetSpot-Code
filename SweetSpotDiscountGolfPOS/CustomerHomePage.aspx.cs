@@ -41,7 +41,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -67,7 +67,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -82,14 +82,14 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Opens the page to add a new customer
-                Response.Redirect("CustomerAddNew.aspx?cust=-10", false);
+                Response.Redirect("CustomerAddNew.aspx?customer=-10", false);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -106,15 +106,15 @@ namespace SweetSpotDiscountGolfPOS
                 if (e.CommandName == "ViewProfile")
                 {
                     //open Add New Customer page
-                    Response.Redirect("CustomerAddNew.aspx?cust=" + e.CommandArgument.ToString(), false);
+                    Response.Redirect("CustomerAddNew.aspx?customer=" + e.CommandArgument.ToString(), false);
                 }
                 else if (e.CommandName == "StartSale")
                 {
                     InvoiceManager IM = new InvoiceManager();
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                    nameValues.Set("cust", e.CommandArgument.ToString());
-                    string invoice = CU.locationName + "-" + IM.ReturnNextInvoiceNumber(objPageDetails) + "-1";
-                    nameValues.Set("inv", invoice);
+                    nameValues.Set("customer", e.CommandArgument.ToString());
+                    string invoice = "-10";
+                    nameValues.Set("invoice", invoice);
                     Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
                     //Changes page to Sales Cart
                     Response.Redirect("SalesCart.aspx?" + nameValues, false);
@@ -125,7 +125,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -152,7 +152,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                                 + "If you continue to receive this message please contact "

@@ -35,47 +35,47 @@
                 <Columns>
                     <asp:TemplateField HeaderText="Moose Jaw Clubs">
                         <ItemTemplate>
-                            <asp:Label ID="lblcMJ" runat="server" Text='<%#Eval("cMJ", "{0:C}")%>' />
+                            <asp:Label ID="lblcMJ" runat="server" Text='<%#Eval("fltCostClubsMJ", "{0:C}")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Moose Jaw Accessories">
                         <ItemTemplate>
-                            <asp:Label ID="lblaMJ" runat="server" Text='<%#Eval("aMJ","{0:C}") %>' />
+                            <asp:Label ID="lblaMJ" runat="server" Text='<%#Eval("fltCostAccessoriesMJ","{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Moose Jaw Apparel">
                         <ItemTemplate>
-                            <asp:Label ID="lblclMJ" runat="server" Text='<%#Eval("clMJ","{0:C}") %>' />
+                            <asp:Label ID="lblclMJ" runat="server" Text='<%#Eval("fltCostClothingMJ","{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Calgary Clubs">
                         <ItemTemplate>
-                            <asp:Label ID="lblcCAL" runat="server" Text='<%#Eval("cCAL","{0:C}") %>' />
+                            <asp:Label ID="lblcCAL" runat="server" Text='<%#Eval("fltCostClubsCAL","{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Calgary Accessories">
                         <ItemTemplate>
-                            <asp:Label ID="lblaCAL" runat="server" Text='<%#Eval("aCAL","{0:C}") %>' />
+                            <asp:Label ID="lblaCAL" runat="server" Text='<%#Eval("fltCostAccessoriesCAL","{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Calgary Apparel">
                         <ItemTemplate>
-                            <asp:Label ID="lblclCAL" runat="server" Text='<%#Eval("clCAL","{0:C}") %>' />
+                            <asp:Label ID="lblclCAL" runat="server" Text='<%#Eval("fltCostClothingCAL","{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Edmonton Clubs">
                         <ItemTemplate>
-                            <asp:Label ID="lblcEDM" runat="server" Text='<%#Eval("cEDM","{0:C}") %>' />
+                            <asp:Label ID="lblcEDM" runat="server" Text='<%#Eval("fltCostClubsEDM","{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Edmonton Accessories">
                         <ItemTemplate>
-                            <asp:Label ID="lblaEDM" runat="server" Text='<%#Eval("aEDM","{0:C}") %>' />
+                            <asp:Label ID="lblaEDM" runat="server" Text='<%#Eval("fltCostAccessoriesEDM","{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Edmonton Apparel">
                         <ItemTemplate>
-                            <asp:Label ID="lblclEDM" runat="server" Text='<%#Eval("clEDM","{0:C}") %>' />
+                            <asp:Label ID="lblclEDM" runat="server" Text='<%#Eval("fltCostClothingEDM","{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>

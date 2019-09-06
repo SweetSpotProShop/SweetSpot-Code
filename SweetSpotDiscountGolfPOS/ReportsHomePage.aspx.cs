@@ -40,9 +40,9 @@ namespace SweetSpotDiscountGolfPOS
                         calEndDate.SelectedDate = DateTime.Today;
                         ddlLocation.DataSource = LM.ReturnLocationDropDown(objPageDetails);
                         ddlLocation.DataBind();
-                        ddlLocation.SelectedValue = CU.location.locationID.ToString();
+                        ddlLocation.SelectedValue = CU.location.intLocationID.ToString();
                     }
-                    if (CU.jobID != 0)
+                    if (CU.employee.intJobID != 0)
                     {
                         //User is not an admin
                         lblReport.Text = "You are not authorized to view reports";
@@ -59,7 +59,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -77,7 +77,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -95,7 +95,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -111,7 +111,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                object[] reportLog = { 1, CU.emp.employeeID, CU.location.locationID };
+                object[] reportLog = { 1, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
@@ -120,11 +120,8 @@ namespace SweetSpotDiscountGolfPOS
                 ////Check to see if there are sales first
                 if (indicator == 0)
                 {
-                    var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                    nameValues.Set("from", dtm[0].ToString());
-                    nameValues.Set("to", dtm[1].ToString());
-                    nameValues.Set("location", ddlLocation.SelectedValue.ToString());
-                    Response.Redirect("ReportsCashOut.aspx?" + nameValues, false);
+                    Session["reportInfo"] = repInfo;
+                    Response.Redirect("ReportsCashOut.aspx", false);
                 }
                 else if (indicator == 1)
                 {
@@ -136,7 +133,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -152,7 +149,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                object[] reportLog = { 3, CU.emp.employeeID, CU.location.locationID };
+                object[] reportLog = { 3, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
@@ -172,7 +169,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -188,7 +185,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                object[] reportLog = { 6, CU.emp.employeeID, CU.location.locationID };
+                object[] reportLog = { 6, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
@@ -209,7 +206,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -225,7 +222,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                object[] reportLog = { 7, CU.emp.employeeID, CU.location.locationID };
+                object[] reportLog = { 7, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
                 //Stores report dates into Session
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
@@ -247,7 +244,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -263,7 +260,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                object[] reportLog = { 11, CU.emp.employeeID, CU.location.locationID };
+                object[] reportLog = { 11, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 int loc = Convert.ToInt32(ddlLocation.SelectedValue);
@@ -273,7 +270,7 @@ namespace SweetSpotDiscountGolfPOS
                 if (indicator == 0)
                 {
                     Session["reportInfo"] = repInfo;
-                    Server.Transfer("ReportsExtensiveInvoice.aspx", false);
+                    Response.Redirect("ReportsExtensiveInvoice.aspx", false);
                 }
                 else if (indicator == 1)
                 {
@@ -285,7 +282,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //string prevPage = Convert.ToString(Session["prevPage"]);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
@@ -303,16 +300,16 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                object[] reportLog = { 12, CU.emp.employeeID, CU.location.locationID };
+                object[] reportLog = { 12, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
-                Server.Transfer("ReportsCostOfInventory.aspx", false);
+                Response.Redirect("ReportsCostOfInventory.aspx", false);
             }
             //Exception catch
             catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //string prevPage = Convert.ToString(Session["prevPage"]);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
@@ -330,7 +327,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                object[] reportLog = { 13, CU.emp.employeeID, CU.location.locationID };
+                object[] reportLog = { 13, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm, ddlDatePeriod.SelectedItem.Text.ToString() };
@@ -350,7 +347,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -366,7 +363,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                object[] reportLog = { 16, CU.emp.employeeID, CU.location.locationID };
+                object[] reportLog = { 16, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm };
@@ -387,7 +384,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -403,7 +400,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                object[] reportLog = { 14, CU.emp.employeeID, CU.location.locationID };
+                object[] reportLog = { 14, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm };
@@ -424,7 +421,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -440,7 +437,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                object[] reportLog = { 15, CU.emp.employeeID, CU.location.locationID };
+                object[] reportLog = { 15, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
                 object[] repInfo = new object[] { dtm };
@@ -461,7 +458,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -471,13 +468,9 @@ namespace SweetSpotDiscountGolfPOS
 
         protected DateTime[] getDateRange(DateTime startDate, DateTime endDate)
         {
-            if (ddlDatePeriod.SelectedItem.Text.Equals("Day"))
+            if (ddlDatePeriod.SelectedItem.Text.Equals("Month"))
             {
-                return new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
-            }
-            else if (ddlDatePeriod.SelectedItem.Text.Equals("Default"))
-            {
-                return new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                return new DateTime[2] { calStartDate.SelectedDate.GetMonthStart(), calEndDate.SelectedDate.GetMonthEnd() };
             }
             else if (ddlDatePeriod.SelectedItem.Text.Equals("Week"))
             {
@@ -485,9 +478,8 @@ namespace SweetSpotDiscountGolfPOS
             }
             else
             {
-                return new DateTime[2] { calStartDate.SelectedDate.GetMonthStart(), calEndDate.SelectedDate.GetMonthEnd() };
+                return new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
             }
-
         }
 
 

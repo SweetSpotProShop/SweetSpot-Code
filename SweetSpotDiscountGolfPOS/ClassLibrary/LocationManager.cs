@@ -18,18 +18,17 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             List<Location> location = dt.AsEnumerable().Select(row =>
             new Location
             {
-                locationID = row.Field<int>("locationID"),
-                locationName = row.Field<string>("locationName"),
-                primaryPhone = row.Field<string>("primaryPhoneINT"),
-                secondaryPhone = row.Field<string>("secondaryPhoneINT"),
-                email = row.Field<string>("email"),
-                address = row.Field<string>("address"),
-                city = row.Field<string>("city"),
-                provID = row.Field<int>("provStateID"),
-                countryID = row.Field<int>("country"),
-                postal = row.Field<string>("postZip"),
-                relationName = row.Field<string>("secondaryIdentifier"),
-                taxNumber = row.Field<string>("taxNumber")
+                intLocationID = row.Field<int>("intLocationID"),
+                varLocationName = row.Field<string>("varLocationName"),
+                varContactNumber = row.Field<string>("varContactNumber"),
+                varEmailAddress = row.Field<string>("varEmailAddress"),
+                varAddress = row.Field<string>("varAddress"),
+                varCityName = row.Field<string>("varCityName"),
+                intProvinceID = row.Field<int>("intProvinceID"),
+                intCountryID = row.Field<int>("intCountryID"),
+                varPostalCode = row.Field<string>("varPostalCode"),
+                varSecondLocationID = row.Field<string>("varSecondLocationID"),
+                varTaxNumber = row.Field<string>("varTaxNumber")
             }).ToList();
             return location;
         }
@@ -48,16 +47,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
 
         //Returns list of locations based on a location ID
-        public List<Location> ReturnLocation(int loc, object[] objPageDetails)
+        public List<Location> ReturnLocation(int locationID, object[] objPageDetails)
         {
             string strQueryName = "ReturnLocation";
-            string sqlCmd = "SELECT locationID, locationName, primaryPhoneINT, secondaryPhoneINT, "
-                + "email, address,city, provStateID, country, postZip, secondaryIdentifier, "
-                + "taxNumber FROM tbl_location WHERE locationID = @locationID";
+            string sqlCmd = "SELECT intLocationID, varLocationName, varContactNumber, varEmailAddress, varAddress, "
+                + "varCityName, intProvinceID, intCountryID, varPostalCode, varSecondLocationID, varTaxNumber FROM "
+                + "tbl_location WHERE intLocationID = @intLocationID";
 
             object[][] parms =
             {
-                 new object[] { "@locationID", loc }
+                 new object[] { "@intLocationID", locationID }
             };
 
             return ConvertFromDataTableToLocation(dbc.returnDataTableData(sqlCmd, parms));
@@ -93,11 +92,11 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public string ReturnLocationName(int locationID, object[] objPageDetails)
         {
             string strQueryName = "ReturnLocationName";
-            string sqlCmd = "SELECT locationName FROM tbl_location WHERE locationID = @locationID";
+            string sqlCmd = "SELECT varLocationName FROM tbl_location WHERE intLocationID = @intLocationID";
 
             object[][] parms =
             {
-                 new object[] { "@locationID", locationID }
+                 new object[] { "@intLocationID", locationID }
             };
 
             return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
@@ -107,7 +106,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public DataTable ReturnLocationDropDown(object[] objPageDetails)
         {
             string strQueryName = "ReturnLocationDropDown";
-            string sqlCmd = "SELECT locationID, city FROM tbl_location WHERE isRetailStore = 1";
+            string sqlCmd = "SELECT intLocationID, varCityName FROM tbl_location WHERE bitIsRetailStore = 1";
             object[][] parms = { };
             return dbc.returnDataTableData(sqlCmd, parms);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
@@ -124,15 +123,15 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public DataTable ReturnProvinceDropDown(int countryID, object[] objPageDetails)
         {
             string strQueryName = "ReturnProvinceDropDown";
-            string sqlCmd = "SELECT provStateID, provName FROM tbl_provSTate WHERE countryID = @countryID";
-            object[][] parms = { new object[] { "@countryID", countryID} };
+            string sqlCmd = "SELECT intProvinceID, varProvinceName FROM tbl_provSTate WHERE intCountryID = @intCountryID";
+            object[][] parms = { new object[] { "@intCountryID", countryID} };
             return dbc.returnDataTableData(sqlCmd, parms);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public DataTable ReturnCountryDropDown(object[] objPageDetails)
         {
             string strQueryName = "ReturnCountryDropDown";
-            string sqlCmd = "SELECT countryID, countryDesc FROM tbl_country";
+            string sqlCmd = "SELECT intCountryID, varCountryName FROM tbl_country";
             object[][] parms = { };
             return dbc.returnDataTableData(sqlCmd, parms);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);

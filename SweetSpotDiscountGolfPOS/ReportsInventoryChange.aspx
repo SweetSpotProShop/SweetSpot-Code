@@ -62,19 +62,19 @@
 										<asp:Label ID="lblGrdEmployee" runat="server" Text='<%#Eval("employeeName")%>' />
 									</asp:TableCell>
 									<asp:TableCell Width="15%" RowSpan="2" HorizontalAlign="Center">
-										<asp:Label ID="lblGrdSKU" runat="server" Text='<%#Eval("intSku")%>' />
+										<asp:Label ID="lblGrdSKU" runat="server" Text='<%#Eval("varSku")%>' />
 									</asp:TableCell>
 									<asp:TableCell Width="17%" HorizontalAlign="Center">
 										<asp:Label ID="lblOriginalC" runat="server" Text="Original: " />
-										<asp:Label ID="lblOriginalCost" runat="server" Text='<%#Eval("originalCost", "{0:C}")%>' />
+										<asp:Label ID="lblOriginalCost" runat="server" Text='<%#Eval("fltOriginalCost", "{0:C}")%>' />
 									</asp:TableCell>
 									<asp:TableCell Width="17%" HorizontalAlign="Center">
 										<asp:Label ID="lblOriginalP" runat="server" Text="Original: " />
-										<asp:Label ID="lblOriginalPrice" runat="server" Text='<%#Eval("originalPrice", "{0:C}")%>' />
+										<asp:Label ID="lblOriginalPrice" runat="server" Text='<%#Eval("fltOriginalPrice", "{0:C}")%>' />
 									</asp:TableCell>
 									<asp:TableCell Width="17%" HorizontalAlign="Center">
 										<asp:Label ID="lblOriginalQ" runat="server" Text="Original: " />
-										<asp:Label ID="lblOriginalQuantity" runat="server" Text='<%#Eval("originalQuantity")%>' />
+										<asp:Label ID="lblOriginalQuantity" runat="server" Text='<%#Eval("intOriginalQuantity")%>' />
 									</asp:TableCell>
 								</asp:TableRow>
 								<asp:TableRow>
@@ -82,31 +82,31 @@
 										<asp:Label ID="lblGrdChangeTime" runat="server" Text='<%# DateTime.Parse(Eval("dtmChangeTime").ToString()).ToShortTimeString()%>' />
 									</asp:TableCell>
 									<asp:TableCell HorizontalAlign="Center">
-										<asp:Label ID="lblGrdLocation" runat="server" Text='<%#Eval("city")%>' />
+										<asp:Label ID="lblGrdLocation" runat="server" Text='<%#Eval("varCityName")%>' />
 									</asp:TableCell>
 									<asp:TableCell HorizontalAlign="Center">
 										<asp:Label ID="lblNewC" runat="server" Text="New: " />
-										<asp:Label ID="lblNewCost" runat="server" Text='<%#Eval("newCost", "{0:C}")%>' />
+										<asp:Label ID="lblNewCost" runat="server" Text='<%#Eval("fltNewCost", "{0:C}")%>' />
 									</asp:TableCell>
 									<asp:TableCell HorizontalAlign="Center">
 										<asp:Label ID="lblNewP" runat="server" Text="New: " />
-										<asp:Label ID="lblNewPrice" runat="server" Text='<%#Eval("newPrice", "{0:C}")%>' />
+										<asp:Label ID="lblNewPrice" runat="server" Text='<%#Eval("fltNewPrice", "{0:C}")%>' />
 									</asp:TableCell>
 									<asp:TableCell HorizontalAlign="Center">
 										<asp:Label ID="lblNewQ" runat="server" Text="New: " />
-										<asp:Label ID="lblNewQuantity" runat="server" Text='<%#Eval("newQuantity")%>' />
+										<asp:Label ID="lblNewQuantity" runat="server" Text='<%#Eval("intNewQuantity")%>' />
 									</asp:TableCell>
 								</asp:TableRow>
 								<asp:TableRow>
 									<asp:TableCell ColumnSpan="6">
 										<asp:Label ID="lblOriginalD" runat="server" Text="Original Description: " />
-										<asp:Label ID="lblOriginalDescription" runat="server" BorderWidth="1" Text='<%#Eval("originalDescription")%>' />
+										<asp:Label ID="lblOriginalDescription" runat="server" BorderWidth="1" Text='<%#Eval("varOriginalDescription")%>' />
 									</asp:TableCell>
 								</asp:TableRow>
 								<asp:TableRow>
 									<asp:TableCell ColumnSpan="6">
 										<asp:Label ID="lblNewD" runat="server" Text="New Description: " />
-										<asp:Label ID="lblNewDescription" runat="server" BorderWidth="1" Text='<%#Eval("newDescription")%>' />
+										<asp:Label ID="lblNewDescription" runat="server" BorderWidth="1" Text='<%#Eval("varNewDescription")%>' />
 									</asp:TableCell>
 								</asp:TableRow>
 							</asp:Table>

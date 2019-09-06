@@ -19,18 +19,18 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             double singleDiscoount = 0;
             double totalDiscount = 0;
             //Loops through the cart and pulls each item
-            foreach (var cart in itemsSold)
+            foreach (var invoiceItem in itemsSold)
             {
                 //Determines if the discount was a percentage or a number
-                if (cart.percentage)
+                if (invoiceItem.bitIsDiscountPercent)
                 {
                     //If the discount is a percentage
-                    singleDiscoount = cart.quantity * (cart.price * (cart.itemDiscount / 100));
+                    singleDiscoount = invoiceItem.intItemQuantity * (invoiceItem.fltItemPrice * (invoiceItem.fltItemDiscount / 100));
                 }
                 else
                 {
                     //If the discount is a dollar amount
-                    singleDiscoount = cart.quantity * cart.itemDiscount;
+                    singleDiscoount = invoiceItem.intItemQuantity * invoiceItem.fltItemDiscount;
                 }
                 totalDiscount += singleDiscoount;
             }
@@ -43,16 +43,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             double singleTradeInAmount = 0;
             double totalTradeinAmount = 0;
             //Checks the range of trade in sku's by location
-            int[] range = tradeInSkuRange(loc, objPageDetails);
+            //int[] range = tradeInSkuRange(loc, objPageDetails);
             //Loops through the cart and pulls each item
-            foreach (var cart in itemsSold)
+            foreach (var invoiceItem in itemsSold)
             {
                 //Checking the sku and seeing if it falls in the trade in range.
                 //If it does, the item is a trade in
-                if (cart.sku <= range[1] && cart.sku >= range[0])
+                if (invoiceItem.bitIsClubTradeIn)
                 {
                     //Adding the trade in value to the total trade in amount
-                    singleTradeInAmount = cart.quantity * cart.price;
+                    singleTradeInAmount = invoiceItem.intItemQuantity * invoiceItem.fltItemPrice;
                     totalTradeinAmount += singleTradeInAmount;
                 }
             }
@@ -63,16 +63,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         private double returnTotalAmount(List<InvoiceItems> itemsSold, int loc, object[] objPageDetails)
         {
             //Checks the range of trade in sku's by location
-            int[] range = tradeInSkuRange(loc, objPageDetails);
+            //int[] range = tradeInSkuRange(loc, objPageDetails);
             double singleTotalAmount = 0;
             double totalTotalAmount = 0;
             //Loops through the cart and pulls each item
-            foreach (var cart in itemsSold)
+            foreach (var invoiceItem in itemsSold)
             {
                 //Checks if the sku is outside of the range for the trade in sku's
-                if (cart.sku >= range[1] || cart.sku <= range[0])
+                if (!invoiceItem.bitIsClubTradeIn)
                 {
-                    singleTotalAmount = cart.quantity * cart.price;
+                    singleTotalAmount = invoiceItem.intItemQuantity * invoiceItem.fltItemPrice;
                     totalTotalAmount += singleTotalAmount;
                 }
             }
@@ -96,14 +96,14 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //Returns the subtotal value of the cart
             return totalSubtotalAmount;
         }
-        private double returnReceiptSubtotalAmount(List<InvoiceItems> itemsSold, int loc)
+        private double returnReceiptSubtotalAmount(List<InvoiceItems> invoiceItems, int loc)
         {
             double singleTotalAmount = 0;
             double totalTotalAmount = 0;
             //Loops through the cart and pulls each item
-            foreach (var cart in itemsSold)
+            foreach (var item in invoiceItems)
             {
-                singleTotalAmount = cart.quantity * cart.cost;
+                singleTotalAmount = item.intItemQuantity * item.fltItemCost;
                 totalTotalAmount += singleTotalAmount;
             }
             //Returns the total amount value of the cart
@@ -118,7 +118,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //Loops through the cart and pulls each item
             foreach (var cart in itemsSold)
             {
-                singleRefundSubtotalAmount = cart.quantity * cart.itemRefund;
+                singleRefundSubtotalAmount = cart.intItemQuantity * cart.fltItemRefund;
                 totalRefundSubtotalAmount += singleRefundSubtotalAmount;
             }
             //Returns the total refund subtotal amount
@@ -130,7 +130,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             double totalPurchaseAmount = 0;
             foreach (var cart in itemsSold)
             {
-                singlePurchaseAmount = cart.quantity * cart.cost;
+                singlePurchaseAmount = cart.intItemQuantity * cart.fltItemCost;
                 totalPurchaseAmount += singlePurchaseAmount;
             }
             //Returns the total amount of the cart
@@ -176,68 +176,68 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //Returns the range
             return range;
         }
-        public Invoice SaveAllInvoiceTotals(Invoice I, object[] objPageDetails)
+        public Invoice SaveAllInvoiceTotals(Invoice invoice, object[] objPageDetails)
         {
-            I.subTotal = returnSubtotalAmount(I.soldItems, I.location.locationID, objPageDetails);
-            I.discountAmount = returnDiscount(I.soldItems);
-            I.tradeinAmount = returnTradeInAmount(I.soldItems, I.location.locationID, objPageDetails);
-            I.balanceDue = I.subTotal;
-            return I;
+            invoice.fltSubTotal = returnSubtotalAmount(invoice.invoiceItems, invoice.location.intLocationID, objPageDetails);
+            invoice.fltTotalDiscount = returnDiscount(invoice.invoiceItems);
+            invoice.fltTotalTradeIn = returnTradeInAmount(invoice.invoiceItems, invoice.location.intLocationID, objPageDetails);
+            invoice.fltBalanceDue = invoice.fltSubTotal;
+            return invoice;
         }
 
-        public Invoice SaveAllInvoiceTotalsForReturn(Invoice I)
+        public Invoice SaveAllInvoiceTotalsForReturn(Invoice invoice)
         {
-            I.subTotal = returnSubtotalReturnAmount(I);
-            I.tradeinAmount = returnTradeInReturnAmount(I);
-            I.balanceDue = I.subTotal;
-            return I;
+            invoice.fltSubTotal = returnSubtotalReturnAmount(invoice);
+            invoice.fltTotalTradeIn = returnTradeInReturnAmount(invoice);
+            invoice.fltBalanceDue = invoice.fltSubTotal;
+            return invoice;
         }
-        public Invoice SaveAllReceiptTotals(Invoice I)
+        public Invoice SaveAllReceiptTotals(Invoice invoice)
         {
-            I.subTotal = returnReceiptSubtotalAmount(I.soldItems, I.location.locationID);
-            I.balanceDue = I.subTotal;
-            return I;
+            invoice.fltSubTotal = returnReceiptSubtotalAmount(invoice.invoiceItems, invoice.location.intLocationID);
+            invoice.fltBalanceDue = invoice.fltSubTotal;
+            return invoice;
         }
-        private double returnSubtotalReturnAmount(Invoice I)
+        private double returnSubtotalReturnAmount(Invoice invoice)
         {
             double totalSubtotalAmount = 0;
-            double totalTotalAmount = returnTotalAmountForReturn(I);
-            double totalTradeInAmount = returnTradeInReturnAmount(I);
+            double totalTotalAmount = returnTotalAmountForReturn(invoice);
+            double totalTradeInAmount = returnTradeInReturnAmount(invoice);
             totalSubtotalAmount = totalSubtotalAmount + totalTotalAmount;
             totalSubtotalAmount = totalSubtotalAmount - (totalTradeInAmount * (-1));
             return totalSubtotalAmount;
         }
-        private double returnTotalAmountForReturn(Invoice I)
+        private double returnTotalAmountForReturn(Invoice invoice)
         {
             //Checks the range of trade in sku's by location
             double singleTotalAmount = 0;
             double totalTotalAmount = 0;
             //Loops through the cart and pulls each item
-            foreach (var cart in I.soldItems)
+            foreach (var invoiceItem in invoice.invoiceItems)
             {
-                if (!cart.isTradeIn)
+                if (!invoiceItem.bitIsClubTradeIn)
                 {
                     //Checks if the sku is outside of the range for the trade in sku's
-                    singleTotalAmount = cart.quantity * cart.itemRefund;
+                    singleTotalAmount = invoiceItem.intItemQuantity * invoiceItem.fltItemRefund;
                     totalTotalAmount += singleTotalAmount;
                 }
             }
             //Returns the total amount value of the cart
             return totalTotalAmount;
         }
-        private double returnTradeInReturnAmount(Invoice I)
+        private double returnTradeInReturnAmount(Invoice invoice)
         {
             double singleTradeInAmount = 0;
             double totalTradeinAmount = 0;
             //Loops through the cart and pulls each item
-            foreach (var cart in I.soldItems)
+            foreach (var invoiceItem in invoice.invoiceItems)
             {
                 //Checking the sku and seeing if it falls in the trade in range.
                 //If it does, the item is a trade in
-                if (cart.isTradeIn)
+                if (invoiceItem.bitIsClubTradeIn)
                 {
                     //Adding the trade in value to the total trade in amount
-                    singleTradeInAmount = cart.quantity * cart.itemRefund;
+                    singleTradeInAmount = invoiceItem.intItemQuantity * invoiceItem.fltItemRefund;
                     totalTradeinAmount += singleTradeInAmount;
                 }
             }

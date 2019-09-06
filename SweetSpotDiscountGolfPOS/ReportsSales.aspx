@@ -42,7 +42,7 @@
                 <Columns>
                     <asp:TemplateField HeaderText="Date">
                         <ItemTemplate>
-                            <asp:Label ID="lblDate" runat="server" Text='<%#Eval("invoiceDate","{0: dd/MMM/yy}")%>' />
+                            <asp:Label ID="lblDate" runat="server" Text='<%#Eval("dtmInvoiceDate","{0: dd/MMM/yy}")%>' />
                         </ItemTemplate>
                         <FooterTemplate>
                             <asp:Label ID="lblTotal" runat="server" Text="Totals:" />
@@ -50,7 +50,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Sales Dollars">
                         <ItemTemplate>
-                            <asp:Label ID="lblSalesDollars" runat="server" Text='<%#Eval("totalSales","{0:C}") %>' />
+                            <asp:Label ID="lblSalesDollars" runat="server" Text='<%#Eval("fltTotalSales","{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>

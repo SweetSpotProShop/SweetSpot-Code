@@ -68,7 +68,7 @@
                         <Columns>
                             <asp:TemplateField HeaderText="Switch Customer">
                                 <ItemTemplate>
-                                    <asp:LinkButton ID="lbtnSwitchCustomer" CommandName="SwitchCustomer" CommandArgument='<%#Eval("CustomerId") %>' Text="Switch Customer" runat="server" />
+                                    <asp:LinkButton ID="lbtnSwitchCustomer" CommandName="SwitchCustomer" CommandArgument='<%#Eval("intCustomerID") %>' Text="Switch Customer" runat="server" />
                                 </ItemTemplate>
                                 <FooterTemplate>
                                     <asp:Button ID="btnAddCustomer" runat="server" Text="Add Customer" OnClick="btnAddCustomer_Click" />
@@ -76,7 +76,7 @@
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Customer Name">
                                 <ItemTemplate>
-                                    <asp:Label runat="server" Text='<%#Eval("firstName") + " " + Eval("lastName") %>' />
+                                    <asp:Label runat="server" Text='<%#Eval("varFirstName") + " " + Eval("varLastName") %>' />
                                 </ItemTemplate>
                                 <FooterTemplate>
                                     <div>
@@ -89,7 +89,7 @@
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Phone Number">
                                 <ItemTemplate>
-                                    <asp:Label runat="server" Text='<%#Eval("primaryPhoneNumber") %>' />
+                                    <asp:Label runat="server" Text='<%#Eval("varContactNumber") %>' />
                                 </ItemTemplate>
                                 <FooterTemplate>
                                     <div>
@@ -99,7 +99,7 @@
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Email Address">
                                 <ItemTemplate>
-                                    <asp:Label runat="server" Text='<%#Eval("email") %>' />
+                                    <asp:Label runat="server" Text='<%#Eval("varEmailAddress") %>' />
                                 </ItemTemplate>
                                 <FooterTemplate>
                                     <div>
@@ -144,31 +144,31 @@
                 <Columns>
                     <asp:TemplateField HeaderText="Add Item">
                         <ItemTemplate>
-                            <asp:LinkButton Text="Add Item" runat="server" CommandName="AddItem" CausesValidation="false" />
+                            <asp:LinkButton Text="Add Item" runat="server" CommandName="AddItem" CausesValidation="false" CommandArgument='<%#Eval("intInventoryID") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:BoundField DataField="sku" HeaderText="SKU" />
+                    <asp:BoundField DataField="varSku" HeaderText="SKU" />
                     <asp:TemplateField HeaderText="In Stock">
                         <ItemTemplate>
                             <div>
                                 <asp:TextBox ID="quantityToAdd" runat="server" AutoComplete="off" placeholder="Enter Quantity To Add" />
                             </div>
                             <div>
-                                <asp:Label ID="QuantityInOrder" Text='<%#Eval("quantity")%>' runat="server" />
+                                <asp:Label ID="QuantityInOrder" Text='<%#Eval("intItemQuantity")%>' runat="server" />
                             </div>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Description">
                         <ItemTemplate>
-                            <asp:Label ID="Description" Text='<%#Eval("description")%>' runat="server" />
+                            <asp:Label ID="Description" Text='<%#Eval("varItemDescription")%>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Price" ItemStyle-Width="50px">
                         <ItemTemplate>
                             <div class='cost' id="divRollOverSearch" runat="server">
-                                <asp:Label ID="rollPrice" runat="server" Text='<%#  (Eval("price","{0:C}")).ToString() %>' />
+                                <asp:Label ID="rollPrice" runat="server" Text='<%#  (Eval("fltItemPrice","{0:C}")).ToString() %>' />
                                 <div id="divPriceConvert" class="costDetail" runat="server">
-                                    <asp:Label ID="rollCost" runat="server" Text='<%# Convert.ToString(Eval("cost","{0:C}")).Replace("\n","<br/>") %>' />
+                                    <asp:Label ID="rollCost" runat="server" Text='<%# Convert.ToString(Eval("fltItemCost","{0:C}")).Replace("\n","<br/>") %>' />
                                 </div>
                             </div>
                         </ItemTemplate>
@@ -185,12 +185,12 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Trade In" Visible="false" >
                         <ItemTemplate>
-                            <asp:CheckBox ID="chkTradeInSearch" Checked='<%# Eval("isTradeIn") %>' runat="server" Enabled="false" />
+                            <asp:CheckBox ID="chkTradeInSearch" Checked='<%# Eval("bitIsClubTradeIn") %>' runat="server" Enabled="false" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Type ID" Visible="false">
                         <ItemTemplate>
-                            <asp:Label ID="lblTypeIDSearch" Text='<%# Eval("typeID") %>' runat="server" />
+                            <asp:Label ID="lblTypeIDSearch" Text='<%# Eval("intItemTypeID") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -206,52 +206,53 @@
                     <asp:TemplateField HeaderText="Remove Item">
                         <ItemTemplate>
                             <asp:LinkButton Text="Remove" runat="server" CommandName="Delete" OnClientClick="return confirm('Are you sure you want to delete?');" CausesValidation="false" />
+							<asp:Label ID="lblInventoryID" runat="server" Text='<%#Eval("intInventoryID")%>' Visible="false" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Edit Item">
                         <ItemTemplate>
-                            <asp:LinkButton Text="Edit" runat="server" CommandName="Edit" CommandArgument='<%#Eval("sku")%>' CausesValidation="false" />
+                            <asp:LinkButton Text="Edit" runat="server" CommandName="Edit" CommandArgument='<%#Eval("intInventoryID")%>' CausesValidation="false" />
                         </ItemTemplate>
                         <EditItemTemplate>
-                            <asp:LinkButton Text="Update" runat="server" CommandName="Update" CommandArgument='<%#Eval("sku")%>' CausesValidation="false" />
+                            <asp:LinkButton Text="Update" runat="server" CommandName="Update" CommandArgument='<%#Eval("intInventoryID")%>' CausesValidation="false" />
                             <asp:LinkButton Text="Cancel" runat="server" CommandName="Cancel" CausesValidation="false" />
                         </EditItemTemplate>
                     </asp:TemplateField>
-                    <asp:BoundField DataField="sku" ReadOnly="true" HeaderText="SKU" />
-                    <asp:BoundField DataField="quantity" HeaderText="Quantity" />
-                    <asp:BoundField DataField="description" ReadOnly="true" HeaderText="Description" />
+                    <asp:BoundField DataField="varSku" ReadOnly="true" HeaderText="SKU" />
+                    <asp:BoundField DataField="intItemQuantity" HeaderText="Quantity" />
+                    <asp:BoundField DataField="varItemDescription" ReadOnly="true" HeaderText="Description" />
                     <asp:TemplateField HeaderText="Price" ItemStyle-Width="50px">
                         <ItemTemplate>
                             <div class='cost' id="divRollOverCart" runat="server">
-                                <asp:Label ID="price" runat="server" Text='<%#  (Eval("price","{0:C}")).ToString() %>' />
+                                <asp:Label ID="price" runat="server" Text='<%#  (Eval("fltItemPrice","{0:C}")).ToString() %>' />
                                 <div id="divCostConvert" class="costDetail" runat="server">
-                                    <asp:Label ID="cost" runat="server" Text='<%# Convert.ToString(Eval("cost","{0:C}")).Replace("\n","<br/>") %>' />
+                                    <asp:Label ID="cost" runat="server" Text='<%# Convert.ToString(Eval("fltItemCost","{0:C}")).Replace("\n","<br/>") %>' />
                                 </div>
                             </div>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Discount Amount">
                         <ItemTemplate>
-                            <asp:CheckBox ID="ckbPercentageDisplay" Checked='<%# Convert.ToBoolean(Eval("percentage")) %>' runat="server" Text="Discount by Percent" Enabled="false" />
+                            <asp:CheckBox ID="ckbPercentageDisplay" Checked='<%# Convert.ToBoolean(Eval("bitIsDiscountPercent")) %>' runat="server" Text="Discount by Percent" Enabled="false" />
                             <div id="divAmountDisplay" class="txt" runat="server">
-                                <asp:Label ID="lblAmountDisplay" runat="server" Text='<%# Eval("itemDiscount") %>' Enabled="false" />
+                                <asp:Label ID="lblAmountDisplay" runat="server" Text='<%# Eval("fltItemDiscount") %>' Enabled="false" />
                             </div>
                         </ItemTemplate>
                         <EditItemTemplate>
-                            <asp:CheckBox ID="ckbPercentageEdit" Checked='<%# Convert.ToBoolean(Eval("percentage")) %>' runat="server" Text="Discount by Percent" Enabled="true" />
+                            <asp:CheckBox ID="ckbPercentageEdit" Checked='<%# Convert.ToBoolean(Eval("bitIsDiscountPercent")) %>' runat="server" Text="Discount by Percent" Enabled="true" />
                             <div id="divAmountEdit" class="txt" runat="server">
-                                <asp:TextBox ID="txtAmnt" runat="server" AutoComplete="off" Text='<%# Eval("itemDiscount") %>' Enabled="true" />
+                                <asp:TextBox ID="txtAmnt" runat="server" AutoComplete="off" Text='<%# Eval("fltItemDiscount") %>' Enabled="true" />
                             </div>
                         </EditItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Trade In" Visible="false">
                         <ItemTemplate>
-                            <asp:CheckBox ID="chkTradeIn" Checked='<%# Eval("isTradeIn") %>' runat="server" Enabled="false" />
+                            <asp:CheckBox ID="chkTradeIn" Checked='<%# Eval("bitIsClubTradeIn") %>' runat="server" Enabled="false" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Type ID" Visible="false">
                         <ItemTemplate>
-                            <asp:Label ID="lblTypeID" Text='<%# Eval("typeID") %>' runat="server" />
+                            <asp:Label ID="lblTypeID" Text='<%# Eval("intItemTypeID") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>

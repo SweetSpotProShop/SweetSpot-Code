@@ -54,16 +54,16 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     lblPurchasesMadeDate.Text = "Purchases Made Between: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     //Creating a cashout list and calling a method that grabs all mops and amounts paid
-                    purch = R.returnPurchasesDuringDates(startDate, endDate, locationID, objPageDetails);
-                    grdPurchasesMade.DataSource = purch;
-                    grdPurchasesMade.DataBind();
-                    foreach (GridViewRow row in grdPurchasesMade.Rows)
-                    {
-                        foreach (TableCell cell in row.Cells)
-                        {
-                            cell.Attributes.CssStyle["text-align"] = "center";
-                        }
-                    }
+                    //purch = R.returnPurchasesDuringDates(startDate, endDate, locationID, objPageDetails);
+                    //grdPurchasesMade.DataSource = purch;
+                    //grdPurchasesMade.DataBind();
+                    //foreach (GridViewRow row in grdPurchasesMade.Rows)
+                    //{
+                    //    foreach (TableCell cell in row.Cells)
+                    //    {
+                    //        cell.Attributes.CssStyle["text-align"] = "center";
+                    //    }
+                    //}
                 }
             }
             //Exception catch
@@ -71,7 +71,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -106,7 +106,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -126,7 +126,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -152,7 +152,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -185,16 +185,16 @@ namespace SweetSpotDiscountGolfPOS
                     purchasesExport.Cells[2, 4].Value = "Cheque Number";
                     purchasesExport.Cells[2, 5].Value = "Purchase Amount";
                     int recordIndex = 3;
-                    foreach (Purchases p in purch)
-                    {
+                    //foreach (Purchases p in purch)
+                    //{
 
-                        purchasesExport.Cells[recordIndex, 1].Value = p.receiptNumber;
-                        purchasesExport.Cells[recordIndex, 2].Value = p.receiptDate.ToString("d");
-                        purchasesExport.Cells[recordIndex, 3].Value = p.mopDescription;
-                        purchasesExport.Cells[recordIndex, 4].Value = p.chequeNumber;
-                        purchasesExport.Cells[recordIndex, 5].Value = p.amountPaid;
-                        recordIndex++;
-                    }
+                    //    purchasesExport.Cells[recordIndex, 1].Value = p.intReceiptID;
+                    //    purchasesExport.Cells[recordIndex, 2].Value = p.dtmReceiptDate.ToString("d");
+                    //    purchasesExport.Cells[recordIndex, 3].Value = p.mopDescription;
+                    //    purchasesExport.Cells[recordIndex, 4].Value = p.chequeNumber;
+                    //    purchasesExport.Cells[recordIndex, 5].Value = p.amountPaid;
+                    //    recordIndex++;
+                    //}
                     Response.Clear();
                     Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
                     Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -207,7 +207,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

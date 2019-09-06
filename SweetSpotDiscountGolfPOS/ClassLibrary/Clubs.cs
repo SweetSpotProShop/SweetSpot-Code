@@ -9,72 +9,74 @@ namespace SweetShop
     //The clubs class is used to define and create easy to access information for clubs.
     public class Clubs
     {
-        public int sku { get; set; }
-        public int brandID { get; set; }
-        public int modelID { get; set; }
-        public int typeID { get; set; }
-        public string clubType { get; set; }
-        public string shaft { get; set; }
-        public string numberOfClubs { get; set; }
-        public double premium { get; set; }
-        public double cost { get; set; }
-        public double price { get; set; }
-        public int quantity { get; set; }
-        public string clubSpec { get; set; }
-        public string shaftSpec { get; set; }
-        public string shaftFlex { get; set; }
-        public string dexterity { get; set; }
-        public int itemlocation { get; set; }
-        public bool isTradeIn { get; set; }
-        public string comments { get; set; }
+        public int intInventoryID { get; set; }
+        public string varSku { get; set; }
+        public int intBrandID { get; set; }
+        public int intModelID { get; set; }
+        public int intItemTypeID { get; set; }
+        public string varTypeOfClub { get; set; }
+        public string varShaftType { get; set; }
+        public string varNumberOfClubs { get; set; }
+        public double fltPremiumCharge { get; set; }
+        public double fltCost { get; set; }
+        public double fltPrice { get; set; }
+        public int intQuantity { get; set; }
+        public string varClubSpecification { get; set; }
+        public string varShaftSpecification { get; set; }
+        public string varShaftFlexability { get; set; }
+        public string varClubDexterity { get; set; }
+        public int intLocationID { get; set; }
+        public bool bitIsUsedProduct { get; set; }
+        public string varAdditionalInformation { get; set; }
+        public List<TaxTypePerInventoryItem> lstTaxTypePerInventoryItem { get; set; }
 
         public Clubs() { }
         //*******still used in TradeIn page
-        public Clubs(int SKU, int brand, int model, int type, string ClubType, string Shaft, string NumberOfClubs,
-            double Premium, double Cost, double Price, int Quantity, string ClubSpec, string ShaftSpec, string ShaftFlex,
-            string Dexterity, bool IsTradeIn, string Comments)
-        {
-            sku = SKU;
-            brandID = brand;
-            modelID = model;
-            typeID = type;
-            clubType = ClubType;
-            shaft = Shaft;
-            numberOfClubs = NumberOfClubs;
-            premium = Premium;
-            cost = Cost;
-            price = Price;
-            quantity = Quantity;
-            clubSpec = ClubSpec;
-            shaftSpec = ShaftSpec;
-            shaftFlex = ShaftFlex;
-            dexterity = Dexterity;
-            isTradeIn = IsTradeIn;
-            comments = Comments;
-        }
-        //This one has location
-        public Clubs(int SKU, int brand, int model, int type, string ClubType, string Shaft, string NumberOfClubs,
-            double Premium, double Cost, double Price, int Quantity, string ClubSpec, string ShaftSpec, string ShaftFlex,
-            string Dexterity, int itemLocation, bool IsTradeIn, string Comments)
-        {
-            sku = SKU;
-            brandID = brand;
-            modelID = model;
-            typeID = type;
-            clubType = ClubType;
-            shaft = Shaft;
-            numberOfClubs = NumberOfClubs;
-            premium = 0;
-            cost = Cost;
-            price = Price;
-            quantity = Quantity;
-            clubSpec = ClubSpec;
-            shaftSpec = ShaftSpec;
-            shaftFlex = ShaftFlex;
-            dexterity = Dexterity;
-            itemlocation = itemLocation;
-            isTradeIn = IsTradeIn;
-            comments = Comments;
-        }
+        //public Clubs(int SKU, int brand, int model, int type, string ClubType, string Shaft, string NumberOfClubs,
+        //    double Premium, double Cost, double Price, int Quantity, string ClubSpec, string ShaftSpec, string ShaftFlex,
+        //    string Dexterity, bool IsTradeIn, string Comments)
+        //{
+        //    sku = SKU;
+        //    brandID = brand;
+        //    modelID = model;
+        //    typeID = type;
+        //    clubType = ClubType;
+        //    shaft = Shaft;
+        //    numberOfClubs = NumberOfClubs;
+        //    premium = Premium;
+        //    cost = Cost;
+        //    price = Price;
+        //    quantity = Quantity;
+        //    clubSpec = ClubSpec;
+        //    shaftSpec = ShaftSpec;
+        //    shaftFlex = ShaftFlex;
+        //    dexterity = Dexterity;
+        //    isTradeIn = IsTradeIn;
+        //    comments = Comments;
+        //}
+        ////This one has location
+        //public Clubs(int SKU, int brand, int model, int type, string ClubType, string Shaft, string NumberOfClubs,
+        //    double Premium, double Cost, double Price, int Quantity, string ClubSpec, string ShaftSpec, string ShaftFlex,
+        //    string Dexterity, int itemLocation, bool IsTradeIn, string Comments)
+        //{
+        //    sku = SKU;
+        //    brandID = brand;
+        //    modelID = model;
+        //    typeID = type;
+        //    clubType = ClubType;
+        //    shaft = Shaft;
+        //    numberOfClubs = NumberOfClubs;
+        //    premium = 0;
+        //    cost = Cost;
+        //    price = Price;
+        //    quantity = Quantity;
+        //    clubSpec = ClubSpec;
+        //    shaftSpec = ShaftSpec;
+        //    shaftFlex = ShaftFlex;
+        //    dexterity = Dexterity;
+        //    itemlocation = itemLocation;
+        //    isTradeIn = IsTradeIn;
+        //    comments = Comments;
+        //}
     }
 }

@@ -53,17 +53,17 @@ namespace SweetSpotDiscountGolfPOS
                     DateTime[] reportDates = (DateTime[])repInfo[0];
                     DateTime startDate = reportDates[0];
                     DateTime endDate = reportDates[1];
-                    int locID = Convert.ToInt32(repInfo[1]);
+                    int locationID = Convert.ToInt32(repInfo[1]);
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locID, objPageDetails);
+                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     }
                     else
                     {
-                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locID, objPageDetails);
+                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     }
-                    invoices = R.returnExtensiveInvoices(startDate, endDate, locID, objPageDetails);
+                    invoices = R.returnExtensiveInvoices(startDate, endDate, locationID, objPageDetails);
                     grdInvoices.DataSource = invoices;
                     grdInvoices.DataBind();
                 }
@@ -73,7 +73,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -206,7 +206,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                                 + "If you continue to receive this message please contact "
@@ -298,32 +298,31 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void lbtnInvoiceNumber_Click(object sender, EventArgs e)
+        
+        protected void grdInvoices_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method for error tracking
             string method = "lbtnInvoiceNumber_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                //Text of the linkbutton
-                LinkButton btn = sender as LinkButton;
-                string invoice = btn.Text;
+                string invoice = e.CommandArgument.ToString();
                 //Changes page to display a printable invoice
-                Response.Redirect("PrintableInvoice.aspx?inv=" + invoice, false);
+                Response.Redirect("PrintableInvoice.aspx?invoice=" + invoice, false);
             }
             //Exception catch
             catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

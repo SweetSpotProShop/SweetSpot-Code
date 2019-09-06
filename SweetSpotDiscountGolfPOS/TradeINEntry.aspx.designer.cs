@@ -184,22 +184,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblClubType;
         
         /// <summary>
-        /// ddlClubType control.
+        /// txtClubType control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlClubType;
-        
-        /// <summary>
-        /// rfvClubType control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvClubType;
+        protected global::System.Web.UI.WebControls.TextBox txtClubType;
         
         /// <summary>
         /// lblModel control.

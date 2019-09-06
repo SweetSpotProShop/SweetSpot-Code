@@ -18,6 +18,7 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU;
         Reports R = new Reports();
+        private static Cashout cashout;
         LocationManager LM = new LocationManager();
 
         protected void Page_Load(object sender, EventArgs e)
@@ -40,51 +41,55 @@ namespace SweetSpotDiscountGolfPOS
                     if (!IsPostBack)
                     {
                         //Gathering the start and end dates
-                        DateTime startDate = DateTime.Parse(Request.QueryString["dtm"].ToString());
-                        int loc = Convert.ToInt32(Request.QueryString["location"]);
-                        object[] args = { startDate, loc };
-                        lblCashoutDate.Text = "Cashout on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(loc, objPageDetails);
+                        DateTime selectedDate = DateTime.Parse(Request.QueryString["selectedDate"].ToString());
+                        int locationID = Convert.ToInt32(Request.QueryString["location"]);
+                        object[] args = { selectedDate, locationID };
+                        lblCashoutDate.Text = "Cashout on: " + selectedDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
                         if (R.CashoutExists(args, objPageDetails))
                         {
-                            Cashout C = R.ReturnSelectedCashout(args, objPageDetails)[0];
+                            cashout = R.ReturnSelectedCashout(args, objPageDetails)[0];
 
-                            lblTradeInDisplay.Text = C.saleTradeIn.ToString("C");
-                            lblGiftCardDisplay.Text = C.saleGiftCard.ToString("C");
-                            lblCashDisplay.Text = C.saleCash.ToString("C");
-                            lblDebitDisplay.Text = C.saleDebit.ToString("C");
-                            lblMasterCardDisplay.Text = C.saleMasterCard.ToString("C");
-                            lblVisaDisplay.Text = C.saleVisa.ToString("C");
+                            lblTradeInDisplay.Text = cashout.fltSystemCountedBasedOnSystemTradeIn.ToString("C");
+                            lblGiftCardDisplay.Text = cashout.fltSystemCountedBasedOnSystemGiftCard.ToString("C");
+                            lblCashDisplay.Text = cashout.fltSystemCountedBasedOnSystemCash.ToString("C");
+                            lblDebitDisplay.Text = cashout.fltSystemCountedBasedOnSystemDebit.ToString("C");
+                            lblMasterCardDisplay.Text = cashout.fltSystemCountedBasedOnSystemMastercard.ToString("C");
+                            lblVisaDisplay.Text = cashout.fltSystemCountedBasedOnSystemVisa.ToString("C");
 
-                            lblPreTaxDisplay.Text = C.preTax.ToString("C");
-                            lblGSTDisplay.Text = C.saleGST.ToString("C");
-                            lblPSTDisplay.Text = C.salePST.ToString("C");
-                            lblTotalDisplay.Text = (C.saleTradeIn + C.saleGiftCard + C.saleCash + C.saleDebit + C.saleMasterCard + C.saleVisa).ToString("C");
+                            lblPreTaxDisplay.Text = cashout.fltSalesSubTotal.ToString("C");
+                            lblGSTDisplay.Text = cashout.fltGovernmentTaxAmount.ToString("C");
+                            lblPSTDisplay.Text = cashout.fltProvincialTaxAmount.ToString("C");
+                            lblTotalDisplay.Text = (cashout.fltSystemCountedBasedOnSystemTradeIn + cashout.fltSystemCountedBasedOnSystemGiftCard + cashout.fltSystemCountedBasedOnSystemCash 
+                                + cashout.fltSystemCountedBasedOnSystemDebit + cashout.fltSystemCountedBasedOnSystemMastercard + cashout.fltSystemCountedBasedOnSystemVisa).ToString("C");
 
-                            txtTradeIn.Text = C.receiptTradeIn.ToString("#0.00");
-                            txtGiftCard.Text = C.receiptGiftCard.ToString("#0.00");
-                            txtCash.Text = C.receiptCash.ToString("#0.00");
-                            txtDebit.Text = C.receiptDebit.ToString("#0.00");
-                            txtMasterCard.Text = C.receiptMasterCard.ToString("#0.00");
-                            txtVisa.Text = C.receiptVisa.ToString("#0.00");
+                            txtTradeIn.Text = cashout.fltManuallyCountedBasedOnReceiptsTradeIn.ToString("#0.00");
+                            txtGiftCard.Text = cashout.fltManuallyCountedBasedOnReceiptsGiftCard.ToString("#0.00");
+                            txtCash.Text = cashout.fltManuallyCountedBasedOnReceiptsCash.ToString("#0.00");
+                            txtDebit.Text = cashout.fltManuallyCountedBasedOnReceiptsDebit.ToString("#0.00");
+                            txtMasterCard.Text = cashout.fltManuallyCountedBasedOnReceiptsMastercard.ToString("#0.00");
+                            txtVisa.Text = cashout.fltManuallyCountedBasedOnReceiptsVisa.ToString("#0.00");
 
-                            lblReceiptsFinal.Text = (C.receiptTradeIn + C.receiptGiftCard + C.receiptCash + C.receiptDebit + C.receiptMasterCard + C.receiptVisa).ToString("C");
-                            lblTotalFinal.Text = (C.saleTradeIn + C.saleGiftCard + C.saleCash + C.saleDebit + C.saleMasterCard + C.saleVisa).ToString("C");
-                            lblOverShortFinal.Text = C.overShort.ToString("C");
+                            lblReceiptsFinal.Text = (cashout.fltManuallyCountedBasedOnReceiptsTradeIn + cashout.fltManuallyCountedBasedOnReceiptsGiftCard + cashout.fltManuallyCountedBasedOnReceiptsCash 
+                                + cashout.fltManuallyCountedBasedOnReceiptsDebit + cashout.fltManuallyCountedBasedOnReceiptsMastercard + cashout.fltManuallyCountedBasedOnReceiptsVisa).ToString("C");
+                            lblTotalFinal.Text = (cashout.fltSystemCountedBasedOnSystemTradeIn + cashout.fltSystemCountedBasedOnSystemGiftCard + cashout.fltSystemCountedBasedOnSystemCash 
+                                + cashout.fltSystemCountedBasedOnSystemDebit + cashout.fltSystemCountedBasedOnSystemMastercard + cashout.fltSystemCountedBasedOnSystemVisa).ToString("C");
+                            lblOverShortFinal.Text = cashout.fltCashDrawerOverShort.ToString("C");
                         }
                         else
                         {
                             //Creating a cashout list and calling a method that grabs all mops and amounts paid
-                            Cashout C = R.CreateNewCashout(startDate, loc, objPageDetails);
-                            lblVisaDisplay.Text = C.saleVisa.ToString("C");
-                            lblMasterCardDisplay.Text = C.saleMasterCard.ToString("C");
-                            lblCashDisplay.Text = C.saleCash.ToString("C");
-                            lblGiftCardDisplay.Text = C.saleGiftCard.ToString("C");
-                            lblDebitDisplay.Text = C.saleDebit.ToString("C");
-                            lblTradeInDisplay.Text = (C.saleTradeIn * -1).ToString("C");
-                            lblTotalDisplay.Text = (C.saleVisa + C.saleMasterCard + C.saleCash + C.saleGiftCard + C.saleDebit + (C.saleTradeIn * -1)).ToString("C");
-                            lblGSTDisplay.Text = C.saleGST.ToString("C");
-                            lblPSTDisplay.Text = C.salePST.ToString("C");
-                            lblPreTaxDisplay.Text = (C.preTax + (C.saleTradeIn * -1)).ToString("C");
+                            cashout = R.CreateNewCashout(selectedDate, locationID, objPageDetails);
+                            lblVisaDisplay.Text = cashout.fltSystemCountedBasedOnSystemVisa.ToString("C");
+                            lblMasterCardDisplay.Text = cashout.fltSystemCountedBasedOnSystemMastercard.ToString("C");
+                            lblCashDisplay.Text = cashout.fltSystemCountedBasedOnSystemCash.ToString("C");
+                            lblGiftCardDisplay.Text = cashout.fltSystemCountedBasedOnSystemGiftCard.ToString("C");
+                            lblDebitDisplay.Text = cashout.fltSystemCountedBasedOnSystemDebit.ToString("C");
+                            lblTradeInDisplay.Text = (cashout.fltSystemCountedBasedOnSystemTradeIn * -1).ToString("C");
+                            lblTotalDisplay.Text = (cashout.fltSystemCountedBasedOnSystemVisa + cashout.fltSystemCountedBasedOnSystemMastercard + cashout.fltSystemCountedBasedOnSystemCash 
+                                + cashout.fltSystemCountedBasedOnSystemGiftCard + cashout.fltSystemCountedBasedOnSystemDebit + (cashout.fltSystemCountedBasedOnSystemTradeIn * -1)).ToString("C");
+                            lblGSTDisplay.Text = cashout.fltGovernmentTaxAmount.ToString("C");
+                            lblPSTDisplay.Text = cashout.fltProvincialTaxAmount.ToString("C");
+                            lblPreTaxDisplay.Text = (cashout.fltSalesSubTotal + (cashout.fltSystemCountedBasedOnSystemTradeIn * -1)).ToString("C");
                         }
                     }
                 }
@@ -94,7 +99,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -116,7 +121,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -144,7 +149,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -159,28 +164,29 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 calculteMethod();
-                DateTime startDate = DateTime.Parse(Request.QueryString["dtm"].ToString());
-                int loc = Convert.ToInt32(Request.QueryString["location"]);
-                object[] args = { startDate, loc };
+                object[] args = { cashout.dtmCashoutDate, cashout.intLocationID };
 
 
                 //Creates new cashout
-                Cashout cas = new Cashout(startDate, startDate, double.Parse(lblTradeInDisplay.Text, NumberStyles.Currency),
-                    double.Parse(lblGiftCardDisplay.Text, NumberStyles.Currency), double.Parse(lblCashDisplay.Text, NumberStyles.Currency),
-                    double.Parse(lblDebitDisplay.Text, NumberStyles.Currency), double.Parse(lblMasterCardDisplay.Text, NumberStyles.Currency),
-                    double.Parse(lblVisaDisplay.Text, NumberStyles.Currency), Convert.ToDouble(txtTradeIn.Text), Convert.ToDouble(txtGiftCard.Text),
-                    Convert.ToDouble(txtCash.Text), Convert.ToDouble(txtDebit.Text), Convert.ToDouble(txtMasterCard.Text), Convert.ToDouble(txtVisa.Text),
-                    double.Parse(lblPreTaxDisplay.Text, NumberStyles.Currency), double.Parse(lblGSTDisplay.Text, NumberStyles.Currency),
-                    double.Parse(lblPSTDisplay.Text, NumberStyles.Currency), double.Parse(lblOverShortFinal.Text, NumberStyles.Currency), false, true, loc, CU.emp.employeeID);
+                cashout.fltManuallyCountedBasedOnReceiptsTradeIn = Convert.ToDouble(txtTradeIn.Text);
+                cashout.fltManuallyCountedBasedOnReceiptsGiftCard = Convert.ToDouble(txtGiftCard.Text);
+                cashout.fltManuallyCountedBasedOnReceiptsCash = Convert.ToDouble(txtCash.Text);
+                cashout.fltManuallyCountedBasedOnReceiptsDebit = Convert.ToDouble(txtDebit.Text);
+                cashout.fltManuallyCountedBasedOnReceiptsMastercard = Convert.ToDouble(txtMasterCard.Text);
+                cashout.fltManuallyCountedBasedOnReceiptsVisa = Convert.ToDouble(txtVisa.Text);
+                cashout.fltCashDrawerOverShort = double.Parse(lblOverShortFinal.Text, NumberStyles.Currency);
+                cashout.bitIsCashoutProcessed = true;
+                cashout.bitIsCashoutFinalized = false;
+                cashout.intEmployeeID = CU.employee.intEmployeeID;
 
                 //Processes as done
                 if (R.CashoutExists(args, objPageDetails))
                 {
-                    R.UpdateCashout(cas, objPageDetails);
+                    R.UpdateCashout(cashout, objPageDetails);
                 }
                 else
                 {
-                    R.insertCashout(cas, objPageDetails);
+                    R.insertCashout(cashout, objPageDetails);
                 }
                 MessageBox.ShowMessage("Cashout has been processed", this);
                 btnPrint.Enabled = true;
@@ -191,7 +197,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -243,7 +249,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

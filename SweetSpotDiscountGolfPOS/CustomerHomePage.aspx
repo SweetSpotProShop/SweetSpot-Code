@@ -25,47 +25,47 @@
                 </asp:TableRow>
             </asp:Table>
             <hr />
-            <asp:GridView ID="grdCustomersSearched" runat="server" AutoGenerateColumns="false" OnRowCommand="grdCustomersSearched_RowCommand" AllowPaging="True" PageSize="25" 
-                OnPageIndexChanging="grdCustomersSearched_PageIndexChanging" RowStyle-HorizontalAlign="Center">
+            <asp:GridView ID="grdCustomersSearched" runat="server" AutoGenerateColumns="false" OnRowCommand="grdCustomersSearched_RowCommand" 
+				AllowPaging="True" PageSize="25" OnPageIndexChanging="grdCustomersSearched_PageIndexChanging" RowStyle-HorizontalAlign="Center">
                 <Columns>
                     <asp:TemplateField HeaderText="Sale">
                         <ItemTemplate>
-                            <asp:LinkButton ID="lbtnStartSale" CommandName="StartSale" CommandArgument='<%#Eval("CustomerId") %>' Text="Start Sale" runat="server" />
+                            <asp:LinkButton ID="lbtnStartSale" CommandName="StartSale" CommandArgument='<%#Eval("intCustomerID") %>' Text="Start Sale" runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="View Profile">
                         <ItemTemplate>
-                            <asp:LinkButton ID="lbtnViewCustomer" CommandName="ViewProfile" CommandArgument='<%#Eval("CustomerId") %>' Text="View Profile" runat="server" />
+                            <asp:LinkButton ID="lbtnViewCustomer" CommandName="ViewProfile" CommandArgument='<%#Eval("intCustomerID") %>' Text="View Profile" runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Customer Number">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("CustomerId") %>' ID="key" />
+                            <asp:Label runat="server" Text='<%#Eval("intCustomerID") %>' ID="key" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Customer Name">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("firstName") + " " + Eval("lastName") %>' />
+                            <asp:Label runat="server" Text='<%#Eval("varFirstName") + " " + Eval("varLastName") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Customer Address">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("primaryAddress") %>' />
+                            <asp:Label runat="server" Text='<%#Eval("varAddress") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Phone Number">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("primaryPhoneNumber") %>' />
+                            <asp:Label runat="server" Text='<%#Eval("varContactNumber") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Email Address">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("email") %>' />
+                            <asp:Label runat="server" Text='<%#Eval("varEmailAddress") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="City">
                         <ItemTemplate>
-                            <asp:Label runat="server" Text='<%#Eval("city") %>' />
+                            <asp:Label runat="server" Text='<%#Eval("varCityName") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>

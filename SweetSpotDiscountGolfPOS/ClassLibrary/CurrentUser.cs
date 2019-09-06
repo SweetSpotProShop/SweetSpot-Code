@@ -11,19 +11,17 @@ namespace SweetShop
     //The current user class is used to keep track of the current user's information
     public class CurrentUser
     {
-        public Employee emp { get; set; }
-        public int password { get; set; }
+        public Employee employee { get; set; }
+        public int intPassword { get; set; }
         public Location location { get; set; }
-        public string locationName { get; set; }
-        public int jobID { get; set; }
 
         public CurrentUser() { }
-        public CurrentUser(Employee e, int j, Location l, string ln, int p) {
-            emp = e;
-            jobID = j;
-            location = l;
-            locationName = ln;
-            password = p;
-        }
+        //public CurrentUser(Employee e, int j, Location l, string ln, int p) {
+        //    emp = e;
+        //    jobID = j;
+        //    location = l;
+        //    locationName = ln;
+        //    password = p;
+        //}
     }
 }

@@ -8,20 +8,22 @@ namespace SweetShop
 {
     //The accessories class is used to define and create an easy to access information for accessories. 
     public class Accessories
-    {        
-        public int sku { get; set; }
-        public string size { get; set; }
-        public string colour { get; set; }
-        public double price { get; set; }
-        public double cost { get; set; }
-        public int brandID { get; set; }
-        public int modelID { get; set; }
-        public string accessoryType { get; set; }
-        public int quantity { get; set; }
-        public int typeID { get; set; }
-        public int locID { get; set; }
-        public string comments { get; set; }
-        
+    {
+        public int intInventoryID { get; set; }
+        public string varSku { get; set; }
+        public string varSize { get; set; }
+        public string varColour { get; set; }
+        public double fltPrice { get; set; }
+        public double fltCost { get; set; }
+        public int intBrandID { get; set; }
+        public int intModelID { get; set; }
+        public string varTypeOfAccessory { get; set; }
+        public int intQuantity { get; set; }
+        public int intItemTypeID { get; set; }
+        public int intLocationID { get; set; }
+        public string varAdditionalInformation { get; set; }
+        public List<TaxTypePerInventoryItem> lstTaxTypePerInventoryItem { get; set; }
+
         public Accessories() { }
     }
 }

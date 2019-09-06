@@ -75,42 +75,43 @@
                 <Columns>
                     <asp:TemplateField HeaderText="Return Item">
                         <ItemTemplate>
-                            <asp:LinkButton ID="lkbReturnItem" Text="Return Item" CommandName="Delete" CommandArgument='<%#Eval("sku") %>' runat="server" CausesValidation="false" />
+                            <asp:LinkButton ID="lkbReturnItem" Text="Return Item" CommandName="Delete" CommandArgument='<%#Eval("intInvoiceItemID") %>' runat="server" CausesValidation="false" />
+							<asp:Label ID="lblInvoiceItemID" Text='<%#Eval("intInvoiceItemID") %>' runat="server" Visible="false" />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:BoundField DataField="sku" ReadOnly="true" HeaderText="SKU" />
+                    <asp:BoundField DataField="varSku" ReadOnly="true" HeaderText="SKU" />
                     <asp:TemplateField HeaderText="Quantity">
                         <ItemTemplate>
                             <div>
-                                <asp:Label ID="quantitySold" runat="server" Text='<%#Eval("quantity") %>' />
+                                <asp:Label ID="quantitySold" runat="server" Text='<%#Eval("intItemQuantity") %>' />
                             </div>
                             <div>
                                 <asp:TextBox ID="quantityToReturn" runat="server" AutoComplete="off" placeholder="Enter Quantity To Return" />
                             </div>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:BoundField DataField="description" ReadOnly="true" HeaderText="Description" />
+                    <asp:BoundField DataField="varItemDescription" ReadOnly="true" HeaderText="Description" />
                     <asp:TemplateField HeaderText="Paid">
                         <ItemTemplate>
-                            <%# Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("price")))-(Convert.ToDouble(Eval("itemDiscount")))).ToString("C") : ((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("price"))))).ToString("C") %>
+                            <%# Convert.ToBoolean(Eval("bitIsDiscountPercent")) == false ? ((Convert.ToDouble(Eval("fltItemPrice")))-(Convert.ToDouble(Eval("fltItemDiscount")))).ToString("C") : ((Convert.ToDouble(Eval("fltItemPrice")) - ((Convert.ToDouble(Eval("fltItemDiscount")) / 100) * Convert.ToDouble(Eval("fltItemPrice"))))).ToString("C") %>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Discount Applied" Visible="false">
                         <ItemTemplate>
-                            <asp:CheckBox ID="ckbPercentage" Checked='<%# Convert.ToBoolean(Eval("percentage")) %>' runat="server" Text="Discount by Percent" Enabled="false" />
+                            <asp:CheckBox ID="ckbPercentage" Checked='<%# Convert.ToBoolean(Eval("bitIsDiscountPercent")) %>' runat="server" Text="Discount by Percent" Enabled="false" />
                             <div id="divReturnAmountDiscount" class="txt" runat="server">
-                                <asp:Label ID="lblReturnAmountDisplay" runat="server" Text='<%# Eval("itemDiscount") %>' Enabled="false" />
+                                <asp:Label ID="lblReturnAmountDisplay" runat="server" Text='<%# Eval("fltItemDiscount") %>' Enabled="false" />
                             </div>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Type ID" Visible="false">
                         <ItemTemplate>
-                            <asp:Label ID="lblReturnTypeID" Text='<%# Eval("typeID") %>' runat="server" />
+                            <asp:Label ID="lblReturnTypeID" Text='<%# Eval("intItemTypeID") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Amount to Refund">
                         <ItemTemplate>
-                            <asp:TextBox ID="txtReturnAmount" runat="server" AutoComplete="off" Text='<%# Convert.ToBoolean(Eval("percentage")) == false ? ((Convert.ToDouble(Eval("price")))-(Convert.ToDouble(Eval("itemDiscount")))).ToString("#0.00") : ((Convert.ToDouble(Eval("price")) - ((Convert.ToDouble(Eval("itemDiscount")) / 100) * Convert.ToDouble(Eval("price"))))).ToString("#0.00") %>' />
+                            <asp:TextBox ID="txtReturnAmount" runat="server" AutoComplete="off" Text='<%# Convert.ToBoolean(Eval("bitIsDiscountPercent")) == false ? ((Convert.ToDouble(Eval("fltItemPrice")))-(Convert.ToDouble(Eval("fltItemDiscount")))).ToString("#0.00") : ((Convert.ToDouble(Eval("fltItemPrice")) - ((Convert.ToDouble(Eval("fltItemDiscount")) / 100) * Convert.ToDouble(Eval("fltItemPrice"))))).ToString("#0.00") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -122,24 +123,25 @@
                 <Columns>
                     <asp:TemplateField HeaderText="Cancel Return">
                         <ItemTemplate>
-                            <asp:LinkButton ID="lkbCancelItem" Text="Cancel Return" CommandName="Delete" CommandArgument='<%#Eval("sku") %>' runat="server" CausesValidation="false" />
+                            <asp:LinkButton ID="lkbCancelItem" Text="Cancel Return" CommandName="Delete" CommandArgument='<%#Eval("intInvoiceItemID") %>' runat="server" CausesValidation="false" />
+							<asp:Label ID="lblInvoiceItemReturnID" Text='<%#Eval("intInvoiceItemID") %>' runat="server" Visible="false" />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:BoundField DataField="sku" ReadOnly="true" HeaderText="SKU" />
-                    <asp:BoundField DataField="quantity" ReadOnly="true" HeaderText="Quantity" />
-                    <asp:BoundField DataField="description" ReadOnly="true" HeaderText="Description" />
-                    <asp:BoundField DataField="itemRefund" ReadOnly="true" HeaderText="Refund Amount" DataFormatString="{0:C}" />
+                    <asp:BoundField DataField="varSku" ReadOnly="true" HeaderText="SKU" />
+                    <asp:BoundField DataField="intItemQuantity" ReadOnly="true" HeaderText="Quantity" />
+                    <asp:BoundField DataField="varItemDescription" ReadOnly="true" HeaderText="Description" />
+                    <asp:BoundField DataField="fltItemRefund" ReadOnly="true" HeaderText="Refund Amount" DataFormatString="{0:C}" />
                     <asp:TemplateField HeaderText="Discount Applied" Visible="false">
                         <ItemTemplate>
-                            <asp:CheckBox ID="ckbRIPercentage" Checked='<%# Convert.ToBoolean(Eval("percentage")) %>' runat="server" Text="Discount by Percent" Enabled="false" />
+                            <asp:CheckBox ID="ckbRIPercentage" Checked='<%# Convert.ToBoolean(Eval("bitIsDiscountPercent")) %>' runat="server" Text="Discount by Percent" Enabled="false" />
                             <div id="divRIReturnAmountDiscount" class="txt" runat="server">
-                                <asp:Label ID="lblRIReturnAmountDisplay" runat="server" Text='<%# Eval("itemDiscount") %>' Enabled="false" />
+                                <asp:Label ID="lblRIReturnAmountDisplay" runat="server" Text='<%# Eval("fltItemDiscount") %>' Enabled="false" />
                             </div>
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Type ID" Visible="false">
                         <ItemTemplate>
-                            <asp:Label ID="lblReturnedTypeID" Text='<%# Eval("typeID") %>' runat="server" />
+                            <asp:Label ID="lblReturnedTypeID" Text='<%# Eval("intItemTypeID") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>

@@ -30,10 +30,11 @@
 #image_simple{
     position:inherit;
     margin-left:22%;
-    width:100%;
+    width:75%;
 }
-#indentContent{
-    margin-left:22%;
+#indentContent {
+    margin-left: 22%;
+    width: 75%;
 }
 /*.divider{
     width:3%;
@@ -45,3 +46,70 @@
     right: 80px;
     top: 200px;
 }
+
+.costDetail {
+    display: none;
+}
+
+.cost:hover .costDetail {
+    display: block;
+    position: absolute;
+    text-align: left;
+    max-width: 300px;
+    max-height: 300px;
+    overflow: auto;
+    background-color: #fff;
+    border: 2px solid #bbb;
+    padding: 3px;
+}
+
+.priceDetail {
+    display: none;
+}
+
+.price:hover .priceDetail {
+    display: block;
+    position: absolute;
+    text-align: left;
+    max-width: 300px;
+    max-height: 300px;
+    overflow: auto;
+    background-color: #fff;
+    border: 2px solid #bbb;
+    padding: 3px;
+}
+
+.wrap {
+    white-space: normal;
+}
+
+.InitialLounge {
+    display: block;
+    padding: 4px 18px 4px 18px;
+    float: left;
+    background-color: #CCCCCC; /*light grey*/
+    background-repeat: no-repeat;
+    border-style: outset;
+    color: Black;
+    font-weight: bold;
+}
+
+    .InitialLounge:hover {
+        color: White;
+        background-color: #545454; /*dark grey*/
+        background-repeat: no-repeat;
+        border-style: outset;
+    }
+
+.ClickedLounge {
+    float: left;
+    display: block;
+    background-color: #0000FF; /*supposed to be blue*/
+    background-repeat: no-repeat;
+    border-style: inset;
+    padding: 4px 18px 4px 18px;
+    color: Black;
+    font-weight: bold;
+    color: White;
+}
+

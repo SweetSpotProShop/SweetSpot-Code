@@ -54,12 +54,27 @@ namespace SweetSpotDiscountGolfPOS
                     DateTime endDate = reportDates[1];
                     timeFrame = (string)passing[1];
                     //Builds string to display in label
-                    if (startDate == endDate) { lblDates.Text = "Store stats for: " + startDate.ToString("dd/MMM/yy"); }
-                    else { lblDates.Text = "Store stats for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy"); }
+                    if (startDate == endDate)
+                    {
+                        lblDates.Text = "Store stats for: " + startDate.ToString("dd/MMM/yy");
+                    }
+                    else
+                    {
+                        lblDates.Text = "Store stats for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy");
+                    }
                     //Binding the gridview
-                    if (timeFrame.Equals("Day") || timeFrame.Equals("Default")){ stats = R.returnStoreStats(startDate, endDate, 1, objPageDetails); }
-                    else if (timeFrame.Equals("Week")){ stats = R.returnStoreStats(startDate, endDate, 2, objPageDetails); }
-                    else if (timeFrame.Equals("Month")){ stats = R.returnStoreStats(startDate, endDate, 3, objPageDetails); }
+                    if (timeFrame.Equals("Day"))
+                    {
+                        stats = R.returnStoreStats(startDate, endDate, 1, objPageDetails);
+                    }
+                    else if (timeFrame.Equals("Week"))
+                    {
+                        stats = R.returnStoreStats(startDate, endDate, 2, objPageDetails);
+                    }
+                    else if (timeFrame.Equals("Month"))
+                    {
+                        stats = R.returnStoreStats(startDate, endDate, 3, objPageDetails);
+                    }
                     //Checking if there are any values
                     if (stats.Rows.Count > 0)
                     {
@@ -67,15 +82,30 @@ namespace SweetSpotDiscountGolfPOS
                         grdStats.DataBind();
                         if(grdStats.Rows.Count > 0)
                         {
-                            if (timeFrame.Equals("Day") || timeFrame.Equals("Default")) { grdStats.HeaderRow.Cells[2].Text = "Date"; }
-                            else if (timeFrame.Equals("Week")) { grdStats.HeaderRow.Cells[2].Text = "Week Start Date"; }
-                            else if (timeFrame.Equals("Month")) { grdStats.Columns[2].Visible = false; }
+                            if (timeFrame.Equals("Day"))
+                            {
+                                grdStats.HeaderRow.Cells[2].Text = "Date";
+                            }
+                            else if (timeFrame.Equals("Week"))
+                            {
+                                grdStats.HeaderRow.Cells[2].Text = "Week Start Date";
+                            }
+                            else if (timeFrame.Equals("Month"))
+                            {
+                                grdStats.Columns[2].Visible = false;
+                            }
                         }
                     }
                     else
                     {
-                        if (startDate == endDate) { lblDates.Text = "There are no stats for: " + startDate.ToString("dd/MMM/yy"); }
-                        else { lblDates.Text = "There are no states for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy"); }
+                        if (startDate == endDate)
+                        {
+                            lblDates.Text = "There are no stats for: " + startDate.ToString("dd/MMM/yy");
+                        }
+                        else
+                        {
+                            lblDates.Text = "There are no states for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy");
+                        }
                     }
                 }
             }
@@ -84,14 +114,13 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-
         protected void grdStats_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             string method = "grdStats_RowDataBound";
@@ -100,12 +129,12 @@ namespace SweetSpotDiscountGolfPOS
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
                 {
-                    gTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "governmentTax"));
-                    pTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "provincialTax"));
-                    cogs += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "totalCOGS"));
-                    pm += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "averageProfitMargin"));
-                    salesPrT += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "salespretax"));
-                    salesPoT += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "salesposttax"));
+                    gTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmount"));
+                    pTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmount"));
+                    cogs += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltTotalCOGS"));
+                    pm += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltAverageProfitMargin"));
+                    salesPrT += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltSalesPreTax"));
+                    salesPoT += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltSalesPostTax"));
                 }
                 else if (e.Row.RowType == DataControlRowType.Footer)
                 {
@@ -130,7 +159,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -160,7 +189,7 @@ namespace SweetSpotDiscountGolfPOS
                     statsExport.Cells[1, 1].Value = lblDates.Text;
                     statsExport.Cells[2, 1].Value = "Year";
                     statsExport.Cells[2, 2].Value = "Month";
-                    if (timeFrame.Equals("Day") || timeFrame.Equals("Default")) { statsExport.Cells[2, 3].Value = "Trade-In Amount"; }
+                    if (timeFrame.Equals("Day")) { statsExport.Cells[2, 3].Value = "Trade-In Amount"; }
                     else if (timeFrame.Equals("Week")) { statsExport.Cells[2, 3].Value = "Week Start Date"; }
                     else if (timeFrame.Equals("Month")) { rowAdjust = 1; }
                     
@@ -225,7 +254,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

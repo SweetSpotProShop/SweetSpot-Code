@@ -26,7 +26,7 @@
             <br />
             <asp:Label runat="server" Text="Select Location:" />
             <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="false"
-                DataTextField="city" DataValueField="locationID" Visible="true" />
+                DataTextField="varCityName" DataValueField="intLocationID" Visible="true" />
             <hr />
             <%--Start Calendar--%>
             <asp:Table runat="server">
@@ -36,7 +36,6 @@
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:DropDownList ID="ddlDatePeriod" runat="server" AutoPostBack="false">
-                            <asp:ListItem Text="Default" Value="0" Selected="True" />
                             <asp:ListItem Text="Day" Value="1" />
                             <asp:ListItem Text="Week" Value="2" />
                             <asp:ListItem Text="Month" Value="3" />

@@ -16,84 +16,91 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             List<Tax> tax = dt.AsEnumerable().Select(row =>
             new Tax
             {
-                taxID = row.Field<int>("taxID"),
-                taxRate = row.Field<double>("taxRate")
+                intTaxID = row.Field<int>("intTaxID"),
+                fltTaxRate = row.Field<double>("fltTaxRate")
             }).ToList();
             return tax;
         }
         private List<Tax> ReturnListOfTaxes(DataTable dt)
         {
-            List<Tax> t = dt.AsEnumerable().Select(row =>
+            List<Tax> tax = dt.AsEnumerable().Select(row =>
             new Tax
             {
-                taxRate = row.Field<double>("taxRate"),
-                taxName = row.Field<string>("taxName")
+                fltTaxRate = row.Field<double>("fltTaxRate"),
+                varTaxName = row.Field<string>("varTaxName")
             }).ToList();
-            return t;
+            return tax;
         }
         public List<Tax> ReturnTaxListBasedOnDate(DateTime selectedDate, int provinceID, object[] objPageDetails)
         {
             return ConvertFromDataTableToTax(ReturnTaxListBasedOnDateAndProvinceForUpdate(provinceID, selectedDate, objPageDetails));
         }
-        public DataTable ReturnTaxListBasedOnDateAndProvinceForUpdate (int prov, DateTime currentDate, object[] objPageDetails)
+        public DataTable ReturnTaxListBasedOnDateAndProvinceForUpdate (int provinceID, DateTime selectedDate, object[] objPageDetails)
         {
             string strQueryName = "ReturnTaxListBasedOnDateAndProvinceForUpdate";
-            string sqlCmd = "SELECT TR.taxID, TR.taxRate, TT.taxName FROM tbl_taxRate AS TR "
-                + "INNER JOIN tbl_taxType TT ON TR.taxID = TT.taxID INNER JOIN(SELECT taxID, "
-                + "MAX(taxDate) AS MTD FROM tbl_taxRate WHERE (taxDate <= @currentDate) AND "
-                + "(provStateID = @prov) GROUP BY taxID) AS TD ON TR.taxID = TD.taxID AND "
-                + "TR.taxDate = TD.MTD WHERE (TR.provStateID = @prov)";
+            string sqlCmd = "SELECT TR.intTaxID, TR.fltTaxRate, TT.varTaxName FROM tbl_taxRate AS TR INNER JOIN tbl_taxType TT ON "
+                + "TR.intTaxID = TT.intTaxID INNER JOIN(SELECT intTaxID, MAX(dtmTaxEffectiveDate) AS MTD FROM tbl_taxRate WHERE "
+                + "(dtmTaxEffectiveDate <= @dtmSelectedDate) AND (intProvinceID = @intProvinceID) GROUP BY intTaxID) AS TD ON TR.intTaxID "
+                + "= TD.intTaxID AND TR.dtmTaxEffectiveDate = TD.MTD WHERE (TR.intProvinceID = @intProvinceID)";
             object[][] parms =
             {
-                new object[] { "@currentDate", currentDate },
-                new object[] { "@prov", prov }
+                new object[] { "@dtmSelectedDate", selectedDate },
+                new object[] { "@intProvinceID", provinceID }
             };
             return dbc.returnDataTableData(sqlCmd, parms);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
-        private List<Tax> getTaxes(int provStateID, DateTime recDate, object[] objPageDetails)
+        private List<Tax> getTaxes(int provinceID, DateTime selectedDate, object[] objPageDetails)
         {
             string strQueryName = "getTaxes";
             //New command
-            string sqlCmd = "SELECT TR.taxRate, TT.taxName from tbl_taxRate TR INNER JOIN tbl_taxType TT ON "
-                + "TR.taxID = TT.taxID INNER JOIN (SELECT taxID, MAX(taxDate) AS MTD FROM tbl_taxRate WHERE "
-                + "taxDate <= @recDate AND provStateID = @provStateID GROUP BY taxID) TD ON TR.taxID = TD.taxID "
-                + "AND TR.taxDate = TD.MTD WHERE provStateID = @provStateID";
+            string sqlCmd = "SELECT TR.fltTaxRate, TT.varTaxName FROM tbl_taxRate TR INNER JOIN tbl_taxType TT ON TR.intTaxID = TT.intTaxID "
+                + "INNER JOIN (SELECT intTaxID, MAX(dtmTaxEffectiveDate) AS MTD FROM tbl_taxRate WHERE dtmTaxEffectiveDate <= @selectedDate "
+                + "AND intProvinceID = @intProvinceID GROUP BY intTaxID) TD ON TR.intTaxID = TD.intTaxID AND TR.dtmTaxEffectiveDate = "
+                + "TD.MTD WHERE intProvinceID = @intProvinceID";
 
             object[][] parms =
             {
-                new object[] { "@provStateID", provStateID },
-                new object[] { "@recDate", recDate }
+                new object[] { "@intProvinceID", provinceID },
+                new object[] { "@selectedDate", selectedDate }
             };
             //Returns the list of taxes
             return ReturnListOfTaxes(dbc.returnDataTableData(sqlCmd, parms));
             //return ReturnListOfTaxes(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
-
+        public DataTable ReturnTaxList()
+        {
+            return GatherFullTaxList();
+        }
+        private DataTable GatherFullTaxList()
+        {
+            string sqlCmd = "SELECT intTaxID FROM tbl_taxType";
+            object[][] parms = { };
+            return dbc.returnDataTableData(sqlCmd, parms);
+        }
         public void InsertNewTaxRate(int provinceID, int taxID, DateTime selectedDate, double taxRate, object[] objPageDetails)
         {
             string strQueryName = "InsertNewTaxRate";
-            string sqlCmd = "INSERT INTO tbl_taxRate VALUES(@provID, "
-                + "@taxDate, @taxID, @taxRate)";
+            string sqlCmd = "INSERT INTO tbl_taxRate VALUES(@intProvinceID, @dtmTaxDate, @intTaxID, @fltTaxRate)";
             object[][] parms =
             {
-                new object[] { "@provID", provinceID },
-                new object[] { "@taxDate", selectedDate },
-                new object[] { "@taxID", taxID },
-                new object[] { "@taxRate", taxRate }
+                new object[] { "@intProvinceID", provinceID },
+                new object[] { "@dtmTaxDate", selectedDate },
+                new object[] { "@intTaxID", taxID },
+                new object[] { "@fltTaxRate", taxRate }
             };
             dbc.executeInsertQuery(sqlCmd,parms);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public object[] ReturnChargedTaxForSale(Invoice I, object[] btnRequirements, object[] objPageDetails)
+        public object[] ReturnChargedTaxForSale(Invoice invoice, object[] btnRequirements, object[] objPageDetails)
         {
-            int prov = I.location.provID;
-            if (I.shippingAmount > 0)
+            int prov = invoice.location.intProvinceID;
+            if (invoice.fltShippingCharges > 0)
             {
-                prov = I.customer.province;
+                prov = invoice.customer.intProvinceID;
             }
-            List<Tax> t = getTaxes(prov, I.invoiceDate, objPageDetails);
+            List<Tax> t = getTaxes(prov, invoice.dtmInvoiceDate, objPageDetails);
             
             double totalTax = 0;
             bool bolGSTDisplay = false;
@@ -103,24 +110,24 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             foreach (var T in t)
             {
                 double taxAmount = 0;
-                switch (T.taxName)
+                switch (T.varTaxName)
                 {
                     //If tax is GST calculate and make visible
                     case "GST":
                         if (gstText.Split(' ')[0] == "Remove")
                         {
                             //Sets tax amount to a negative version of GST
-                            taxAmount = -(I.governmentTax);
-                            I.chargeGST = false;
+                            taxAmount = -(invoice.fltGovernmentTaxAmount);
+                            invoice.bitChargeGST = false;
                             //Changes button name
                             gstText = "Add GST";
                         }
                         else if (gstText.Split(' ')[0] == "Add")
                         {
                             //Sets tax amount to a positive version of GST
-                            I.governmentTax = CallReturnTaxAmount(T.taxRate, I.subTotal + I.shippingAmount);
-                            taxAmount = I.governmentTax;
-                            I.chargeGST = true;
+                            invoice.fltGovernmentTaxAmount = CallReturnTaxAmount(T.fltTaxRate, invoice.fltSubTotal + invoice.fltShippingCharges);
+                            taxAmount = invoice.fltGovernmentTaxAmount;
+                            invoice.bitChargeGST = true;
                             //Changes button name
                             gstText = "Remove GST";
                         }
@@ -131,17 +138,17 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         if (pstText.Split(' ')[0] == "Remove")
                         {
                             //Sets tax amount to a negative version of PST
-                            taxAmount = -(I.provincialTax);
-                            I.chargePST = false;
+                            taxAmount = -(invoice.fltProvincialTaxAmount);
+                            invoice.bitChargePST = false;
                             //Changes button name
                             pstText = "Add PST"; //*** Need to figure out proper name of tax
                         }
                         else if (pstText.Split(' ')[0] == "Add")
                         {
                             //Sets tax amount to a positive version of PST
-                            I.provincialTax = CallReturnTaxAmount(T.taxRate, I.subTotal);
-                            taxAmount = I.provincialTax;
-                            I.chargePST = true;
+                            invoice.fltProvincialTaxAmount = CallReturnTaxAmount(T.fltTaxRate, invoice.fltSubTotal);
+                            taxAmount = invoice.fltProvincialTaxAmount;
+                            invoice.bitChargePST = true;
                             //Changes button name
                             pstText = "Remove PST";
                         }
@@ -152,17 +159,17 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         if (gstText.Split(' ')[0] == "Remove")
                         {
                             //Sets tax amount to a negative version of GST
-                            taxAmount = -(I.governmentTax);
-                            I.chargeGST = false;
+                            taxAmount = -(invoice.fltGovernmentTaxAmount);
+                            invoice.bitChargeGST = false;
                             //Changes button name
                             gstText = "Add HST";
                         }
                         else if (gstText.Split(' ')[0] == "Add")
                         {
                             //Sets tax amount to a positive version of GST
-                            I.governmentTax = CallReturnTaxAmount(T.taxRate, I.subTotal + I.shippingAmount);
-                            taxAmount = I.governmentTax;
-                            I.chargeGST = true;
+                            invoice.fltGovernmentTaxAmount = CallReturnTaxAmount(T.fltTaxRate, invoice.fltSubTotal + invoice.fltShippingCharges);
+                            taxAmount = invoice.fltGovernmentTaxAmount;
+                            invoice.bitChargeGST = true;
                             //Changes button name
                             gstText = "Remove HST";
                         }
@@ -173,17 +180,17 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         if (pstText.Split(' ')[0] == "Remove")
                         {
                             //Sets tax amount to a negative version of PST
-                            taxAmount = -(I.provincialTax);
-                            I.chargePST = false;
+                            taxAmount = -(invoice.fltProvincialTaxAmount);
+                            invoice.bitChargePST = false;
                             //Changes button name
                             pstText = "Add RST"; //*** Need to figure out proper name of tax
                         }
                         else if (pstText.Split(' ')[0] == "Add")
                         {
                             //Sets tax amount to a positive version of PST
-                            I.provincialTax = CallReturnTaxAmount(T.taxRate, I.subTotal);
-                            taxAmount = I.provincialTax;
-                            I.chargePST = true;
+                            invoice.fltProvincialTaxAmount = CallReturnTaxAmount(T.fltTaxRate, invoice.fltSubTotal);
+                            taxAmount = invoice.fltProvincialTaxAmount;
+                            invoice.bitChargePST = true;
                             //Changes button name
                             pstText = "Remove RST";
                         }
@@ -194,17 +201,17 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         if (pstText.Split(' ')[0] == "Remove")
                         {
                             //Sets tax amount to a negative version of PST
-                            taxAmount = -(I.provincialTax);
-                            I.chargePST = false;
+                            taxAmount = -(invoice.fltProvincialTaxAmount);
+                            invoice.bitChargePST = false;
                             //Changes button name
                             pstText = "Add QST"; //*** Need to figure out proper name of tax
                         }
                         else if (pstText.Split(' ')[0] == "Add")
                         {
                             //Sets tax amount to a positive version of PST
-                            I.provincialTax = CallReturnTaxAmount(T.taxRate, I.subTotal);
-                            taxAmount = I.provincialTax;
-                            I.chargePST = true;
+                            invoice.fltProvincialTaxAmount = CallReturnTaxAmount(T.fltTaxRate, invoice.fltSubTotal);
+                            taxAmount = invoice.fltProvincialTaxAmount;
+                            invoice.bitChargePST = true;
                             //Changes button name
                             pstText = "Remove QST";
                         }
@@ -216,8 +223,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 
             object[] btnParms = { bolGSTDisplay, gstText, bolPSTDisplay, pstText };
             InvoiceManager IM = new InvoiceManager();
-            IM.UpdateCurrentInvoice(I, objPageDetails);
-            object[] results = { I, btnParms };
+            IM.UpdateCurrentInvoice(invoice, objPageDetails);
+            object[] results = { invoice, btnParms };
             return results;
         }
         private double CallReturnTaxAmount(double rate, double subTotal)
@@ -232,11 +239,31 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //Returns the gst amount 
             return TaxAmount;
         }
-        public void TaxCorrectionOnReturnInvoice(Invoice I, object[] objPageDetails)
+        public void TaxCorrectionOnReturnInvoice(Invoice invoice, object[] objPageDetails)
         {
-            I.balanceDue = I.balanceDue - (I.governmentTax + I.provincialTax);
+            invoice.fltBalanceDue = invoice.fltBalanceDue - (invoice.fltGovernmentTaxAmount + invoice.fltProvincialTaxAmount);
             InvoiceManager IM = new InvoiceManager();
-            IM.CalculateNewInvoiceReturnTotalsToUpdate(I, objPageDetails);
+            IM.CalculateNewInvoiceReturnTotalsToUpdate(invoice, objPageDetails);
+        }
+
+
+
+        public void UpdateTaxChargedForInventory(int inventoryID, int taxID, bool chargeTax)
+        {
+            SetTaxChargedForInventory(inventoryID, taxID, chargeTax);
+        }
+
+        private void SetTaxChargedForInventory(int inventoryID, int taxID, bool chargeTax)
+        {
+            string sqlCmd = "UPDATE tbl_taxTypePerInventoryItem SET bitChargeTax = @bitChargeTax WHERE "
+                + "intIventoryID = @intInventoryID AND intTaxID = @intTaxID";
+            object[][] parms =
+            {
+                new object[] { "@bitChargeTax", chargeTax },
+                new object[] { "@intInventoryID", inventoryID },
+                new object[] { "@intTaxID", taxID }
+            };
+            dbc.executeInsertQuery(sqlCmd, parms);
         }
     }
 }

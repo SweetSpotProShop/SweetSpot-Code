@@ -20,8 +20,7 @@ namespace SweetSpotDiscountGolfPOS
         Reports R = new Reports();
         CurrentUser CU;
 
-
-        List<TaxReport> tr = new List<TaxReport>();
+        List<TaxReport> taxReport = new List<TaxReport>();
         double colGST;
         double colPST;
         double retGST;
@@ -57,21 +56,21 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     lblTaxDate.Text = "Taxes Through: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
                     //Creating a cashout list and calling a method that grabs all mops and amounts paid
-                    tr = R.returnTaxReportDetails(startDate, endDate, objPageDetails);
+                    taxReport = R.returnTaxReportDetails(startDate, endDate, objPageDetails);
 
-                    foreach (var item in tr)
+                    foreach (var salesDate in taxReport)
                     {
-                        if (item.locationID == Convert.ToInt32(passing[1]))
+                        if (salesDate.intLocationID == Convert.ToInt32(passing[1]))
                         {
-                            if (item.transactionType == 1)
+                            if (salesDate.intTransactionTypeID == 1)
                             {
-                                collected.Add(item);
+                                collected.Add(salesDate);
                             }
-                            if (item.transactionType == 2)
+                            else if (salesDate.intTransactionTypeID == 2)
                             {
-                                returned.Add(item);
+                                returned.Add(salesDate);
                             }
-                            overall.Add(item);
+                            overall.Add(salesDate);
                         }
                     }
 
@@ -111,7 +110,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -127,8 +126,8 @@ namespace SweetSpotDiscountGolfPOS
                 // check row type
                 if (e.Row.RowType == DataControlRowType.DataRow)
                 {
-                    colGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "govTax"));
-                    colPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "provTax"));
+                    colGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmount"));
+                    colPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmount"));
                 }
                 else if (e.Row.RowType == DataControlRowType.Footer)
                 {
@@ -141,7 +140,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -157,8 +156,8 @@ namespace SweetSpotDiscountGolfPOS
                 // check row type
                 if (e.Row.RowType == DataControlRowType.DataRow)
                 {
-                    retGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "govTax"));
-                    retPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "provTax"));
+                    retGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmount"));
+                    retPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmount"));
                 }
                 else if (e.Row.RowType == DataControlRowType.Footer)
                 {
@@ -171,7 +170,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -187,8 +186,8 @@ namespace SweetSpotDiscountGolfPOS
                 // check row type
                 if (e.Row.RowType == DataControlRowType.DataRow)
                 {
-                    ovrGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "govTax"));
-                    ovrPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "provTax"));
+                    ovrGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmount"));
+                    ovrPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmount"));
                 }
                 else if (e.Row.RowType == DataControlRowType.Footer)
                 {
@@ -201,7 +200,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -221,7 +220,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -259,8 +258,8 @@ namespace SweetSpotDiscountGolfPOS
                         foreach (TaxReport trCollected in collected)
                         {
                             salesTax.Cells[recordIndexSales, 1].Value = trCollected.dtmInvoiceDate.ToString("d");
-                            salesTax.Cells[recordIndexSales, 2].Value = trCollected.govTax;
-                            salesTax.Cells[recordIndexSales, 3].Value = trCollected.provTax;
+                            salesTax.Cells[recordIndexSales, 2].Value = trCollected.fltGovernmentTaxAmount;
+                            salesTax.Cells[recordIndexSales, 3].Value = trCollected.fltProvincialTaxAmount;
                             recordIndexSales++;
                         }
                     }
@@ -270,8 +269,8 @@ namespace SweetSpotDiscountGolfPOS
                         foreach (TaxReport trReturned in returned)
                         {
                             returnsTax.Cells[recordIndexReturns, 1].Value = trReturned.dtmInvoiceDate.ToString("d");
-                            returnsTax.Cells[recordIndexReturns, 2].Value = trReturned.govTax;
-                            returnsTax.Cells[recordIndexReturns, 3].Value = trReturned.provTax;
+                            returnsTax.Cells[recordIndexReturns, 2].Value = trReturned.fltGovernmentTaxAmount;
+                            returnsTax.Cells[recordIndexReturns, 3].Value = trReturned.fltProvincialTaxAmount;
                             recordIndexReturns++;
                         }
                     }
@@ -281,8 +280,8 @@ namespace SweetSpotDiscountGolfPOS
                         foreach (TaxReport trOverall in overall)
                         {
                             allTax.Cells[recordIndexOverall, 1].Value = trOverall.dtmInvoiceDate.ToString("d");
-                            allTax.Cells[recordIndexOverall, 2].Value = trOverall.govTax;
-                            allTax.Cells[recordIndexOverall, 3].Value = trOverall.provTax;
+                            allTax.Cells[recordIndexOverall, 2].Value = trOverall.fltGovernmentTaxAmount;
+                            allTax.Cells[recordIndexOverall, 3].Value = trOverall.fltProvincialTaxAmount;
                             recordIndexOverall++;
                         }
                     }
@@ -298,7 +297,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.emp.employeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

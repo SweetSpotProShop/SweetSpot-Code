@@ -118,11 +118,11 @@
                                         <asp:LinkButton Text="Remove Refund Method" runat="server" CommandName="Delete" OnClientClick="return confirm('Are you sure you want to remove this Method of Payment?');" CausesValidation="false" />
                                     </ItemTemplate>
                                 </asp:TemplateField>
-                                <asp:BoundField DataField="mopType" ReadOnly="true" HeaderText="Refund Type" />
-                                <asp:BoundField DataField="amountPaid" ReadOnly="true" HeaderText="Refund Amount" DataFormatString="{0:C}" />
+                                <asp:BoundField DataField="varPaymentName" ReadOnly="true" HeaderText="Refund Type" />
+                                <asp:BoundField DataField="fltAmountPaid" ReadOnly="true" HeaderText="Refund Amount" DataFormatString="{0:C}" />
                                 <asp:TemplateField HeaderText="Table ID" Visible="false">
                                     <ItemTemplate>
-                                        <asp:Label ID="lblTableID" Text='<%#Eval("id") %>' runat="server" />
+                                        <asp:Label ID="lblTableID" Text='<%#Eval("intInvoicePaymentID") %>' runat="server" />
                                     </ItemTemplate>
                                 </asp:TemplateField>
                             </Columns>

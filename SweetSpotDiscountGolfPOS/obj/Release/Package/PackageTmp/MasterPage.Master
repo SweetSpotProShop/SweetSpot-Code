@@ -33,6 +33,7 @@
                         <li><a href="InventoryHomePage.aspx">INVENTORY</a></li>
                         <li><a href="ReportsHomePage.aspx">REPORTS</a></li>
                         <li><a href="SettingsHomePage.aspx">SETTINGS</a></li>
+						<li><a href="LoungeSims.aspx">SIMULATOR LOUNGE</a></li>
                     </ul>
                 </div>
                 <div id="image_simple">

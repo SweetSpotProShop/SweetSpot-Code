@@ -17,19 +17,17 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             List<Customer> customer = dt.AsEnumerable().Select(row =>
             new Customer
             {
-                customerId = row.Field<int>("custID"),
-                firstName = row.Field<string>("firstName"),
-                lastName = row.Field<string>("lastName"),
-                primaryAddress = row.Field<string>("primaryAddress"),
-                secondaryAddress = row.Field<string>("secondaryAddress"),
-                primaryPhoneNumber = row.Field<string>("primaryPhoneINT"),
-                secondaryPhoneNumber = row.Field<string>("secondaryPhoneINT"),
-                email = row.Field<string>("email"),
-                city = row.Field<string>("city"),
-                province = row.Field<int>("provStateID"),
-                country = row.Field<int>("country"),
-                postalCode = row.Field<string>("postZip"),
-                emailList = row.Field<bool>("marketingEmail")
+                intCustomerID = row.Field<int>("intCustomerID"),
+                varFirstName = row.Field<string>("varFirstName"),
+                varLastName = row.Field<string>("varLastName"),
+                varAddress = row.Field<string>("varAddress"),
+                varContactNumber = row.Field<string>("varContactNumber"),
+                varEmailAddress = row.Field<string>("varEmailAddress"),
+                varCityName = row.Field<string>("varCityName"),
+                intProvinceID = row.Field<int>("intProvinceID"),
+                intCountryID = row.Field<int>("intCountryID"),
+                varPostalCode = row.Field<string>("varPostalCode"),
+                bitSendMarketing = row.Field<bool>("bitSendMarketing")
             }).ToList();
             return customer;
         }
@@ -39,51 +37,52 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             List<Customer> customer = dt.AsEnumerable().Select(row =>
             new Customer
             {
-                customerId = row.Field<int>("custID"),
-                firstName = row.Field<string>("firstName"),
-                lastName = row.Field<string>("lastName"),
-                primaryAddress = row.Field<string>("primaryAddress"),
+                intCustomerID = row.Field<int>("intCustomerID"),
+                varFirstName = row.Field<string>("varFirstName"),
+                varLastName = row.Field<string>("varLastName"),
+                varAddress = row.Field<string>("varAddress"),
                 secondaryAddress = row.Field<string>("secondaryAddress"),
-                primaryPhoneNumber = row.Field<string>("primaryPhoneINT"),
+                varContactNumber = row.Field<string>("varContactNumber"),
                 secondaryPhoneNumber = row.Field<string>("secondaryPhoneINT"),
-                email = row.Field<string>("email"),
-                city = row.Field<string>("city"),
-                province = row.Field<int>("provStateID"),
-                country = row.Field<int>("country"),
-                postalCode = row.Field<string>("postZip"),
-                invoices = IM.ReturnInvoiceByCustomers(row.Field<int>("custID"), objPageDetails),
-                emailList = row.Field<bool>("marketingEmail")
+                billingAddress = row.Field<string>("billingAddress"),
+                varEmailAddress = row.Field<string>("varEmailAddress"),
+                varCityName = row.Field<string>("varCityName"),
+                intProvinceID = row.Field<int>("intProvinceID"),
+                intCountryID = row.Field<int>("intCountryID"),
+                varPostalCode = row.Field<string>("varPostalCode"),
+                invoices = IM.ReturnInvoiceByCustomers(row.Field<int>("intCustomerID"), objPageDetails),
+                bitSendMarketing = row.Field<bool>("bitSendMarketing")
             }).ToList();
             return customer;
         }
 
         //Returns list of customers based on an customer ID
-        public List<Customer> ReturnCustomer(int cust, object[] objPageDetails)
+        public List<Customer> ReturnCustomer(int customerID, object[] objPageDetails)
         {
             string strQueryName = "ReturnCustomer";
-            string sqlCmd = "SELECT custID, firstName, lastName, primaryAddress, secondaryAddress, "
-                + "primaryPhoneINT, secondaryPhoneINT, email, city, provStateID, country, postZip, "
-                + "marketingEmail FROM tbl_customers WHERE custID = @custID";
+            string sqlCmd = "SELECT intCustomerID, varFirstName, varLastName, varAddress, varContactNumber, varEmailAddress, "
+                + "varCityName, intProvinceID, intCountryID, varPostalCode, bitSendMarketing FROM tbl_customers WHERE "
+                + "intCustomerID = @intCustomerID";
 
             object[][] parms =
             {
-                 new object[] { "@custID", cust },
+                 new object[] { "@intCustomerID", customerID },
             };
 
             return ConvertFromDataTableToCustomer(dbc.returnDataTableData(sqlCmd, parms));
             //return ConvertFromDataTableToCustomer(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
         //Returns list of custoemrs based on an customer ID
-        public List<Customer> ReturnCustomerWithInvoiceList(int cust, object[] objPageDetails)
+        public List<Customer> ReturnCustomerWithInvoiceList(int customerID, object[] objPageDetails)
         {
             string strQueryName = "ReturnCustomerWithInvoiceList";
-            string sqlCmd = "SELECT custID, firstName, lastName, primaryAddress, secondaryAddress, "
-                + "primaryPhoneINT, secondaryPhoneINT, email, city, provStateID, country, postZip, "
-                + "marketingEmail FROM tbl_customers WHERE custID = @custID";
+            string sqlCmd = "SELECT intCustomerID, varFirstName, varLastName, varAddress, secondaryAddress, varContactNumber, secondaryPhoneINT, "
+                + "billingAddress, varEmailAddress, varCityName, intProvinceID, intCountryID, varPostalCode, bitSendMarketing FROM tbl_customers "
+                + "WHERE intCustomerID = @intCustomerID";
 
             object[][] parms =
             {
-                 new object[] { "@custID", cust },
+                 new object[] { "@intCustomerID", customerID },
             };
 
             return ConvertFromDataTableToCustomerWithInvoices(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
@@ -101,12 +100,10 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 strText.Add("%" + searchText.Split(' ')[i] + "%");
                 if (i == 0)
                 {
-                    sqlCmd = "SELECT custID, firstName, lastName, primaryAddress, secondaryAddress, "
-                        + "primaryPhoneINT, secondaryPhoneINT, email, city, provStateID, country, postZip, "
-                        + "marketingEmail FROM tbl_customers WHERE CAST(custID AS VARCHAR) LIKE @parm1" + i
-                        + " OR CONCAT(firstName,lastName) LIKE @parm2" + i
-                        + " OR CONCAT(primaryPhoneINT,secondaryPhoneINT) LIKE @parm3" + i
-                        + " OR email LIKE @parm4" + i + "";
+                    sqlCmd = "SELECT intCustomerID, varFirstName, varLastName, varAddress, varContactNumber, varEmailAddress, "
+                        + "varCityName, intProvinceID, intCountryID, varPostalCode, bitSendMarketing FROM tbl_customers WHERE "
+                        + "CAST(intCustomerID AS VARCHAR) LIKE @parm1" + i + " OR CONCAT(varFirstName, varLastName) LIKE @parm2"
+                        + i + " OR CONCAT(varContactNumber, secondaryPhoneINT) LIKE @parm3" + i + " OR varEmailAddress LIKE @parm4" + i + "";
                     parms.Add("@parm1" + i);
                     parms.Add("@parm2" + i);
                     parms.Add("@parm3" + i);
@@ -114,80 +111,74 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 }
                 else
                 {
-                    sqlCmd += " INTERSECT (SELECT custID, firstName, lastName, primaryAddress, secondaryAddress, "
-                        + "primaryPhoneINT, secondaryPhoneINT, email, city, provStateID, country, postZip, "
-                        + "marketingEmail FROM tbl_customers WHERE CAST(custID AS VARCHAR) LIKE @parm1" + i
-                        + " OR CONCAT(firstName,lastName) LIKE @parm2" + i
-                        + " OR CONCAT(primaryPhoneINT,secondaryPhoneINT) LIKE @parm3" + i
-                        + " OR email LIKE @parm4" + i + ")";
+                    sqlCmd += " INTERSECT (SELECT intCustomerID, varFirstName, varLastName, varAddress, varContactNumber, "
+                        + "varEmailAddress, varCityName, intProvinceID, intCountryID, varPostalCode, bitSendMarketing FROM "
+                        + "tbl_customers WHERE CAST(intCustomerID AS VARCHAR) LIKE @parm1" + i + " OR CONCAT(varFirstName, "
+                        + "varLastName) LIKE @parm2" + i + " OR CONCAT(varContactNumber, secondaryPhoneINT) LIKE @parm3" + i
+                        + " OR varEmailAddress LIKE @parm4" + i + ")";
                     parms.Add("@parm1" + i);
                     parms.Add("@parm2" + i);
                     parms.Add("@parm3" + i);
                     parms.Add("@parm4" + i);
                 }
             }
-            sqlCmd += " ORDER BY firstName ASC";
+            sqlCmd += " ORDER BY varFirstName ASC";
 
             return ConvertFromDataTableToCustomer(dbc.returnDataTableDataFromArrayLists(sqlCmd, parms, strText));
             //return ConvertFromDataTableToCustomer(dbc.returnDataTableDataFromArrayLists(sqlCmd, parms, strText, objPageDetails, strQueryName));
         }
         //Add Customer Nathan and Tyler created. Returns customer ID
-        public int addCustomer(Customer c, object[] objPageDetails)
+        public int addCustomer(Customer customer, object[] objPageDetails)
         {
             string strQueryName = "addCustomer";
             //New command
-            string sqlCmd = "INSERT INTO tbl_customers (firstName, lastName, primaryAddress, "
-                + "secondaryAddress, primaryPhoneINT, secondaryPhoneINT, billingAddress, "
-                + "marketingEmail, email, city, provStateID, country, postZip) VALUES "
-                + "(@FirstName, @LastName, @primaryAddress, @secondaryAddress, "
-                + "@primaryPhoneNumber, @secondaryPhoneNumber, @billingAddress, "
-                + "@marketingEmail, @Email, @City, @Province, @Country, @PostalCode)";
+            string sqlCmd = "INSERT INTO tbl_customers VALUES (@varFirstName, @varLastName, @varAddress, @secondaryAddress, "
+                + "@varContactNumber, @secondaryPhoneINT, @billingAddress, @varEmailAddress, @varCityName, @intProvinceID, "
+                + "@intCountryID, @varPostalCode, @bitSendMarketing)";
 
             object[][] parms =
             {
-                 new object[] { "@FirstName", c.firstName },
-                 new object[] { "@LastName", c.lastName },
-                 new object[] { "@primaryAddress", c.primaryAddress },
-                 new object[] { "@secondaryAddress", c.secondaryAddress },
-                 new object[] { "@marketingEmail", c.emailList },
-                 new object[] { "@City", c.city },
-                 new object[] { "@billingAddress", "" },
-                 new object[] { "@PostalCode", c.postalCode },
-                 new object[] { "@Province", c.province },
-                 new object[] { "@Country", c.country },
-                 new object[] { "@primaryPhoneNumber", c.primaryPhoneNumber },
-                 new object[] { "@secondaryPhoneNumber", c.secondaryPhoneNumber },
-                 new object[] { "@Email", c.email }
+                new object[] { "@varFirstName", customer.varFirstName },
+                new object[] { "@varLastName", customer.varLastName },
+                new object[] { "@varAddress", customer.varAddress },
+                new object[] { "@secondaryAddress", customer.secondaryAddress },
+                new object[] { "@varContactNumber", customer.varContactNumber },
+                new object[] { "@secondaryPhoneINT", customer.secondaryPhoneNumber },
+                new object[] { "@billingAddress", customer.billingAddress },
+                new object[] { "@varEmailAddress", customer.varEmailAddress },
+                new object[] { "@varCityName", customer.varCityName },                
+                new object[] { "@intProvinceID", customer.intProvinceID },
+                new object[] { "@intCountryID", customer.intCountryID },
+                new object[] { "@varPostalCode", customer.varPostalCode },
+                new object[] { "@bitSendMarketing", customer.bitSendMarketing }
             };
 
             dbc.executeInsertQuery(sqlCmd, parms);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
-            return ReturnCustomerIDFromCustomerStats(parms, objPageDetails)[0].customerId;
+            return ReturnCustomerIDFromCustomerStats(parms, objPageDetails)[0].intCustomerID;
         }
-        public void updateCustomer(Customer c, object[] objPageDetails)
+        public void updateCustomer(Customer customer, object[] objPageDetails)
         {
             string strQueryName = "updateCustomer";
             //New command
-            string sqlCmd = "UPDATE tbl_customers SET firstName = @FirstName, lastName = @LastName, primaryAddress = @primaryAddress,"
-                + " secondaryAddress = @secondaryAddress, primaryPhoneINT = @primaryPhoneNumber, secondaryPhoneINT = @secondaryPhoneNumber,"
-                + " marketingEmail = @marketingEmail, email = @Email, city = @City, provStateID = @Province, country = @Country,"
-                + " postZip = @PostalCode WHERE custID = @CustomerID";
+            string sqlCmd = "UPDATE tbl_customers SET varFirstName = @varFirstName, varLastName = @varLastName, varAddress = @varAddress, "
+                + "varContactNumber = @varContactNumber, bitSendMarketing = @bitSendMarketing, varEmailAddress = @varEmailAddress, "
+                + "varCityName = @varCityName, intProvinceID = @intProvinceID, intCountryID = @intCountryID, varPostalCode = @varPostalCode "
+                + "WHERE intCustomerID = @intCustomerID";
 
             object[][] parms =
             {
-                new object[] { "CustomerID", c.customerId },
-                new object[] { "FirstName", c.firstName },
-                new object[] { "LastName", c.lastName },
-                new object[] { "primaryAddress", c.primaryAddress },
-                new object[] { "secondaryAddress", c.secondaryAddress },
-                new object[] { "primaryPhoneNumber", c.primaryPhoneNumber },
-                new object[] { "secondaryPhoneNumber", c.secondaryPhoneNumber },
-                new object[] { "marketingEmail", c.emailList },
-                new object[] { "Email", c.email },
-                new object[] { "City", c.city },
-                new object[] { "Province", c.province },
-                new object[] { "Country", c.country },
-                new object[] { "PostalCode", c.postalCode }
+                new object[] { "intCustomerID", customer.intCustomerID },
+                new object[] { "varFirstName", customer.varFirstName },
+                new object[] { "varLastName", customer.varLastName },
+                new object[] { "varAddress", customer.varAddress },
+                new object[] { "varContactNumber", customer.varContactNumber },
+                new object[] { "bitSendMarketing", customer.bitSendMarketing },
+                new object[] { "varEmailAddress", customer.varEmailAddress },
+                new object[] { "varCityName", customer.varCityName },
+                new object[] { "intProvinceID", customer.intProvinceID },
+                new object[] { "intCountryID", customer.intCountryID },
+                new object[] { "varPostalCode", customer.varPostalCode }
             };
             dbc.executeInsertQuery(sqlCmd, parms);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
@@ -195,13 +186,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public List<Customer> ReturnCustomerIDFromCustomerStats(object[][] parms, object[] objPageDetails)
         {
             string strQueryName = "ReturnCustomerIDFromCustomerStats";
-            string sqlCmd = "SELECT custID, firstName, lastName, primaryAddress, secondaryAddress, primaryPhoneINT, "
-                + "secondaryPhoneINT, marketingEmail, email, city, provStateID, country, postZip "
-                + "FROM tbl_customers WHERE firstName = @FirstName and lastName = @LastName and "
-                + "primaryAddress = @primaryAddress and secondaryAddress = @secondaryAddress and primaryPhoneINT = "
-                + "@primaryPhoneNumber and secondaryPhoneINT = @secondaryPhoneNumber and "
-                + "marketingEmail = @marketingEmail and email = @Email and city = @City and provStateID = @Province "
-                + "and country = @Country and postZip = @PostalCode";
+            string sqlCmd = "SELECT intCustomerID, varFirstName, varLastName, varAddress, varContactNumber, bitSendMarketing, "
+                + "varEmailAddress, varCityName, intProvinceID, intCountryID, varPostalCode FROM tbl_customers WHERE varFirstName "
+                + "= @varFirstName and varLastName = @varLastName and varAddress = @varAddress and varContactNumber = "
+                + "@varContactNumber and bitSendMarketing = @bitSendMarketing and varEmailAddress = @varEmailAddress and "
+                + "varCityName = @varCityName and intProvinceID = @intProvinceID and intCountryID = @intCountryID and "
+                + "varPostalCode = @varPostalCode";
 
             return ConvertFromDataTableToCustomer(dbc.returnDataTableData(sqlCmd, parms));
             //return ConvertFromDataTableToCustomer(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));

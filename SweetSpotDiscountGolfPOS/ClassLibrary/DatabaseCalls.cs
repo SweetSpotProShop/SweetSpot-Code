@@ -77,7 +77,7 @@ namespace SweetSpotDiscountGolfPOS
             {
                 return Convert.ToInt32((returnDataTableData(sqlCmd, parms).Rows[0][0]).ToString());
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return -10;
             }

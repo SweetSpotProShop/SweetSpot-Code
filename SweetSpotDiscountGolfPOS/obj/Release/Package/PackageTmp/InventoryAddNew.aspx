@@ -149,15 +149,36 @@
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
-                    <asp:TableCell ColumnSpan="2">
+                    <asp:TableCell>
                         <asp:Label ID="lblComments" runat="server" Text="Comments:" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:CheckBox ID="chkUsed" runat="server" Text="Used" Enabled="false" />
                     </asp:TableCell>
+					<asp:TableCell ColumnSpan="2" RowSpan="2" HorizontalAlign="Center">
+						<asp:Label ID="lblTaxesChargedAtSale" runat="server" Text="Taxes Charged At Sale" Font-Bold="true" />
+						<asp:GridView ID="grdInventoryTaxes" runat="server" AutoGenerateColumns="false" Width="80%"
+							RowStyle-HorizontalAlign="Center" OnRowDataBound="grdInventoryTaxes_RowDataBound"
+							OnRowCommand="grdInventoryTaxes_RowCommand">
+							<Columns>
+								<asp:TemplateField>
+									<ItemTemplate>
+										<asp:LinkButton ID="lbtnChangeCharged" runat="server" Text="Remove" CommandArgument='<%#Eval("taxID") %>' />
+									</ItemTemplate>
+								</asp:TemplateField>
+								<asp:BoundField DataField="taxName" ReadOnly="true" HeaderText="Tax Name" />
+								<asp:BoundField DataField="taxRate" ReadOnly="true" HeaderText="Tax Rate" />
+								<asp:TemplateField HeaderText="Charge">
+									<ItemTemplate>
+										<asp:CheckBox ID="chkChargeTax" runat="server" Text="" Checked='<%#Eval("bitChargeTax") %>' Enabled="false" />
+									</ItemTemplate>
+								</asp:TemplateField>
+							</Columns>
+						</asp:GridView>
+					</asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
-                    <asp:TableCell ColumnSpan="4">
+                    <asp:TableCell ColumnSpan="2">
                         <asp:TextBox Height="30px" Width="100%" ID="txtComments" runat="server" AutoComplete="off" Enabled="false" />
                     </asp:TableCell>
                 </asp:TableRow>
