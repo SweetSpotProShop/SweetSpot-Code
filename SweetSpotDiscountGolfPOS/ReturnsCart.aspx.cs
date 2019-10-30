@@ -19,7 +19,7 @@ namespace SweetSpotDiscountGolfPOS
         CurrentUser CU;
         InvoiceManager IM = new InvoiceManager();
         InvoiceItemsManager IIM = new InvoiceItemsManager();
-        private static Invoice returnInvoice;
+        //private static Invoice returnInvoice;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -41,7 +41,8 @@ namespace SweetSpotDiscountGolfPOS
                     CU = (CurrentUser)Session["currentUser"];
                     if (!Page.IsPostBack)
                     {
-                        List<Invoice> returnInvoicesCalled = IM.ReturnInvoice(Convert.ToInt32(Request.QueryString["invoice"]), objPageDetails);
+                        List<Invoice> returnInvoicesCalled = IM.ReturnInvoice(Convert.ToInt32(Request.QueryString["invoice"]), CU.location.intProvinceID, objPageDetails);
+                        Invoice returnInvoice = new Invoice();
                         if (returnInvoicesCalled.Count > 0)
                         {
                             returnInvoice = returnInvoicesCalled[0];
@@ -50,16 +51,20 @@ namespace SweetSpotDiscountGolfPOS
                             returnInvoice.employee = CU.employee;
                             returnInvoice.intTransactionTypeID = 2;
                             returnInvoice = IM.CreateInitialTotalsForTable(returnInvoice, objPageDetails)[0];
+
+                            var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                            nameValues.Set("invoice", returnInvoice.intInvoiceID.ToString());
+                            Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
                         }
                         else
                         {
-                            returnInvoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"]), objPageDetails)[0];
+                            returnInvoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"]), CU.location.intProvinceID, objPageDetails)[0];
                         }
                         lblCustomerDisplay.Text = returnInvoice.customer.varFirstName.ToString() + " " + returnInvoice.customer.varLastName.ToString();
                         lblInvoiceNumberDisplay.Text = returnInvoice.varInvoiceNumber + "-" + returnInvoice.intInvoiceSubNumber;
                         lblDateDisplay.Text = returnInvoice.dtmInvoiceDate.ToString("dd/MMM/yy");
                         //binds items in cart to gridview
-                        grdInvoicedItems.DataSource = IIM.ReturnInvoiceItemsFromProcessedSalesForReturn(returnInvoice.varInvoiceNumber.ToString(), objPageDetails);
+                        grdInvoicedItems.DataSource = IIM.ReturnInvoiceItemsFromProcessedSalesForReturn(returnInvoice.varInvoiceNumber.ToString(),returnInvoice.dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
                         grdInvoicedItems.DataBind();
 
                         grdReturningItems.DataSource = returnInvoice.invoiceItems;
@@ -89,8 +94,9 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                Invoice returnInvoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"]), CU.location.intProvinceID, objPageDetails)[0];
                 lblInvalidQty.Visible = false;
-                IIM.LoopThroughTheItemsToReturnToInventory(returnInvoice.intInvoiceID, objPageDetails);
+                IIM.LoopThroughTheItemsToReturnToInventory(returnInvoice.intInvoiceID, returnInvoice.dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
                 IIM.RemoveInitialTotalsForTable(returnInvoice.intInvoiceID, objPageDetails);
                 Response.Redirect("HomePage.aspx", false);
             }
@@ -113,7 +119,8 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                if (IIM.CheckForItemsInTransaction(IM.ReturnCurrentInvoice(returnInvoice.intInvoiceID, objPageDetails)[0]))
+                Invoice returnInvoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"]), CU.location.intProvinceID, objPageDetails)[0];
+                if (IIM.CheckForItemsInTransaction(IM.ReturnCurrentInvoice(returnInvoice.intInvoiceID, CU.location.intProvinceID, objPageDetails)[0]))
                 {
                     lblInvalidQty.Visible = false;
                     //Changes page to the returns checkout page
@@ -145,6 +152,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                Invoice returnInvoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"]), CU.location.intProvinceID, objPageDetails)[0];
                 lblInvalidQty.Visible = false;
                 //Stores the info about the item in that index
                 InvoiceItems selectedSku = IIM.ReturnInvoiceItemForReturnProcess(Convert.ToInt32(((Label)grdInvoicedItems.Rows[e.RowIndex].Cells[0].FindControl("lblInvoiceItemID")).Text), objPageDetails);
@@ -181,15 +189,15 @@ namespace SweetSpotDiscountGolfPOS
                         selectedSku.intItemQuantity = returnQuantity;
                         selectedSku.fltItemRefund = -1 * returnDollars;
                         selectedSku.fltItemCost = selectedSku.fltItemCost * -1;
-                        IIM.InsertItemIntoSalesCart(selectedSku, objPageDetails);
+                        IIM.InsertItemIntoSalesCart(selectedSku, returnInvoice.intTransactionTypeID, returnInvoice.dtmInvoiceDate, CU, objPageDetails);
                         //deselect the indexed item
                         grdInvoicedItems.EditIndex = -1;
                         //store items available for return in session
-                        grdInvoicedItems.DataSource = IIM.ReturnInvoiceItemsFromProcessedSalesForReturn(returnInvoice.varInvoiceNumber.ToString(), objPageDetails);
+                        grdInvoicedItems.DataSource = IIM.ReturnInvoiceItemsFromProcessedSalesForReturn(returnInvoice.varInvoiceNumber.ToString(), returnInvoice.dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
                         grdInvoicedItems.DataBind();
 
-                        IM.CalculateNewInvoiceReturnTotalsToUpdate(IM.ReturnCurrentInvoice(returnInvoice.intInvoiceID, objPageDetails)[0], objPageDetails);
-                        returnInvoice = IM.ReturnCurrentInvoice(returnInvoice.intInvoiceID, objPageDetails)[0];
+                        IM.CalculateNewInvoiceReturnTotalsToUpdate(IM.ReturnCurrentInvoice(returnInvoice.intInvoiceID, CU.location.intProvinceID, objPageDetails)[0], objPageDetails);
+                        returnInvoice = IM.ReturnCurrentInvoice(returnInvoice.intInvoiceID, CU.location.intProvinceID, objPageDetails)[0];
 
                         grdReturningItems.DataSource = returnInvoice.invoiceItems;
                         grdReturningItems.DataBind();
@@ -223,12 +231,13 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                Invoice returnInvoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"]), CU.location.intProvinceID, objPageDetails)[0];
                 lblInvalidQty.Visible = false;
                 //Gathers index from selected line item
                 int index = e.RowIndex;
                 //Stores the info about the item in that index
                 int invoiceItemReturnID = Convert.ToInt32(((Label)grdReturningItems.Rows[index].Cells[0].FindControl("lblInvoiceItemReturnID")).Text);
-                InvoiceItems selectedSku = IIM.ReturnSkuFromCurrentSalesUsingSKU(invoiceItemReturnID, objPageDetails);
+                InvoiceItems selectedSku = IIM.ReturnSkuFromCurrentSalesUsingSKU(invoiceItemReturnID, returnInvoice.dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
 
                 //add item to table and remove the added qty from current inventory
                 IIM.DoNotReturnTheItemOnReturn(selectedSku, objPageDetails);
@@ -236,10 +245,10 @@ namespace SweetSpotDiscountGolfPOS
                 //deselect the indexed item
                 grdReturningItems.EditIndex = -1;
                 //Check if the marked for returns cart has any items in it
-                grdInvoicedItems.DataSource = IIM.ReturnInvoiceItemsFromProcessedSalesForReturn(returnInvoice.varInvoiceNumber, objPageDetails);
+                grdInvoicedItems.DataSource = IIM.ReturnInvoiceItemsFromProcessedSalesForReturn(returnInvoice.varInvoiceNumber, returnInvoice.dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
                 grdInvoicedItems.DataBind();
 
-                returnInvoice = IM.ReturnCurrentInvoice(returnInvoice.intInvoiceID, objPageDetails)[0];
+                returnInvoice = IM.ReturnCurrentInvoice(returnInvoice.intInvoiceID, CU.location.intProvinceID, objPageDetails)[0];
                 IM.CalculateNewInvoiceReturnTotalsToUpdate(returnInvoice, objPageDetails);
 
                 grdReturningItems.DataSource = returnInvoice.invoiceItems;

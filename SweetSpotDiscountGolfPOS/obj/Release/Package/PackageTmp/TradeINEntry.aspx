@@ -41,7 +41,7 @@
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:DropDownList ID="ddlBrand" runat="server" AutoPostBack="false"
-                                DataTextField="brandName" DataValueField="brandID" Visible="true" />
+                                DataTextField="varBrandName" DataValueField="intBrandID" Visible="true" />
                             <asp:RequiredFieldValidator ID="rfvBrand"
                                 runat="server" ControlToValidate="ddlBrand"
                                 ErrorMessage="Brand Required"
@@ -90,19 +90,14 @@
                             <asp:Label ID="lblClubType" runat="server" Text="Club Type:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:DropDownList ID="ddlClubType" runat="server" AutoPostBack="false"
-                                DataTextField="typeName" DataValueField="typeID" Visible="True" />
-                            <asp:RequiredFieldValidator ID="rfvClubType"
-                                runat="server" ControlToValidate="ddlClubType"
-                                ErrorMessage="Club Type Required"
-                                ForeColor="Red" />
+                            <asp:TextBox ID="txtClubType" runat="server" AutoComplete="off" Visible="True" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label ID="lblModel" runat="server" Text="Model:" Visible="true" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:DropDownList ID="ddlModel" runat="server" AutoPostBack="false"
-                                DataTextField="modelName" DataValueField="modelID" Visible="True" />
+                                DataTextField="varModelName" DataValueField="intModelID" Visible="True" />
                             <asp:RequiredFieldValidator ID="rfvModel"
                                 runat="server" ControlToValidate="ddlModel"
                                 ErrorMessage="Model Required"

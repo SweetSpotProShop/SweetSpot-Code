@@ -166,22 +166,22 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblDiscountsDisplay;
         
         /// <summary>
-        /// lblBlank control.
+        /// lblGovernment control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblBlank;
+        protected global::System.Web.UI.WebControls.Label lblGovernment;
         
         /// <summary>
-        /// lblBlankDisplay control.
+        /// lblGovernmentAmount control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblBlankDisplay;
+        protected global::System.Web.UI.WebControls.Label lblGovernmentAmount;
         
         /// <summary>
         /// lblTradeIns control.
@@ -202,22 +202,22 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblTradeInsDisplay;
         
         /// <summary>
-        /// lblGST control.
+        /// lblProvincial control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblGST;
+        protected global::System.Web.UI.WebControls.Label lblProvincial;
         
         /// <summary>
-        /// lblGSTDisplay control.
+        /// lblProvincialAmount control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblGSTDisplay;
+        protected global::System.Web.UI.WebControls.Label lblProvincialAmount;
         
         /// <summary>
         /// lblShipping control.
@@ -238,22 +238,22 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblShippingDisplay;
         
         /// <summary>
-        /// lblPST control.
+        /// lblLiquorTax control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblPST;
+        protected global::System.Web.UI.WebControls.Label lblLiquorTax;
         
         /// <summary>
-        /// lblPSTDisplay control.
+        /// lblLiquorTaxAmount control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblPSTDisplay;
+        protected global::System.Web.UI.WebControls.Label lblLiquorTaxAmount;
         
         /// <summary>
         /// lblTender control.

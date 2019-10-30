@@ -330,7 +330,7 @@ namespace SweetSpotDiscountGolfPOS
                 object[] reportLog = { 13, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
-                object[] repInfo = new object[] { dtm, ddlDatePeriod.SelectedItem.Text.ToString() };
+                object[] repInfo = new object[] { dtm, ddlDatePeriod.SelectedValue.ToString() };
                 int indicator = R.verifyStatsAvailable(repInfo, objPageDetails);
                 if (indicator == 0)
                 {

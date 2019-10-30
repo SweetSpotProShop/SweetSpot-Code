@@ -1,4 +1,5 @@
 ﻿using SweetShop;
+using SweetSpotProShop;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 {
     public class ItemsManager
     {
-        DatabaseCalls dbc = new DatabaseCalls();
+        DatabaseCalls DBC = new DatabaseCalls();
 
         //Database connections
         public List<InvoiceItems> ConvertFromDataTableToCartItems(DataTable dt)
@@ -49,21 +50,21 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }).ToList();
             return invoiceItems;
         }
-        private int ConvertFromDataTableToInt(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
-        {
-            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms);
-            //return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
-        }
-        private string ConvertFromDataTableToString(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
-        {
-            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
-            //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
-        }
-        private void ExecuteNonReturnQuery(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
-        {
-            dbc.executeInsertQuery(sqlCmd, parms);
-            //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
-        }
+        //private int ConvertFromDataTableToInt(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
+        //{
+        //    return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms);
+        //    //return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
+        //}
+        //private string ConvertFromDataTableToString(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
+        //{
+        //    return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
+        //    //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+        //}
+        //private void ExecuteNonReturnQuery(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
+        //{
+        //    dbc.executeInsertQuery(sqlCmd, parms);
+        //    //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+        //}
 
         //Search results
         private string ReturnItemsFromSearchString(string searchTxt, int quantity)
@@ -89,27 +90,27 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             {
                 if (i == 0)
                 {
-                    sqlCmd += "SELECT A.intInventoryID, A.varSku, (SELECT B.varBrandName + ' ' + M.varModelName + ' ' + AC.varSize + ' ' + AC.varColour "
-                        + "AS varItemDescription FROM tbl_accessories AC JOIN tbl_brand B ON AC.intBrandID = B.intBrandID JOIN tbl_model M ON "
-                        + "AC.intModelID = M.intModelID WHERE AC.intInventoryID = A.intInventoryID) AS varItemDescription, A.intLocationID, (SELECT L.varCityName FROM "
-                        + "tbl_accessories AC JOIN tbl_location L ON AC.intLocationID = L.intLocationID WHERE AC.intInventoryID = A.intInventoryID) AS "
-                        + "varLocationName, A.intQuantity AS intItemQuantity, A.fltPrice AS fltItemPrice, A.fltCost AS fltItemCost, A.intItemTypeID, CAST(0 AS bit) AS "
-                        + "bitIsUsedProduct, A.varAdditionalInformation FROM tbl_accessories A WHERE ((varSku LIKE '%" + array[i] + "%' OR intBrandID IN(SELECT intBrandID "
-                        + "FROM tbl_brand WHERE varBrandName LIKE '%" + array[i] + "%') OR intModelID IN(SELECT intModelID FROM tbl_model WHERE "
-                        + "varModelName LIKE '%" + array[i] + "%') OR CONCAT(varSize, varColour, varTypeOfAccessory, varAdditionalInformation) LIKE '%" 
-                        + array[i] + "%')) AND A.intQuantity > " + quantity + " ";
+                    sqlCmd += "SELECT A.intInventoryID, A.varSku, (SELECT B.varBrandName + ' ' + M.varModelName + ' ' + AC.varSize + ' ' + AC.varColour + "
+                        + "' ' + AC.varTypeOfAccessory AS varItemDescription FROM tbl_accessories AC JOIN tbl_brand B ON AC.intBrandID = B.intBrandID JOIN "
+                        + "tbl_model M ON AC.intModelID = M.intModelID WHERE AC.intInventoryID = A.intInventoryID) AS varItemDescription, A.intLocationID, "
+                        + "(SELECT L.varCityName FROM tbl_accessories AC JOIN tbl_location L ON AC.intLocationID = L.intLocationID WHERE AC.intInventoryID "
+                        + "= A.intInventoryID) AS varLocationName, A.intQuantity AS intItemQuantity, A.fltPrice AS fltItemPrice, A.fltCost AS fltItemCost, "
+                        + "A.intItemTypeID, CAST(0 AS bit) AS bitIsUsedProduct, A.varAdditionalInformation FROM tbl_accessories A WHERE ((varSku LIKE '%" 
+                        + array[i] + "%' OR intBrandID IN(SELECT intBrandID FROM tbl_brand WHERE varBrandName LIKE '%" + array[i] + "%') OR intModelID "
+                        + "IN(SELECT intModelID FROM tbl_model WHERE varModelName LIKE '%" + array[i] + "%') OR CONCAT(varSize, varColour, "
+                        + "varTypeOfAccessory, varAdditionalInformation) LIKE '%" + array[i] + "%')) AND A.intQuantity > " + quantity + " ";
                 }
                 else
                 {
                     sqlCmd += "INTERSECT(SELECT A.intInventoryID, A.varSku, (SELECT B.varBrandName + ' ' + M.varModelName + ' ' + AC.varSize + ' ' + "
-                        + "AC.varColour AS varItemDescription FROM tbl_accessories AC JOIN tbl_brand B ON AC.intBrandID = B.intBrandID JOIN tbl_model "
-                        + "M ON AC.intModelID = M.intModelID WHERE AC.intInventoryID = A.intInventoryID) AS varItemDescription, A.intLocationID, (SELECT L.varCityName "
-                        + "FROM tbl_accessories AC JOIN tbl_location L ON AC.intLocationID = L.intLocationID WHERE AC.intInventoryID = A.intInventoryID) "
-                        + "AS varLocationName, A.intQuantity AS intItemQuantity, A.fltPrice AS fltItemPrice, A.fltCost AS fltItemCost, A.intItemTypeID, CAST(0 AS bit) AS bitIsUsedProduct, "
-                        + "A.varAdditionalInformation FROM tbl_accessories A WHERE ((varSku LIKE '%" + array[i] + "%' OR intBrandID IN(SELECT intBrandID "
-                        + "FROM tbl_brand WHERE varBrandName LIKE '%" + array[i] + "%') OR intModelID IN(SELECT intModelID FROM tbl_model WHERE "
-                        + "varModelName LIKE '%" + array[i] + "%') OR CONCAT(varSize, varColour, varTypeOfAccessory, varAdditionalInformation) LIKE '%" 
-                        + array[i] + "%')) AND A.intQuantity > " + quantity + ") ";
+                        + "AC.varColour + ' ' + AC.varTypeOfAccessory AS varItemDescription FROM tbl_accessories AC JOIN tbl_brand B ON AC.intBrandID = "
+                        + "B.intBrandID JOIN tbl_model M ON AC.intModelID = M.intModelID WHERE AC.intInventoryID = A.intInventoryID) AS varItemDescription"
+                        + ", A.intLocationID, (SELECT L.varCityName FROM tbl_accessories AC JOIN tbl_location L ON AC.intLocationID = L.intLocationID "
+                        + "WHERE AC.intInventoryID = A.intInventoryID) AS varLocationName, A.intQuantity AS intItemQuantity, A.fltPrice AS fltItemPrice, "
+                        + "A.fltCost AS fltItemCost, A.intItemTypeID, CAST(0 AS bit) AS bitIsUsedProduct, A.varAdditionalInformation FROM tbl_accessories "
+                        + "A WHERE ((varSku LIKE '%" + array[i] + "%' OR intBrandID IN(SELECT intBrandID FROM tbl_brand WHERE varBrandName LIKE '%" 
+                        + array[i] + "%') OR intModelID IN(SELECT intModelID FROM tbl_model WHERE varModelName LIKE '%" + array[i] + "%') OR CONCAT(varSize"
+                        + ", varColour, varTypeOfAccessory, varAdditionalInformation) LIKE '%" + array[i] + "%')) AND A.intQuantity > " + quantity + ") ";
                 }
             }
             sqlCmd += ") AS tblResult";
@@ -195,7 +196,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             string sqlCmd = ReturnItemsFromSearchString(searchText, quantity);
             object[][] parms = { };
-            return ConvertFromDataTableToInventoryItem(dbc.returnDataTableData(sqlCmd, parms));
+            return ConvertFromDataTableToInventoryItem(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
             //return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
         public List<InvoiceItems> ReturnInvoiceItemsFromSearchStringForSale(string searchText, object[] objPageDetails)
@@ -203,7 +204,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string strQueryName = "ReturnInvoiceItemsFromSearchStringForSale";
             string sqlCmd = ReturnItemsFromSearchString(searchText, -1);
             object[][] parms = { };
-            return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms));
+            return ConvertFromDataTableToCartItems(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
             //return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
         public List<InvoiceItems> ReturnTradeInSku(object[] objPageDetails)
@@ -214,10 +215,10 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 + "varItemDescription FROM tbl_clubs CLU JOIN tbl_brand B ON CLU.intBrandID = B.intBrandID JOIN tbl_model M ON CLU.intModelID "
                 + "= M.intModelID  WHERE CLU.intInventoryID = C.intInventoryID) AS varItemDescription, (SELECT L.varCityName FROM tbl_clubs "
                 + "CLU JOIN tbl_location L ON CLU.intLocationID = L.intLocationID WHERE CLU.intInventoryID = C.intInventoryID) AS varLocationName, "
-                + "C.intQuantity, C.fltPrice, C.fltCost, C.intItemTypeID, C.bitIsClubTradeIn, C.varAdditionalInformation FROM tbl_clubs C WHERE "
-                + "C.varSku = '100000'";
+                + "C.intQuantity AS intItemQuantity, C.fltPrice AS fltItemPrice, C.fltCost AS fltItemCost, C.intItemTypeID, C.bitIsUsedProduct, "
+                + "C.varAdditionalInformation FROM tbl_clubs C WHERE C.varSku = '100000'";
             object[][] parms = { };
-            return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms));
+            return ConvertFromDataTableToCartItems(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
             //return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
 
@@ -227,7 +228,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string strQueryName = "ReturnDropDownForBrand";
             string sqlCmd = "SELECT intBrandID, varBrandName FROM tbl_brand ORDER BY varBrandName";
             object[][] parms = { };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public DataTable ReturnDropDownForModel(object[] objPageDetails)
@@ -235,7 +236,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string strQueryName = "ReturnDropDownForModel";
             string sqlCmd = "SELECT intModelID, varModelName FROM tbl_model ORDER BY varModelName";
             object[][] parms = { };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public DataTable ReturnDropDownForItemType(object[] objPageDetails)
@@ -243,12 +244,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string strQueryName = "ReturnDropDownForItemType";
             string sqlCmd = "SELECT intItemTypeID, varItemTypeName FROM tbl_itemType ORDER BY varItemTypeName";
             object[][] parms = { };
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
         
         //TradeIn Criteria
-        public string ReserveTradeInSKU(CurrentUser cu, object[] objPageDetails)
+        public string[] ReserveTradeInSKU(CurrentUser cu, object[] objPageDetails)
         {
             string strQueryName = "ReserveTradeInSKU";
             string sqlCmd = "SELECT CONCAT(varStoreCode, varTradeInCode, CASE WHEN LEN(CAST(intSetTradeInNumber AS INT)) < 6 THEN RIGHT(RTRIM("
@@ -258,8 +259,20 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             {
                 new object[] { "@intLocationID", cu.location.intLocationID }
             };
+
+            string sqlCmd2 = "SELECT intInventoryIDTracking FROM tbl_storedStoreNumbers WHERE intLocationID = @intLocationID";
+
+            object[][] parms2 =
+            {
+                new object[] { "@intLocationID", cu.location.intLocationID }
+            };
+
+            string inventorySku = DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+            string inventoryID = DBC.MakeDataBaseCallToReturnString(sqlCmd2, parms2, objPageDetails, strQueryName);
+            string[] inventory = { inventorySku, inventoryID };
+
             TradeInSKU(cu, objPageDetails);
-            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
+            return inventory;
         }
         private void TradeInSKU(CurrentUser cu, object[] objPageDetails)
         {
@@ -270,18 +283,24 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             {
                 new object[] { "@intLocationID", cu.location.intLocationID }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+
+            string sqlCmd2 = "UPDATE tbl_storedStoreNumbers SET intInventoryIDTracking = intInventoryIDTracking + 1";
+            object[][] parms2 = { };
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd2, parms2, objPageDetails, strQueryName);
         }
         
         public void AddTradeInItemToTempTable(Clubs tradeIn, object[] objPageDetails)
         {
             string strQueryName = "AddTradeInItemToTempTable";
-            string sqlCmd = "INSERT INTO tbl_tempTradeInCartSkus VALUES(@varSku, @intBrandID, @intModelID, @varTypeOfClub, @varShaftType, "
-                + "@varNumberOfClubs, @fltPremiumCharge, @fltCostost, @fltPrice, @intQuantity, @varClubSpecification, @varShaftSpecification, "
-                + "@varShaftFlexability, @varClubDexterity, @intItemTypeID, @intLocationID, @bitIsUsedProduct, @varAdditionalInformtaion)";
+            string sqlCmd = "INSERT INTO tbl_tempTradeInCartSkus VALUES(@intInventoryID, @varSku, @intBrandID, @intModelID, @varTypeOfClub, "
+                + "@varShaftType, @varNumberOfClubs, @fltPremiumCharge, @fltCost, @fltPrice, @intQuantity, @varClubSpecification, "
+                + "@varShaftSpecification, @varShaftFlexability, @varClubDexterity, @intItemTypeID, @intLocationID, @bitIsUsedProduct, "
+                + "@varAdditionalInformation)";
 
             object[][] parms =
             {
+                new object[] { "@intInventoryID", tradeIn.intInventoryID },
                 new object[] { "@varSku", tradeIn.varSku },
                 new object[] { "@intBrandID", tradeIn.intBrandID },
                 new object[] { "@intModelID", tradeIn.intModelID },
@@ -302,69 +321,105 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@varAdditionalInformation", tradeIn.varAdditionalInformation }
             };
 
-            ExecuteNonReturnQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            //DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            SetTaxesForNewTradeInInventory(tradeIn.intInventoryID, objPageDetails);
         }
-
+        private void SetTaxesForNewTradeInInventory(int inventoryID, object[] objPageDetails)
+        {
+            TaxManager TM = new TaxManager();
+            ItemDataUtilities IDU = new ItemDataUtilities();
+            DataTable lTax = TM.ReturnTaxList(objPageDetails);
+            foreach (DataRow TR in lTax.Rows)
+            {
+                bool chargeTax = true;
+                if (TM.CheckForLiquorTax(Convert.ToInt32(TR[0]), objPageDetails))
+                {
+                    chargeTax = false;
+                }
+                IDU.SaveTaxIDForNewInventoryItem(inventoryID, Convert.ToInt32(TR[0]), chargeTax, objPageDetails);
+            }
+        }
         public string ReturnModelNameFromModelID(int modelID, object[] objPageDetails)
         {
             string strQueryName = "ReturnModelNameFromModelID";
-            string sqlCmd = "SELECT modelName FROM tbl_model WHERE modelID = @modelID";
+            string sqlCmd = "SELECT varModelName FROM tbl_model WHERE intModelID = @intModelID";
             object[][] parms =
             {
-                new object[] { "@modelID", modelID }
+                new object[] { "@intModelID", modelID }
             };
-            return ConvertFromDataTableToString(sqlCmd, parms, objPageDetails, strQueryName);
+            return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+            //return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public string ReturnBrandlNameFromBrandID(int brandID, object[] objPageDetails)
         {
             string strQueryName = "ReturnBrandlNameFromBrandID";
-            string sqlCmd = "SELECT brandName FROM tbl_brand WHERE brandID = @brandID";
+            string sqlCmd = "SELECT varBrandName FROM tbl_brand WHERE intBrandID = @intBrandID";
             object[][] parms =
             {
-                new object[] { "@brandID", brandID }
+                new object[] { "@intBrandID", brandID }
             };
-            return ConvertFromDataTableToString(sqlCmd, parms, objPageDetails, strQueryName);
+            return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+            //return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
         }
-
-
-        public void ProgramLoungeSimButton(int sku, string buttonName)
+        public void ProgramLoungeSimButton(int inventoryID, string buttonText, string buttonName, object[] objPageDetails)
         {
-            StoreSkuAndNumber(sku, buttonName);
+            StoreSkuAndNumber(inventoryID, buttonText, buttonName, objPageDetails);
         }
-        private void StoreSkuAndNumber(int sku, string buttonName)
+        private void StoreSkuAndNumber(int inventoryID, string buttonText, string buttonName, object[] objPageDetails)
         {
-            string sqlCmd = "INSERT INTO tbl_LoungeButtonItemCombination VALUES(@sku, @buttonName)";
+            string strQueryName = "StoreSkuAndNumber";
+            string sqlCmd = "INSERT INTO tbl_LoungeButtonItemCombination VALUES(@intInventoryID, @varButtonText, @varLoungeButtonName)";
             object[][] parms =
             {
-                new object[] { "@sku", sku },
-                new object[] { "@buttonName", buttonName }
+                new object[] { "@intInventoryID", inventoryID },
+                new object[] { "@varButtonText", buttonText },
+                new object[] { "@varLoungeButtonName", buttonName }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public List<InvoiceItems> ReturnProgrammedSaleableItems()
+        public List<InvoiceItems> ReturnProgrammedSaleableItems(object[] objPageDetails)
         {
-            return CallAllProgrammedItems();
+            return CallAllProgrammedItems(objPageDetails);
         }
-        private List<InvoiceItems> CallAllProgrammedItems()
+        private List<InvoiceItems> CallAllProgrammedItems(object[] objPageDetails)
         {
-            string sqlCmd = "SELECT LBIC.sku, A.accessoryType AS description, L.locationName, A.quantity, A.price, A.cost, A.typeID, CAST(0 "
-                + "AS bit) AS isTradeIn, LBIC.loungeButton AS comments FROM tbl_LoungeButtonItemCombination LBIC LEFT JOIN tbl_accessories "
-                + "A ON A.sku = LBIC.sku JOIN tbl_location L ON L.locationID = A.locationID UNION SELECT LBIC.sku, (SELECT B.brandName + "
-                + "' ' + CLO.size + ' ' + CLO.colour + ' ' + CLO.gender + ' ' + CLO.style AS description FROM tbl_clothing CLO JOIN "
-                + "tbl_brand B ON CLO.brandID = B.brandID WHERE CLO.sku = CL.sku) AS description, L.locationName, CL.quantity, CL.price, "
-                + "CL.cost, CL.typeID, CAST(0 AS bit) AS isTradeIn, LBIC.loungeButton AS comments FROM tbl_LoungeButtonItemCombination LBIC "
-                + "LEFT JOIN tbl_clothing CL ON CL.sku = LBIC.sku JOIN tbl_location L ON L.locationID = CL.locationID UNION SELECT "
-                + "LBIC.sku, (SELECT B.brandName + ' ' + M.modelName + ' ' + CLU.clubSpec + ' ' + CLU.clubType + ' ' + CLU.shaftSpec + ' ' "
-                + "+ CLU.shaftFlex + ' ' + CLU.dexterity AS description FROM tbl_clubs CLU JOIN tbl_brand B ON CLU.brandID = B.brandID JOIN "
-                + "tbl_model M ON CLU.modelID = M.modelID WHERE CLU.sku = C.sku) AS description, L.locationName, C.quantity, C.price, "
-                + "C.cost, C.typeID, C.isTradeIn, LBIC.loungeButton AS comments FROM tbl_LoungeButtonItemCombination LBIC LEFT JOIN "
-                + "tbl_clubs C ON C.sku = LBIC.sku JOIN tbl_location L ON L.locationID = C.locationID";
+            string strQueryName = "CallAllProgrammedItems";
+            //string sqlCmd = "SELECT LBIC.intInventoryID, A.varTypeOfAccessory AS varItemDescription, L.varLocationName, A.intQuantity AS intItemQuantity, A.fltPrice AS fltOtemPrice, "
+            //    + "A.fltCost AS fltItemCost, A.intItemTypeID, CAST(0 AS bit) AS bitIsClubTradeIn, LBIC.varLoungeButton AS varAdditionalInformation FROM tbl_LoungeButtonItemCombination "
+            //    + "LBIC LEFT JOIN tbl_accessories A ON A.intInventoryID = LBIC.intInventoryID JOIN tbl_location L ON L.intLocationID = A.intLocationID UNION SELECT LBIC.intInventoryID, "
+            //    + "(SELECT B.varBrandName + ' ' + CLO.varSize + ' ' + CLO.varColour + ' ' + CLO.varGender + ' ' + CLO.varStyle AS varItemDescription FROM tbl_clothing CLO JOIN tbl_brand "
+            //    + "B ON CLO.intBrandID = B.intBrandID WHERE CLO.intInventoryID = CL.intInventoryID) AS varItemDescription, L.varLocationName, CL.intQuantity AS intItemQuantity, "
+            //    + "CL.fltPrice AS fltItemPrice, CL.fltCost AS fltItemCost, CL.intItemTypeID, CAST(0 AS bit) AS bitIsClubTradeIn, LBIC.varLoungeButton AS varAdditionalInformation FROM "
+            //    + "tbl_LoungeButtonItemCombination LBIC LEFT JOIN tbl_clothing CL ON CL.intInventoryID = LBIC.intInventoryID JOIN tbl_location L ON L.intLocationID = CL.intLocationID "
+            //    + "UNION SELECT LBIC.intInventoryID, (SELECT B.varBrandName + ' ' + M.varModelName + ' ' + CLU.varClubSpecification + ' ' + CLU.varTypeOfClub + ' ' + "
+            //    + "CLU.varShaftSpecification + ' ' + CLU.varShaftFlexability + ' ' + CLU.varClubDexterity AS varItemDescription FROM tbl_clubs CLU JOIN tbl_brand B ON CLU.intBrandID = "
+            //    + "B.intBrandID JOIN tbl_model M ON CLU.intModelID = M.intModelID WHERE CLU.intInventoryID = C.intInventoryID) AS varItemDescription, L.varLocationName, C.intQuantity AS "
+            //    + "intItemQuantity, C.fltPrice AS fltItemPrice, C.fltCost AS fltItemCost, C.intItemTypeID, C.bitIsUsedProduct AS bitIsTradeIn, LBIC.varLoungeButton AS "
+            //    + "varAdditionalInformation FROM tbl_LoungeButtonItemCombination LBIC LEFT JOIN tbl_clubs C ON C.intInventoryID = LBIC.intInventoryID JOIN tbl_location L ON "
+            //    + "L.intLocationID = C.intLocationID";
+
+            string sqlCmd = "SELECT LBIC.intInventoryID, A.varSku, A.varTypeOfAccessory AS varItemDescription, A.intQuantity AS intItemQuantity, A.fltPrice "
+                + "AS fltItemPrice, A.fltCost AS fltItemCost, A.intItemTypeID, LBIC.varLoungeButtonName AS varAdditionalInformation FROM "
+                + "tbl_LoungeButtonItemCombination LBIC LEFT JOIN tbl_accessories A ON A.intInventoryID = LBIC.intInventoryID JOIN tbl_location L ON "
+                + "L.intLocationID = A.intLocationID UNION SELECT LBIC.intInventoryID, CL.varSku, (SELECT B.varBrandName + ' ' + CLO.varSize + ' ' + "
+                + "CLO.varColour + ' ' + CLO.varGender + ' ' + CLO.varStyle AS varItemDescription FROM tbl_clothing CLO JOIN tbl_brand B ON CLO.intBrandID "
+                + "= B.intBrandID WHERE CLO.intInventoryID = CL.intInventoryID) AS varItemDescription, CL.intQuantity AS intItemQuantity, CL.fltPrice AS "
+                + "fltItemPrice, CL.fltCost AS fltItemCost, CL.intItemTypeID, LBIC.varLoungeButtonName AS varAdditionalInformation FROM "
+                + "tbl_LoungeButtonItemCombination LBIC LEFT JOIN tbl_clothing CL ON CL.intInventoryID = LBIC.intInventoryID JOIN tbl_location L ON "
+                + "L.intLocationID = CL.intLocationID UNION SELECT LBIC.intInventoryID, C.varSku, (SELECT B.varBrandName + ' ' + M.varModelName + ' ' + "
+                + "CLU.varClubSpecification + ' ' + CLU.varTypeOfClub + ' ' + CLU.varShaftSpecification + ' ' + CLU.varShaftFlexability + ' ' + "
+                + "CLU.varClubDexterity AS varItemDescription FROM tbl_clubs CLU JOIN tbl_brand B ON CLU.intBrandID = B.intBrandID JOIN tbl_model M ON "
+                + "CLU.intModelID = M.intModelID WHERE CLU.intInventoryID = C.intInventoryID) AS varItemDescription, C.intQuantity AS intItemQuantity, "
+                + "C.fltPrice AS fltItemPrice, C.fltCost AS fltItemCost, C.intItemTypeID, LBIC.varLoungeButtonName AS varAdditionalInformation FROM "
+                + "tbl_LoungeButtonItemCombination LBIC LEFT JOIN tbl_clubs C ON C.intInventoryID = LBIC.intInventoryID JOIN tbl_location L ON "
+                + "L.intLocationID = C.intLocationID UNION SELECT LBIC.intInventoryID, '' AS varSku, LBIC.varButtonText AS varItemDescription, CAST(0 AS "
+                + "INT) AS intItemQuantity, CAST(0 AS FLOAT) AS fltItemPrice, CAST(0 AS FLOAT) AS fltItemCost, CAST(0 AS INT) AS intItemTypeID, "
+                + "LBIC.varLoungeButtonName AS varAdditionalInformation FROM tbl_LoungeButtonItemCombination LBIC WHERE LBIC.intInventoryID = 0";
+
             object[][] parms = { };
-            return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms));
+            return ConvertFromDataTableToCartItems(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
         }
-
-
-
 
         public List<InvoiceItems> ReturnInvoiceItemsFromForLoungeSim(string searchText, object[] objPageDetails)
         {
@@ -382,7 +437,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             sqlCmd += " ORDER BY sku DESC";
 
             object[][] parms = { };
-            return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms));
+            return ConvertFromDataTableToCartItems(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
         }
         //Returns string for search accessories
         private string ReturnStringSearchForAccessoriesLoungeSim(ArrayList array)
@@ -476,10 +531,5 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             sqlCmd += ") AS tblResults";
             return sqlCmd;
         }
-
-        
-
-
-
     }
 }

@@ -129,16 +129,17 @@
                 <Columns>
                     <asp:TemplateField HeaderStyle-Width="20%" HeaderText="Edit Item" >
                         <ItemTemplate>
-                            <asp:LinkButton Text="Edit" runat="server" CommandName="Edit" CommandArgument='<%#Eval("sku")%>' CausesValidation="false" />
+                            <asp:LinkButton Text="Edit" runat="server" CommandName="Edit" CommandArgument='<%#Eval("intInvoiceItemID")%>' CausesValidation="false" />
+							<asp:Label ID="lblInvoiceItemID" runat="server" Text='<%#Eval("intInvoiceItemID")%>' Visible="false" />
                         </ItemTemplate>
                         <EditItemTemplate>
-                            <asp:LinkButton Text="Update" runat="server" CommandName="Update" CommandArgument='<%#Eval("sku")%>' CausesValidation="false" />
+                            <asp:LinkButton Text="Update" runat="server" CommandName="Update" CommandArgument='<%#Eval("intInvoiceItemID")%>' CausesValidation="false" />
                             <asp:LinkButton Text="Cancel" runat="server" CommandName="Cancel" CausesValidation="false" />
                         </EditItemTemplate>
                     </asp:TemplateField>
-                    <asp:BoundField DataField="sku" ReadOnly="true" HeaderStyle-Width="20%" HeaderText="SKU" />
-                    <asp:BoundField DataField="description" HeaderStyle-Width="20%" HeaderText="Description" />
-                    <asp:BoundField DataField="cost" HeaderStyle-Width="20%" HeaderText="Cost" DataFormatString="{0:C}" />
+                    <asp:BoundField DataField="varSku" ReadOnly="true" HeaderStyle-Width="20%" HeaderText="SKU" />
+                    <asp:BoundField DataField="varItemDescription" HeaderStyle-Width="20%" HeaderText="Description" />
+                    <asp:BoundField DataField="varItemCost" HeaderStyle-Width="20%" HeaderText="Cost" DataFormatString="{0:C}" />
                 </Columns>
             </asp:GridView>
             <hr />

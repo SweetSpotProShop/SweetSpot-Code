@@ -24,4 +24,15 @@ namespace SweetShop
 
         public TaxTypePerInventoryItem() { }
     }
+
+    public class InvoiceItemTax
+    {
+        public int intInvoiceItemID { get; set; }
+        public int intTaxTypeID { get; set; }
+        public string varTaxName { get; set; }
+        public double fltTaxRate { get; set; }
+        public double fltTaxAmount { get; set; }
+        public bool bitIsTaxCharged { get; set; }
+        public InvoiceItemTax() { }
+    }
 }

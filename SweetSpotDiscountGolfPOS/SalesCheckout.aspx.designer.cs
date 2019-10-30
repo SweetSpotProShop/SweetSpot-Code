@@ -202,15 +202,6 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblGovernmentAmount;
         
         /// <summary>
-        /// btnRemoveGov control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnRemoveGov;
-        
-        /// <summary>
         /// lblProvincial control.
         /// </summary>
         /// <remarks>
@@ -229,13 +220,22 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblProvincialAmount;
         
         /// <summary>
-        /// btnRemoveProv control.
+        /// lblLiquorTax control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnRemoveProv;
+        protected global::System.Web.UI.WebControls.Label lblLiquorTax;
+        
+        /// <summary>
+        /// lblLiquorTaxAmount control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblLiquorTaxAmount;
         
         /// <summary>
         /// lblBalance control.

@@ -29,7 +29,7 @@ namespace SweetSpotDiscountGolfPOS
         Reports R = new Reports();
         TaxManager TM = new TaxManager();
         LocationManager LM = new LocationManager();
-        DatabaseCalls dbc = new DatabaseCalls();
+        DatabaseCalls DBC = new DatabaseCalls();
 
         //SweetShopManager ssm = new SweetShopManager();
         internal static readonly Page aspx;
@@ -71,7 +71,7 @@ namespace SweetSpotDiscountGolfPOS
                         ddlProvince.DataSource = LM.ReturnProvinceDropDown(0, objPageDetails);
                         ddlProvince.DataBind();
                         ddlProvince.SelectedValue = CU.location.intProvinceID.ToString();
-                        ddlTax.DataSource = TM.ReturnTaxListBasedOnDateAndProvinceForUpdate(CU.location.intProvinceID, Convert.ToDateTime(lblCurrentDate.Text), objPageDetails);
+                        ddlTax.DataSource = TM.GatherTaxListFromDateAndProvince(CU.location.intProvinceID, Convert.ToDateTime(lblCurrentDate.Text), objPageDetails);
                         ddlTax.DataBind();
                     }
                 }
@@ -188,7 +188,7 @@ namespace SweetSpotDiscountGolfPOS
                         for (int i = 2; i <= rowCnt; i++) //Starts on 2 because excel starts at 1, and line 1 is headers
                         {
                             //Array of the cells that will need to be checked
-                            int[] cells = { 3, 5, 6, 10, 11, 12, 13, 14, 15, 22 };
+                            int[] cells = { 3, 5, 6, 12, 13, 15, 22 };
                             foreach (int column in cells)
                             {
                                 //If there is no value in the column, proceed
@@ -214,22 +214,22 @@ namespace SweetSpotDiscountGolfPOS
                         {
                             //Calls method to import the requested file
                             DataTable errors = new DataTable();
-                            errors.Columns.Add("sku");
-                            errors.Columns.Add("brandError");
-                            errors.Columns.Add("modelError");
-                            errors.Columns.Add("identifierError");
-                            errors = R.uploadItems(fupItemSheet);
+                            //errors.Columns.Add("sku");
+                            //errors.Columns.Add("brandError");
+                            //errors.Columns.Add("modelError");
+                            //errors.Columns.Add("identifierError");
+                            errors = R.uploadItems(fupItemSheet, CU, objPageDetails);
                             if (errors.Rows.Count != 0)
                             {
                                 //Loops through the errors datatable pulling the sku's from there and entering them into an array
                                 //Then loops through each row on the excel sheet and checks to compare against sku array
                                 //If it is not in there, that row is deleted
-                                int[,] errorList = new int[errors.Rows.Count, 4];
+                                object[,] errorList = new object[errors.Rows.Count, 4];
                                 ArrayList errorSkus = new ArrayList();
                                 for (int i = 0; i < errors.Rows.Count; i++)
                                 {
                                     errorSkus.Add(errors.Rows[i][0]); //SKUs used for row deletion
-                                    errorList[i, 0] = Convert.ToInt32(errors.Rows[i][0]); //SKU
+                                    errorList[i, 0] = errors.Rows[i][0].ToNullSafeString(); //SKU
                                     errorList[i, 1] = Convert.ToInt32(errors.Rows[i][1]); //Brand
                                     errorList[i, 2] = Convert.ToInt32(errors.Rows[i][2]); //Model
                                     errorList[i, 3] = Convert.ToInt32(errors.Rows[i][3]); //Secondary Identifier
@@ -246,19 +246,19 @@ namespace SweetSpotDiscountGolfPOS
                                             worksheet.Cells[i, 3].Style.Fill.PatternType = ExcelFillStyle.Solid;
                                             worksheet.Cells[i, 3].Style.Fill.BackgroundColor.SetColor(Color.Red);
                                             //If brand caused an error
-                                            if (errorList[j,1] == 1)
+                                            if (Convert.ToInt32(errorList[j,1]) == 1)
                                             {
                                                 worksheet.Cells[i, 5].Style.Fill.PatternType = ExcelFillStyle.Solid;
                                                 worksheet.Cells[i, 5].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
                                             }
                                             //If model caused an error
-                                            if(errorList[j, 2] == 1)
+                                            if(Convert.ToInt32(errorList[j, 2]) == 1)
                                             {
                                                 worksheet.Cells[i, 6].Style.Fill.PatternType = ExcelFillStyle.Solid;
                                                 worksheet.Cells[i, 6].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
                                             }
                                             //If secondary identifier(Destination) caused an error
-                                            if (errorList[j,3] == 1)
+                                            if (Convert.ToInt32(errorList[j,3]) == 1)
                                             {
                                                 worksheet.Cells[i, 22].Style.Fill.PatternType = ExcelFillStyle.Solid;
                                                 worksheet.Cells[i, 22].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
@@ -286,11 +286,10 @@ namespace SweetSpotDiscountGolfPOS
                             else
                             {
                                 MessageBox.ShowMessage("Importing Complete", this);
-                            }   
+                            }
                         }
                     }
-                }
-                
+                }                
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -305,34 +304,34 @@ namespace SweetSpotDiscountGolfPOS
             }
             imgLoadingItemImport.Visible = false;
         }
-        protected void btnImportCustomers_Click(object sender, EventArgs e)
-        {
-            //Collects current method for error tracking
-            string method = "btnImportCustomers_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
-            try
-            {
-                //Verifies file has been selected
-                if (fupCustomers.HasFile)
-                {
-                    //Calls method to import the requested file
-                    R.importCustomers(fupCustomers);
-                }
-                //Show that it is done
-                MessageBox.ShowMessage("Importing Complete", this);
-            }
-            //Exception catch
-            catch (ThreadAbortException tae) { }
-            catch (Exception ex)
-            {
-                //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-                //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator.", this);
-            }
-        }
+        //protected void btnImportCustomers_Click(object sender, EventArgs e)
+        //{
+        //    //Collects current method for error tracking
+        //    string method = "btnImportCustomers_Click";
+        //    object[] objPageDetails = { Session["currPage"].ToString(), method };
+        //    try
+        //    {
+        //        //Verifies file has been selected
+        //        if (fupCustomers.HasFile)
+        //        {
+        //            //Calls method to import the requested file
+        //            R.importCustomers(fupCustomers);
+        //        }
+        //        //Show that it is done
+        //        MessageBox.ShowMessage("Importing Complete", this);
+        //    }
+        //    //Exception catch
+        //    catch (ThreadAbortException tae) { }
+        //    catch (Exception ex)
+        //    {
+        //        //Log all info into error table
+        //        ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+        //        //Display message box
+        //        MessageBox.ShowMessage("An Error has occurred and been logged. "
+        //            + "If you continue to receive this message please contact "
+        //            + "your system administrator.", this);
+        //    }
+        //}
         //Exporting
         protected void btnExportAll_Click(object sender, EventArgs e)
         {
@@ -564,7 +563,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                ddlTax.DataSource = TM.ReturnTaxListBasedOnDateAndProvinceForUpdate(Convert.ToInt32(ddlProvince.SelectedValue), Convert.ToDateTime(lblCurrentDate.Text), objPageDetails);
+                ddlTax.DataSource = TM.GatherTaxListFromDateAndProvince(Convert.ToInt32(ddlProvince.SelectedValue), Convert.ToDateTime(lblCurrentDate.Text), objPageDetails);
                 ddlTax.DataBind();
             }
             catch (ThreadAbortException tae) { }
@@ -724,20 +723,13 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     if (txtModelOne.Text.Equals(txtModelTwo.Text))
                     {
-                        string sqlCmd = "IF EXISTS((SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName)) " +
-                                            "BEGIN " +
-                                                "PRINT '1'; " +
-                                            "END " +
-                                        "ELSE " +
-                                            "BEGIN " +
-                                                "INSERT INTO tbl_model VALUES(@varModelName) " +
-                                                "PRINT '0'; " +
-                                             "END";
+                        string sqlCmd = "IF EXISTS((SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName)) "
+                            + "BEGIN PRINT '1'; END ELSE BEGIN INSERT INTO tbl_model VALUES(@varModelName) PRINT '0'; END";
                         object[][] parms =
                         {
                             new object[] {"@varModelName", txtModelOne.Text}
                         };
-                        dbc.executeInsertQuery(sqlCmd, parms);
+                        DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
                         txtModelOne.Text = "";
                         txtModelTwo.Text = "";
                         //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
@@ -777,20 +769,13 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     if (txtBrandOne.Text.Equals(txtBrandTwo.Text))
                     {
-                        string sqlCmd = "IF EXISTS((SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName)) " +
-                                            "BEGIN " +
-                                                "PRINT '1'; " +
-                                            "END " +
-                                        "ELSE " +
-                                            "BEGIN " +
-                                                "INSERT INTO tbl_brand VALUES(@varBrandName) " +
-                                                "PRINT '0'; " +
-                                             "END";
+                        string sqlCmd = "IF EXISTS((SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName)) "
+                            + "BEGIN PRINT '1'; END ELSE BEGIN INSERT INTO tbl_brand VALUES(@varBrandName) PRINT '0'; END";
                         object[][] parms =
                         {
                             new object[] {"@varBrandName", txtBrandOne.Text}
                         };
-                        dbc.executeInsertQuery(sqlCmd, parms);
+                        DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
                         //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
                         txtBrandOne.Text = "";
                         txtBrandTwo.Text = "";

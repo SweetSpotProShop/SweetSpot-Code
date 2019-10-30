@@ -41,7 +41,7 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         calSearchDate.SelectedDate = DateTime.Today;
                         //Binds invoice list to the grid view
-                        grdCurrentOpenSales.DataSource = IM.ReturnCurrentOpenInvoices(CU.location.intLocationID, objPageDetails);
+                        grdCurrentOpenSales.DataSource = IM.ReturnCurrentOpenInvoices(CU.location.intLocationID, CU.location.intProvinceID, objPageDetails);
                         grdCurrentOpenSales.DataBind();
                     }
                 }

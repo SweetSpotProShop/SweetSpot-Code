@@ -18,7 +18,7 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU;
         Reports R = new Reports();
-        private static Cashout cashout;
+        //private static Cashout cashout;
         LocationManager LM = new LocationManager();
 
         protected void Page_Load(object sender, EventArgs e)
@@ -40,9 +40,10 @@ namespace SweetSpotDiscountGolfPOS
                     CU = (CurrentUser)Session["currentUser"];
                     if (!IsPostBack)
                     {
+                        Cashout cashout = new Cashout();
                         //Gathering the start and end dates
                         DateTime selectedDate = DateTime.Parse(Request.QueryString["selectedDate"].ToString());
-                        int locationID = Convert.ToInt32(Request.QueryString["location"]);
+                        int locationID = Convert.ToInt32(Request.QueryString["location"].ToString());
                         object[] args = { selectedDate, locationID };
                         lblCashoutDate.Text = "Cashout on: " + selectedDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
                         if (R.CashoutExists(args, objPageDetails))
@@ -84,12 +85,21 @@ namespace SweetSpotDiscountGolfPOS
                             lblCashDisplay.Text = cashout.fltSystemCountedBasedOnSystemCash.ToString("C");
                             lblGiftCardDisplay.Text = cashout.fltSystemCountedBasedOnSystemGiftCard.ToString("C");
                             lblDebitDisplay.Text = cashout.fltSystemCountedBasedOnSystemDebit.ToString("C");
-                            lblTradeInDisplay.Text = (cashout.fltSystemCountedBasedOnSystemTradeIn * -1).ToString("C");
+                            lblTradeInDisplay.Text = cashout.fltSystemCountedBasedOnSystemTradeIn.ToString("C");
                             lblTotalDisplay.Text = (cashout.fltSystemCountedBasedOnSystemVisa + cashout.fltSystemCountedBasedOnSystemMastercard + cashout.fltSystemCountedBasedOnSystemCash 
                                 + cashout.fltSystemCountedBasedOnSystemGiftCard + cashout.fltSystemCountedBasedOnSystemDebit + (cashout.fltSystemCountedBasedOnSystemTradeIn * -1)).ToString("C");
                             lblGSTDisplay.Text = cashout.fltGovernmentTaxAmount.ToString("C");
                             lblPSTDisplay.Text = cashout.fltProvincialTaxAmount.ToString("C");
                             lblPreTaxDisplay.Text = (cashout.fltSalesSubTotal + (cashout.fltSystemCountedBasedOnSystemTradeIn * -1)).ToString("C");
+
+                            cashout.fltManuallyCountedBasedOnReceiptsTradeIn = 0;
+                            cashout.fltManuallyCountedBasedOnReceiptsGiftCard = 0;
+                            cashout.fltManuallyCountedBasedOnReceiptsCash = 0;
+                            cashout.fltManuallyCountedBasedOnReceiptsDebit = 0;
+                            cashout.fltManuallyCountedBasedOnReceiptsMastercard = 0;
+                            cashout.fltManuallyCountedBasedOnReceiptsVisa = 0;
+                            cashout.fltCashDrawerOverShort = 0;
+                            R.insertCashout(cashout, objPageDetails);
                         }
                     }
                 }
@@ -162,10 +172,10 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnProcessReport_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
-            {
+            {                
                 calculteMethod();
-                object[] args = { cashout.dtmCashoutDate, cashout.intLocationID };
-
+                object[] args = { DateTime.Parse(Request.QueryString["selectedDate"].ToString()), Convert.ToInt32(Request.QueryString["location"].ToString()) };
+                Cashout cashout = R.ReturnSelectedCashout(args, objPageDetails)[0];
 
                 //Creates new cashout
                 cashout.fltManuallyCountedBasedOnReceiptsTradeIn = Convert.ToDouble(txtTradeIn.Text);
@@ -179,15 +189,8 @@ namespace SweetSpotDiscountGolfPOS
                 cashout.bitIsCashoutFinalized = false;
                 cashout.intEmployeeID = CU.employee.intEmployeeID;
 
-                //Processes as done
-                if (R.CashoutExists(args, objPageDetails))
-                {
-                    R.UpdateCashout(cashout, objPageDetails);
-                }
-                else
-                {
-                    R.insertCashout(cashout, objPageDetails);
-                }
+                R.UpdateCashout(cashout, objPageDetails);
+
                 MessageBox.ShowMessage("Cashout has been processed", this);
                 btnPrint.Enabled = true;
                 btnProcessReport.Enabled = false;

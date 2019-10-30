@@ -22,34 +22,34 @@ namespace SweetShop
         public int locationID { get; set; }
 
         public Cart() { }
-        public Cart(int s, string de, int q, double pr, double c, double d, bool p, double retA, bool t, int id, int l)
-        {
-            sku = s;
-            description = de;
-            quantity = q;
-            price = pr;
-            cost = c;
-            itemDiscount = d;
-            percentage = p;
-            returnAmount = retA;
-            isTradeIn = t;
-            typeID = id;
-            locationID = l;
-        }
+        //public Cart(int s, string de, int q, double pr, double c, double d, bool p, double retA, bool t, int id, int l)
+        //{
+        //    sku = s;
+        //    description = de;
+        //    quantity = q;
+        //    price = pr;
+        //    cost = c;
+        //    itemDiscount = d;
+        //    percentage = p;
+        //    returnAmount = retA;
+        //    isTradeIn = t;
+        //    typeID = id;
+        //    locationID = l;
+        //}
 
         //old cart
-        public Cart(int s, string de, int q, double pr, double c, double d, bool p, double retA, bool t, int id)
-        {
-            sku = s;
-            description = de;
-            quantity = q;
-            price = pr;
-            cost = c;
-            itemDiscount = d;
-            percentage = p;
-            returnAmount = retA;
-            isTradeIn = t;
-            typeID = id;
-        }
+        //public Cart(int s, string de, int q, double pr, double c, double d, bool p, double retA, bool t, int id)
+        //{
+        //    sku = s;
+        //    description = de;
+        //    quantity = q;
+        //    price = pr;
+        //    cost = c;
+        //    itemDiscount = d;
+        //    percentage = p;
+        //    returnAmount = retA;
+        //    isTradeIn = t;
+        //    typeID = id;
+        //}
     }
 }

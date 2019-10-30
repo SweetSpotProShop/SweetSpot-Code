@@ -18,7 +18,7 @@ namespace SweetSpotDiscountGolfPOS
         EmployeeManager EM = new EmployeeManager();
         LocationManager LM = new LocationManager();
         CurrentUser CU;
-        private static Employee employee;
+        //private static Employee employee;
         
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -48,7 +48,7 @@ namespace SweetSpotDiscountGolfPOS
                         if (!IsPostBack)
                         {
                             //Create an employee class
-                            employee = EM.ReturnEmployee(Convert.ToInt32(Request.QueryString["employee"].ToString()), objPageDetails)[0];
+                            Employee employee = EM.ReturnEmployee(Convert.ToInt32(Request.QueryString["employee"].ToString()), objPageDetails)[0];
                             //Fill asll lables with current selected employee info
                             txtFirstName.Text = employee.varFirstName.ToString();
                             txtLastName.Text = employee.varLastName.ToString();
@@ -142,7 +142,7 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Collects new employee data to add to database
-                employee = new Employee(); ;
+                Employee employee = new Employee(); ;
                 employee.varFirstName = txtFirstName.Text;
                 employee.varLastName = txtLastName.Text;
                 employee.intJobID = Convert.ToInt32(ddlJob.SelectedValue);
@@ -230,8 +230,8 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Collects employee data to add to database
-                employee = new Employee();
-                employee.intEmployeeID = Convert.ToInt32(Convert.ToInt32(Request.QueryString["employee"].ToString()));
+                Employee employee = new Employee();
+                employee.intEmployeeID = Convert.ToInt32(Request.QueryString["employee"].ToString());
                 employee.varFirstName = txtFirstName.Text;
                 employee.varLastName = txtLastName.Text;
                 employee.intJobID = Convert.ToInt32(ddlJob.SelectedValue);
@@ -346,7 +346,7 @@ namespace SweetSpotDiscountGolfPOS
                 if(Convert.ToInt32(txtNewPassword.Text) == Convert.ToInt32(txtNewPassword2.Text))
                 {
                     //Call method to add the new password
-                    bool bolAdded = EM.saveNewPassword(employee.intEmployeeID, Convert.ToInt32(txtNewPassword.Text), objPageDetails);
+                    bool bolAdded = EM.saveNewPassword(Convert.ToInt32(Request.QueryString["employee"].ToString()), Convert.ToInt32(txtNewPassword.Text), objPageDetails);
                     //Check if the password was added or not
                     if (!bolAdded)
                     {

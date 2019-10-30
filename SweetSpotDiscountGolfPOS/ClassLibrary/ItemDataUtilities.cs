@@ -13,14 +13,9 @@ namespace SweetSpotProShop
     //This class is used for way too much...
     public class ItemDataUtilities
     {
-        private string connectionString;
-        //LocationManager lm = new LocationManager();
-        //Connection String
-        public ItemDataUtilities()
-        {
-            connectionString = ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString;
-        }
-        DatabaseCalls dbc = new DatabaseCalls();
+        DatabaseCalls DBC = new DatabaseCalls();
+        public ItemDataUtilities() { }
+        
         //private List<Accessories> ConvertFromDataTableToAccessories(DataTable dt)
         //{
         //    List<Accessories> accessories = dt.AsEnumerable().Select(row =>
@@ -41,7 +36,7 @@ namespace SweetSpotProShop
         //    }).ToList();
         //    return accessories;
         //}
-        private List<Accessories> ConvertFromDataTableToAccessoriesForInventoryAddNew(DataTable dt, DateTime currentDate, int provinceID)
+        private List<Accessories> ConvertFromDataTableToAccessoriesForInventoryAddNew(DataTable dt, DateTime currentDate, int provinceID, object[] objPageDetails)
         {
             List<Accessories> accessories = dt.AsEnumerable().Select(row =>
             new Accessories
@@ -62,7 +57,7 @@ namespace SweetSpotProShop
             }).ToList();
             foreach (Accessories a in accessories)
             {
-                a.lstTaxTypePerInventoryItem = ReturnTaxTypePerInventoryItem(currentDate, provinceID, a.intInventoryID);
+                a.lstTaxTypePerInventoryItem = ReturnTaxTypePerInventoryItem(currentDate, provinceID, a.intInventoryID, objPageDetails);
             }
             return accessories;
         }
@@ -86,7 +81,7 @@ namespace SweetSpotProShop
         //    }).ToList();
         //    return clothing;
         //}
-        private List<Clothing> ConvertFromDataTableToClothingForInventoryAddNew(DataTable dt, DateTime currentDate, int provinceID)
+        private List<Clothing> ConvertFromDataTableToClothingForInventoryAddNew(DataTable dt, DateTime currentDate, int provinceID, object[] objPageDetails)
         {
             List<Clothing> clothing = dt.AsEnumerable().Select(row =>
             new Clothing
@@ -107,7 +102,7 @@ namespace SweetSpotProShop
             }).ToList();
             foreach (Clothing c in clothing)
             {
-                c.lstTaxTypePerInventoryItem = ReturnTaxTypePerInventoryItem(currentDate, provinceID, c.intInventoryID);
+                c.lstTaxTypePerInventoryItem = ReturnTaxTypePerInventoryItem(currentDate, provinceID, c.intInventoryID, objPageDetails);
             }
             return clothing;
         }
@@ -137,7 +132,7 @@ namespace SweetSpotProShop
         //    }).ToList();
         //    return clubs;
         //}
-        private List<Clubs> ConvertFromDataTableToClubsForInventoryAddNew(DataTable dt, DateTime currentDate, int provinceID)
+        private List<Clubs> ConvertFromDataTableToClubsForInventoryAddNew(DataTable dt, DateTime currentDate, int provinceID, object[] objPageDetails)
         {
             List<Clubs> clubs = dt.AsEnumerable().Select(row =>
             new Clubs
@@ -164,7 +159,7 @@ namespace SweetSpotProShop
             }).ToList();
             foreach (Clubs c in clubs)
             {
-                c.lstTaxTypePerInventoryItem = ReturnTaxTypePerInventoryItem(currentDate, provinceID, c.intInventoryID);
+                c.lstTaxTypePerInventoryItem = ReturnTaxTypePerInventoryItem(currentDate, provinceID, c.intInventoryID, objPageDetails);
             }
             return clubs;
         }
@@ -215,19 +210,19 @@ namespace SweetSpotProShop
                  new object[] { "@intInventoryID", inventoryID }
             };
 
-            List<Clubs> c = ConvertFromDataTableToClubsForInventoryAddNew(dbc.returnDataTableData(sqlCmd, parms), currentDate, provinceID);
+            List<Clubs> c = ConvertFromDataTableToClubsForInventoryAddNew(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), currentDate, provinceID, objPageDetails);
             //List<Clubs> c = ConvertFromDataTableToClubs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
 
             sqlCmd = "SELECT intInventoryID, varSku, varSize, varColour, varGender, varStyle, fltPrice, fltCost, intBrandID, intQuantity, "
                 + "intItemTypeID, intLocationID, varAdditionalInformation FROM tbl_clothing WHERE intInventoryID = @intInventoryID";
 
-            List<Clothing> cl = ConvertFromDataTableToClothingForInventoryAddNew(dbc.returnDataTableData(sqlCmd, parms), currentDate, provinceID);
+            List<Clothing> cl = ConvertFromDataTableToClothingForInventoryAddNew(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), currentDate, provinceID, objPageDetails);
             //List<Clothing> cl = ConvertFromDataTableToClothing(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
 
             sqlCmd = "SELECT intInventoryID, varSku, varSize, varColour, fltPrice, fltCost, intBrandID, intModelID, varTypeOfAccessory, "
                 + "intQuantity, intItemTypeID, intLocationID, varAdditionalInformation FROM tbl_accessories WHERE intInventoryID = @intInventoryID";
 
-            List<Accessories> a = ConvertFromDataTableToAccessoriesForInventoryAddNew(dbc.returnDataTableData(sqlCmd, parms), currentDate, provinceID);
+            List<Accessories> a = ConvertFromDataTableToAccessoriesForInventoryAddNew(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), currentDate, provinceID, objPageDetails);
             //List<Accessories> a = ConvertFromDataTableToAccessories(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
 
             List<object> o = new List<object>();
@@ -236,8 +231,9 @@ namespace SweetSpotProShop
             o.AddRange(c);
             return o;
         }
-        private List<TaxTypePerInventoryItem> ReturnTaxTypePerInventoryItem(DateTime currentDate, int provinceID, int inventoryID)
+        private List<TaxTypePerInventoryItem> ReturnTaxTypePerInventoryItem(DateTime currentDate, int provinceID, int inventoryID, object[] objPageDetails)
         {
+            string strQueryName = "RetuernTaxTypePerInventoryItem";
             string sqlCmd = "SELECT intInventoryID, TR.intTaxID, varTaxName, fltTaxRate, bitChargeTax FROM tbl_taxRate TR JOIN tbl_taxTypePerInventoryItem "
                 + "TTPII ON TTPII.intTaxID = TR.intTaxID JOIN tbl_taxType TT ON TT.intTaxID = TTPII.intTaxID JOIN(SELECT intTaxID, MAX(dtmTaxEffectiveDate) AS MTD "
                 + "FROM tbl_taxRate WHERE dtmTaxEffectiveDate <= @dtmTaxEffectiveDate AND intProvinceID = @intProvinceID GROUP BY intTaxID) TRBP ON TRBP.intTaxID = "
@@ -249,7 +245,7 @@ namespace SweetSpotProShop
                 new object[] { "@intInventoryID", inventoryID }
             };
 
-            return ConvertFromDataTableToTaxTypePerInventoryItem(dbc.returnDataTableData(sqlCmd, parms));
+            return ConvertFromDataTableToTaxTypePerInventoryItem(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
         }
         private List<TaxTypePerInventoryItem> ConvertFromDataTableToTaxTypePerInventoryItem(DataTable dt)
         {
@@ -277,7 +273,7 @@ namespace SweetSpotProShop
                  new object[] { "@modelID", modelID }
             };
             //Returns the model name
-            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
+            return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
         }
         //Return Brand string created by Nathan and Tyler **getBrandName
@@ -290,7 +286,7 @@ namespace SweetSpotProShop
                  new object[] { "@brandID", brandID }
             };
             //Returns the brand name
-            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
+            return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
         }
         //Returns max sku from the skuNumber table based on itemType and directs code to store it
@@ -299,9 +295,9 @@ namespace SweetSpotProShop
             string strQueryName = "ReturnMaxSku";
             string sqlCmd = "SELECT CONCAT(varStoreCode, CASE WHEN @intItemTypeID = 1 THEN varClubCode WHEN @intItemTypeID = 2 THEN varAccessoryCode "
                 + "WHEN @intItemTypeID = 3 THEN varClothingCode END, CASE WHEN LEN(CAST(intSetInventoryNumber AS INT)) < 6 THEN RIGHT(RTRIM("
-                + "'000000' + CAST(intSetInventroyNumber AS VARCHAR(6))),6) ELSE CAST(intSetInventoryNumber AS VARCHAR(MAX)) END) AS "
+                + "'000000' + CAST(intSetInventoryNumber AS VARCHAR(6))),6) ELSE CAST(intSetInventoryNumber AS VARCHAR(MAX)) END) AS "
                 + "varInventorySKU FROM tbl_storedStoreNumbers WHERE intLocationID = @intLocationID";
-            
+
             object[][] parms =
             {
                  new object[] { "@intItemTypeID", itemTypeID },
@@ -315,8 +311,8 @@ namespace SweetSpotProShop
                  new object[] { "@intLocationID", locationID }
             };
 
-            string inventorySku = dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
-            string inventoryID = dbc.MakeDataBaseCallToReturnString(sqlCmd2, parms2);
+            string inventorySku = DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+            string inventoryID = DBC.MakeDataBaseCallToReturnString(sqlCmd2, parms2, objPageDetails, strQueryName);
             string[] inventory = { inventorySku, inventoryID };
             StoreMaxSku(itemTypeID, locationID, objPageDetails);
             //Returns the new max sku
@@ -350,14 +346,26 @@ namespace SweetSpotProShop
                  new object[] { "@intLocationID", locationID }
             };
 
-            dbc.executeInsertQuery(sqlCmd, parms);
-
-
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             string sqlCmd2 = "UPDATE tbl_storedStoreNumbers SET intInventoryIDTracking = intInventoryIDTracking + 1";
             object[][] parms2 = { };
-            dbc.executeInsertQuery(sqlCmd2, parms2);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd2, parms2, objPageDetails, strQueryName);
         }
-
+        public int CheckIfSkuAlreadyInDatabase(string sku, int itemTypeID, object[] objPageDetails)
+        {
+            return ReturnInventoryIDFromSKU(sku, itemTypeID, objPageDetails);
+        }
+        private int ReturnInventoryIDFromSKU(string sku, int itemTypeID, object[] objPageDetails)
+        {
+            string strQueryName = "ReturnInventoryIDFromSKU";
+            InvoiceItemsManager IIM = new InvoiceItemsManager();
+            string sqlCmd = "SELECT intInventoryID FROM tbl_" + IIM.ReturnTableNameFromTypeID(itemTypeID, objPageDetails) + " WHERE varSku = @varSku";
+            object[][] parms =
+            {
+                new object[] { "@varSku", sku }
+            };
+            return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
+        }
         //**Add Item**
         //Adds new Item to tables Nathan created
         public int AddNewItemToDatabase(object o, object[] objPageDetails)
@@ -367,33 +375,42 @@ namespace SweetSpotProShop
             if (o is Clubs)
             {
                 Clubs club = o as Clubs;
-                inventoryID = AddClubToDatabase(club, objPageDetails);
+                AddClubToDatabase(club, objPageDetails);
+                inventoryID = club.intInventoryID;
             }
             else if (o is Accessories)
             {
                 Accessories accessory = o as Accessories;
-                inventoryID = AddAccessoryToDatabase(accessory, objPageDetails);
+                AddAccessoryToDatabase(accessory, objPageDetails);
+                inventoryID = accessory.intInventoryID;
             }
             else if (o is Clothing)
             {
                 Clothing clothing = o as Clothing;
-                inventoryID = AddClothingToDatabase(clothing, objPageDetails);
+                AddClothingToDatabase(clothing, objPageDetails);
+                inventoryID = clothing.intInventoryID;
             }
             //Returns the sku of the new item
-            SetTaxesForNewInventory(inventoryID, true);
+            SetTaxesForNewInventory(inventoryID, objPageDetails);
             return inventoryID;
         }
-        public void SetTaxesForNewInventory(int inventoryID, bool chargeTax)
+        public void SetTaxesForNewInventory(int inventoryID, object[] objPageDetails)
         {
             TaxManager TM = new TaxManager();
-            DataTable lTax = TM.ReturnTaxList();
+            DataTable lTax = TM.ReturnTaxList(objPageDetails);
             foreach (DataRow TR in lTax.Rows)
             {
-                SaveTaxIDForNewInventoryItem(inventoryID, Convert.ToInt32(TR[0]), chargeTax);
+                bool chargeTax = true;
+                if (TM.CheckForLiquorTax(Convert.ToInt32(TR[0]), objPageDetails))
+                {
+                    chargeTax = false;
+                }
+                SaveTaxIDForNewInventoryItem(inventoryID, Convert.ToInt32(TR[0]), chargeTax, objPageDetails);
             }
         }
-        private void SaveTaxIDForNewInventoryItem(int inventoryID, int taxID, bool chargeTax)
+        public void SaveTaxIDForNewInventoryItem(int inventoryID, int taxID, bool chargeTax, object[] objPageDetails)
         {
+            string strQueryName = "SaveTaxIDForNewInventoryItem";
             string sqlCmd = "INSERT INTO tbl_taxTypePerInventoryItem VALUES("
                 + "@intInventoryID, @intTaxID, @bitChargeTax)";
             object[][] parms =
@@ -402,104 +419,107 @@ namespace SweetSpotProShop
                 new object[] { "@intTaxID", taxID },
                 new object[] { "@bitChargeTax", chargeTax }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
 
         //These three actully add the item to specific tables Nathan created
-        private int AddClubToDatabase(Clubs club, object[] objPageDetails)
+        private void AddClubToDatabase(Clubs club, object[] objPageDetails)
         {
             string strQueryName = "AddClubToDatabase";
-            string sqlCmd = "INSERT INTO tbl_clubs VALUES(@varSku, @intBrandID, @intModelID, @varTypeOfClub, @varShaftType, @varNumberOfClubs, "
+            string sqlCmd = "INSERT INTO tbl_clubs VALUES(@intInventoryID, @varSku, @intBrandID, @intModelID, @varTypeOfClub, @varShaftType, @varNumberOfClubs, "
                 + "@fltPremiumCharge, @fltCost, @fltPrice, @intQuantity, @varClubSpecification, @varShaftSpecification, @varShaftFlexability, "
                 + "@varClubDexterity, @intItemTypeID, @intLocationID, @bitIsUsedProduct, @varAdditionalInformation)";
 
             object[][] parms =
             {
-                 new object[] { "@varSku", club.varSku },
-                 new object[] { "@intBrandID", club.intBrandID },
-                 new object[] { "@intModelID", club.intModelID },
-                 new object[] { "@varTypeOfClub", club.varTypeOfClub },
-                 new object[] { "@varShaftType", club.varShaftType },
-                 new object[] { "@varNumberOfClubs", club.varNumberOfClubs },
-                 new object[] { "@fltPremiumCharge", club.fltPremiumCharge },
-                 new object[] { "@fltCost", club.fltCost },
-                 new object[] { "@fltPrice", club.fltPrice },
-                 new object[] { "@intQuantity", club.intQuantity },
-                 new object[] { "@varClubSpecification", club.varClubSpecification },
-                 new object[] { "@varShaftSpecification", club.varShaftSpecification },
-                 new object[] { "@varShaftFlexability", club.varShaftFlexability },
-                 new object[] { "@varClubDexterity", club.varClubDexterity },
-                 new object[] { "@intItemTypeID", club.intItemTypeID },
-                 new object[] { "@intLocationID", club.intLocationID },
-                 new object[] { "@bitIsUsedProduct", club.bitIsUsedProduct },
-                 new object[] { "@varAdditionalInformation", club.varAdditionalInformation }
+                new object[] { "@intInventoryID", club.intInventoryID},
+                new object[] { "@varSku", club.varSku },
+                new object[] { "@intBrandID", club.intBrandID },
+                new object[] { "@intModelID", club.intModelID },
+                new object[] { "@varTypeOfClub", club.varTypeOfClub },
+                new object[] { "@varShaftType", club.varShaftType },
+                new object[] { "@varNumberOfClubs", club.varNumberOfClubs },
+                new object[] { "@fltPremiumCharge", club.fltPremiumCharge },
+                new object[] { "@fltCost", club.fltCost },
+                new object[] { "@fltPrice", club.fltPrice },
+                new object[] { "@intQuantity", club.intQuantity },
+                new object[] { "@varClubSpecification", club.varClubSpecification },
+                new object[] { "@varShaftSpecification", club.varShaftSpecification },
+                new object[] { "@varShaftFlexability", club.varShaftFlexability },
+                new object[] { "@varClubDexterity", club.varClubDexterity },
+                new object[] { "@intItemTypeID", club.intItemTypeID },
+                new object[] { "@intLocationID", club.intLocationID },
+                new object[] { "@bitIsUsedProduct", club.bitIsUsedProduct },
+                new object[] { "@varAdditionalInformation", club.varAdditionalInformation }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
-            return ReturnClubIDFromClubStats(parms, objPageDetails);
+            //return ReturnClubIDFromClubStats(parms, objPageDetails);
         }
-        private int AddAccessoryToDatabase(Accessories accessory, object[] objPageDetails)
+        private void AddAccessoryToDatabase(Accessories accessory, object[] objPageDetails)
         {
             string strQueryName = "AddAccessoryToDatabase";
-            string sqlCmd = "INSERT INTO tbl_accessories VALUES(@varSku, @varSize, @varColour, @fltPrice, @fltCost, @intBrandID, @intModelID, "
+            string sqlCmd = "INSERT INTO tbl_accessories VALUES(@intInventoryID, @varSku, @varSize, @varColour, @fltPrice, @fltCost, @intBrandID, @intModelID, "
                 + "@varTypeOfAccessory, @intQuantity, @intItemTypeID, @intLocationID, @varAdditionalInformation)";
 
             object[][] parms =
             {
-                 new object[] { "@varSku", accessory.varSku },
-                 new object[] { "@varSize", accessory.varSize },
-                 new object[] { "@varColour", accessory.varColour },
-                 new object[] { "@fltPrice", accessory.fltPrice },
-                 new object[] { "@fltCost", accessory.fltCost },
-                 new object[] { "@intBrandID", accessory.intBrandID },
-                 new object[] { "@intModelID", accessory.intModelID },
-                 new object[] { "@varTypeOfAccessory", accessory.varTypeOfAccessory },
-                 new object[] { "@intQuantity", accessory.intQuantity },
-                 new object[] { "@intItemTypeID", accessory.intItemTypeID },
-                 new object[] { "@intLocationID", accessory.intLocationID },
-                 new object[] { "@varAdditionalInformation", accessory.varAdditionalInformation }
+                new object[] { "@intInventoryID", accessory.intInventoryID },
+                new object[] { "@varSku", accessory.varSku },
+                new object[] { "@varSize", accessory.varSize },
+                new object[] { "@varColour", accessory.varColour },
+                new object[] { "@fltPrice", accessory.fltPrice },
+                new object[] { "@fltCost", accessory.fltCost },
+                new object[] { "@intBrandID", accessory.intBrandID },
+                new object[] { "@intModelID", accessory.intModelID },
+                new object[] { "@varTypeOfAccessory", accessory.varTypeOfAccessory },
+                new object[] { "@intQuantity", accessory.intQuantity },
+                new object[] { "@intItemTypeID", accessory.intItemTypeID },
+                new object[] { "@intLocationID", accessory.intLocationID },
+                new object[] { "@varAdditionalInformation", accessory.varAdditionalInformation }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
-            return ReturnAccessoryIDFromAccessoryStats(parms, objPageDetails);
+            //return ReturnAccessoryIDFromAccessoryStats(parms, objPageDetails);
         }
-        private int AddClothingToDatabase(Clothing clothing, object[] objPageDetails)
+        private void AddClothingToDatabase(Clothing clothing, object[] objPageDetails)
         {
             string strQueryName = "AddClothingToDatabase";
-            string sqlCmd = "INSERT INTO tbl_clothing VALUES(@varSku, @varSize, @varColour, @varGender, @varStyle, @fltPrice, @fltCost, "
+            string sqlCmd = "INSERT INTO tbl_clothing VALUES(@intInventoryID, @varSku, @varSize, @varColour, @varGender, @varStyle, @fltPrice, @fltCost, "
                 + "@intBrandID, @intQuantity, @intItemTypeID, @intLocationID, @varAdditionalInformation)";
 
             object[][] parms =
             {
-                 new object[] { "@varSku", clothing.varSku },
-                 new object[] { "@varSize", clothing.varSize },
-                 new object[] { "@varColour", clothing.varColour },
-                 new object[] { "@varGender", clothing.varGender },
-                 new object[] { "@varStyle", clothing.varStyle },
-                 new object[] { "@fltPrice", clothing.fltPrice },
-                 new object[] { "@fltCost", clothing.fltCost },
-                 new object[] { "@intBrandID", clothing.intBrandID },
-                 new object[] { "@intQuantity", clothing.intQuantity },
-                 new object[] { "@intItemTypeID", clothing.intItemTypeID },
-                 new object[] { "@intLocationID", clothing.intLocationID },
-                 new object[] { "@varAdditionalInformation", clothing.varAdditionalInformation }
+                new object[] { "@intInventoryID", clothing.intInventoryID },
+                new object[] { "@varSku", clothing.varSku },
+                new object[] { "@varSize", clothing.varSize },
+                new object[] { "@varColour", clothing.varColour },
+                new object[] { "@varGender", clothing.varGender },
+                new object[] { "@varStyle", clothing.varStyle },
+                new object[] { "@fltPrice", clothing.fltPrice },
+                new object[] { "@fltCost", clothing.fltCost },
+                new object[] { "@intBrandID", clothing.intBrandID },
+                new object[] { "@intQuantity", clothing.intQuantity },
+                new object[] { "@intItemTypeID", clothing.intItemTypeID },
+                new object[] { "@intLocationID", clothing.intLocationID },
+                new object[] { "@varAdditionalInformation", clothing.varAdditionalInformation }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
-            return ReturnClothingIDFromClothingStats(parms, objPageDetails);
+            //return ReturnClothingIDFromClothingStats(parms, objPageDetails);
         }
         private int ReturnClubIDFromClubStats(object[][] parms, object[] objPageDetails)
         {
             string strQueryName = "ReturnClubIDFromClubStats";
             string sqlCmd = "SELECT intInventoryID FROM tbl_clubs WHERE varSku = @varSku AND intBrandID = @intBrandID AND intModelID = @intModelID "
                 + "AND varTypeOfClub = @varTypeOfClub AND varShaftType = @varShaftType AND varNumberOfClubs = @varNumberOfClubs AND fltPremiumCharge "
-                + "= @fltPremiumCharge AND fltCost = @fltCost AND fltPrice = @fltPrice AND intQuantity = @intQuantity AND varCkubSpecification = "
+                + "= @fltPremiumCharge AND fltCost = @fltCost AND fltPrice = @fltPrice AND intQuantity = @intQuantity AND varClubSpecification = "
                 + "@varClubSpecification AND varShaftSpecification = @varShaftSpecification AND varShaftFlexability = @ varShaftFlexability AND "
                 + "varClubDexterity = @varClubDexterity AND intItemTypeID = @intItemTypeID AND intLocationID = @intLocationID AND bitIsUsedProduct = "
                 + "@bitIsUsedProduct AND varAdditionalInformation = @varAdditionalInformation";
 
-            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms);
+            return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
         }
         private int ReturnAccessoryIDFromAccessoryStats(object[][] parms, object[] objPageDetails)
         {
@@ -509,7 +529,7 @@ namespace SweetSpotProShop
                 + "@varTypeOfAccessory AND intQuantity = @intQuantity AND intItemTypeID = @intItemTypeID AND intLocationID = @intLocationID AND "
                 + "varAdditionalInformation = @varAdditionalInformation";
 
-            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms);
+            return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
         }
         private int ReturnClothingIDFromClothingStats(object[][] parms, object[] objPageDetails)
         {
@@ -519,7 +539,7 @@ namespace SweetSpotProShop
                 + "AND intQuantity = @intQuantity AND intItemTypeID = @intItemTypeID AND intLocationID = @intLocationID AND "
                 + "varAdditionalInformation = @varAdditionalInformation";
 
-            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms);
+            return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
         }
         //**Update Item**
         public int UpdateItemInDatabase(object o, object[] objPageDetails)
@@ -578,7 +598,7 @@ namespace SweetSpotProShop
                  new object[] { "@bitIsUsedProduct", club.bitIsUsedProduct },
                  new object[] { "@varAdditionalInformation", club.varAdditionalInformation }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         private void UpdateAccessoryInDatabase(Accessories accessory, object[] objPageDetails)
@@ -602,7 +622,7 @@ namespace SweetSpotProShop
                  new object[] { "@intLocationID", accessory.intLocationID },
                  new object[] { "@varAdditionalInformation", accessory.varAdditionalInformation }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         private void UpdateClothingInDatabase(Clothing clothing, object[] objPageDetails)
@@ -626,171 +646,172 @@ namespace SweetSpotProShop
                  new object[] { "@intLocationID", clothing.intLocationID },
                  new object[] { "@varAdditionalInformation", clothing.varAdditionalInformation }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
-        public void SaveInventoryChanges(ItemChangeTracking changeItem, object[] extra)
+        public void SaveInventoryChanges(ItemChangeTracking changeItem, object[] extra, object[] objPageDetails)
         {
-            StoreNewAndOldInventoryChanges(changeItem, extra);
+            StoreNewAndOldInventoryChanges(changeItem, extra, objPageDetails);
         }
 
-        private void StoreNewAndOldInventoryChanges(ItemChangeTracking changeItem, object[] extra)
+        private void StoreNewAndOldInventoryChanges(ItemChangeTracking changeItem, object[] extra, object[] objPageDetails)
         {
+            string strQueryName = "StoreNewAndOldInventoryChanges";
             string sqlCmd = "INSERT INTO tbl_itemChangeTracking VALUES(@dtmChangeDate, @dtmChangeTime, @intEmployeeID, @intLocationID, "
-                + "@intInventoryID, @originalCost, @newCost, @originalPrice, @newPrice, @originalQuantity, "
-                + "@newQuantity, @originalDescription, @newDescription)";
+                + "@intInventoryID, @fltOriginalCost, @fltNewCost, @fltOriginalPrice, @fltNewPrice, @intOriginalQuantity, "
+                + "@intNewQuantity, @varOriginalDescription, @varNewDescription)";
             object[][] parms =
             {
                 new object[] { "@dtmChangeDate", DateTime.Now },
                 new object[] { "@dtmChangeTime", DateTime.Now },
                 new object[] { "@intEmployeeID", extra[0] },
                 new object[] { "@intLocationID", extra[1] },
-                new object[] { "@intSku", changeItem.intInventoryID },
-                new object[] { "@originalCost", changeItem.fltOriginalCost },
-                new object[] { "@newCost", changeItem.fltNewCost },
-                new object[] { "@originalPrice", changeItem.fltOriginalPrice },
-                new object[] { "@newPrice", changeItem.fltNewPrice },
-                new object[] { "@originalQuantity", changeItem.intOriginalQuantity },
-                new object[] { "@newQuantity", changeItem.intNewQuantity },
-                new object[] { "@originalDescription", changeItem.varOriginalDescription },
-                new object[] { "@newDescription", changeItem.varNewDescription }
+                new object[] { "@intInventoryID", changeItem.intInventoryID },
+                new object[] { "@fltOriginalCost", changeItem.fltOriginalCost },
+                new object[] { "@fltNewCost", changeItem.fltNewCost },
+                new object[] { "@fltOriginalPrice", changeItem.fltOriginalPrice },
+                new object[] { "@fltNewPrice", changeItem.fltNewPrice },
+                new object[] { "@intOriginalQuantity", changeItem.intOriginalQuantity },
+                new object[] { "@intNewQuantity", changeItem.intNewQuantity },
+                new object[] { "@varOriginalDescription", changeItem.varOriginalDescription },
+                new object[] { "@varNewDescription", changeItem.varNewDescription }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         //**OLD CODE**
         //**Used in Reports.importItems
-        public int modelName(string modelN)
-        {
-            int model = 0;
-            SqlConnection conn = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
+        //public int modelName(string modelN)
+        //{
+        //    int model = 0;
+        //    SqlConnection conn = new SqlConnection(connectionString);
+        //    SqlCommand cmd = new SqlCommand();
 
-            cmd.Connection = conn;
-            cmd.CommandText = "Select modelID from tbl_model where modelName = @modelName";
-            cmd.Parameters.AddWithValue("modelName", modelN);
-            conn.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
+        //    cmd.Connection = conn;
+        //    cmd.CommandText = "Select modelID from tbl_model where modelName = @modelName";
+        //    cmd.Parameters.AddWithValue("modelName", modelN);
+        //    conn.Open();
+        //    SqlDataReader reader = cmd.ExecuteReader();
 
-            while (reader.Read())
-            {
-                int m = Convert.ToInt32(reader["modelID"]);
-                model = m;
-            }
-            conn.Close();
+        //    while (reader.Read())
+        //    {
+        //        int m = Convert.ToInt32(reader["modelID"]);
+        //        model = m;
+        //    }
+        //    conn.Close();
 
-            if (model == 0)
-            {
-                model = insertModel(modelN);
-            }
-            //Returns the modelID 
-            return model;
-        }
-        //**Used in Reports.importItems
-        public int brandName(string brandN)
-        {
-            SqlConnection conn = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
+        //    if (model == 0)
+        //    {
+        //        model = insertModel(modelN);
+        //    }
+        //    //Returns the modelID 
+        //    return model;
+        //}
+        ////**Used in Reports.importItems
+        //public int brandName(string brandN)
+        //{
+        //    SqlConnection conn = new SqlConnection(connectionString);
+        //    SqlCommand cmd = new SqlCommand();
 
-            cmd.Connection = conn;
-            cmd.CommandText = "Select brandID from tbl_brand where brandName = '" + brandN + "'";
+        //    cmd.Connection = conn;
+        //    cmd.CommandText = "Select brandID from tbl_brand where brandName = '" + brandN + "'";
 
-            conn.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            int brand = 0;
+        //    conn.Open();
+        //    SqlDataReader reader = cmd.ExecuteReader();
+        //    int brand = 0;
 
-            while (reader.Read())
-            {
-                int b = Convert.ToInt32(reader["brandID"]);
-                brand = b;
-            }
-            conn.Close();
-            if (brand == 0)
-            {
-                brand = insertBrand(brandN);
-            }
-            //Returns the brandID
-            return brand;
-        }
+        //    while (reader.Read())
+        //    {
+        //        int b = Convert.ToInt32(reader["brandID"]);
+        //        brand = b;
+        //    }
+        //    conn.Close();
+        //    if (brand == 0)
+        //    {
+        //        brand = insertBrand(brandN);
+        //    }
+        //    //Returns the brandID
+        //    return brand;
+        //}
         //**Used in ItemDataUtilities.brandName
-        public int insertBrand(string brandName)
-        {
-            int brandID = 0;
-            SqlConnection conn = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = conn;
-            cmd.CommandText = "INSERT INTO tbl_brand (brandName) OUTPUT Inserted.brandID VALUES(@brandName); ";
-            cmd.Parameters.AddWithValue("brandName", brandName);
-            conn.Open();
-            brandID = (int)cmd.ExecuteScalar();
-            conn.Close();
-            //Returns the brandID of the newly added brand
-            return brandID;
-        }
-        //**Used in ItemDataUtilities.modelName
-        public int insertModel(string modelName)
-        {
-            int modelID = 0;
-            SqlConnection conn = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = conn;
-            cmd.CommandText = "INSERT INTO tbl_model (modelName) OUTPUT Inserted.modelID VALUES(@modelName); ";
-            cmd.Parameters.AddWithValue("modelName", modelName);
-            conn.Open();
-            modelID = (int)cmd.ExecuteScalar();
-            conn.Close();
-            //Returns the modelID of the newly added model
-            return modelID;
-        }
+        //public int insertBrand(string brandName)
+        //{
+        //    int brandID = 0;
+        //    SqlConnection conn = new SqlConnection(connectionString);
+        //    SqlCommand cmd = new SqlCommand();
+        //    cmd.Connection = conn;
+        //    cmd.CommandText = "INSERT INTO tbl_brand (brandName) OUTPUT Inserted.brandID VALUES(@brandName); ";
+        //    cmd.Parameters.AddWithValue("brandName", brandName);
+        //    conn.Open();
+        //    brandID = (int)cmd.ExecuteScalar();
+        //    conn.Close();
+        //    //Returns the brandID of the newly added brand
+        //    return brandID;
+        //}
+        ////**Used in ItemDataUtilities.modelName
+        //public int insertModel(string modelName)
+        //{
+        //    int modelID = 0;
+        //    SqlConnection conn = new SqlConnection(connectionString);
+        //    SqlCommand cmd = new SqlCommand();
+        //    cmd.Connection = conn;
+        //    cmd.CommandText = "INSERT INTO tbl_model (modelName) OUTPUT Inserted.modelID VALUES(@modelName); ";
+        //    cmd.Parameters.AddWithValue("modelName", modelName);
+        //    conn.Open();
+        //    modelID = (int)cmd.ExecuteScalar();
+        //    conn.Close();
+        //    //Returns the modelID of the newly added model
+        //    return modelID;
+        //}
         //**Used in SweetShopManager.transferTradeInStart
-        public int[] tradeInSkuRange(int location)
-        {
-            int[] range = new int[2];
-            int upper = 0;
-            int lower = 0;
+        //public int[] tradeInSkuRange(int location)
+        //{
+        //    int[] range = new int[2];
+        //    int upper = 0;
+        //    int lower = 0;
 
-            SqlConnection conn = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
+        //    SqlConnection conn = new SqlConnection(connectionString);
+        //    SqlCommand cmd = new SqlCommand();
 
-            cmd.Connection = conn;
-            cmd.CommandText = "Select skuStartAt, skuStopAt from tbl_tradeInSkusForCart where locationID = " + location.ToString();
-            conn.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
+        //    cmd.Connection = conn;
+        //    cmd.CommandText = "Select skuStartAt, skuStopAt from tbl_tradeInSkusForCart where locationID = " + location.ToString();
+        //    conn.Open();
+        //    SqlDataReader reader = cmd.ExecuteReader();
 
-            while (reader.Read())
-            {
-                upper = Convert.ToInt32(reader["skuStopAt"].ToString());
-                lower = Convert.ToInt32(reader["skuStartAt"].ToString());
-            }
-            //Setting the values in the array
-            range[0] = lower;
-            range[1] = upper;
+        //    while (reader.Read())
+        //    {
+        //        upper = Convert.ToInt32(reader["skuStopAt"].ToString());
+        //        lower = Convert.ToInt32(reader["skuStartAt"].ToString());
+        //    }
+        //    //Setting the values in the array
+        //    range[0] = lower;
+        //    range[1] = upper;
 
 
-            conn.Close();
-            //Returns the range
-            return range;
-        }
-        //**Used in SweetShopManager.getSingleReceipt
-        public string returnMOPIntasName(int mopN)
-        {
-            SqlConnection conn = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
+        //    conn.Close();
+        //    //Returns the range
+        //    return range;
+        //}
+        ////**Used in SweetShopManager.getSingleReceipt
+        //public string returnMOPIntasName(int mopN)
+        //{
+        //    SqlConnection conn = new SqlConnection(connectionString);
+        //    SqlCommand cmd = new SqlCommand();
 
-            cmd.Connection = conn;
-            cmd.CommandText = "Select methodDesc from tbl_methodOfPayment where methodID = @mopN";
-            cmd.Parameters.AddWithValue("mopN", mopN);
-            conn.Open();
-            SqlDataReader reader = cmd.ExecuteReader();
-            string mop = "";
+        //    cmd.Connection = conn;
+        //    cmd.CommandText = "Select methodDesc from tbl_methodOfPayment where methodID = @mopN";
+        //    cmd.Parameters.AddWithValue("mopN", mopN);
+        //    conn.Open();
+        //    SqlDataReader reader = cmd.ExecuteReader();
+        //    string mop = "";
 
-            while (reader.Read())
-            {
-                mop = Convert.ToString(reader["methodDesc"]);
-            }
-            conn.Close();
-            //Returns the methodID
-            return mop;
-        }
+        //    while (reader.Read())
+        //    {
+        //        mop = Convert.ToString(reader["methodDesc"]);
+        //    }
+        //    conn.Close();
+        //    //Returns the methodID
+        //    return mop;
+        //}
     }
 }

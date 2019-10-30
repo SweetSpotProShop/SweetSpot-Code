@@ -27,7 +27,6 @@ namespace SweetSpotDiscountGolfPOS
         double salesPoT = 0;
         double pm = 0;
         double avp = 0;
-        string timeFrame;
         DataTable stats = new DataTable();
 
         protected void Page_Load(object sender, EventArgs e)
@@ -52,7 +51,7 @@ namespace SweetSpotDiscountGolfPOS
                     DateTime[] reportDates = (DateTime[])passing[0];
                     DateTime startDate = reportDates[0];
                     DateTime endDate = reportDates[1];
-                    timeFrame = (string)passing[1];
+                    int timeFrame = Convert.ToInt32(passing[1]);
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
@@ -63,50 +62,50 @@ namespace SweetSpotDiscountGolfPOS
                         lblDates.Text = "Store stats for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy");
                     }
                     //Binding the gridview
-                    if (timeFrame.Equals("Day"))
-                    {
-                        stats = R.returnStoreStats(startDate, endDate, 1, objPageDetails);
-                    }
-                    else if (timeFrame.Equals("Week"))
-                    {
-                        stats = R.returnStoreStats(startDate, endDate, 2, objPageDetails);
-                    }
-                    else if (timeFrame.Equals("Month"))
-                    {
-                        stats = R.returnStoreStats(startDate, endDate, 3, objPageDetails);
-                    }
+                    //if (timeFrame.Equals("Day"))
+                    //{
+                        stats = R.returnStoreStats(startDate, endDate, timeFrame, objPageDetails);
+                    //}
+                    //else if (timeFrame.Equals("Week"))
+                    //{
+                    //    stats = R.returnStoreStats(startDate, endDate, 2, objPageDetails);
+                    //}
+                    //else if (timeFrame.Equals("Month"))
+                    //{
+                    //    stats = R.returnStoreStats(startDate, endDate, 3, objPageDetails);
+                    //}
                     //Checking if there are any values
-                    if (stats.Rows.Count > 0)
-                    {
+                    //if (stats.Rows.Count > 0)
+                    //{
                         grdStats.DataSource = stats;
                         grdStats.DataBind();
-                        if(grdStats.Rows.Count > 0)
-                        {
-                            if (timeFrame.Equals("Day"))
+                    //    if(grdStats.Rows.Count > 0)
+                    //    {
+                            if (timeFrame.Equals(1))
                             {
                                 grdStats.HeaderRow.Cells[2].Text = "Date";
                             }
-                            else if (timeFrame.Equals("Week"))
+                            else if (timeFrame.Equals(2))
                             {
                                 grdStats.HeaderRow.Cells[2].Text = "Week Start Date";
                             }
-                            else if (timeFrame.Equals("Month"))
+                            else if (timeFrame.Equals(3))
                             {
                                 grdStats.Columns[2].Visible = false;
                             }
-                        }
-                    }
-                    else
-                    {
-                        if (startDate == endDate)
-                        {
-                            lblDates.Text = "There are no stats for: " + startDate.ToString("dd/MMM/yy");
-                        }
-                        else
-                        {
-                            lblDates.Text = "There are no states for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy");
-                        }
-                    }
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    if (startDate == endDate)
+                    //    {
+                    //        lblDates.Text = "There are no stats for: " + startDate.ToString("dd/MMM/yy");
+                    //    }
+                    //    else
+                    //    {
+                    //        lblDates.Text = "There are no states for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy");
+                    //    }
+                    //}
                 }
             }
             //Exception catch
@@ -177,8 +176,8 @@ namespace SweetSpotDiscountGolfPOS
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
                 object[] passing = (object[])Session["reportInfo"];
-                string type = (string)passing[1];
-                string fileName = "Store Stats Report - " + type + ".xlsx";
+                int timeFrame = Convert.ToInt32(passing[1]);
+                string fileName = "Store Stats Report - " + timeFrame + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
@@ -189,9 +188,9 @@ namespace SweetSpotDiscountGolfPOS
                     statsExport.Cells[1, 1].Value = lblDates.Text;
                     statsExport.Cells[2, 1].Value = "Year";
                     statsExport.Cells[2, 2].Value = "Month";
-                    if (timeFrame.Equals("Day")) { statsExport.Cells[2, 3].Value = "Trade-In Amount"; }
-                    else if (timeFrame.Equals("Week")) { statsExport.Cells[2, 3].Value = "Week Start Date"; }
-                    else if (timeFrame.Equals("Month")) { rowAdjust = 1; }
+                    if (timeFrame.Equals(1)) { statsExport.Cells[2, 3].Value = "Trade-In Amount"; }
+                    else if (timeFrame.Equals(2)) { statsExport.Cells[2, 3].Value = "Week Start Date"; }
+                    else if (timeFrame.Equals(3)) { rowAdjust = 1; }
                     
 
                     statsExport.Cells[2, 4 - rowAdjust].Value = "City Name";
@@ -204,7 +203,7 @@ namespace SweetSpotDiscountGolfPOS
                     int recordIndex = 3;
                     foreach (DataRow row in stats.Rows)
                     {                       
-                        if (!timeFrame.Equals("Month"))
+                        if (!timeFrame.Equals(3))
                         {
                             statsExport.Cells[recordIndex, 1].Value = row[0].ToString();
                             statsExport.Cells[recordIndex, 2].Value = row[1].ToString();

@@ -43,14 +43,14 @@
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:DropDownList ID="ddlJob" runat="server" AutoPostBack="false" 
-                            DataTextField="title" DataValueField="jobID" Enabled="false" />
+                            DataTextField="varJobTitle" DataValueField="intJobID" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblLocation" runat="server" Text="Location:" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="false"
-                            DataTextField="city" DataValueField="locationID" Enabled="false" />
+                            DataTextField="varCityName" DataValueField="intLocationID" Enabled="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -114,14 +114,14 @@
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:DropDownList ID="ddlProvince" runat="server" AutoPostBack="false" 
-                            DataTextField="provName" DataValueField="provStateID" Enabled="false" />
+                            DataTextField="varProvinceName" DataValueField="intProvinceID" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblCountry" runat="server" Text="Country:" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:DropDownList ID="ddlCountry" runat="server" AutoPostBack="True" 
-                            DataTextField="countryDesc" DataValueField="countryID" Enabled="false" 
+                            DataTextField="varCountryName" DataValueField="intCountryID" Enabled="false" 
                             OnSelectedIndexChanged="ddlCountry_SelectedIndexChanged" />
                     </asp:TableCell>
                 </asp:TableRow>

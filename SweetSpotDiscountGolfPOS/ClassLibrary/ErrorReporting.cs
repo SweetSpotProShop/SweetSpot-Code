@@ -53,7 +53,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@intErrorCode", er.HResult },
                 new object[] { "@varErrorText", er.Message }
             };
-            DBC.executeErrorInsertQuery(sqlCmd, parms);
+            DBC.MakeDataBaseCallToNonReturnErrorQuery(sqlCmd, parms);
         }
     }
 }

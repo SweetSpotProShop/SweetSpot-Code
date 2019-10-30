@@ -977,6 +977,97 @@
 							<br />
 						</asp:TableCell>
 					</asp:TableRow>
+
+					<asp:TableRow>
+						<asp:TableCell ColumnSpan="36">
+						</asp:TableCell>
+					</asp:TableRow>
+					<asp:TableRow>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell ColumnSpan="3" HorizontalAlign="Center">
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell ColumnSpan="3" HorizontalAlign="Center">
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell ColumnSpan="3" HorizontalAlign="Center">
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell ColumnSpan="3" HorizontalAlign="Center">
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<%--BlankRow--%>
+						</asp:TableCell>
+						<asp:TableCell>
+							<asp:Button ID="btnEditMode" runat="server" Text="Edit Mode" OnClick="btnEditMode_Click" />
+						</asp:TableCell>
+					</asp:TableRow>
 				</asp:Table>
 			</div>
 			<hr />

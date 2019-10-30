@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="PrintableInvoice.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.PrintableInvoice" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="PrintableInvoiceReturn.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.PrintableInvoiceReturn" %>
 
 <%--<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>--%>
@@ -136,12 +136,12 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Retail Price">
                         <ItemTemplate>
-                            <asp:Label ID="itemPrice" Text='<%# Eval("fltItemPrice", "{0:C}") %>' runat="server" />
+                            <asp:Label ID="itemPrice" Text='<%# (Convert.ToBoolean(Eval("bitIsDiscountPercent")) == false ? ((Convert.ToDouble(Eval("fltItemPrice"))) - Convert.ToDouble(Eval("fltItemDiscount"))).ToString("C") : ((Convert.ToDouble(Eval("fltItemPrice")) - ((Convert.ToDouble(Eval("fltItemDiscount")) / 100) * Convert.ToDouble(Eval("fltItemPrice"))))).ToString("C")) %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Discounts/Bonus Applied">
                         <ItemTemplate>
-                            <asp:Label ID="discount" Text='<%# Convert.ToBoolean(Eval("bitIsDiscountPercent")) == false ? (Eval("fltItemDiscount","{0:C}")).ToString() : ((Convert.ToDouble(Eval("fltItemDiscount")) / 100) * Convert.ToDouble(Eval("fltItemPrice"))).ToString("C") %>' runat="server" />
+                            <asp:Label ID="discount" Text='<%# ((Convert.ToDouble(Eval("fltItemPrice")) + Convert.ToDouble(Eval("fltItemRefund"))) * Convert.ToDouble(Eval("intItemQuantity"))).ToString("C") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Quantity">
@@ -151,12 +151,12 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Sale Price">
                         <ItemTemplate>
-                            <asp:Label ID="salePrice" Text='<%# Convert.ToBoolean(Eval("bitIsDiscountPercent")) == false ? ((Convert.ToDouble(Eval("fltItemPrice")))-(Convert.ToDouble(Eval("fltItemDiscount")))).ToString("C") : ((Convert.ToDouble(Eval("fltItemPrice")) - ((Convert.ToDouble(Eval("fltItemDiscount")) / 100) * Convert.ToDouble(Eval("fltItemPrice"))))).ToString("C") %>' runat="server" />
+                            <asp:Label ID="salePrice" Text='<%# Eval("fltItemRefund", "{0:C}") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Extended Price">
                         <ItemTemplate>
-                            <asp:Label ID="extended" Text='<%# Convert.ToBoolean(Eval("bitIsDiscountPercent")) == false ? ((Convert.ToDouble(Eval("fltItemPrice"))-Convert.ToDouble(Eval("fltItemDiscount")))*Convert.ToDouble(Eval("intItemQuantity"))).ToString("C") : ((Convert.ToDouble(Eval("fltItemPrice")) - ((Convert.ToDouble(Eval("fltItemDiscount")) / 100) * Convert.ToDouble(Eval("fltItemPrice"))))*Convert.ToDouble(Eval("intItemQuantity"))).ToString("C") %>' runat="server" />
+                            <asp:Label ID="extended" Text='<%# (Convert.ToDouble(Eval("fltItemRefund")) * Convert.ToDouble(Eval("intItemQuantity"))).ToString("C") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -174,10 +174,10 @@
                         <asp:Label ID="lblDiscountsDisplay" runat="server" Text="" DataFormatString="{0:C}" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightFirst">
-                        <asp:Label ID="lblGovernment" runat="server" Text="GST:" Visible="false" />
+                        <asp:Label ID="lblBlank" runat="server" Text="" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSecond">
-                        <asp:Label ID="lblGovernmentAmount" runat="server" Visible="false" DataFormatString="{0:C}" />
+                        <asp:Label ID="lblBlankDisplay" runat="server" Text="" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -188,10 +188,10 @@
                         <asp:Label ID="lblTradeInsDisplay" runat="server" Text="" DataFormatString="{0:C}" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightFirst">
-                        <asp:Label ID="lblProvincial" runat="server" Text="PST:" Visible="false" />
+                        <asp:Label ID="lblGST" runat="server" Text="GST:" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSecond">
-                        <asp:Label ID="lblProvincialAmount" runat="server" Visible="false" DataFormatString="{0:C}" />
+                        <asp:Label ID="lblGSTDisplay" runat="server" Text="" DataFormatString="{0:C}" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -201,11 +201,11 @@
                     <asp:TableCell CssClass="leftSecond">
                         <asp:Label ID="lblShippingDisplay" runat="server" Text="" DataFormatString="{0:C}" />
                     </asp:TableCell>
-					<asp:TableCell CssClass="rightFirst">
-                        <asp:Label ID="lblLiquorTax" runat="server" Text="LCT:" Visible="false" />
+                    <asp:TableCell CssClass="rightFirst">
+                        <asp:Label ID="lblPST" runat="server" Text="PST:" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSecond">
-                        <asp:Label ID="lblLiquorTaxAmount" runat="server" Visible="false" DataFormatString="{0:C}" />
+                        <asp:Label ID="lblPSTDisplay" runat="server" Text="" DataFormatString="{0:C}" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightFirst">
                         <asp:Label ID="lblTender" runat="server" Text="Tender:" />

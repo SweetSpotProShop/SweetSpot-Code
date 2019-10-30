@@ -185,7 +185,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Total">
                             <ItemTemplate>
-                                <asp:Label ID="lblAmountPaid" runat="server" Text='<%#(Convert.ToDouble(Eval("fltBalanceDue")) + Convert.ToDouble(Eval("fltGovernmentTaxAmount")) + Convert.ToDouble(Eval("fltProvincialTaxAmount"))).ToString("C") %>' />
+                                <asp:Label ID="lblAmountPaid" runat="server" Text='<%# Eval("fltBalanceDue", "{0:C}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name">

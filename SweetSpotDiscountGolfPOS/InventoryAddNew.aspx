@@ -163,11 +163,11 @@
 							<Columns>
 								<asp:TemplateField>
 									<ItemTemplate>
-										<asp:LinkButton ID="lbtnChangeCharged" runat="server" Text="Remove" CommandArgument='<%#Eval("taxID") %>' />
+										<asp:LinkButton ID="lbtnChangeCharged" runat="server" Text="Remove" CommandArgument='<%#Eval("intTaxID") %>' />
 									</ItemTemplate>
 								</asp:TemplateField>
-								<asp:BoundField DataField="taxName" ReadOnly="true" HeaderText="Tax Name" />
-								<asp:BoundField DataField="taxRate" ReadOnly="true" HeaderText="Tax Rate" />
+								<asp:BoundField DataField="varTaxName" ReadOnly="true" HeaderText="Tax Name" />
+								<asp:BoundField DataField="fltTaxRate" ReadOnly="true" HeaderText="Tax Rate" DataFormatString="{0:P}" />
 								<asp:TemplateField HeaderText="Charge">
 									<ItemTemplate>
 										<asp:CheckBox ID="chkChargeTax" runat="server" Text="" Checked='<%#Eval("bitChargeTax") %>' Enabled="false" />

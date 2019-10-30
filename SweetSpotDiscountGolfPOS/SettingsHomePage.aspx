@@ -172,13 +172,13 @@
                             <%--The actual button--%>
                             <asp:Image id="imgLoadingItemImport" ImageUrl="~/Images/ajax-loader.gif" visible="false"  runat="server"/>
                         </asp:TableCell>
-                        <asp:TableCell>
+                        <%--<asp:TableCell>
                             <asp:Label ID="lblLoadCustomers" runat="server" Text="Import Customers" />
                             <div>
                                 <asp:FileUpload ID="fupCustomers" runat="server" />
                             </div>
                             <asp:Button ID="btnImportCustomers" runat="server" Width="150" Text="Import Customers" OnClientClick="showImage" OnClick="btnImportCustomers_Click" />
-                        </asp:TableCell>
+                        </asp:TableCell>--%>
                     </asp:TableRow>
                 </asp:Table>
             </div>

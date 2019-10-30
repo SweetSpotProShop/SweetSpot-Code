@@ -26,7 +26,7 @@ namespace SweetSpotDiscountGolfPOS
         double totalPurchAmount = 0;
         int totalPurchases = 0;
         int totalCheques = 0;
-        List<Purchases> purch = new List<Purchases>();
+        //List<Purchases> purch = new List<Purchases>();
 
         protected void Page_Load(object sender, EventArgs e)
         {

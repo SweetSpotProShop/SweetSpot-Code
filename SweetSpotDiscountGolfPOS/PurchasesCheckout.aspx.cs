@@ -14,7 +14,7 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting ER = new ErrorReporting();
         InvoiceManager IM = new InvoiceManager();
         CurrentUser CU;
-        private static Invoice receipt;
+        //private static Invoice receipt;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -227,7 +227,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                receipt = IM.ReturnCurrentPurchaseInvoice(Convert.ToInt32(Request.QueryString["receipt"]), objPageDetails)[0];
+                Invoice receipt = IM.ReturnCurrentPurchaseInvoice(Convert.ToInt32(Request.QueryString["receipt"]), CU.location.intProvinceID, objPageDetails)[0];
                 lblTotalPurchaseAmount.Text = "$ " + receipt.fltSubTotal.ToString("#0.00");
 
                 double dblAmountPaid = 0;
@@ -265,7 +265,7 @@ namespace SweetSpotDiscountGolfPOS
             {
                 if (rb >= -.001 && rb <= 0.001)
                 {
-                    if (IM.VerifyPurchaseMOPHasBeenAdded(receipt.intInvoiceID, objPageDetails))
+                    if (IM.VerifyPurchaseMOPHasBeenAdded(Convert.ToInt32(Request.QueryString["receipt"].ToString()), objPageDetails))
                     {
                         mopCash.Enabled = false;
                     }
@@ -306,7 +306,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                IM.CancellingReceipt(IM.ReturnCurrentPurchaseInvoice(receipt.intInvoiceID, objPageDetails)[0], objPageDetails);
+                IM.CancellingReceipt(IM.ReturnCurrentPurchaseInvoice(Convert.ToInt32(Request.QueryString["receipt"].ToString()), CU.location.intProvinceID, objPageDetails)[0], objPageDetails);
                 //Change to Home Page
                 Response.Redirect("HomePage.aspx", false);
             }
@@ -330,8 +330,8 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                nameValues.Set("receipt", receipt.intInvoiceID.ToString());
-                nameValues.Set("customer", receipt.customer.intCustomerID.ToString());
+                nameValues.Set("receipt", Request.QueryString["receipt"].ToString());
+                nameValues.Set("customer", Request.QueryString["customer"].ToString());
                 Response.Redirect("PurchasesCart.aspx?" + nameValues, false);
             }
             //Exception catch
@@ -362,10 +362,10 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    if (IM.VerifyPurchaseMOPHasBeenAdded(receipt.intInvoiceID, objPageDetails))
+                    if (IM.VerifyPurchaseMOPHasBeenAdded(Convert.ToInt32(Request.QueryString["receipt"].ToString()), objPageDetails))
                     {
                         //Stores all the Sales data to the database
-                        receipt = IM.ReturnCurrentPurchaseInvoice(receipt.intInvoiceID, objPageDetails)[0];
+                        Invoice receipt = IM.ReturnCurrentPurchaseInvoice(Convert.ToInt32(Request.QueryString["receipt"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
                         receipt.varAdditionalInformation = txtComments.Text;
                         IM.FinalizeReceipt(receipt, "tbl_receiptItem", objPageDetails);
                         var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());

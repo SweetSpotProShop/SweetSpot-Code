@@ -15,7 +15,10 @@ namespace SweetSpotDiscountGolfPOS
     {
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU;
-        ItemsManager IM = new ItemsManager();
+        ItemsManager ItM = new ItemsManager();
+        InvoiceManager IM = new InvoiceManager();
+        private static Invoice invoice;
+        private static int inventoryID;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -27,11 +30,16 @@ namespace SweetSpotDiscountGolfPOS
                 CU = (CurrentUser)Session["currentUser"];
                 if (!IsPostBack)
                 {
-                    lblSKUDisplay.Text = IM.ReserveTradeInSKU(CU, objPageDetails).ToString();
-                    ddlBrand.DataSource = IM.ReturnDropDownForBrand(objPageDetails);
+                    invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"]), CU.location.intProvinceID, objPageDetails)[0];
+
+                    string[] inventoryInfo = ItM.ReserveTradeInSKU(CU, objPageDetails);
+                    inventoryID = Convert.ToInt32(inventoryInfo[1]);
+
+                    lblSKUDisplay.Text = inventoryInfo[0].ToString();
+                    ddlBrand.DataSource = ItM.ReturnDropDownForBrand(objPageDetails);
                     ddlBrand.DataBind();
 
-                    ddlModel.DataSource = IM.ReturnDropDownForModel(objPageDetails);
+                    ddlModel.DataSource = ItM.ReturnDropDownForModel(objPageDetails);
                     ddlModel.DataBind();
                     ddlModel.SelectedValue = "2624"; //"2426"; // is the testing value for 'Customer Trade'
 
@@ -76,7 +84,7 @@ namespace SweetSpotDiscountGolfPOS
                 CU = (CurrentUser)Session["currentUser"];
                 //Creating a new club
                 Clubs tradeIN = new Clubs();
-
+                tradeIN.intInventoryID = inventoryID;
                 tradeIN.varSku = lblSKUDisplay.Text;
                 tradeIN.fltCost = Convert.ToDouble(txtCost.Text);
                 tradeIN.fltPrice = Convert.ToDouble(txtPrice.Text);
@@ -97,16 +105,17 @@ namespace SweetSpotDiscountGolfPOS
                 tradeIN.intLocationID = CU.location.intLocationID;
 
                 //this adds to the temp tradeIncart
-                IM.AddTradeInItemToTempTable(tradeIN, objPageDetails);
+                ItM.AddTradeInItemToTempTable(tradeIN, objPageDetails);
 
                 //change cost and price for cart
                 InvoiceItemsManager IIM = new InvoiceItemsManager();
                 InvoiceItems selectedTradeIn = new InvoiceItems();
-                selectedTradeIn.intInvoiceID = Convert.ToInt32(Request.QueryString["invoice"]);                
+                selectedTradeIn.intInvoiceID = invoice.intInvoiceID;
+                selectedTradeIn.intInventoryID = tradeIN.intInventoryID;
                 selectedTradeIn.varSku = tradeIN.varSku;
                 selectedTradeIn.intItemQuantity = tradeIN.intQuantity;
-                selectedTradeIn.varItemDescription = IM.ReturnBrandlNameFromBrandID(tradeIN.intBrandID, objPageDetails) + " " 
-                    + IM.ReturnModelNameFromModelID(tradeIN.intModelID, objPageDetails) + " " + tradeIN.varClubSpecification + " " 
+                selectedTradeIn.varItemDescription = ItM.ReturnBrandlNameFromBrandID(tradeIN.intBrandID, objPageDetails) + " " 
+                    + ItM.ReturnModelNameFromModelID(tradeIN.intModelID, objPageDetails) + " " + tradeIN.varClubSpecification + " " 
                     + tradeIN.varTypeOfClub + " " + tradeIN.varShaftSpecification + " " + tradeIN.varShaftFlexability + " " 
                     + tradeIN.varClubDexterity;
                 selectedTradeIn.fltItemCost = 0;
@@ -117,7 +126,10 @@ namespace SweetSpotDiscountGolfPOS
                 selectedTradeIn.bitIsClubTradeIn = true;
                 selectedTradeIn.intItemTypeID = 1;
 
-                IIM.InsertItemIntoSalesCart(selectedTradeIn, objPageDetails);
+                IIM.InsertItemIntoSalesCart(selectedTradeIn, invoice.intTransactionTypeID, invoice.dtmInvoiceDate, CU, objPageDetails);
+
+                //IIM.NewTradeInChangeChargeTaxToFalse(selectedTradeIn, invoice.dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
+
                 //Closing the trade in information window
                 string redirect = "<script>window.close('TradeINEntry.aspx');</script>";
                 Response.Write(redirect);

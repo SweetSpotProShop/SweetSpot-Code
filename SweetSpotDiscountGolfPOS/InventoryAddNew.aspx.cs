@@ -631,7 +631,7 @@ namespace SweetSpotDiscountGolfPOS
                 btnCreateSimilar.Visible = true;
 
                 object[] extra = { CU.employee.intEmployeeID, CU.location.intLocationID };
-                IDU.SaveInventoryChanges(changeItem, extra);
+                IDU.SaveInventoryChanges(changeItem, extra, objPageDetails);
 
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("inventory", IDU.UpdateItemInDatabase(o, objPageDetails).ToString());
@@ -823,6 +823,8 @@ namespace SweetSpotDiscountGolfPOS
         }
         protected void grdInventoryTaxes_RowCommand(object sender, GridViewCommandEventArgs e)
         {
+            string method = "grdInventoryTaxes_RowCommand";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             int index = ((GridViewRow)((LinkButton)e.CommandSource).NamingContainer).RowIndex;
             bool chargeTax = Convert.ToBoolean(((CheckBox)grdInventoryTaxes.Rows[index].Cells[3].FindControl("chkChargeTax")).Checked);
             if (chargeTax)
@@ -834,7 +836,7 @@ namespace SweetSpotDiscountGolfPOS
                 chargeTax = true;
             }
             TaxManager TM = new TaxManager();
-            TM.UpdateTaxChargedForInventory(Convert.ToInt32(Request.QueryString["inventory"].ToString()), Convert.ToInt32(e.CommandArgument.ToString()), chargeTax);
+            TM.UpdateTaxChargedForInventory(Convert.ToInt32(Request.QueryString["inventory"].ToString()), Convert.ToInt32(e.CommandArgument.ToString()), chargeTax, objPageDetails);
             var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
             nameValues.Set("inventory", Request.QueryString["inventory"].ToString());
             //Refreshes current page

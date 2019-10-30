@@ -22,7 +22,7 @@ namespace SweetSpotDiscountGolfPOS
         InvoiceManager IM = new InvoiceManager();
         ItemsManager ITM = new ItemsManager();
         InvoiceItemsManager IIM = new InvoiceItemsManager();
-        private static Invoice invoice;
+        //private static Invoice invoice;
         CurrentUser CU;
 
         //Still need to account for a duplicate item being added
@@ -48,7 +48,7 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         txtSearch.Focus();
                         //Set name in text box
-
+                        Invoice invoice = new Invoice();
                         if(Request.QueryString["invoice"].ToString() == "-10")
                         {
                             Invoice newInvoice = new Invoice();
@@ -59,15 +59,22 @@ namespace SweetSpotDiscountGolfPOS
                             newInvoice.location = CU.location;
                             newInvoice.fltGovernmentTaxAmount = 0;
                             newInvoice.fltProvincialTaxAmount = 0;
+                            newInvoice.fltLiquorTaxAmount = 0;
                             newInvoice.bitChargeGST = true;
                             newInvoice.bitChargePST = true;
+                            newInvoice.bitChargeLCT = true;
                             newInvoice.intTransactionTypeID = 1;
                             newInvoice.varAdditionalInformation = "";
                             invoice = IM.CreateInitialTotalsForTable(newInvoice, objPageDetails)[0];
+
+                            var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                            nameValues.Set("customer", invoice.customer.intCustomerID.ToString());
+                            nameValues.Set("invoice", invoice.intInvoiceID.ToString());
+                            Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
                         }
                         else
                         {
-                            invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
+                            invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
                         }
 
                         txtCustomer.Text = invoice.customer.varFirstName + " " + invoice.customer.varLastName;
@@ -77,7 +84,7 @@ namespace SweetSpotDiscountGolfPOS
                         grdCartItems.DataSource = invoice.invoiceItems;
                         grdCartItems.DataBind();
                         txtShippingAmount.Text = invoice.fltShippingCharges.ToString();
-                        lblSubtotalDisplay.Text = "$ " + invoice.fltSubTotal.ToString("#0.00");
+                        lblSubtotalDisplay.Text = invoice.fltSubTotal.ToString("C");
                     }
                 }
             }
@@ -92,8 +99,7 @@ namespace SweetSpotDiscountGolfPOS
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
-        }
-        
+        }        
         protected void txtShippingAmount_TextChanged(object sender, EventArgs e)
         {
             string method = "txtShippingAmount_TextChanged";
@@ -113,6 +119,7 @@ namespace SweetSpotDiscountGolfPOS
                         rdbShipping.Checked = true;
                     }
                 }
+                Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
                 invoice.fltShippingCharges = shipAmount;
                 //send back to update
                 IM.UpdateCurrentInvoice(invoice, objPageDetails);
@@ -192,6 +199,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
                 Customer customer = new Customer();
                 customer.varFirstName = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtFirstName")).Text;
                 customer.varLastName = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtLastName")).Text;
@@ -261,6 +269,7 @@ namespace SweetSpotDiscountGolfPOS
                 //grabs the command argument for the command pressed 
                 if (e.CommandName == "SwitchCustomer")
                 {
+                    Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
                     Customer C = CM.ReturnCustomer(Convert.ToInt32(e.CommandArgument.ToString()), objPageDetails)[0];
                     invoice.customer = C;
                     IM.UpdateCurrentInvoice(invoice, objPageDetails);
@@ -327,20 +336,21 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
                 lblInvalidQty.Visible = false;
-                int currentItemSaleID = Convert.ToInt32(((Label)grdCartItems.Rows[e.RowIndex].Cells[0].FindControl("lblInventoryID")).Text);
-                IIM.ReturnQTYToInventory(currentItemSaleID, objPageDetails);
+                int currentInvoiceItemID = Convert.ToInt32(((Label)grdCartItems.Rows[e.RowIndex].Cells[0].FindControl("lblInvoiceItemID")).Text);
+                IIM.ReturnQTYToInventory(currentInvoiceItemID, invoice.dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
                 //Remove the indexed pointer
                 grdCartItems.EditIndex = -1;
 
-                IM.CalculateNewInvoiceTotalsToUpdate(IM.ReturnCurrentInvoice(invoice.intInvoiceID, objPageDetails)[0], objPageDetails);
-                invoice = IM.ReturnCurrentInvoice(invoice.intInvoiceID, objPageDetails)[0];
+                IM.CalculateNewInvoiceTotalsToUpdate(IM.ReturnCurrentInvoice(invoice.intInvoiceID, CU.location.intProvinceID, objPageDetails)[0], objPageDetails);
+                invoice = IM.ReturnCurrentInvoice(invoice.intInvoiceID, CU.location.intProvinceID, objPageDetails)[0];
 
                 //bind items back to grid view
                 grdCartItems.DataSource = invoice.invoiceItems;
                 grdCartItems.DataBind();
                 //Calculate new subtotal
-                lblSubtotalDisplay.Text = "$ " + invoice.fltSubTotal.ToString("#0.00");
+                lblSubtotalDisplay.Text = invoice.fltSubTotal.ToString("C");
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -362,10 +372,13 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
                 lblInvalidQty.Visible = false;
                 grdCartItems.DataSource = invoice.invoiceItems;
                 grdCartItems.EditIndex = e.NewEditIndex;
                 grdCartItems.DataBind();
+                ((CheckBoxList)grdCartItems.Rows[e.NewEditIndex].Cells[9].FindControl("cblTaxes")).Enabled = true;
+
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -387,7 +400,9 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
                 lblInvalidQty.Visible = false;
+                ((CheckBoxList)grdCartItems.Rows[grdCartItems.EditIndex].Cells[9].FindControl("cblTaxes")).Enabled = false;
                 //Clears the indexed row
                 grdCartItems.EditIndex = -1;
                 //Binds gridview to Session items in cart
@@ -414,27 +429,64 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
                 lblInvalidQty.Visible = false;
                 //Stores all the data for each element in the row
                 InvoiceItems newItemInfo = new InvoiceItems();
                 newItemInfo.intInvoiceID = invoice.intInvoiceID;
-                newItemInfo.intInventoryID = Convert.ToInt32(((Label)grdCartItems.Rows[e.RowIndex].Cells[0].FindControl("lblInventoryID")).Text);
+                newItemInfo.intInvoiceItemID = Convert.ToInt32(((Label)grdCartItems.Rows[e.RowIndex].Cells[0].FindControl("lblInvoiceItemID")).Text);
+                newItemInfo.intInventoryID = IIM.ReturnInventoryIDFromInvoiceItemID(newItemInfo.intInvoiceItemID, objPageDetails);
+                //newItemInfo.fltItemPrice = Convert.ToDouble(((Label)grdCartItems.Rows[e.RowIndex].Cells[5].FindControl("price")).Text.Replace("$",""));
                 newItemInfo.fltItemDiscount = Convert.ToDouble(((TextBox)grdCartItems.Rows[e.RowIndex].Cells[6].FindControl("txtAmnt")).Text);
                 newItemInfo.intItemQuantity = Convert.ToInt32(((TextBox)grdCartItems.Rows[e.RowIndex].Cells[3].Controls[0]).Text);
                 newItemInfo.bitIsDiscountPercent = ((CheckBox)grdCartItems.Rows[e.RowIndex].Cells[6].FindControl("ckbPercentageEdit")).Checked;
+                newItemInfo.bitIsClubTradeIn = ((CheckBox)grdCartItems.Rows[e.RowIndex].Cells[7].FindControl("chkTradeIn")).Checked;
                 newItemInfo.intItemTypeID = Convert.ToInt32(((Label)grdCartItems.Rows[e.RowIndex].Cells[8].FindControl("lblTypeID")).Text);
+                newItemInfo.invoiceItemTaxes = new List<InvoiceItemTax>();
+
+                CheckBoxList checkboxTaxes = (CheckBoxList)grdCartItems.Rows[e.RowIndex].Cells[9].FindControl("cblTaxes");
+
+                foreach (ListItem item in checkboxTaxes.Items)
+                {
+                    InvoiceItemTax iit = new InvoiceItemTax();
+                    iit.intInvoiceItemID = newItemInfo.intInvoiceItemID;
+                    iit.varTaxName = item.Text;
+                    iit.bitIsTaxCharged = Convert.ToBoolean(item.Selected);
+                    foreach(InvoiceItems itemCheck in invoice.invoiceItems)
+                    {
+                        foreach(InvoiceItemTax itemTaxCheck in itemCheck.invoiceItemTaxes)
+                        {
+                            if(itemCheck.intInvoiceItemID == iit.intInvoiceItemID)
+                            {
+                                if(itemTaxCheck.varTaxName == iit.varTaxName)
+                                {
+                                    itemTaxCheck.bitIsTaxCharged = iit.bitIsTaxCharged;
+                                    newItemInfo.invoiceItemTaxes.Add(itemTaxCheck);
+                                    newItemInfo.fltItemPrice = itemCheck.fltItemPrice;
+                                }
+                            }
+                        }
+                    }
+                }
 
                 if (!IIM.ValidQTY(newItemInfo, objPageDetails))
                 {
-                    //if it is less than 0 then there is not enough in invenmtory to sell
-                    lblInvalidQty.Visible = true;
-                    //Display error message
-                    lblInvalidQty.Text = "Quantity Exceeds the Remaining Inventory";
-                    lblInvalidQty.ForeColor = System.Drawing.Color.Red;
+                    if (newItemInfo.bitIsClubTradeIn)
+                    {
+                        IIM.UpdateItemFromCurrentSalesTable(newItemInfo, invoice.intTransactionTypeID, objPageDetails);
+                    }
+                    else
+                    { 
+                        //if it is less than 0 then there is not enough in invenmtory to sell
+                        lblInvalidQty.Visible = true;
+                        //Display error message
+                        lblInvalidQty.Text = "Quantity Exceeds the Remaining Inventory";
+                        lblInvalidQty.ForeColor = System.Drawing.Color.Red;
+                    }
                 }
                 else
                 {
-                    IIM.UpdateItemFromCurrentSalesTable(newItemInfo, objPageDetails);
+                    IIM.UpdateItemFromCurrentSalesTable(newItemInfo, invoice.intTransactionTypeID, objPageDetails);
                 }
                 
                 //Clears the indexed row
@@ -462,7 +514,8 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                IIM.LoopThroughTheItemsToReturnToInventory(invoice.intInvoiceID, objPageDetails);
+                Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
+                IIM.LoopThroughTheItemsToReturnToInventory(invoice.intInvoiceID, invoice.dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
                 IIM.RemoveInitialTotalsForTable(invoice.intInvoiceID, objPageDetails);
                 Response.Redirect("HomePage.aspx", false);
             }
@@ -485,6 +538,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
                 invoice.intTransactionTypeID = 1;
                 IM.UpdateCurrentInvoice(invoice, objPageDetails);
                 Response.Redirect("HomePage.aspx", false);
@@ -533,6 +587,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
                 if (IIM.CheckForItemsInTransaction(invoice))
                 {
                     UpdateInvoiceTotal();
@@ -569,6 +624,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
                 lblInvalidQty.Visible = false;
                 int index = ((GridViewRow)((LinkButton)e.CommandSource).NamingContainer).RowIndex;
                 int quantity = 1;
@@ -593,7 +649,9 @@ namespace SweetSpotDiscountGolfPOS
                     if (!IIM.ItemAlreadyInCart(selectedSku, objPageDetails))
                     {
                         //ToDo this check needs to look for the actual ID of the trade in sku
-                        if (selectedSku.intInventoryID == 100000)
+                        //13040 is the testing trade in sku
+                        //13240 is the live trade in sku
+                        if (selectedSku.intInventoryID == 13240)
                         {
                             btnRefreshCart.Visible = true;
                             //Trade In Sku to add in SK
@@ -623,7 +681,7 @@ namespace SweetSpotDiscountGolfPOS
                             selectedSku.intItemQuantity = quantity;
 
                             //add item to table and remove the added qty from current inventory
-                            IIM.InsertItemIntoSalesCart(selectedSku, objPageDetails);
+                            IIM.InsertItemIntoSalesCart(selectedSku, invoice.intTransactionTypeID, invoice.dtmInvoiceDate, CU, objPageDetails);
                             IIM.RemoveQTYFromInventoryWithSKU(selectedSku.intInventoryID, selectedSku.intItemTypeID, (currentQty - quantity), objPageDetails);
                             
                             //Set an empty variable to bind to the searched items grid view so it is empty
@@ -681,10 +739,10 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                invoice = IM.ReturnCurrentInvoice(invoice.intInvoiceID, objPageDetails)[0];
+                Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
                 IM.CalculateNewInvoiceTotalsToUpdate(invoice, objPageDetails);
-                invoice = IM.ReturnCurrentInvoice(invoice.intInvoiceID, objPageDetails)[0];
-                lblSubtotalDisplay.Text = "$ " + invoice.fltSubTotal.ToString("#0.00");
+                invoice = IM.ReturnCurrentInvoice(invoice.intInvoiceID, CU.location.intProvinceID, objPageDetails)[0];
+                lblSubtotalDisplay.Text = invoice.fltSubTotal.ToString("C");
                 grdCartItems.DataSource = invoice.invoiceItems;
                 grdCartItems.DataBind();
             }
@@ -741,6 +799,19 @@ namespace SweetSpotDiscountGolfPOS
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
+        }
+
+        protected void grdCartItems_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if(e.Row.RowType == DataControlRowType.DataRow)
+            {
+                CheckBoxList checkboxTaxes = (CheckBoxList)e.Row.FindControl("cblTaxes");
+                foreach (ListItem item in checkboxTaxes.Items)
+                {
+                    item.Selected = bool.Parse(item.Value);
+                }
+            }
+             
         }
     }
 }

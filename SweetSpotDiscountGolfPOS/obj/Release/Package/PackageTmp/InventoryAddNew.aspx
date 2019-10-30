@@ -13,7 +13,7 @@
             <br />
             <h3>
                 <asp:DropDownList ID="ddlType" runat="server" AutoPostBack="True" 
-                    DataTextField="typeDescription" DataValueField="typeID" Enabled="false" />
+                    DataTextField="varItemTypeName" DataValueField="intItemTypeID" Enabled="false" />
             </h3>
             <asp:Table ID="Table1" runat="server" Width="100%">
                 <asp:TableRow>
@@ -43,7 +43,7 @@
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:DropDownList ID="ddlBrand" runat="server" AutoPostBack="false" 
-                            DataTextField="brandName" DataValueField="brandID" Enabled="false" />
+                            DataTextField="varBrandName" DataValueField="intBrandID" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblPrice" runat="server" Text="Price:  $" />
@@ -78,7 +78,7 @@
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="false" 
-                            DataTextField="city" DataValueField="locationID" Enabled="false" />
+                            DataTextField="varCityName" DataValueField="intLocationID" Enabled="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -98,7 +98,7 @@
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:DropDownList ID="ddlModel" runat="server" AutoPostBack="false"
-                            DataTextField="modelName" DataValueField="modelID" Enabled="false" /> 
+                            DataTextField="varModelName" DataValueField="intModelID" Enabled="false" /> 
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -163,11 +163,11 @@
 							<Columns>
 								<asp:TemplateField>
 									<ItemTemplate>
-										<asp:LinkButton ID="lbtnChangeCharged" runat="server" Text="Remove" CommandArgument='<%#Eval("taxID") %>' />
+										<asp:LinkButton ID="lbtnChangeCharged" runat="server" Text="Remove" CommandArgument='<%#Eval("intTaxID") %>' />
 									</ItemTemplate>
 								</asp:TemplateField>
-								<asp:BoundField DataField="taxName" ReadOnly="true" HeaderText="Tax Name" />
-								<asp:BoundField DataField="taxRate" ReadOnly="true" HeaderText="Tax Rate" />
+								<asp:BoundField DataField="varTaxName" ReadOnly="true" HeaderText="Tax Name" />
+								<asp:BoundField DataField="fltTaxRate" ReadOnly="true" HeaderText="Tax Rate" DataFormatString="{0:P}" />
 								<asp:TemplateField HeaderText="Charge">
 									<ItemTemplate>
 										<asp:CheckBox ID="chkChargeTax" runat="server" Text="" Checked='<%#Eval("bitChargeTax") %>' Enabled="false" />

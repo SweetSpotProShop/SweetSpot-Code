@@ -8,7 +8,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 {
     public class InvoiceMOPsManager
     {
-        DatabaseCalls dbc = new DatabaseCalls();
+        DatabaseCalls DBC = new DatabaseCalls();
         private List<InvoiceMOPs> ConvertFromDataTableToInvoiceMOPs(DataTable dt, object[] objPageDetails)
         {
             List<InvoiceMOPs> invoiceMOPs = dt.AsEnumerable().Select(row =>
@@ -79,7 +79,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@intInvoiceID", invoiceID }
             };
 
-            return ConvertFromDataTableToInvoiceMOPs(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
+            return ConvertFromDataTableToInvoiceMOPs(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
             //return ConvertFromDataTableToInvoiceMOPs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
 
@@ -95,7 +95,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@intInvoiceID", invoiceID }
             };
 
-            return ConvertFromDataTableToCurrentInvoiceMOPs(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
+            return ConvertFromDataTableToCurrentInvoiceMOPs(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
             //return ConvertFromDataTableToCurrentInvoiceMOPs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         public List<InvoiceMOPs> ReturnPurchaseMOPsCurrentSale(int receiptID, object[] objPageDetails)
@@ -109,7 +109,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@intReceiptID", receiptID }
             };
 
-            return ConvertFromDataTableToCurrentPurchaseMOPs(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
+            return ConvertFromDataTableToCurrentPurchaseMOPs(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
             //return ConvertFromDataTableToCurrentPurchaseMOPs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         public List<InvoiceMOPs> ReturnReceiptMOPsPurchase(int receiptID, object[] objPageDetails)
@@ -123,7 +123,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@intReceiptID", receiptID }
             };
 
-            return ConvertFromDataTableToReceiptPurchaseMOPs(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
+            return ConvertFromDataTableToReceiptPurchaseMOPs(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
             //return ConvertFromDataTableToReceiptPurchaseMOPs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         public void AddNewMopToList(InvoiceMOPs invoicePayment, object[] objPageDetails)
@@ -140,7 +140,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@fltTenderedAmount", invoicePayment.fltTenderedAmount },
                 new object[] { "@fltCustomerChange", invoicePayment.fltCustomerChange }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public void AddNewMopToReceiptList(InvoiceMOPs payment, object[] objPageDetails)
@@ -155,7 +155,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@intChequeNumber", payment.intChequeNumber },
                 new object[] { "@fltAmountPaid", payment.fltAmountPaid }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public void RemoveMopFromList(int invoicePaymentID, object[] objPageDetails)
@@ -167,7 +167,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             {
                 new object[] { "@intInvoicePaymentID", invoicePaymentID }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public void RemoveMopFromPurchaseList(int receiptPaymentID, int receiptID, object[] objPageDetails)
@@ -180,7 +180,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@intReceiptID", receiptID },
                 new object[] { "@intReceiptPaymentID", receiptPaymentID }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         private int ReturnMOPInt(string mopName, object[] objPageDetails)
@@ -191,7 +191,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             {
                 new object[] { "@mopName", mopName }
             };
-            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms);
+            return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
         }
         private string ReturnMOPString(int paymentID, object[] objPageDetails)
@@ -202,7 +202,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             {
                 new object[] { "@intPaymentID", paymentID }
             };
-            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
+            return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public int ReturnMopIntForTable(string mopName, object[] objPageDetails)

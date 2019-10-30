@@ -17,7 +17,7 @@ namespace SweetSpotDiscountGolfPOS
         InvoiceManager IM = new InvoiceManager();
         List<Tax> t = new List<Tax>();
         TaxManager TM = new TaxManager();
-        private static Invoice returnInvoice;
+        //private static Invoice returnInvoice;
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -38,7 +38,7 @@ namespace SweetSpotDiscountGolfPOS
                     if (!Page.IsPostBack)
                     {
 
-                        returnInvoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
+                        Invoice returnInvoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
                         //Retrieve taxes based on current location
                         string gTax = "Do Nothing";
                         string pTax = "Do Nothing";
@@ -248,7 +248,8 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 InvoiceItemsManager IIM = new InvoiceItemsManager();
-                IIM.LoopThroughTheItemsToReturnToInventory(returnInvoice.intInvoiceID, objPageDetails);
+                Invoice returnInvoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"]), CU.location.intProvinceID, objPageDetails)[0];
+                IIM.LoopThroughTheItemsToReturnToInventory(returnInvoice.intInvoiceID, returnInvoice.dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
                 IIM.RemoveInitialTotalsForTable(returnInvoice.intInvoiceID, objPageDetails);
                 //Change page to the Home Page
                 Response.Redirect("HomePage.aspx", false);
@@ -274,7 +275,7 @@ namespace SweetSpotDiscountGolfPOS
             {
                 //Changes page to Returns Cart page
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                nameValues.Set("invoice", returnInvoice.intInvoiceID.ToString());
+                nameValues.Set("invoice", Request.QueryString["invoice"].ToString());
                 Response.Redirect("ReturnsCart.aspx?" + nameValues, false);
             }
             //Exception catch
@@ -296,6 +297,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                Invoice returnInvoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"]), CU.location.intProvinceID, objPageDetails)[0];
                 CU = (CurrentUser)Session["currentUser"];
                 EmployeeManager EM = new EmployeeManager();
                 if (EM.returnCanEmployeeMakeSale(Convert.ToInt32(txtEmployeePasscode.Text), objPageDetails))
@@ -353,7 +355,7 @@ namespace SweetSpotDiscountGolfPOS
             {
                 InvoiceMOPsManager IMM = new InvoiceMOPsManager();
                 InvoiceMOPs invoicePayment = new InvoiceMOPs();
-                invoicePayment.intInvoiceID = returnInvoice.intInvoiceID;
+                invoicePayment.intInvoiceID = Convert.ToInt32(Request.QueryString["invoice"].ToString());
                 invoicePayment.intPaymentID = paymentID;
                 invoicePayment.fltAmountPaid = amountPaid;
                 invoicePayment.fltTenderedAmount = Convert.ToDouble(amounts[0]);
@@ -414,7 +416,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                returnInvoice = IM.ReturnCurrentInvoice(returnInvoice.intInvoiceID, objPageDetails)[0];
+                Invoice returnInvoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
                 //Loops through each mop
                 double dblAmountPaid = 0;
                 foreach (var payment in returnInvoice.invoiceMops)

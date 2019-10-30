@@ -14,6 +14,7 @@ namespace SweetShop
         public Employee employee { get; set; }
         public int intPassword { get; set; }
         public Location location { get; set; }
+        public bool isSimEditMode { get; set; }
 
         public CurrentUser() { }
         //public CurrentUser(Employee e, int j, Location l, string ln, int p) {

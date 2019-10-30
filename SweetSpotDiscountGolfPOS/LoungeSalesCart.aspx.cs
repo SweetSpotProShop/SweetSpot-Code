@@ -23,7 +23,7 @@ namespace SweetSpotDiscountGolfPOS
         InvoiceManager InM = new InvoiceManager();
         InvoiceItemsManager IIM = new InvoiceItemsManager();
         CurrentUser CU;
-        private static Invoice invoice;
+        private static List<Invoice> invoices;
         private static List<InvoiceItems> programmed;
 
         //Still need to account for a duplicate item being added
@@ -47,20 +47,41 @@ namespace SweetSpotDiscountGolfPOS
                     if (!Page.IsPostBack)
                     {
                         mvApplicableServices.ActiveViewIndex = 0;
-                        programmed = IM.ReturnProgrammedSaleableItems();
+                        programmed = IM.ReturnProgrammedSaleableItems(objPageDetails);
                         ButtonCheck(Page);
 
-                        List<Invoice> invoices = InM.GatherInvoicesFromTable(Request.QueryString["pressedBTN"].ToString(), objPageDetails);
-                        if (invoices.Count == 0)
+                        if (!CU.isSimEditMode)
                         {
-                            InM.CreateNewInvoiceAtTable(Request.QueryString["pressedBTN"].ToString(), CU, objPageDetails);
-                            invoices = InM.GatherInvoicesFromTable(Request.QueryString["pressedBTN"].ToString(), objPageDetails);
+                            invoices = InM.GatherInvoicesFromTable(Request.QueryString["pressedBTN"].ToString(), CU.location.intProvinceID, objPageDetails);
+                            if (invoices.Count == 0)
+                            {
+                                InM.CreateNewInvoiceAtTable(Request.QueryString["pressedBTN"].ToString(), CU, objPageDetails);
+                                invoices = InM.GatherInvoicesFromTable(Request.QueryString["pressedBTN"].ToString(), CU.location.intProvinceID, objPageDetails);
+                                txtCustomer.Text = invoices[0].customer.varFirstName + " " + invoices[0].customer.varLastName;
+                                lblInvoiceNumberDisplay.Text = invoices[0].varInvoiceNumber.ToString();
+                                lblDateDisplay.Text = invoices[0].dtmInvoiceDate.ToShortDateString() + " " + invoices[0].dtmInvoiceTime.ToShortTimeString();
+                                cellMaster.Visible = false;
+                                cellEachInvoice.Visible = false;
+                                cellSingleInvoice.Visible = true;
+                            }
+                            else if (invoices.Count == 1)
+                            {
+                                invoices = InM.GatherInvoicesFromTable(Request.QueryString["pressedBTN"].ToString(), CU.location.intProvinceID, objPageDetails);
+                                txtCustomer.Text = invoices[0].customer.varFirstName + " " + invoices[0].customer.varLastName;
+                                lblInvoiceNumberDisplay.Text = invoices[0].varInvoiceNumber.ToString();
+                                lblDateDisplay.Text = invoices[0].dtmInvoiceDate.ToShortDateString() + " " + invoices[0].dtmInvoiceTime.ToShortTimeString();
+                                cellMaster.Visible = false;
+                                cellEachInvoice.Visible = false;
+                                cellSingleInvoice.Visible = true;
+                            }
+                            else
+                            {
+                                cellMaster.Visible = true;
+                                cellEachInvoice.Visible = true;
+                                cellSingleInvoice.Visible = false;
+                            }
+                            UpdateInvoiceTotal();
                         }
-                        invoice = invoices[0];
-                        UpdateInvoiceTotal();
-                        txtCustomer.Text = invoice.customer.varFirstName + " " + invoice.customer.varLastName;
-                        lblInvoiceNumberDisplay.Text = invoice.intInvoiceID + "-" + invoice.intInvoiceSubNumber;
-                        lblDateDisplay.Text = invoice.dtmInvoiceDate.ToShortDateString() + " " + invoice.dtmInvoiceTime.ToShortTimeString();
                     }
                 }
             }
@@ -156,7 +177,7 @@ namespace SweetSpotDiscountGolfPOS
                 customer.varPostalCode = "";
                 int customerNumber = CM.addCustomer(customer, objPageDetails);
                 customer.intCustomerID = customerNumber;
-                invoice.customer = customer;
+                invoices[0].customer = customer;
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("pressedBTN", Request.QueryString["pressedBTN"].ToString());
                 Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
@@ -207,8 +228,8 @@ namespace SweetSpotDiscountGolfPOS
                 if (e.CommandName == "SwitchCustomer")
                 {
                     Customer customer = CM.ReturnCustomer(Convert.ToInt32(e.CommandArgument.ToString()), objPageDetails)[0];
-                    invoice.customer = customer;
-                    InM.UpdateCurrentInvoice(invoice, objPageDetails);
+                    invoices[0].customer = customer;
+                    InM.UpdateCurrentInvoice(invoices[0], objPageDetails);
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                     nameValues.Set("pressedBTN", Request.QueryString["pressedBTN"].ToString());
                     Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
@@ -233,10 +254,10 @@ namespace SweetSpotDiscountGolfPOS
             string method = "OnRowDeleting";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
-            {                
-                int sku = Convert.ToInt32(((Label)grdCartItems.Rows[e.RowIndex].Cells[2].FindControl("")).Text);
+            {
+                int invoiceItemID = Convert.ToInt32(((Label)grdCartItems.Rows[e.RowIndex].Cells[0].FindControl("lblInvoiceItemID")).Text);
                 //Remove the item from table;
-                IIM.RemoveFromLoungeSimCart(sku, (CU.location.varLocationName + "-" + invoice.varInvoiceNumber + "-" + invoice.intInvoiceSubNumber).ToString(), objPageDetails);
+                IIM.RemoveFromLoungeSimCart(invoiceItemID, invoices[0].dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
                 //Remove the indexed pointer
                 grdCartItems.EditIndex = -1;
                 UpdateInvoiceTotal();
@@ -310,15 +331,16 @@ namespace SweetSpotDiscountGolfPOS
             {
                 //Stores all the data for each element in the row
                 InvoiceItems newItemInfo = new InvoiceItems();
-                newItemInfo.intInvoiceID = Convert.ToInt32(invoice.intInvoiceID);                
-                newItemInfo.intInventoryID = Convert.ToInt32(grdCartItems.Rows[e.RowIndex].Cells[2].Text);
+                newItemInfo.intInvoiceID = Convert.ToInt32(invoices[0].intInvoiceID);
+                newItemInfo.intInvoiceItemID = Convert.ToInt32(((Label)grdCartItems.Rows[e.RowIndex].Cells[0].FindControl("lblInvoiceItemID")).Text);
                 newItemInfo.fltItemDiscount = Convert.ToDouble(((TextBox)grdCartItems.Rows[e.RowIndex].Cells[6].FindControl("txtAmnt")).Text);
                 newItemInfo.intItemQuantity = Convert.ToInt32(((TextBox)grdCartItems.Rows[e.RowIndex].Cells[3].Controls[0]).Text);
                 newItemInfo.bitIsDiscountPercent = ((CheckBox)grdCartItems.Rows[e.RowIndex].Cells[6].FindControl("ckbPercentageEdit")).Checked;
                 newItemInfo.intItemTypeID = Convert.ToInt32(((Label)grdCartItems.Rows[e.RowIndex].Cells[8].FindControl("lblTypeID")).Text);
                 //Clears the indexed row
                 grdCartItems.EditIndex = -1;
-                IIM.UpdateItemFromCurrentSalesTable(newItemInfo, objPageDetails);
+
+                IIM.UpdateSimItemFromCurrentSalesTableActualQuery(newItemInfo, objPageDetails);
                 //Recalculates the new subtotal and Binds cart items to grid view
                 UpdateInvoiceTotal();
             }
@@ -342,7 +364,76 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                CU.isSimEditMode = false;
+                Session["currentUser"] = CU;
                 Response.Redirect("HomePage.aspx", false);
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+        protected void btnExitSale_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnExitSale_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
+            {
+                invoices[0].intTransactionTypeID = 7;
+                InM.UpdateCurrentInvoice(invoices[0], objPageDetails);
+                CU.isSimEditMode = false;
+                Session["currentUser"] = CU;
+                Response.Redirect("HomePage.aspx", false);
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+        protected void btnPrintBill_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnCancelSale_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
+            {
+                //need access to printer to see how to code a small bill print for this
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+        protected void btnProcessPayment_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnCancelSale_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
+            {
+                //Not sure if this should then go to the checkout screen or just have an option to select payment
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -363,11 +454,19 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                InM.CalculateNewInvoiceTotalsToUpdate(InM.ReturnCurrentInvoice(invoice.intInvoiceID, objPageDetails)[0], objPageDetails);
-                invoice = InM.ReturnCurrentInvoice(invoice.intInvoiceID, objPageDetails)[0];
-                grdCartItems.DataSource = invoice.invoiceItems;
-                grdCartItems.DataBind();
-                lblSubtotalDisplay.Text = "$ " + invoice.fltSubTotal.ToString("#0.00");
+                rptEachInvoice.DataSource = invoices;
+                rptEachInvoice.DataBind();
+                for (int i = 0; i <= invoices.Count - 1; ++i)
+                {
+                    InM.CalculateNewInvoiceTotalsToUpdate(InM.ReturnCurrentInvoice(invoices[i].intInvoiceID, CU.location.intProvinceID, objPageDetails)[0], objPageDetails);
+                    invoices[i] = InM.ReturnCurrentInvoice(invoices[i].intInvoiceID, CU.location.intProvinceID, objPageDetails)[0];
+                    grdCartItems.DataSource = invoices[i].invoiceItems;
+                    grdCartItems.DataBind();
+                    lblLiquorTaxDisplay.Text = invoices[i].fltLiquorTaxAmount.ToString("C");
+                    lblGovernmentTaxDisplay.Text = invoices[i].fltGovernmentTaxAmount.ToString("C");
+                    lblProvincialTaxDisplay.Text = invoices[i].fltProvincialTaxAmount.ToString("C");
+                    lblSubtotalDisplay.Text = "$ " + invoices[i].fltSubTotal.ToString("#0.00");
+                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -388,7 +487,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                mvApplicableServices.ActiveViewIndex = 1;
+                PageButtonCheck((Button)sender, 1);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -409,7 +508,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                mvApplicableServices.ActiveViewIndex = 2;
+                PageButtonCheck((Button)sender, 2);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -430,7 +529,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                mvApplicableServices.ActiveViewIndex = 3;
+                PageButtonCheck((Button)sender, 3);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -451,7 +550,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                mvApplicableServices.ActiveViewIndex = 4;
+                PageButtonCheck((Button)sender, 4);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -472,7 +571,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                mvApplicableServices.ActiveViewIndex = 5;
+                PageButtonCheck((Button)sender, 5);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -493,7 +592,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                mvApplicableServices.ActiveViewIndex = 6;
+                PageButtonCheck((Button)sender, 6);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -514,6 +613,8 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                CU.isSimEditMode = false;
+                Session["currentUser"] = CU;
                 Response.Redirect("LoungeSims.aspx", false);
             }
             //Exception catch
@@ -578,9 +679,14 @@ namespace SweetSpotDiscountGolfPOS
                     //use text to make db call
                     //this will return the item number
                     //once item number returned can be added to sale
-                    InvoiceItems selectedSku = IIM.GatherLoungeSimToAddToInvoice(selectedItem.ID.ToString(), Convert.ToInt32(invoice.intInvoiceID));
+                    InvoiceItems selectedSku = IIM.GatherLoungeSimToAddToInvoice(selectedItem.ID.ToString(), Convert.ToInt32(invoices[0].intInvoiceID), objPageDetails);
+                    selectedSku.intInvoiceID = invoices[0].intInvoiceID;
+                    selectedSku.fltItemDiscount = 0;
+                    selectedSku.fltItemRefund = 0;
+                    selectedSku.bitIsDiscountPercent = false;
+                    selectedSku.bitIsClubTradeIn = false;
                     //add item to table and remove the added qty from current inventory
-                    IIM.InsertItemIntoSalesCart(selectedSku, objPageDetails);
+                    IIM.InsertItemIntoSalesCart(selectedSku, invoices[0].intTransactionTypeID, invoices[0].dtmInvoiceDate, CU, objPageDetails);
                     UpdateInvoiceTotal();
                     mvApplicableServices.ActiveViewIndex = 0;
                 }
@@ -627,7 +733,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                IM.ProgramLoungeSimButton(Convert.ToInt32(e.CommandArgument.ToString()), Session["selectedProgramButton"].ToString());
+                IM.ProgramLoungeSimButton(Convert.ToInt32(e.CommandArgument.ToString()), "", Session["selectedProgramButton"].ToString(), objPageDetails);
                 Session["selectedProgramButton"] = null;
                 tblSelectItem.Visible = false;
                 txtSearchText.Visible = false;
@@ -661,11 +767,90 @@ namespace SweetSpotDiscountGolfPOS
                             button.Text = i.varItemDescription;
                         }
                     }
+                    if (!CU.isSimEditMode)
+                    {
+                        if (button.Text == "Program Button")
+                        {
+                            button.Visible = false;
+                        }
+                    }
                 }
                 else if (c.HasControls())
                 {
                     ButtonCheck(c);
                 }
+            }
+        }
+        protected void btnEditButtonText_Click(object sender, EventArgs e)
+        {
+            string method = "btnEditButtonText_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
+            {
+                IM.ProgramLoungeSimButton(0, txtButtonText.Text, Session["selectedProgramButton"].ToString(), objPageDetails);
+                Session["selectedProgramButton"] = null;
+                tblSelectItem.Visible = false;
+                txtButtonText.Visible = false;
+                txtButtonText.Text = "";
+                btnEditButtonText.Visible = false;
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+        private void PageButtonCheck(Button selectedItem, int activeWindow)
+        {
+             if (CU.isSimEditMode)
+                {
+                    if (selectedItem.Text == "Program Button")
+                    {
+                        //View Item Selection to set
+                        Session["selectedProgramButton"] = selectedItem.ID.ToString();
+                        tblSelectItem.Visible = true;
+                        txtButtonText.Visible = true;
+                        btnEditButtonText.Visible = true;
+                    }
+                    else
+                    {
+                        mvApplicableServices.ActiveViewIndex = activeWindow;
+                    }
+                }
+                else
+                {
+                    mvApplicableServices.ActiveViewIndex = activeWindow;
+                }
+        }
+
+        protected void grdEachCartItems_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            string method = "grdEachCartItems_RowCommand";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
+            {
+                if(e.CommandName.ToString() == "R")
+                {
+                    IIM.DeleteItemFromCurrentSalesTable(Convert.ToInt32(e.CommandArgument.ToString()), invoices[0].dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
+                }
+                UpdateInvoiceTotal();
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
             }
         }
     }

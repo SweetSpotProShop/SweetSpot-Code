@@ -18,7 +18,7 @@ namespace SweetSpotDiscountGolfPOS
         InvoiceManager IM = new InvoiceManager();
         LocationManager LM = new LocationManager();
         ItemsManager ItM = new ItemsManager();
-        private static Invoice receipt;
+        //private static Invoice receipt;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -36,6 +36,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
+                    Invoice receipt = new Invoice();
                     CU = (CurrentUser)Session["currentUser"];
                     if (!Page.IsPostBack)
                     {
@@ -55,7 +56,7 @@ namespace SweetSpotDiscountGolfPOS
                         }
                         else
                         {
-                            receipt = IM.ReturnCurrentPurchaseInvoice(Convert.ToInt32(Request.QueryString["receipt"]), objPageDetails)[0];
+                            receipt = IM.ReturnCurrentPurchaseInvoice(Convert.ToInt32(Request.QueryString["receipt"]), CU.location.intProvinceID, objPageDetails)[0];
                         }
 
                         //Checks if there is a Customer Number stored in the Session
@@ -126,6 +127,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                Invoice receipt = IM.ReturnCurrentPurchaseInvoice(Convert.ToInt32(Request.QueryString["receipt"]), CU.location.intProvinceID, objPageDetails)[0];
                 Customer C = new Customer
                 {
                     varFirstName = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtFirstName")).Text,
@@ -191,11 +193,12 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                Invoice receipt = IM.ReturnCurrentPurchaseInvoice(Convert.ToInt32(Request.QueryString["receipt"]), CU.location.intProvinceID, objPageDetails)[0];
                 //grabs the command argument for the command pressed 
                 if (e.CommandName == "SwitchCustomer")
                 {
                     //if command argument is SwitchCustomer, set the new key
-                    receipt = IM.ReturnCurrentInvoice(receipt.intInvoiceID, objPageDetails)[0];
+                    receipt = IM.ReturnCurrentInvoice(receipt.intInvoiceID, CU.location.intProvinceID, objPageDetails)[0];
                     receipt.customer = CM.ReturnCustomer(Convert.ToInt32(e.CommandArgument.ToString()), objPageDetails)[0];
                     IM.UpdateCurrentInvoice(receipt, objPageDetails);
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
@@ -225,9 +228,12 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                Invoice receipt = IM.ReturnCurrentPurchaseInvoice(Convert.ToInt32(Request.QueryString["receipt"]), CU.location.intProvinceID, objPageDetails)[0];
+                string[] inventoryInfo = ItM.ReserveTradeInSKU(CU, objPageDetails);
                 InvoiceItems purchItem = new InvoiceItems
                 {
-                    varSku = ItM.ReserveTradeInSKU(CU, objPageDetails),
+                    intInventoryID = Convert.ToInt32(inventoryInfo[1]),
+                    varSku = inventoryInfo[0].ToString(),
                     intItemQuantity = 1,
                     varItemDescription = "",
                     fltItemCost = 0.00,
@@ -240,7 +246,7 @@ namespace SweetSpotDiscountGolfPOS
                     intItemTypeID = 1
                 };
 
-                IIM.InsertItemIntoSalesCart(purchItem, objPageDetails);
+                IIM.InsertItemIntoSalesCart(purchItem, receipt.intTransactionTypeID, receipt.dtmInvoiceDate, CU, objPageDetails);
                 //Bind items in cart to grid view
                 UpdateReceiptTotal();
             }
@@ -264,6 +270,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                Invoice receipt = IM.ReturnCurrentPurchaseInvoice(Convert.ToInt32(Request.QueryString["receipt"]), CU.location.intProvinceID, objPageDetails)[0];
                 //it's available columns
                 grdPurchasedItems.DataSource = receipt.invoiceItems;
                 grdPurchasedItems.EditIndex = e.NewEditIndex;
@@ -291,6 +298,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                Invoice receipt = IM.ReturnCurrentPurchaseInvoice(Convert.ToInt32(Request.QueryString["receipt"]), CU.location.intProvinceID, objPageDetails)[0];
                 //Clears the indexed row
                 grdPurchasedItems.EditIndex = -1;
                 //Binds gridview to Session items in cart
@@ -319,6 +327,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                Invoice receipt = IM.ReturnCurrentPurchaseInvoice(Convert.ToInt32(Request.QueryString["receipt"]), CU.location.intProvinceID, objPageDetails)[0];
                 //creates a temp item with the new updates
                 InvoiceItems purchItem = new InvoiceItems
                 {
@@ -354,7 +363,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                IM.CancellingReceipt(IM.ReturnCurrentInvoice(receipt.intInvoiceID, objPageDetails)[0], objPageDetails);
+                IM.CancellingReceipt(IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["receipt"].ToString()), CU.location.intProvinceID, objPageDetails)[0], objPageDetails);
                 //Change to Home Page
                 Response.Redirect("HomePage.aspx", false);
             }
@@ -378,8 +387,8 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                nameValues.Set("receipt", receipt.intInvoiceID.ToString());
-                nameValues.Set("customer", receipt.customer.intCustomerID.ToString());
+                nameValues.Set("receipt", Request.QueryString["receipt"].ToString());
+                nameValues.Set("customer", Request.QueryString["customer"].ToString());
                 //Changes to Sales Checkout page
                 Response.Redirect("PurchasesCheckout.aspx?" + nameValues, false);
             }
@@ -401,8 +410,8 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                IM.CalculateNewReceiptTotalsToUpdate(IM.ReturnCurrentPurchaseInvoice(receipt.intInvoiceID, objPageDetails)[0], objPageDetails);
-                receipt = IM.ReturnCurrentPurchaseInvoice(receipt.intInvoiceID, objPageDetails)[0];
+                IM.CalculateNewReceiptTotalsToUpdate(IM.ReturnCurrentPurchaseInvoice(Convert.ToInt32(Request.QueryString["receipt"].ToString()), CU.location.intProvinceID, objPageDetails)[0], objPageDetails);
+                Invoice receipt = IM.ReturnCurrentPurchaseInvoice(Convert.ToInt32(Request.QueryString["receipt"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
                 grdPurchasedItems.DataSource = receipt.invoiceItems;
                 grdPurchasedItems.DataBind();
                 //Recalculates the new subtotal

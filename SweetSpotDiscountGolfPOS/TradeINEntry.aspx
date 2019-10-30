@@ -41,7 +41,7 @@
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:DropDownList ID="ddlBrand" runat="server" AutoPostBack="false"
-                                DataTextField="brandName" DataValueField="brandID" Visible="true" />
+                                DataTextField="varBrandName" DataValueField="intBrandID" Visible="true" />
                             <asp:RequiredFieldValidator ID="rfvBrand"
                                 runat="server" ControlToValidate="ddlBrand"
                                 ErrorMessage="Brand Required"
@@ -97,7 +97,7 @@
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:DropDownList ID="ddlModel" runat="server" AutoPostBack="false"
-                                DataTextField="modelName" DataValueField="modelID" Visible="True" />
+                                DataTextField="varModelName" DataValueField="intModelID" Visible="True" />
                             <asp:RequiredFieldValidator ID="rfvModel"
                                 runat="server" ControlToValidate="ddlModel"
                                 ErrorMessage="Model Required"

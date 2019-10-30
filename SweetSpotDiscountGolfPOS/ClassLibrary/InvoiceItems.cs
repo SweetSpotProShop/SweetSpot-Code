@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SweetShop;
 using System.Linq;
 using System.Web;
 
@@ -7,6 +8,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 {
     //The invoice items class is used to define and keep track of what an invoice item is.
     //Used in storing the items from a sale in the database
+    [Serializable]
     public class InvoiceItems
     {
         public int intInvoiceItemID { get; set; }
@@ -23,6 +25,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public int intItemTypeID { get; set; }
         public bool bitIsClubTradeIn { get; set; }
         public int intLocationID { get; set; }
+        public List<InvoiceItemTax> invoiceItemTaxes { get; set; }
         public string varLocationName { get; set; }
         public string varAdditionalInformation { get; set; }
 

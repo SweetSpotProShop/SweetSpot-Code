@@ -36,9 +36,7 @@
                             <asp:TableCell>
                                 <asp:Button ID="btnMakePurchase" runat="server" Width="150" Text="Make Purchase" OnClick="btnMakePurchase_Click" />
                             </asp:TableCell>
-
                         </asp:TableRow>
-
                     </asp:Table>
                     <asp:UpdateProgress ID="UpdateProgress1" runat="server">
                         <ProgressTemplate>
@@ -48,11 +46,12 @@
                         </ProgressTemplate>
                     </asp:UpdateProgress>
                     <hr />
-                    <asp:GridView ID="grdInventorySearched" runat="server" AutoGenerateColumns="False" OnRowCommand="grdInventorySearched_RowCommand" AllowPaging="true" PageSize="50" OnPageIndexChanging="grdInventorySearched_PageIndexChanging">
+                    <asp:GridView ID="grdInventorySearched" runat="server" AutoGenerateColumns="False" OnRowCommand="grdInventorySearched_RowCommand" 
+						AllowPaging="True" PageSize="50" OnPageIndexChanging="grdInventorySearched_PageIndexChanging" >
                         <Columns>
                             <asp:TemplateField HeaderText="View Item">
                                 <ItemTemplate>
-                                    <asp:LinkButton ID="lbtnView" CommandName="viewItem" CommandArgument='<%#Eval("sku") %>' Text="View Item" runat="server" />
+                                    <asp:LinkButton ID="lbtnView" CommandName="viewItem" CommandArgument='<%#Eval("intInventoryID") %>' Text="View Item" runat="server" />
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="SKU">
@@ -60,7 +59,7 @@
                                     <asp:Button ID="btnSKU" runat="server" OnClick="lbtnSKU_Click" Width="100px" Text="SKU" />
                                 </HeaderTemplate>
                                 <ItemTemplate>
-                                    <asp:Label runat="server" Text='<%#Eval("sku")%>' />
+                                    <asp:Label runat="server" Text='<%#Eval("varSku")%>' />
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Description">
@@ -68,7 +67,7 @@
                                     <asp:Button ID="btnDescription" runat="server" OnClick="btnDescription_Click" Width="100px" Text="Description" />
                                 </HeaderTemplate>
                                 <ItemTemplate>
-                                    <asp:Label runat="server" Text='<%#Eval("description")%>' />
+                                    <asp:Label runat="server" Text='<%#Eval("varItemDescription")%>' />
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Store">
@@ -76,7 +75,7 @@
                                     <asp:Button ID="btnStore" runat="server" OnClick="btnStore_Click" Width="100px" Text="Store" />
                                 </HeaderTemplate>
                                 <ItemTemplate>
-                                    <asp:Label runat="server" Text='<%#Eval("location")%>' />
+                                    <asp:Label runat="server" Text='<%#Eval("varLocationName")%>' />
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Quantity">
@@ -84,7 +83,7 @@
                                     <asp:Button ID="btnQuantity" runat="server" OnClick="btnQuantity_Click" Width="100px" Text="Quantity" />
                                 </HeaderTemplate>
                                 <ItemTemplate>
-                                    <asp:Label runat="server" Text='<%#Eval("quantity")%>' />
+                                    <asp:Label runat="server" Text='<%#Eval("intItemQuantity")%>' />
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Price">
@@ -92,7 +91,7 @@
                                     <asp:Button ID="btnPrice" runat="server" OnClick="btnPrice_Click" Width="100px" Text="Price" />
                                 </HeaderTemplate>
                                 <ItemTemplate>
-                                    <asp:Label runat="server" Text='<%#Eval("price","{0:C}")%>' />
+                                    <asp:Label runat="server" Text='<%#Eval("fltItemPrice","{0:C}")%>' />
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Cost">
@@ -100,7 +99,7 @@
                                     <asp:Button ID="btnCost" runat="server" OnClick="btnCost_Click" Width="100px" Text="Cost" />
                                 </HeaderTemplate>
                                 <ItemTemplate>
-                                    <asp:Label runat="server" Text='<%#Eval("cost","{0:C}")%>' />
+                                    <asp:Label runat="server" Text='<%#Eval("fltItemCost","{0:C}")%>' />
                                 </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Comments">
@@ -108,7 +107,7 @@
                                     <asp:Button ID="btnComments" runat="server" OnClick="btnComments_Click" Width="100px" Text="Comments" />
                                 </HeaderTemplate>
                                 <ItemTemplate>
-                                    <asp:Label runat="server" Text='<%#Eval("comments")%>' />
+                                    <asp:Label runat="server" Text='<%#Eval("varAdditionalInformation")%>' />
                                 </ItemTemplate>
                             </asp:TemplateField>
                         </Columns>

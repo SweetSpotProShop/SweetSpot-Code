@@ -17,7 +17,7 @@ namespace SweetSpotDiscountGolfPOS
         CurrentUser CU;
         LocationManager LM = new LocationManager();
         InvoiceManager IM = new InvoiceManager();
-        private static Invoice invoice;
+        //private static Invoice invoice;
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -37,7 +37,7 @@ namespace SweetSpotDiscountGolfPOS
                     CU = (CurrentUser)Session["currentUser"];
                     if (!IsPostBack)
                     {
-                        invoice = IM.ReturnInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
+                        Invoice invoice = IM.ReturnInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
 
                         //display information on receipt
                         lblCustomerName.Text = invoice.customer.varFirstName.ToString() + " " + invoice.customer.varLastName.ToString();
@@ -56,17 +56,63 @@ namespace SweetSpotDiscountGolfPOS
                         lblTaxNum.Text = invoice.location.varTaxNumber.ToString();
 
                         //Display the totals
-                        lblDiscountsDisplay.Text = invoice.fltTotalDiscount.ToString("#0.00");
-                        lblTradeInsDisplay.Text = invoice.fltTotalTradeIn.ToString("#0.00");
-                        lblShippingDisplay.Text = invoice.fltShippingCharges.ToString("#0.00");
-                        lblGSTDisplay.Text = invoice.fltGovernmentTaxAmount.ToString("#0.00");
-                        lblPSTDisplay.Text = invoice.fltProvincialTaxAmount.ToString("#0.00");
-                        lblSubtotalDisplay.Text = (invoice.fltSubTotal + invoice.fltShippingCharges).ToString("#0.00");
-                        lblTotalPaidDisplay.Text = (invoice.fltBalanceDue + invoice.fltGovernmentTaxAmount + invoice.fltProvincialTaxAmount).ToString("#0.00");
+                        lblDiscountsDisplay.Text = invoice.fltTotalDiscount.ToString("C");
+                        lblTradeInsDisplay.Text = invoice.fltTotalTradeIn.ToString("C");
+                        lblShippingDisplay.Text = invoice.fltShippingCharges.ToString("C");
+
+                        double governmentTax = 0;
+                        double provincialTax = 0;
+                        double liquorTax = 0;
+
+                        foreach (var invoiceItem in invoice.invoiceItems)
+                        {
+                            foreach (var invoiceItemTax in invoiceItem.invoiceItemTaxes)
+                            {
+                                if (invoiceItemTax.intTaxTypeID == 1 || invoiceItemTax.intTaxTypeID == 3)
+                                {
+                                    if (invoiceItemTax.bitIsTaxCharged)
+                                    {
+                                        governmentTax += invoiceItemTax.fltTaxAmount;
+                                        lblGovernment.Visible = true;
+                                        lblGovernment.Text = invoiceItemTax.varTaxName;
+                                        lblGovernmentAmount.Visible = true;
+                                    }
+                                }
+                                else if (invoiceItemTax.intTaxTypeID == 2 || invoiceItemTax.intTaxTypeID == 4 || invoiceItemTax.intTaxTypeID == 5)
+                                {
+                                    if (invoiceItemTax.bitIsTaxCharged)
+                                    {
+                                        provincialTax += invoiceItemTax.fltTaxAmount;
+                                        lblProvincial.Visible = true;
+                                        lblProvincial.Text = invoiceItemTax.varTaxName;
+                                        lblProvincialAmount.Visible = true;
+                                    }
+                                }
+                                else if (invoiceItemTax.intTaxTypeID == 7)
+                                {
+                                    if (invoiceItemTax.bitIsTaxCharged)
+                                    {
+                                        liquorTax += invoiceItemTax.fltTaxAmount;
+                                        lblLiquorTax.Visible = true;
+                                        lblLiquorTax.Text = invoiceItemTax.varTaxName;
+                                        lblLiquorTaxAmount.Visible = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        lblGovernmentAmount.Text = governmentTax.ToString("C");
+                        lblProvincialAmount.Text = provincialTax.ToString("C");
+                        lblLiquorTaxAmount.Text = liquorTax.ToString("C");
+
+                        double taxAmount = governmentTax + provincialTax + liquorTax;
+
+                        lblSubtotalDisplay.Text = (invoice.fltSubTotal + invoice.fltShippingCharges).ToString("C");
+                        lblTotalPaidDisplay.Text = (invoice.fltBalanceDue + taxAmount).ToString("C");
 
                         object[] amounts = IM.ReturnTotalsForTenderAndChange(invoice);
-                        lblTenderDisplay.Text = Convert.ToDouble(amounts[0]).ToString("#0.00");
-                        lblChangeDisplay.Text = Convert.ToDouble(amounts[1]).ToString("#0.00");
+                        lblTenderDisplay.Text = Convert.ToDouble(amounts[0]).ToString("C");
+                        lblChangeDisplay.Text = Convert.ToDouble(amounts[1]).ToString("C");
 
                         if (invoice.intInvoiceSubNumber > 1)
                         {

@@ -135,7 +135,7 @@ namespace SweetSpotDiscountGolfPOS
                 int invoiceID = Convert.ToInt32(e.CommandArgument.ToString());
 
                 InvoiceManager IM = new InvoiceManager();
-                if (IM.invoiceIsReturn(invoiceID))
+                if (IM.invoiceIsReturn(invoiceID, objPageDetails))
                 {
                     //Changes page to display a printable invoice
                     Response.Redirect("PrintableInvoiceReturn.aspx?invoice=" + invoiceID.ToString(), false);

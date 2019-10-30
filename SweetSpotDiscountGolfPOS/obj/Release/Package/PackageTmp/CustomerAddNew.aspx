@@ -111,14 +111,14 @@
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:DropDownList ID="ddlProvince" AutoPostBack="false" runat="server"
-                            DataTextField = "provName" DataValueField = "provStateID" Enabled="false" />
+                            DataTextField = "varProvinceName" DataValueField = "intProvinceID" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblCountry" runat="server" Text="Country:" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:DropDownList ID="ddlCountry" runat="server" AutoPostBack="true"
-                            DataTextField = "countryDesc" DataValueField = "countryID" Enabled="false" 
+                            DataTextField = "varCountryName" DataValueField = "intCountryID" Enabled="false" 
                             OnSelectedIndexChanged="ddlCountry_SelectedIndexChanged" />
                     </asp:TableCell>
                 </asp:TableRow>
@@ -150,47 +150,47 @@
                     <Columns>
                         <asp:TemplateField HeaderText=" View Invoice">
                             <ItemTemplate>
-                                <asp:LinkButton ID="lkbInvoiceNum" runat="server" CommandName="returnInvoice" CommandArgument='<%#Eval("invoiceNum") + "-" + Eval("invoiceSub")%>' Text='<%#Eval("invoiceNum") + "-" + Eval("invoiceSub") %>' />
+                                <asp:LinkButton ID="lkbInvoiceNum" runat="server" CommandName="returnInvoice" CommandArgument='<%#Eval("intInvoiceID")%>' Text='<%#Eval("varInvoiceNumber") + "-" + Eval("intInvoiceSubNumber") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Invoice Date">
                             <ItemTemplate>
-                                <asp:Label ID="lblInvoiceDate" runat="server" Text='<%#Eval("invoiceDate","{0: dd/MMM/yy}") %>' />
+                                <asp:Label ID="lblInvoiceDate" runat="server" Text='<%#Eval("dtmInvoiceDate","{0: dd/MMM/yy}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Discount">
                             <ItemTemplate>
-                                <asp:Label ID="lblDiscountAmount" runat="server" Text='<%#Eval("discountAmount","{0:C}") %>' />
+                                <asp:Label ID="lblDiscountAmount" runat="server" Text='<%#Eval("fltTotalDiscount","{0:C}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Trade In">
                             <ItemTemplate>
-                                <asp:Label ID="lblTradeInAmount" runat="server" Text='<%#Eval("tradeinAmount","{0:C}") %>' />
+                                <asp:Label ID="lblTradeInAmount" runat="server" Text='<%#Eval("fltTotalTradeIn","{0:C}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Subtotal">
                             <ItemTemplate>
-                                <asp:Label ID="lblSubtotal" runat="server" Text='<%#Eval("subTotal","{0:C}") %>' />
+                                <asp:Label ID="lblSubtotal" runat="server" Text='<%#Eval("fltSubTotal","{0:C}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="GST">
                             <ItemTemplate>
-                                <asp:Label ID="lblGSTAmount" runat="server" Text='<%#Eval("governmentTax","{0:C}") %>' />
+                                <asp:Label ID="lblGSTAmount" runat="server" Text='<%#Eval("fltGovernmentTaxAmount","{0:C}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="PST">
                             <ItemTemplate>
-                                <asp:Label ID="lblPSTAmount" runat="server" Text='<%#Eval("provincialTax","{0:C}") %>' />
+                                <asp:Label ID="lblPSTAmount" runat="server" Text='<%#Eval("fltProvincialTaxAmount","{0:C}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Total">
                             <ItemTemplate>
-                                <asp:Label ID="lblAmountPaid" runat="server" Text='<%#(Convert.ToDouble(Eval("balanceDue")) + Convert.ToDouble(Eval("governmentTax")) + Convert.ToDouble(Eval("provincialTax"))).ToString("C") %>' />
+                                <asp:Label ID="lblAmountPaid" runat="server" Text='<%# Eval("fltBalanceDue", "{0:C}") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name">
                             <ItemTemplate>
-                                <asp:Label ID="lblEmployeeName" runat="server" Text='<%#Eval("employee.firstName") +" "+Eval("employee.lastName") %>' />
+                                <asp:Label ID="lblEmployeeName" runat="server" Text='<%#Eval("employee.varFirstName") +" "+Eval("employee.varLastName") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>

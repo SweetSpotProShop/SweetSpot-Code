@@ -146,16 +146,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClassLibrary\Accessories.cs" />
+    <Compile Include="ClassLibrary\ImportExport.cs" />
     <Compile Include="ClassLibrary\ItemChangeTracking.cs" />
     <Compile Include="ClassLibrary\CustomerManager.cs" />
     <Compile Include="ClassLibrary\InvoiceItemsManager.cs" />
     <Compile Include="ClassLibrary\InvoiceMOPsManager.cs" />
     <Compile Include="ClassLibrary\ItemsManager.cs" />
-    <Compile Include="ClassLibrary\MopsManager.cs" />
+    <Compile Include="ClassLibrary\MasterBIll.cs" />
     <Compile Include="ClassLibrary\SalesCalculationManager.cs" />
     <Compile Include="ClassLibrary\Cart.cs" />
     <Compile Include="ClassLibrary\Cashout.cs" />
-    <Compile Include="ClassLibrary\Mops.cs" />
     <Compile Include="ClassLibrary\CheckoutManager.cs" />
     <Compile Include="ClassLibrary\Clothing.cs" />
     <Compile Include="ClassLibrary\Clubs.cs" />
@@ -263,7 +263,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="ClassLibrary\Purchases.cs" />
     <Compile Include="PurchasesCart.aspx.cs">
       <DependentUpon>PurchasesCart.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

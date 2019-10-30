@@ -22,6 +22,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method and page for error tracking
             string method = "Page_Load";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -34,7 +35,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     CU = (CurrentUser)Session["currentUser"];
 
-                    programmed = IM.ReturnSeatedTables();
+                    programmed = IM.ReturnSeatedTables(objPageDetails);
                     ButtonCheck(Page);
                 }
             }
@@ -152,14 +153,12 @@ namespace SweetSpotDiscountGolfPOS
                     Button button = (Button)c;
                     foreach (DataRow dr in programmed.Rows)
                     {
-                        if (button.ID.ToString() == dr[0].ToString())
+                        if (button.ID.ToString() == dr[0].ToString() || button.ID.ToString() == (dr[0].ToString() + dr[1].ToString()).ToString())
                         {
                             button.BackColor = Color.Green;
-                            button.Enabled = false;
                         }
-                        else if(button.ID.ToString() == (dr[0].ToString() + dr[1].ToString()).ToString())
+                        if(button.ID.Contains(dr[0].ToString()))
                         {
-                            button.BackColor = Color.Green;
                             button.Enabled = true;
                         }
                     }
@@ -168,6 +167,29 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     ButtonCheck(c);
                 }
+            }
+        }
+
+        protected void btnEditMode_Click(object sender, EventArgs e)
+        {
+            //Collects current method and page for error tracking
+            string method = "btnEditMode_Click";
+            try
+            {
+                CU.isSimEditMode = true;
+                Session["currentUser"] = CU;
+                Response.Redirect("LoungeSalesCart.aspx", false);
+            }
+            //Exception catch
+            catch (ThreadAbortException) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
             }
         }
     }

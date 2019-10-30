@@ -10,7 +10,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 {
     public class CustomerManager
     {
-        DatabaseCalls dbc = new DatabaseCalls();
+        DatabaseCalls DBC = new DatabaseCalls();
 
         private List<Customer> ConvertFromDataTableToCustomer(DataTable dt)
         {
@@ -69,7 +69,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@intCustomerID", customerID },
             };
 
-            return ConvertFromDataTableToCustomer(dbc.returnDataTableData(sqlCmd, parms));
+            return ConvertFromDataTableToCustomer(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
             //return ConvertFromDataTableToCustomer(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
         //Returns list of custoemrs based on an customer ID
@@ -85,7 +85,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@intCustomerID", customerID },
             };
 
-            return ConvertFromDataTableToCustomerWithInvoices(dbc.returnDataTableData(sqlCmd, parms), objPageDetails);
+            return ConvertFromDataTableToCustomerWithInvoices(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
             //return ConvertFromDataTableToCustomerWithInvoices(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         //Returns list of custoemrs based on an search text
@@ -124,7 +124,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             sqlCmd += " ORDER BY varFirstName ASC";
 
-            return ConvertFromDataTableToCustomer(dbc.returnDataTableDataFromArrayLists(sqlCmd, parms, strText));
+            return ConvertFromDataTableToCustomer(DBC.MakeDataBaseCallToReturnDataTableFromArrayLists(sqlCmd, parms, strText, objPageDetails, strQueryName));
             //return ConvertFromDataTableToCustomer(dbc.returnDataTableDataFromArrayLists(sqlCmd, parms, strText, objPageDetails, strQueryName));
         }
         //Add Customer Nathan and Tyler created. Returns customer ID
@@ -133,7 +133,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string strQueryName = "addCustomer";
             //New command
             string sqlCmd = "INSERT INTO tbl_customers VALUES (@varFirstName, @varLastName, @varAddress, @secondaryAddress, "
-                + "@varContactNumber, @secondaryPhoneINT, @billingAddress, @varEmailAddress, @varCityName, @intProvinceID, "
+                + "@varContactNumber, @secondaryPhoneINT, '', @varEmailAddress, @varCityName, @intProvinceID, "
                 + "@intCountryID, @varPostalCode, @bitSendMarketing)";
 
             object[][] parms =
@@ -144,7 +144,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@secondaryAddress", customer.secondaryAddress },
                 new object[] { "@varContactNumber", customer.varContactNumber },
                 new object[] { "@secondaryPhoneINT", customer.secondaryPhoneNumber },
-                new object[] { "@billingAddress", customer.billingAddress },
+
                 new object[] { "@varEmailAddress", customer.varEmailAddress },
                 new object[] { "@varCityName", customer.varCityName },                
                 new object[] { "@intProvinceID", customer.intProvinceID },
@@ -153,7 +153,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@bitSendMarketing", customer.bitSendMarketing }
             };
 
-            dbc.executeInsertQuery(sqlCmd, parms);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
             return ReturnCustomerIDFromCustomerStats(parms, objPageDetails)[0].intCustomerID;
         }
@@ -180,20 +180,20 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "intCountryID", customer.intCountryID },
                 new object[] { "varPostalCode", customer.varPostalCode }
             };
-            dbc.executeInsertQuery(sqlCmd, parms);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public List<Customer> ReturnCustomerIDFromCustomerStats(object[][] parms, object[] objPageDetails)
         {
             string strQueryName = "ReturnCustomerIDFromCustomerStats";
-            string sqlCmd = "SELECT intCustomerID, varFirstName, varLastName, varAddress, varContactNumber, bitSendMarketing, "
-                + "varEmailAddress, varCityName, intProvinceID, intCountryID, varPostalCode FROM tbl_customers WHERE varFirstName "
-                + "= @varFirstName and varLastName = @varLastName and varAddress = @varAddress and varContactNumber = "
-                + "@varContactNumber and bitSendMarketing = @bitSendMarketing and varEmailAddress = @varEmailAddress and "
-                + "varCityName = @varCityName and intProvinceID = @intProvinceID and intCountryID = @intCountryID and "
-                + "varPostalCode = @varPostalCode";
+            string sqlCmd = "SELECT intCustomerID, varFirstName, varLastName, varAddress, secondaryAddress, varContactNumber, secondaryPhoneINT, "
+                + "varEmailAddress, varCityName, intProvinceID, intCountryID, varPostalCode, bitSendMarketing FROM tbl_customers WHERE varFirstName "
+                + "= @varFirstName AND varLastName = @varLastName AND varAddress = @varAddress AND secondaryAddress = @secondaryAddress AND "
+                + "varContactNumber = @varContactNumber AND secondaryPhoneINT = @secondaryPhoneINT AND varEmailAddress = @varEmailAddress AND "
+                + "varCityName = @varCityName AND intProvinceID = @intProvinceID AND intCountryID = @intCountryID AND varPostalCode = @varPostalCode "
+                + "AND bitSendMarketing = @bitSendMarketing";
 
-            return ConvertFromDataTableToCustomer(dbc.returnDataTableData(sqlCmd, parms));
+            return ConvertFromDataTableToCustomer(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
             //return ConvertFromDataTableToCustomer(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
     }

@@ -10,8 +10,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
 {
     public class InvoiceItemsManager
     {
-        DatabaseCalls dbc = new DatabaseCalls();
-        private List<InvoiceItems> ConvertFromDataTableToInvoiceItems(DataTable dt)
+        DatabaseCalls DBC = new DatabaseCalls();
+        private List<InvoiceItems> ConvertFromDataTableToInvoiceItemsCurrentSale(DataTable dt, DateTime selectedDate, int provinceID, object[] objPageDetails)
         {
             List<InvoiceItems> invoiceItems = dt.AsEnumerable().Select(row =>
             new InvoiceItems
@@ -28,7 +28,30 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 fltItemRefund = row.Field<double>("fltItemRefund"),
                 bitIsDiscountPercent = row.Field<bool>("bitIsDiscountPercent"),
                 intItemTypeID = row.Field<int>("intItemTypeID"),
-                bitIsClubTradeIn = row.Field<bool>("bitIsClubTradeIn")
+                bitIsClubTradeIn = row.Field<bool>("bitIsClubTradeIn"),
+                invoiceItemTaxes = ReturnInvoiceItemTaxesCurrent(row.Field<int>("intInvoiceItemID"), selectedDate, provinceID, objPageDetails)
+            }).ToList();
+            return invoiceItems;
+        }
+        private List<InvoiceItems> ConvertFromDataTableToInvoiceItems(DataTable dt, DateTime selectedDate, int provinceID, object[] objPageDetails)
+        {
+            List<InvoiceItems> invoiceItems = dt.AsEnumerable().Select(row =>
+            new InvoiceItems
+            {
+                intInvoiceItemID = row.Field<int>("intInvoiceItemID"),
+                intInvoiceID = row.Field<int>("intInvoiceID"),
+                intInventoryID = row.Field<int>("intInventoryID"),
+                varSku = row.Field<string>("varSku"),
+                varItemDescription = row.Field<string>("varItemDescription"),
+                intItemQuantity = row.Field<int>("intItemQuantity"),
+                fltItemCost = row.Field<double>("fltItemCost"),
+                fltItemPrice = row.Field<double>("fltItemPrice"),
+                fltItemDiscount = row.Field<double>("fltItemDiscount"),
+                fltItemRefund = row.Field<double>("fltItemRefund"),
+                bitIsDiscountPercent = row.Field<bool>("bitIsDiscountPercent"),
+                intItemTypeID = row.Field<int>("intItemTypeID"),
+                bitIsClubTradeIn = row.Field<bool>("bitIsClubTradeIn"),
+                invoiceItemTaxes = ReturnInvoiceItemTaxes(row.Field<int>("intInvoiceItemID"), selectedDate, provinceID, objPageDetails)
             }).ToList();
             return invoiceItems;
         }
@@ -47,7 +70,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return receiptItems;
         }
 
-        private List<InvoiceItems> ConvertFromDataTableToAvaiableToReturnItems(DataTable dt, string invoiceNumber)
+        private List<InvoiceItems> ConvertFromDataTableToAvaiableToReturnItems(DataTable dt, string invoiceNumber, DateTime selectedDate, int provinceID, object[] objPageDetails)
         {
             List<InvoiceItems> invoiceItem = dt.AsEnumerable().Select(row =>
             new InvoiceItems
@@ -58,41 +81,46 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }).ToList();
             foreach (InvoiceItems ii in invoiceItem)
             {
-                InvoiceItems temp = GatherRemainingReturnItemInformation(ii, invoiceNumber);
+                InvoiceItems temp = GatherRemainingReturnItemInformation(ii, invoiceNumber, objPageDetails);
                 ii.varSku = temp.varSku;
                 ii.varItemDescription = temp.varItemDescription;
                 ii.fltItemPrice = temp.fltItemPrice;
+                ii.fltItemDiscount = temp.fltItemDiscount;
                 ii.fltItemCost = temp.fltItemCost;
                 ii.intItemTypeID = temp.intItemTypeID;
+                ii.bitIsDiscountPercent = temp.bitIsDiscountPercent;
                 ii.varAdditionalInformation = temp.varAdditionalInformation;
-                
+                ii.invoiceItemTaxes = ReturnInvoiceItemTaxes(temp.intInvoiceItemID, selectedDate, provinceID, objPageDetails);
             }
             return invoiceItem;
         }
 
-        private void ExecuteNonReturnQuery(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
-        {
-            dbc.executeInsertQuery(sqlCmd, parms);
-            //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
-        }
+        //private void ExecuteNonReturnQuery(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
+        //{
+        //    DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms);
+        //    //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+        //}
 
         //Returns list of InvoiceItems based on an Invoice Number
         //THIS CAN BE UPDATED TO GET ALL INFO FROM INVOICE TABLES (remove all joins)
-        public List<InvoiceItems> ReturnInvoiceItems(int invoiceID, object[] objPageDetails)
+        public List<InvoiceItems> ReturnInvoiceItems(int invoiceID, DateTime selectedDate, int provinceID, object[] objPageDetails)
         {
             string strQueryName = "ReturnInvoiceItems";
             string sqlCmd = "SELECT II.intInvoiceItemID, II.intInvoiceID, II.intInventoryID, CASE WHEN EXISTS(SELECT A.intInventoryID FROM tbl_accessories "
                 + "A WHERE A.intInventoryID = II.intInventoryID) THEN (SELECT A.varSku FROM tbl_accessories A WHERE A.intInventoryID = II.intInventoryID) "
                 + "WHEN EXISTS(SELECT CL.intInventoryID FROM tbl_clothing CL WHERE CL.intInventoryID = II.intInventoryID) THEN (SELECT CL.varSku FROM "
                 + "tbl_clothing CL WHERE CL.intInventoryID = II.intInventoryID) WHEN EXISTS(SELECT C.intInventoryID FROM tbl_clubs C WHERE "
-                + "C.intInventoryID = II.intInventoryID) THEN (SELECT C.varSku FROM tbl_clubs C WHERE C.intInventoryID = II.intInventoryID) END AS varSku, "
-                + "II.varItemDescription, II.intItemQuantity, II.fltItemCost, II.fltItemPrice, II.fltItemDiscount, II.fltItemRefund, "
-                + "II.bitIsDiscountPercent, II.intItemTypeID, II.bitIsClubTradeIn FROM tbl_invoiceItem II WHERE II.intInvoiceID = @intInvoiceID UNION "
-                + "SELECT IR.intInvoiceItemID, IR.intInvoiceID, IR.intInventoryID, CASE WHEN EXISTS(SELECT A.intInventoryID FROM tbl_accessories A WHERE "
-                + "A.intInventoryID = IR.intInventoryID) THEN (SELECT A.varSku FROM tbl_accessories A WHERE A.intInventoryID = IR.intInventoryID) WHEN "
-                + "EXISTS(SELECT CL.intInventoryID FROM tbl_clothing CL WHERE CL.intInventoryID = IR.intInventoryID) THEN (SELECT CL.varSku FROM "
-                + "tbl_clothing CL WHERE CL.intInventoryID = IR.intInventoryID) WHEN EXISTS(SELECT C.intInventoryID FROM tbl_clubs C WHERE "
-                + "C.intInventoryID = IR.intInventoryID) THEN (SELECT C.varSku FROM tbl_clubs C WHERE C.intInventoryID = IR.intInventoryID) END AS varSku, "
+                + "C.intInventoryID = II.intInventoryID) THEN (SELECT C.varSku FROM tbl_clubs C WHERE C.intInventoryID = II.intInventoryID) WHEN EXISTS("
+                + "SELECT TI.intTradeInID FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = II.intInventoryID) THEN (SELECT TI.varSku FROM "
+                + "tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = II.intInventoryID) END AS varSku, II.varItemDescription, II.intItemQuantity, "
+                + "II.fltItemCost, II.fltItemPrice, II.fltItemDiscount, II.fltItemRefund, II.bitIsDiscountPercent, II.intItemTypeID, II.bitIsClubTradeIn "
+                + "FROM tbl_invoiceItem II WHERE II.intInvoiceID = @intInvoiceID UNION SELECT IR.intInvoiceItemID, IR.intInvoiceID, IR.intInventoryID, "
+                + "CASE WHEN EXISTS(SELECT A.intInventoryID FROM tbl_accessories A WHERE A.intInventoryID = IR.intInventoryID) THEN (SELECT A.varSku FROM "
+                + "tbl_accessories A WHERE A.intInventoryID = IR.intInventoryID) WHEN EXISTS(SELECT CL.intInventoryID FROM tbl_clothing CL WHERE "
+                + "CL.intInventoryID = IR.intInventoryID) THEN (SELECT CL.varSku FROM tbl_clothing CL WHERE CL.intInventoryID = IR.intInventoryID) WHEN "
+                + "EXISTS(SELECT C.intInventoryID FROM tbl_clubs C WHERE C.intInventoryID = IR.intInventoryID) THEN (SELECT C.varSku FROM tbl_clubs C "
+                + "WHERE C.intInventoryID = IR.intInventoryID) WHEN EXISTS(SELECT TI.intTradeInID FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = "
+                + "IR.intInventoryID) THEN (SELECT TI.varSku FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = IR.intInventoryID) END AS varSku, "
                 + "IR.varItemDescription, IR.intItemQuantity, IR.fltItemCost, IR.fltItemPrice, IR.fltItemDiscount, IR.fltItemRefund, "
                 + "IR.bitIsDiscountPercent, IR.intItemTypeID, IR.bitIsClubTradeIn FROM tbl_invoiceItemReturns IR WHERE IR.intInvoiceID = @intInvoiceID";
 
@@ -101,79 +129,27 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@intInvoiceID", invoiceID }
             };
 
-            List<InvoiceItems> invoiceItems = ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms));
-            //List<InvoiceItems> invoiceItems = ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
-
-            //foreach (InvoiceItems ii in invoiceItems)
-            //{
-            //    string transferDescription = ii.varItemDescription;
-            //    if (transferDescription == null)
-            //    {
-            //        sqlCmd = "SELECT B.brandName + ' ' + M.modelName + ' ' + C.clubSpec + ' ' + C.clubType "
-            //            + "+ ' ' + C.shaftSpec + ' ' + C.shaftFlex + ' ' + C.dexterity AS description "
-            //            + "FROM tbl_tempTradeInCartSkus C JOIN tbl_brand B ON C.brandID = B.brandID JOIN "
-            //            + "tbl_model M ON C.modelID = M.modelID WHERE sku = @sku";
-            //        object[][] parms2 =
-            //        {
-            //            new object[] { "@sku", ii.intInventoryID }
-            //        };
-            //        ii.varItemDescription = dbc.MakeDataBaseCallToReturnString(sqlCmd, parms2);
-            //        //ii.description = dbc.MakeDataBaseCallToReturnString(sqlCmd, parms2, objPageDetails, strQueryName);
-            //    }
-            //}
-
-            //foreach (InvoiceItems ii in invoiceItems)
-            //{
-            //    string transferDescription = ii.varItemDescription;
-            //    if (transferDescription == null)
-            //    {
-            //        sqlCmd = "SELECT B.brandName + ' ' + M.modelName + ' ' + A.size + ' ' + A.colour AS description "
-            //            + "FROM tbl_accessories A JOIN tbl_brand B ON A.brandID = B.brandID JOIN tbl_model M ON "
-            //            + "A.modelID = M.modelID WHERE sku = @sku";
-            //        object[][] parms3 =
-            //        {
-            //            new object[] { "@sku", ii.intInventoryID }
-            //        };
-            //        ii.varItemDescription = dbc.MakeDataBaseCallToReturnString(sqlCmd, parms3);
-            //        //ii.description = dbc.MakeDataBaseCallToReturnString(sqlCmd, parms3, objPageDetails, strQueryName);
-            //    }
-            //}
-
-            //foreach (InvoiceItems ii in invoiceItems)
-            //{
-            //    string transferDescription = ii.varItemDescription;
-            //    if (transferDescription == null)
-            //    {
-            //        sqlCmd = "SELECT B.brandName + ' ' + C.size + ' ' + C.colour + ' ' + C.gender "
-            //            + "+ ' ' + C.style AS description "
-            //            + "FROM tbl_clothing C JOIN tbl_brand B ON C.brandID = B.brandID "
-            //            + "WHERE sku = @sku";
-            //        object[][] parms4 =
-            //        {
-            //            new object[] { "@sku", ii.intInventoryID }
-            //        };
-            //        ii.varItemDescription = dbc.MakeDataBaseCallToReturnString(sqlCmd, parms4);
-            //        //ii.description = dbc.MakeDataBaseCallToReturnString(sqlCmd, parms4, objPageDetails, strQueryName);
-            //    }
-            //}
+            List<InvoiceItems> invoiceItems = ConvertFromDataTableToInvoiceItems(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), selectedDate, provinceID, objPageDetails);
             return invoiceItems;
         }
-        public List<InvoiceItems> ReturnInvoiceItemsCurrentSale(int invoiceID, object[] objPageDetails)
+        public List<InvoiceItems> ReturnInvoiceItemsCurrentSale(int invoiceID, DateTime selectedDate, int provinceID, object[] objPageDetails)
         {
             string strQueryName = "ReturnInvoiceItemsCurrentSale";
             string sqlCmd = "SELECT intInvoiceItemID, intInvoiceID, CSI.intInventoryID, CASE WHEN EXISTS(SELECT A.intInventoryID FROM tbl_accessories A "
                 + "WHERE A.intInventoryID = CSI.intInventoryID) THEN (SELECT A.varSku FROM tbl_accessories A WHERE A.intInventoryID = CSI.intInventoryID"
                 + ") WHEN EXISTS(SELECT CL.intInventoryID FROM tbl_clothing CL WHERE CL.intInventoryID = CSI.intInventoryID) THEN (SELECT CL.varSku "
                 + "FROM tbl_clothing CL WHERE CL.intInventoryID = CSI.intInventoryID) WHEN EXISTS(SELECT C.intInventoryID FROM tbl_clubs C WHERE "
-                + "C.intInventoryID = CSI.intInventoryID) THEN (SELECT C.varSku FROM tbl_clubs C WHERE C.intInventoryID = CSI.intInventoryID) END AS "
-                + "varSku, varItemDescription, intItemQuantity, fltItemCost, fltItemPrice, fltItemDiscount, fltItemRefund, bitIsDiscountPercent, "
-                + "intItemTypeID, bitIsClubTradeIn FROM tbl_currentSalesItems CSI WHERE intInvoiceID = @intInvoiceID";
+                + "C.intInventoryID = CSI.intInventoryID) THEN (SELECT C.varSku FROM tbl_clubs C WHERE C.intInventoryID = CSI.intInventoryID) WHEN "
+                + "EXISTS(SELECT TI.intTradeInID FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = CSI.intInventoryID) THEN (SELECT TI.varSku "
+                + "FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = CSI.intInventoryID) END AS varSku, varItemDescription, intItemQuantity, "
+                + "fltItemCost, fltItemPrice, fltItemDiscount, fltItemRefund, bitIsDiscountPercent, intItemTypeID, bitIsClubTradeIn FROM "
+                + "tbl_currentSalesItems CSI WHERE intInvoiceID = @intInvoiceID";
             object[][] parms =
             {
                  new object[] { "@intInvoiceID", invoiceID }
             };
             
-            return ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms));
+            return ConvertFromDataTableToInvoiceItemsCurrentSale(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), selectedDate, provinceID, objPageDetails);
             //return ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
         public List<InvoiceItems> ReturnInvoiceItemsReceipt(int receiptID, object[] objPageDetails)
@@ -187,7 +163,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                  new object[] { "@intReceiptID", receiptID }
             };
 
-            return ConvertFromDataTableToReceiptItems(dbc.returnDataTableData(sqlCmd, parms));
+            return ConvertFromDataTableToReceiptItems(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
             //return ConvertFromDataTableToReceiptItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
         public string ReturnStringSearchForAccessories(ArrayList array)
@@ -259,7 +235,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return sqlCmd;
         }
 
-        public void InsertItemIntoSalesCart(InvoiceItems II, object[] objPageDetails)
+        public void InsertItemIntoSalesCart(InvoiceItems II, int transactionTypeID, DateTime currentDateTime, CurrentUser cu, object[] objPageDetails)
         {
             string strQueryName = "InsertItemIntoSalesCart";
             string sqlCmd = "INSERT INTO tbl_currentSalesItems VALUES(@intInvoiceID, @intInventoryID, @intItemQuantity, "
@@ -280,7 +256,10 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@bitIsClubTradeIn", II.bitIsClubTradeIn },
                 new object[] { "@intItemTypeID", II.intItemTypeID }
             };
-            ExecuteNonReturnQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            TaxManager TM = new TaxManager();
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            //DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            TM.LoopThroughTaxesForEachItemAddingToCurrentInvoiceItemTaxes(II, transactionTypeID, currentDateTime, cu, objPageDetails);
         }
         public void RemoveQTYFromInventoryWithSKU(int inventoryID, int itemTypeID, int remainingQTY, object[] objPageDetails)
         {
@@ -294,7 +273,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@intItemTypeID", itemTypeID },
                 new object[] { "@intQuantity", remainingQTY }
             };
-            ExecuteNonReturnQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            //DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public string ReturnTableNameFromTypeID(int itemTypeID, object[] objPageDetails)
         {
@@ -305,7 +285,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@intItemTypeID", itemTypeID }
             };
 
-            return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms);
+            return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public DataTable ReturnItemsInTheCart(int invoiceID, object[] objPageDetails)
@@ -320,7 +300,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@intInvoiceID", invoiceID }
             };
 
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public DataTable ReturnItemsInTheReturnCart(string invoice, object[] objPageDetails)
@@ -336,23 +316,34 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@invoiceSubNum", invoice.Split('-')[2] }
             };
 
-            return dbc.returnDataTableData(sqlCmd, parms);
+            return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public void ReturnQTYToInventory(int invoiceItemID, object[] objPageDetails)
+        public void ReturnQTYToInventory(int invoiceItemID, DateTime selectedDate, int provinceID, object[] objPageDetails)
         {
             //gather sku info
-            List<InvoiceItems> itemToReturn = ReturnItemDetailsFromCurrentSaleTable(invoiceItemID, objPageDetails);
+            List<InvoiceItems> itemToReturn = ReturnItemDetailsFromCurrentSaleTable(invoiceItemID, selectedDate, provinceID, objPageDetails);
             //use info to add quantity back
             AddInventoryBackIntoStock(itemToReturn[0], objPageDetails);
             //remove the sku from currentSales table
+            RemoveItemFromCurrentSalesTaxTable(itemToReturn[0], objPageDetails);
             RemoveItemFromCurrentSalesTable(itemToReturn[0], objPageDetails);
+        }
+        public int ReturnInventoryIDFromInvoiceItemID(int invoiceItemID, object[] objPageDetails)
+        {
+            string strQueryName = "ReturnInventoryIDFromInvoiceItemID";
+            string sqlCmd = "SELECT intInventoryID FROM tbl_currentSalesItems WHERE intInvoiceItemID = @intInvoiceItemID";
+            object[][] parms =
+            {
+                new object[] { "@intInvoiceItemID", invoiceItemID }
+            };
+            return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public bool ValidQTY(InvoiceItems ii, object[] objPageDetails)
         {
             bool hasValidQty = true;
-            int qtyInCurrentStock = ReturnQTYofItem(ii.intInventoryID, "tbl_" + ReturnTableNameFromTypeID(ii.intItemTypeID, objPageDetails), "intQuantity", objPageDetails);
-            int qtyOnCurrentSale = ReturnQTYofItem(ii.intInventoryID, "tbl_currentSalesItems", "intItemQuantity", objPageDetails);
+            int qtyInCurrentStock = ReturnQTYofItemFromInventoryID(ii.intInventoryID, "tbl_" + ReturnTableNameFromTypeID(ii.intItemTypeID, objPageDetails), "intQuantity", objPageDetails);
+            int qtyOnCurrentSale = ReturnQTYofItemFromInventoryID(ii.intInventoryID, "tbl_currentSalesItems", "intItemQuantity", objPageDetails);
 
             int remaingQTYAvailForSale = qtyInCurrentStock - (ii.intItemQuantity - qtyOnCurrentSale);
 
@@ -362,16 +353,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             return hasValidQty;
         }
-        public void UpdateItemFromCurrentSalesTable(InvoiceItems ii, object[] objPageDetails)
+        public void UpdateItemFromCurrentSalesTable(InvoiceItems ii, int transactionTypeID, object[] objPageDetails)
         {
-            int AccessoryQTY = ReturnQTYofItem(ii.intInventoryID, "tbl_" + ReturnTableNameFromTypeID(ii.intItemTypeID, objPageDetails), "intQuantity", objPageDetails);
-
-            int OrigQTYonSale = ReturnQTYofItem(ii.intInventoryID, "tbl_currentSalesItems", "intItemQuantity", objPageDetails);
+            int AccessoryQTY = ReturnQTYofItemFromInventoryID(ii.intInventoryID, "tbl_" + ReturnTableNameFromTypeID(ii.intItemTypeID, objPageDetails), "intQuantity", objPageDetails);
+            int OrigQTYonSale = ReturnQTYofItemFromInventoryID(ii.intInventoryID, "tbl_currentSalesItems", "intItemQuantity", objPageDetails);
 
             int NewQTYonSale = ii.intItemQuantity;
 
             RemoveQTYFromInventoryWithSKU(ii.intInventoryID, ii.intItemTypeID, AccessoryQTY - (NewQTYonSale - OrigQTYonSale), objPageDetails);
             UpdateItemFromCurrentSalesTableActualQuery(ii, objPageDetails);
+            UpdateItemTaxesFromCurrentSalesTableActualQuery(ii, transactionTypeID, objPageDetails); 
         }
         public void UpdateItemFromCurrentSalesTableActualQuery(InvoiceItems ii, object[] objPageDetails)
         {
@@ -387,9 +378,95 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@intInventoryID", ii.intInventoryID }
             };
 
-            ExecuteNonReturnQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            //DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
+        public void NewTradeInChangeChargeTaxToFalse(InvoiceItems invoiceItems, DateTime selectedDate, int provinceID, object[] objPageDetails)
+        {
+            string strQueryName = "NewTradeInChangeChargeTaxToFalse";
+            invoiceItems.invoiceItemTaxes = ReturnInvoiceItemTaxesCurrent(ReturnInvoiceItemIDFromInventoryID(invoiceItems, objPageDetails), selectedDate, provinceID, objPageDetails);
 
+            foreach (InvoiceItemTax invoiceItemTax in invoiceItems.invoiceItemTaxes)
+            {
+                string sqlCmd = "UPDATE tbl_currentSalesItemsTaxes SET bitIsTaxCharged = @bitIsTaxCharged WHERE intInvoiceItemID = "
+                + "@intInvoiceItemID AND intTaxTypeID = @intTaxTypeID";
+                object[][] parms =
+                {
+                    new object[] { "@bitIsTaxCharged", false },
+                    new object[] { "@intTaxTypeID", invoiceItemTax.intTaxTypeID },
+                    new object[] { "@intInvoiceItemID", invoiceItemTax.intInvoiceItemID }
+                };
+
+                DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            }            
+        }
+        private int ReturnInvoiceItemIDFromInventoryID(InvoiceItems invoiceItem, object[] objPageDetails)
+        {
+            string strQueryName = "ReturnInvoiceItemIDFromInventoryID";
+            string sqlCmd = "SELECT intInvoiceItemID FROM tbl_currentSalesItems WHERE intInventoryID = @intInventoryID AND intInvoiceID = "
+                + "@intInvoiceID";
+
+            object[][] parms =
+            {
+                new object[] { "@intInventoryID", invoiceItem.intInventoryID },
+                new object[] { "@intInvoiceID", invoiceItem.intInvoiceID }
+            };
+            return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
+        }
+        public void UpdateItemTaxesFromCurrentSalesTableActualQuery(InvoiceItems invoiceItem, int transactionTypeID, object[] objPageDetails)
+        {
+            string strQueryName = "UpdateItemTaxesFromCurrentSalesTableActualQuery";
+            foreach(InvoiceItemTax iit in invoiceItem.invoiceItemTaxes)
+            {
+                string sqlCmd = "UPDATE tbl_currentSalesItemsTaxes SET bitIsTaxCharged = @bitIsTaxCharged, fltTaxAmount = @fltTaxAmount WHERE intInvoiceItemID = "
+                    + "@intInvoiceItemID AND intTaxTypeID = (SELECT intTaxID FROM tbl_taxType WHERE varTaxName = @varTaxName)";
+
+                double taxAmount = 0;
+                if (transactionTypeID == 1)
+                {
+                    if (invoiceItem.bitIsDiscountPercent)
+                    {
+                        taxAmount = ((invoiceItem.fltItemPrice - (invoiceItem.fltItemPrice * (invoiceItem.fltItemDiscount / 100))) * iit.fltTaxRate) * invoiceItem.intItemQuantity;
+
+                    }
+                    else
+                    {
+                        taxAmount = ((invoiceItem.fltItemPrice - invoiceItem.fltItemDiscount) * iit.fltTaxRate) * invoiceItem.intItemQuantity;
+                    }
+                }
+                else if (transactionTypeID == 2)
+                {
+                    taxAmount = (invoiceItem.fltItemRefund * iit.fltTaxRate) * invoiceItem.intItemQuantity;
+                }
+
+                object[][] parms =
+                {
+                    new object[] { "@bitIsTaxCharged", iit.bitIsTaxCharged },
+                    new object[] { "@fltTaxAmount", taxAmount },
+                    new object[] { "@intInvoiceItemID", iit.intInvoiceItemID },
+                    new object[] { "@varTaxName", iit.varTaxName }
+                };
+                DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+                //DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            }            
+        }
+        public void UpdateSimItemFromCurrentSalesTableActualQuery(InvoiceItems ii, object[] objPageDetails)
+        {
+            string strQueryName = "UpdateSimItemFromCurrentSalesTableActualQuery";
+            string sqlCmd = "UPDATE tbl_currentSalesItems SET intItemQuantity = @intItemQuantity, fltItemDiscount = @fltItemDiscount, "
+                + "bitIsDiscountPercent = @bitIsDiscountPercent WHERE intInvoiceItemID = @intInvoiceItemID";
+
+            object[][] parms =
+            {
+                new object[] { "@intItemQuantity", ii.intItemQuantity },
+                new object[] { "@fltItemDiscount", ii.fltItemDiscount },
+                new object[] { "@bitIsDiscountPercent", ii.bitIsDiscountPercent },
+                new object[] { "@intInvoiceItemID", ii.intInvoiceItemID }
+            };
+
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            //DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+        }
         public void UpdateItemFromCurrentSalesTableActualQueryForPurchases(InvoiceItems ii, object[] objPageDetails)
         {
             string strQueryName = "UpdateItemFromCurrentSalesTableActualQueryForPurchases";
@@ -404,16 +481,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@intInvoiceID", ii.intInvoiceID },
             };
 
-            ExecuteNonReturnQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            //DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
-
-        public void LoopThroughTheItemsToReturnToInventory(int invoiceID, object[] objPageDetails)
+        public void LoopThroughTheItemsToReturnToInventory(int invoiceID, DateTime selectedDate, int provinceID, object[] objPageDetails)
         {
             DataTable dt = ReturnItemsInTheCart(invoiceID, objPageDetails);
             //Loop through DataTable
             foreach(DataRow r in dt.Rows)
             {
-                ReturnQTYToInventory(Convert.ToInt32(r["intInvoiceItemID"].ToString()), objPageDetails);
+                ReturnQTYToInventory(Convert.ToInt32(r["intInvoiceItemID"].ToString()), selectedDate, provinceID, objPageDetails);
             }
         }
         public void RemoveInitialTotalsForTable(int invoiceID, object[] objPageDetails)
@@ -426,14 +503,14 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@intInvoiceID", invoiceID }
             };
 
-            ExecuteNonReturnQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            //DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public List<InvoiceItems> ReturnItemsToCalculateTotals(int invoiceID, object[] objPageDetails)
+        public List<InvoiceItems> ReturnItemsToCalculateTotals(int invoiceID, DateTime selectedDate, int provinceID, object[] objPageDetails)
         {
-            return ConvertFromDataTableToInvoiceItems(ReturnItemsInTheCart(invoiceID, objPageDetails));
+            return ConvertFromDataTableToInvoiceItems(ReturnItemsInTheCart(invoiceID, objPageDetails), selectedDate, provinceID, objPageDetails);
         }
-
-        private int ReturnQTYofItem(int inventoryID, string tbl, string column, object[] objPageDetails)
+        private int ReturnQTYofItemFromInventoryID(int inventoryID, string tbl, string column, object[] objPageDetails)
         {
             string strQueryName = "ReturnQTYofItem";
             string sqlCmd = "SELECT " + column + " FROM " + tbl + " WHERE intInventoryID = @intInventoryID";
@@ -443,25 +520,27 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@intInventoryID", inventoryID }
             };   
             //Returns the quantity of the searched item
-            return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms);
+            return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private List<InvoiceItems> ReturnItemDetailsFromCurrentSaleTable(int invoiceItemID, object[] objPageDetails)
+        private List<InvoiceItems> ReturnItemDetailsFromCurrentSaleTable(int invoiceItemID, DateTime selectedDate, int provinceID, object[] objPageDetails)
         {
             string strQueryName = "ReturnItemDetailsFromCurrentSaleTable";
             string sqlCmd = "SELECT intInvoiceItemID, intInvoiceID, intInventoryID, CASE WHEN EXISTS(SELECT A.intInventoryID FROM tbl_accessories A WHERE "
                 + "A.intInventoryID = I.intInventoryID) THEN (SELECT A.varSku FROM tbl_accessories A WHERE A.intInventoryID = I.intInventoryID) WHEN "
                 + "EXISTS(SELECT CL.intInventoryID FROM tbl_clothing CL WHERE CL.intInventoryID = I.intInventoryID) THEN (SELECT CL.varSku FROM "
                 + "tbl_clothing CL WHERE CL.intInventoryID = I.intInventoryID) WHEN EXISTS(SELECT C.intInventoryID FROM tbl_clubs C WHERE "
-                + "C.intInventoryID = I.intInventoryID) THEN (SELECT C.varSku FROM tbl_clubs C WHERE C.intInventoryID = I.intInventoryID) END AS varSku, "
-                + "varItemDescription, intItemQuantity, fltItemCost, fltItemPrice, fltItemDiscount, fltItemRefund, bitIsDiscountPercent, "
-                + "bitIsClubTradeIn, intItemTypeID FROM tbl_currentSalesItems I WHERE intInvoiceItemID = @intInvoiceItemID";
+                + "C.intInventoryID = I.intInventoryID) THEN (SELECT C.varSku FROM tbl_clubs C WHERE C.intInventoryID = I.intInventoryID) WHEN EXISTS("
+                + "SELECT TI.intTradeInID FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = I.intInventoryID) THEN (SELECT TI.varSku FROM "
+                + "tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = I.intInventoryID) END AS varSku, varItemDescription, intItemQuantity, fltItemCost, "
+                + "fltItemPrice, fltItemDiscount, fltItemRefund, bitIsDiscountPercent, bitIsClubTradeIn, intItemTypeID FROM tbl_currentSalesItems I WHERE "
+                + "intInvoiceItemID = @intInvoiceItemID";
             object[][] parms =
             {
                 new object[] { "@intInvoiceItemID", invoiceItemID }
             };
 
-            return ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms));
+            return ConvertFromDataTableToInvoiceItems(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), selectedDate, provinceID, objPageDetails);
             //return ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
         private void AddInventoryBackIntoStock(InvoiceItems ii, object[] objPageDetails)
@@ -475,7 +554,26 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@intQuantity", ii.intItemQuantity },
                 new object[] { "@intInventoryID", ii.intInventoryID }
             };
-            ExecuteNonReturnQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            //DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+        }
+        private void RemoveItemFromCurrentSalesTaxTable(InvoiceItems invoiceItem, object[] objPageDetails)
+        {
+            string strQueryName = "RemoveItemFromCurrentSalesTable";
+            string sqlCmd = "DELETE tbl_currentSalesItemsTaxes WHERE intInvoiceItemID = @intInvoiceItemID";
+
+            object[][] parms =
+            {
+                new object[] { "@intInvoiceItemID", invoiceItem.intInvoiceItemID }
+            };
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            //DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+        }
+        public void DeleteItemFromCurrentSalesTable(int invoiceItemID, DateTime selectedDate, int provinceID, object[] objPageDetails)
+        {
+            List<InvoiceItems> invoiceItems = ReturnItemDetailsFromCurrentSaleTable(invoiceItemID, selectedDate, provinceID, objPageDetails);
+            RemoveItemFromCurrentSalesTaxTable(invoiceItems[0], objPageDetails);
+            RemoveItemFromCurrentSalesTable(invoiceItems[0], objPageDetails);
         }
         private void RemoveItemFromCurrentSalesTable(InvoiceItems invoiceItem, object[] objPageDetails)
         {
@@ -486,7 +584,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             {
                 new object[] { "@intInvoiceItemID", invoiceItem.intInvoiceItemID }
             };
-            ExecuteNonReturnQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            //DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public bool CheckForItemsInTransaction(object transaction)
         {
@@ -554,23 +653,9 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         //}
 
         //Search results for A Return
-        public List<InvoiceItems> ReturnInvoiceItemsFromProcessedSalesForReturn(string invoiceNumber, object[] objPageDetails)
+        public List<InvoiceItems> ReturnInvoiceItemsFromProcessedSalesForReturn(string invoiceNumber, DateTime selectedDate, int provinceID, object[] objPageDetails)
         {
             string strQueryName = "ReturnInvoiceItemsFromProcessedSalesForReturn";
-            //string sqlCmd = "SELECT I.intInvoiceID, I.varInvoiceNumber, I.intInvoiceSubNumber, I.intInventoryID, (SELECT SUM(DISTINCT II.intItemQuantity) - "
-            //    + "((CASE WHEN SUM(IIR.intItemQuantity) IS NULL OR SUM(IIR.intItemQuantity) = '' THEN 0 ELSE SUM(IIR.intItemQuantity) "
-            //    + "END) + (CASE WHEN SUM(CSI.intItemQuantity) IS NULL OR SUM(CSI.intItemQuantity) = '' THEN 0 ELSE "
-            //    + "SUM(CSI.intItemQuantity) END)) AS intItemQuantity FROM tbl_invoiceItem II LEFT JOIN tbl_invoiceItemReturns "
-            //    + "IIR ON II.intInvoiceID = IIR.intInvoiceID AND II.intInventoryID = IIR.intInventoryID LEFT JOIN tbl_currentSalesItems CSI "
-            //    + "ON II.intInvoiceID = CSI.intInvoiceID AND II.intInventoryID = CSI.intInventoryID WHERE II.intInvoiceID = @intInvoiceID AND "
-            //    + "II.intInventoryID = I.intInventoryID GROUP BY II.intInvoiceID, II.intInventoryID) AS intItemQuantity, I.varItemDescription, (CONCAT((SELECT "
-            //    + "L.varLocationName AS varLocationName FROM tbl_accessories A JOIN tbl_location L ON A.intLocationID = "
-            //    + "L.intLocationID WHERE A.intInventoryID = I.intInventoryID), (SELECT L.varLocationName AS varLocationName FROM tbl_clothing CL "
-            //    + "JOIN tbl_location L ON CL.intLocationID = L.intLocationID WHERE CL.intInventoryID = I.intInventoryID), (SELECT L.varLocationName "
-            //    + "AS varLocationName FROM tbl_clubs C JOIN tbl_location L ON C.intLocationID = L.intLocationID WHERE C.intInventoryID = "
-            //    + "I.intInventoryID))) AS varLocationName, I.fltItemCost, I.fltItemPrice, I.fltItemDiscount, I.fltItemRefund, I.bitIsDiscountPercent, I.intItemTypeID, "
-            //    + "I.bitIsClubTradeIn FROM tbl_invoiceItem I WHERE varInvoiceNumber = @varInvoiceNum and invoiceSubNum = 1";
-
             string sqlCmd = "SELECT RI2.intInvoiceItemID, RI2.intInventoryID, (SUM(DISTINCT RI2.intFirstSaleQuantity) - ((CASE WHEN SUM(RIR.intReturnQuantity) IS NULL "
                 + "OR SUM(RIR.intReturnQuantity) = '' THEN 0 ELSE SUM(RIR.intReturnQuantity) END) + (CASE WHEN SUM(RIC.intCurrentReturnQuantity) IS NULL OR SUM("
                 + "RIC.intCurrentReturnQuantity) = '' THEN 0 ELSE SUM(RIC.intCurrentReturnQuantity) END))) AS intItemQuantity FROM(SELECT RIQ.intInvoiceItemID, "
@@ -588,24 +673,28 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@varInvoiceNumber", invoiceNumber }
             };
 
-            return ConvertFromDataTableToAvaiableToReturnItems(dbc.returnDataTableData(sqlCmd, parms), invoiceNumber);
+            return ConvertFromDataTableToAvaiableToReturnItems(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), invoiceNumber, selectedDate, provinceID, objPageDetails);
             //return ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
-        private InvoiceItems GatherRemainingReturnItemInformation(InvoiceItems invoiceItem, string invoiceNumber)
+        private InvoiceItems GatherRemainingReturnItemInformation(InvoiceItems invoiceItem, string invoiceNumber, object[] objPageDetails)
         {
-            string sqlCmd = "SELECT CASE WHEN EXISTS(SELECT A.intInventoryID FROM tbl_accessories A WHERE A.intInventoryID = II.intInventoryID) THEN (SELECT A.varSku "
-                + "FROM tbl_accessories A WHERE A.intInventoryID = II.intInventoryID) WHEN EXISTS(SELECT CL.intInventoryID FROM tbl_clothing CL WHERE CL.intInventoryID "
-                + "= II.intInventoryID) THEN (SELECT CL.varSku FROM tbl_clothing CL WHERE CL.intInventoryID = II.intInventoryID) WHEN EXISTS(SELECT C.intInventoryID "
-                + "FROM tbl_clubs C WHERE C.intInventoryID = II.intInventoryID) THEN (SELECT C.varSku FROM tbl_clubs C WHERE C.intInventoryID = II.intInventoryID) END "
-                + "AS varSku, varItemDescription, fltItemPrice, fltItemCost, intItemTypeID, varAdditionalInformation FROM tbl_invoiceItem II JOIN tbl_invoice I ON "
-                + "I.intInvoiceID = II.intInvoiceID WHERE I.varInvoiceNumber = @varInvoiceNumber AND I.intInvoiceSubNumber = 1 AND II.intInventoryID = @intInventoryID";
+            string strQueryName = "GatherRemainingReturnItemInformation";
+            string sqlCmd = "SELECT CASE WHEN EXISTS(SELECT A.intInventoryID FROM tbl_accessories A WHERE A.intInventoryID = II.intInventoryID) THEN (SELECT "
+                + "A.varSku FROM tbl_accessories A WHERE A.intInventoryID = II.intInventoryID) WHEN EXISTS(SELECT CL.intInventoryID FROM tbl_clothing CL "
+                + "WHERE CL.intInventoryID = II.intInventoryID) THEN (SELECT CL.varSku FROM tbl_clothing CL WHERE CL.intInventoryID = II.intInventoryID) "
+                + "WHEN EXISTS(SELECT C.intInventoryID FROM tbl_clubs C WHERE C.intInventoryID = II.intInventoryID) THEN (SELECT C.varSku FROM tbl_clubs C "
+                + "WHERE C.intInventoryID = II.intInventoryID) WHEN EXISTS(SELECT TI.intTradeInID FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID "
+                + "= II.intInventoryID) THEN (SELECT TI.varSku FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = II.intInventoryID) END AS varSku, "
+                + "varItemDescription, fltItemPrice, fltItemDiscount, fltItemCost, intItemTypeID, bitIsDiscountPercent, varAdditionalInformation FROM "
+                + "tbl_invoiceItem II JOIN tbl_invoice I ON I.intInvoiceID = II.intInvoiceID WHERE I.varInvoiceNumber = @varInvoiceNumber AND "
+                + "I.intInvoiceSubNumber = 1 AND II.intInventoryID = @intInventoryID";
 
             object[][] parms =
             {
                 new object[] { "@varInvoiceNumber", invoiceNumber },
                 new object[] { "@intInventoryID", invoiceItem.intInventoryID }
             };
-            return TurnIntoTempInvoiceItemForReturn(dbc.returnDataTableData(sqlCmd, parms));
+            return TurnIntoTempInvoiceItemForReturn(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
         }
         private InvoiceItems TurnIntoTempInvoiceItemForReturn(DataTable dt)
         {
@@ -614,8 +703,10 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             {
                 varSku = row.Field<string>("varSku"),
                 fltItemPrice = row.Field<double>("fltItemPrice"),
+                fltItemDiscount = row.Field<double>("fltItemDiscount"),
                 fltItemCost = row.Field<double>("fltItemCost"),
                 intItemTypeID = row.Field<int>("intItemTypeID"),
+                bitIsDiscountPercent = row.Field<bool>("bitIsDiscountPercent"),
                 varAdditionalInformation = row.Field<string>("varAdditionalInformation"),
                 varItemDescription = row.Field<string>("varItemDescription")
             }).ToList();
@@ -625,38 +716,42 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         {
             string strQueryName = "ReturnInvoiceItemForReturnProcess";
             string sqlCmd = "SELECT I.intInventoryID, CASE WHEN EXISTS(SELECT A.intInventoryID FROM tbl_accessories A WHERE A.intInventoryID = I.intInventoryID) "
-                + "THEN (SELECT A.varSku FROM tbl_accessories A WHERE A.intInventoryID = I.intInventoryID) WHEN EXISTS(SELECT CL.intInventoryID FROM "
-                + "tbl_clothing CL WHERE CL.intInventoryID = I.intInventoryID) THEN (SELECT CL.varSku FROM tbl_clothing CL WHERE CL.intInventoryID = "
-                + "I.intInventoryID) WHEN EXISTS(SELECT C.intInventoryID FROM tbl_clubs C WHERE C.intInventoryID = I.intInventoryID) THEN (SELECT C.varSku FROM "
-                + "tbl_clubs C WHERE C.intInventoryID = I.intInventoryID) END AS varSku, intItemQuantity, fltItemCost, fltItemPrice, fltItemDiscount, "
-                + "fltItemRefund, bitIsDiscountPercent, varItemDescription, intItemTypeID, bitIsClubTradeIn, CASE WHEN EXISTS(SELECT A.intInventoryID FROM "
-                + "tbl_accessories A WHERE A.intInventoryID = I.intInventoryID) THEN (SELECT A.varAdditionalInformation FROM tbl_accessories A WHERE "
-                + "A.intInventoryID = I.intInventoryID) WHEN EXISTS(SELECT CL.intInventoryID FROM tbl_clothing CL WHERE CL.intInventoryID = I.intInventoryID) "
-                + "THEN (SELECT CL.varAdditionalInformation FROM tbl_clothing CL WHERE CL.intInventoryID = I.intInventoryID) WHEN EXISTS(SELECT C.intInventoryID "
-                + "FROM tbl_clubs C WHERE C.intInventoryID = I.intInventoryID) THEN (SELECT C.varAdditionalInformation FROM tbl_clubs C WHERE C.intInventoryID = "
-                + "I.intInventoryID) END AS varAdditionalInformation FROM tbl_invoiceItem I WHERE intInvoiceItemID = @intInvoiceItemID";
+                + "THEN (SELECT A.varSku FROM tbl_accessories A WHERE A.intInventoryID = I.intInventoryID) WHEN EXISTS(SELECT CL.intInventoryID FROM tbl_clothing "
+                + "CL WHERE CL.intInventoryID = I.intInventoryID) THEN (SELECT CL.varSku FROM tbl_clothing CL WHERE CL.intInventoryID = I.intInventoryID) WHEN "
+                + "EXISTS(SELECT C.intInventoryID FROM tbl_clubs C WHERE C.intInventoryID = I.intInventoryID) THEN (SELECT C.varSku FROM tbl_clubs C WHERE "
+                + "C.intInventoryID = I.intInventoryID) WHEN EXISTS(SELECT TI.intTradeInID FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = "
+                + "I.intInventoryID) THEN (SELECT TI.varSku FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = I.intInventoryID) END AS varSku, "
+                + "intItemQuantity, fltItemCost, fltItemPrice, fltItemDiscount, fltItemRefund, bitIsDiscountPercent, varItemDescription, intItemTypeID, "
+                + "bitIsClubTradeIn, CASE WHEN EXISTS(SELECT A.intInventoryID FROM tbl_accessories A WHERE A.intInventoryID = I.intInventoryID) THEN (SELECT "
+                + "A.varAdditionalInformation FROM tbl_accessories A WHERE A.intInventoryID = I.intInventoryID) WHEN EXISTS(SELECT CL.intInventoryID FROM "
+                + "tbl_clothing CL WHERE CL.intInventoryID = I.intInventoryID) THEN (SELECT CL.varAdditionalInformation FROM tbl_clothing CL WHERE "
+                + "CL.intInventoryID = I.intInventoryID) WHEN EXISTS(SELECT C.intInventoryID FROM tbl_clubs C WHERE C.intInventoryID = I.intInventoryID) THEN "
+                + "(SELECT C.varAdditionalInformation FROM tbl_clubs C WHERE C.intInventoryID = I.intInventoryID) WHEN EXISTS(SELECT TI.intTradeInID FROM "
+                + "tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = I.intInventoryID) THEN (SELECT TI.varSku FROM tbl_tempTradeInCartSkus TI WHERE "
+                + "TI.intTradeInID = I.intInventoryID) END AS varAdditionalInformation FROM tbl_invoiceItem I WHERE intInvoiceItemID = @intInvoiceItemID";
 
             object[][] parms =
             {                
                 new object[] { "@intInvoiceItemID", invoiceItemID }
             };
             ItemsManager IM = new ItemsManager();
-            InvoiceItems invoiceItems = IM.ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms))[0];
+            InvoiceItems invoiceItems = IM.ConvertFromDataTableToCartItems(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName))[0];
             //InvoiceItems II = ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName))[0];
-            invoiceItems.intItemQuantity = ReturnQTYofItem(invoiceItems.intInventoryID, "tbl_" + ReturnTableNameFromTypeID(invoiceItems.intItemTypeID, objPageDetails), "intQuantity", objPageDetails);
+            //does not have invoiceItemID
+            invoiceItems.intItemQuantity = ReturnQTYofItemFromInventoryID(invoiceItems.intInventoryID, "tbl_" + ReturnTableNameFromTypeID(invoiceItems.intItemTypeID, objPageDetails), "intQuantity", objPageDetails);
             return invoiceItems;
         }
         public void DoNotReturnTheItemOnReturn(InvoiceItems invoiceItem, object[] objPageDetails)
         {
             RemoveItemFromCurrentSalesTable(invoiceItem, objPageDetails);
         }
-        public InvoiceItems ReturnSkuFromCurrentSalesUsingSKU(int invoiceItemID, object[] objPageDetails)
+        public InvoiceItems ReturnSkuFromCurrentSalesUsingSKU(int invoiceItemID, DateTime selectedDate, int provinceID, object[] objPageDetails)
         {
-            return ReturnItemDetailsFromCurrentSaleTable(invoiceItemID, objPageDetails)[0];
+            return ReturnItemDetailsFromCurrentSaleTable(invoiceItemID, selectedDate, provinceID, objPageDetails)[0];
         }
         public int ReturnCurrentQuantityOfItem(InvoiceItems invoiceItems, object[] objPageDetails)
         {
-            return ReturnQTYofItem(invoiceItems.intInventoryID, "tbl_" + ReturnTableNameFromTypeID(invoiceItems.intItemTypeID, objPageDetails), "intQuantity", objPageDetails);
+            return ReturnQTYofItemFromInventoryID(invoiceItems.intInventoryID, "tbl_" + ReturnTableNameFromTypeID(invoiceItems.intItemTypeID, objPageDetails), "intQuantity", objPageDetails);
         }
         public bool ItemAlreadyInCart(InvoiceItems ii, object[] objPageDetails)
         {
@@ -671,7 +766,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@intInventoryID", ii.intInventoryID }
             };
 
-            DataTable dt = dbc.returnDataTableData(sqlCmd, parms);
+            DataTable dt = DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //DataTable dt = dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
             if (dt.Rows.Count > 0)
             {
@@ -679,28 +774,64 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             return itemInCart;
         }
-
-
-        public InvoiceItems GatherLoungeSimToAddToInvoice(string buttonName, int invoiceID)
+        public InvoiceItems GatherLoungeSimToAddToInvoice(string buttonName, int invoiceID, object[] objPageDetails)
         {
-            string sqlCmd = "SELECT @intInvoiceID AS intInvoiceID, A.varSku, A.varTypeOfAccessory AS varItemDescriptionescription, "
-                + "CAST(1 AS INT) AS intItemQuantity, A.fltItemCost, A.fltItemPrice, CAST(0 AS FLOAT) AS fltItemDiscount, CAST(0 "
-                + "AS FLOAT) AS fltItemRefund, CAST(0 AS BIT) AS bitIsDiscountPercent, A.intItemTypeID, CAST(0 AS BIT) AS "
-                + "bitIsClubTradeIn FROM tbl_accessories A JOIN tbl_LoungeButtonItemCombination LBIC ON LBIC.intInventoryID = "
-                + "A.intInventoryID WHERE LBIC.loungeButton = @buttonName";
+            string strQueryName = "GatherLoungeSimToAddToInvoice";
+            string sqlCmd = "SELECT A.intInventoryID, A.varSku, A.varTypeOfAccessory AS varItemDescription, CAST(1 AS INT) AS intItemQuantity, "
+                + "A.fltCost AS fltItemCost, A.fltPrice AS fltItemPrice, A.intItemTypeID, A.varAdditionalInformation FROM tbl_accessories A "
+                + "JOIN tbl_LoungeButtonItemCombination LBIC ON LBIC.intInventoryID = A.intInventoryID WHERE LBIC.varLoungeButtonName = @varButtonName";
             object[][] parms =
             {
                 new object[] { "@intInvoiceID", invoiceID },
-                new object[] { "@buttonName", buttonName }
+                new object[] { "@varButtonName", buttonName }
             };
-            return ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms))[0];
+            ItemsManager IM = new ItemsManager();
+            return IM.ConvertFromDataTableToCartItems(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName))[0];
         }
-        public void RemoveFromLoungeSimCart(int sku, string invoice, object[] objPageDetails)
+        public void RemoveFromLoungeSimCart(int invoiceItemID, DateTime selectedDate, int provinceID, object[] objPageDetails)
         {
             //gather sku info
-            List<InvoiceItems> itemToReturn = ReturnItemDetailsFromCurrentSaleTable(sku, objPageDetails);
+            List<InvoiceItems> itemToReturn = ReturnItemDetailsFromCurrentSaleTable(invoiceItemID, selectedDate, provinceID, objPageDetails);
             //remove the sku from currentSales table
             RemoveItemFromCurrentSalesTable(itemToReturn[0], objPageDetails);
+        }
+        public List<InvoiceItemTax> ReturnInvoiceItemTaxesCurrent(int invoiceItemID, DateTime selectedDate, int provinceID, object[] objPageDetails)
+        {
+            string strQueryName = "ReturnInvoiceItemTaxesCurrent";
+            //string sqlCmd = "SELECT CSIT.intInvoiceItemID, T.varTaxName, CSIT.intTaxTypeID, fltTaxAmount, bitIsTaxCharged FROM tbl_currentSalesItemsTaxes "
+            //    + "CSIT JOIN tbl_taxType T ON T.intTaxID = CSIT.intTaxTypeID WHERE CSIT.intInvoiceItemID = @intInvoiceItemID";
+            string sqlCmd = "SELECT CSIT.intInvoiceItemID, T.varTaxName, CSIT.intTaxTypeID, TAX.fltTaxRate, fltTaxAmount, bitIsTaxCharged FROM "
+                + "tbl_currentSalesItemsTaxes CSIT JOIN tbl_taxType T ON T.intTaxID = CSIT.intTaxTypeID INNER JOIN(SELECT TD.intTaxID, fltTaxRate, TD.MTD "
+                + "FROM tbl_taxRate TR INNER JOIN(SELECT intTaxID, MAX(dtmTaxEffectiveDate) AS MTD FROM tbl_taxRate WHERE dtmTaxEffectiveDate <= "
+                + "@dtmSelectedDate AND intProvinceID = @intProvinceID GROUP BY intTaxID) TD ON TR.intTaxID = TD.intTaxID AND TR.dtmTaxEffectiveDate = TD.MTD "
+                + "GROUP BY TD.intTaxID, fltTaxRate, TD.MTD) TAX ON TAX.intTaxID = CSIT.intTaxTypeID WHERE CSIT.intInvoiceItemID = @intInvoiceItemID";
+            object[][] parms =
+            {
+                new object[] { "@intInvoiceItemID", invoiceItemID },
+                new object[] { "@dtmSelectedDate", selectedDate },
+                new object[] { "@intProvinceID", provinceID }
+            };
+            TaxManager TM = new TaxManager();
+            return TM.ConvertFromDataTableToInvoiceItemTax(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
+        }
+        public List<InvoiceItemTax> ReturnInvoiceItemTaxes(int invoiceItemID, DateTime selectedDate, int provinceID, object[] objPageDetails)
+        {
+            string strQueryName = "ReturnInvoiceItemTaxes";
+            //string sqlCmd = "SELECT intInvoiceItemID, T.varTaxName, IIT.intTaxTypeID, fltTaxAmount, bitIsTaxCharged FROM tbl_invoiceItemTaxes IIT JOIN "
+            //    + "tbl_taxType T ON T.intTaxID = IIT.intTaxTypeID WHERE intInvoiceItemID = @intInvoiceItemID";
+            string sqlCmd = "SELECT intInvoiceItemID, T.varTaxName, IIT.intTaxTypeID, TAX.fltTaxRate, fltTaxAmount, bitIsTaxCharged FROM tbl_invoiceItemTaxes "
+                + "IIT JOIN tbl_taxType T ON T.intTaxID = IIT.intTaxTypeID INNER JOIN(SELECT TD.intTaxID, fltTaxRate, TD.MTD FROM tbl_taxRate TR INNER "
+                + "JOIN(SELECT intTaxID, MAX(dtmTaxEffectiveDate) AS MTD FROM tbl_taxRate WHERE dtmTaxEffectiveDate <= @dtmSelectedDate AND intProvinceID = "
+                + "@intProvinceID GROUP BY intTaxID) TD ON TR.intTaxID = TD.intTaxID AND TR.dtmTaxEffectiveDate = TD.MTD GROUP BY TD.intTaxID, fltTaxRate, "
+                + "TD.MTD) TAX ON TAX.intTaxID = IIT.intTaxTypeID WHERE intInvoiceItemID = @intInvoiceItemID";
+            object[][] parms =
+            {
+                new object[] { "@intInvoiceItemID", invoiceItemID },
+                new object[] { "@dtmSelectedDate", selectedDate },
+                new object[] { "@intProvinceID", provinceID }
+            };
+            TaxManager TM = new TaxManager();
+            return TM.ConvertFromDataTableToInvoiceItemTax(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
         }
     }
 }

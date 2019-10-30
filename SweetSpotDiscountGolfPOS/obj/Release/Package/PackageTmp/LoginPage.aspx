@@ -46,6 +46,7 @@
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblError" runat="server" ForeColor="Red" />
+						<%--<asp:Label ID="lblMaintenanceMessage" Text="This Site is currently unavailable as it is undergoing Maintenance." runat="server" ForeColor="Red" />--%>
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>

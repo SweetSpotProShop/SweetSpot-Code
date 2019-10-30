@@ -151,7 +151,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             };
             //Returns the total refund subtotal of the cart
             DatabaseCalls dbc = new DatabaseCalls();
-            return dbc.MakeDataBaseCallToReturnDouble(sqlCmd, parms);
+            return dbc.MakeDataBaseCallToReturnDouble(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.MakeDataBaseCallToReturnDouble(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
@@ -166,8 +166,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             {
                 new object[] { "@locationID", location }
             };
-            DatabaseCalls dbc = new DatabaseCalls();
-            DataTable dt = dbc.returnDataTableData(sqlCmd, parms);
+            DatabaseCalls DBC = new DatabaseCalls();
+            DataTable dt = DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //DataTable dt = dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
             //Setting the values in the array
             range[0] = dt.Rows[0].Field<int>("skuStartAt");
@@ -178,10 +178,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         }
         public Invoice SaveAllInvoiceTotals(Invoice invoice, object[] objPageDetails)
         {
+            //invoice.invoiceItems = ReCalculateTheTaxes(invoice.invoiceItems);
             invoice.fltSubTotal = returnSubtotalAmount(invoice.invoiceItems, invoice.location.intLocationID, objPageDetails);
             invoice.fltTotalDiscount = returnDiscount(invoice.invoiceItems);
             invoice.fltTotalTradeIn = returnTradeInAmount(invoice.invoiceItems, invoice.location.intLocationID, objPageDetails);
             invoice.fltBalanceDue = invoice.fltSubTotal;
+            
             return invoice;
         }
 
