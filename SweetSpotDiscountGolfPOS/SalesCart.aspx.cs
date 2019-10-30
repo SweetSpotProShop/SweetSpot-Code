@@ -300,7 +300,7 @@ namespace SweetSpotDiscountGolfPOS
             {
                 if (txtSearch.Text != "")
                 {
-                    if (txtSearch.Text.Equals("100000"))
+                    if (IM.InventorySearchReturnsTradeIn(txtSearch.Text, CU, objPageDetails))
                     {
                         grdInventorySearched.DataSource = ITM.ReturnTradeInSku(objPageDetails);
                     }
@@ -651,7 +651,7 @@ namespace SweetSpotDiscountGolfPOS
                         //ToDo this check needs to look for the actual ID of the trade in sku
                         //13040 is the testing trade in sku
                         //13240 is the live trade in sku
-                        if (selectedSku.intInventoryID == 13240)
+                        if (InventoryIsInTradeInList(selectedSku.intInventoryID, CU, objPageDetails))
                         {
                             btnRefreshCart.Visible = true;
                             //Trade In Sku to add in SK

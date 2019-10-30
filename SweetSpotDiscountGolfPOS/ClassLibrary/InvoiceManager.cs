@@ -389,7 +389,48 @@ namespace SweetSpotDiscountGolfPOS
             return ConvertFromDataTableToInvoiceForReturns(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
             //return ConvertFromDataTableToInvoiceForReturns(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
+        public bool InventorySearchReturnsTradeIn(string searchText, CurrentUser cu, object[] objPageDetails)
+        {
+            bool tradeInFound = false;
+            DataTable dt = InventorySearchQueryForTradeIn(searchText, cu, objPageDetails);
+            if (dt.Rows.Count > 0)
+            {
+                tradeInFound = true;
+            }
+            return tradeInFound;
+        }
+        public bool InventoryIsInTradeInList(int inventoryID, CurrentUser cu, object[] objPageDetails)
+        {
+            bool tradeInFound = false;
+            DataTable dt = InventoryIDForTradeIn(inventoryID, cu, objPageDetails);
+            if (dt.Rows.Count > 0)
+            {
+                tradeInFound = true;
+            }
+            return tradeInFound;
+        }
+        private DataTable InventorySearchQueryForTradeIn(string searchText, CurrentUser cu, object[] objPageDetails)
+        {
+            string strQueryName = "InventorySearchQueryForTradeIn";
+            string sqlCmd = "";
 
+            object[][] parms =
+            {
+                new object[] { "@", searchText }
+            };
+            return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
+        }
+        private DataTable InventoryIDForTradeIn(int inventoryID, CurrentUser cu, object[] objPageDetails)
+        {
+            string strQueryName = "InventorySearchQueryForTradeIn";
+            string sqlCmd = "";
+
+            object[][] parms =
+            {
+                new object[] { "@", inventoryID }
+            };
+            return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
+        }
         public int CalculateNextInvoiceSubNum(string invoiceNumber, object[] objPageDetails)
         {
             string strQueryName = "CalculateNextInvoiceSubNum";
