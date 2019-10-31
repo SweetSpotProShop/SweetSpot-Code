@@ -88,7 +88,7 @@ namespace SweetSpotDiscountGolfPOS
                                         lblProvincialAmount.Visible = true;
                                     }
                                 }
-                                else if (invoiceItemTax.intTaxTypeID == 7)
+                                else if (invoiceItemTax.intTaxTypeID == 6)
                                 {
                                     if (invoiceItemTax.bitIsTaxCharged)
                                     {

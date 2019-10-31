@@ -173,11 +173,17 @@
                     <asp:TableCell CssClass="leftSecond">
                         <asp:Label ID="lblDiscountsDisplay" runat="server" Text="" DataFormatString="{0:C}" />
                     </asp:TableCell>
-                    <asp:TableCell CssClass="rightFirst">
-                        <asp:Label ID="lblBlank" runat="server" Text="" />
+                    <asp:TableCell CssClass="middleFirst">
+                        <asp:Label ID="lblGST" runat="server" Text="GST:" Visible="false" />
+                    </asp:TableCell>
+                    <asp:TableCell CssClass="middleSecond">
+                        <asp:Label ID="lblGSTDisplay" runat="server" Text="" DataFormatString="{0:C}" Visible="false" />
+                    </asp:TableCell>
+					<asp:TableCell CssClass="rightFirst">
+                        <asp:Label ID="lblBlank01" runat="server" Text="" Visible="false" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSecond">
-                        <asp:Label ID="lblBlankDisplay" runat="server" Text="" />
+                        <asp:Label ID="lblBlank02" runat="server" Text="" Visible="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -187,11 +193,17 @@
                     <asp:TableCell CssClass="leftSecond">
                         <asp:Label ID="lblTradeInsDisplay" runat="server" Text="" DataFormatString="{0:C}" />
                     </asp:TableCell>
-                    <asp:TableCell CssClass="rightFirst">
-                        <asp:Label ID="lblGST" runat="server" Text="GST:" />
+					<asp:TableCell CssClass="middleFirst">
+                        <asp:Label ID="lblPST" runat="server" Text="PST:" Visible="false" />
+                    </asp:TableCell>
+                    <asp:TableCell CssClass="middleSecond">
+                        <asp:Label ID="lblPSTDisplay" runat="server" Text="" DataFormatString="{0:C}" Visible="false" />
+                    </asp:TableCell>
+					<asp:TableCell CssClass="rightFirst">
+                        <asp:Label ID="lblBlank03" runat="server" Text="" Visible="false" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightSecond">
-                        <asp:Label ID="lblGSTDisplay" runat="server" Text="" DataFormatString="{0:C}" />
+                        <asp:Label ID="lblBlank04" runat="server" Text="" Visible="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -201,11 +213,11 @@
                     <asp:TableCell CssClass="leftSecond">
                         <asp:Label ID="lblShippingDisplay" runat="server" Text="" DataFormatString="{0:C}" />
                     </asp:TableCell>
-                    <asp:TableCell CssClass="rightFirst">
-                        <asp:Label ID="lblPST" runat="server" Text="PST:" />
+                    <asp:TableCell CssClass="middleFirst">
+                        <asp:Label ID="lblLCT" runat="server" Text="LCT:" Visible="false" />
                     </asp:TableCell>
-                    <asp:TableCell CssClass="rightSecond">
-                        <asp:Label ID="lblPSTDisplay" runat="server" Text="" DataFormatString="{0:C}" />
+                    <asp:TableCell CssClass="middleSecond">
+                        <asp:Label ID="lblLCTDisplay" runat="server" Text="" DataFormatString="{0:C}" Visible="false" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightFirst">
                         <asp:Label ID="lblTender" runat="server" Text="Tender:" />
@@ -221,10 +233,10 @@
                     <asp:TableCell CssClass="leftSecond">
                         <asp:Label ID="lblSubtotalDisplay" runat="server" Text="" DataFormatString="{0:C}" />
                     </asp:TableCell>
-                    <asp:TableCell CssClass="rightFirst">
+                    <asp:TableCell CssClass="middleFirst">
                         <asp:Label ID="lblTotalPaid" runat="server" Text="Total Paid:" />
                     </asp:TableCell>
-                    <asp:TableCell CssClass="rightSecond">
+                    <asp:TableCell CssClass="middleSecond">
                         <asp:Label ID="lblTotalPaidDisplay" runat="server" Text="" DataFormatString="{0:C}" />
                     </asp:TableCell>
                     <asp:TableCell CssClass="rightFirst">

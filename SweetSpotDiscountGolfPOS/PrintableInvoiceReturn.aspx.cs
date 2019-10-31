@@ -55,18 +55,64 @@ namespace SweetSpotDiscountGolfPOS
                         lblSweetShopPhone.Text = invoice.location.varContactNumber.ToString();
                         lblTaxNum.Text = invoice.location.varTaxNumber.ToString();
 
+                        double governmentTax = 0;
+                        double provincialTax = 0;
+                        double liquorTax = 0;
+
+                        foreach (var invoiceItem in invoice.invoiceItems)
+                        {
+                            foreach (var invoiceItemTax in invoiceItem.invoiceItemTaxes)
+                            {
+                                if (invoiceItemTax.intTaxTypeID == 1 || invoiceItemTax.intTaxTypeID == 3)
+                                {
+                                    if (invoiceItemTax.bitIsTaxCharged)
+                                    {
+                                        governmentTax += invoiceItemTax.fltTaxAmount;
+                                        lblGST.Visible = true;
+                                        lblGST.Text = invoiceItemTax.varTaxName;
+                                        lblGSTDisplay.Visible = true;
+                                    }
+                                }
+                                else if (invoiceItemTax.intTaxTypeID == 2 || invoiceItemTax.intTaxTypeID == 4 || invoiceItemTax.intTaxTypeID == 5)
+                                {
+                                    if (invoiceItemTax.bitIsTaxCharged)
+                                    {
+                                        provincialTax += invoiceItemTax.fltTaxAmount;
+                                        lblPST.Visible = true;
+                                        lblPST.Text = invoiceItemTax.varTaxName;
+                                        lblPSTDisplay.Visible = true;
+                                    }
+                                }
+                                else if (invoiceItemTax.intTaxTypeID == 6)
+                                {
+                                    if (invoiceItemTax.bitIsTaxCharged)
+                                    {
+                                        liquorTax += invoiceItemTax.fltTaxAmount;
+                                        lblLCT.Visible = true;
+                                        lblLCT.Text = invoiceItemTax.varTaxName;
+                                        lblLCTDisplay.Visible = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        lblGSTDisplay.Text = governmentTax.ToString("C");
+                        lblPSTDisplay.Text = provincialTax.ToString("C");
+                        lblLCTDisplay.Text = liquorTax.ToString("C");
+
+                        double taxAmount = governmentTax + provincialTax + liquorTax;
+
                         //Display the totals
-                        lblDiscountsDisplay.Text = invoice.fltTotalDiscount.ToString("#0.00");
-                        lblTradeInsDisplay.Text = invoice.fltTotalTradeIn.ToString("#0.00");
-                        lblShippingDisplay.Text = invoice.fltShippingCharges.ToString("#0.00");
-                        lblGSTDisplay.Text = invoice.fltGovernmentTaxAmount.ToString("#0.00");
-                        lblPSTDisplay.Text = invoice.fltProvincialTaxAmount.ToString("#0.00");
-                        lblSubtotalDisplay.Text = (invoice.fltSubTotal + invoice.fltShippingCharges).ToString("#0.00");
-                        lblTotalPaidDisplay.Text = (invoice.fltBalanceDue + invoice.fltGovernmentTaxAmount + invoice.fltProvincialTaxAmount).ToString("#0.00");
+                        lblDiscountsDisplay.Text = invoice.fltTotalDiscount.ToString("C");
+                        lblTradeInsDisplay.Text = invoice.fltTotalTradeIn.ToString("C");
+                        lblShippingDisplay.Text = invoice.fltShippingCharges.ToString("C");
+                        
+                        lblSubtotalDisplay.Text = (invoice.fltSubTotal + invoice.fltShippingCharges).ToString("C");
+                        lblTotalPaidDisplay.Text = (invoice.fltBalanceDue + taxAmount).ToString("C");
 
                         object[] amounts = IM.ReturnTotalsForTenderAndChange(invoice);
-                        lblTenderDisplay.Text = Convert.ToDouble(amounts[0]).ToString("#0.00");
-                        lblChangeDisplay.Text = Convert.ToDouble(amounts[1]).ToString("#0.00");
+                        lblTenderDisplay.Text = Convert.ToDouble(amounts[0]).ToString("C");
+                        lblChangeDisplay.Text = Convert.ToDouble(amounts[1]).ToString("C");
 
                         if (invoice.intInvoiceSubNumber > 1)
                         {

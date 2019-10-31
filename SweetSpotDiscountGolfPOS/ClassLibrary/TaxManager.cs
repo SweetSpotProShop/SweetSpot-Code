@@ -333,7 +333,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             double taxAmount = 0;
             foreach (InvoiceItemTax iit in invoiceItemTaxes)
             {
-                if (iit.intTaxTypeID == 7)
+                if (iit.intTaxTypeID == 6)
                 {
                     if (iit.bitIsTaxCharged)
                     {
