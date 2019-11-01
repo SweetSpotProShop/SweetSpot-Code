@@ -166,22 +166,40 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblDiscountsDisplay;
         
         /// <summary>
-        /// lblBlank control.
+        /// lblGST control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblBlank;
+        protected global::System.Web.UI.WebControls.Label lblGST;
         
         /// <summary>
-        /// lblBlankDisplay control.
+        /// lblGSTDisplay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblBlankDisplay;
+        protected global::System.Web.UI.WebControls.Label lblGSTDisplay;
+        
+        /// <summary>
+        /// lblBlank01 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblBlank01;
+        
+        /// <summary>
+        /// lblBlank02 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblBlank02;
         
         /// <summary>
         /// lblTradeIns control.
@@ -202,22 +220,40 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblTradeInsDisplay;
         
         /// <summary>
-        /// lblGST control.
+        /// lblPST control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblGST;
+        protected global::System.Web.UI.WebControls.Label lblPST;
         
         /// <summary>
-        /// lblGSTDisplay control.
+        /// lblPSTDisplay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblGSTDisplay;
+        protected global::System.Web.UI.WebControls.Label lblPSTDisplay;
+        
+        /// <summary>
+        /// lblBlank03 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblBlank03;
+        
+        /// <summary>
+        /// lblBlank04 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblBlank04;
         
         /// <summary>
         /// lblShipping control.
@@ -238,22 +274,22 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblShippingDisplay;
         
         /// <summary>
-        /// lblPST control.
+        /// lblLCT control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblPST;
+        protected global::System.Web.UI.WebControls.Label lblLCT;
         
         /// <summary>
-        /// lblPSTDisplay control.
+        /// lblLCTDisplay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblPSTDisplay;
+        protected global::System.Web.UI.WebControls.Label lblLCTDisplay;
         
         /// <summary>
         /// lblTender control.

@@ -98,6 +98,16 @@
                                     <asp:Label ID="lblProvincialAmount" runat="server" Visible="false" />
                                 </asp:TableCell>
                             </asp:TableRow>
+
+							<asp:TableRow>
+                                <asp:TableCell>
+                                    <asp:Label ID="lblLiquorTax" runat="server" Text="LCT:" Visible="false" />
+                                </asp:TableCell>
+                                <asp:TableCell>
+                                    <asp:Label ID="lblLiquorTaxAmount" runat="server" Visible="false" />
+                                </asp:TableCell>
+                            </asp:TableRow>
+
                             <asp:TableRow>
                                 <asp:TableCell>
                                     <asp:Label ID="lblRefundBalance" runat="server" Text="Total Refund Amount:" />

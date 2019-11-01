@@ -40,32 +40,31 @@ namespace SweetSpotDiscountGolfPOS
 
                         Invoice returnInvoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
                         //Retrieve taxes based on current location
-                        string gTax = "Do Nothing";
-                        string pTax = "Do Nothing";
-                        if (returnInvoice.fltGovernmentTaxAmount != 0) { gTax = "Add GST"; }
-                        if (returnInvoice.fltProvincialTaxAmount != 0) { pTax = "Add PST"; }
-                        object[] taxText = { gTax, pTax };
-                        object[] results = TM.ReturnChargedTaxForSale(returnInvoice, taxText, objPageDetails);
-                        returnInvoice = (Invoice)results[0];
-                        object[] taxStatus = (object[])results[1];
-                        if (Convert.ToBoolean(taxStatus[0]))
-                        {
-                            lblGovernment.Visible = true;
-                            lblGovernmentAmount.Text = "$ " + returnInvoice.fltGovernmentTaxAmount.ToString("#0.00");
-                            lblGovernmentAmount.Visible = true;
+                        //string gTax = "Do Nothing";
+                        //string pTax = "Do Nothing";
+                        //if (returnInvoice.fltGovernmentTaxAmount != 0) { gTax = "Add GST"; }
+                        //if (returnInvoice.fltProvincialTaxAmount != 0) { pTax = "Add PST"; }
+                        //object[] taxText = { gTax, pTax };
+                        //object[] results = TM.ReturnChargedTaxForSale(returnInvoice, taxText, objPageDetails);
+                        //returnInvoice = (Invoice)results[0];
+                        //object[] taxStatus = (object[])results[1];
+                        //if (Convert.ToBoolean(taxStatus[0]))
+                        //{
+                        //    lblGovernment.Visible = true;
+                        //    lblGovernmentAmount.Text = "$ " + returnInvoice.fltGovernmentTaxAmount.ToString("#0.00");
+                        //    lblGovernmentAmount.Visible = true;
                             //I.balanceDue = I.balanceDue + I.governmentTax;
                             //IM.UpdateCurrentInvoice(I);
-                        }
-                        if (Convert.ToBoolean(taxStatus[2]))
-                        {
-                            lblProvincial.Visible = true;
-                            lblProvincialAmount.Text = "$ " + returnInvoice.fltProvincialTaxAmount.ToString("#0.00");
-                            lblProvincialAmount.Visible = true;
+                        //}
+                        //if (Convert.ToBoolean(taxStatus[2]))
+                        //{
+                        //    lblProvincial.Visible = true;
+                        //    lblProvincialAmount.Text = "$ " + returnInvoice.fltProvincialTaxAmount.ToString("#0.00");
+                        //    lblProvincialAmount.Visible = true;
                             //I.balanceDue = I.balanceDue + I.provincialTax;
                             //IM.UpdateCurrentInvoice(I);
-                        }
-                        UpdatePageTotals();
-                        lblRefundSubTotalAmount.Text = "$ " + returnInvoice.fltSubTotal.ToString("#0.00");
+                        //}
+                        UpdatePageTotals();                        
                     }
                 }
             }
@@ -426,18 +425,60 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 gvCurrentMOPs.DataSource = returnInvoice.invoiceMops;
                 gvCurrentMOPs.DataBind();
-                double tx = 0;
-                if (returnInvoice.bitChargeGST)
+
+
+                double governmentTax = 0;
+                double provincialTax = 0;
+                double liquorTax = 0;
+
+
+                foreach(var invoiceItem in returnInvoice.invoiceItems)
                 {
-                    tx += returnInvoice.fltGovernmentTaxAmount;
+                    foreach(var invoiceItemTax in invoiceItem.invoiceItemTaxes)
+                    {
+                        if(invoiceItemTax.intTaxTypeID == 1 || invoiceItemTax.intTaxTypeID == 3)
+                        {
+                            if (invoiceItemTax.bitIsTaxCharged)
+                            {
+                                governmentTax += invoiceItemTax.fltTaxAmount;
+                                lblGovernment.Visible = true;
+                                lblGovernment.Text = invoiceItemTax.varTaxName;
+                                lblGovernmentAmount.Visible = true;
+                            }
+                        }
+                        else if(invoiceItemTax.intTaxTypeID == 2 || invoiceItemTax.intTaxTypeID == 4 || invoiceItemTax.intTaxTypeID == 5)
+                        {
+                            if (invoiceItemTax.bitIsTaxCharged)
+                            {
+                                provincialTax += invoiceItemTax.fltTaxAmount;
+                                lblProvincial.Visible = true;
+                                lblProvincial.Text = invoiceItemTax.varTaxName;
+                                lblProvincialAmount.Visible = true;
+                            }
+                        }
+                        else if(invoiceItemTax.intTaxTypeID == 6)
+                        {
+                            if (invoiceItemTax.bitIsTaxCharged)
+                            {
+                                liquorTax += invoiceItemTax.fltTaxAmount;
+                                lblLiquorTax.Visible = true;
+                                lblLiquorTax.Text = invoiceItemTax.varTaxName;
+                                lblLiquorTaxAmount.Visible = true;
+                            }
+                        }
+                    }
                 }
-                if (returnInvoice.bitChargePST)
-                {
-                    tx += returnInvoice.fltProvincialTaxAmount;
-                }
+
+                lblGovernmentAmount.Text = governmentTax.ToString("C");
+                lblProvincialAmount.Text = provincialTax.ToString("C");
+                lblLiquorTaxAmount.Text = liquorTax.ToString("C");
+
+                double tx = governmentTax + provincialTax + liquorTax;
+
                 //Displays the remaining balance
-                lblRefundBalanceAmount.Text = "$ " + (returnInvoice.fltBalanceDue + tx).ToString("#0.00");
-                lblRemainingRefundDisplay.Text = "$ " + ((returnInvoice.fltBalanceDue + tx) - dblAmountPaid).ToString("#0.00");
+                lblRefundBalanceAmount.Text = (returnInvoice.fltBalanceDue + tx).ToString("C");
+                lblRefundSubTotalAmount.Text = returnInvoice.fltSubTotal.ToString("C");
+                lblRemainingRefundDisplay.Text = ((returnInvoice.fltBalanceDue + tx) - dblAmountPaid).ToString("C");
                 txtAmountRefunding.Text = ((returnInvoice.fltBalanceDue + tx) - dblAmountPaid).ToString("#0.00");
                 buttonDisable((returnInvoice.fltBalanceDue + tx) - dblAmountPaid);
             }
