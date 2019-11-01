@@ -368,14 +368,14 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         {
             string strQueryName = "UpdateItemFromCurrentSalesTableActualQuery";
             string sqlCmd = "UPDATE tbl_currentSalesItems SET intItemQuantity = @intItemQuantity, fltItemDiscount = @fltItemDiscount, "
-                + "bitIsDiscountPercent = @bitIsDiscountPercent WHERE intInventoryID = @intInventoryID";
+                + "bitIsDiscountPercent = @bitIsDiscountPercent WHERE intInvoiceItemID = @intInvoiceItemID";
 
             object[][] parms =
             {
                 new object[] { "@intItemQuantity", ii.intItemQuantity },
                 new object[] { "@fltItemDiscount", ii.fltItemDiscount },
                 new object[] { "@bitIsDiscountPercent", ii.bitIsDiscountPercent },
-                new object[] { "@intInventoryID", ii.intInventoryID }
+                new object[] { "@intInvoiceItemID", ii.intInvoiceItemID }
             };
 
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
