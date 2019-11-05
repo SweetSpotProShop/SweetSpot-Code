@@ -26,6 +26,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public double fltSalesSubTotal { get; set; }
         public double fltGovernmentTaxAmount { get; set; }
         public double fltProvincialTaxAmount { get; set; }
+        public double fltLiquorTaxAmount { get; set; }
         public double fltCashDrawerOverShort { get; set; }
         public bool bitIsCashoutFinalized { get; set; }
         public bool bitIsCashoutProcessed { get; set; }

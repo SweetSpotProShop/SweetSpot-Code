@@ -300,14 +300,14 @@ namespace SweetSpotDiscountGolfPOS
             {
                 if (txtSearch.Text != "")
                 {
-                    if (IM.InventorySearchReturnsTradeIn(txtSearch.Text, CU, objPageDetails))
-                    {
-                        grdInventorySearched.DataSource = ITM.ReturnTradeInSku(objPageDetails);
-                    }
-                    else
-                    {
+                    //if (IM.InventorySearchReturnsTradeIn(txtSearch.Text, CU, objPageDetails))
+                    //{
+                    //    grdInventorySearched.DataSource = ITM.ReturnTradeInSku(objPageDetails);
+                    //}
+                    //else
+                    //{
                         grdInventorySearched.DataSource = ITM.ReturnInvoiceItemsFromSearchStringForSale(txtSearch.Text, objPageDetails);
-                    }
+                    //}
                     lblInvalidQty.Visible = false;
                     //Binds list to the grid view
 
@@ -506,7 +506,6 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-
         protected void btnCancelSale_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -651,7 +650,7 @@ namespace SweetSpotDiscountGolfPOS
                         //ToDo this check needs to look for the actual ID of the trade in sku
                         //13040 is the testing trade in sku
                         //13240 is the live trade in sku
-                        if (InventoryIsInTradeInList(selectedSku.intInventoryID, CU, objPageDetails))
+                        if (IM.InventoryIsInTradeInList(selectedSku.intInventoryID, CU, objPageDetails))
                         {
                             btnRefreshCart.Visible = true;
                             //Trade In Sku to add in SK

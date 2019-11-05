@@ -6,43 +6,73 @@
 </asp:Content>--%>
 
 <asp:Content ID="ReportsTaxesPageContent" ContentPlaceHolderID="IndividualPageContent" runat="server">
-    <style media="print">
-        .noPrint {
-            display: none;
-            /*margin-left: 0;*/
-        }
+	<style media="print">
+		.noPrint {
+			display: none;
+			/*margin-left: 0;*/
+		}
 
-        .yesPrint {
-            display: inline-block !important;
-            /* margin-right:100px;
+		.yesPrint {
+			display: inline-block !important;
+			/* margin-right:100px;
            float: right;*/
-            margin-left: 10px !important;
-        }
-    </style>
-    <script>
-        function CallPrint(strid) {
-            var prtContent = document.getElementById(strid);
-            var WinPrint = window.open('', '', 'letf=10,top=10,width="450",height="250",toolbar=1,scrollbars=1,status=0');
+			margin-left: 10px !important;
+		}
+	</style>
+	<script>
+		function CallPrint(strid) {
+			var prtContent = document.getElementById(strid);
+			var WinPrint = window.open('', '', 'letf=10,top=10,width="450",height="250",toolbar=1,scrollbars=1,status=0');
 
-            WinPrint.document.write("<html><head><LINK rel=\"stylesheet\" type\"text/css\" href=\"css/print.css\" media=\"print\"><LINK rel=\"stylesheet\" type\"text/css\" href=\"css/print.css\" media=\"screen\"></head><body>");
+			WinPrint.document.write("<html><head><LINK rel=\"stylesheet\" type\"text/css\" href=\"css/print.css\" media=\"print\"><LINK rel=\"stylesheet\" type\"text/css\" href=\"css/print.css\" media=\"screen\"></head><body>");
 
-            WinPrint.document.write(prtContent.innerHTML);
-            WinPrint.document.write("</body></html>");
-            WinPrint.document.close();
-            WinPrint.focus();
-            WinPrint.print();
-            WinPrint.close();
-            return false;
-        }
-    </script>
-    <link href="MainStyleSheet.css" rel="stylesheet" type="text/css" />
-    <div id="Taxes" class="yesPrint">
-        <h2>Taxes</h2>
-        <hr />
-        <%--Taxes Breakdown--%>
-        <asp:Label ID="lblTaxDate" Font-Bold="true" runat="server" />
-        <hr />
-        <h3>Sales</h3>
+			WinPrint.document.write(prtContent.innerHTML);
+			WinPrint.document.write("</body></html>");
+			WinPrint.document.close();
+			WinPrint.focus();
+			WinPrint.print();
+			WinPrint.close();
+			return false;
+		}
+	</script>
+	<link href="MainStyleSheet.css" rel="stylesheet" type="text/css" />
+	<div id="Taxes" class="yesPrint">
+		<h2>Taxes</h2>
+		<hr />
+		<%--Taxes Breakdown--%>
+		<asp:Label ID="lblTaxDate" Font-Bold="true" runat="server" />
+		<hr />
+
+		<div>
+			<asp:GridView ID="grdTaxList" runat="server" Width="100%" AutoGenerateColumns="false" ShowFooter="true" OnRowDataBound="grdTaxList_RowDataBound">
+				<Columns>
+					<asp:BoundField HeaderText="Date" HeaderStyle-Width="10%" DataField="dtmInvoiceDate" FooterText="Totals:" DataFormatString="{0:d}" />
+					<asp:BoundField HeaderText="Collected GST" HeaderStyle-Width="10%" DataField="fltGovernmentTaxAmountCollected" DataFormatString="{0:C}" />
+					<asp:BoundField HeaderText="Collected PST" HeaderStyle-Width="10%" DataField="fltProvincialTaxAmountCollected" DataFormatString="{0:C}" />
+					<asp:BoundField HeaderText="Collected LCT" HeaderStyle-Width="10%" DataField="fltProvincialTaxAmountCollected" DataFormatString="{0:C}" />
+					<asp:BoundField HeaderText="Returned GST" HeaderStyle-Width="10%" DataField="fltGovernmentTaxAmountReturned" DataFormatString="{0:C}" />
+					<asp:BoundField HeaderText="Returned PST" HeaderStyle-Width="10%" DataField="fltProvincialTaxAmountReturned" DataFormatString="{0:C}" />
+					<asp:BoundField HeaderText="Returned LCT" HeaderStyle-Width="10%" DataField="fltProvincialTaxAmountReturned" DataFormatString="{0:C}" />
+					<asp:TemplateField>
+						<ItemTemplate>
+							<asp:Label ID="lblGovernmentTaxAmountTotaled" runat="server" Text='<%# (Convert.ToDouble(Eval("fltGovernmentTaxAmountCollected")) + Convert.ToDouble(Eval("fltGovernmentTaxAmountReturned"))).ToString("C") %>' />
+						</ItemTemplate>
+					</asp:TemplateField>
+					<asp:TemplateField>
+						<ItemTemplate>
+							<asp:Label ID="lblProvincialTaxAmountTotaled" runat="server" Text='<%# (Convert.ToDouble(Eval("fltProvincialTaxAmountCollected")) + Convert.ToDouble(Eval("fltProvincialTaxAmountReturned"))).ToString("C") %>' />
+						</ItemTemplate>
+					</asp:TemplateField>
+					<asp:TemplateField>
+						<ItemTemplate>
+							<asp:Label ID="lblLiquorTaxAmountTotaled" runat="server" Text='<%# (Convert.ToDouble(Eval("fltLiquorTaxAmountCollected")) + Convert.ToDouble(Eval("fltLiquorTaxAmountReturned"))).ToString("C") %>' />
+						</ItemTemplate>
+					</asp:TemplateField>
+				</Columns>
+			</asp:GridView>
+		</div>
+
+		<%--        <h3>Sales</h3>
         <div>
             <asp:GridView ID="grdTaxesCollected" runat="server" Width="40%" AutoGenerateColumns="false" ShowFooter="true" OnRowDataBound="grdTaxesCollected_RowDataBound">
                 <Columns>
@@ -75,15 +105,15 @@
                     <asp:BoundField HeaderText="PST" DataField="fltProvincialTaxAmount" DataFormatString="{0:C}" />
                 </Columns>
             </asp:GridView>
-        </div>
-        <br />
-        <hr />
-    </div>
-    <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px"  OnClientClick="CallPrint('Taxes');" />
-    <asp:Button class="noPrint" ID="btnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="btnDownload_Click" />
-    <script>
-        function printReport(printable) {
-            window.print();
-        }
-    </script>
+        </div>--%>
+		<br />
+		<hr />
+	</div>
+	<asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('Taxes');" />
+	<asp:Button class="noPrint" ID="btnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="btnDownload_Click" />
+	<script>
+		function printReport(printable) {
+			window.print();
+		}
+	</script>
 </asp:Content>

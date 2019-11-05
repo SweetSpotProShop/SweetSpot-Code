@@ -23,13 +23,16 @@ namespace SweetSpotDiscountGolfPOS
         List<TaxReport> taxReport = new List<TaxReport>();
         double colGST;
         double colPST;
+        double colLCT;
         double retGST;
         double retPST;
+        double retLCT;
         double ovrGST;
         double ovrPST;
-        List<TaxReport> collected = new List<TaxReport>();
-        List<TaxReport> returned = new List<TaxReport>();
-        List<TaxReport> overall = new List<TaxReport>();
+        double ovrLCT;
+        //List<TaxReport> collected = new List<TaxReport>();
+        //List<TaxReport> returned = new List<TaxReport>();
+        //List<TaxReport> overall = new List<TaxReport>();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -56,53 +59,55 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     lblTaxDate.Text = "Taxes Through: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
                     //Creating a cashout list and calling a method that grabs all mops and amounts paid
-                    taxReport = R.returnTaxReportDetails(startDate, endDate, objPageDetails);
+                    taxReport = R.returnTaxReportDetails(startDate, endDate, Convert.ToInt32(passing[1]), objPageDetails);
 
-                    foreach (var salesDate in taxReport)
-                    {
-                        if (salesDate.intLocationID == Convert.ToInt32(passing[1]))
-                        {
-                            if (salesDate.intTransactionTypeID == 1)
-                            {
-                                collected.Add(salesDate);
-                            }
-                            else if (salesDate.intTransactionTypeID == 2)
-                            {
-                                returned.Add(salesDate);
-                            }
-                            overall.Add(salesDate);
-                        }
-                    }
+                    grdTaxList.DataSource = taxReport;
+                    grdTaxList.DataBind();
+                    //foreach (var salesDate in taxReport)
+                    //{
+                    //    if (salesDate.intLocationID == Convert.ToInt32(passing[1]))
+                    //    {
+                    //        if (salesDate.intTransactionTypeID == 1)
+                    //        {
+                    //            collected.Add(salesDate);
+                    //        }
+                    //        else if (salesDate.intTransactionTypeID == 2)
+                    //        {
+                    //            returned.Add(salesDate);
+                    //        }
+                    //        overall.Add(salesDate);
+                    //    }
+                    //}
 
-                    grdTaxesCollected.DataSource = collected;
-                    grdTaxesCollected.DataBind();
-                    foreach (GridViewRow row in grdTaxesCollected.Rows)
-                    {
-                        foreach (TableCell cell in row.Cells)
-                        {
-                            cell.Attributes.CssStyle["text-align"] = "center";
-                        }
-                    }
+                    //grdTaxesCollected.DataSource = collected;
+                    //grdTaxesCollected.DataBind();
+                    //foreach (GridViewRow row in grdTaxesCollected.Rows)
+                    //{
+                    //    foreach (TableCell cell in row.Cells)
+                    //    {
+                    //        cell.Attributes.CssStyle["text-align"] = "center";
+                    //    }
+                    //}
 
-                    grdTaxesReturned.DataSource = returned;
-                    grdTaxesReturned.DataBind();
-                    foreach (GridViewRow row in grdTaxesReturned.Rows)
-                    {
-                        foreach (TableCell cell in row.Cells)
-                        {
-                            cell.Attributes.CssStyle["text-align"] = "center";
-                        }
-                    }
+                    //grdTaxesReturned.DataSource = returned;
+                    //grdTaxesReturned.DataBind();
+                    //foreach (GridViewRow row in grdTaxesReturned.Rows)
+                    //{
+                    //    foreach (TableCell cell in row.Cells)
+                    //    {
+                    //        cell.Attributes.CssStyle["text-align"] = "center";
+                    //    }
+                    //}
 
-                    grdTaxesOverall.DataSource = overall;
-                    grdTaxesOverall.DataBind();
-                    foreach (GridViewRow row in grdTaxesOverall.Rows)
-                    {
-                        foreach (TableCell cell in row.Cells)
-                        {
-                            cell.Attributes.CssStyle["text-align"] = "center";
-                        }
-                    }
+                    //grdTaxesOverall.DataSource = overall;
+                    //grdTaxesOverall.DataBind();
+                    //foreach (GridViewRow row in grdTaxesOverall.Rows)
+                    //{
+                    //    foreach (TableCell cell in row.Cells)
+                    //    {
+                    //        cell.Attributes.CssStyle["text-align"] = "center";
+                    //    }
+                    //}
                 }
             }
             //Exception catch
@@ -119,93 +124,93 @@ namespace SweetSpotDiscountGolfPOS
         }
         protected void grdTaxesCollected_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            string method = "grdTaxesCollected_RowDataBound";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
-            try
-            {
-                // check row type
-                if (e.Row.RowType == DataControlRowType.DataRow)
-                {
-                    colGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmount"));
-                    colPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmount"));
-                }
-                else if (e.Row.RowType == DataControlRowType.Footer)
-                {
-                    e.Row.Cells[1].Text = String.Format("{0:C}", colGST);
-                    e.Row.Cells[2].Text = String.Format("{0:C}", colPST);
-                }
-            }
-            //Exception catch
-            catch (ThreadAbortException tae) { }
-            catch (Exception ex)
-            {
-                //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-                //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator.", this);
-            }
+            //string method = "grdTaxesCollected_RowDataBound";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //try
+            //{
+            //    // check row type
+            //    if (e.Row.RowType == DataControlRowType.DataRow)
+            //    {
+            //        colGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmount"));
+            //        colPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmount"));
+            //    }
+            //    else if (e.Row.RowType == DataControlRowType.Footer)
+            //    {
+            //        e.Row.Cells[1].Text = String.Format("{0:C}", colGST);
+            //        e.Row.Cells[2].Text = String.Format("{0:C}", colPST);
+            //    }
+            //}
+            ////Exception catch
+            //catch (ThreadAbortException tae) { }
+            //catch (Exception ex)
+            //{
+            //    //Log all info into error table
+            //    ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+            //    //Display message box
+            //    MessageBox.ShowMessage("An Error has occurred and been logged. "
+            //        + "If you continue to receive this message please contact "
+            //        + "your system administrator.", this);
+            //}
         }
         protected void grdTaxesReturned_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            string method = "grdTaxesReturned_RowDataBound";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
-            try
-            {
-                // check row type
-                if (e.Row.RowType == DataControlRowType.DataRow)
-                {
-                    retGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmount"));
-                    retPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmount"));
-                }
-                else if (e.Row.RowType == DataControlRowType.Footer)
-                {
-                    e.Row.Cells[1].Text = String.Format("{0:C}", retGST);
-                    e.Row.Cells[2].Text = String.Format("{0:C}", retPST);
-                }
-            }
-            //Exception catch
-            catch (ThreadAbortException tae) { }
-            catch (Exception ex)
-            {
-                //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-                //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator.", this);
-            }
+            //string method = "grdTaxesReturned_RowDataBound";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //try
+            //{
+            //    // check row type
+            //    if (e.Row.RowType == DataControlRowType.DataRow)
+            //    {
+            //        retGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmount"));
+            //        retPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmount"));
+            //    }
+            //    else if (e.Row.RowType == DataControlRowType.Footer)
+            //    {
+            //        e.Row.Cells[1].Text = String.Format("{0:C}", retGST);
+            //        e.Row.Cells[2].Text = String.Format("{0:C}", retPST);
+            //    }
+            //}
+            ////Exception catch
+            //catch (ThreadAbortException tae) { }
+            //catch (Exception ex)
+            //{
+            //    //Log all info into error table
+            //    ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+            //    //Display message box
+            //    MessageBox.ShowMessage("An Error has occurred and been logged. "
+            //        + "If you continue to receive this message please contact "
+            //        + "your system administrator.", this);
+            //}
         }
         protected void grdTaxesOverall_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            string method = "grdTaxesOverall_RowDataBound";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
-            try
-            {
-                // check row type
-                if (e.Row.RowType == DataControlRowType.DataRow)
-                {
-                    ovrGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmount"));
-                    ovrPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmount"));
-                }
-                else if (e.Row.RowType == DataControlRowType.Footer)
-                {
-                    e.Row.Cells[1].Text = String.Format("{0:C}", ovrGST);
-                    e.Row.Cells[2].Text = String.Format("{0:C}", ovrPST);
-                }
-            }
-            //Exception catch
-            catch (ThreadAbortException tae) { }
-            catch (Exception ex)
-            {
-                //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-                //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator.", this);
-            }
+            //string method = "grdTaxesOverall_RowDataBound";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //try
+            //{
+            //    // check row type
+            //    if (e.Row.RowType == DataControlRowType.DataRow)
+            //    {
+            //        ovrGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmount"));
+            //        ovrPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmount"));
+            //    }
+            //    else if (e.Row.RowType == DataControlRowType.Footer)
+            //    {
+            //        e.Row.Cells[1].Text = String.Format("{0:C}", ovrGST);
+            //        e.Row.Cells[2].Text = String.Format("{0:C}", ovrPST);
+            //    }
+            //}
+            ////Exception catch
+            //catch (ThreadAbortException tae) { }
+            //catch (Exception ex)
+            //{
+            //    //Log all info into error table
+            //    ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+            //    //Display message box
+            //    MessageBox.ShowMessage("An Error has occurred and been logged. "
+            //        + "If you continue to receive this message please contact "
+            //        + "your system administrator.", this);
+            //}
         }
         protected void printReport(object sender, EventArgs e)
         {
@@ -290,6 +295,52 @@ namespace SweetSpotDiscountGolfPOS
                     Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                     Response.BinaryWrite(xlPackage.GetAsByteArray());
                     Response.End();
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+
+        protected void grdTaxList_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+
+            string method = "grdTaxesOverall_RowDataBound";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
+            {
+                // check row type
+                if (e.Row.RowType == DataControlRowType.DataRow)
+                {
+                    colGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmountCollected"));
+                    colPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmountCollected"));
+                    colLCT += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltLiquorTaxAmountCollected"));
+                    retGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmountReturned"));
+                    retPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmountReturned"));
+                    retLCT += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltLiquorTaxAmountReturned"));
+                    ovrGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmountCollected")) + Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmountReturned"));
+                    ovrPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmountCollected")) + Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmountReturned"));
+                    ovrLCT += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltLiquorTaxAmountCollected")) + Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltLiquorTaxAmountReturned"));
+                }
+                else if (e.Row.RowType == DataControlRowType.Footer)
+                {
+                    e.Row.Cells[1].Text = String.Format("{0:C}", colGST);
+                    e.Row.Cells[2].Text = String.Format("{0:C}", colPST);
+                    e.Row.Cells[3].Text = String.Format("{0:C}", colLCT);
+                    e.Row.Cells[4].Text = String.Format("{0:C}", retGST);
+                    e.Row.Cells[5].Text = String.Format("{0:C}", retPST);
+                    e.Row.Cells[6].Text = String.Format("{0:C}", retLCT);
+                    e.Row.Cells[7].Text = String.Format("{0:C}", ovrGST);
+                    e.Row.Cells[8].Text = String.Format("{0:C}", ovrPST);
+                    e.Row.Cells[9].Text = String.Format("{0:C}", ovrLCT);
                 }
             }
             //Exception catch

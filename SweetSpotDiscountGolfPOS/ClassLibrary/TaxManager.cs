@@ -298,12 +298,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             };
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public double ReturnGovernmentTaxTotal(List<InvoiceItemTax> invoiceItemTaxes)
+        public double ReturnGovernmentTaxTotal(List<InvoiceItemTax> invoiceItemTaxes, object[] objPageDetails)
         {
             double taxAmount = 0;
             foreach(InvoiceItemTax iit in invoiceItemTaxes)
             {
-                if(iit.intTaxTypeID == 1 || iit.intTaxTypeID == 3)
+                if(iit.intTaxTypeID == ReturnTaxIDFromString("GST", objPageDetails) || iit.intTaxTypeID == ReturnTaxIDFromString("HST", objPageDetails))
                 {
                     if (iit.bitIsTaxCharged)
                     {
@@ -313,12 +313,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             return taxAmount;
         }
-        public double ReturnProvincialTaxTotal(List<InvoiceItemTax> invoiceItemTaxes)
+        public double ReturnProvincialTaxTotal(List<InvoiceItemTax> invoiceItemTaxes, object[] objPageDetails)
         {
             double taxAmount = 0;
             foreach (InvoiceItemTax iit in invoiceItemTaxes)
             {
-                if (iit.intTaxTypeID == 2 || iit.intTaxTypeID == 4 || iit.intTaxTypeID == 5)
+                if (iit.intTaxTypeID == ReturnTaxIDFromString("PST", objPageDetails) || iit.intTaxTypeID == ReturnTaxIDFromString("RST", objPageDetails) || iit.intTaxTypeID == ReturnTaxIDFromString("QST", objPageDetails))
                 {
                     if (iit.bitIsTaxCharged)
                     {
@@ -328,12 +328,12 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             return taxAmount;
         }
-        public double ReturnLiquorTaxTotal(List<InvoiceItemTax> invoiceItemTaxes)
+        public double ReturnLiquorTaxTotal(List<InvoiceItemTax> invoiceItemTaxes, object[] objPageDetails)
         {
             double taxAmount = 0;
             foreach (InvoiceItemTax iit in invoiceItemTaxes)
             {
-                if (iit.intTaxTypeID == 6)
+                if (iit.intTaxTypeID == ReturnTaxIDFromString("LCT", objPageDetails))
                 {
                     if (iit.bitIsTaxCharged)
                     {
@@ -343,7 +343,20 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             return taxAmount;
         }
-
+        public int GatherTaxIDFromString(string taxName, object[] objPageDetails)
+        {
+            return ReturnTaxIDFromString(taxName, objPageDetails);
+        }
+        private int ReturnTaxIDFromString(string taxName, object[] objPageDetails)
+        {
+            string strQueryName = "ReturnTaxIDFromString";
+            string sqlCmd = "SELECT intTaxID FROM tbl_taxType WHERE varTaxName = @varTaxName";
+            object[][] parms =
+            {
+                new object[] { "@varTaxName", taxName }
+            };
+            return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
+        }
         public void LoopThroughTaxesForEachItemAddingToCurrentInvoiceItemTaxes(InvoiceItems invoiceItem, int transactionTypeID, DateTime currentDateTime, CurrentUser cu, object[] objPageDetails)
         {
             List<InvoiceItemTax> invoiceItemTaxes = ReturnTaxesAvailableForItem(invoiceItem, transactionTypeID, currentDateTime, cu, objPageDetails);

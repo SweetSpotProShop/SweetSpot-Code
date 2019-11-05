@@ -22,31 +22,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblTaxDate;
         
         /// <summary>
-        /// grdTaxesCollected control.
+        /// grdTaxList control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView grdTaxesCollected;
-        
-        /// <summary>
-        /// grdTaxesReturned control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView grdTaxesReturned;
-        
-        /// <summary>
-        /// grdTaxesOverall control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView grdTaxesOverall;
+        protected global::System.Web.UI.WebControls.GridView grdTaxList;
         
         /// <summary>
         /// btnPrint control.

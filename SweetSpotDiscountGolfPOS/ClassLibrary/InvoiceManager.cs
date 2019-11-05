@@ -50,9 +50,9 @@ namespace SweetSpotDiscountGolfPOS
             {
                 foreach (InvoiceItems ii in i.invoiceItems)
                 {
-                    i.fltGovernmentTaxAmount += TM.ReturnGovernmentTaxTotal(ii.invoiceItemTaxes);
-                    i.fltProvincialTaxAmount += TM.ReturnProvincialTaxTotal(ii.invoiceItemTaxes);
-                    i.fltLiquorTaxAmount += TM.ReturnLiquorTaxTotal(ii.invoiceItemTaxes);
+                    i.fltGovernmentTaxAmount += TM.ReturnGovernmentTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                    i.fltProvincialTaxAmount += TM.ReturnProvincialTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                    i.fltLiquorTaxAmount += TM.ReturnLiquorTaxTotal(ii.invoiceItemTaxes, objPageDetails);
                 }
             }
             return invoice;
@@ -97,9 +97,9 @@ namespace SweetSpotDiscountGolfPOS
             {
                 foreach (InvoiceItems ii in i.invoiceItems)
                 {
-                    i.fltGovernmentTaxAmount += TM.ReturnGovernmentTaxTotal(ii.invoiceItemTaxes);
-                    i.fltProvincialTaxAmount += TM.ReturnProvincialTaxTotal(ii.invoiceItemTaxes);
-                    i.fltLiquorTaxAmount += TM.ReturnLiquorTaxTotal(ii.invoiceItemTaxes);
+                    i.fltGovernmentTaxAmount += TM.ReturnGovernmentTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                    i.fltProvincialTaxAmount += TM.ReturnProvincialTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                    i.fltLiquorTaxAmount += TM.ReturnLiquorTaxTotal(ii.invoiceItemTaxes, objPageDetails);
                 }
             }
             return invoice;
@@ -389,16 +389,6 @@ namespace SweetSpotDiscountGolfPOS
             return ConvertFromDataTableToInvoiceForReturns(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
             //return ConvertFromDataTableToInvoiceForReturns(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
-        public bool InventorySearchReturnsTradeIn(string searchText, CurrentUser cu, object[] objPageDetails)
-        {
-            bool tradeInFound = false;
-            DataTable dt = InventorySearchQueryForTradeIn(searchText, cu, objPageDetails);
-            if (dt.Rows.Count > 0)
-            {
-                tradeInFound = true;
-            }
-            return tradeInFound;
-        }
         public bool InventoryIsInTradeInList(int inventoryID, CurrentUser cu, object[] objPageDetails)
         {
             bool tradeInFound = false;
@@ -409,25 +399,15 @@ namespace SweetSpotDiscountGolfPOS
             }
             return tradeInFound;
         }
-        private DataTable InventorySearchQueryForTradeIn(string searchText, CurrentUser cu, object[] objPageDetails)
-        {
-            string strQueryName = "InventorySearchQueryForTradeIn";
-            string sqlCmd = "";
-
-            object[][] parms =
-            {
-                new object[] { "@", searchText }
-            };
-            return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
-        }
         private DataTable InventoryIDForTradeIn(int inventoryID, CurrentUser cu, object[] objPageDetails)
         {
-            string strQueryName = "InventorySearchQueryForTradeIn";
-            string sqlCmd = "";
+            string strQueryName = "InventoryIDForTradeIn";
+            string sqlCmd = "SELECT intInventoryID FROM tbl_tradeInSkuPerLocation WHERE intInventoryID = @intInventoryID AND intLocationID = @intLocationID";
 
             object[][] parms =
             {
-                new object[] { "@", inventoryID }
+                new object[] { "@intInventoryID", inventoryID },
+                new object[] { "@intLocationID", cu.location.intLocationID }
             };
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
         }

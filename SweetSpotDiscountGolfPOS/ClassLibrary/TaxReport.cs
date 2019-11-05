@@ -9,9 +9,14 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
     {
         public DateTime dtmInvoiceDate { get; set; }
         public int intLocationID { get; set; }
-        public double fltGovernmentTaxAmount { get; set; }
-        public double fltProvincialTaxAmount { get; set; }
-        public int intTransactionTypeID { get; set; }
+        public double fltGovernmentTaxAmountCollected { get; set; }
+        public double fltProvincialTaxAmountCollected { get; set; }
+        public double fltLiquorTaxAmountCollected { get; set; }
+        public double fltGovernmentTaxAmountReturned { get; set; }
+        public double fltProvincialTaxAmountReturned { get; set; }
+        public double fltLiquorTaxAmountReturned { get; set; }
+        
+        //public int intTransactionTypeID { get; set; }
 
         //public double subTotal { get; set; }
         //public double shippingAmount { get; set; }

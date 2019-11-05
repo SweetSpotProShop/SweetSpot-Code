@@ -580,6 +580,7 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
+                TaxManager TM = new TaxManager();
                 //Loops through each mop
                 double dblAmountPaid = 0;
                 foreach (var payment in invoice.invoiceMops)
@@ -598,7 +599,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     foreach(var invoiceItemTax in invoiceItem.invoiceItemTaxes)
                     {
-                        if (invoiceItemTax.intTaxTypeID == 1 || invoiceItemTax.intTaxTypeID == 3)
+                        if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("GST", objPageDetails) || invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("HST", objPageDetails))
                         {
                             if (invoiceItemTax.bitIsTaxCharged)
                             {
@@ -608,7 +609,7 @@ namespace SweetSpotDiscountGolfPOS
                                 lblGovernmentAmount.Visible = true;
                             }
                         }
-                        else if(invoiceItemTax.intTaxTypeID == 2 || invoiceItemTax.intTaxTypeID == 4 || invoiceItemTax.intTaxTypeID == 5)
+                        else if(invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("PST", objPageDetails) || invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("RST", objPageDetails) || invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("QST", objPageDetails))
                         {
                             if (invoiceItemTax.bitIsTaxCharged)
                             {
@@ -618,7 +619,7 @@ namespace SweetSpotDiscountGolfPOS
                                 lblProvincialAmount.Visible = true;
                             }
                         }
-                        else if (invoiceItemTax.intTaxTypeID == 6)
+                        else if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("LCT", objPageDetails))
                         {
                             if (invoiceItemTax.bitIsTaxCharged)
                             {
