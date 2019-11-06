@@ -20,7 +20,6 @@ namespace SweetSpotDiscountGolfPOS
         Reports R = new Reports();
         CurrentUser CU;
 
-        List<TaxReport> taxReport = new List<TaxReport>();
         double colGST;
         double colPST;
         double colLCT;
@@ -30,10 +29,7 @@ namespace SweetSpotDiscountGolfPOS
         double ovrGST;
         double ovrPST;
         double ovrLCT;
-        //List<TaxReport> collected = new List<TaxReport>();
-        //List<TaxReport> returned = new List<TaxReport>();
-        //List<TaxReport> overall = new List<TaxReport>();
-
+        
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -59,7 +55,7 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     lblTaxDate.Text = "Taxes Through: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
                     //Creating a cashout list and calling a method that grabs all mops and amounts paid
-                    taxReport = R.returnTaxReportDetails(startDate, endDate, Convert.ToInt32(passing[1]), objPageDetails);
+                    List<TaxReport> taxReport = R.returnTaxReportDetails(startDate, endDate, Convert.ToInt32(passing[1]), objPageDetails);
 
                     grdTaxList.DataSource = taxReport;
                     grdTaxList.DataBind();
@@ -241,55 +237,67 @@ namespace SweetSpotDiscountGolfPOS
             {
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
+
                 object[] passing = (object[])Session["reportInfo"];
-                string loc = LM.ReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
-                string fileName = "Taxes Report - " + loc + ".xlsx";
+                DateTime[] reportDates = (DateTime[])passing[0];
+                DateTime startDate = reportDates[0];
+                DateTime endDate = reportDates[1];
+
+                string fileName = "Taxes Report-" + LM.ReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails) + "_" + startDate.ToShortDateString() + " - " + endDate.ToShortDateString() + ".xlsx";
+                
+                List<TaxReport> taxReport = R.returnTaxReportDetails(startDate, endDate, Convert.ToInt32(passing[1]), objPageDetails);
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
                     //Creates a seperate sheet for each data table
-                    ExcelWorksheet salesTax = xlPackage.Workbook.Worksheets.Add("Sales");
-                    ExcelWorksheet returnsTax = xlPackage.Workbook.Worksheets.Add("Returns");
-                    ExcelWorksheet allTax = xlPackage.Workbook.Worksheets.Add("All Transactions");
+                    ExcelWorksheet taxes = xlPackage.Workbook.Worksheets.Add("Taxes");
                     //Writing       
-                    salesTax.Cells[1, 1].Value = lblTaxDate.Text; returnsTax.Cells[1, 1].Value = lblTaxDate.Text; allTax.Cells[1, 1].Value = lblTaxDate.Text;
-                    salesTax.Cells[2, 1].Value = "Sales"; returnsTax.Cells[2, 1].Value = "Returns"; allTax.Cells[2, 1].Value = "All Transactions";
-                    salesTax.Cells[3, 1].Value = "Date"; salesTax.Cells[3, 2].Value = "GST"; salesTax.Cells[3, 3].Value = "PST";
-                    returnsTax.Cells[3, 1].Value = "Date"; returnsTax.Cells[3, 2].Value = "GST"; returnsTax.Cells[3, 3].Value = "PST";
-                    allTax.Cells[3, 1].Value = "Date"; allTax.Cells[3, 2].Value = "GST"; allTax.Cells[3, 3].Value = "PST";
-                    int recordIndexSales = 4;
-                    if (collected.Count > 0)
+                    taxes.Cells[1, 1].Value = lblTaxDate.Text;
+
+                    taxes.Cells[2, 1].Value = "Date";
+
+                    taxes.Cells[2, 2].Value = "GST Collected";
+                    taxes.Cells[2, 3].Value = "PST Collected";
+                    taxes.Cells[2, 4].Value = "LCT Collected";
+
+                    taxes.Cells[2, 5].Value = "GST Returned";
+                    taxes.Cells[2, 6].Value = "PST Returned";
+                    taxes.Cells[2, 7].Value = "LCT Returned";
+
+                    taxes.Cells[2, 8].Value = "GST Total";
+                    taxes.Cells[2, 9].Value = "PST Total";
+                    taxes.Cells[2, 10].Value = "LCT Total";
+
+                    int recordIndex = 3;
+                    if (taxReport.Count > 0)
                     {
-                        foreach (TaxReport trCollected in collected)
+                        foreach (TaxReport tr in taxReport)
                         {
-                            salesTax.Cells[recordIndexSales, 1].Value = trCollected.dtmInvoiceDate.ToString("d");
-                            salesTax.Cells[recordIndexSales, 2].Value = trCollected.fltGovernmentTaxAmount;
-                            salesTax.Cells[recordIndexSales, 3].Value = trCollected.fltProvincialTaxAmount;
-                            recordIndexSales++;
+                            taxes.Cells[recordIndex, 1].Value = tr.dtmInvoiceDate.ToShortDateString();
+                            taxes.Cells[recordIndex, 2].Value = tr.fltGovernmentTaxAmountCollected;
+                            taxes.Cells[recordIndex, 3].Value = tr.fltProvincialTaxAmountCollected;
+                            taxes.Cells[recordIndex, 4].Value = tr.fltLiquorTaxAmountCollected;
+                            taxes.Cells[recordIndex, 5].Value = tr.fltGovernmentTaxAmountReturned;
+                            taxes.Cells[recordIndex, 6].Value = tr.fltProvincialTaxAmountReturned;
+                            taxes.Cells[recordIndex, 7].Value = tr.fltLiquorTaxAmountReturned;
+                            taxes.Cells[recordIndex, 8].Value = tr.fltGovernmentTaxAmountCollected + tr.fltGovernmentTaxAmountReturned;
+                            taxes.Cells[recordIndex, 9].Value = tr.fltProvincialTaxAmountCollected + tr.fltProvincialTaxAmountReturned;
+                            taxes.Cells[recordIndex, 10].Value = tr.fltLiquorTaxAmountCollected + tr.fltLiquorTaxAmountReturned;
+                            recordIndex++;
                         }
+
+                        taxes.Cells[recordIndex + 1, 1].Value = "Totals:";
+                        taxes.Cells[recordIndex + 1, 2].Value = colGST;
+                        taxes.Cells[recordIndex + 1, 3].Value = colPST;
+                        taxes.Cells[recordIndex + 1, 4].Value = colLCT;
+                        taxes.Cells[recordIndex + 1, 5].Value = retGST;
+                        taxes.Cells[recordIndex + 1, 6].Value = retPST;
+                        taxes.Cells[recordIndex + 1, 7].Value = retLCT;
+                        taxes.Cells[recordIndex + 1, 8].Value = ovrGST;
+                        taxes.Cells[recordIndex + 1, 9].Value = ovrPST;
+                        taxes.Cells[recordIndex + 1, 10].Value = ovrLCT;
                     }
-                    int recordIndexReturns = 4;
-                    if (returned.Count > 0)
-                    {
-                        foreach (TaxReport trReturned in returned)
-                        {
-                            returnsTax.Cells[recordIndexReturns, 1].Value = trReturned.dtmInvoiceDate.ToString("d");
-                            returnsTax.Cells[recordIndexReturns, 2].Value = trReturned.fltGovernmentTaxAmount;
-                            returnsTax.Cells[recordIndexReturns, 3].Value = trReturned.fltProvincialTaxAmount;
-                            recordIndexReturns++;
-                        }
-                    }
-                    int recordIndexOverall = 4;
-                    if (overall.Count > 0)
-                    {
-                        foreach (TaxReport trOverall in overall)
-                        {
-                            allTax.Cells[recordIndexOverall, 1].Value = trOverall.dtmInvoiceDate.ToString("d");
-                            allTax.Cells[recordIndexOverall, 2].Value = trOverall.fltGovernmentTaxAmount;
-                            allTax.Cells[recordIndexOverall, 3].Value = trOverall.fltProvincialTaxAmount;
-                            recordIndexOverall++;
-                        }
-                    }
+
                     Response.Clear();
                     Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
                     Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";

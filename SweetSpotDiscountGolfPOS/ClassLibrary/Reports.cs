@@ -1173,7 +1173,6 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             new TaxReport
             {
                 dtmInvoiceDate = row.Field<DateTime>("dtmInvoiceDate"),
-                intLocationID = row.Field<int>("intLocationID"),
                 fltGovernmentTaxAmountCollected = row.Field<double>("fltGovernmentTaxAmountCollected"),
                 fltProvincialTaxAmountCollected = row.Field<double>("fltProvincialTaxAmountCollected"),
                 fltLiquorTaxAmountCollected = row.Field<double>("fltLiquorTaxAmountCollected"),
@@ -1245,10 +1244,17 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             DateTime endDate = reportDates[1];
             int locationID = Convert.ToInt32(repInfo[1]);
             //This method returns all invoices with discounts between two dates
-            string sqlCmd = "SELECT intInvoiceID, varInvoiceNumber, intInvoiceSubNumber, dtmInvoiceDate, (SELECT CONCAT(varFirstName, ' ', varLastName) FROM "
-                + "tbl_customers WHERE intCustomerID = tbl_invoice.intCustomerID) AS 'customerName', (SELECT CONCAT(varFirstName, ' ', varLastName) FROM "
-                + "tbl_employee WHERE intEmployeeID = tbl_invoice.intEmployeeID) AS 'employeeName', fltTotalDiscount, fltBalanceDue FROM tbl_invoice WHERE "
-                + "fltTotalDiscount <> 0 AND dtmInvoiceDate BETWEEN @dtmStartDate AND @dtmEndDate AND intLocationID = @intLocationID";
+            string sqlCmd = "SELECT TD.intInvoiceID, I2.varInvoiceNumber, I2.intInvoiceSubNumber, I2.dtmInvoiceDate, (SELECT CONCAT(varFirstName, ' ', varLastName) FROM tbl_customers "
+                + "WHERE intCustomerID = I2.intCustomerID) AS customerName, (SELECT CONCAT(varFirstName, ' ', varLastName) FROM tbl_employee WHERE intEmployeeID = I2.intEmployeeID) AS "
+                + "employeeName, I2.fltTotalDiscount, I2.fltBalanceDue, TD.fltGovernmentTaxAmount, TD.fltProvincialTaxAmount, TD.fltLiquorTaxAmount FROM tbl_invoice I2 JOIN(SELECT "
+                + "I.intInvoiceID, IIT.fltGovernmentTaxAmount, IIT.fltProvincialTaxAmount, IIT.fltLiquorTaxAmount FROM tbl_invoice I JOIN tbl_invoiceItem II ON II.intInvoiceID = "
+                + "I.intInvoiceID JOIN(SELECT intInvoiceID, ROUND(ISNULL([GST], 0) + ISNULL([HST], 0), 2) AS fltGovernmentTaxAmount, ROUND(ISNULL([PST], 0) +ISNULL([RST], 0) +ISNULL("
+                + "[QST], 0), 2) AS fltProvincialTaxAmount, ROUND(ISNULL([LCT], 0), 2) AS fltLiquorTaxAmount FROM(SELECT II.intInvoiceID, TT.varTaxName, SUM(IIT.fltTaxAmount) AS "
+                + "fltTaxAmount FROM tbl_invoiceItemTaxes IIT JOIN tbl_taxType TT ON TT.intTaxID = IIT.intTaxTypeID JOIN tbl_invoiceItem II ON II.intInvoiceItemID = "
+                + "IIT.intInvoiceItemID WHERE IIT.bitIsTaxCharged = 1 GROUP BY II.intInvoiceID, TT.varTaxName) PS1 PIVOT(SUM(fltTaxAmount) FOR varTaxName IN([GST], [HST], [PST], "
+                + "[RST], [QST], [LCT])) AS PVT1) IIT ON IIT.intInvoiceID = II.intInvoiceID WHERE fltTotalDiscount <> 0 AND dtmInvoiceDate BETWEEN @dtmStartDate AND @dtmEndDate AND "
+                + "intLocationID = @intLocationID GROUP BY I.intInvoiceID, IIT.fltGovernmentTaxAmount, IIT.fltProvincialTaxAmount, IIT.fltLiquorTaxAmount) TD ON TD.intInvoiceID = "
+                + "I2.intInvoiceID";
             object[][] parms =
             {
                 new object[] { "@dtmStartDate", startDate },
