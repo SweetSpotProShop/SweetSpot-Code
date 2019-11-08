@@ -12,82 +12,196 @@ by editing this MSBuild file. In order to learn more about this please visit htt
   </PropertyGroup>
   <ItemGroup>
     <File Include="bin/EPPlus.dll">
-      <publishTime>07/14/2016 15:57:38</publishTime>
+      <publishTime>11/01/2018 09:32:46</publishTime>
     </File>
     <File Include="bin/Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll">
-      <publishTime>04/26/2017 09:45:26</publishTime>
+      <publishTime>10/20/2017 08:54:12</publishTime>
     </File>
     <File Include="bin/roslyn/csc.exe">
-      <publishTime>04/26/2017 09:45:30</publishTime>
+      <publishTime>10/20/2017 08:54:12</publishTime>
     </File>
     <File Include="bin/roslyn/Microsoft.Build.Tasks.CodeAnalysis.dll">
-      <publishTime>04/26/2017 09:45:28</publishTime>
+      <publishTime>10/20/2017 08:54:12</publishTime>
     </File>
     <File Include="bin/roslyn/Microsoft.CodeAnalysis.CSharp.dll">
-      <publishTime>04/26/2017 09:45:28</publishTime>
+      <publishTime>10/20/2017 08:54:12</publishTime>
     </File>
     <File Include="bin/roslyn/Microsoft.CodeAnalysis.dll">
-      <publishTime>04/26/2017 09:45:30</publishTime>
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.VisualBasic.dll">
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CSharp.Core.targets">
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.VisualBasic.Core.targets">
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Collections.Immutable.dll">
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Reflection.Metadata.dll">
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/roslyn/vbc.exe">
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/roslyn/VBCSCompiler.exe">
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/roslyn/VBCSCompiler.exe.config">
+      <publishTime>10/20/2017 08:54:12</publishTime>
     </File>
     <File Include="bin/SweetSpotDiscountGolfPOS.dll">
-      <publishTime>08/04/2017 18:59:49</publishTime>
+      <publishTime>11/08/2019 16:28:16</publishTime>
     </File>
     <File Include="bin/SweetSpotDiscountGolfPOS.pdb">
-      <publishTime>08/04/2017 18:59:49</publishTime>
+      <publishTime>11/08/2019 16:28:16</publishTime>
+    </File>
+    <File Include="CSS/MainStyleSheet.css">
+      <publishTime>10/30/2019 13:24:57</publishTime>
     </File>
     <File Include="CustomerAddNew.aspx">
-      <publishTime>06/20/2017 14:24:14</publishTime>
+      <publishTime>10/30/2019 13:24:57</publishTime>
     </File>
     <File Include="CustomerHomePage.aspx">
-      <publishTime>05/10/2017 09:43:14</publishTime>
+      <publishTime>10/30/2019 13:24:57</publishTime>
     </File>
     <File Include="EmployeeAddNew.aspx">
-      <publishTime>06/02/2017 09:20:28</publishTime>
+      <publishTime>10/30/2019 13:24:57</publishTime>
     </File>
     <File Include="HomePage.aspx">
-      <publishTime>07/30/2017 14:15:38</publishTime>
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="Images/ajax-loader.gif">
+      <publishTime>07/04/2018 09:43:42</publishTime>
+    </File>
+    <File Include="Images/combinedLogo.jpg">
+      <publishTime>10/20/2017 08:54:09</publishTime>
+    </File>
+    <File Include="Images/SweetSpotLogo.jpg">
+      <publishTime>10/20/2017 08:54:09</publishTime>
     </File>
     <File Include="InventoryAddNew.aspx">
-      <publishTime>07/27/2017 16:44:08</publishTime>
+      <publishTime>10/30/2019 13:24:57</publishTime>
     </File>
     <File Include="InventoryHomePage.aspx">
-      <publishTime>06/17/2017 18:45:10</publishTime>
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="InvoiceSearch.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
     </File>
     <File Include="LoginPage.aspx">
-      <publishTime>07/17/2017 07:28:22</publishTime>
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="LoungeSalesCart.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="LoungeSims.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
     </File>
     <File Include="MasterPage.Master">
-      <publishTime>08/03/2017 12:58:10</publishTime>
+      <publishTime>10/30/2019 13:24:57</publishTime>
     </File>
     <File Include="packages.config">
-      <publishTime>07/31/2017 21:23:06</publishTime>
+      <publishTime>11/01/2018 09:32:46</publishTime>
     </File>
     <File Include="PrintableInvoice.aspx">
-      <publishTime>08/04/2017 08:16:44</publishTime>
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="PrintableInvoiceReturn.aspx">
+      <publishTime>11/08/2019 16:23:46</publishTime>
+    </File>
+    <File Include="PrintableReceipt.aspx">
+      <publishTime>01/11/2019 12:25:01</publishTime>
+    </File>
+    <File Include="PurchasesCart.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="PurchasesCheckout.aspx">
+      <publishTime>01/11/2019 12:25:01</publishTime>
     </File>
     <File Include="ReportsCashOut.aspx">
-      <publishTime>06/20/2017 12:52:48</publishTime>
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="ReportsCOGSvsPM.aspx">
+      <publishTime>01/11/2019 12:25:01</publishTime>
+    </File>
+    <File Include="ReportsCostOfInventory.aspx">
+      <publishTime>11/08/2019 16:26:04</publishTime>
+    </File>
+    <File Include="ReportsDiscounts.aspx">
+      <publishTime>11/08/2019 16:26:04</publishTime>
+    </File>
+    <File Include="ReportsExtensiveInvoice.aspx">
+      <publishTime>11/08/2019 16:26:04</publishTime>
     </File>
     <File Include="ReportsHomePage.aspx">
-      <publishTime>08/01/2017 14:02:02</publishTime>
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="ReportsInventoryChange.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="ReportsItemsSold.aspx">
+      <publishTime>01/11/2019 12:25:01</publishTime>
+    </File>
+    <File Include="ReportsMostSold.aspx">
+      <publishTime>01/11/2019 12:25:01</publishTime>
+    </File>
+    <File Include="ReportsPaymentType.aspx">
+      <publishTime>01/11/2019 12:25:01</publishTime>
+    </File>
+    <File Include="ReportsPurchasesMade.aspx">
+      <publishTime>01/11/2019 12:25:01</publishTime>
+    </File>
+    <File Include="ReportsSales.aspx">
+      <publishTime>11/08/2019 16:26:04</publishTime>
+    </File>
+    <File Include="ReportsSpecificApparel.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="ReportsSpecificGrip.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="ReportsStoreStats.aspx">
+      <publishTime>11/08/2019 16:26:04</publishTime>
+    </File>
+    <File Include="ReportsTaxes.aspx">
+      <publishTime>11/08/2019 16:26:04</publishTime>
+    </File>
+    <File Include="ReportsTradeIns.aspx">
+      <publishTime>01/11/2019 12:25:01</publishTime>
+    </File>
+    <File Include="ReturnsCart.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="ReturnsCheckout.aspx">
+      <publishTime>11/08/2019 16:23:46</publishTime>
+    </File>
+    <File Include="ReturnsHomePage.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
     </File>
     <File Include="SalesCart.aspx">
-      <publishTime>07/27/2017 13:39:46</publishTime>
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="SalesCashOut.aspx">
+      <publishTime>11/08/2019 16:26:04</publishTime>
     </File>
     <File Include="SalesCheckout.aspx">
-      <publishTime>07/29/2017 10:07:08</publishTime>
+      <publishTime>10/30/2019 13:24:57</publishTime>
     </File>
     <File Include="SalesHomePage.aspx">
-      <publishTime>07/20/2017 08:28:46</publishTime>
+      <publishTime>10/30/2019 13:24:57</publishTime>
     </File>
     <File Include="SettingsHomePage.aspx">
-      <publishTime>07/28/2017 15:58:16</publishTime>
+      <publishTime>10/30/2019 13:24:57</publishTime>
     </File>
     <File Include="TradeINEntry.aspx">
-      <publishTime>07/27/2017 13:31:10</publishTime>
+      <publishTime>10/30/2019 13:24:57</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>08/04/2017 18:59:52</publishTime>
+      <publishTime>11/08/2019 16:28:28</publishTime>
     </File>
   </ItemGroup>
 </Project>
