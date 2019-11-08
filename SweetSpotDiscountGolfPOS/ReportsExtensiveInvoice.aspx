@@ -14,7 +14,7 @@
             <Columns>
                 <asp:TemplateField HeaderText="Invoice">
                     <ItemTemplate>
-                        <asp:LinkButton ID="lbtnInvoiceNumber" runat="server" Text='<%#Eval("invoiceNumber")%>' CommandArgument='<%# Eval("intInvoiceID") %>' />
+                        <asp:LinkButton ID="lbtnInvoiceNumber" runat="server" Text='<%#Eval("varInvoiceNumber")%>' CommandArgument='<%# Eval("intInvoiceID")%>' />
                     </ItemTemplate>
                     <FooterTemplate>
                         <asp:Label ID="lblTotals" runat="server" Text="Totals:" />
@@ -22,105 +22,72 @@
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Shipping">
                     <ItemTemplate>
-                        <asp:Label ID="lblShipping" runat="server" Text='<%#Eval("fltShippingCharges")%>' />
+                        <asp:Label ID="lblShipping" runat="server" Text='<%#Eval("fltShippingCharges", "{0:C}")%>' />
                     </ItemTemplate>
-                    <FooterTemplate>
-                        <asp:Label ID="lblShippingTotal" runat="server" />
-                    </FooterTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Trade-in Amount">
                     <ItemTemplate>
-                        <asp:Label ID="lblTradeIn" runat="server" Text='<%#Eval("totalTradeIn")%>' />
+                        <asp:Label ID="lblTradeIn" runat="server" Text='<%#Eval("fltTotalTradeIn", "{0:C}")%>' />
                     </ItemTemplate>
-                    <FooterTemplate>
-                        <asp:Label ID="lblTradeInTotal" runat="server" />
-                    </FooterTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Discount">
                     <ItemTemplate>
-                        <asp:Label ID="lblDiscount" runat="server" Text='<%#Eval("totalDiscount")%>' />
+                        <asp:Label ID="lblDiscount" runat="server" Text='<%#Eval("fltTotalDiscount", "{0:C}")%>' />
                     </ItemTemplate>
-                    <FooterTemplate>
-                        <asp:Label ID="lblDiscountTotal" runat="server" />
-                    </FooterTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Pre-Tax">
                     <ItemTemplate>
-                        <asp:Label ID="lblPreTax" runat="server" Text='<%#Eval("fltSubTotalAndTradeIn")%>' />
+                        <asp:Label ID="lblPreTax" runat="server" Text='<%#Eval("fltPreTax", "{0:C}")%>' />
                     </ItemTemplate>
-                    <FooterTemplate>
-                        <asp:Label ID="lblPreTaxTotal" runat="server" />
-                    </FooterTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Government Tax">
                     <ItemTemplate>
-                        <asp:Label ID="lblGovernmentTax" runat="server" Text='<%#Eval("fltGovernmentTaxAmount")%>' />
+                        <asp:Label ID="lblGovernmentTax" runat="server" Text='<%#Eval("fltGovernmentTaxAmount", "{0:C}")%>' />
                     </ItemTemplate>
-                    <FooterTemplate>
-                        <asp:Label ID="lblGovernmentTaxTotal" runat="server" />
-                    </FooterTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Provincial Tax">
                     <ItemTemplate>
-                        <asp:Label ID="lblProvincialTax" runat="server" Text='<%#Eval("fltProvincialTaxAmount")%>' />
+                        <asp:Label ID="lblProvincialTax" runat="server" Text='<%#Eval("fltProvincialTaxAmount", "{0:C}")%>' />
                     </ItemTemplate>
-                    <FooterTemplate>
-                        <asp:Label ID="lblProvincialTaxTotal" runat="server" />
-                    </FooterTemplate>
                 </asp:TemplateField>
-                <asp:TemplateField HeaderText="Post-Tax">
+				<asp:TemplateField HeaderText="Liquor Tax">
                     <ItemTemplate>
-                        <asp:Label ID="lblPostTax" runat="server" Text='<%#Eval("fltTotalSales")%>' />
+                        <asp:Label ID="lblLiquorTax" runat="server" Text='<%#Eval("fltLiquorTaxAmount", "{0:C}")%>' />
                     </ItemTemplate>
-                    <FooterTemplate>
-                        <asp:Label ID="lblPostTaxTotal" runat="server" />
-                    </FooterTemplate>
+                </asp:TemplateField>
+                <asp:TemplateField HeaderText="Sales Dollars">
+                    <ItemTemplate>
+                        <asp:Label ID="lblPostTax" runat="server" Text='<%#Eval("fltTotalSales", "{0:C}")%>' />
+                    </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="COGS">
                     <ItemTemplate>
-                        <asp:Label ID="lblCOGS" runat="server" Text='<%#Eval("COGS")%>' />
+                        <asp:Label ID="lblCOGS" runat="server" Text='<%#Eval("fltCostofGoods", "{0:C}")%>' />
                     </ItemTemplate>
-                    <FooterTemplate>
-                        <asp:Label ID="lblCOGSTotal" runat="server" />
-                    </FooterTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Revenue Earned">
                     <ItemTemplate>
-                        <asp:Label ID="lblRevenue" runat="server" Text='<%#Eval("RevenueEarned")%>' />
+                        <asp:Label ID="lblRevenue" runat="server" Text='<%#Eval("fltRevenueEarned", "{0:C}")%>' />
                     </ItemTemplate>
-                    <FooterTemplate>
-                        <asp:Label ID="lblRevenueTotal" runat="server" />
-                    </FooterTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Profit Margin">
                     <ItemTemplate>
-                        <asp:Label ID="lblProfitMargin" runat="server" Text='<%#Eval("ProfitMargin")%>' />
+                        <asp:Label ID="lblProfitMargin" runat="server" Text='<%#(Convert.ToDouble(Eval("fltRevenueEarned")) / Convert.ToDouble(Eval("fltPreTax"))).ToString("P")%>' />
                     </ItemTemplate>
-                    <FooterTemplate>
-                        <asp:Label ID="lblProfitMarginTotal" runat="server" />
-                    </FooterTemplate>
-                </asp:TemplateField>
-                <asp:TemplateField HeaderText="Payment">
-                    <ItemTemplate>
-                        <asp:Label ID="lblPayment" runat="server" Text='<%#Eval("PaidAmount")%>' />
-                    </ItemTemplate>
-                    <FooterTemplate>
-                        <asp:Label ID="lblPaymentTotal" runat="server" />
-                    </FooterTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Customer Name">
                     <ItemTemplate>
-                        <asp:Label ID="lblCustomer" runat="server" Text='<%#Eval("CustomerName")%>' />
+                        <asp:Label ID="lblCustomer" runat="server" Text='<%#Eval("varCustomerName")%>' />
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Employee Name">
                     <ItemTemplate>
-                        <asp:Label ID="lblEmployee" runat="server" Text='<%#Eval("EmployeeName")%>' />
+                        <asp:Label ID="lblEmployee" runat="server" Text='<%#Eval("varEmployeeName")%>' />
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Date">
                     <ItemTemplate>
-                        <asp:Label ID="lblDate" runat="server" Text='<%#Eval("dtmInvoiceDate") %>' />
+                        <asp:Label ID="lblDate" runat="server" Text='<%#Eval("dtmInvoiceDate", "{0:dd/MMM/yy}")%>' />
                     </ItemTemplate>
                 </asp:TemplateField>
             </Columns>

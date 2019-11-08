@@ -26,76 +26,50 @@
         <div>
             <asp:GridView ID="grdStats" runat="server" AutoGenerateColumns="false" ShowFooter="true" RowStyle-HorizontalAlign="Center" OnRowDataBound="grdStats_RowDataBound">
                 <Columns>
-                    <asp:TemplateField HeaderText="Year">
+                    <asp:TemplateField HeaderText="Grouped By">
                         <ItemTemplate>
-                            <asp:Label ID="lblYear" runat="server" Text='<%#Eval("dtmInvoiceYear")%>' />
+							<asp:Label ID="lblSelection" runat="server" Text='<%#Eval("selection")%>' />
+                            <%--<asp:Label ID="lblYear" runat="server" Text='<%#Eval("varMonthName") + " / " + Eval("dtmInvoiceYear")%>' Visible="false" />
+							<asp:Label ID="lblSelectedDate" runat="server" Text='<%#Eval("dtmSelectedDate", "{0: dd/MMM/yy}")%>' Visible="false" />--%>
                         </ItemTemplate>
                         <FooterTemplate>
                             <asp:Label ID="lblTotals" runat="server" Text="Totals:" />
                         </FooterTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Month">
-                        <ItemTemplate>
-                            <asp:Label ID="lblC2" runat="server" Text='<%#Eval("varMonthName")%>' />
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="C3">
-                        <ItemTemplate>
-                            <asp:Label ID="lblC3" runat="server" Text='<%#Eval("dtmSelectedDate", "{0: dd/MMM/yy}")%>' />
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="City Name">
-                        <ItemTemplate>
-                            <asp:Label ID="lblCityName" runat="server" Text='<%#Eval("varCityName")%>' />
-                        </ItemTemplate>
-                    </asp:TemplateField>
                     <asp:TemplateField HeaderText="Government Tax">
                         <ItemTemplate>
-                            <asp:Label ID="lblGovTax" runat="server" Text='<%#Eval("fltGovernmentTaxAmount", "{0:C}")%>' />
+                            <asp:Label ID="lblGovernmentTax" runat="server" Text='<%#Eval("fltGovernmentTaxAmount", "{0:C}")%>' />
                         </ItemTemplate>
-                        <FooterTemplate>
-                            <asp:Label ID="lblGovTaxTotal" runat="server" />
-                        </FooterTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Provincial Tax">
                         <ItemTemplate>
-                            <asp:Label ID="lblProvTax" runat="server" Text='<%#Eval("fltProvincialTaxAmount", "{0:C}")%>' />
+                            <asp:Label ID="lblProvincialTax" runat="server" Text='<%#Eval("fltProvincialTaxAmount", "{0:C}")%>' />
                         </ItemTemplate>
-                        <FooterTemplate>
-                            <asp:Label ID="lblProvTaxTotal" runat="server" />
-                        </FooterTemplate>
+                    </asp:TemplateField>
+					<asp:TemplateField HeaderText="Liquor Tax">
+                        <ItemTemplate>
+                            <asp:Label ID="lblLiquorTax" runat="server" Text='<%#Eval("fltLiquorTaxAmount", "{0:C}")%>' />
+                        </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Cost of Goods Sold">
                         <ItemTemplate>
-                            <asp:Label ID="lblCOGS" runat="server" Text='<%#Eval("fltTotalCOGS", "{0:C}")%>' />
+                            <asp:Label ID="lblCostofGoods" runat="server" Text='<%#Eval("fltCostofGoods", "{0:C}")%>' />
                         </ItemTemplate>
-                        <FooterTemplate>
-                            <asp:Label ID="lblCOGSTotal" runat="server" />
-                        </FooterTemplate>
+                    </asp:TemplateField>
+					<asp:TemplateField HeaderText="Sales Pre-Tax">
+                        <ItemTemplate>
+                            <asp:Label ID="lblSalesPreTax" runat="server" Text='<%#Eval("fltSalesPreTax", "{0:C}")%>' />
+                        </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Average Profit Margin">
                         <ItemTemplate>
                             <asp:Label ID="lblAverageProfitMargin" runat="server" Text='<%#Eval("fltAverageProfitMargin", "{0:P}")%>' />
                         </ItemTemplate>
-                        <FooterTemplate>
-                            <asp:Label ID="lblAverageProfitMarginTotal" runat="server" />
-                        </FooterTemplate>
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Sales Pre-Tax">
+                    </asp:TemplateField>                    
+                    <asp:TemplateField HeaderText="Sales Dollars">
                         <ItemTemplate>
-                            <asp:Label ID="lblSalesPreTax" runat="server" Text='<%#Eval("fltSalesPreTax", "{0:C}")%>' />
+                            <asp:Label ID="lblSalesDollars" runat="server" Text='<%#Eval("fltSalesDollars", "{0:C}")%>' />
                         </ItemTemplate>
-                        <FooterTemplate>
-                            <asp:Label ID="lblSalesPreTaxTotal" runat="server" />
-                        </FooterTemplate>
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Sales Post-Tax">
-                        <ItemTemplate>
-                            <asp:Label ID="lblSalesPostTax" runat="server" Text='<%#Eval("fltSalesPostTax", "{0:C}")%>' />
-                        </ItemTemplate>
-                        <FooterTemplate>
-                            <asp:Label ID="lblSalesPostTaxTotal" runat="server" />
-                        </FooterTemplate>
                     </asp:TemplateField>
                 </Columns>
             </asp:GridView>

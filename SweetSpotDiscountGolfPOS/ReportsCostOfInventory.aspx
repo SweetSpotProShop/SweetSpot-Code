@@ -33,51 +33,29 @@
         <div>
             <asp:GridView ID="grdCostOfInventory" runat="server" AutoGenerateColumns="false" Width="60%" RowStyle-HorizontalAlign="Center">
                 <Columns>
-                    <asp:TemplateField HeaderText="Moose Jaw Clubs">
+                    <asp:TemplateField HeaderText="Store">
                         <ItemTemplate>
-                            <asp:Label ID="lblcMJ" runat="server" Text='<%#Eval("fltCostClubsMJ", "{0:C}")%>' />
+                            <asp:Label ID="lblLocationName" runat="server" Text='<%#Eval("varLocationName")%>' />
+                        </ItemTemplate>
+						<FooterTemplate>
+							<asp:Label ID="lblTotal" runat="server" Text="Totals:" />
+						</FooterTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Accessories Cost">
+                        <ItemTemplate>
+                            <asp:Label ID="lblAccessoriesCost" runat="server" Text='<%#Eval("fltAccessoriesCost","{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Moose Jaw Accessories">
+                    <asp:TemplateField HeaderText="Clothing Cost">
                         <ItemTemplate>
-                            <asp:Label ID="lblaMJ" runat="server" Text='<%#Eval("fltCostAccessoriesMJ","{0:C}") %>' />
+                            <asp:Label ID="lblClothingCost" runat="server" Text='<%#Eval("fltClothingCost","{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Moose Jaw Apparel">
+                    <asp:TemplateField HeaderText="Club Cost">
                         <ItemTemplate>
-                            <asp:Label ID="lblclMJ" runat="server" Text='<%#Eval("fltCostClothingMJ","{0:C}") %>' />
+                            <asp:Label ID="lblClubCost" runat="server" Text='<%#Eval("fltClubsCost","{0:C}") %>' />
                         </ItemTemplate>
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Calgary Clubs">
-                        <ItemTemplate>
-                            <asp:Label ID="lblcCAL" runat="server" Text='<%#Eval("fltCostClubsCAL","{0:C}") %>' />
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Calgary Accessories">
-                        <ItemTemplate>
-                            <asp:Label ID="lblaCAL" runat="server" Text='<%#Eval("fltCostAccessoriesCAL","{0:C}") %>' />
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Calgary Apparel">
-                        <ItemTemplate>
-                            <asp:Label ID="lblclCAL" runat="server" Text='<%#Eval("fltCostClothingCAL","{0:C}") %>' />
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Edmonton Clubs">
-                        <ItemTemplate>
-                            <asp:Label ID="lblcEDM" runat="server" Text='<%#Eval("fltCostClubsEDM","{0:C}") %>' />
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Edmonton Accessories">
-                        <ItemTemplate>
-                            <asp:Label ID="lblaEDM" runat="server" Text='<%#Eval("fltCostAccessoriesEDM","{0:C}") %>' />
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Edmonton Apparel">
-                        <ItemTemplate>
-                            <asp:Label ID="lblclEDM" runat="server" Text='<%#Eval("fltCostClothingEDM","{0:C}") %>' />
-                        </ItemTemplate>
-                    </asp:TemplateField>
+                    </asp:TemplateField>                    
                 </Columns>
             </asp:GridView>
         </div>

@@ -253,6 +253,7 @@ namespace SweetSpotDiscountGolfPOS
         }
 
         //Similar to the COGSvsPM report with a little more detail
+        //only fixed download
         protected void btnExtensiveInvoice_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -293,6 +294,7 @@ namespace SweetSpotDiscountGolfPOS
         }
 
         //Displays the total cost of currently stocked inventory
+        //only fixed download
         protected void btnCostOfInventory_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -320,6 +322,7 @@ namespace SweetSpotDiscountGolfPOS
         }
 
         //Another report similar to COGSvsPM and Extensive Invoice, can be broken out by month, week, or day.
+        //only fixed download
         protected void btnStoreStatsReport_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -330,7 +333,8 @@ namespace SweetSpotDiscountGolfPOS
                 object[] reportLog = { 13, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
-                object[] repInfo = new object[] { dtm, ddlDatePeriod.SelectedValue.ToString() };
+                int loc = Convert.ToInt32(ddlLocation.SelectedValue);
+                object[] repInfo = new object[] { dtm, loc, ddlDatePeriod.SelectedValue.ToString() };
                 int indicator = R.verifyStatsAvailable(repInfo, objPageDetails);
                 if (indicator == 0)
                 {
@@ -356,6 +360,7 @@ namespace SweetSpotDiscountGolfPOS
         }
 
         //Displays chnages made to inventory items in a date range
+        //only fixed download
         protected void btnInventoryChangeReport_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -393,6 +398,7 @@ namespace SweetSpotDiscountGolfPOS
         }
 
         //Displays specific apparel skus sold, their average cost, average price, and profit margin
+        //only fixed download
         protected void btnSpecificApparelReport_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -430,6 +436,7 @@ namespace SweetSpotDiscountGolfPOS
         }
 
         //Displays specific apparel skus sold, their average cost, average price, and profit margin
+        //only fixed download
         protected void btnSpecificGripReport_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
