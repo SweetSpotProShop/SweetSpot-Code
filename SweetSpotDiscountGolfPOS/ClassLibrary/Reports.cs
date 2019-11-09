@@ -255,6 +255,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             cashout.fltSalesSubTotal = Convert.ToDouble(dt2.Rows[0][1].ToString());
             cashout.fltGovernmentTaxAmount = Convert.ToDouble(dt2.Rows[0][2].ToString());
             cashout.fltProvincialTaxAmount = Convert.ToDouble(dt2.Rows[0][3].ToString());
+            cashout.fltLiquorTaxAmount = Convert.ToDouble(dt2.Rows[0][4].ToString());
 
             return cashout;
         }
