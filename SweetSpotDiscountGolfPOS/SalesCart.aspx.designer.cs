@@ -166,6 +166,15 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Button btnInventorySearch;
         
         /// <summary>
+        /// btnAddTradeIn control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnAddTradeIn;
+        
+        /// <summary>
         /// btnClearSearch control.
         /// </summary>
         /// <remarks>
