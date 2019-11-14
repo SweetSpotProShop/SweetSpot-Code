@@ -91,7 +91,7 @@
 									<asp:TableCell Width="20%" Height="100%">
 									</asp:TableCell>
 									<asp:TableCell Width="20%" Height="100%">
-										<asp:Button ID="btnExit" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />
+										<%--<asp:Button ID="btnExit" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />--%>
 									</asp:TableCell>
 								</asp:TableRow>
 							</asp:Table>
@@ -180,7 +180,7 @@
 										<asp:Button ID="btnPageOneItemTwentyThree" CssClass="wrap" Text="Program Button" runat="server" OnClick="btnSelectedItem_Click" />
 									</asp:TableCell>
 									<asp:TableCell Width="20%" Height="100%">
-										<asp:Button ID="btnExitFromPageOne" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />
+										<%--<asp:Button ID="btnExitFromPageOne" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />--%>
 									</asp:TableCell>
 								</asp:TableRow>
 							</asp:Table>
@@ -269,7 +269,7 @@
 										<asp:Button ID="btnPageTwoItemTwentThree" CssClass="wrap" Text="Program Button" runat="server" OnClick="btnSelectedItem_Click" />
 									</asp:TableCell>
 									<asp:TableCell Width="20%" Height="100%">
-										<asp:Button ID="btnExitFromPageTwo" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />
+										<%--<asp:Button ID="btnExitFromPageTwo" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />--%>
 									</asp:TableCell>
 								</asp:TableRow>
 							</asp:Table>
@@ -358,7 +358,7 @@
 										<asp:Button ID="btnPageThreeItemTwentyThree" CssClass="wrap" Text="Program Button" runat="server" OnClick="btnSelectedItem_Click" />
 									</asp:TableCell>
 									<asp:TableCell Width="20%" Height="100%">
-										<asp:Button ID="btnExitFromPageThree" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />
+										<%--<asp:Button ID="btnExitFromPageThree" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />--%>
 									</asp:TableCell>
 								</asp:TableRow>
 							</asp:Table>
@@ -447,7 +447,7 @@
 										<asp:Button ID="btnPageFourItemTwentyThree" CssClass="wrap" Text="Program Button" runat="server" OnClick="btnSelectedItem_Click" />
 									</asp:TableCell>
 									<asp:TableCell Width="20%" Height="100%">
-										<asp:Button ID="btnExitFromPageFour" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />
+										<%--<asp:Button ID="btnExitFromPageFour" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />--%>
 									</asp:TableCell>
 								</asp:TableRow>
 							</asp:Table>
@@ -536,7 +536,7 @@
 										<asp:Button ID="btnPageFiveItemTwentyThree" CssClass="wrap" Text="Program Button" runat="server" OnClick="btnSelectedItem_Click" />
 									</asp:TableCell>
 									<asp:TableCell Width="20%" Height="100%">
-										<asp:Button ID="btnExitFromPageFive" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />
+										<%--<asp:Button ID="btnExitFromPageFive" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />--%>
 									</asp:TableCell>
 								</asp:TableRow>
 							</asp:Table>
@@ -625,7 +625,7 @@
 										<asp:Button ID="btnPageSixItemTwentyThree" CssClass="wrap" Text="Program Button" runat="server" OnClick="btnSelectedItem_Click" />
 									</asp:TableCell>
 									<asp:TableCell Width="20%" Height="100%">
-										<asp:Button ID="btnExitFromPageSix" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />
+										<%--<asp:Button ID="btnExitFromPageSix" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />--%>
 									</asp:TableCell>
 								</asp:TableRow>
 							</asp:Table>
@@ -675,7 +675,9 @@
 										<ItemTemplate>
 
 											<asp:Label ID="lblEachCustomer" runat="server" Text="Customer Name:" />
+											<asp:Label ID="lblEachDescription" runat="server" Text="Customer Description:" Visible="false" />
 											<asp:TextBox ID="txtEachCustomer" runat="server" Text='<%#Eval("customer.varFirstName") + " " + Eval("customer.varLastName") %>' Enabled="false" />
+											<asp:TextBox ID="txtEachDescription" runat="server" Text='<%#Eval("varAdditionalInformation") %>' Visible="false" />
 
 											<div style="text-align: right">
 												<asp:Label ID="lblInvoiceNumber" runat="server" Text="Invoice No:" />
@@ -733,7 +735,9 @@
 								</asp:TableCell>
 								<asp:TableCell ID="cellSingleInvoice" Width="100%" Visible="false">
 									<asp:Label ID="lblCustomer" runat="server" Text="Customer Name:" />
+									<asp:Label ID="lblCustomerDescription" runat="server" Text="Customer Description:" Visible="false" />
 									<asp:TextBox ID="txtCustomer" runat="server" AutoComplete="off" />
+									<asp:TextBox ID="txtCustomerDescription" runat="server" AutoComplete="off" Visible="false" />
 									<asp:Button ID="btnCustomerSelect" runat="server" Text="Change Customer" OnClick="btnCustomerSelect_Click" CausesValidation="false" />
 									<div>
 										<br />

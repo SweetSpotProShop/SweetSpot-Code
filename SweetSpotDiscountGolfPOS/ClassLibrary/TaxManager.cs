@@ -370,7 +370,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string strQueryName = "ReturnTaxesAvailableForItem";
             string sqlCmd = "SELECT CSI.intInvoiceItemID, TTPII.intTaxID AS intTaxTypeID, T.varTaxName, ITR.fltTaxRate, ";
 
-            if (transactionTypeID == 1)
+            if (transactionTypeID == 1 || transactionTypeID == 7)
             {
                 sqlCmd += "CASE WHEN CSI.bitIsDiscountPercent = 1 THEN ROUND(((CSI.fltItemPrice - (CSI.fltItemPrice * (CSI.fltItemDiscount / "
                     + "100))) * ITR.fltTaxRate) * CSI.intItemQuantity, 2) ELSE ROUND(((CSI.fltItemPrice - CSI.fltItemDiscount) * ITR.fltTaxRate) "
