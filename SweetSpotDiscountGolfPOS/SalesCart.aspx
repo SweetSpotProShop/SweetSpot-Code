@@ -136,7 +136,8 @@
 			<div>
 				<asp:TextBox ID="txtSearch" runat="server" AutoComplete="off" />
 				<asp:Button ID="btnInventorySearch" runat="server" Width="150" Text="Inventory Search" OnClick="btnInventorySearch_Click" />
-				<asp:Button ID="btnClearSearch" runat="server" Width="150" Text="Clear Search Results" OnClick="btnClearSearch_Click" />
+				<asp:Button ID="btnAddTradeIn" runat="server" Text="Add Trade In" Width="150" OnClick="btnAddTradeIn_Click" />
+				<asp:Button ID="btnClearSearch" runat="server" Width="150" Text="Clear Search Results" OnClick="btnClearSearch_Click" />				
 				<asp:Button ID="btnRefreshCart" runat="server" Text="Refresh Cart" Width="150" OnClick="btnRefreshCart_Click" Visible="false" />
 			</div>
 			<hr />

@@ -650,15 +650,12 @@ namespace SweetSpotDiscountGolfPOS
                         //ToDo this check needs to look for the actual ID of the trade in sku
                         //13040 is the testing trade in sku
                         //13240 is the live trade in sku
-                        if (IM.InventoryIsInTradeInList(selectedSku.intInventoryID, CU, objPageDetails))
-                        {
-                            btnRefreshCart.Visible = true;
-                            //Trade In Sku to add in SK
-                            string redirect = "<script>window.open('TradeINEntry.aspx?invoice=" + invoice.intInvoiceID.ToString() + "');</script>";
-                            Response.Write(redirect);
-                        }
-                        else
-                        {
+                        //if (IM.InventoryIsInTradeInList(selectedSku.intInventoryID, CU, objPageDetails))
+                        //{
+                            
+                        //}
+                        //else
+                        //{
 
                             double discount = 0;
                             string discountAmount = ((TextBox)grdInventorySearched.Rows[index].Cells[5].FindControl("txtAmountDiscount")).Text;
@@ -688,7 +685,7 @@ namespace SweetSpotDiscountGolfPOS
                             grdInventorySearched.DataBind();
                             //Recalculate the new subtotal
                             UpdateInvoiceTotal();
-                        }
+                        //}
                     }
                     else
                     {
@@ -811,6 +808,31 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
              
+        }
+
+        protected void btnAddTradeIn_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "grdInventorySearched_RowCommand";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
+            {
+                btnRefreshCart.Visible = true;
+            //Trade In Sku to add in SK
+            string redirect = "<script>window.open('TradeINEntry.aspx?invoice=" + Request.QueryString["invoice"].ToString() + "');</script>";
+            Response.Write(redirect);
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
         }
     }
 }
