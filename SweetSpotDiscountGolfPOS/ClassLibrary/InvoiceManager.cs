@@ -1026,7 +1026,10 @@ namespace SweetSpotDiscountGolfPOS
         public DataTable ReturnSeatedTables(object[] objPageDetails)
         {
             string strQueryName = "ReturnSeatedTables";
-            string sqlCmd = "SELECT varTableButton, varSeatNumber FROM tbl_LoungeTableSeatCombination";
+            //string sqlCmd = "SELECT varTableButton, varSeatNumber FROM tbl_LoungeTableSeatCombination";
+            string sqlCmd = "SELECT varTableButton, varSeatNumber, varCustomer FROM tbl_LoungeTableSeatCombination LTSC JOIN(SELECT intInvoiceID, CASE WHEN "
+                + "CSI.intCustomerID = 1 THEN varAdditionalInformation ELSE varFirstName END AS varCustomer FROM tbl_currentSalesInvoice CSI JOIN tbl_customers "
+                + "C ON CSI.intCustomerID = C.intCustomerID) T ON T.intInvoiceID = LTSC.intInvoiceID";
             object[][] parms = { };
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
         }
@@ -1051,6 +1054,33 @@ namespace SweetSpotDiscountGolfPOS
                 new object[] { "@varPressedSeat", tableSeat[1] }
             };
             return ConvertFromDataTableToCurrentInvoice(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), provinceID, objPageDetails);
+        }
+        public int ReturnMasterInvoice(string pressedBTN, int provinceID, object[] objPageDetails)
+        {
+            return GatherMasterInvoice(pressedBTN, provinceID, objPageDetails);
+        }
+        private int GatherMasterInvoice(string pressedBTN, int provinceID, object[] objPageDetails)
+        {
+            string strQueryName = "GatherMasterInvoice";
+            string[] tableSeat = SplitStringofTableSeat(pressedBTN);
+
+            string sqlCmd = "SELECT intInvoiceID FROM tbl_LoungeTableSeatCombination LTSC WHERE LTSC.varTableButton = @varPressedTable AND LTSC.varSeatNumber = 'ALL'";
+
+
+            //string sqlCmd = "SELECT CSI.intInvoiceID, varInvoiceNumber, intInvoiceSubNumber, dtmInvoiceDate, CAST(dtmInvoiceTime AS DATETIME) AS "
+            //    + "dtmInvoiceTime, intCustomerID, intEmployeeID, intLocationID, fltSubTotal, fltShippingCharges, fltTotalDiscount, fltTotalTradeIn, "
+            //    + "fltGovernmentTaxAmount, fltProvincialTaxAmount, fltLiquorTaxAmount, fltBalanceDue, intTransactionTypeID, varAdditionalInformation, "
+            //    + "bitChargeGST, bitChargePST, bitChargeLCT FROM tbl_currentSalesInvoice CSI JOIN tbl_LoungeTableSeatCombination LTSC ON "
+            //    + "LTSC.intInvoiceID = CSI.intInvoiceID WHERE LTSC.varTableButton = @varPressedTable AND LTSC.varSeatNumber = 'ALL'";
+
+
+            object[][] parms =
+            {
+                new object[] { "@varPressedTable", tableSeat[0] }
+                //new object[] { "@varPressedSeat", tableSeat[1] }
+            };
+            //return ConvertFromDataTableToCurrentInvoice(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), provinceID, objPageDetails)[0];
+            return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
         }
         public void CreateNewInvoiceAtTable(string pressedBTN, CurrentUser cu, object[] objPageDetails)
         {
@@ -1094,6 +1124,10 @@ namespace SweetSpotDiscountGolfPOS
                 new object[] { "@invoiceNum", invoiceNum }
             };
             return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
+        }
+        public string[] GatherTableForFirstPlayerInvoice(string pressedBTN)
+        {
+            return SplitStringofTableSeat(pressedBTN);
         }
         private string[] SplitStringofTableSeat(string pressedBTN)
         {

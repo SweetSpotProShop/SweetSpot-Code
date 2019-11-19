@@ -103,6 +103,15 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Button btnItemSelectionPageSix;
         
         /// <summary>
+        /// btnExit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnExit;
+        
+        /// <summary>
         /// viewPageOne control.
         /// </summary>
         /// <remarks>
@@ -335,6 +344,15 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnPageOneItemTwentyThree;
+        
+        /// <summary>
+        /// btnExitFromPageOne control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnExitFromPageOne;
         
         /// <summary>
         /// viewPageTwo control.
@@ -571,6 +589,15 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Button btnPageTwoItemTwentThree;
         
         /// <summary>
+        /// btnExitFromPageTwo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnExitFromPageTwo;
+        
+        /// <summary>
         /// viewPageThree control.
         /// </summary>
         /// <remarks>
@@ -803,6 +830,15 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnPageThreeItemTwentyThree;
+        
+        /// <summary>
+        /// btnExitFromPageThree control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnExitFromPageThree;
         
         /// <summary>
         /// viewPageFour control.
@@ -1039,6 +1075,15 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Button btnPageFourItemTwentyThree;
         
         /// <summary>
+        /// btnExitFromPageFour control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnExitFromPageFour;
+        
+        /// <summary>
         /// viewPageFive control.
         /// </summary>
         /// <remarks>
@@ -1271,6 +1316,15 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnPageFiveItemTwentyThree;
+        
+        /// <summary>
+        /// btnExitFromPageFive control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnExitFromPageFive;
         
         /// <summary>
         /// viewPageSix control.
@@ -1507,6 +1561,15 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Button btnPageSixItemTwentyThree;
         
         /// <summary>
+        /// btnExitFromPageSix control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnExitFromPageSix;
+        
+        /// <summary>
         /// tblSelectItem control.
         /// </summary>
         /// <remarks>
@@ -1595,6 +1658,15 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblMaster;
+        
+        /// <summary>
+        /// grdMasterCartItems control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView grdMasterCartItems;
         
         /// <summary>
         /// cellEachInvoice control.

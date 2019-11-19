@@ -91,7 +91,7 @@
 									<asp:TableCell Width="20%" Height="100%">
 									</asp:TableCell>
 									<asp:TableCell Width="20%" Height="100%">
-										<%--<asp:Button ID="btnExit" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />--%>
+										<asp:Button ID="btnExit" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" Visible="false" />
 									</asp:TableCell>
 								</asp:TableRow>
 							</asp:Table>
@@ -180,7 +180,7 @@
 										<asp:Button ID="btnPageOneItemTwentyThree" CssClass="wrap" Text="Program Button" runat="server" OnClick="btnSelectedItem_Click" />
 									</asp:TableCell>
 									<asp:TableCell Width="20%" Height="100%">
-										<%--<asp:Button ID="btnExitFromPageOne" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />--%>
+										<asp:Button ID="btnExitFromPageOne" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" Visible="false" />
 									</asp:TableCell>
 								</asp:TableRow>
 							</asp:Table>
@@ -269,7 +269,7 @@
 										<asp:Button ID="btnPageTwoItemTwentThree" CssClass="wrap" Text="Program Button" runat="server" OnClick="btnSelectedItem_Click" />
 									</asp:TableCell>
 									<asp:TableCell Width="20%" Height="100%">
-										<%--<asp:Button ID="btnExitFromPageTwo" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />--%>
+										<asp:Button ID="btnExitFromPageTwo" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" Visible="false" />
 									</asp:TableCell>
 								</asp:TableRow>
 							</asp:Table>
@@ -358,7 +358,7 @@
 										<asp:Button ID="btnPageThreeItemTwentyThree" CssClass="wrap" Text="Program Button" runat="server" OnClick="btnSelectedItem_Click" />
 									</asp:TableCell>
 									<asp:TableCell Width="20%" Height="100%">
-										<%--<asp:Button ID="btnExitFromPageThree" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />--%>
+										<asp:Button ID="btnExitFromPageThree" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" Visible="false" />
 									</asp:TableCell>
 								</asp:TableRow>
 							</asp:Table>
@@ -447,7 +447,7 @@
 										<asp:Button ID="btnPageFourItemTwentyThree" CssClass="wrap" Text="Program Button" runat="server" OnClick="btnSelectedItem_Click" />
 									</asp:TableCell>
 									<asp:TableCell Width="20%" Height="100%">
-										<%--<asp:Button ID="btnExitFromPageFour" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />--%>
+										<asp:Button ID="btnExitFromPageFour" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" Visible="false" />
 									</asp:TableCell>
 								</asp:TableRow>
 							</asp:Table>
@@ -536,7 +536,7 @@
 										<asp:Button ID="btnPageFiveItemTwentyThree" CssClass="wrap" Text="Program Button" runat="server" OnClick="btnSelectedItem_Click" />
 									</asp:TableCell>
 									<asp:TableCell Width="20%" Height="100%">
-										<%--<asp:Button ID="btnExitFromPageFive" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />--%>
+										<asp:Button ID="btnExitFromPageFive" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" Visible="false" />
 									</asp:TableCell>
 								</asp:TableRow>
 							</asp:Table>
@@ -625,7 +625,7 @@
 										<asp:Button ID="btnPageSixItemTwentyThree" CssClass="wrap" Text="Program Button" runat="server" OnClick="btnSelectedItem_Click" />
 									</asp:TableCell>
 									<asp:TableCell Width="20%" Height="100%">
-										<%--<asp:Button ID="btnExitFromPageSix" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" />--%>
+										<asp:Button ID="btnExitFromPageSix" CssClass="wrap" Text="Exit" runat="server" OnClick="btnExit_Click" Visible="false" />
 									</asp:TableCell>
 								</asp:TableRow>
 							</asp:Table>
@@ -654,11 +654,11 @@
 						<Columns>
 							<asp:TemplateField HeaderText="Program">
 								<ItemTemplate>
-									<asp:Button ID="btnInsert" runat="server" Text="Program" CommandArgument='<%#Eval("sku") %>' />
+									<asp:Button ID="btnInsert" runat="server" Text="Program" CommandArgument='<%#Eval("intInventoryID") %>' />
 								</ItemTemplate>
 							</asp:TemplateField>
-							<asp:BoundField DataField="description" HeaderText="Description" ReadOnly="true" />
-							<asp:BoundField DataField="price" HeaderText="Price" ReadOnly="true" />
+							<asp:BoundField DataField="varItemDescription" HeaderText="Description" ReadOnly="true" />
+							<asp:BoundField DataField="fltItemPrice" HeaderText="Price" ReadOnly="true" />
 						</Columns>
 					</asp:GridView>
 				</asp:TableCell>
@@ -668,14 +668,45 @@
 							<asp:TableRow Width="100%">
 								<asp:TableCell ID="cellMaster" Width="50%" Visible="false">
 									<asp:Label ID="lblMaster" runat="server" Text="Master" />
+									<asp:GridView ID="grdMasterCartItems" EmptyDataText=" No Records Found" runat="server" AutoGenerateColumns="false"
+										Style="margin-right: 0px" RowStyle-HorizontalAlign="Center" OnRowCommand="grdMasterCartItems_RowCommand"
+										DataKeyNames="intInvoiceItemID" >
+										<Columns>
+											<asp:TemplateField HeaderText="Remove Item">
+												<ItemTemplate>
+													<asp:LinkButton Text="Remove" runat="server" CommandName="R" CommandArgument='<%# Eval("intInvoiceItemID") %>' OnClientClick="return confirm('Are you sure you want to delete?');" CausesValidation="false" />
+												</ItemTemplate>
+											</asp:TemplateField>
+											<asp:BoundField DataField="varSku" HeaderText="SKU" ReadOnly="true" Visible="false" />
+											<asp:BoundField DataField="intItemQuantity" HeaderText="Quantity" />
+											<asp:BoundField DataField="varItemDescription" ReadOnly="true" HeaderText="Description" />
+											<asp:TemplateField HeaderText="Price" ItemStyle-Width="50px">
+												<ItemTemplate>
+													<asp:Label ID="lblEachItemPrice" runat="server" Text='<%#  (Eval("fltItemPrice","{0:C}")).ToString() %>' />
+												</ItemTemplate>
+											</asp:TemplateField>
+											<asp:TemplateField HeaderText="Discount Amount">
+												<ItemTemplate>
+													<asp:CheckBox ID="ckbEachDiscountPercentDisplay" Checked='<%# Convert.ToBoolean(Eval("bitIsDiscountPercent")) %>' runat="server" Text="Discount by Percent" Enabled="false" />
+													<div id="divAmountDisplay" class="txt" runat="server">
+														<asp:Label ID="lblEachDiscountAmountDisplay" runat="server" Text='<%# Eval("fltItemDiscount") %>' Enabled="false" />
+													</div>
+												</ItemTemplate>
+											</asp:TemplateField>
+											<asp:TemplateField HeaderText="Type ID" Visible="false">
+												<ItemTemplate>
+													<asp:Label ID="lblEachItemTypeID" Text='<%# Eval("intItemTypeID") %>' runat="server" />
+												</ItemTemplate>
+											</asp:TemplateField>
+										</Columns>
+									</asp:GridView>
 								</asp:TableCell>
 								<asp:TableCell ID="cellEachInvoice" Width="50%" Visible="false">
-
-									<asp:Repeater ID="rptEachInvoice" runat="server">
+									<asp:Repeater ID="rptEachInvoice" OnItemDataBound="rptEachInvoice_ItemDataBound" runat="server">
 										<ItemTemplate>
-
 											<asp:Label ID="lblEachCustomer" runat="server" Text="Customer Name:" />
 											<asp:Label ID="lblEachDescription" runat="server" Text="Customer Description:" Visible="false" />
+											<asp:HiddenField ID="hidRepeatCustomerID" runat="server" Value='<%#Eval("customer.intCustomerID") %>' />
 											<asp:TextBox ID="txtEachCustomer" runat="server" Text='<%#Eval("customer.varFirstName") + " " + Eval("customer.varLastName") %>' Enabled="false" />
 											<asp:TextBox ID="txtEachDescription" runat="server" Text='<%#Eval("varAdditionalInformation") %>' Visible="false" />
 
@@ -729,7 +760,7 @@
 										</ItemTemplate>
 										<SeparatorTemplate>
 											<br>
-										</SeparatorTemplate>										
+										</SeparatorTemplate>
 									</asp:Repeater>
 
 								</asp:TableCell>
