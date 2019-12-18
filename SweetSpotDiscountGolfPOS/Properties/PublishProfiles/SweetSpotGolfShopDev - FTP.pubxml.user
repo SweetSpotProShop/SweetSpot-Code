@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAjezc2vhTzECcelrEN1Z9dgAAAAACAAAAAAAQZgAAAAEAACAAAADX1VzJCmm4QSzgBFMXFOTEnsE68WjRCFEOEMvo72hkFQAAAAAOgAAAAAIAACAAAACY5kTC7nSwCV5NCo/8whymbVt1+aNTTp52Qetu2THzZoAAAAC7sYSaQJA5Kf2H4h8lWLcHKoJ/ncDiTlBi6KePc7fZFMAuCsqehBiR3LpgxgwoFyHiYfIrFSu2+IgPbAOC29NhNXmwHOp2wzAt7XEmou/R0NR8FraIBgy4acfTEdZfJV12OhGZF2WOf2KiorNJVuvkkBqV994R4aiXa6A2xIZTVUAAAACpnVBBWJWTcOshscNdUia2aBqH8Duzbgh2OOVJOLtC8H8rPYgqKPuew1cZzam8dvjVDZGl7LQmA5CyBkOaS13g</EncryptedPassword>
+    <_NewBackgroundProfile>True</_NewBackgroundProfile>
+    <_PublishTargetUrl>ftp://waws-prod-yt1-003.ftp.azurewebsites.windows.net/site/wwwroot</_PublishTargetUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="bin/EPPlus.dll">
+      <publishTime>11/01/2018 09:32:46</publishTime>
+    </File>
+    <File Include="bin/Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll">
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/roslyn/csc.exe">
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.Build.Tasks.CodeAnalysis.dll">
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.CSharp.dll">
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.dll">
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.VisualBasic.dll">
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CSharp.Core.targets">
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.VisualBasic.Core.targets">
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Collections.Immutable.dll">
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Reflection.Metadata.dll">
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/roslyn/vbc.exe">
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/roslyn/VBCSCompiler.exe">
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/roslyn/VBCSCompiler.exe.config">
+      <publishTime>10/20/2017 08:54:12</publishTime>
+    </File>
+    <File Include="bin/SweetSpotDiscountGolfPOS.dll">
+      <publishTime>11/08/2019 16:17:42</publishTime>
+    </File>
+    <File Include="bin/SweetSpotDiscountGolfPOS.pdb">
+      <publishTime>11/08/2019 16:17:42</publishTime>
+    </File>
+    <File Include="CSS/MainStyleSheet.css">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="CustomerAddNew.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="CustomerHomePage.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="EmployeeAddNew.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="HomePage.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="Images/ajax-loader.gif">
+      <publishTime>07/04/2018 09:43:42</publishTime>
+    </File>
+    <File Include="Images/combinedLogo.jpg">
+      <publishTime>10/20/2017 08:54:09</publishTime>
+    </File>
+    <File Include="Images/SweetSpotLogo.jpg">
+      <publishTime>10/20/2017 08:54:09</publishTime>
+    </File>
+    <File Include="InventoryAddNew.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="InventoryHomePage.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="InvoiceSearch.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="LoginPage.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="LoungeSalesCart.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="LoungeSims.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="MasterPage.Master">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="packages.config">
+      <publishTime>11/01/2018 09:32:46</publishTime>
+    </File>
+    <File Include="PrintableInvoice.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="PrintableInvoiceReturn.aspx">
+      <publishTime>11/01/2019 10:10:16</publishTime>
+    </File>
+    <File Include="PrintableReceipt.aspx">
+      <publishTime>01/11/2019 12:25:01</publishTime>
+    </File>
+    <File Include="PurchasesCart.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="PurchasesCheckout.aspx">
+      <publishTime>01/11/2019 12:25:01</publishTime>
+    </File>
+    <File Include="ReportsCashOut.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="ReportsCOGSvsPM.aspx">
+      <publishTime>01/11/2019 12:25:01</publishTime>
+    </File>
+    <File Include="ReportsCostOfInventory.aspx">
+      <publishTime>11/07/2019 16:48:10</publishTime>
+    </File>
+    <File Include="ReportsDiscounts.aspx">
+      <publishTime>11/05/2019 20:52:48</publishTime>
+    </File>
+    <File Include="ReportsExtensiveInvoice.aspx">
+      <publishTime>11/07/2019 12:19:35</publishTime>
+    </File>
+    <File Include="ReportsHomePage.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="ReportsInventoryChange.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="ReportsItemsSold.aspx">
+      <publishTime>01/11/2019 12:25:01</publishTime>
+    </File>
+    <File Include="ReportsMostSold.aspx">
+      <publishTime>01/11/2019 12:25:01</publishTime>
+    </File>
+    <File Include="ReportsPaymentType.aspx">
+      <publishTime>01/11/2019 12:25:01</publishTime>
+    </File>
+    <File Include="ReportsPurchasesMade.aspx">
+      <publishTime>01/11/2019 12:25:01</publishTime>
+    </File>
+    <File Include="ReportsSales.aspx">
+      <publishTime>11/06/2019 18:10:04</publishTime>
+    </File>
+    <File Include="ReportsSpecificApparel.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="ReportsSpecificGrip.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="ReportsStoreStats.aspx">
+      <publishTime>11/08/2019 14:16:16</publishTime>
+    </File>
+    <File Include="ReportsTaxes.aspx">
+      <publishTime>11/05/2019 17:32:21</publishTime>
+    </File>
+    <File Include="ReportsTradeIns.aspx">
+      <publishTime>01/11/2019 12:25:01</publishTime>
+    </File>
+    <File Include="ReturnsCart.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="ReturnsCheckout.aspx">
+      <publishTime>11/01/2019 10:10:17</publishTime>
+    </File>
+    <File Include="ReturnsHomePage.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="SalesCart.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="SalesCashOut.aspx">
+      <publishTime>11/04/2019 16:23:49</publishTime>
+    </File>
+    <File Include="SalesCheckout.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="SalesHomePage.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="SettingsHomePage.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="TradeINEntry.aspx">
+      <publishTime>10/30/2019 13:24:57</publishTime>
+    </File>
+    <File Include="Web.config">
+      <publishTime>11/08/2019 16:18:04</publishTime>
+    </File>
+  </ItemGroup>
+</Project>
