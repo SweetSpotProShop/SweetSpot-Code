@@ -126,7 +126,7 @@ namespace SweetSpotDiscountGolfPOS
                 selectedTradeIn.bitIsClubTradeIn = true;
                 selectedTradeIn.intItemTypeID = 1;
 
-                IIM.InsertItemIntoSalesCart(selectedTradeIn, invoice.intTransactionTypeID, invoice.dtmInvoiceDate, CU, objPageDetails);
+                IIM.InsertItemIntoSalesCart(selectedTradeIn, invoice.intTransactionTypeID, invoice.dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
 
                 //IIM.NewTradeInChangeChargeTaxToFalse(selectedTradeIn, invoice.dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
 

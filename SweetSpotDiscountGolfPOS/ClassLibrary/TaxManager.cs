@@ -45,6 +45,23 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }).ToList();
             return invoiceItemTax;
         }
+        private List<InvoiceItemTax> ConvertFromDataTableToInvoiceItemTax2(DataTable dt)
+        {
+            List<InvoiceItemTax> invoiceItemTax = dt.AsEnumerable().Select(row =>
+            new InvoiceItemTax
+            {
+                intInvoiceItemID = row.Field<int>("intInvoiceItemID"),
+                intTaxTypeID = row.Field<int>("intTaxTypeID"),
+                varTaxName = row.Field<string>("varTaxName"),
+                fltTaxAmount = row.Field<double>("fltTaxAmount"),
+                bitIsTaxCharged = row.Field<bool>("bitIsTaxCharged")
+            }).ToList();
+            return invoiceItemTax;
+        }
+        public List<InvoiceItemTax> CallConversionFromDataTableToInvoiceItemTax2(DataTable dt)
+        {
+            return ConvertFromDataTableToInvoiceItemTax2(dt);
+        }
         public List<Tax> ReturnTaxListBasedOnDate(DateTime selectedDate, int provinceID, object[] objPageDetails)
         {
             return ConvertFromDataTableToTax(ReturnTaxListBasedOnDateAndProvinceForUpdate(provinceID, selectedDate, objPageDetails));
@@ -70,19 +87,23 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
-        private List<Tax> getTaxes(int provinceID, DateTime selectedDate, object[] objPageDetails)
+        private List<Tax> getTaxes(int invoiceID, object[] objPageDetails)
         {
             string strQueryName = "getTaxes";
             //New command
-            string sqlCmd = "SELECT TR.fltTaxRate, TT.varTaxName FROM tbl_taxRate TR INNER JOIN tbl_taxType TT ON TR.intTaxID = TT.intTaxID "
-                + "INNER JOIN (SELECT intTaxID, MAX(dtmTaxEffectiveDate) AS MTD FROM tbl_taxRate WHERE dtmTaxEffectiveDate <= @selectedDate "
-                + "AND intProvinceID = @intProvinceID GROUP BY intTaxID) TD ON TR.intTaxID = TD.intTaxID AND TR.dtmTaxEffectiveDate = "
-                + "TD.MTD WHERE intProvinceID = @intProvinceID";
+            //string sqlCmd = "SELECT TR.fltTaxRate, TT.varTaxName FROM tbl_taxRate TR INNER JOIN tbl_taxType TT ON TR.intTaxID = TT.intTaxID "
+            //    + "INNER JOIN (SELECT intTaxID, MAX(dtmTaxEffectiveDate) AS MTD FROM tbl_taxRate WHERE dtmTaxEffectiveDate <= @selectedDate "
+            //    + "AND intProvinceID = @intProvinceID GROUP BY intTaxID) TD ON TR.intTaxID = TD.intTaxID AND TR.dtmTaxEffectiveDate = "
+            //    + "TD.MTD WHERE intProvinceID = @intProvinceID";
+
+            string sqlCmd = "SELECT CSIT.intInvoiceItemID, intTaxTypeID, fltTaxAmount, bitIsTaxCharged FROM tbl_currentSalesItemsTaxes CSIT JOIN "
+                + "tbl_currentSalesItems CSI ON CSI.intInvoiceItemID = CSIT.intInvoiceItemID WHERE CSI.intInvoiceID = @intInvoiceID";
 
             object[][] parms =
             {
-                new object[] { "@intProvinceID", provinceID },
-                new object[] { "@selectedDate", selectedDate }
+                //new object[] { "@intProvinceID", provinceID },
+                //new object[] { "@selectedDate", selectedDate }
+                new object[] { "@intInvoiceID", invoiceID }
             };
             //Returns the list of taxes
             return ReturnListOfTaxes(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
@@ -115,6 +136,38 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }
             return isLiquor;
         }
+        public bool CheckForQuebecSalesTax(int taxID, object[] objPageDetails)
+        {
+            string strQueryName = "CheckForQuebecSalesTax";
+            bool isQuebecSales = false;
+            string sqlCmd = "SELECT varTaxName FROM tbl_taxType WHERE intTaxID = @intTaxID";
+            object[][] parms =
+            {
+                new object[] { "@intTaxID", taxID }
+            };
+
+            if (DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName) == "QST")
+            {
+                isQuebecSales = true;
+            }
+            return isQuebecSales;
+        }
+        public bool CheckForRetailSalesTax(int taxID, object[] objPageDetails)
+        {
+            string strQueryName = "CheckForRetailSalesTax";
+            bool isRetailSales = false;
+            string sqlCmd = "SELECT varTaxName FROM tbl_taxType WHERE intTaxID = @intTaxID";
+            object[][] parms =
+            {
+                new object[] { "@intTaxID", taxID }
+            };
+
+            if (DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName) == "RST")
+            {
+                isRetailSales = true;
+            }
+            return isRetailSales;
+        }
         public void InsertNewTaxRate(int provinceID, int taxID, DateTime selectedDate, double taxRate, object[] objPageDetails)
         {
             string strQueryName = "InsertNewTaxRate";
@@ -136,7 +189,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             {
                 prov = invoice.customer.intProvinceID;
             }
-            List<Tax> t = getTaxes(prov, invoice.dtmInvoiceDate, objPageDetails);
+            List<Tax> t = getTaxes(invoice.intInvoiceID, objPageDetails);
             
             double totalTax = 0;
             bool bolGSTDisplay = false;
@@ -154,7 +207,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         {
                             //Sets tax amount to a negative version of GST
                             taxAmount = -(invoice.fltGovernmentTaxAmount);
-                            invoice.bitChargeGST = false;
+                            //invoice.bitChargeGST = false;
                             //Changes button name
                             gstText = "Add GST";
                         }
@@ -163,7 +216,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                             //Sets tax amount to a positive version of GST
                             invoice.fltGovernmentTaxAmount = CallReturnTaxAmount(T.fltTaxRate, invoice.fltSubTotal + invoice.fltShippingCharges);
                             taxAmount = invoice.fltGovernmentTaxAmount;
-                            invoice.bitChargeGST = true;
+                            //invoice.bitChargeGST = true;
                             //Changes button name
                             gstText = "Remove GST";
                         }
@@ -175,7 +228,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         {
                             //Sets tax amount to a negative version of PST
                             taxAmount = -(invoice.fltProvincialTaxAmount);
-                            invoice.bitChargePST = false;
+                            //invoice.bitChargePST = false;
                             //Changes button name
                             pstText = "Add PST"; //*** Need to figure out proper name of tax
                         }
@@ -184,7 +237,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                             //Sets tax amount to a positive version of PST
                             invoice.fltProvincialTaxAmount = CallReturnTaxAmount(T.fltTaxRate, invoice.fltSubTotal);
                             taxAmount = invoice.fltProvincialTaxAmount;
-                            invoice.bitChargePST = true;
+                            //invoice.bitChargePST = true;
                             //Changes button name
                             pstText = "Remove PST";
                         }
@@ -196,7 +249,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         {
                             //Sets tax amount to a negative version of GST
                             taxAmount = -(invoice.fltGovernmentTaxAmount);
-                            invoice.bitChargeGST = false;
+                            //invoice.bitChargeGST = false;
                             //Changes button name
                             gstText = "Add HST";
                         }
@@ -205,7 +258,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                             //Sets tax amount to a positive version of GST
                             invoice.fltGovernmentTaxAmount = CallReturnTaxAmount(T.fltTaxRate, invoice.fltSubTotal + invoice.fltShippingCharges);
                             taxAmount = invoice.fltGovernmentTaxAmount;
-                            invoice.bitChargeGST = true;
+                            //invoice.bitChargeGST = true;
                             //Changes button name
                             gstText = "Remove HST";
                         }
@@ -217,7 +270,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         {
                             //Sets tax amount to a negative version of PST
                             taxAmount = -(invoice.fltProvincialTaxAmount);
-                            invoice.bitChargePST = false;
+                            //invoice.bitChargePST = false;
                             //Changes button name
                             pstText = "Add RST"; //*** Need to figure out proper name of tax
                         }
@@ -226,7 +279,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                             //Sets tax amount to a positive version of PST
                             invoice.fltProvincialTaxAmount = CallReturnTaxAmount(T.fltTaxRate, invoice.fltSubTotal);
                             taxAmount = invoice.fltProvincialTaxAmount;
-                            invoice.bitChargePST = true;
+                            //invoice.bitChargePST = true;
                             //Changes button name
                             pstText = "Remove RST";
                         }
@@ -238,7 +291,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                         {
                             //Sets tax amount to a negative version of PST
                             taxAmount = -(invoice.fltProvincialTaxAmount);
-                            invoice.bitChargePST = false;
+                            //invoice.bitChargePST = false;
                             //Changes button name
                             pstText = "Add QST"; //*** Need to figure out proper name of tax
                         }
@@ -247,7 +300,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                             //Sets tax amount to a positive version of PST
                             invoice.fltProvincialTaxAmount = CallReturnTaxAmount(T.fltTaxRate, invoice.fltSubTotal);
                             taxAmount = invoice.fltProvincialTaxAmount;
-                            invoice.bitChargePST = true;
+                            //invoice.bitChargePST = true;
                             //Changes button name
                             pstText = "Remove QST";
                         }
@@ -357,15 +410,15 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             };
             return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public void LoopThroughTaxesForEachItemAddingToCurrentInvoiceItemTaxes(InvoiceItems invoiceItem, int transactionTypeID, DateTime currentDateTime, CurrentUser cu, object[] objPageDetails)
+        public void LoopThroughTaxesForEachItemAddingToCurrentInvoiceItemTaxes(InvoiceItems invoiceItem, int transactionTypeID, DateTime currentDateTime, int provinceID, object[] objPageDetails)
         {
-            List<InvoiceItemTax> invoiceItemTaxes = ReturnTaxesAvailableForItem(invoiceItem, transactionTypeID, currentDateTime, cu, objPageDetails);
+            List<InvoiceItemTax> invoiceItemTaxes = ReturnTaxesAvailableForItem(invoiceItem, transactionTypeID, currentDateTime, provinceID, objPageDetails);
             foreach (var tax in invoiceItemTaxes)
             {
                 InsertItemTaxIntoSalesCart(tax, objPageDetails);
             }
         }
-        private List<InvoiceItemTax> ReturnTaxesAvailableForItem(InvoiceItems invoiceItem, int transactionTypeID, DateTime currentDateTime, CurrentUser cu, object[] objPageDetails)
+        private List<InvoiceItemTax> ReturnTaxesAvailableForItem(InvoiceItems invoiceItem, int transactionTypeID, DateTime currentDateTime, int provinceID, object[] objPageDetails)
         {
             string strQueryName = "ReturnTaxesAvailableForItem";
             string sqlCmd = "SELECT CSI.intInvoiceItemID, TTPII.intTaxID AS intTaxTypeID, T.varTaxName, ITR.fltTaxRate, ";
@@ -394,7 +447,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             {
                 new object[] { "@intInvoiceID", invoiceItem.intInvoiceID },
                 new object[] { "@dtmCurrentDate",  currentDateTime.ToString("yyyy-MM-dd") },
-                new object[] { "@intProvinceID", cu.location.intProvinceID },
+                new object[] { "@intProvinceID", provinceID },
                 new object[] { "@intInventoryID", invoiceItem.intInventoryID }
             };
             return ConvertFromDataTableToInvoiceItemTax(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
@@ -411,6 +464,17 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
                 new object[] { "@bitIsTaxCharged", invoiceItemTaxes.bitIsTaxCharged }
             };
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+        }
+        public void ChangeProvinceTaxesBasedOnShipping(int invoiceID, int shippingProvinceID, object[] objPageDetails)
+        {
+            string strQueryName = "InsertItemTaxIntoSalesCart";
+            InvoiceManager IM = new InvoiceManager();
+            Invoice invoice = IM.ReturnCurrentInvoice(invoiceID, shippingProvinceID, objPageDetails)[0];
+            IM.CallRemoveInvoiceItemTaxesFromCurrentItemsTaxesTable(invoice.invoiceItems, objPageDetails);
+            foreach(InvoiceItems invoiceItem in invoice.invoiceItems)
+            {
+                LoopThroughTaxesForEachItemAddingToCurrentInvoiceItemTaxes(invoiceItem, invoice.intTransactionTypeID, invoice.dtmInvoiceDate, shippingProvinceID, objPageDetails);
+            }
         }
     }
 }

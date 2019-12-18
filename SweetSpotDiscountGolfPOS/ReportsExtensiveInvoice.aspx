@@ -35,9 +35,14 @@
                         <asp:Label ID="lblDiscount" runat="server" Text='<%#Eval("fltTotalDiscount", "{0:C}")%>' />
                     </ItemTemplate>
                 </asp:TemplateField>
-                <asp:TemplateField HeaderText="Pre-Tax">
+                <asp:TemplateField HeaderText="Sub-Total">
                     <ItemTemplate>
-                        <asp:Label ID="lblPreTax" runat="server" Text='<%#Eval("fltPreTax", "{0:C}")%>' />
+                        <asp:Label ID="lblSubTotal" runat="server" Text='<%#Eval("fltSubTotal", "{0:C}")%>' />
+                    </ItemTemplate>
+                </asp:TemplateField>
+				<asp:TemplateField HeaderText="Total Sales">
+                    <ItemTemplate>
+                        <asp:Label ID="lblTotalSales" runat="server" Text='<%#Eval("fltTotalSales", "{0:C}")%>' />
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Government Tax">
@@ -57,7 +62,7 @@
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Sales Dollars">
                     <ItemTemplate>
-                        <asp:Label ID="lblPostTax" runat="server" Text='<%#Eval("fltTotalSales", "{0:C}")%>' />
+                        <asp:Label ID="lblSalesDollars" runat="server" Text='<%#Eval("fltSalesDollars", "{0:C}")%>' />
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="COGS">
@@ -72,7 +77,7 @@
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Profit Margin">
                     <ItemTemplate>
-                        <asp:Label ID="lblProfitMargin" runat="server" Text='<%#(Convert.ToDouble(Eval("fltRevenueEarned")) / Convert.ToDouble(Eval("fltPreTax"))).ToString("P")%>' />
+                        <asp:Label ID="lblProfitMargin" runat="server" Text='<%#(Convert.ToDouble(Eval("fltRevenueEarned")) / Convert.ToDouble(Eval("fltSalesDollars"))).ToString("P")%>' />
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField HeaderText="Customer Name">

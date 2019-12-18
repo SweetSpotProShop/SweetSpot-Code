@@ -21,7 +21,8 @@ namespace SweetSpotDiscountGolfPOS
         double shipping;
         double tradein;
         double discount;
-        double preTax;
+        double subTotal;
+        double totalSales;
         double governmentTax;
         double provincialTax;
         double liquorTax;
@@ -61,8 +62,10 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     }
-                    DataTable invoices = R.returnExtensiveInvoices(startDate, endDate, locationID, objPageDetails);
-                    grdInvoices.DataSource = invoices;
+                    //DataTable invoices = R.returnExtensiveInvoices(startDate, endDate, locationID, objPageDetails);
+
+                    DataTable invoices2 = R.returnExtensiveInvoices2(startDate, endDate, locationID, objPageDetails);
+                    grdInvoices.DataSource = invoices2;
                     grdInvoices.DataBind();
                 }
             }
@@ -90,11 +93,12 @@ namespace SweetSpotDiscountGolfPOS
                     shipping += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltShippingCharges"));
                     tradein += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltTotalTradeIn"));
                     discount += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltTotalDiscount"));
-                    preTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltPreTax"));
+                    subTotal += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltSubTotal"));
+                    totalSales += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltTotalSales"));
                     governmentTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmount"));
                     provincialTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmount"));
                     liquorTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltLiquorTaxAmount"));
-                    salesDollars += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltTotalSales"));
+                    salesDollars += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltSalesDollars"));
                     costofGoods += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltCostofGoods"));
                     revenue += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltRevenueEarned"));
 
@@ -109,15 +113,16 @@ namespace SweetSpotDiscountGolfPOS
                     e.Row.Cells[1].Text = String.Format("{0:C}", shipping);
                     e.Row.Cells[2].Text = String.Format("{0:C}", tradein);
                     e.Row.Cells[3].Text = String.Format("{0:C}", discount);
-                    e.Row.Cells[4].Text = String.Format("{0:C}", preTax);
-                    e.Row.Cells[5].Text = String.Format("{0:C}", governmentTax);                    
-                    e.Row.Cells[6].Text = String.Format("{0:C}", provincialTax);
-                    e.Row.Cells[7].Text = String.Format("{0:C}", liquorTax);
-                    e.Row.Cells[8].Text = String.Format("{0:C}", salesDollars);
-                    e.Row.Cells[9].Text = String.Format("{0:C}", costofGoods);
-                    e.Row.Cells[10].Text = String.Format("{0:C}", revenue);
+                    e.Row.Cells[4].Text = String.Format("{0:C}", subTotal);
+                    e.Row.Cells[5].Text = String.Format("{0:C}", totalSales);
+                    e.Row.Cells[6].Text = String.Format("{0:C}", governmentTax);                    
+                    e.Row.Cells[7].Text = String.Format("{0:C}", provincialTax);
+                    e.Row.Cells[8].Text = String.Format("{0:C}", liquorTax);
+                    e.Row.Cells[9].Text = String.Format("{0:C}", salesDollars);
+                    e.Row.Cells[10].Text = String.Format("{0:C}", costofGoods);
+                    e.Row.Cells[11].Text = String.Format("{0:C}", revenue);
 
-                    e.Row.Cells[11].Text = (revenue / preTax).ToString("P");
+                    e.Row.Cells[12].Text = (revenue / salesDollars).ToString("P");
                 }
             }
             //Exception catch
@@ -179,17 +184,18 @@ namespace SweetSpotDiscountGolfPOS
                         invoicesExport.Cells[recordIndex, 2].Value = Convert.ToDouble(row[3]).ToString("C"); //Shipping
                         invoicesExport.Cells[recordIndex, 3].Value = Convert.ToDouble(row[4]).ToString("C"); //Trade-In
                         invoicesExport.Cells[recordIndex, 4].Value = Convert.ToDouble(row[5]).ToString("C"); //Discount
-                        invoicesExport.Cells[recordIndex, 5].Value = Convert.ToDouble(row[6]).ToString("C"); //PreTax
-                        invoicesExport.Cells[recordIndex, 6].Value = Convert.ToDouble(row[7]).ToString("C"); //GST
-                        invoicesExport.Cells[recordIndex, 7].Value = Convert.ToDouble(row[8]).ToString("C"); //PST
-                        invoicesExport.Cells[recordIndex, 8].Value = Convert.ToDouble(row[9]).ToString("C"); //LCT
-                        invoicesExport.Cells[recordIndex, 9].Value = Convert.ToDouble(row[11]).ToString("C"); //SalesDollars
-                        invoicesExport.Cells[recordIndex, 10].Value = Convert.ToDouble(row[10]).ToString("C"); //Cost of Good
-                        invoicesExport.Cells[recordIndex, 11].Value = Convert.ToDouble(row[12]).ToString("C"); //Revenue
-                        invoicesExport.Cells[recordIndex, 12].Value = (Convert.ToDouble(row[12]) / Convert.ToDouble(row[6])).ToString("P"); //Profit Margin
-                        invoicesExport.Cells[recordIndex, 13].Value = row[13].ToString(); //Cust
-                        invoicesExport.Cells[recordIndex, 14].Value = row[14].ToString(); //Emp
-                        invoicesExport.Cells[recordIndex, 15].Value = Convert.ToDateTime(row[1]).ToString("dd-MM-yyyy"); //Date
+                        invoicesExport.Cells[recordIndex, 5].Value = Convert.ToDouble(row[6]).ToString("C"); //SubTotal
+                        invoicesExport.Cells[recordIndex, 6].Value = Convert.ToDouble(row[7]).ToString("C"); //TotalSales
+                        invoicesExport.Cells[recordIndex, 7].Value = Convert.ToDouble(row[8]).ToString("C"); //GST
+                        invoicesExport.Cells[recordIndex, 8].Value = Convert.ToDouble(row[9]).ToString("C"); //PST
+                        invoicesExport.Cells[recordIndex, 9].Value = Convert.ToDouble(row[10]).ToString("C"); //LCT
+                        invoicesExport.Cells[recordIndex, 10].Value = Convert.ToDouble(row[12]).ToString("C"); //SalesDollars
+                        invoicesExport.Cells[recordIndex, 11].Value = Convert.ToDouble(row[11]).ToString("C"); //Cost of Good
+                        invoicesExport.Cells[recordIndex, 12].Value = Convert.ToDouble(row[13]).ToString("C"); //Revenue
+                        invoicesExport.Cells[recordIndex, 13].Value = (Convert.ToDouble(row[13]) / Convert.ToDouble(row[12])).ToString("P"); //Profit Margin
+                        invoicesExport.Cells[recordIndex, 14].Value = row[14].ToString(); //Cust
+                        invoicesExport.Cells[recordIndex, 15].Value = row[15].ToString(); //Emp
+                        invoicesExport.Cells[recordIndex, 16].Value = Convert.ToDateTime(row[1]).ToString("dd-MM-yyyy"); //Date
                         recordIndex++;
                     }
                     //Totals
@@ -197,14 +203,15 @@ namespace SweetSpotDiscountGolfPOS
                     invoicesExport.Cells[recordIndex + 1, 2].Value = shipping.ToString("C");
                     invoicesExport.Cells[recordIndex + 1, 3].Value = tradein.ToString("C");
                     invoicesExport.Cells[recordIndex + 1, 4].Value = discount.ToString("C");
-                    invoicesExport.Cells[recordIndex + 1, 5].Value = preTax.ToString("C");
-                    invoicesExport.Cells[recordIndex + 1, 6].Value = governmentTax.ToString("C");
-                    invoicesExport.Cells[recordIndex + 1, 7].Value = provincialTax.ToString("C");
-                    invoicesExport.Cells[recordIndex + 1, 8].Value = liquorTax.ToString("C");
-                    invoicesExport.Cells[recordIndex + 1, 9].Value = salesDollars.ToString("C");
-                    invoicesExport.Cells[recordIndex + 1, 10].Value = costofGoods.ToString("C");
-                    invoicesExport.Cells[recordIndex + 1, 11].Value = revenue.ToString("C");
-                    invoicesExport.Cells[recordIndex + 1, 12].Value = (revenue / preTax).ToString("P");                   
+                    invoicesExport.Cells[recordIndex + 1, 5].Value = subTotal.ToString("C");
+                    invoicesExport.Cells[recordIndex + 1, 6].Value = totalSales.ToString("C");
+                    invoicesExport.Cells[recordIndex + 1, 7].Value = governmentTax.ToString("C");
+                    invoicesExport.Cells[recordIndex + 1, 8].Value = provincialTax.ToString("C");
+                    invoicesExport.Cells[recordIndex + 1, 9].Value = liquorTax.ToString("C");
+                    invoicesExport.Cells[recordIndex + 1, 10].Value = salesDollars.ToString("C");
+                    invoicesExport.Cells[recordIndex + 1, 11].Value = costofGoods.ToString("C");
+                    invoicesExport.Cells[recordIndex + 1, 12].Value = revenue.ToString("C");
+                    invoicesExport.Cells[recordIndex + 1, 13].Value = (revenue / salesDollars).ToString("P");                   
 
                     Response.Clear();
                     Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");

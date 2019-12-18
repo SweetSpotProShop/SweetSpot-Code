@@ -94,6 +94,15 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.TextBox txtShippingAmount;
         
         /// <summary>
+        /// ddlShippingProvince control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlShippingProvince;
+        
+        /// <summary>
         /// lblShippingWarning control.
         /// </summary>
         /// <remarks>
@@ -254,15 +263,6 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnExitSale;
-        
-        /// <summary>
-        /// btnLayaway control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnLayaway;
         
         /// <summary>
         /// btnProceedToCheckout control.

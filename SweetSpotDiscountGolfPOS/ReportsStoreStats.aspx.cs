@@ -25,10 +25,10 @@ namespace SweetSpotDiscountGolfPOS
         double provincialTax;
         double liquorTax;
         double costofGoods;
-        double preTaxTotal;
+        double subTotal;
         double salesDollars;
-        double profitMargin;
-        int profitMarginCount = 0;
+        //double profitMargin;
+        //int profitMarginCount = 0;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -57,11 +57,11 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "Store stats on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
+                        lblDates.Text = "Store stats on: " + startDate.ToString("dd/MMM/yy"); //+ " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     }
                     else
                     {
-                        lblDates.Text = "Store stats on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
+                        lblDates.Text = "Store stats on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy"); //+ " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     }
                     //Binding the gridview
                     DataTable stats = R.returnStoreStats(startDate, endDate, timeFrame, locationID, objPageDetails);
@@ -94,21 +94,21 @@ namespace SweetSpotDiscountGolfPOS
                     provincialTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmount"));
                     liquorTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltLiquorTaxAmount"));
                     costofGoods += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltCostofGoods"));
-                    preTaxTotal += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltSalesPreTax"));
-                    profitMargin += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltAverageProfitMargin"));
+                    subTotal += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltSubTotal"));
+                    //profitMargin += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProfitMargin"));
                     salesDollars += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltSalesDollars"));
 
-                    profitMarginCount++;
+                    //profitMarginCount++;
                 }
                 else if (e.Row.RowType == DataControlRowType.Footer)
                 {
-                    e.Row.Cells[1].Text = string.Format("{0:C}", governmentTax);
-                    e.Row.Cells[2].Text = string.Format("{0:C}", provincialTax);
-                    e.Row.Cells[3].Text = string.Format("{0:C}", liquorTax);
-                    e.Row.Cells[4].Text = string.Format("{0:C}", costofGoods);
-                    e.Row.Cells[5].Text = string.Format("{0:C}", preTaxTotal);
-                    e.Row.Cells[6].Text = string.Format("{0:P}", profitMargin / profitMarginCount);
-                    e.Row.Cells[7].Text = string.Format("{0:C}", salesDollars);
+                    e.Row.Cells[2].Text = string.Format("{0:C}", governmentTax);
+                    e.Row.Cells[3].Text = string.Format("{0:C}", provincialTax);
+                    e.Row.Cells[4].Text = string.Format("{0:C}", liquorTax);
+                    e.Row.Cells[5].Text = string.Format("{0:C}", costofGoods);
+                    e.Row.Cells[6].Text = string.Format("{0:C}", subTotal);
+                    e.Row.Cells[7].Text = string.Format("{0:P}", (salesDollars - costofGoods) / salesDollars);
+                    e.Row.Cells[8].Text = string.Format("{0:C}", salesDollars);
                 }
             }
             //Exception catch
@@ -186,8 +186,8 @@ namespace SweetSpotDiscountGolfPOS
                     statsExport.Cells[recordIndex + 1, 3].Value = provincialTax.ToString("C");
                     statsExport.Cells[recordIndex + 1, 4].Value = liquorTax.ToString("C");
                     statsExport.Cells[recordIndex + 1, 5].Value = costofGoods.ToString("C");
-                    statsExport.Cells[recordIndex + 1, 6].Value = preTaxTotal.ToString("C");
-                    statsExport.Cells[recordIndex + 1, 7].Value = (profitMargin / profitMarginCount).ToString("P");
+                    statsExport.Cells[recordIndex + 1, 6].Value = subTotal.ToString("C");
+                    //statsExport.Cells[recordIndex + 1, 7].Value = (profitMargin / profitMarginCount).ToString("P");
                     statsExport.Cells[recordIndex + 1, 8].Value = salesDollars.ToString();
 
                     Response.Clear();

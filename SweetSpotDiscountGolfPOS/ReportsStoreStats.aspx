@@ -36,17 +36,22 @@
                             <asp:Label ID="lblTotals" runat="server" Text="Totals:" />
                         </FooterTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Government Tax">
+					<asp:TemplateField HeaderText="Store">
+                        <ItemTemplate>
+                            <asp:Label ID="lblLocationName" runat="server" Text='<%#Eval("varLocationName")%>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="GST">
                         <ItemTemplate>
                             <asp:Label ID="lblGovernmentTax" runat="server" Text='<%#Eval("fltGovernmentTaxAmount", "{0:C}")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Provincial Tax">
+                    <asp:TemplateField HeaderText="PST">
                         <ItemTemplate>
                             <asp:Label ID="lblProvincialTax" runat="server" Text='<%#Eval("fltProvincialTaxAmount", "{0:C}")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
-					<asp:TemplateField HeaderText="Liquor Tax">
+					<asp:TemplateField HeaderText="LCT">
                         <ItemTemplate>
                             <asp:Label ID="lblLiquorTax" runat="server" Text='<%#Eval("fltLiquorTaxAmount", "{0:C}")%>' />
                         </ItemTemplate>
@@ -58,12 +63,12 @@
                     </asp:TemplateField>
 					<asp:TemplateField HeaderText="Sales Pre-Tax">
                         <ItemTemplate>
-                            <asp:Label ID="lblSalesPreTax" runat="server" Text='<%#Eval("fltSalesPreTax", "{0:C}")%>' />
+                            <asp:Label ID="lblSalesPreTax" runat="server" Text='<%#Eval("fltSubTotal", "{0:C}")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Average Profit Margin">
+                    <asp:TemplateField HeaderText="Profit Margin">
                         <ItemTemplate>
-                            <asp:Label ID="lblAverageProfitMargin" runat="server" Text='<%#Eval("fltAverageProfitMargin", "{0:P}")%>' />
+                            <asp:Label ID="lblProfitMargin" runat="server" Text='<%#Eval("fltProfitMargin", "{0:P}")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>                    
                     <asp:TemplateField HeaderText="Sales Dollars">

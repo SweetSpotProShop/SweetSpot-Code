@@ -489,7 +489,6 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
 
-
         ////Displays Cost of Sold Items and a Profit margin calulation
         //protected void btnCOGSvsPMReport_Click(object sender, EventArgs e)
         //{

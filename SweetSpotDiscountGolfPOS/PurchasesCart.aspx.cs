@@ -50,8 +50,8 @@ namespace SweetSpotDiscountGolfPOS
                             receipt.fltGovernmentTaxAmount = 0;
                             receipt.fltProvincialTaxAmount = 0;
                             receipt.intTransactionTypeID = 5;
-                            receipt.bitChargeGST = false;
-                            receipt.bitChargePST = false;
+                            //receipt.bitChargeGST = false;
+                            //receipt.bitChargePST = false;
                             IM.CreateInitialTotalsForTable(receipt, objPageDetails);
                         }
                         else
@@ -246,7 +246,7 @@ namespace SweetSpotDiscountGolfPOS
                     intItemTypeID = 1
                 };
 
-                IIM.InsertItemIntoSalesCart(purchItem, receipt.intTransactionTypeID, receipt.dtmInvoiceDate, CU, objPageDetails);
+                IIM.InsertItemIntoSalesCart(purchItem, receipt.intTransactionTypeID, receipt.dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
                 //Bind items in cart to grid view
                 UpdateReceiptTotal();
             }

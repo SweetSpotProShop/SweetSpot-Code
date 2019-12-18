@@ -122,7 +122,7 @@
 									<asp:Label ID="lblGovernmentAmount" runat="server" Visible="false" Text="0.00" />
 								</asp:TableCell>
 								<asp:TableCell>
-                                    <%--<asp:Button ID="btnRemoveGov" runat="server" Text="Remove GST" Width="163px" OnClick="btnRemoveGovTax" Visible="false" CausesValidation="false" />--%>
+                                    <asp:Button ID="btnRemoveGov" runat="server" Text="Remove GST" Width="163px" OnClick="btnRemoveGovTax" Visible="false" CausesValidation="false" />
 								</asp:TableCell>
 							</asp:TableRow>
 							<asp:TableRow>
@@ -133,7 +133,7 @@
 									<asp:Label ID="lblProvincialAmount" runat="server" Visible="false" Text="0.00" />
 								</asp:TableCell>
 								<asp:TableCell>
-                                    <%--<asp:Button ID="btnRemoveProv" runat="server" Text="Remove PST" Width="163px" OnClick="btnRemoveProvTax" Visible="false" CausesValidation="false" />--%>
+                                    <asp:Button ID="btnRemoveProv" runat="server" Text="Remove PST" Width="163px" OnClick="btnRemoveProvTax" Visible="false" CausesValidation="false" />
 								</asp:TableCell>
 							</asp:TableRow>
 
@@ -145,7 +145,7 @@
 									<asp:Label ID="lblLiquorTaxAmount" runat="server" Visible="false" Text="0.00" />
 								</asp:TableCell>
 								<asp:TableCell>
-                                    <%--<asp:Button ID="btnRemoveProv" runat="server" Text="Remove PST" Width="163px" OnClick="btnRemoveProvTax" Visible="false" CausesValidation="false" />--%>
+                                    <asp:Button ID="btnRemoveLiq" runat="server" Text="Remove LCT" Width="163px" OnClick="btnRemoveLiqTax" Visible="false" CausesValidation="false" />
 								</asp:TableCell>
 							</asp:TableRow>
 
@@ -198,7 +198,7 @@
 						<asp:Button ID="btnExitSale" runat="server" Text="Hold Sale" OnClick="btnExitSale_Click" Width="163px" CausesValidation="false" />
 					</asp:TableCell>
 					<asp:TableCell>
-						<asp:Button ID="btnLayaway" runat="server" Text="Layaway" OnClick="btnLayaway_Click" Width="163px" CausesValidation="false" Visible="false" />
+						<%--<asp:Button ID="btnLayaway" runat="server" Text="Layaway" OnClick="btnLayaway_Click" Width="163px" CausesValidation="false" Visible="false" />--%>
 					</asp:TableCell>
 					<asp:TableCell>
 						<asp:Button ID="btnReturnToCart" runat="server" Text="Sales Cart" OnClick="btnReturnToCart_Click" Width="163px" CausesValidation="false" />

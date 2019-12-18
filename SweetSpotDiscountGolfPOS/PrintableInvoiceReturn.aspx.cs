@@ -37,7 +37,7 @@ namespace SweetSpotDiscountGolfPOS
                     CU = (CurrentUser)Session["currentUser"];
                     if (!IsPostBack)
                     {
-                        Invoice invoice = IM.ReturnInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
+                        Invoice invoice = IM.ReturnInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
 
                         //display information on receipt
                         lblCustomerName.Text = invoice.customer.varFirstName.ToString() + " " + invoice.customer.varLastName.ToString();

@@ -116,10 +116,12 @@
 				<br />
 			</div>
 			<%--//Radio button for InStore or Shipping--%>
-			<asp:RadioButton ID="rdbInStorePurchase" runat="server" Text="In Store" Checked="True" Enabled="false" GroupName="rgSales" />
-			<asp:RadioButton ID="rdbShipping" runat="server" Text="Shipping" GroupName="rgSales" Enabled="false" />
+			<asp:RadioButton ID="rdbInStorePurchase" runat="server" Text="In Store" Checked="True" GroupName="rgSales" OnCheckedChanged="rdbInStorePurchase_CheckedChanged" AutoPostBack="true" />
+			<asp:RadioButton ID="rdbShipping" runat="server" Text="Shipping" GroupName="rgSales" OnCheckedChanged="rdbShipping_CheckedChanged" AutoPostBack="true" />
 			<asp:Label ID="lblShipping" runat="server" Text="Amount:" />
-			<asp:TextBox ID="txtShippingAmount" runat="server" AutoComplete="off" OnTextChanged="txtShippingAmount_TextChanged" AutoPostBack="true" Text="0.00" />
+			<asp:TextBox ID="txtShippingAmount" runat="server" AutoComplete="off" Text="0.00" />
+			<asp:DropDownList ID="ddlShippingProvince" runat="server" DataTextField="varProvinceName" DataValueField="intProvinceID" 
+				Enabled="false" Visible="false" OnSelectedIndexChanged="ddlShippingProvince_SelectedIndexChanged" AutoPostBack="true" />
 			<asp:Label ID="lblShippingWarning" runat="server" Visible="false" />
 			<div>
 				<asp:Button ID="btnJumpToInventory" Text="Jump to Inventory" OnClick="btnJumpToInventory_Click" runat="server" />
@@ -277,7 +279,7 @@
 						<asp:Button ID="btnExitSale" runat="server" Text="Hold Sale" OnClick="btnExitSale_Click" Width="163px" CausesValidation="false" />
 					</asp:TableCell>
 					<asp:TableCell>
-						<asp:Button ID="btnLayaway" runat="server" Text="Layaway" OnClick="btnLayaway_Click" Width="163px" CausesValidation="false" Visible="false" />
+						<%--<asp:Button ID="btnLayaway" runat="server" Text="Layaway" OnClick="btnLayaway_Click" Width="163px" CausesValidation="false" Visible="false" />--%>
 					</asp:TableCell>
 					<asp:TableCell>
 						<asp:Button ID="btnProceedToCheckout" runat="server" Text="Checkout" OnClick="btnProceedToCheckout_Click" Width="163px" CausesValidation="false" />
