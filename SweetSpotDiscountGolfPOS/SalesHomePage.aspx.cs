@@ -171,8 +171,7 @@ namespace SweetSpotDiscountGolfPOS
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
-        }
-        
+        }        
         protected void grdCurrentOpenSales_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method for error tracking

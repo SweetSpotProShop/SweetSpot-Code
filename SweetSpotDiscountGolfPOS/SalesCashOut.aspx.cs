@@ -57,9 +57,11 @@ namespace SweetSpotDiscountGolfPOS
                             lblMasterCardDisplay.Text = cashout.fltSystemCountedBasedOnSystemMastercard.ToString("C");
                             lblVisaDisplay.Text = cashout.fltSystemCountedBasedOnSystemVisa.ToString("C");
 
-                            lblPreTaxDisplay.Text = cashout.fltSalesSubTotal.ToString("C");
+                            lblPreTaxDisplay.Text = (cashout.fltSalesSubTotal + cashout.fltSystemCountedBasedOnSystemTradeIn).ToString("C");
                             lblGSTDisplay.Text = cashout.fltGovernmentTaxAmount.ToString("C");
                             lblPSTDisplay.Text = cashout.fltProvincialTaxAmount.ToString("C");
+                            lblLCTDisplay.Text = cashout.fltLiquorTaxAmount.ToString("C");
+
                             lblTotalDisplay.Text = (cashout.fltSystemCountedBasedOnSystemTradeIn + cashout.fltSystemCountedBasedOnSystemGiftCard + cashout.fltSystemCountedBasedOnSystemCash 
                                 + cashout.fltSystemCountedBasedOnSystemDebit + cashout.fltSystemCountedBasedOnSystemMastercard + cashout.fltSystemCountedBasedOnSystemVisa).ToString("C");
 
@@ -87,10 +89,11 @@ namespace SweetSpotDiscountGolfPOS
                             lblDebitDisplay.Text = cashout.fltSystemCountedBasedOnSystemDebit.ToString("C");
                             lblTradeInDisplay.Text = cashout.fltSystemCountedBasedOnSystemTradeIn.ToString("C");
                             lblTotalDisplay.Text = (cashout.fltSystemCountedBasedOnSystemVisa + cashout.fltSystemCountedBasedOnSystemMastercard + cashout.fltSystemCountedBasedOnSystemCash 
-                                + cashout.fltSystemCountedBasedOnSystemGiftCard + cashout.fltSystemCountedBasedOnSystemDebit + (cashout.fltSystemCountedBasedOnSystemTradeIn * -1)).ToString("C");
+                                + cashout.fltSystemCountedBasedOnSystemGiftCard + cashout.fltSystemCountedBasedOnSystemDebit + (cashout.fltSystemCountedBasedOnSystemTradeIn)).ToString("C");
                             lblGSTDisplay.Text = cashout.fltGovernmentTaxAmount.ToString("C");
                             lblPSTDisplay.Text = cashout.fltProvincialTaxAmount.ToString("C");
-                            lblPreTaxDisplay.Text = (cashout.fltSalesSubTotal + (cashout.fltSystemCountedBasedOnSystemTradeIn * -1)).ToString("C");
+                            lblLCTDisplay.Text = cashout.fltLiquorTaxAmount.ToString("C");
+                            lblPreTaxDisplay.Text = (cashout.fltSalesSubTotal + cashout.fltSystemCountedBasedOnSystemTradeIn).ToString("C");
 
                             cashout.fltManuallyCountedBasedOnReceiptsTradeIn = 0;
                             cashout.fltManuallyCountedBasedOnReceiptsGiftCard = 0;

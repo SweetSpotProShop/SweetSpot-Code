@@ -109,7 +109,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Type">
                             <ItemTemplate>
-                                <asp:Label ID="lblTransactionType" runat="server" Text='<%#Eval("varTransactionName") %>' />
+                                <%--<asp:Label ID="lblTransactionType" runat="server" Text='<%#Eval("varTransactionName") %>' />--%>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="CustID" Visible="false">

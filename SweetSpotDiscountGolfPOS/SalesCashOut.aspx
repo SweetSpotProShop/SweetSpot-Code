@@ -34,74 +34,80 @@
                 <hr />
                 <h3>Balancing</h3>
                 <br />
-                <asp:Table ID="tblCashout" runat="server" GridLines="Both" CssClass="CashoutTable">
-                    <asp:TableRow>
-                        <asp:TableCell ColumnSpan="9">
+                <asp:Table ID="tblCashout" runat="server" GridLines="Both" CssClass="CashoutTable" Width="100%">
+                    <asp:TableRow Width="100%">
+                        <asp:TableCell ColumnSpan="11" Width="100%">
                             <asp:Label runat="server" ID="lblSales" Text="Sales" />
                         </asp:TableCell>
                     </asp:TableRow>
-                    <asp:TableRow>
-                        <asp:TableCell>
-                            <asp:Label runat="server" ID="lblTradeInS" Text="Trade-In" Width="80" />
+                    <asp:TableRow Width="100%">
+                        <asp:TableCell Width="9%">
+                            <asp:Label runat="server" ID="lblTradeInS" Text="Trade-In" Width="100%" />
                         </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Label runat="server" ID="lblGiftCardS" Text="Gift Card" Width="80" />
+                        <asp:TableCell Width="9%">
+                            <asp:Label runat="server" ID="lblGiftCardS" Text="Gift Card" Width="100%" />
                         </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Label runat="server" ID="lblCashS" Text="Cash" Width="80" />
+                        <asp:TableCell Width="9%">
+                            <asp:Label runat="server" ID="lblCashS" Text="Cash" Width="100%" />
                         </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Label runat="server" ID="lblDebitS" Text="Debit" Width="80" />
+                        <asp:TableCell Width="9%">
+                            <asp:Label runat="server" ID="lblDebitS" Text="Debit" Width="100%" />
                         </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Label runat="server" ID="lblMasterCardS" Text="MasterCard" Width="80" />
+                        <asp:TableCell Width="9%">
+                            <asp:Label runat="server" ID="lblMasterCardS" Text="MasterCard" Width="100%" />
                         </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Label runat="server" ID="lblVisaS" Text="Visa" Width="80" />
+                        <asp:TableCell Width="9%">
+                            <asp:Label runat="server" ID="lblVisaS" Text="Visa" Width="100%" />
                         </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Label runat="server" ID="lblPreTaxS" Text="Pre Tax" Width="80" />
+                        <asp:TableCell Width="9%">
+                            <asp:Label runat="server" ID="lblPreTaxS" Text="Pre Tax" Width="100%" />
                         </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Label runat="server" ID="lblGSTS" Text="GST" Width="80" />
+                        <asp:TableCell Width="9%">
+                            <asp:Label runat="server" ID="lblGSTS" Text="GST" Width="100%" />
                         </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Label runat="server" ID="lblPSTS" Text="PST" Width="80" />
+                        <asp:TableCell Width="9%">
+                            <asp:Label runat="server" ID="lblPSTS" Text="PST" Width="100%" />
                         </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Label runat="server" ID="lblTotalS" Text="Total" Width="80" />
+						<asp:TableCell Width="9%">
+                            <asp:Label runat="server" ID="LblLCTS" Text="LCT" Width="100%" />
+                        </asp:TableCell>
+                        <asp:TableCell Width="9%">
+                            <asp:Label runat="server" ID="lblTotalS" Text="Total" Width="100%" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:Label runat="server" ID="lblTradeInDisplay" Text="" Width="80" />
+                            <asp:Label runat="server" ID="lblTradeInDisplay" Text="" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label runat="server" ID="lblGiftCardDisplay" Text="" Width="80" />
+                            <asp:Label runat="server" ID="lblGiftCardDisplay" Text="" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label runat="server" ID="lblCashDisplay" Text="" Width="80" />
+                            <asp:Label runat="server" ID="lblCashDisplay" Text="" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label runat="server" ID="lblDebitDisplay" Text="" Width="80" />
+                            <asp:Label runat="server" ID="lblDebitDisplay" Text="" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label runat="server" ID="lblMasterCardDisplay" Text="" Width="80" />
+                            <asp:Label runat="server" ID="lblMasterCardDisplay" Text="" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label runat="server" ID="lblVisaDisplay" Text="" Width="80" />
+                            <asp:Label runat="server" ID="lblVisaDisplay" Text="" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label runat="server" ID="lblPreTaxDisplay" Text="" Width="80" />
+                            <asp:Label runat="server" ID="lblPreTaxDisplay" Text="" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label runat="server" ID="lblGSTDisplay" Text="" Width="80" />
+                            <asp:Label runat="server" ID="lblGSTDisplay" Text="" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label runat="server" ID="lblPSTDisplay" Text="" Width="80" />
+                            <asp:Label runat="server" ID="lblPSTDisplay" Text="" />
+                        </asp:TableCell>
+						<asp:TableCell>
+                            <asp:Label runat="server" ID="lblLCTDisplay" Text="" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label runat="server" ID="lblTotalDisplay" Text="" Width="80" />
+                            <asp:Label runat="server" ID="lblTotalDisplay" Text="" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
@@ -111,92 +117,92 @@
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:Label runat="server" ID="lblTradeInR" Text="Trade-In" Width="80" />
+                            <asp:Label runat="server" ID="lblTradeInR" Text="Trade-In" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label runat="server" ID="lblGiftCardR" Text="Gift Card" Width="80" />
+                            <asp:Label runat="server" ID="lblGiftCardR" Text="Gift Card" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label runat="server" ID="lblCashR" Text="Cash" Width="80" />
+                            <asp:Label runat="server" ID="lblCashR" Text="Cash" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label runat="server" ID="lblDebitR" Text="Debit" Width="80" />
+                            <asp:Label runat="server" ID="lblDebitR" Text="Debit" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label runat="server" ID="lblMasterCardR" Text="MasterCard" Width="80" />
+                            <asp:Label runat="server" ID="lblMasterCardR" Text="MasterCard" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Label runat="server" ID="lblVisaR" Text="Visa" Width="80" />
+                            <asp:Label runat="server" ID="lblVisaR" Text="Visa" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtTradeIn" runat="server" AutoComplete="off" Text="0.00" Width="80" />
-                            <asp:RegularExpressionValidator ID="revTradeIn"
+                            <asp:TextBox ID="txtTradeIn" runat="server" AutoComplete="off" Text="0.00" Width="60" />
+<%--                            <asp:RegularExpressionValidator ID="revTradeIn"
                                 ControlToValidate="txtTradeIn"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
                                 Display="Static"
                                 EnableClientScript="true"
-                                ErrorMessage="Requires a number"
-                                runat="server" />
+                                ErrorMessage="numbers only"
+                                runat="server" />--%>
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtGiftCard" runat="server" AutoComplete="off" Text="0.00" Width="80" />
-                            <asp:RegularExpressionValidator ID="revGiftCard"
+                            <asp:TextBox ID="txtGiftCard" runat="server" AutoComplete="off" Text="0.00" Width="60" />
+<%--                            <asp:RegularExpressionValidator ID="revGiftCard"
                                 ControlToValidate="txtGiftCard"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
                                 Display="Static"
                                 EnableClientScript="true"
-                                ErrorMessage="Requires a number"
-                                runat="server" />
+                                ErrorMessage="numbers only"
+                                runat="server" />--%>
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtCash" runat="server" AutoComplete="off" Text="0.00" Width="80" />
-                            <asp:RegularExpressionValidator ID="revCash"
+                            <asp:TextBox ID="txtCash" runat="server" AutoComplete="off" Text="0.00" Width="60" />
+                            <%--<asp:RegularExpressionValidator ID="revCash"
                                 ControlToValidate="txtCash"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
                                 Display="Static"
                                 EnableClientScript="true"
-                                ErrorMessage="Requires a number"
-                                runat="server" />
+                                ErrorMessage="numbers only"
+                                runat="server" />--%>
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtDebit" runat="server" AutoComplete="off" Text="0.00" Width="80" />
-                            <asp:RegularExpressionValidator ID="revDebit"
+                            <asp:TextBox ID="txtDebit" runat="server" AutoComplete="off" Text="0.00" Width="60" />
+                            <%--<asp:RegularExpressionValidator ID="revDebit"
                                 ControlToValidate="txtDebit"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
                                 Display="Static"
                                 EnableClientScript="true"
-                                ErrorMessage="Requires a number"
-                                runat="server" />
+                                ErrorMessage="numbers only"
+                                runat="server" />--%>
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtMasterCard" runat="server" AutoComplete="off" Text="0.00" Width="80" />
-                            <asp:RegularExpressionValidator ID="revMasterCard"
+                            <asp:TextBox ID="txtMasterCard" runat="server" AutoComplete="off" Text="0.00" Width="60" />
+                            <%--<asp:RegularExpressionValidator ID="revMasterCard"
                                 ControlToValidate="txtMasterCard"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
                                 Display="Static"
                                 EnableClientScript="true"
-                                ErrorMessage="Requires a number"
-                                runat="server" />
+                                ErrorMessage="numbers only"
+                                runat="server" />--%>
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtVisa" runat="server" AutoComplete="off" Text="0.00" Width="80" />
-                            <asp:RegularExpressionValidator ID="revVisa"
+                            <asp:TextBox ID="txtVisa" runat="server" AutoComplete="off" Text="0.00" Width="60" />
+<%--                            <asp:RegularExpressionValidator ID="revVisa"
                                 ControlToValidate="txtVisa"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
                                 Display="Static"
                                 EnableClientScript="true"
-                                ErrorMessage="Requires a number"
-                                runat="server" />
+                                ErrorMessage="numbers only"
+                                runat="server" />--%>
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:Button ID="btnCalculate" runat="server" Text="Calculate" Width="100px" OnClick="btnCalculate_Click" CausesValidation="True"/>
+                            <asp:Button ID="btnCalculate" runat="server" Text="Calculate" OnClick="btnCalculate_Click" CausesValidation="True"/>
                         </asp:TableCell>
-                        <asp:TableCell ColumnSpan="5">
-                            <asp:Button ID="btnClear" runat="server" Width="90px" Text="Clear" OnClick="btnClear_Click" />
+                        <asp:TableCell>
+                            <asp:Button ID="btnClear" runat="server" Text="Clear" OnClick="btnClear_Click" />
                         </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>

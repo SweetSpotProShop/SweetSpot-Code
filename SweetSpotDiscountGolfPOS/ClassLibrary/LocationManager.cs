@@ -109,7 +109,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
         public DataTable ReturnProvinceDropDown(int countryID, object[] objPageDetails)
         {
             string strQueryName = "ReturnProvinceDropDown";
-            string sqlCmd = "SELECT intProvinceID, varProvinceName FROM tbl_provState WHERE intCountryID = @intCountryID";
+            string sqlCmd = "SELECT intProvinceID, varProvinceName FROM tbl_provState WHERE intCountryID = @intCountryID ORDER BY varProvinceName";
             object[][] parms = { new object[] { "@intCountryID", countryID} };
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);

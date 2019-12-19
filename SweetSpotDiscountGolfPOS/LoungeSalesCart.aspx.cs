@@ -686,7 +686,7 @@ namespace SweetSpotDiscountGolfPOS
                     selectedSku.bitIsDiscountPercent = false;
                     selectedSku.bitIsClubTradeIn = false;
                     //add item to table and remove the added qty from current inventory
-                    IIM.InsertItemIntoSalesCart(selectedSku, invoices[0].intTransactionTypeID, invoices[0].dtmInvoiceDate, CU, objPageDetails);
+                    IIM.InsertItemIntoSalesCart(selectedSku, invoices[0].intTransactionTypeID, invoices[0].dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
                     UpdateInvoiceTotal();
                     mvApplicableServices.ActiveViewIndex = 0;
                 }

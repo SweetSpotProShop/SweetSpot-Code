@@ -21,8 +21,10 @@ namespace SweetSpotDiscountGolfPOS
         Reports R = new Reports();
         LocationManager LM = new LocationManager();
 
-        DataTable dt = new DataTable();
         double salesDollars;
+        double gstDollars;
+        double pstDollars;
+        double lctDollars;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -56,7 +58,7 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         lblDates.Text = "Items sold on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     }
-                    dt = R.returnSalesForSelectedDate(passing, objPageDetails);
+                    DataTable dt = R.returnSalesForSelectedDate(passing, objPageDetails);
                     grdSalesByDate.DataSource = dt;
                     grdSalesByDate.DataBind();
                 }
@@ -82,10 +84,16 @@ namespace SweetSpotDiscountGolfPOS
                 if (e.Row.RowType == DataControlRowType.DataRow)
                 {
                     salesDollars += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltTotalSales"));
+                    gstDollars += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmount"));
+                    pstDollars += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmount"));
+                    lctDollars += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltLiquorTaxAmount"));
                 }
                 else if (e.Row.RowType == DataControlRowType.Footer)
                 {
-                    e.Row.Cells[1].Text = String.Format("{0:C}", salesDollars);
+                    e.Row.Cells[1].Text = String.Format("{0:C}", gstDollars);
+                    e.Row.Cells[2].Text = String.Format("{0:C}", pstDollars);
+                    e.Row.Cells[3].Text = String.Format("{0:C}", lctDollars);
+                    e.Row.Cells[4].Text = String.Format("{0:C}", salesDollars + gstDollars + pstDollars + lctDollars);
                 }
             }
             //Exception catch
@@ -110,9 +118,14 @@ namespace SweetSpotDiscountGolfPOS
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
+
                 object[] passing = (object[])Session["reportInfo"];
-                string loc = LM.ReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
-                string fileName = "Sales Report by Date - " + loc + ".xlsx";
+                DateTime[] reportDates = (DateTime[])passing[0];
+                DateTime startDate = reportDates[0];
+                DateTime endDate = reportDates[1];
+
+                DataTable dt = R.returnSalesForSelectedDate(passing, objPageDetails);
+                string fileName = "Sales Report by Date-" + LM.ReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails) + "_" + startDate.ToShortDateString() + " - " + endDate.ToShortDateString() + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
@@ -121,15 +134,28 @@ namespace SweetSpotDiscountGolfPOS
                     // write to sheet   
                     salesExport.Cells[1, 1].Value = lblDates.Text;
                     salesExport.Cells[2, 1].Value = "Date";
-                    salesExport.Cells[2, 2].Value = "Sales Dollars";
+                    salesExport.Cells[2, 2].Value = "GST";
+                    salesExport.Cells[2, 3].Value = "PST";
+                    salesExport.Cells[2, 4].Value = "LCT";
+                    salesExport.Cells[2, 5].Value = "Sales Dollars";
                     int recordIndex = 3;
                     foreach (DataRow row in dt.Rows)
                     {
                         DateTime d = (DateTime)row[0];
                         salesExport.Cells[recordIndex, 1].Value = d.ToString("d");
-                        salesExport.Cells[recordIndex, 2].Value = row[1].ToString();
+                        salesExport.Cells[recordIndex, 2].Value = Convert.ToDouble(row[1]).ToString("C");
+                        salesExport.Cells[recordIndex, 3].Value = Convert.ToDouble(row[2]).ToString("C");
+                        salesExport.Cells[recordIndex, 4].Value = Convert.ToDouble(row[3]).ToString("C");
+                        salesExport.Cells[recordIndex, 5].Value = Convert.ToDouble(row[4]).ToString("C");
                         recordIndex++;
                     }
+
+                    salesExport.Cells[recordIndex + 1, 1].Value = "Totals:";
+                    salesExport.Cells[recordIndex + 1, 2].Value = gstDollars;
+                    salesExport.Cells[recordIndex + 1, 3].Value = pstDollars;
+                    salesExport.Cells[recordIndex + 1, 4].Value = lctDollars;
+                    salesExport.Cells[recordIndex + 1, 5].Value = salesDollars + gstDollars + pstDollars + lctDollars;
+
                     Response.Clear();
                     Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
                     Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";

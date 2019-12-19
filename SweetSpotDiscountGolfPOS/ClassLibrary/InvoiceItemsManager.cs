@@ -33,6 +33,28 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             }).ToList();
             return invoiceItems;
         }
+        private List<InvoiceItems> ConvertFromDataTableToInvoiceItemsCurrentSale2(DataTable dt, DateTime selectedDate, int provinceID, object[] objPageDetails)
+        {
+            List<InvoiceItems> invoiceItems = dt.AsEnumerable().Select(row =>
+            new InvoiceItems
+            {
+                intInvoiceItemID = row.Field<int>("intInvoiceItemID"),
+                intInvoiceID = row.Field<int>("intInvoiceID"),
+                intInventoryID = row.Field<int>("intInventoryID"),
+                varSku = row.Field<string>("varSku"),
+                varItemDescription = row.Field<string>("varItemDescription"),
+                intItemQuantity = row.Field<int>("intItemQuantity"),
+                fltItemCost = row.Field<double>("fltItemCost"),
+                fltItemPrice = row.Field<double>("fltItemPrice"),
+                fltItemDiscount = row.Field<double>("fltItemDiscount"),
+                fltItemRefund = row.Field<double>("fltItemRefund"),
+                bitIsDiscountPercent = row.Field<bool>("bitIsDiscountPercent"),
+                intItemTypeID = row.Field<int>("intItemTypeID"),
+                bitIsClubTradeIn = row.Field<bool>("bitIsClubTradeIn"),
+                invoiceItemTaxes = ReturnInvoiceItemTaxesCurrent(row.Field<int>("intInvoiceItemID"), selectedDate, provinceID, objPageDetails)
+            }).ToList();
+            return invoiceItems;
+        }
         private List<InvoiceItems> ConvertFromDataTableToInvoiceItems(DataTable dt, DateTime selectedDate, int provinceID, object[] objPageDetails)
         {
             List<InvoiceItems> invoiceItems = dt.AsEnumerable().Select(row =>
@@ -152,6 +174,30 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return ConvertFromDataTableToInvoiceItemsCurrentSale(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), selectedDate, provinceID, objPageDetails);
             //return ConvertFromDataTableToInvoiceItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
+
+        public List<InvoiceItems> CallReturnInvoiceItemsCurrentSale(int invoiceID, DateTime selectedDate, int provinceID, object[] objPageDetails)
+        {
+            return ReturnInvoiceItemsCurrentSale2(invoiceID, selectedDate, provinceID, objPageDetails);
+        }
+        private List<InvoiceItems> ReturnInvoiceItemsCurrentSale2(int invoiceID, DateTime selectedDate, int provinceID, object[] objPageDetails)
+        {
+            string strQueryName = "ReturnInvoiceItemsCurrentSale2";
+            string sqlCmd = "SELECT intInvoiceItemID, intInvoiceID, CSI.intInventoryID, CASE WHEN EXISTS(SELECT A.intInventoryID FROM tbl_accessories A "
+                + "WHERE A.intInventoryID = CSI.intInventoryID) THEN (SELECT A.varSku FROM tbl_accessories A WHERE A.intInventoryID = CSI.intInventoryID"
+                + ") WHEN EXISTS(SELECT CL.intInventoryID FROM tbl_clothing CL WHERE CL.intInventoryID = CSI.intInventoryID) THEN (SELECT CL.varSku "
+                + "FROM tbl_clothing CL WHERE CL.intInventoryID = CSI.intInventoryID) WHEN EXISTS(SELECT C.intInventoryID FROM tbl_clubs C WHERE "
+                + "C.intInventoryID = CSI.intInventoryID) THEN (SELECT C.varSku FROM tbl_clubs C WHERE C.intInventoryID = CSI.intInventoryID) WHEN "
+                + "EXISTS(SELECT TI.intTradeInID FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = CSI.intInventoryID) THEN (SELECT TI.varSku "
+                + "FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = CSI.intInventoryID) END AS varSku, varItemDescription, intItemQuantity, "
+                + "fltItemCost, fltItemPrice, fltItemDiscount, fltItemRefund, bitIsDiscountPercent, intItemTypeID, bitIsClubTradeIn FROM "
+                + "tbl_currentSalesItems CSI WHERE intInvoiceID = @intInvoiceID";
+            object[][] parms =
+            {
+                 new object[] { "@intInvoiceID", invoiceID }
+            };
+
+            return ConvertFromDataTableToInvoiceItemsCurrentSale2(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), selectedDate, provinceID, objPageDetails);
+        }
         public List<InvoiceItems> ReturnInvoiceItemsReceipt(int receiptID, object[] objPageDetails)
         {
             string strQueryName = "ReturnInvoiceItemsReceipt";
@@ -235,7 +281,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return sqlCmd;
         }
 
-        public void InsertItemIntoSalesCart(InvoiceItems II, int transactionTypeID, DateTime currentDateTime, CurrentUser cu, object[] objPageDetails)
+        public void InsertItemIntoSalesCart(InvoiceItems II, int transactionTypeID, DateTime currentDateTime, int provinceID, object[] objPageDetails)
         {
             string strQueryName = "InsertItemIntoSalesCart";
             string sqlCmd = "INSERT INTO tbl_currentSalesItems VALUES(@intInvoiceID, @intInventoryID, @intItemQuantity, "
@@ -259,7 +305,7 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             TaxManager TM = new TaxManager();
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
-            TM.LoopThroughTaxesForEachItemAddingToCurrentInvoiceItemTaxes(II, transactionTypeID, currentDateTime, cu, objPageDetails);
+            TM.LoopThroughTaxesForEachItemAddingToCurrentInvoiceItemTaxes(II, transactionTypeID, currentDateTime, provinceID, objPageDetails);
         }
         public void RemoveQTYFromInventoryWithSKU(int inventoryID, int itemTypeID, int remainingQTY, object[] objPageDetails)
         {
@@ -800,11 +846,17 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string strQueryName = "ReturnInvoiceItemTaxesCurrent";
             //string sqlCmd = "SELECT CSIT.intInvoiceItemID, T.varTaxName, CSIT.intTaxTypeID, fltTaxAmount, bitIsTaxCharged FROM tbl_currentSalesItemsTaxes "
             //    + "CSIT JOIN tbl_taxType T ON T.intTaxID = CSIT.intTaxTypeID WHERE CSIT.intInvoiceItemID = @intInvoiceItemID";
+            //string sqlCmd = "SELECT CSIT.intInvoiceItemID, T.varTaxName, CSIT.intTaxTypeID, TAX.fltTaxRate, fltTaxAmount, bitIsTaxCharged FROM "
+            //    + "tbl_currentSalesItemsTaxes CSIT JOIN tbl_taxType T ON T.intTaxID = CSIT.intTaxTypeID INNER JOIN(SELECT TD.intTaxID, fltTaxRate, TD.MTD "
+            //    + "FROM tbl_taxRate TR INNER JOIN(SELECT intTaxID, MAX(dtmTaxEffectiveDate) AS MTD FROM tbl_taxRate WHERE dtmTaxEffectiveDate <= "
+            //    + "@dtmSelectedDate AND intProvinceID = @intProvinceID GROUP BY intTaxID) TD ON TR.intTaxID = TD.intTaxID AND TR.dtmTaxEffectiveDate = TD.MTD "
+            //    + "GROUP BY TD.intTaxID, fltTaxRate, TD.MTD) TAX ON TAX.intTaxID = CSIT.intTaxTypeID WHERE CSIT.intInvoiceItemID = @intInvoiceItemID";
             string sqlCmd = "SELECT CSIT.intInvoiceItemID, T.varTaxName, CSIT.intTaxTypeID, TAX.fltTaxRate, fltTaxAmount, bitIsTaxCharged FROM "
-                + "tbl_currentSalesItemsTaxes CSIT JOIN tbl_taxType T ON T.intTaxID = CSIT.intTaxTypeID INNER JOIN(SELECT TD.intTaxID, fltTaxRate, TD.MTD "
-                + "FROM tbl_taxRate TR INNER JOIN(SELECT intTaxID, MAX(dtmTaxEffectiveDate) AS MTD FROM tbl_taxRate WHERE dtmTaxEffectiveDate <= "
-                + "@dtmSelectedDate AND intProvinceID = @intProvinceID GROUP BY intTaxID) TD ON TR.intTaxID = TD.intTaxID AND TR.dtmTaxEffectiveDate = TD.MTD "
-                + "GROUP BY TD.intTaxID, fltTaxRate, TD.MTD) TAX ON TAX.intTaxID = CSIT.intTaxTypeID WHERE CSIT.intInvoiceItemID = @intInvoiceItemID";
+                + "tbl_currentSalesItemsTaxes CSIT JOIN tbl_taxType T ON T.intTaxID = CSIT.intTaxTypeID INNER JOIN(SELECT TD.intTaxID, fltTaxRate, "
+                + "TD.MTD FROM tbl_taxRate TR INNER JOIN(SELECT intTaxID, MAX(dtmTaxEffectiveDate) AS MTD FROM tbl_taxRate WHERE dtmTaxEffectiveDate "
+                + "<= @dtmSelectedDate AND intProvinceID = @intProvinceID GROUP BY intTaxID) TD ON TR.intTaxID = TD.intTaxID AND TR.dtmTaxEffectiveDate "
+                + "= TD.MTD WHERE intProvinceID = @intProvinceID GROUP BY TD.intTaxID, fltTaxRate, TD.MTD) TAX ON TAX.intTaxID = CSIT.intTaxTypeID "
+                + "WHERE CSIT.intInvoiceItemID = @intInvoiceItemID";
             object[][] parms =
             {
                 new object[] { "@intInvoiceItemID", invoiceItemID },
@@ -814,6 +866,18 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             TaxManager TM = new TaxManager();
             return TM.ConvertFromDataTableToInvoiceItemTax(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
         }
+        private List<InvoiceItemTax> ReturnInvoiceItemTaxesCurrent2(int invoiceItemID, object[] objPageDetails)
+        {
+            string strQueryName = "ReturnInvoiceItemTaxesCurrent2";            
+            string sqlCmd = "SELECT CSIT.intInvoiceItemID, T.varTaxName, CSIT.intTaxTypeID, fltTaxAmount, bitIsTaxCharged FROM tbl_currentSalesItemsTaxes "
+                + "CSIT JOIN tbl_taxType T ON T.intTaxID = CSIT.intTaxTypeID WHERE CSIT.intInvoiceItemID = @intInvoiceItemID";
+            object[][] parms =
+            {
+                new object[] { "@intInvoiceItemID", invoiceItemID }
+            };
+            TaxManager TM = new TaxManager();
+            return TM.CallConversionFromDataTableToInvoiceItemTax2(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
+        }
         public List<InvoiceItemTax> ReturnInvoiceItemTaxes(int invoiceItemID, DateTime selectedDate, int provinceID, object[] objPageDetails)
         {
             string strQueryName = "ReturnInvoiceItemTaxes";
@@ -822,8 +886,8 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             string sqlCmd = "SELECT intInvoiceItemID, T.varTaxName, IIT.intTaxTypeID, TAX.fltTaxRate, fltTaxAmount, bitIsTaxCharged FROM tbl_invoiceItemTaxes "
                 + "IIT JOIN tbl_taxType T ON T.intTaxID = IIT.intTaxTypeID INNER JOIN(SELECT TD.intTaxID, fltTaxRate, TD.MTD FROM tbl_taxRate TR INNER "
                 + "JOIN(SELECT intTaxID, MAX(dtmTaxEffectiveDate) AS MTD FROM tbl_taxRate WHERE dtmTaxEffectiveDate <= @dtmSelectedDate AND intProvinceID = "
-                + "@intProvinceID GROUP BY intTaxID) TD ON TR.intTaxID = TD.intTaxID AND TR.dtmTaxEffectiveDate = TD.MTD GROUP BY TD.intTaxID, fltTaxRate, "
-                + "TD.MTD) TAX ON TAX.intTaxID = IIT.intTaxTypeID WHERE intInvoiceItemID = @intInvoiceItemID";
+                + "@intProvinceID GROUP BY intTaxID) TD ON TR.intTaxID = TD.intTaxID AND TR.dtmTaxEffectiveDate = TD.MTD WHERE intProvinceID = @intProvinceID "
+                + "GROUP BY TD.intTaxID, fltTaxRate, TD.MTD) TAX ON TAX.intTaxID = IIT.intTaxTypeID WHERE intInvoiceItemID = @intInvoiceItemID";
             object[][] parms =
             {
                 new object[] { "@intInvoiceItemID", invoiceItemID },

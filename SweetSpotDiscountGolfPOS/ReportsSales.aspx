@@ -48,9 +48,24 @@
                             <asp:Label ID="lblTotal" runat="server" Text="Totals:" />
                         </FooterTemplate>
                     </asp:TemplateField>
+					<asp:TemplateField HeaderText="GST">
+                        <ItemTemplate>
+                            <asp:Label ID="lblGSTAmount" runat="server" Text='<%#Eval("fltGovernmentTaxAmount","{0:C}") %>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+					<asp:TemplateField HeaderText="PST">
+                        <ItemTemplate>
+                            <asp:Label ID="lblPSTAmount" runat="server" Text='<%#Eval("fltProvincialTaxAmount","{0:C}") %>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+					<asp:TemplateField HeaderText="LCT">
+                        <ItemTemplate>
+                            <asp:Label ID="lblLCTAmount" runat="server" Text='<%#Eval("fltLiquorTaxAmount","{0:C}") %>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:TemplateField HeaderText="Sales Dollars">
                         <ItemTemplate>
-                            <asp:Label ID="lblSalesDollars" runat="server" Text='<%#Eval("fltTotalSales","{0:C}") %>' />
+                            <asp:Label ID="lblSalesDollars" runat="server" Text='<%# (Convert.ToDouble(Eval("fltTotalSales")) + Convert.ToDouble(Eval("fltGovernmentTaxAmount")) + Convert.ToDouble(Eval("fltProvincialTaxAmount")) + Convert.ToDouble(Eval("fltLiquorTaxAmount"))).ToString("C") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>

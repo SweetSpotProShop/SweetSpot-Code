@@ -41,7 +41,7 @@ namespace SweetSpotDiscountGolfPOS
                     CU = (CurrentUser)Session["currentUser"];
                     if (!Page.IsPostBack)
                     {
-                        List<Invoice> returnInvoicesCalled = IM.ReturnInvoice(Convert.ToInt32(Request.QueryString["invoice"]), CU.location.intProvinceID, objPageDetails);
+                        List<Invoice> returnInvoicesCalled = IM.ReturnInvoice(Convert.ToInt32(Request.QueryString["invoice"]), objPageDetails);
                         Invoice returnInvoice = new Invoice();
                         if (returnInvoicesCalled.Count > 0)
                         {
@@ -189,7 +189,7 @@ namespace SweetSpotDiscountGolfPOS
                         selectedSku.intItemQuantity = returnQuantity;
                         selectedSku.fltItemRefund = -1 * returnDollars;
                         selectedSku.fltItemCost = selectedSku.fltItemCost * -1;
-                        IIM.InsertItemIntoSalesCart(selectedSku, returnInvoice.intTransactionTypeID, returnInvoice.dtmInvoiceDate, CU, objPageDetails);
+                        IIM.InsertItemIntoSalesCart(selectedSku, returnInvoice.intTransactionTypeID, returnInvoice.dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
                         //deselect the indexed item
                         grdInvoicedItems.EditIndex = -1;
                         //store items available for return in session

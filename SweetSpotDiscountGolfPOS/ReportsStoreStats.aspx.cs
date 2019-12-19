@@ -18,16 +18,17 @@ namespace SweetSpotDiscountGolfPOS
     {
         ErrorReporting ER = new ErrorReporting();
         Reports R = new Reports();
+        LocationManager LM = new LocationManager();
         CurrentUser CU;
 
-        double gTax = 0;
-        double pTax = 0;
-        double cogs = 0;
-        double salesPrT = 0;
-        double salesPoT = 0;
-        double pm = 0;
-        double avp = 0;
-        DataTable stats = new DataTable();
+        double governmentTax;
+        double provincialTax;
+        double liquorTax;
+        double costofGoods;
+        double subTotal;
+        double salesDollars;
+        //double profitMargin;
+        //int profitMarginCount = 0;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -51,61 +52,22 @@ namespace SweetSpotDiscountGolfPOS
                     DateTime[] reportDates = (DateTime[])passing[0];
                     DateTime startDate = reportDates[0];
                     DateTime endDate = reportDates[1];
-                    int timeFrame = Convert.ToInt32(passing[1]);
+                    int locationID = Convert.ToInt32(passing[1]);
+                    int timeFrame = Convert.ToInt32(passing[2]);
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "Store stats for: " + startDate.ToString("dd/MMM/yy");
+                        lblDates.Text = "Store stats on: " + startDate.ToString("dd/MMM/yy"); //+ " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     }
                     else
                     {
-                        lblDates.Text = "Store stats for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy");
+                        lblDates.Text = "Store stats on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy"); //+ " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     }
                     //Binding the gridview
-                    //if (timeFrame.Equals("Day"))
-                    //{
-                        stats = R.returnStoreStats(startDate, endDate, timeFrame, objPageDetails);
-                    //}
-                    //else if (timeFrame.Equals("Week"))
-                    //{
-                    //    stats = R.returnStoreStats(startDate, endDate, 2, objPageDetails);
-                    //}
-                    //else if (timeFrame.Equals("Month"))
-                    //{
-                    //    stats = R.returnStoreStats(startDate, endDate, 3, objPageDetails);
-                    //}
-                    //Checking if there are any values
-                    //if (stats.Rows.Count > 0)
-                    //{
-                        grdStats.DataSource = stats;
-                        grdStats.DataBind();
-                    //    if(grdStats.Rows.Count > 0)
-                    //    {
-                            if (timeFrame.Equals(1))
-                            {
-                                grdStats.HeaderRow.Cells[2].Text = "Date";
-                            }
-                            else if (timeFrame.Equals(2))
-                            {
-                                grdStats.HeaderRow.Cells[2].Text = "Week Start Date";
-                            }
-                            else if (timeFrame.Equals(3))
-                            {
-                                grdStats.Columns[2].Visible = false;
-                            }
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    if (startDate == endDate)
-                    //    {
-                    //        lblDates.Text = "There are no stats for: " + startDate.ToString("dd/MMM/yy");
-                    //    }
-                    //    else
-                    //    {
-                    //        lblDates.Text = "There are no states for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy");
-                    //    }
-                    //}
+                    DataTable stats = R.returnStoreStats(startDate, endDate, timeFrame, locationID, objPageDetails);
+
+                    grdStats.DataSource = stats;
+                    grdStats.DataBind();
                 }
             }
             //Exception catch
@@ -128,29 +90,25 @@ namespace SweetSpotDiscountGolfPOS
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
                 {
-                    gTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmount"));
-                    pTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmount"));
-                    cogs += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltTotalCOGS"));
-                    pm += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltAverageProfitMargin"));
-                    salesPrT += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltSalesPreTax"));
-                    salesPoT += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltSalesPostTax"));
+                    governmentTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmount"));
+                    provincialTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmount"));
+                    liquorTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltLiquorTaxAmount"));
+                    costofGoods += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltCostofGoods"));
+                    subTotal += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltSubTotal"));
+                    //profitMargin += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProfitMargin"));
+                    salesDollars += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltSalesDollars"));
+
+                    //profitMarginCount++;
                 }
                 else if (e.Row.RowType == DataControlRowType.Footer)
                 {
-                    Label lblGovTaxTotal = (Label)e.Row.FindControl("lblGovTaxTotal");
-                    Label lblProvTaxTotal = (Label)e.Row.FindControl("lblProvTaxTotal");
-                    Label lblCOGSTotal = (Label)e.Row.FindControl("lblCOGSTotal");
-                    Label lblAverageProfitMarginTotal = (Label)e.Row.FindControl("lblAverageProfitMarginTotal");
-                    Label lblSalesPreTaxTotal = (Label)e.Row.FindControl("lblSalesPreTaxTotal");
-                    Label lblSalesPostTaxTotal = (Label)e.Row.FindControl("lblSalesPostTaxTotal");
-
-                    lblGovTaxTotal.Text = Math.Round(gTax, 2).ToString("C");
-                    lblProvTaxTotal.Text = Math.Round(pTax, 2).ToString("C");
-                    lblCOGSTotal.Text = Math.Round(cogs, 2).ToString("C");
-                    avp = ((salesPrT - cogs) / salesPrT);
-                    lblAverageProfitMarginTotal.Text = String.Format("{0:P}", avp);
-                    lblSalesPreTaxTotal.Text = Math.Round(salesPrT, 2).ToString("C");
-                    lblSalesPostTaxTotal.Text = Math.Round(salesPoT, 2).ToString("C");
+                    e.Row.Cells[2].Text = string.Format("{0:C}", governmentTax);
+                    e.Row.Cells[3].Text = string.Format("{0:C}", provincialTax);
+                    e.Row.Cells[4].Text = string.Format("{0:C}", liquorTax);
+                    e.Row.Cells[5].Text = string.Format("{0:C}", costofGoods);
+                    e.Row.Cells[6].Text = string.Format("{0:C}", subTotal);
+                    e.Row.Cells[7].Text = string.Format("{0:P}", (salesDollars - costofGoods) / salesDollars);
+                    e.Row.Cells[8].Text = string.Format("{0:C}", salesDollars);
                 }
             }
             //Exception catch
@@ -175,72 +133,63 @@ namespace SweetSpotDiscountGolfPOS
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
+
                 object[] passing = (object[])Session["reportInfo"];
-                int timeFrame = Convert.ToInt32(passing[1]);
-                string fileName = "Store Stats Report - " + timeFrame + ".xlsx";
+                DateTime[] reportDates = (DateTime[])passing[0];
+                DateTime startDate = reportDates[0];
+                DateTime endDate = reportDates[1];
+                int locationID = Convert.ToInt32(passing[1]);
+                int timeFrame = Convert.ToInt32(passing[2]);
+
+                DataTable stats = R.returnStoreStats(startDate, endDate, timeFrame, locationID, objPageDetails);
+
+                string fileName = "Store Stats Report-" + LM.ReturnLocationName(locationID, objPageDetails) + "_" + startDate.ToShortDateString() + " - " + endDate.ToShortDateString() + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
-                    int rowAdjust = 0;
                     //Creates a seperate sheet for each data table
                     ExcelWorksheet statsExport = xlPackage.Workbook.Worksheets.Add("Stats");
                     // write to sheet   
                     statsExport.Cells[1, 1].Value = lblDates.Text;
-                    statsExport.Cells[2, 1].Value = "Year";
-                    statsExport.Cells[2, 2].Value = "Month";
-                    if (timeFrame.Equals(1)) { statsExport.Cells[2, 3].Value = "Trade-In Amount"; }
-                    else if (timeFrame.Equals(2)) { statsExport.Cells[2, 3].Value = "Week Start Date"; }
-                    else if (timeFrame.Equals(3)) { rowAdjust = 1; }
-                    
-
-                    statsExport.Cells[2, 4 - rowAdjust].Value = "City Name";
-                    statsExport.Cells[2, 5 - rowAdjust].Value = "Government Tax";
-                    statsExport.Cells[2, 6 - rowAdjust].Value = "Provincial Tax";
-                    statsExport.Cells[2, 7 - rowAdjust].Value = "Total COGS";
-                    statsExport.Cells[2, 8 - rowAdjust].Value = "Average Profit Margin";
-                    statsExport.Cells[2, 9 - rowAdjust].Value = "Sales Pre-Tax";
-                    statsExport.Cells[2, 10 - rowAdjust].Value = "Sales Post-Tax";
+                    statsExport.Cells[2, 1].Value = "Grouped By";
+                    statsExport.Cells[2, 2].Value = "Government Tax";
+                    statsExport.Cells[2, 3].Value = "Provincial Tax";
+                    statsExport.Cells[2, 4].Value = "Liquor Tax";
+                    statsExport.Cells[2, 5].Value = "Cost of Goods";
+                    statsExport.Cells[2, 6].Value = "Sales Pre-Tax";
+                    statsExport.Cells[2, 7].Value = "Average Profit Margin";
+                    statsExport.Cells[2, 8].Value = "Sales Dollars";
                     int recordIndex = 3;
                     foreach (DataRow row in stats.Rows)
-                    {                       
-                        if (!timeFrame.Equals(3))
-                        {
+                    {
+                        //if (timeFrame == 3)
+                        //{
                             statsExport.Cells[recordIndex, 1].Value = row[0].ToString();
-                            statsExport.Cells[recordIndex, 2].Value = row[1].ToString();
-                            DateTime date = Convert.ToDateTime(row[2]);
-                            statsExport.Cells[recordIndex, 3].Value = date.ToString("dd-MM-yyyy");
-                            statsExport.Cells[recordIndex, 4].Value = row[3].ToString();
-                            statsExport.Cells[recordIndex, 5].Value = row[4].ToString();
-                            statsExport.Cells[recordIndex, 6].Value = row[5].ToString();
-                            statsExport.Cells[recordIndex, 7].Value = row[6].ToString();
-                            statsExport.Cells[recordIndex, 8].Value = row[7].ToString();
-                            statsExport.Cells[recordIndex, 9].Value = row[8].ToString();
-                            statsExport.Cells[recordIndex, 10].Value = row[9].ToString();
-                        }
-                        else
-                        {
-                            statsExport.Cells[recordIndex, 1].Value = row[1].ToString(); //Year
-                            statsExport.Cells[recordIndex, 2].Value = row[2].ToString(); //Month
-                            statsExport.Cells[recordIndex, 4 - rowAdjust].Value = row[4].ToString(); //City
-                            statsExport.Cells[recordIndex, 5 - rowAdjust].Value = row[5].ToString(); //GTax
-                            statsExport.Cells[recordIndex, 6 - rowAdjust].Value = row[6].ToString(); //PTax
-                            statsExport.Cells[recordIndex, 7 - rowAdjust].Value = row[7].ToString(); //COGS
-                            statsExport.Cells[recordIndex, 8 - rowAdjust].Value = row[8].ToString(); //AVP
-                            statsExport.Cells[recordIndex, 9 - rowAdjust].Value = row[9].ToString(); //Sale pre
-                            statsExport.Cells[recordIndex, 10 - rowAdjust].Value = row[10].ToString(); //Sale pos
-                        }
-                        
-                           
+                        //}
+                        //else
+                        //{
+                            //statsExport.Cells[recordIndex, 1].Value = Convert.ToDateTime(row[0]).ToString("dd-MM-yyyy");
+                        //}
+                        statsExport.Cells[recordIndex, 2].Value = Convert.ToDouble(row[1]).ToString("C");
+                        statsExport.Cells[recordIndex, 3].Value = Convert.ToDouble(row[2]).ToString("C");
+                        statsExport.Cells[recordIndex, 4].Value = Convert.ToDouble(row[3]).ToString("C");
+                        statsExport.Cells[recordIndex, 5].Value = Convert.ToDouble(row[4]).ToString("C");
+                        statsExport.Cells[recordIndex, 6].Value = Convert.ToDouble(row[5]).ToString("C");
+                        statsExport.Cells[recordIndex, 7].Value = Convert.ToDouble(row[6]).ToString("P");
+                        statsExport.Cells[recordIndex, 8].Value = Convert.ToDouble(row[7]).ToString("C");
+
                         recordIndex++;
                     }
                     //Totals
-                    statsExport.Cells[recordIndex + 1, 1].Value = "Totals:";                    
-                    statsExport.Cells[recordIndex + 1, 5 - rowAdjust].Value = gTax.ToString();
-                    statsExport.Cells[recordIndex + 1, 6 - rowAdjust].Value = pTax.ToString();
-                    statsExport.Cells[recordIndex + 1, 7 - rowAdjust].Value = cogs.ToString();
-                    statsExport.Cells[recordIndex + 1, 8 - rowAdjust].Value = avp.ToString();
-                    statsExport.Cells[recordIndex + 1, 9 - rowAdjust].Value = salesPrT.ToString();
-                    statsExport.Cells[recordIndex + 1, 10 - rowAdjust].Value = salesPoT.ToString();
+                    statsExport.Cells[recordIndex + 1, 1].Value = "Totals:";
+                    statsExport.Cells[recordIndex + 1, 2].Value = governmentTax.ToString("C");
+                    statsExport.Cells[recordIndex + 1, 3].Value = provincialTax.ToString("C");
+                    statsExport.Cells[recordIndex + 1, 4].Value = liquorTax.ToString("C");
+                    statsExport.Cells[recordIndex + 1, 5].Value = costofGoods.ToString("C");
+                    statsExport.Cells[recordIndex + 1, 6].Value = subTotal.ToString("C");
+                    //statsExport.Cells[recordIndex + 1, 7].Value = (profitMargin / profitMarginCount).ToString("P");
+                    statsExport.Cells[recordIndex + 1, 8].Value = salesDollars.ToString();
+
                     Response.Clear();
                     Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
                     Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";

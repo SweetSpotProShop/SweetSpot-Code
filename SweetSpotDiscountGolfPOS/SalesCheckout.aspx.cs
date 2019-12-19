@@ -18,6 +18,7 @@ namespace SweetSpotDiscountGolfPOS
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU;
         InvoiceManager IM = new InvoiceManager();
+        InvoiceItemsManager IIM = new InvoiceItemsManager();
         //private static Invoice invoice;
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -42,7 +43,8 @@ namespace SweetSpotDiscountGolfPOS
                         //TaxManager TM = new TaxManager();
 
                         //Checks if shipping was charged 
-                        Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
+                        //Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
+                        Invoice invoice = (Invoice)Session["currentInvoice"];
                         UpdatePageTotals();
                     }
                 }
@@ -228,100 +230,142 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        //protected void btnRemoveGovTax(object sender, EventArgs e)
-        //{
-        //    //Collects current method for error tracking
-        //    string method = "btnRemoveGovTax";
-        //    object[] objPageDetails = { Session["currPage"].ToString(), method };
-        //    try
-        //    {
-        //        TaxManager TM = new TaxManager();
-        //        InvoiceManager IM = new InvoiceManager();
-        //        //Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0];
-        //        //object[] taxText = { btnRemoveGov.Text, "Do Nothing" };
-        //        //object[] results = TM.ReturnChargedTaxForSale(invoice, taxText, objPageDetails);
-        //        //invoice = (Invoice)results[0];
-        //        //object[] taxStatus = (object[])results[1];
-        //        //if (Convert.ToBoolean(taxStatus[0]))
-        //        //{
-        //        lblGovernment.Visible = true;
-        //        if (!invoice.bitChargeGST)
-        //        {
-        //            lblGovernmentAmount.Text = invoice.fltGovernmentTaxAmount.ToString("C");
-        //            invoice.bitChargeGST = true;
-        //            //btnRemoveGov.Text = "Remove GST";
-        //        }
-        //        else
-        //        {
-        //            lblGovernmentAmount.Text = 0.ToString("C");
-        //            invoice.bitChargeGST = false;
-        //            //btnRemoveGov.Text = "Add GST";
-        //        }
-        //        lblGovernmentAmount.Visible = true;
-        //        //btnRemoveGov.Visible = true;
-        //        //}
-        //        IM.UpdateCurrentInvoice(invoice, objPageDetails);
-        //        UpdatePageTotals();
-        //    }
-        //    //Exception catch
-        //    catch (ThreadAbortException tae) { }
-        //    catch (Exception ex)
-        //    {
-        //        //Log all info into error table
-        //        ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-        //        //Display message box
-        //        MessageBox.ShowMessage("An Error has occurred and been logged. "
-        //            + "If you continue to receive this message please contact "
-        //            + "your system administrator.", this);
-        //    }
-        //}
-        //protected void btnRemoveProvTax(object sender, EventArgs e)
-        //{
-        //    //Collects current method for error tracking
-        //    string method = "btnRemoveProvTax";
-        //    object[] objPageDetails = { Session["currPage"].ToString(), method };
-        //    try
-        //    {
-        //        TaxManager TM = new TaxManager();
-        //        InvoiceManager IM = new InvoiceManager();
-        //        //Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0];
-        //        //object[] taxText = { "Do Nothing", btnRemoveProv.Text };
-        //        //object[] results = TM.ReturnChargedTaxForSale(invoice, taxText, objPageDetails);
-        //        //invoice = (Invoice)results[0];
-        //        //object[] taxStatus = (object[])results[1];
-        //        //if (Convert.ToBoolean(taxStatus[2]))
-        //        //{
-        //        lblProvincial.Visible = true;
-        //        if (!invoice.bitChargePST)
-        //        {
-        //            lblProvincialAmount.Text = invoice.fltProvincialTaxAmount.ToString("C");
-        //            invoice.bitChargePST = true;
-        //            //btnRemoveProv.Text = "Remove PST";
-        //        }
-        //        else
-        //        {
-        //            lblProvincialAmount.Text = 0.ToString("C");
-        //            invoice.bitChargePST = false;
-        //            //btnRemoveProv.Text = "Add PST";
-        //        }
-        //        lblProvincialAmount.Visible = true;
-        //        //btnRemoveProv.Visible = true;
-        //        //}
-        //        IM.UpdateCurrentInvoice(invoice, objPageDetails);
-        //        UpdatePageTotals();
-        //    }
-        //    //Exception catch
-        //    catch (ThreadAbortException tae) { }
-        //    catch (Exception ex)
-        //    {
-        //        //Log all info into error table
-        //        ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-        //        //Display message box
-        //        MessageBox.ShowMessage("An Error has occurred and been logged. "
-        //            + "If you continue to receive this message please contact "
-        //            + "your system administrator.", this);
-        //    }
-        //}
+        protected void btnRemoveGovTax(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnRemoveGovTax";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
+            {
+                TaxManager TM = new TaxManager();
+                Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
+                bool chargeGST;
+                if (!btnRemoveGov.Text.Contains("Remove"))
+                {
+                    chargeGST = true;
+                }
+                else
+                {
+                    chargeGST = false;
+                }
+                
+                foreach (InvoiceItems invoiceItem in invoice.invoiceItems)
+                {
+                    foreach (InvoiceItemTax invoiceItemTax in invoiceItem.invoiceItemTaxes)
+                    {
+                        if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("GST", objPageDetails) || invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("HST", objPageDetails))
+                        {
+                            invoiceItemTax.bitIsTaxCharged = chargeGST;
+                        }
+                    }
+                    IIM.UpdateItemTaxesFromCurrentSalesTableActualQuery(invoiceItem, invoice.intTransactionTypeID, objPageDetails);
+                }
+
+                IM.UpdateCurrentInvoice(invoice, objPageDetails);                
+                UpdatePageTotals();
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+        protected void btnRemoveProvTax(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnRemoveProvTax";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
+            {
+                TaxManager TM = new TaxManager();                
+                Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
+                bool chargePST;
+                if (!btnRemoveProv.Text.Contains("Remove"))
+                {
+                    chargePST = true;
+                }
+                else
+                {
+                    chargePST = false;
+                }
+                foreach (InvoiceItems invoiceItem in invoice.invoiceItems)
+                {
+                    foreach (InvoiceItemTax invoiceItemTax in invoiceItem.invoiceItemTaxes)
+                    {
+                        if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("PST", objPageDetails) || invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("RST", objPageDetails) || invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("QST", objPageDetails))
+                        {
+                            invoiceItemTax.bitIsTaxCharged = chargePST;
+                        }
+                    }
+                    IIM.UpdateItemTaxesFromCurrentSalesTableActualQuery(invoiceItem, invoice.intTransactionTypeID, objPageDetails);
+                }
+
+                IM.UpdateCurrentInvoice(invoice, objPageDetails);
+                UpdatePageTotals();
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+        protected void btnRemoveLiqTax(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnRemoveLiqTax";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
+            {
+                TaxManager TM = new TaxManager();                
+                Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
+                bool chargeLCT;
+                if (!btnRemoveLiq.Text.Contains("Remove"))
+                {
+                    chargeLCT = true;
+                }
+                else
+                {
+                    chargeLCT = false;
+                }
+                foreach (InvoiceItems invoiceItem in invoice.invoiceItems)
+                {
+                    foreach (InvoiceItemTax invoiceItemTax in invoiceItem.invoiceItemTaxes)
+                    {
+                        if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("LCT", objPageDetails))
+                        {
+                            invoiceItemTax.bitIsTaxCharged = chargeLCT;
+                        }
+                    }
+                    IIM.UpdateItemTaxesFromCurrentSalesTableActualQuery(invoiceItem, invoice.intTransactionTypeID, objPageDetails);
+                }
+
+                IM.UpdateCurrentInvoice(invoice, objPageDetails);
+                UpdatePageTotals();
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
         //Other functionality
         protected void btnCancelSale_Click(object sender, EventArgs e)
         {
@@ -331,7 +375,7 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 InvoiceItemsManager IIM = new InvoiceItemsManager();
-                Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
+                Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
                 IIM.LoopThroughTheItemsToReturnToInventory(invoice.intInvoiceID, invoice.dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
                 IIM.RemoveInitialTotalsForTable(invoice.intInvoiceID, objPageDetails);
                 //Changes to the Home page
@@ -358,7 +402,7 @@ namespace SweetSpotDiscountGolfPOS
             {
                 //TODO: btnExitSale_Click is good as it doesn't read the new values. It removes the entry 
                 TaxManager TM = new TaxManager();
-                Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
+                Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
                 //object[] taxText = { "Remove GST", "Remove PST" };
                 //object[] results = TM.ReturnChargedTaxForSale(invoice, taxText, objPageDetails);
                 invoice.intTransactionTypeID = 1;
@@ -377,33 +421,33 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnLayaway_Click(object sender, EventArgs e)
-        {
-            //Collects current method for error tracking
-            string method = "btnLayaway_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
-            try
-            {
-                //TaxManager TM = new TaxManager();
-                //Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0];
-                //object[] taxText = { "Remove GST", "Remove PST" };
-                //object[] results = TM.ReturnChargedTaxForSale(I, taxText, objPageDetails);
-                //I.transactionType = 6;
-                //IM.UpdateCurrentInvoice(I, objPageDetails);
-                //Response.Redirect("HomePage.aspx", false);
-            }
-            //Exception catch
-            catch (ThreadAbortException tae) { }
-            catch (Exception ex)
-            {
-                //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-                //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator.", this);
-            }
-        }
+        //protected void btnLayaway_Click(object sender, EventArgs e)
+        //{
+        //    //Collects current method for error tracking
+        //    string method = "btnLayaway_Click";
+        //    object[] objPageDetails = { Session["currPage"].ToString(), method };
+        //    try
+        //    {
+        //        //TaxManager TM = new TaxManager();
+        //        //Invoice I = IM.ReturnCurrentInvoice(Request.QueryString["inv"].ToString(), objPageDetails)[0];
+        //        //object[] taxText = { "Remove GST", "Remove PST" };
+        //        //object[] results = TM.ReturnChargedTaxForSale(I, taxText, objPageDetails);
+        //        //I.transactionType = 6;
+        //        //IM.UpdateCurrentInvoice(I, objPageDetails);
+        //        //Response.Redirect("HomePage.aspx", false);
+        //    }
+        //    //Exception catch
+        //    catch (ThreadAbortException tae) { }
+        //    catch (Exception ex)
+        //    {
+        //        //Log all info into error table
+        //        ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+        //        //Display message box
+        //        MessageBox.ShowMessage("An Error has occurred and been logged. "
+        //            + "If you continue to receive this message please contact "
+        //            + "your system administrator.", this);
+        //    }
+        //}
         protected void btnReturnToCart_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -450,7 +494,7 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 CU = (CurrentUser)Session["currentUser"];
-                Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
+                Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
                 //Employee
                 EmployeeManager EM = new EmployeeManager();
                 if (EM.returnCanEmployeeMakeSale(Convert.ToInt32(txtEmployeePasscode.Text), objPageDetails))
@@ -466,7 +510,7 @@ namespace SweetSpotDiscountGolfPOS
                         if (IM.VerifyMOPHasBeenAdded(invoice.intInvoiceID, objPageDetails))
                         {
                             //Stores all the Sales data to the database
-                            invoice = IM.ReturnCurrentInvoice(invoice.intInvoiceID, CU.location.intProvinceID, objPageDetails)[0];
+                            invoice = IM.CallReturnCurrentInvoice(invoice.intInvoiceID, objPageDetails)[0];
                             invoice.employee = EM.returnEmployeeFromPassword(Convert.ToInt32(txtEmployeePasscode.Text), objPageDetails)[0];
                             invoice.varAdditionalInformation = txtComments.Text;
                             IM.FinalizeInvoice(invoice, "tbl_invoiceItem", objPageDetails);
@@ -579,7 +623,8 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
+                Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
+                TaxManager TM = new TaxManager();
                 //Loops through each mop
                 double dblAmountPaid = 0;
                 foreach (var payment in invoice.invoiceMops)
@@ -590,15 +635,18 @@ namespace SweetSpotDiscountGolfPOS
                 gvCurrentMOPs.DataSource = invoice.invoiceMops;
                 gvCurrentMOPs.DataBind();
 
+                string governmentName = "GST";
+                string provincialName = "PST";
+                string liquorName = "LCT";
                 double governmentTax = 0;
                 double provincialTax = 0;
                 double liquorTax = 0;
 
                 foreach (var invoiceItem in invoice.invoiceItems)
                 {
-                    foreach(var invoiceItemTax in invoiceItem.invoiceItemTaxes)
+                    foreach (var invoiceItemTax in invoiceItem.invoiceItemTaxes)
                     {
-                        if (invoiceItemTax.intTaxTypeID == 1 || invoiceItemTax.intTaxTypeID == 3)
+                        if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("GST", objPageDetails) || invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("HST", objPageDetails))
                         {
                             if (invoiceItemTax.bitIsTaxCharged)
                             {
@@ -606,9 +654,12 @@ namespace SweetSpotDiscountGolfPOS
                                 lblGovernment.Visible = true;
                                 lblGovernment.Text = invoiceItemTax.varTaxName;
                                 lblGovernmentAmount.Visible = true;
+                                btnRemoveGov.Visible = true;
+                                btnRemoveGov.Text = "Remove " + invoiceItemTax.varTaxName.ToString();
                             }
+                            governmentName = invoiceItemTax.varTaxName.ToString();
                         }
-                        else if(invoiceItemTax.intTaxTypeID == 2 || invoiceItemTax.intTaxTypeID == 4 || invoiceItemTax.intTaxTypeID == 5)
+                        else if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("PST", objPageDetails) || invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("RST", objPageDetails) || invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("QST", objPageDetails))
                         {
                             if (invoiceItemTax.bitIsTaxCharged)
                             {
@@ -616,9 +667,12 @@ namespace SweetSpotDiscountGolfPOS
                                 lblProvincial.Visible = true;
                                 lblProvincial.Text = invoiceItemTax.varTaxName;
                                 lblProvincialAmount.Visible = true;
+                                btnRemoveProv.Visible = true;
+                                btnRemoveProv.Text = "Remove " + invoiceItemTax.varTaxName.ToString();
                             }
+                            provincialName = invoiceItemTax.varTaxName.ToString();
                         }
-                        else if (invoiceItemTax.intTaxTypeID == 6)
+                        else if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("LCT", objPageDetails))
                         {
                             if (invoiceItemTax.bitIsTaxCharged)
                             {
@@ -626,9 +680,25 @@ namespace SweetSpotDiscountGolfPOS
                                 lblLiquorTax.Visible = true;
                                 lblLiquorTax.Text = invoiceItemTax.varTaxName;
                                 lblLiquorTaxAmount.Visible = true;
+                                btnRemoveLiq.Visible = true;
+                                btnRemoveLiq.Text = "Remove " + invoiceItemTax.varTaxName.ToString();
                             }
+                            liquorName = invoiceItemTax.varTaxName.ToString();
                         }
                     }
+                }
+
+                if (governmentTax == 0)
+                {
+                    btnRemoveGov.Text = "Add " + governmentName.ToString();
+                }
+                if (provincialTax == 0)
+                {
+                    btnRemoveProv.Text = "Add " + provincialName.ToString();
+                }
+                if (liquorTax == 0)
+                {
+                    btnRemoveLiq.Text = "Add " + liquorName.ToString();
                 }
 
                 lblGovernmentAmount.Text = governmentTax.ToString("C");

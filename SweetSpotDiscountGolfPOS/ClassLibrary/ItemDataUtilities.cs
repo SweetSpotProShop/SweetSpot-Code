@@ -405,6 +405,14 @@ namespace SweetSpotProShop
                 {
                     chargeTax = false;
                 }
+                if (TM.CheckForQuebecSalesTax(Convert.ToInt32(TR[0]), objPageDetails))
+                {
+                    chargeTax = false;
+                }
+                if (TM.CheckForRetailSalesTax(Convert.ToInt32(TR[0]), objPageDetails))
+                {
+                    chargeTax = false;
+                }
                 SaveTaxIDForNewInventoryItem(inventoryID, Convert.ToInt32(TR[0]), chargeTax, objPageDetails);
             }
         }

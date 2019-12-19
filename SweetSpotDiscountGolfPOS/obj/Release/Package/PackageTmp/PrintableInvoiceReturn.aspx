@@ -61,8 +61,8 @@
         <asp:Table runat="server">
             <asp:TableRow>
                 <asp:TableCell CssClass="leftSide">
-                    <div id="image_simple">
-                        <img src="Images/combinedLogo.jpg" />
+                    <div id="image_simple">                        
+						<img src="Images/combinedLogo.jpg" />
                     </div>
                 </asp:TableCell>
                 <asp:TableCell>

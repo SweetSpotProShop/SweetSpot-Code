@@ -27,7 +27,7 @@
         </ul>
     </div>
     <div id="image_simple">
-        <img src="Images/combinedLogo.jpg" />
+		<img src="Images/combinedLogo.jpg" />
     </div>
     <link rel="stylesheet" type="text/css" href="CSS/MainStyleSheet.css" />
 </asp:Content>

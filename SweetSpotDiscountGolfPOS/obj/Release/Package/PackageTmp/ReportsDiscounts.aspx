@@ -65,7 +65,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Balance Due" HeaderStyle-Width="17%">
                         <ItemTemplate>
-                            <asp:Label ID="lblBalanceDue" runat="server" Text='<%#Eval("fltBalanceDue","{0:C}") %>' />
+                            <asp:Label ID="lblBalanceDue" runat="server" Text='<%# (Convert.ToDouble(Eval("fltBalanceDue")) + Convert.ToDouble(Eval("fltGovernmentTaxAmount")) + Convert.ToDouble(Eval("fltProvincialTaxAmount")) + Convert.ToDouble(Eval("fltLiquorTaxAmount"))).ToString("C") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Employee Name" HeaderStyle-Width="18%">

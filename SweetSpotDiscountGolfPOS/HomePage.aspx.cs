@@ -65,6 +65,7 @@ namespace SweetSpotDiscountGolfPOS
                     //populate gridview with todays sales
                     grdSameDaySales.DataSource = R.getInvoiceBySaleDate(DateTime.Today, DateTime.Today, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
                     grdSameDaySales.DataBind();
+                    MergeRows(grdSameDaySales);
                 }
             }
             //Exception catch
@@ -141,7 +142,7 @@ namespace SweetSpotDiscountGolfPOS
                     e.Row.Cells[10].Text = String.Format("{0:C}", totalMOPAmount);
                 }
                 currentRow++;
-            }
+            }            
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
@@ -164,34 +165,23 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     GridViewRow row = gridView.Rows[rowIndex];
                     GridViewRow previousRow = gridView.Rows[rowIndex + 1];
-
-                    string rowText = row.Cells[1].Text;
-                    string previousRowText = previousRow.Cells[1].Text;
-                    string rowInvoice;
-                    string prevRowInvoice;
+                    //string rowText = row.Cells[1].Text;
+                    //string previousRowText = previousRow.Cells[1].Text;
+                    string rowInvoice = "";
+                    string prevRowInvoice = "";
                     LinkButton lbtnRow = (LinkButton)row.FindControl("lbtnInvoiceNumber");
                     LinkButton lbtnPrevRow = (LinkButton)previousRow.FindControl("lbtnInvoiceNumber");
-                    if (lbtnRow != null)
-                        rowInvoice = lbtnRow.Text;
-                    else
-                        rowInvoice = "";
-                    if (lbtnPrevRow != null)
-                        prevRowInvoice = lbtnPrevRow.Text;
-                    else
-                        prevRowInvoice = "";
-                    if (rowText.Equals(previousRowText) && !rowText.isNumber() && !previousRowText.isNumber())
-                    {
-                        row.Cells[1].RowSpan = previousRow.Cells[1].RowSpan < 2
-                                         ? 2 // merge the first two cells
-                                         : previousRow.Cells[1].RowSpan + 1; //any subsequent merging
-                        previousRow.Cells[1].Visible = false;
-                    }
+                    if (lbtnRow != null) { rowInvoice = lbtnRow.Text; }                    
+                    if (lbtnPrevRow != null) { prevRowInvoice = lbtnPrevRow.Text; }
                     if (rowInvoice.Equals(prevRowInvoice) || prevRowInvoice.Equals(""))
                     {
-                        row.Cells[0].RowSpan = previousRow.Cells[0].RowSpan < 2
-                                         ? 2 // merge the first two cells
-                                         : previousRow.Cells[0].RowSpan + 1; //any subsequent merging
-                        previousRow.Cells[0].Visible = false;
+                        for (int i = 0; i < 9; i++)
+                        {
+                            row.Cells[i].RowSpan = previousRow.Cells[i].RowSpan < 2 ? 2 // merge the first two cells
+                                             : previousRow.Cells[i].RowSpan + 1; //any subsequent merging
+                            previousRow.Cells[i].Visible = false;
+
+                        }
                     }
                 }
             }
