@@ -253,13 +253,16 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             cashout.fltSystemCountedBasedOnSystemMastercard = Convert.ToDouble(dt1.Rows[0][4].ToString());
             cashout.fltSystemCountedBasedOnSystemVisa = Convert.ToDouble(dt1.Rows[0][5].ToString());
             cashout.fltSalesSubTotal = Convert.ToDouble(dt2.Rows[0][1].ToString());
-            cashout.fltGovernmentTaxAmount = Convert.ToDouble(dt2.Rows[0][2].ToString());            
-            //cashout.fltHarmonizedTaxAmount = 0;
+            cashout.fltGovernmentTaxAmount = Convert.ToDouble(dt2.Rows[0][2].ToString());
             cashout.fltLiquorTaxAmount = Convert.ToDouble(dt2.Rows[0][4].ToString());
             cashout.fltProvincialTaxAmount = Convert.ToDouble(dt2.Rows[0][3].ToString());
-            //cashout.fltQuebecTaxAmount = 0;
-            //cashout.fltRetailTaxAmount = 0;
-            //cashout.intSalesCount = 0;
+
+            //cashout.fltHarmonizedTaxAmount = Convert.ToDouble(dt2.Rows[0][3].ToString());
+            //cashout.fltLiquorTaxAmount = Convert.ToDouble(dt2.Rows[0][4].ToString());
+            //cashout.fltProvincialTaxAmount = Convert.ToDouble(dt2.Rows[0][5].ToString());
+            //cashout.fltQuebecTaxAmount = Convert.ToDouble(dt2.Rows[0][6].ToString());
+            //cashout.fltRetailTaxAmount = Convert.ToDouble(dt2.Rows[0][7].ToString());
+            //cashout.intSalesCount = Convert.ToDouble(dt2.Rows[0][8].ToString());
 
             return cashout;
         }
@@ -1649,7 +1652,78 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
-        public List<Cashout> ReturnSelectedCashout(object[] args, object[] objPageDetails)
+        public Cashout CallSelectedCashoutToReturn(object[] args, object[] objPageDetails)
+        {
+            Cashout cOut;
+            //if (CheckForNewSales(args, objPageDetails))
+            //{
+                cOut = RecalculateCashoutTotals(args, objPageDetails);
+            //}
+            //else
+            //{
+            //    cOut = ReturnSelectedCashout(args, objPageDetails)[0];
+            //}
+            return cOut;
+        }
+        private bool CheckForNewSales(object[] args, object[] objPageDetails)
+        {
+            string strQueryName = "CheckForNewSales";
+            bool newSales = false;
+
+            string sqlCmd = "SELECT (SELECT COUNT(intInvoiceID) FROM tbl_invoice WHERE dtmInvoiceDate = @dtmSelectedDate AND intLocationID = @intLocationID) "
+                + "- C.intSalesCount FROM tbl_cashout C WHERE C.dtmCashoutDate = @dtmSelectedDate AND C.intLocationID = @intLocationID";
+            object[][] parms =
+            {
+                new object[] { "@dtmSelectedDate", DateTime.Parse(args[0].ToString()).ToShortDateString() },
+                new object[] { "@intLocationID", Convert.ToInt32(args[1]) }
+            };
+
+            if (DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) > 0)            
+            {
+                newSales = true;
+            }
+            return newSales;
+        }
+        private Cashout RecalculateCashoutTotals(object[] args, object[] objPageDetails)
+        {
+            Cashout cOut = CreateNewCashout(DateTime.Parse(args[0].ToString()), Convert.ToInt32(args[1]), objPageDetails);
+            UpdateCalculatedTotalsCashout(cOut, objPageDetails);
+            return ReturnSelectedCashout(args, objPageDetails)[0];
+        }
+
+        private void UpdateCalculatedTotalsCashout(Cashout cashout, object[] objPageDetails)
+        {
+            string strQueryName = "UpdateCashout";
+            string sqlCmd = "UPDATE tbl_cashout SET fltSystemCountedBasedOnSystemTradeIn = @fltSystemCountedBasedOnSystemTradeIn, fltSystemCountedBasedOnSystemGiftCard "
+                + "= @fltSystemCountedBasedOnSystemGiftCard, fltSystemCountedBasedOnSystemCash = @fltSystemCountedBasedOnSystemCash, fltSystemCountedBasedOnSystemDebit "
+                + "= @fltSystemCountedBasedOnSystemDebit, fltSystemCountedBasedOnSystemMastercard = @fltSystemCountedBasedOnSystemMastercard, "
+                + "fltSystemCountedBasedOnSystemVisa = @fltSystemCountedBasedOnSystemVisa, fltSalesSubTotal = @fltSalesSubTotal, fltGovernmentTaxAmount = "
+                + "@fltGovernmentTaxAmount, fltProvincialTaxAmount = @fltProvincialTaxAmount, fltLiquorTaxAmount = @fltLiquorTaxAmount " //, fltHarmonizedTaxAmount = "
+                //+ "@fltHarmonizedTaxAmount, fltQuebecTaxAmount = @fltQuebecTaxAmount, fltRetailTaxAmount = @fltRetailTaxAmount, intSalesCount = @intSalesCount "
+                + "WHERE dtmCashoutDate = @dtmCashoutDate AND intLocationID = @intLocationID";
+
+            object[][] parms =
+            {
+                new object[] { "@dtmCashoutDate", cashout.dtmCashoutDate.ToShortDateString() },                
+                new object[] { "@fltSystemCountedBasedOnSystemTradeIn", cashout.fltSystemCountedBasedOnSystemTradeIn },
+                new object[] { "@fltSystemCountedBasedOnSystemGiftCard", cashout.fltSystemCountedBasedOnSystemGiftCard },
+                new object[] { "@fltSystemCountedBasedOnSystemCash", cashout.fltSystemCountedBasedOnSystemCash },
+                new object[] { "@fltSystemCountedBasedOnSystemDebit", cashout.fltSystemCountedBasedOnSystemDebit },
+                new object[] { "@fltSystemCountedBasedOnSystemMastercard", cashout.fltSystemCountedBasedOnSystemMastercard },
+                new object[] { "@fltSystemCountedBasedOnSystemVisa", cashout.fltSystemCountedBasedOnSystemVisa },
+                new object[] { "@fltSalesSubTotal", cashout.fltSalesSubTotal },
+                new object[] { "@fltGovernmentTaxAmount", cashout.fltGovernmentTaxAmount },
+                new object[] { "@fltProvincialTaxAmount", cashout.fltProvincialTaxAmount },
+                new object[] { "@fltLiquorTaxAmount", cashout.fltLiquorTaxAmount },
+                //new object[] { "@fltHarmonizedTaxAmount", cashout.fltHarmonizedTaxAmount },
+                //new object[] { "@fltQuebecTaxAmount", cashout.fltQuebecTaxAmount },
+                //new object[] { "@fltRetailTaxAmount", cashout.fltRetailTaxAmount },
+                //new object[] { "@intSalesCount", cashout.intSalesCount },
+                new object[] { "@intLocationID", cashout.intLocationID }
+            };
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+        }
+        private List<Cashout> ReturnSelectedCashout(object[] args, object[] objPageDetails)
         {
             string strQueryName = "ReturnSelectedCashout";
             string sqlCmd = "SELECT dtmCashoutDate, intLocationID, intEmployeeID, fltSystemCountedBasedOnSystemTradeIn, fltSystemCountedBasedOnSystemGiftCard, "

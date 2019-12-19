@@ -48,7 +48,7 @@ namespace SweetSpotDiscountGolfPOS
                         lblCashoutDate.Text = "Cashout on: " + selectedDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
                         if (R.CashoutExists(args, objPageDetails))
                         {
-                            cashout = R.ReturnSelectedCashout(args, objPageDetails)[0];
+                            cashout = R.CallSelectedCashoutToReturn(args, objPageDetails);
 
                             lblTradeInDisplay.Text = cashout.fltSystemCountedBasedOnSystemTradeIn.ToString("C");
                             lblGiftCardDisplay.Text = cashout.fltSystemCountedBasedOnSystemGiftCard.ToString("C");
@@ -178,7 +178,7 @@ namespace SweetSpotDiscountGolfPOS
             {                
                 calculteMethod();
                 object[] args = { DateTime.Parse(Request.QueryString["selectedDate"].ToString()), Convert.ToInt32(Request.QueryString["location"].ToString()) };
-                Cashout cashout = R.ReturnSelectedCashout(args, objPageDetails)[0];
+                Cashout cashout = R.CallSelectedCashoutToReturn(args, objPageDetails);
 
                 //Creates new cashout
                 cashout.fltManuallyCountedBasedOnReceiptsTradeIn = Convert.ToDouble(txtTradeIn.Text);
