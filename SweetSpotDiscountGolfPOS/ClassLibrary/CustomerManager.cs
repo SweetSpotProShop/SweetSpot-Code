@@ -196,5 +196,25 @@ namespace SweetSpotDiscountGolfPOS.ClassLibrary
             return ConvertFromDataTableToCustomer(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
             //return ConvertFromDataTableToCustomer(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
+
+        public bool isGuestCustomer(int customerID, int locationID, object[] objPageDetails)
+        {
+            bool bolGuestCustomer = false;
+            if(customerID == ReturnGuestCustomerForLocation(locationID, objPageDetails))
+            {
+                bolGuestCustomer = true;
+            }
+            return bolGuestCustomer;
+        }
+        private int ReturnGuestCustomerForLocation(int locationID, object[] objPageDetails)
+        {
+            string strQueryName = "ReturnGuestCustomerForLocation";
+            string sqlCmd = "SELECT intCustomerID FROM tbl_guestCustomerPerLocation WHERE intLocationID = @intLocationID";
+            object[][] parms =
+            {
+                new object[] { "@intLocationID", locationID }
+            };
+            return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
+        }
     }
 }

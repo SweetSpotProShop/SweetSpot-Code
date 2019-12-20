@@ -60,6 +60,7 @@ namespace SweetSpotDiscountGolfPOS
                 Button pressedBTN = (Button)sender;
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("pressedBTN", pressedBTN.ID.ToString());
+                nameValues.Set("MTI", "true");
                 Response.Redirect("LoungeSalesCart.aspx?" + nameValues, false);
             }
             //Exception catch
@@ -83,6 +84,7 @@ namespace SweetSpotDiscountGolfPOS
                 Button pressedBTN = (Button)sender;
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("pressedBTN", pressedBTN.ID.ToString());
+                nameValues.Set("MTI", "false");
                 Response.Redirect("LoungeSalesCart.aspx?" + nameValues, false);
             }
             //Exception catch
@@ -106,6 +108,7 @@ namespace SweetSpotDiscountGolfPOS
                 Button pressedBTN = (Button)sender;
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("pressedBTN", pressedBTN.ID.ToString());
+                nameValues.Set("MTI", "true");
                 Response.Redirect("LoungeSalesCart.aspx?" + nameValues, false);
             }
             //Exception catch
@@ -129,6 +132,7 @@ namespace SweetSpotDiscountGolfPOS
                 Button pressedBTN = (Button)sender;
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("pressedBTN", pressedBTN.ID.ToString());
+                nameValues.Set("MTI", "false");
                 Response.Redirect("LoungeSalesCart.aspx?" + nameValues, false);
             }
             //Exception catch
@@ -160,6 +164,10 @@ namespace SweetSpotDiscountGolfPOS
                         if(button.ID.Contains(dr[0].ToString()))
                         {
                             button.Enabled = true;
+                        }
+                        if(button.ID.ToString() == (dr[0].ToString() + dr[1].ToString()).ToString())
+                        {
+                            button.Text = dr[2].ToString();
                         }
                     }
                 }
