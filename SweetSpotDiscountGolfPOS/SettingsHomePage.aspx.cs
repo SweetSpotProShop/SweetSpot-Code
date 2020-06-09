@@ -30,8 +30,8 @@ namespace SweetSpotDiscountGolfPOS
         TaxManager TM = new TaxManager();
         LocationManager LM = new LocationManager();
         DatabaseCalls DBC = new DatabaseCalls();
+        CustomerManager CM = new CustomerManager();
 
-        //SweetShopManager ssm = new SweetShopManager();
         internal static readonly Page aspx;
         public int counter;
         public int total;
@@ -654,18 +654,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                //Sets up database connection
-                string connectionString = ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString;
-                SqlConnection sqlCon = new SqlConnection(connectionString);
-                //Selects everything form the invoice table
-                DataTable emailTable = new DataTable();
-                using (var cmd = new SqlCommand("getCustomerEmailAll", sqlCon)) //Calling the SP   
-                using (var da = new SqlDataAdapter(cmd))
-                {
-                    //Executing the SP
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    da.Fill(emailTable);
-                }
+                DataTable emailTable = CM.CallReturnCustomerEmailAddresses(objPageDetails);
                 DataColumnCollection headers = emailTable.Columns;
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -704,13 +693,14 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
+
         protected void btnAddModel_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
