@@ -11,7 +11,7 @@ namespace SweetSpotDiscountGolfPOS.FP
 {
     public class InvoiceManager
     {
-        DatabaseCalls DBC = new DatabaseCalls();
+        readonly DatabaseCalls DBC = new DatabaseCalls();
 
 
         //Converters
@@ -771,17 +771,17 @@ namespace SweetSpotDiscountGolfPOS.FP
             //DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
         //used in new POS
-        private int ReturnNextInvoiceNumber(object[] objPageDetails)
-        {
-            string strQueryName = "ReturnNextInvoiceNumber";
-            string sqlCmd = "SELECT invoiceNum FROM tbl_InvoiceNumbers";
-            object[][] parms = { };
-            int nextInvoiceNum = DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) + 1;
-            //Creates the invoice with the next invoice num
-            CreateInvoiceNum(nextInvoiceNum, objPageDetails);
-            //Returns the next invoiceNum
-            return nextInvoiceNum;
-        }
+        //private int ReturnNextInvoiceNumber(object[] objPageDetails)
+        //{
+        //    string strQueryName = "ReturnNextInvoiceNumber";
+        //    string sqlCmd = "SELECT invoiceNum FROM tbl_InvoiceNumbers";
+        //    object[][] parms = { };
+        //    int nextInvoiceNum = DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) + 1;
+        //    //Creates the invoice with the next invoice num
+        //    CreateInvoiceNum(nextInvoiceNum, objPageDetails);
+        //    //Returns the next invoiceNum
+        //    return nextInvoiceNum;
+        //}
         private string ReturnNextInvoiceNumberForNewInvoice(CurrentUser cu, object[] objPageDetails)
         {
             string strQueryName = "ReturnNextInvoiceNumberForNewInvoice";
@@ -841,18 +841,18 @@ namespace SweetSpotDiscountGolfPOS.FP
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private string ReturnTransactionName(int transactionTypeID, object[] objPageDetails)
-        {
-            string strQueryName = "ReturnTransactionName";
-            string sqlCmd = "SELECT varTransactionName FROM tbl_transactionType WHERE intTransactionTypeID = @intTransactionTypeID";
+        //private string ReturnTransactionName(int transactionTypeID, object[] objPageDetails)
+        //{
+        //    string strQueryName = "ReturnTransactionName";
+        //    string sqlCmd = "SELECT varTransactionName FROM tbl_transactionType WHERE intTransactionTypeID = @intTransactionTypeID";
 
-            object[][] parms =
-            {
-                new object[] { "@intTransactionTypeID", transactionTypeID }
-            };
-            return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
-            //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
-        }
+        //    object[][] parms =
+        //    {
+        //        new object[] { "@intTransactionTypeID", transactionTypeID }
+        //    };
+        //    return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+        //    //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+        //}
         private bool VerifyMOPHasBeenAdded(int invoiceID, object[] objPageDetails)
         {
             string strQueryName = "VerifyMOPHasBeenAdded";
@@ -898,11 +898,11 @@ namespace SweetSpotDiscountGolfPOS.FP
             {
                 new object[] { "@intLocationID", cu.location.intLocationID }
             };
-            createReceiptNum(cu, objPageDetails);
+            CreateReceiptNum(cu, objPageDetails);
             //Returns the next invoiceNum
             return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private void createReceiptNum(CurrentUser cu, object[] objPageDetails)
+        private void CreateReceiptNum(CurrentUser cu, object[] objPageDetails)
         {
             string strQueryName = "createReceiptNum";
             string sqlCmd = "Update tbl_storedStoreNumbers set intSetReceiptNumber = intSetReceiptNumber + 1 WHERE intLocationID = @intLocationID";
@@ -960,7 +960,6 @@ namespace SweetSpotDiscountGolfPOS.FP
         private void InsertReceiptMopsIntoFinalMopsTable(Invoice receipt, object[] objPageDetails)
         {
             string strQueryName = "InsertReceiptMopsIntoFinalMopsTable";
-            InvoiceMOPsManager IMM = new InvoiceMOPsManager();
             foreach (InvoiceMOPs payment in receipt.invoiceMops)
             {
                 string sqlCmd = "INSERT INTO tbl_receiptMOP VALUES(@intReceiptPaymentID, @intReceiptID, @intPaymentID, "
@@ -1010,7 +1009,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             };
             return ConvertFromDataTableToCurrentInvoice(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), provinceID, objPageDetails);
         }
-        private int GatherMasterInvoice(string pressedBTN, int provinceID, object[] objPageDetails)
+        private int GatherMasterInvoice(string pressedBTN, object[] objPageDetails)
         {
             string strQueryName = "GatherMasterInvoice";
             string[] tableSeat = SplitStringofTableSeat(pressedBTN);
@@ -1038,16 +1037,16 @@ namespace SweetSpotDiscountGolfPOS.FP
             };
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private int GatherCurrentSalesIID(int invoiceNum, object[] objPageDetails)
-        {
-            string strQueryName = "GatherCurrentSalesID";
-            string sqlCmd = "SELECT currentSalesIID FROM tbl_currentSalesInvoice WHERE invoiceNum = @invoiceNum";
-            object[][] parms =
-            {
-                new object[] { "@invoiceNum", invoiceNum }
-            };
-            return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
-        }
+        //private int GatherCurrentSalesIID(int invoiceNum, object[] objPageDetails)
+        //{
+        //    string strQueryName = "GatherCurrentSalesID";
+        //    string sqlCmd = "SELECT currentSalesIID FROM tbl_currentSalesInvoice WHERE invoiceNum = @invoiceNum";
+        //    object[][] parms =
+        //    {
+        //        new object[] { "@invoiceNum", invoiceNum }
+        //    };
+        //    return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
+        //}
 
 
 
@@ -1099,7 +1098,7 @@ namespace SweetSpotDiscountGolfPOS.FP
         {
             RemoveInvoiceItemTaxesFromCurrentItemsTaxesTable(invoiceItems, objPageDetails);
         }
-        public bool invoiceIsReturn(int invoiceID, object[] objPageDetails)
+        public bool InvoiceIsReturn(int invoiceID, object[] objPageDetails)
         {
             bool isReturn = false;
             if (InvoiceSubNumberCheck(invoiceID, objPageDetails) > 1)
@@ -1152,27 +1151,29 @@ namespace SweetSpotDiscountGolfPOS.FP
             object[] amounts = { tender, change };
             return amounts;
         }
-        public int ReturnMasterInvoice(string pressedBTN, int provinceID, object[] objPageDetails)
+        public int ReturnMasterInvoice(string pressedBTN, object[] objPageDetails)
         {
-            return GatherMasterInvoice(pressedBTN, provinceID, objPageDetails);
+            return GatherMasterInvoice(pressedBTN, objPageDetails);
         }
         public void CreateNewInvoiceAtTable(string pressedBTN, CurrentUser cu, object[] objPageDetails)
         {
             CustomerManager CM = new CustomerManager();
-            Invoice newInvoice = new Invoice();
-            newInvoice.varInvoiceNumber = ReturnNextBillNumberForNewBill(cu, objPageDetails);
-            newInvoice.intInvoiceSubNumber = 1;
-            newInvoice.customer = CM.CallReturnCustomer(1, objPageDetails)[0]; //CM.ReturnGuestCustomerForLocation(cu, objPageDetails)[0];
-            newInvoice.employee = cu.employee;
-            newInvoice.location = cu.location;
-            newInvoice.fltGovernmentTaxAmount = 0;
-            newInvoice.fltProvincialTaxAmount = 0;
-            newInvoice.fltLiquorTaxAmount = 0;
-            //newInvoice.bitChargeGST = true;
-            //newInvoice.bitChargePST = true;
-            //newInvoice.bitChargeLCT = true;
-            newInvoice.intTransactionTypeID = 7;
-            newInvoice.varAdditionalInformation = "";
+            Invoice newInvoice = new Invoice
+            {
+                varInvoiceNumber = ReturnNextBillNumberForNewBill(cu, objPageDetails),
+                intInvoiceSubNumber = 1,
+                customer = CM.CallReturnCustomer(1, objPageDetails)[0], //CM.ReturnGuestCustomerForLocation(cu, objPageDetails)[0];
+                employee = cu.employee,
+                location = cu.location,
+                fltGovernmentTaxAmount = 0,
+                fltProvincialTaxAmount = 0,
+                fltLiquorTaxAmount = 0,
+                //newInvoice.bitChargeGST = true;
+                //newInvoice.bitChargePST = true;
+                //newInvoice.bitChargeLCT = true;
+                intTransactionTypeID = 7,
+                varAdditionalInformation = ""
+            };
             newInvoice = CreateInitialTotalsForTable(newInvoice, objPageDetails)[0];
             InsertNewInvoiceLoungeTableSeatCombination(pressedBTN, newInvoice.intInvoiceID, objPageDetails);
         }
@@ -1182,7 +1183,7 @@ namespace SweetSpotDiscountGolfPOS.FP
         }
         private string[] SplitStringofTableSeat(string pressedBTN)
         {
-            int splitNumber = 0;
+            int splitNumber;
             if (pressedBTN.Contains("Seat"))
             {
                 splitNumber = pressedBTN.IndexOf("Seat");
@@ -1234,6 +1235,66 @@ namespace SweetSpotDiscountGolfPOS.FP
         public List<Invoice> CallReturnInvoiceByCustomers(int customerID, object[] objPageDetails)
         {
             return ReturnInvoiceByCustomers(customerID, objPageDetails);
+        }
+        public List<Invoice> CallReturnCurrentOpenInvoices(int locationID, int provinceID, object[] objPageDetails)
+        {
+            return ReturnCurrentOpenInvoices(locationID, provinceID, objPageDetails);
+        }
+        public bool CallVerifyMOPHasBeenAdded(int invoiceID, object[] objPageDetails)
+        {
+            return VerifyMOPHasBeenAdded(invoiceID, objPageDetails);
+        }
+        public string CallReturnNextInvoiceNumberForNewInvoice(CurrentUser cu, object[] objPageDetails)
+        {
+            return ReturnNextInvoiceNumberForNewInvoice(cu, objPageDetails);
+        }
+        public List<Invoice> CallCreateInitialTotalsForTable(Invoice invoice, object[] objPageDetails)
+        {
+            return CreateInitialTotalsForTable(invoice, objPageDetails);
+        }
+        public List<Invoice> CallReturnInvoicesBasedOnSearchForReturns(string txtSearch, DateTime selectedDate, object[] objPageDetails)
+        {
+            return ReturnInvoicesBasedOnSearchForReturns(txtSearch, selectedDate, objPageDetails);
+        }
+        public List<Invoice> CallReturnInvoice(int invoiceID, object[] objPageDetails)
+        {
+            return ReturnInvoice(invoiceID, objPageDetails);
+        }
+        public int CallCalculateNextInvoiceSubNum(string invoiceNumber, object[] objPageDetails)
+        {
+            return CalculateNextInvoiceSubNum(invoiceNumber, objPageDetails);
+        }
+        public List<Invoice> CallReturnCurrentPurchaseInvoice(int invoiceID, int provinceID, object[] objPageDetails)
+        {
+            return ReturnCurrentPurchaseInvoice(invoiceID, provinceID, objPageDetails);
+        }
+        public bool CallVerifyPurchaseMOPHasBeenAdded(int receiptID, object[] objPageDetails)
+        {
+            return VerifyPurchaseMOPHasBeenAdded(receiptID, objPageDetails);
+        }
+        public bool CallReturnBolInvoiceExists(int invoiceID, object[] objPageDetails)
+        {
+            return ReturnBolInvoiceExists(invoiceID, objPageDetails);
+        }
+        public string CallReturnNextReceiptNumber(CurrentUser cu, object[] objPageDetails)
+        {
+            return ReturnNextReceiptNumber(cu, objPageDetails);
+        }
+        public List<Invoice> CallReturnPurchaseInvoice(int receiptID, object[] objPageDetails)
+        {
+            return ReturnPurchaseInvoice(receiptID, objPageDetails);
+        }
+        public DataTable CallReturnSeatedTables(object[] objPageDetails)
+        {
+            return ReturnSeatedTables(objPageDetails);
+        }
+        public List<Invoice> CallGatherInvoicesFromTable(string pressedBTN, int provinceID, object[] objPageDetails)
+        {
+            return GatherInvoicesFromTable(pressedBTN, provinceID, objPageDetails);
+        }
+        public DataTable CallReturnInvoicesBasedOnSearchCriteria(DateTime stDate, DateTime endDate, string searchTxt, int locationID, object[] objPageDetails)
+        {
+            return ReturnInvoicesBasedOnSearchCriteria(stDate, endDate, searchTxt, locationID, objPageDetails);
         }
     }
 }

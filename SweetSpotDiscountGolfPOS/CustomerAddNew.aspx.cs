@@ -1,6 +1,6 @@
-﻿using SweetShop;
-using SweetSpotDiscountGolfPOS.ClassLibrary;
-using SweetSpotProShop;
+﻿using SweetSpotDiscountGolfPOS.FP;
+using SweetSpotDiscountGolfPOS.OB;
+using SweetSpotDiscountGolfPOS.Misc;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -43,7 +43,7 @@ namespace SweetSpotDiscountGolfPOS
                         if (!IsPostBack)
                         {
                             //Create customer class and fill page with all info based in the customer number 
-                            Customer customer = CM.ReturnCustomerWithInvoiceList(Convert.ToInt32(Request.QueryString["customer"].ToString()), objPageDetails)[0];
+                            Customer customer = CM.CallReturnCustomerWithInvoiceList(Convert.ToInt32(Request.QueryString["customer"].ToString()), objPageDetails)[0];
 
                             txtFirstName.Text = customer.varFirstName.ToString();
                             txtLastName.Text = customer.varLastName.ToString();
@@ -54,10 +54,10 @@ namespace SweetSpotDiscountGolfPOS
                             txtEmail.Text = customer.varEmailAddress.ToString();
                             txtCity.Text = customer.varCityName.ToString();
 
-                            ddlCountry.DataSource = LM.ReturnCountryDropDown(objPageDetails);
+                            ddlCountry.DataSource = LM.CallReturnCountryDropDown(objPageDetails);
                             ddlCountry.DataBind();
                             ddlCountry.SelectedValue = customer.intCountryID.ToString();
-                            ddlProvince.DataSource = LM.ReturnProvinceDropDown(customer.intCountryID, objPageDetails);
+                            ddlProvince.DataSource = LM.CallReturnProvinceDropDown(customer.intCountryID, objPageDetails);
                             ddlProvince.SelectedValue = customer.intProvinceID.ToString();
                             ddlProvince.DataBind();
 
@@ -74,11 +74,11 @@ namespace SweetSpotDiscountGolfPOS
                         //no cust number
                         if (!IsPostBack)
                         {
-                            ddlCountry.DataSource = LM.ReturnCountryDropDown(objPageDetails);
+                            ddlCountry.DataSource = LM.CallReturnCountryDropDown(objPageDetails);
                             ddlCountry.DataBind();
                             ddlCountry.SelectedValue = CU.location.intCountryID.ToString();
 
-                            ddlProvince.DataSource = LM.ReturnProvinceDropDown(0, objPageDetails);
+                            ddlProvince.DataSource = LM.CallReturnProvinceDropDown(0, objPageDetails);
                             ddlProvince.DataBind();
                         }
                         //Displays text boxes instead of label for customer creation info
@@ -110,7 +110,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -140,7 +140,7 @@ namespace SweetSpotDiscountGolfPOS
                 customer.varPostalCode = txtPostalCode.Text;
 
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                nameValues.Set("customer", CM.addCustomer(customer, objPageDetails).ToString());
+                nameValues.Set("customer", CM.CallAddCustomer(customer, objPageDetails).ToString());
                 Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
             }
             //Exception catch
@@ -148,7 +148,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -189,7 +189,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -219,7 +219,7 @@ namespace SweetSpotDiscountGolfPOS
                 customer.intCountryID = Convert.ToInt32(ddlCountry.SelectedValue);
                 customer.varPostalCode = txtPostalCode.Text;
                 //updates the customer info in tables
-                CM.updateCustomer(customer, objPageDetails);
+                CM.CallUpdateCustomer(customer, objPageDetails);
                 //changes all text boxes and dropdowns to labels
                 txtFirstName.Enabled = false;
                 txtLastName.Enabled = false;
@@ -250,7 +250,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -272,7 +272,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -299,7 +299,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -321,7 +321,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -346,7 +346,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -360,7 +360,7 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                ddlProvince.DataSource = LM.ReturnProvinceDropDown(Convert.ToInt32(ddlCountry.SelectedValue), objPageDetails);
+                ddlProvince.DataSource = LM.CallReturnProvinceDropDown(Convert.ToInt32(ddlCountry.SelectedValue), objPageDetails);
                 ddlProvince.DataBind();
             }
             //Exception catch
@@ -368,7 +368,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

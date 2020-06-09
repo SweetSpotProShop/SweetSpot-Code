@@ -43,7 +43,7 @@
         <asp:Label ID="lblPurchasesMadeDate" Font-Bold="true" runat="server" />
         <hr />
         <div>
-            <asp:GridView ID="grdPurchasesMade" runat="server" Width="75%" AutoGenerateColumns="false" ShowFooter="true" OnRowDataBound="grdPurchasesMade_RowDataBound">
+            <asp:GridView ID="GrdPurchasesMade" runat="server" Width="75%" AutoGenerateColumns="false" ShowFooter="true" OnRowDataBound="GrdPurchasesMade_RowDataBound">
                 <Columns>
                     <asp:TemplateField HeaderText="Receipt Number" HeaderStyle-Width="20%">
                         <ItemTemplate>

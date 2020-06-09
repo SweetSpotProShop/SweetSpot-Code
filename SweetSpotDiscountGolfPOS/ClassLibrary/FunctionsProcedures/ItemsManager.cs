@@ -12,7 +12,7 @@ namespace SweetSpotDiscountGolfPOS.FP
 {
     public class ItemsManager
     {
-        DatabaseCalls DBC = new DatabaseCalls();
+        readonly DatabaseCalls DBC = new DatabaseCalls();
 
         //Converters
         private List<InvoiceItems> ConvertFromDataTableToCartItems(DataTable dt)
@@ -194,20 +194,20 @@ namespace SweetSpotDiscountGolfPOS.FP
             return ConvertFromDataTableToCartItems(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
             //return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
-        private List<InvoiceItems> ReturnTradeInSku(object[] objPageDetails)
-        {
-            string strQueryName = "ReturnTradeInSku";
-            string sqlCmd = "SELECT C.intInventoryID, C.varSku, (SELECT B.varBrandName + ' ' + M.varModelName + ' ' + CLU.varClubSpecification "
-                + "+ ' ' + CLU.varTypeOfClub + ' ' + CLU.varShaftSpecification + ' ' + CLU.varShaftFlexability + ' ' + CLU.varClubDexterity AS "
-                + "varItemDescription FROM tbl_clubs CLU JOIN tbl_brand B ON CLU.intBrandID = B.intBrandID JOIN tbl_model M ON CLU.intModelID "
-                + "= M.intModelID  WHERE CLU.intInventoryID = C.intInventoryID) AS varItemDescription, (SELECT L.varCityName FROM tbl_clubs "
-                + "CLU JOIN tbl_location L ON CLU.intLocationID = L.intLocationID WHERE CLU.intInventoryID = C.intInventoryID) AS varLocationName, "
-                + "C.intQuantity AS intItemQuantity, C.fltPrice AS fltItemPrice, C.fltCost AS fltItemCost, C.intItemTypeID, C.bitIsUsedProduct, "
-                + "C.varAdditionalInformation FROM tbl_clubs C WHERE C.varSku = '100000'";
-            object[][] parms = { };
-            return ConvertFromDataTableToCartItems(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
-            //return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
-        }
+        //private List<InvoiceItems> ReturnTradeInSku(object[] objPageDetails)
+        //{
+        //    string strQueryName = "ReturnTradeInSku";
+        //    string sqlCmd = "SELECT C.intInventoryID, C.varSku, (SELECT B.varBrandName + ' ' + M.varModelName + ' ' + CLU.varClubSpecification "
+        //        + "+ ' ' + CLU.varTypeOfClub + ' ' + CLU.varShaftSpecification + ' ' + CLU.varShaftFlexability + ' ' + CLU.varClubDexterity AS "
+        //        + "varItemDescription FROM tbl_clubs CLU JOIN tbl_brand B ON CLU.intBrandID = B.intBrandID JOIN tbl_model M ON CLU.intModelID "
+        //        + "= M.intModelID  WHERE CLU.intInventoryID = C.intInventoryID) AS varItemDescription, (SELECT L.varCityName FROM tbl_clubs "
+        //        + "CLU JOIN tbl_location L ON CLU.intLocationID = L.intLocationID WHERE CLU.intInventoryID = C.intInventoryID) AS varLocationName, "
+        //        + "C.intQuantity AS intItemQuantity, C.fltPrice AS fltItemPrice, C.fltCost AS fltItemCost, C.intItemTypeID, C.bitIsUsedProduct, "
+        //        + "C.varAdditionalInformation FROM tbl_clubs C WHERE C.varSku = '100000'";
+        //    object[][] parms = { };
+        //    return ConvertFromDataTableToCartItems(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
+        //    //return ConvertFromDataTableToCartItems(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
+        //}
         private DataTable ReturnDropDownForBrand(object[] objPageDetails)
         {
             string strQueryName = "ReturnDropDownForBrand";
@@ -539,5 +539,46 @@ namespace SweetSpotDiscountGolfPOS.FP
         {
             return CallConvertFromDataTableToCartItems(dt);
         }
+        public string[] CallReserveTradeInSKU(CurrentUser cu, object[] objPageDetails)
+        {
+            return ReserveTradeInSKU(cu, objPageDetails);
+        }
+        public DataTable CallReturnDropDownForBrand(object[] objPageDetails)
+        {
+            return ReturnDropDownForBrand(objPageDetails);
+        }
+        public DataTable CallReturnDropDownForModel(object[] objPageDetails)
+        {
+            return ReturnDropDownForModel(objPageDetails);
+        }
+        public void CallAddTradeInItemToTempTable(Clubs tradeIn, object[] objPageDetails)
+        {
+            AddTradeInItemToTempTable(tradeIn, objPageDetails);
+        }
+        public string CallReturnModelNameFromModelID(int modelID, object[] objPageDetails)
+        {
+            return ReturnModelNameFromModelID(modelID, objPageDetails);
+        }
+        public string CallReturnBrandlNameFromBrandID(int brandID, object[] objPageDetails)
+        {
+            return ReturnBrandlNameFromBrandID(brandID, objPageDetails);
+        }
+        public List<InvoiceItems> CallReturnInvoiceItemsFromSearchStringForSale(string searchText, object[] objPageDetails)
+        {
+            return ReturnInvoiceItemsFromSearchStringForSale(searchText, objPageDetails);
+        }
+        public List<InvoiceItems> CallReturnInvoiceItemsFromForLoungeSim(string searchText, object[] objPageDetails)
+        {
+            return ReturnInvoiceItemsFromForLoungeSim(searchText, objPageDetails);
+        }
+        public List<InvoiceItems> CallReturnInventoryFromSearchStringAndQuantity(string searchText, bool zeroQuantity, object[] objPageDetails)
+        {
+            return ReturnInventoryFromSearchStringAndQuantity(searchText, zeroQuantity, objPageDetails);
+        }
+        public DataTable CallReturnDropDownForItemType(object[] objPageDetails)
+        {
+            return ReturnDropDownForItemType(objPageDetails);
+        }
+
     }
 }

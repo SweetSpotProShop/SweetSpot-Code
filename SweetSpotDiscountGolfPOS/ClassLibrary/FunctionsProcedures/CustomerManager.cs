@@ -11,7 +11,7 @@ namespace SweetSpotDiscountGolfPOS.FP
 {
     public class CustomerManager
     {
-        DatabaseCalls DBC = new DatabaseCalls();
+        readonly DatabaseCalls DBC = new DatabaseCalls();
 
         //Converters
         private List<Customer> ConvertFromDataTableToCustomer(DataTable dt)
@@ -154,7 +154,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             object[][] parms = { };
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private int addCustomer(Customer customer, object[] objPageDetails)
+        private int AddCustomer(Customer customer, object[] objPageDetails)
         {
             string strQueryName = "addCustomer";
             //New command
@@ -193,7 +193,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             };
             return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private void updateCustomer(Customer customer, object[] objPageDetails)
+        private void UpdateCustomer(Customer customer, object[] objPageDetails)
         {
             string strQueryName = "updateCustomer";
             //New command
@@ -223,7 +223,7 @@ namespace SweetSpotDiscountGolfPOS.FP
 
 
         //public calls
-        public bool isGuestCustomer(int customerID, int locationID, object[] objPageDetails)
+        public bool IsGuestCustomer(int customerID, int locationID, object[] objPageDetails)
         {
             bool bolGuestCustomer = false;
             if(customerID == ReturnGuestCustomerForLocation(locationID, objPageDetails))
@@ -236,13 +236,25 @@ namespace SweetSpotDiscountGolfPOS.FP
         {
             return ReturnCustomerEmailAddresses(objPageDetails);
         }
-
         public List<Customer> CallReturnCustomer(int customerID, object[] objPageDetails)
         {
             return ReturnCustomer(customerID, objPageDetails);
         }
-
-        
-
+        public List<Customer> CallReturnCustomerWithInvoiceList(int customerID, object[] objPageDetails)
+        {
+            return ReturnCustomerWithInvoiceList(customerID, objPageDetails);
+        }
+        public int CallAddCustomer(Customer customer, object[] objPageDetails)
+        {
+            return AddCustomer(customer, objPageDetails);
+        }
+        public void CallUpdateCustomer(Customer customer, object[] objPageDetails)
+        {
+            UpdateCustomer(customer, objPageDetails);
+        }
+        public List<Customer> CallReturnCustomerBasedOnText(string searchText, object[] objPageDetails)
+        {
+            return ReturnCustomerBasedOnText(searchText, objPageDetails);
+        }
     }
 }

@@ -12,7 +12,7 @@ namespace SweetSpotDiscountGolfPOS.FP
     //This class is used for way too much...
     public class ItemDataUtilities
     {
-        DatabaseCalls DBC = new DatabaseCalls();
+        readonly DatabaseCalls DBC = new DatabaseCalls();
         public ItemDataUtilities() { }
         
         //Converters
@@ -164,32 +164,32 @@ namespace SweetSpotDiscountGolfPOS.FP
             return ConvertFromDataTableToTaxTypePerInventoryItem(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
         }
         //Return Model string created by Nathan and Tyler **getModelName
-        private string ReturnModelNameFromModelID(int modelID, object[] objPageDetails)
-        {
-            string strQueryName = "ReturnModelNameFromModelID";
-            string sqlCmd = "Select modelName from tbl_model where modelID = @modelID";
+        //private string ReturnModelNameFromModelID(int modelID, object[] objPageDetails)
+        //{
+        //    string strQueryName = "ReturnModelNameFromModelID";
+        //    string sqlCmd = "Select modelName from tbl_model where modelID = @modelID";
 
-            object[][] parms =
-            {
-                 new object[] { "@modelID", modelID }
-            };
-            //Returns the model name
-            return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
-            //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
-        }
+        //    object[][] parms =
+        //    {
+        //         new object[] { "@modelID", modelID }
+        //    };
+        //    //Returns the model name
+        //    return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+        //    //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+        //}
         //Return Brand string created by Nathan and Tyler **getBrandName
-        private string ReturnBrandNameFromBrandID(int brandID, object[] objPageDetails)
-        {
-            string strQueryName = "ReturnBrandNameFromBrandID";
-            string sqlCmd = "SELECT brandName FROM tbl_brand WHERE brandID = @brandID";
-            object[][] parms =
-            {
-                 new object[] { "@brandID", brandID }
-            };
-            //Returns the brand name
-            return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
-            //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
-        }
+        //private string ReturnBrandNameFromBrandID(int brandID, object[] objPageDetails)
+        //{
+        //    string strQueryName = "ReturnBrandNameFromBrandID";
+        //    string sqlCmd = "SELECT brandName FROM tbl_brand WHERE brandID = @brandID";
+        //    object[][] parms =
+        //    {
+        //         new object[] { "@brandID", brandID }
+        //    };
+        //    //Returns the brand name
+        //    return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+        //    //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+        //}
         //Returns max sku from the skuNumber table based on itemType and directs code to store it
         private string[] ReturnMaxSku(int itemTypeID, int locationID, object[] objPageDetails)
         {
@@ -215,12 +215,12 @@ namespace SweetSpotDiscountGolfPOS.FP
             string inventorySku = DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
             string inventoryID = DBC.MakeDataBaseCallToReturnString(sqlCmd2, parms2, objPageDetails, strQueryName);
             string[] inventory = { inventorySku, inventoryID };
-            StoreMaxSku(itemTypeID, locationID, objPageDetails);
+            StoreMaxSku(locationID, objPageDetails);
             //Returns the new max sku
             return inventory;
         }
         //Stores the max sku in the skuNumber table
-        private void StoreMaxSku(int itemTypeID, int locationID, object[] objPageDetails)
+        private void StoreMaxSku(int locationID, object[] objPageDetails)
         {
             string strQueryName = "StoreMaxSku";
             //This method stores the max sku along with its item type
@@ -346,38 +346,38 @@ namespace SweetSpotDiscountGolfPOS.FP
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //return ReturnClothingIDFromClothingStats(parms, objPageDetails);
         }
-        private int ReturnClubIDFromClubStats(object[][] parms, object[] objPageDetails)
-        {
-            string strQueryName = "ReturnClubIDFromClubStats";
-            string sqlCmd = "SELECT intInventoryID FROM tbl_clubs WHERE varSku = @varSku AND intBrandID = @intBrandID AND intModelID = @intModelID "
-                + "AND varTypeOfClub = @varTypeOfClub AND varShaftType = @varShaftType AND varNumberOfClubs = @varNumberOfClubs AND fltPremiumCharge "
-                + "= @fltPremiumCharge AND fltCost = @fltCost AND fltPrice = @fltPrice AND intQuantity = @intQuantity AND varClubSpecification = "
-                + "@varClubSpecification AND varShaftSpecification = @varShaftSpecification AND varShaftFlexability = @ varShaftFlexability AND "
-                + "varClubDexterity = @varClubDexterity AND intItemTypeID = @intItemTypeID AND intLocationID = @intLocationID AND bitIsUsedProduct = "
-                + "@bitIsUsedProduct AND varAdditionalInformation = @varAdditionalInformation";
+        //private int ReturnClubIDFromClubStats(object[][] parms, object[] objPageDetails)
+        //{
+        //    string strQueryName = "ReturnClubIDFromClubStats";
+        //    string sqlCmd = "SELECT intInventoryID FROM tbl_clubs WHERE varSku = @varSku AND intBrandID = @intBrandID AND intModelID = @intModelID "
+        //        + "AND varTypeOfClub = @varTypeOfClub AND varShaftType = @varShaftType AND varNumberOfClubs = @varNumberOfClubs AND fltPremiumCharge "
+        //        + "= @fltPremiumCharge AND fltCost = @fltCost AND fltPrice = @fltPrice AND intQuantity = @intQuantity AND varClubSpecification = "
+        //        + "@varClubSpecification AND varShaftSpecification = @varShaftSpecification AND varShaftFlexability = @ varShaftFlexability AND "
+        //        + "varClubDexterity = @varClubDexterity AND intItemTypeID = @intItemTypeID AND intLocationID = @intLocationID AND bitIsUsedProduct = "
+        //        + "@bitIsUsedProduct AND varAdditionalInformation = @varAdditionalInformation";
 
-            return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
-        }
-        private int ReturnAccessoryIDFromAccessoryStats(object[][] parms, object[] objPageDetails)
-        {
-            string strQueryName = "ReturnAccessoryIDFromAccessoryStats";
-            string sqlCmd = "SELECT intInventoryID FROM tbl_accessories WHERE varSku = @varSku AND varSize = @varSize AND varColour = @varColour AND "
-                + "fltCost = @fltCost AND fltPrice = @fltPrice AND intBrandID = @intBrandID AND intModelID = @intModelID AND varTypeOfAccessory = "
-                + "@varTypeOfAccessory AND intQuantity = @intQuantity AND intItemTypeID = @intItemTypeID AND intLocationID = @intLocationID AND "
-                + "varAdditionalInformation = @varAdditionalInformation";
+        //    return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
+        //}
+        //private int ReturnAccessoryIDFromAccessoryStats(object[][] parms, object[] objPageDetails)
+        //{
+        //    string strQueryName = "ReturnAccessoryIDFromAccessoryStats";
+        //    string sqlCmd = "SELECT intInventoryID FROM tbl_accessories WHERE varSku = @varSku AND varSize = @varSize AND varColour = @varColour AND "
+        //        + "fltCost = @fltCost AND fltPrice = @fltPrice AND intBrandID = @intBrandID AND intModelID = @intModelID AND varTypeOfAccessory = "
+        //        + "@varTypeOfAccessory AND intQuantity = @intQuantity AND intItemTypeID = @intItemTypeID AND intLocationID = @intLocationID AND "
+        //        + "varAdditionalInformation = @varAdditionalInformation";
 
-            return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
-        }
-        private int ReturnClothingIDFromClothingStats(object[][] parms, object[] objPageDetails)
-        {
-            string strQueryName = "ReturnClothingIDFromClothingStats";
-            string sqlCmd = "SELECT intInventoryID FROM tbl_clothing WHERE varSku = @varSku AND varSize = @varSize AND varColour = @varColour AND "
-                + "varGender = @varGender AND varStyle = @varStyle AND fltCost = @fltCost AND fltPrice = @fltPrice AND intBrandID = @intBrandID "
-                + "AND intQuantity = @intQuantity AND intItemTypeID = @intItemTypeID AND intLocationID = @intLocationID AND "
-                + "varAdditionalInformation = @varAdditionalInformation";
+        //    return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
+        //}
+        //private int ReturnClothingIDFromClothingStats(object[][] parms, object[] objPageDetails)
+        //{
+        //    string strQueryName = "ReturnClothingIDFromClothingStats";
+        //    string sqlCmd = "SELECT intInventoryID FROM tbl_clothing WHERE varSku = @varSku AND varSize = @varSize AND varColour = @varColour AND "
+        //        + "varGender = @varGender AND varStyle = @varStyle AND fltCost = @fltCost AND fltPrice = @fltPrice AND intBrandID = @intBrandID "
+        //        + "AND intQuantity = @intQuantity AND intItemTypeID = @intItemTypeID AND intLocationID = @intLocationID AND "
+        //        + "varAdditionalInformation = @varAdditionalInformation";
 
-            return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
-        }
+        //    return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
+        //}
         //These three actully update the item in their specific tables Nathan created
         private void UpdateClubInDatabase(Clubs club, object[] objPageDetails)
         {
@@ -575,6 +575,14 @@ namespace SweetSpotDiscountGolfPOS.FP
         public void CallSaveTaxIDForNewInventoryItem(int inventoryID, int taxID, bool chargeTax, object[] objPageDetails)
         {
             SaveTaxIDForNewInventoryItem(inventoryID, taxID, chargeTax, objPageDetails);
+        }
+        public List<object> CallReturnListOfObjectsFromThreeTablesForInventoryAddNew(int inventoryID, object[] objPageDetails, DateTime currentDate, int provinceID)
+        {
+            return ReturnListOfObjectsFromThreeTablesForInventoryAddNew(inventoryID, objPageDetails, currentDate, provinceID);
+        }
+        public string[] CallReturnMaxSku(int itemTypeID, int locationID, object[] objPageDetails)
+        {
+            return ReturnMaxSku(itemTypeID, locationID, objPageDetails);
         }
     }
 }

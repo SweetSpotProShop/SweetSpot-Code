@@ -86,7 +86,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 {
                     Clubs club = new Clubs();
                     //Transfers all info into Club class
-                    string[] inventoryInfo = IDU.ReturnMaxSku(itemTypeID, cu.location.intLocationID, objPageDetails);
+                    string[] inventoryInfo = IDU.CallReturnMaxSku(itemTypeID, cu.location.intLocationID, objPageDetails);
                     club.intInventoryID = Convert.ToInt32(inventoryInfo[1]);
                     club.varSku = sku;
                     club.fltCost = Convert.ToDouble(row[7]);
@@ -112,7 +112,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 {
                     Accessories accessory = new Accessories();
                     //Transfers all info into Accessory class
-                    string[] inventoryInfo = IDU.ReturnMaxSku(itemTypeID, cu.location.intLocationID, objPageDetails);
+                    string[] inventoryInfo = IDU.CallReturnMaxSku(itemTypeID, cu.location.intLocationID, objPageDetails);
                     accessory.intInventoryID = Convert.ToInt32(inventoryInfo[1]);
                     accessory.varSku = sku;
                     accessory.intBrandID = Convert.ToInt32(row[1]);
@@ -133,7 +133,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 {
                     Clothing clothing = new Clothing();
                     //Transfers all info into Clothing class
-                    string[] inventoryInfo = IDU.ReturnMaxSku(itemTypeID, cu.location.intLocationID, objPageDetails);
+                    string[] inventoryInfo = IDU.CallReturnMaxSku(itemTypeID, cu.location.intLocationID, objPageDetails);
                     clothing.intInventoryID = Convert.ToInt32(inventoryInfo[1]);
                     clothing.varSku = sku;
                     clothing.intBrandID = Convert.ToInt32(row[1]);

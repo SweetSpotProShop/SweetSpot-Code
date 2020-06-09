@@ -11,8 +11,8 @@ namespace SweetSpotDiscountGolfPOS.FP
     //The employee manager class is used to get information about an employee or employees
     class EmployeeManager
     {
-        LocationManager LM = new LocationManager();
-        DatabaseCalls DBC = new DatabaseCalls();
+        readonly LocationManager LM = new LocationManager();
+        readonly DatabaseCalls DBC = new DatabaseCalls();
         public EmployeeManager() { }
 
         //Converters
@@ -182,7 +182,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             //return ConvertFromDataTableToEmployee(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
         //Save new password into user_info
-        private bool saveNewPassword(int employeeID, int pWord, object[] objPageDetails)
+        private bool SaveNewPassword(int employeeID, int pWord, object[] objPageDetails)
         {
             string strQueryName = "saveNewPassword";
             bool bolAdded = false;
@@ -253,7 +253,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private List<Employee> returnEmployeeFromPassword(int empPassword, object[] objPageDetails)
+        private List<Employee> ReturnEmployeeFromPassword(int empPassword, object[] objPageDetails)
         {
             string strQueryName = "returnEmployeeFromPassword";
             string sqlCmd = "SELECT E.intEmployeeID, varFirstName, varLastName, intJobID, intLocationID, varEmailAddress, "
@@ -284,7 +284,7 @@ namespace SweetSpotDiscountGolfPOS.FP
 
         //Public calls
         //Password check to complete a Sale
-        public bool returnCanEmployeeMakeSale(int empPassword, object[] objPageDetails)
+        public bool ReturnCanEmployeeMakeSale(int empPassword, object[] objPageDetails)
         {
             bool bolValid = false;
 
@@ -296,6 +296,34 @@ namespace SweetSpotDiscountGolfPOS.FP
         public List<Employee> CallReturnEmployee(int employeeID, object[] objPageDetails)
         {
             return ReturnEmployee(employeeID, objPageDetails);
+        }
+        public List<Employee> CallReturnEmployeeBasedOnText(string searchText, object[] objPageDetails)
+        {
+            return ReturnEmployeeBasedOnText(searchText, objPageDetails);
+        }
+        public List<Employee> CallReturnEmployeeFromPassword(int empPassword, object[] objPageDetails)
+        {
+            return ReturnEmployeeFromPassword(empPassword, objPageDetails);
+        }
+        public DataTable CallReturnJobPosition(object[] objPageDetails)
+        {
+            return ReturnJobPosition(objPageDetails);
+        }
+        public int CallAddEmployee(Employee employee, object[] objPageDetails)
+        {
+            return AddEmployee(employee, objPageDetails);
+        }
+        public int CallUpdateEmployee(Employee employee, object[] objPageDetails)
+        {
+            return UpdateEmployee(employee, objPageDetails);
+        }
+        public bool CallSaveNewPassword(int employeeID, int pWord, object[] objPageDetails)
+        {
+            return SaveNewPassword(employeeID, pWord, objPageDetails);
+        }
+        public List<CurrentUser> CallReturnCurrentUserFromPassword(string password, object[] objPageDetails)
+        {
+            return ReturnCurrentUserFromPassword(password, objPageDetails);
         }
     }
 }

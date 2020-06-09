@@ -13,7 +13,7 @@ namespace SweetSpotDiscountGolfPOS.FP
     //Used to gather information about locations
     public class LocationManager
     {
-        DatabaseCalls DBC = new DatabaseCalls();
+        readonly DatabaseCalls DBC = new DatabaseCalls();
         public LocationManager() { }
 
         //Converter
@@ -71,19 +71,19 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private string ReturnCountryName(int countryID, object[] objPageDetails)
-        {
-            string strQueryName = "ReturnCountryName";
-            string sqlCmd = "SELECT countryDesc FROM tbl_country WHERE countryID = @countryID";
+        //private string ReturnCountryName(int countryID, object[] objPageDetails)
+        //{
+        //    string strQueryName = "ReturnCountryName";
+        //    string sqlCmd = "SELECT countryDesc FROM tbl_country WHERE countryID = @countryID";
 
-            object[][] parms =
-            {
-                 new object[] { "@countryID", countryID }
-            };
+        //    object[][] parms =
+        //    {
+        //         new object[] { "@countryID", countryID }
+        //    };
             
-            return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
-            //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
-        }
+        //    return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+        //    //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+        //}
         private string ReturnLocationName(int locationID, object[] objPageDetails)
         {
             string strQueryName = "ReturnLocationName";
@@ -105,15 +105,15 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private DataTable ReturnLocationDropDownAll(object[] objPageDetails)
-        {
-            string strQueryName = "ReturnLocationDropDownAll";
-            string sqlCmd = "SELECT locationID, locationName FROM tbl_location "
-                + "ORDER BY locationName";
-            object[][] parms = { };
-            return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
-            //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
-        }
+        //private DataTable ReturnLocationDropDownAll(object[] objPageDetails)
+        //{
+        //    string strQueryName = "ReturnLocationDropDownAll";
+        //    string sqlCmd = "SELECT locationID, locationName FROM tbl_location "
+        //        + "ORDER BY locationName";
+        //    object[][] parms = { };
+        //    return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
+        //    //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
+        //}
         private DataTable ReturnProvinceDropDown(int countryID, object[] objPageDetails)
         {
             string strQueryName = "ReturnProvinceDropDown";
@@ -137,5 +137,26 @@ namespace SweetSpotDiscountGolfPOS.FP
         {
             return ReturnLocation(locationID, objPageDetails);
         }
+        public DataTable CallReturnCountryDropDown(object[] objPageDetails)
+        {
+            return ReturnCountryDropDown(objPageDetails);
+        }
+        public DataTable CallReturnProvinceDropDown(int countryID, object[] objPageDetails)
+        {
+            return ReturnProvinceDropDown(countryID, objPageDetails);
+        }
+        public string CallReturnLocationName(int locationID, object[] objPageDetails)
+        {
+            return ReturnLocationName(locationID, objPageDetails);
+        }
+        public DataTable CallReturnLocationDropDown(object[] objPageDetails)
+        {
+            return ReturnLocationDropDown(objPageDetails);
+        }
+        public string CallReturnProvinceName(int provID, object[] objPageDetails)
+        {
+            return ReturnProvinceName(provID, objPageDetails);
+        }
+
     }
 }

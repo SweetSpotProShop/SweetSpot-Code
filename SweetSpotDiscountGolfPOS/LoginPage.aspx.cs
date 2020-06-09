@@ -1,16 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Data;
-using System.Data.SqlClient;
-using System.Web.Configuration;
-using System.Web.UI.HtmlControls;
-using SweetSpotDiscountGolfPOS.ClassLibrary;
-using SweetSpotProShop;
-using SweetShop;
+using SweetSpotDiscountGolfPOS.FP;
+using SweetSpotDiscountGolfPOS.OB;
 
 namespace SweetSpotDiscountGolfPOS
 {
@@ -29,7 +20,7 @@ namespace SweetSpotDiscountGolfPOS
             string method = "btnLogin_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             //Connectes to the database and returns the employee id based on the password used
-            List<CurrentUser> CU = EM.ReturnCurrentUserFromPassword(txtPasswordEntry.Text, objPageDetails);
+            List<CurrentUser> CU = EM.CallReturnCurrentUserFromPassword(txtPasswordEntry.Text, objPageDetails);
             if (CU.Count > 0)
             {
                 Session["currentUser"] = CU[0];

@@ -1,7 +1,4 @@
 ﻿using OfficeOpenXml;
-using SweetShop;
-using SweetSpotDiscountGolfPOS.ClassLibrary;
-using SweetSpotProShop;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,6 +8,9 @@ using System.Threading;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using SweetSpotDiscountGolfPOS.FP;
+using SweetSpotDiscountGolfPOS.OB;
+using SweetSpotDiscountGolfPOS.Misc;
 
 namespace SweetSpotDiscountGolfPOS
 {
@@ -46,8 +46,8 @@ namespace SweetSpotDiscountGolfPOS
                         DateTime[] reportDates = (DateTime[])passing[0];
                         DateTime startDate = reportDates[0];
                         DateTime endDate = reportDates[1];
-                        lblDates.Text = "Cashout report for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
-                        dt = R.ReturnCashoutsForSelectedDates(passing, objPageDetails);
+                        lblDates.Text = "Cashout report for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
+                        dt = R.CallReturnCashoutsForSelectedDates(passing, objPageDetails);
                         grdCashoutByDate.DataSource = dt;
                         grdCashoutByDate.DataBind();
                     }
@@ -58,7 +58,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -78,12 +78,12 @@ namespace SweetSpotDiscountGolfPOS
                 DateTime startDate = reportDates[0];
                 DateTime endDate = reportDates[1];
                 int locationID = Convert.ToInt32(passing[1]);
-                dt = R.ReturnCashoutsForSelectedDates(passing, objPageDetails);
+                dt = R.CallReturnCashoutsForSelectedDates(passing, objPageDetails);
 
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
-                string fileName = "CashOut Report by Date - " + LM.ReturnLocationName(locationID, objPageDetails) + ".xlsx";
+                string fileName = "CashOut Report by Date - " + LM.CallReturnLocationName(locationID, objPageDetails) + ".xlsx";
 
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
@@ -175,7 +175,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -200,13 +200,13 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (e.CommandName == "FinalizeCashout")
                 {
-                    R.FinalizeCashout(e.CommandArgument.ToString(), objPageDetails);
+                    R.CallFinalizeCashout(e.CommandArgument.ToString(), objPageDetails);
                     object[] passing = (object[])Session["reportInfo"];
                     DateTime[] reportDates = (DateTime[])passing[0];
                     DateTime startDate = reportDates[0];
                     DateTime endDate = reportDates[1];
                     int locationID = Convert.ToInt32(passing[1]);
-                    dt = R.ReturnCashoutsForSelectedDates(passing, objPageDetails);
+                    dt = R.CallReturnCashoutsForSelectedDates(passing, objPageDetails);
                     grdCashoutByDate.DataSource = dt;
                     grdCashoutByDate.DataBind();
                 }
@@ -216,7 +216,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -276,7 +276,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

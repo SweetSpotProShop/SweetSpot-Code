@@ -5,9 +5,8 @@ using System.Web;
 using System.Net.Mail;
 using System.Data.SqlClient;
 using System.Configuration;
-using SweetSpotDiscountGolfPOS.Misc;
 
-namespace SweetSpotDiscountGolfPOS.FP
+namespace SweetSpotDiscountGolfPOS.Misc
 {
     //This method is used to handle and report an errors that happen during the use of the POS system
     public class ErrorReporting
@@ -37,7 +36,7 @@ namespace SweetSpotDiscountGolfPOS.FP
 
 
         //This method is used to log errors in the database
-        private void logError(Exception er, int employeeID, string page, string method, System.Web.UI.Page webPage)
+        private void LogError(Exception er, int employeeID, string page, string method, System.Web.UI.Page webPage)
         {
             string date = DateTime.Now.ToString("yyyy-MM-dd");
             string time = DateTime.Now.ToString("HH:mm:ss");
@@ -54,6 +53,12 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@varErrorText", er.Message }
             };
             DBC.MakeDataBaseCallToNonReturnErrorQuery(sqlCmd, parms);
+        }
+
+
+        public void CallLogError(Exception er, int employeeID, string page, string method, System.Web.UI.Page webPage)
+        {
+            LogError(er, employeeID, page, method, webPage);
         }
     }
 }

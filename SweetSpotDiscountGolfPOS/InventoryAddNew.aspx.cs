@@ -4,10 +4,10 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using SweetShop;
-using SweetSpotProShop;
-using SweetSpotDiscountGolfPOS.ClassLibrary;
 using System.Threading;
+using SweetSpotDiscountGolfPOS.FP;
+using SweetSpotDiscountGolfPOS.OB;
+using SweetSpotDiscountGolfPOS.Misc;
 
 namespace SweetSpotDiscountGolfPOS
 {
@@ -49,14 +49,14 @@ namespace SweetSpotDiscountGolfPOS
                         {
                             ItemChangeTracking tempItem = new ItemChangeTracking();
                             //Grabs a list of objects that match the sku in query string. There should only ever be 1 that is returned
-                            List<Object> o = IDU.ReturnListOfObjectsFromThreeTablesForInventoryAddNew(Convert.ToInt32(Request.QueryString["inventory"].ToString()), objPageDetails, DateTime.Now, CU.location.intProvinceID);
-                            ddlBrand.DataSource = IM.ReturnDropDownForBrand(objPageDetails);
+                            List<Object> o = IDU.CallReturnListOfObjectsFromThreeTablesForInventoryAddNew(Convert.ToInt32(Request.QueryString["inventory"].ToString()), objPageDetails, DateTime.Now, CU.location.intProvinceID);
+                            ddlBrand.DataSource = IM.CallReturnDropDownForBrand(objPageDetails);
                             ddlBrand.DataBind();
-                            ddlLocation.DataSource = LM.ReturnLocationDropDown(objPageDetails);
+                            ddlLocation.DataSource = LM.CallReturnLocationDropDown(objPageDetails);
                             ddlLocation.DataBind();
-                            ddlType.DataSource = IM.ReturnDropDownForItemType(objPageDetails);
+                            ddlType.DataSource = IM.CallReturnDropDownForItemType(objPageDetails);
                             ddlType.DataBind();
-                            ddlModel.DataSource = IM.ReturnDropDownForModel(objPageDetails);
+                            ddlModel.DataSource = IM.CallReturnDropDownForModel(objPageDetails);
                             ddlModel.DataBind();
                             if (o[0] is Clubs)
                             {
@@ -200,13 +200,13 @@ namespace SweetSpotDiscountGolfPOS
                         btnCreateSimilar.Visible = false;
                         if (!IsPostBack)
                         {
-                            ddlBrand.DataSource = IM.ReturnDropDownForBrand(objPageDetails);
+                            ddlBrand.DataSource = IM.CallReturnDropDownForBrand(objPageDetails);
                             ddlBrand.DataBind();
-                            ddlLocation.DataSource = LM.ReturnLocationDropDown(objPageDetails);
+                            ddlLocation.DataSource = LM.CallReturnLocationDropDown(objPageDetails);
                             ddlLocation.DataBind();
-                            ddlType.DataSource = IM.ReturnDropDownForItemType(objPageDetails);
+                            ddlType.DataSource = IM.CallReturnDropDownForItemType(objPageDetails);
                             ddlType.DataBind();
-                            ddlModel.DataSource = IM.ReturnDropDownForModel(objPageDetails);
+                            ddlModel.DataSource = IM.CallReturnDropDownForModel(objPageDetails);
                             ddlModel.DataBind();
                             ddlLocation.SelectedValue = CU.location.intLocationID.ToString();
                             ddlType.SelectedValue = "1";
@@ -347,7 +347,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -368,7 +368,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     Clubs club = new Clubs();
                     //Transfers all info into Club class
-                    string[] inventoryInfo = IDU.ReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                    string[] inventoryInfo = IDU.CallReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
                     club.intInventoryID = Convert.ToInt32(inventoryInfo[1]);
                     club.varSku = inventoryInfo[0].ToString();
                     club.fltCost = Convert.ToDouble(txtCost.Text);
@@ -394,7 +394,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     Accessories accessory = new Accessories();
                     //Transfers all info into Accessory class
-                    string[] inventoryInfo = IDU.ReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                    string[] inventoryInfo = IDU.CallReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
                     accessory.intInventoryID = Convert.ToInt32(inventoryInfo[1]);
                     accessory.varSku = inventoryInfo[0].ToString();
                     accessory.intBrandID = Convert.ToInt32(ddlBrand.SelectedValue);
@@ -415,7 +415,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     Clothing clothing = new Clothing();
                     //Transfers all info into Clothing class
-                    string[] inventoryInfo = IDU.ReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                    string[] inventoryInfo = IDU.CallReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
                     clothing.intInventoryID = Convert.ToInt32(inventoryInfo[1]);
                     clothing.varSku = inventoryInfo[0].ToString();
                     clothing.intBrandID = Convert.ToInt32(ddlBrand.SelectedValue);
@@ -443,7 +443,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -500,7 +500,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -643,7 +643,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -665,7 +665,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -687,7 +687,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -707,7 +707,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -728,7 +728,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     Clubs club = new Clubs();
                     //Transfers all info into Club class
-                    string[] inventoryInfo = IDU.ReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                    string[] inventoryInfo = IDU.CallReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
                     club.intInventoryID = Convert.ToInt32(inventoryInfo[1]);
                     club.varSku = inventoryInfo[0].ToString();
                     club.fltCost = Convert.ToDouble(txtCost.Text);
@@ -754,7 +754,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     Accessories accessory = new Accessories();
                     //Transfers all info into Accessory class
-                    string[] inventoryInfo = IDU.ReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                    string[] inventoryInfo = IDU.CallReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
                     accessory.intInventoryID = Convert.ToInt32(inventoryInfo[1]);
                     accessory.varSku = inventoryInfo[0].ToString();
                     accessory.intBrandID = Convert.ToInt32(ddlBrand.SelectedValue);
@@ -775,7 +775,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     Clothing clothing = new Clothing();
                     //Transfers all info into Clothing class
-                    string[] inventoryInfo = IDU.ReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                    string[] inventoryInfo = IDU.CallReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
                     clothing.intInventoryID = Convert.ToInt32(inventoryInfo[1]);
                     clothing.varSku = inventoryInfo[0].ToString();
                     clothing.intBrandID = Convert.ToInt32(ddlBrand.SelectedValue);
@@ -803,7 +803,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

@@ -10,7 +10,7 @@ namespace SweetSpotDiscountGolfPOS.FP
 {
     public class InvoiceMOPsManager
     {
-        DatabaseCalls DBC = new DatabaseCalls();
+        readonly DatabaseCalls DBC = new DatabaseCalls();
 
         //Converters
         private List<InvoiceMOPs> ConvertFromDataTableToInvoiceMOPs(DataTable dt, object[] objPageDetails)
@@ -238,5 +238,22 @@ namespace SweetSpotDiscountGolfPOS.FP
         {
             return ReturnReceiptMOPsPurchase(receiptID, objPageDetails);
         }
+        public void CallRemoveMopFromList(int invoicePaymentID, object[] objPageDetails)
+        {
+            RemoveMopFromList(invoicePaymentID, objPageDetails);
+        }
+        public void CallAddNewMopToList(InvoiceMOPs invoicePayment, object[] objPageDetails)
+        {
+            AddNewMopToList(invoicePayment, objPageDetails);
+        }
+        public void CallAddNewMopToReceiptList(InvoiceMOPs payment, object[] objPageDetails)
+        {
+            AddNewMopToReceiptList(payment, objPageDetails);
+        }
+        public void CallRemoveMopFromPurchaseList(int receiptPaymentID, int receiptID, object[] objPageDetails)
+        {
+            RemoveMopFromPurchaseList(receiptPaymentID, receiptID, objPageDetails);
+        }
+
     }
 }

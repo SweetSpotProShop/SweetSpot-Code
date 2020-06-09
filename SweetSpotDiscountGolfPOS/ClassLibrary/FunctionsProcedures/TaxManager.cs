@@ -10,7 +10,7 @@ namespace SweetSpotDiscountGolfPOS.FP
 {
     public class TaxManager
     {
-        DatabaseCalls DBC = new DatabaseCalls();
+        readonly DatabaseCalls DBC = new DatabaseCalls();
 
 
         
@@ -82,7 +82,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private List<Tax> getTaxes(int invoiceID, object[] objPageDetails)
+        private List<Tax> GetTaxes(int invoiceID, object[] objPageDetails)
         {
             string strQueryName = "getTaxes";
             //New command
@@ -266,14 +266,14 @@ namespace SweetSpotDiscountGolfPOS.FP
         }
         public object[] ReturnChargedTaxForSale(Invoice invoice, object[] btnRequirements, object[] objPageDetails)
         {
-            int prov = invoice.location.intProvinceID;
-            if (invoice.fltShippingCharges > 0)
-            {
-                prov = invoice.customer.intProvinceID;
-            }
-            List<Tax> t = getTaxes(invoice.intInvoiceID, objPageDetails);
+            //int prov = invoice.location.intProvinceID;
+            //if (invoice.fltShippingCharges > 0)
+            //{
+            //    prov = invoice.customer.intProvinceID;
+            //}
+            List<Tax> t = GetTaxes(invoice.intInvoiceID, objPageDetails);
             
-            double totalTax = 0;
+            
             bool bolGSTDisplay = false;
             bool bolPSTDisplay = false;
             string gstText = btnRequirements[0].ToString();
@@ -400,19 +400,17 @@ namespace SweetSpotDiscountGolfPOS.FP
         }
         private double CallReturnTaxAmount(double rate, double subTotal)
         {
-            return returnTaxAmount(rate, subTotal);
+            return ReturnTaxAmount(rate, subTotal);
         }
         //This method returns the tax amount of the cart based on subtotal **Checked and Verified
-        private double returnTaxAmount(double rate, double subtotal)
+        private double ReturnTaxAmount(double rate, double subtotal)
         {
-            double TaxAmount = 0;
-            TaxAmount = Math.Round((rate * subtotal), 2);
             //Returns the gst amount 
-            return TaxAmount;
+            return Math.Round((rate * subtotal), 2);
         }
         public void TaxCorrectionOnReturnInvoice(Invoice invoice, object[] objPageDetails)
         {
-            invoice.fltBalanceDue = invoice.fltBalanceDue - (invoice.fltGovernmentTaxAmount + invoice.fltProvincialTaxAmount);
+            invoice.fltBalanceDue -= (invoice.fltGovernmentTaxAmount + invoice.fltProvincialTaxAmount);
             InvoiceManager IM = new InvoiceManager();
             IM.CalculateNewInvoiceReturnTotalsToUpdate(invoice, objPageDetails);
         }
@@ -479,7 +477,7 @@ namespace SweetSpotDiscountGolfPOS.FP
         }
         public void ChangeProvinceTaxesBasedOnShipping(int invoiceID, int shippingProvinceID, object[] objPageDetails)
         {
-            string strQueryName = "InsertItemTaxIntoSalesCart";
+            //string strQueryName = "ChangeProvinceTaxesBasedOnShipping";
             InvoiceManager IM = new InvoiceManager();
             Invoice invoice = IM.CallReturnCurrentInvoice(invoiceID, shippingProvinceID, objPageDetails)[0];
             IM.CallRemoveInvoiceItemTaxesFromCurrentItemsTaxesTable(invoice.invoiceItems, objPageDetails);
@@ -499,6 +497,10 @@ namespace SweetSpotDiscountGolfPOS.FP
         public bool CallCheckForRetailSalesTax(int taxID, object[] objPageDetails)
         {
             return CheckForRetailSalesTax(taxID, objPageDetails);
+        }
+        public void CallInsertNewTaxRate(int provinceID, int taxID, DateTime selectedDate, double taxRate, object[] objPageDetails)
+        {
+            InsertNewTaxRate(provinceID, taxID, selectedDate, taxRate, objPageDetails);
         }
     }
 }

@@ -1,18 +1,13 @@
 ﻿using OfficeOpenXml;
-using SweetShop;
-using SweetSpotDiscountGolfPOS.ClassLibrary;
-using SweetSpotProShop;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using SweetSpotDiscountGolfPOS.FP;
+using SweetSpotDiscountGolfPOS.OB;
+using SweetSpotDiscountGolfPOS.Misc;
 
 namespace SweetSpotDiscountGolfPOS
 {
@@ -20,8 +15,8 @@ namespace SweetSpotDiscountGolfPOS
     {
         ErrorReporting ER = new ErrorReporting();
         CurrentUser CU;
-        Reports R = new Reports();
-        LocationManager LM = new LocationManager();
+        readonly Reports R = new Reports();
+        readonly LocationManager LM = new LocationManager();
 
         double totalPurchAmount = 0;
         int totalPurchases = 0;
@@ -52,7 +47,7 @@ namespace SweetSpotDiscountGolfPOS
                     DateTime endDate = reportDates[1];
                     int locationID = (int)repInfo[1];
                     //Builds string to display in label
-                    lblPurchasesMadeDate.Text = "Purchases Made Between: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
+                    lblPurchasesMadeDate.Text = "Purchases Made Between: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
                     //Creating a cashout list and calling a method that grabs all mops and amounts paid
                     //purch = R.returnPurchasesDuringDates(startDate, endDate, locationID, objPageDetails);
                     //grdPurchasesMade.DataSource = purch;
@@ -71,16 +66,16 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void grdPurchasesMade_RowDataBound(object sender, GridViewRowEventArgs e)
+        protected void GrdPurchasesMade_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            string method = "grdPurchasesMade_RowDataBound";
+            string method = "GrdPurchasesMade_RowDataBound";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -106,17 +101,17 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void printReport(object sender, EventArgs e)
+        protected void PrintReport(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "printReport";
+            string method = "PrintReport";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             //Current method does nothing
             try
@@ -126,14 +121,14 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void lbtnReceiptNumber_Click(object sender, EventArgs e)
+        protected void LbtnReceiptNumber_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "lbtnReceiptNumber_Click";
@@ -152,14 +147,14 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnDownload_Click(object sender, EventArgs e)
+        protected void BtnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "btnDownload_Click";
@@ -170,7 +165,7 @@ namespace SweetSpotDiscountGolfPOS
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
                 object[] passing = (object[])Session["reportInfo"];
-                string loc = LM.ReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
+                string loc = LM.CallReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
                 string fileName = "Purchases Report - " + loc + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
@@ -184,7 +179,7 @@ namespace SweetSpotDiscountGolfPOS
                     purchasesExport.Cells[2, 3].Value = "Purchase Method";
                     purchasesExport.Cells[2, 4].Value = "Cheque Number";
                     purchasesExport.Cells[2, 5].Value = "Purchase Amount";
-                    int recordIndex = 3;
+                    //int recordIndex = 3;
                     //foreach (Purchases p in purch)
                     //{
 
@@ -207,7 +202,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

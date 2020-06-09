@@ -17,16 +17,16 @@ namespace SweetSpotDiscountGolfPOS.FP
 {
     public class Reports
     {
-        DatabaseCalls DBC = new DatabaseCalls();
+        readonly DatabaseCalls DBC = new DatabaseCalls();
 
-        public Reports() {}
+        public Reports() { }
 
         //Report Tracking
         public void CallReportLogger(object[] reportLog, object[] objPageDetails)
         {
-            logReportCall(reportLog, objPageDetails);
+            LogReportCall(reportLog, objPageDetails);
         }
-        private void logReportCall(object[] reportLog, object[] objPageDetails)
+        private void LogReportCall(object[] reportLog, object[] objPageDetails)
         {
             string strQueryName = "logReportCall";
             string sqlCmd = "INSERT INTO tbl_reportView VALUES(@intReportID, @dtmReportClickedDate, @dtmReportClickedTime, "
@@ -45,7 +45,7 @@ namespace SweetSpotDiscountGolfPOS.FP
 
         //*******************HOME PAGE SALES*******************************************************
         //Nathan built for home page sales display
-        private System.Data.DataTable getInvoiceBySaleDate(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
+        private System.Data.DataTable GetInvoiceBySaleDate(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
         {
             string strQueryName = "getInvoiceBySaleDate";
             //Gets a list of all invoices based on date and location. Stores in a list
@@ -68,9 +68,13 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
+        public System.Data.DataTable CallGetInvoiceBySaleDate(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
+        {
+            return GetInvoiceBySaleDate(startDate, endDate, locationID, objPageDetails);
+        }
 
         //******************COST OF INVENTORY REPORTING*******************************************************
-        private System.Data.DataTable costOfInventoryReport(object[] objPageDetails)
+        private System.Data.DataTable CostOfInventoryReport(object[] objPageDetails)
         {
             string strQueryName = "costOfInventoryReport";
             string sqlCmd = "SELECT L.varLocationName, ROUND(ISNULL(fltItemAccessoryCost, 0), 2) AS fltAccessoriesCost, ROUND(ISNULL(fltItemClothingCost, 0), 2) AS "
@@ -89,19 +93,23 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
+        public System.Data.DataTable CallCostOfInventoryReport(object[] objPageDetails)
+        {
+            return CostOfInventoryReport(objPageDetails);
+        }
 
         //*******************CASHOUT UTILITIES*******************************************************
         //Matches new Database Calls
-        public int verifyCashoutCanBeProcessed(int locationID, DateTime selectedDate, object[] objPageDetails)
+        public int VerifyCashoutCanBeProcessed(int locationID, DateTime selectedDate, object[] objPageDetails)
         {
             int indicator = 0;
-            if (transactionsAvailable(locationID, selectedDate, objPageDetails))
+            if (TransactionsAvailable(locationID, selectedDate, objPageDetails))
             {
-                if (openTransactions(locationID, selectedDate, objPageDetails))
+                if (OpenTransactions(locationID, selectedDate, objPageDetails))
                 {
                     indicator = 2;
                 }
-                else if(cashoutAlreadyDone(locationID, selectedDate, objPageDetails))
+                else if (CashoutAlreadyDone(locationID, selectedDate, objPageDetails))
                 {
                     indicator = 3;
                 }
@@ -109,7 +117,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             else { indicator = 1; }
             return indicator;
         }
-        private bool transactionsAvailable(int locationID, DateTime selectedDate, object[] objPageDetails)
+        private bool TransactionsAvailable(int locationID, DateTime selectedDate, object[] objPageDetails)
         {
             string strQueryName = "transactionsAvailable";
             bool bolTA = false;
@@ -129,7 +137,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             }
             return bolTA;
         }
-        private bool cashoutAlreadyDone(int locationID, DateTime selectedDate, object[] objPageDetails)
+        private bool CashoutAlreadyDone(int locationID, DateTime selectedDate, object[] objPageDetails)
         {
             string strQueryName = "cashoutAlreadyDone";
             bool bolCAD = false;
@@ -148,7 +156,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             }
             return bolCAD;
         }
-        private bool openTransactions(int locationID, DateTime selectedDate, object[] objPageDetails)
+        private bool OpenTransactions(int locationID, DateTime selectedDate, object[] objPageDetails)
         {
             string strQueryName = "openTransactions";
             bool bolOT = false;
@@ -166,11 +174,11 @@ namespace SweetSpotDiscountGolfPOS.FP
             }
             return bolOT;
         }
-        public void removeUnprocessedReturns(int locationID, DateTime selectedDate, object[] objPageDetails)
+        public void RemoveUnprocessedReturns(int locationID, DateTime selectedDate, object[] objPageDetails)
         {
             System.Data.DataTable dt = ReturnListOfReturnInvoices(locationID, selectedDate, objPageDetails);
 
-            foreach(DataRow dtr in dt.Rows)
+            foreach (DataRow dtr in dt.Rows)
             {
                 RemoveReturnMopsFromCurrentSales(Convert.ToInt32(dtr[0]), objPageDetails);
                 RemoveReturnItemTaxesFromCurrentSales(Convert.ToInt32(dtr[0]), objPageDetails);
@@ -244,26 +252,28 @@ namespace SweetSpotDiscountGolfPOS.FP
             System.Data.DataTable dt2 = ReturnAdditionTotalsForCashout(startDate, locationID, objPageDetails);
 
             //Save all into a cashout and return
-            Cashout cashout = new Cashout();
-            cashout.dtmCashoutDate = startDate;
-            cashout.intLocationID = locationID;
-            cashout.fltSystemCountedBasedOnSystemTradeIn = Convert.ToDouble(dt2.Rows[0][0].ToString()) * -1;
-            cashout.fltSystemCountedBasedOnSystemGiftCard = Convert.ToDouble(dt1.Rows[0][3].ToString());
-            cashout.fltSystemCountedBasedOnSystemCash = Convert.ToDouble(dt1.Rows[0][1].ToString());
-            cashout.fltSystemCountedBasedOnSystemDebit = Convert.ToDouble(dt1.Rows[0][2].ToString());
-            cashout.fltSystemCountedBasedOnSystemMastercard = Convert.ToDouble(dt1.Rows[0][4].ToString());
-            cashout.fltSystemCountedBasedOnSystemVisa = Convert.ToDouble(dt1.Rows[0][5].ToString());
-            cashout.fltSalesSubTotal = Convert.ToDouble(dt2.Rows[0][1].ToString());
-            cashout.fltGovernmentTaxAmount = Convert.ToDouble(dt2.Rows[0][2].ToString());
-            cashout.fltLiquorTaxAmount = Convert.ToDouble(dt2.Rows[0][4].ToString());
-            cashout.fltProvincialTaxAmount = Convert.ToDouble(dt2.Rows[0][3].ToString());
+            Cashout cashout = new Cashout
+            {
+                dtmCashoutDate = startDate,
+                intLocationID = locationID,
+                fltSystemCountedBasedOnSystemTradeIn = Convert.ToDouble(dt2.Rows[0][0].ToString()) * -1,
+                fltSystemCountedBasedOnSystemGiftCard = Convert.ToDouble(dt1.Rows[0][3].ToString()),
+                fltSystemCountedBasedOnSystemCash = Convert.ToDouble(dt1.Rows[0][1].ToString()),
+                fltSystemCountedBasedOnSystemDebit = Convert.ToDouble(dt1.Rows[0][2].ToString()),
+                fltSystemCountedBasedOnSystemMastercard = Convert.ToDouble(dt1.Rows[0][4].ToString()),
+                fltSystemCountedBasedOnSystemVisa = Convert.ToDouble(dt1.Rows[0][5].ToString()),
+                fltSalesSubTotal = Convert.ToDouble(dt2.Rows[0][1].ToString()),
+                fltGovernmentTaxAmount = Convert.ToDouble(dt2.Rows[0][2].ToString()),
+                fltLiquorTaxAmount = Convert.ToDouble(dt2.Rows[0][4].ToString()),
+                fltProvincialTaxAmount = Convert.ToDouble(dt2.Rows[0][3].ToString())
 
-            //cashout.fltHarmonizedTaxAmount = Convert.ToDouble(dt2.Rows[0][3].ToString());
-            //cashout.fltLiquorTaxAmount = Convert.ToDouble(dt2.Rows[0][4].ToString());
-            //cashout.fltProvincialTaxAmount = Convert.ToDouble(dt2.Rows[0][5].ToString());
-            //cashout.fltQuebecTaxAmount = Convert.ToDouble(dt2.Rows[0][6].ToString());
-            //cashout.fltRetailTaxAmount = Convert.ToDouble(dt2.Rows[0][7].ToString());
-            //cashout.intSalesCount = Convert.ToDouble(dt2.Rows[0][8].ToString());
+                //cashout.fltHarmonizedTaxAmount = Convert.ToDouble(dt2.Rows[0][3].ToString());
+                //cashout.fltLiquorTaxAmount = Convert.ToDouble(dt2.Rows[0][4].ToString());
+                //cashout.fltProvincialTaxAmount = Convert.ToDouble(dt2.Rows[0][5].ToString());
+                //cashout.fltQuebecTaxAmount = Convert.ToDouble(dt2.Rows[0][6].ToString());
+                //cashout.fltRetailTaxAmount = Convert.ToDouble(dt2.Rows[0][7].ToString());
+                //cashout.intSalesCount = Convert.ToDouble(dt2.Rows[0][8].ToString());
+            };
 
             return cashout;
         }
@@ -330,9 +340,9 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        
+
         //Insert the cashout into the database
-        private void insertCashout(Cashout cashout, object[] objPageDetails)
+        private void InsertCashout(Cashout cashout, object[] objPageDetails)
         {
             string strQueryName = "insertCashout";
             string sqlCmd = "INSERT INTO tbl_cashout VALUES(@dtmCashoutDate, @dtmCashoutTime, @intLocationID, @intEmployeeID, "
@@ -378,19 +388,23 @@ namespace SweetSpotDiscountGolfPOS.FP
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
+        public void CallInsertCashout(Cashout cashout, object[] objPageDetails)
+        {
+            InsertCashout(cashout, objPageDetails);
+        }
 
         //******************PURCHASES REPORTING*******************************************************
         //Matches new Database Calls
-        public int verifyPurchasesMade(object[] repInfo, object[] objPageDetails)
+        public int VerifyPurchasesMade(object[] repInfo, object[] objPageDetails)
         {
             int indicator = 0;
-            if (!purchasesAvailable(repInfo, objPageDetails))
+            if (!PurchasesAvailable(repInfo, objPageDetails))
             {
                 indicator = 1;
             }
             return indicator;
         }
-        private bool purchasesAvailable(object[] repInfo, object[] objPageDetails)
+        private bool PurchasesAvailable(object[] repInfo, object[] objPageDetails)
         {
             string strQueryName = "purchasesAvailable";
             bool bolTA = false;
@@ -414,8 +428,7 @@ namespace SweetSpotDiscountGolfPOS.FP
 
             return bolTA;
         }
-
-        private bool tradeinsHaveBeenProcessed(object[] repInfo, object[] objPageDetails)
+        private bool TradeInsHaveBeenProcessed(object[] repInfo, object[] objPageDetails)
         {
             string strQueryName = "tradeinsHaveBeenProcessed";
             bool bolTI = false;
@@ -449,7 +462,7 @@ namespace SweetSpotDiscountGolfPOS.FP
         //        new object[] { "@endDate", endDate },
         //        new object[] { "@locationID", locationID }
         //    };
-            
+
         //    return returnPurchasesFromDataTable(dbc.returnDataTableData(sqlCmd, parms));
         //    //return returnPurchasesFromDataTable(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         //}
@@ -467,7 +480,7 @@ namespace SweetSpotDiscountGolfPOS.FP
         //    return purchase;
         //}
         //******************MARKETING REPORTING*******************************************************
-        private System.Data.DataTable mostSoldItemsReport(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
+        private System.Data.DataTable MostSoldItemsReport(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
         {
             string strQueryName = "mostSoldItemsReport";
             string sqlCmd = "SELECT TOP (10) II.sku, SUM(II.quantity) AS amountSold FROM tbl_invoiceItem II JOIN tbl_invoice I ON I.invoiceNum = II.invoiceNum AND "
@@ -483,7 +496,11 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private System.Data.DataTable mostSoldBrandsReport(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
+        public System.Data.DataTable CallMostSoldItemsReport(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
+        {
+            return MostSoldItemsReport(startDate, endDate, locationID, objPageDetails);
+        }
+        private System.Data.DataTable MostSoldBrandsReport(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
         {
             string strQueryName = "mostSoldBrandsReport";
             string sqlCmd = "SELECT TOP(10) BB.brand, SUM(II.quantity) AS amountSold FROM tbl_invoiceItem II JOIN tbl_invoice I ON I.invoiceNum = II.invoiceNum AND "
@@ -502,7 +519,11 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private System.Data.DataTable mostSoldModelsReport(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
+        public System.Data.DataTable CallMostSoldBrandsReport(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
+        {
+            return MostSoldBrandsReport(startDate, endDate, locationID, objPageDetails);
+        }
+        private System.Data.DataTable MostSoldModelsReport(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
         {
             string strQueryName = "mostSoldModelsReport";
             string sqlCmd = "SELECT TOP (10) MM.model, SUM(II.quantity) AS amountSold FROM tbl_invoiceItem II JOIN tbl_invoice I ON I.invoiceNum = II.invoiceNum AND "
@@ -520,10 +541,14 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
+        public System.Data.DataTable CallMostSoldModelsReport(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
+        {
+            return MostSoldModelsReport(startDate, endDate, locationID, objPageDetails);
+        }
 
 
         //******************COGS and PM REPORTING*******************************************************
-        private System.Data.DataTable returnInvoicesForCOGS(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
+        private System.Data.DataTable ReturnInvoicesForCOGS(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
         {
             string strQueryName = "returnInvoicesForCOGS";
             //This method returns a type of invoice for a report
@@ -534,7 +559,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "SUM(price * quantity) AS totalPrice, SUM(cost * quantity) AS totalCost, CASE WHEN percentage = 1 THEN SUM(itemDiscount) ELSE SUM(itemDiscount * quantity) "
                 + "END AS totalDiscount, percentage FROM tbl_invoiceItem GROUP BY invoiceNum, invoiceSubNum, sku, percentage) AS II ON II.invoiceNum = I.invoiceNum AND "
                 + "II.invoiceSubNum = I.invoiceSubNum WHERE II.sku NOT IN(SELECT sku FROM tbl_tempTradeInCartSkus) AND II.invoiceNum NOT IN(SELECT invoiceNum FROM "
-                +  "tbl_invoiceItemReturns) AND I.locationID = @locationID AND I.invoiceDate BETWEEN @startDate AND @endDate ORDER BY I.invoiceNum, I.invoiceSubNum";
+                + "tbl_invoiceItemReturns) AND I.locationID = @locationID AND I.invoiceDate BETWEEN @startDate AND @endDate ORDER BY I.invoiceNum, I.invoiceSubNum";
             object[][] parms =
             {
                 new object[] { "@startDate", startDate },
@@ -544,16 +569,20 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public int verifyInvoicesCompleted(object[] repInfo, object[] objPageDetails)
+        public System.Data.DataTable CallReturnInvoicesForCOGS(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
+        {
+            return ReturnInvoicesForCOGS(startDate, endDate, locationID, objPageDetails);
+        }
+        public int VerifyInvoicesCompleted(object[] repInfo, object[] objPageDetails)
         {
             int indicator = 0;
-            if (!invoicesCompleted(repInfo, objPageDetails))
+            if (!InvoicesCompleted(repInfo, objPageDetails))
             {
                 indicator = 1;
             }
             return indicator;
         }
-        private bool invoicesCompleted(object[] repInfo, object[] objPageDetails)
+        private bool InvoicesCompleted(object[] repInfo, object[] objPageDetails)
         {
             string strQueryName = "invoicesCompleted";
             bool bolData = false;
@@ -576,16 +605,16 @@ namespace SweetSpotDiscountGolfPOS.FP
 
         //******************Sales by Date Report*******************************************************
         //Matches new Database Calls
-        public int verifySalesHaveBeenMade(object[] repInfo, object[] objPageDetails)
+        public int VerifySalesHaveBeenMade(object[] repInfo, object[] objPageDetails)
         {
             int indicator = 0;
-            if (!transactionsAvailableOverMultipleDates(repInfo, objPageDetails))
+            if (!TransactionsAvailableOverMultipleDates(repInfo, objPageDetails))
             {
                 indicator = 1;
             }
             return indicator;
         }
-        private bool transactionsAvailableOverMultipleDates(object[] repInfo, object[] objPageDetails)
+        private bool TransactionsAvailableOverMultipleDates(object[] repInfo, object[] objPageDetails)
         {
             string strQueryName = "transactionsAvailableOverMultipleDates";
             bool bolTA = false;
@@ -605,7 +634,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             }
             return bolTA;
         }
-        private System.Data.DataTable returnSalesForSelectedDate(object[] repInfo, object[] objPageDetails)
+        private System.Data.DataTable ReturnSalesForSelectedDate(object[] repInfo, object[] objPageDetails)
         {
             string strQueryName = "returnSalesForSelectedDate";
             DateTime[] dtm = (DateTime[])repInfo[0];
@@ -613,7 +642,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "bitChargePST = 1 THEN fltProvincialTaxAmount ELSE 0 END), 2) AS fltProvincialTaxAmount, ROUND(SUM(CASE WHEN bitChargeGST = 1 THEN fltGovernmentTaxAmount "
                 + "ELSE 0 END), 2) AS fltGovernmentTaxAmount, ROUND(SUM(fltBalanceDue), 2) AS fltTotalSales FROM tbl_invoice WHERE dtmInvoiceDate BETWEEN @dtmStartDate AND "
                 + "@dtmEndDate AND intLocationID = @intLocationID GROUP BY dtmInvoiceDate";
-            object[][] parms = 
+            object[][] parms =
             {
                 new object[] { "@dtmStartDate", dtm[0] },
                 new object[] { "@dtmEndDate", dtm[1] },
@@ -622,18 +651,22 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
+        public System.Data.DataTable CallReturnSalesForSelectedDate(object[] repInfo, object[] objPageDetails)
+        {
+            return ReturnSalesForSelectedDate(repInfo, objPageDetails);
+        }
 
         //******************Trade Ins by Date Report*******************************************************
-        public int verifyTradeInsHaveBeenMade(object[] repInfo, object[] objPageDetails)
+        public int VerifyTradeInsHaveBeenMade(object[] repInfo, object[] objPageDetails)
         {
             int indicator = 0;
-            if (!tradeinsHaveBeenProcessed(repInfo, objPageDetails))
+            if (!TradeInsHaveBeenProcessed(repInfo, objPageDetails))
             {
                 indicator = 1;
             }
             return indicator;
         }
-        private System.Data.DataTable returnTradeInsForSelectedDate(object[] repInfo, object[] objPageDetails)
+        private System.Data.DataTable ReturnTradeInsForSelectedDate(object[] repInfo, object[] objPageDetails)
         {
             string strQueryName = "returnTradeInsForSelectedDate";
             DateTime[] dtm = (DateTime[])repInfo[0];
@@ -648,9 +681,13 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
+        public System.Data.DataTable CallReturnTradeInsForSelectedDate(object[] repInfo, object[] objPageDetails)
+        {
+            return ReturnTradeInsForSelectedDate(repInfo, objPageDetails);
+        }
 
         //******************Sales by Payment Type By Date Report***************************************
-        private System.Data.DataTable returnSalesByPaymentTypeForSelectedDate(object[] repInfo, object[] objPageDetails)
+        private System.Data.DataTable ReturnSalesByPaymentTypeForSelectedDate(object[] repInfo, object[] objPageDetails)
         {
             string strQueryName = "returnSalesByPaymentTypeForSelectedDate";
             DateTime[] dtm = (DateTime[])repInfo[0];
@@ -658,7 +695,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "AS Mastercard, ISNULL([Visa],0) AS Visa FROM(SELECT i.invoiceDate, m.mopType, SUM(amountPaid) AS totalPaid FROM tbl_invoiceMOP m JOIN tbl_invoice "
                 + "i ON m.invoiceNum = i.invoiceNum AND m.invoiceSubNum = i.invoiceSubNum WHERE i.invoiceDate BETWEEN @startDate AND @endDate AND i.locationID = "
                 + "@locationID GROUP BY i.invoiceDate, m.mopType) ps PIVOT(SUM(totalPaid) FOR mopType IN([Cash], [Debit], [Gift Card], [MasterCard], [Visa])) AS pvt";
-            object[][] parms = 
+            object[][] parms =
             {
                 new object[] { "@startDate", dtm[0] },
                 new object[] { "@endDate", dtm[1] },
@@ -666,9 +703,13 @@ namespace SweetSpotDiscountGolfPOS.FP
             };
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
-        }        
+        }
+        public System.Data.DataTable CallReturnSalesByPaymentTypeForSelectedDate(object[] repInfo, object[] objPageDetails)
+        {
+            return ReturnSalesByPaymentTypeForSelectedDate(repInfo, objPageDetails);
+        }
         //This method is an updated import item method that runs cleaner and should produce less errors
-        private System.Data.DataTable uploadItems(FileUpload fup, CurrentUser cu, object[] objPageDetails)
+        private System.Data.DataTable UploadItems(FileUpload fup, CurrentUser cu, object[] objPageDetails)
         {
 
             //***************************************************************************************************
@@ -676,505 +717,515 @@ namespace SweetSpotDiscountGolfPOS.FP
             //***************************************************************************************************
             string connectionString = ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString;
             //Datatable to hold any skus that have errors
-            System.Data.DataTable skusWithErrors = new System.Data.DataTable();
-            //skusWithErrors.Columns.Add("sku");
-            //skusWithErrors.Columns.Add("brandError");
-            //skusWithErrors.Columns.Add("modelError");
-            //skusWithErrors.Columns.Add("identifierError");
-            //This datatable can hold all items
-            System.Data.DataTable listItems = new System.Data.DataTable();
-            listItems.Columns.Add("varSku"); //("sku");
-            listItems.Columns.Add("varBrandName"); //("brandName");
-            listItems.Columns.Add("varModelName"); //("modelName");
-            listItems.Columns.Add("fltCost"); //("cost");
-            listItems.Columns.Add("fltPrice"); //("price");
-            listItems.Columns.Add("intQuantity"); //("quantity");
-            listItems.Columns.Add("varAdditionalInformation"); //("comments");
-            listItems.Columns.Add("fltPremiumCharge"); //("premium");
-            listItems.Columns.Add("varTypeOfClub"); //("clubType");
-            listItems.Columns.Add("varShaftType"); //("shaft");
-            listItems.Columns.Add("varNumberOfClubs"); //("numberOfClubs");
-            listItems.Columns.Add("varClubSpecification"); //("clubSpec");
-            listItems.Columns.Add("varShaftSpecification"); //("shaftSpec");
-            listItems.Columns.Add("varShaftFlexability"); //("shaftFlex");
-            listItems.Columns.Add("varClubDexterity"); //("dexterity");
-            listItems.Columns.Add("varLocationName"); //("locationName");
-            listItems.Columns.Add("varItemType"); //("itemType");
-            listItems.Columns.Add("bitIsUsedProduct"); //
-            //listItems.Columns.Add//("size");
-            //listItems.Columns.Add//("colour");
-
-            //Database connections
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlConnection conTempDB = new SqlConnection(connectionString);
-            SqlConnection conInsert = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand();
-            SqlDataReader reader;
-
-            cmd.CommandText = "IF OBJECT_ID('tempItemStorage', 'U') IS NOT NULL DROP TABLE tempItemStorage; IF OBJECT_ID('tempErrorSkus', 'U') IS NOT NULL DROP TABLE tempErrorSkus;";
-            conTempDB.Open();
-            cmd.Connection = conTempDB;
-            reader = cmd.ExecuteReader();
-            conTempDB.Close();
-
-            //***************************************************************************************************
-            //Step 2: Check to see if there is any data in the uploaded file
-            //***************************************************************************************************
-
-            //If there are files, proceed
-            if (fup.HasFiles)
+            using (System.Data.DataTable skusWithErrors = new System.Data.DataTable())
             {
-
-                //***************************************************************************************************
-                //Step 3: Create an excel sheet and set its content to the uploaded file
-                //***************************************************************************************************
-
-                //Load the uploaded file into the memorystream
-                using (MemoryStream stream = new MemoryStream(fup.FileBytes))
-                //Lets the server know to use the excel package
-                using (ExcelPackage xlPackage = new ExcelPackage(stream))
+                //skusWithErrors.Columns.Add("sku");
+                //skusWithErrors.Columns.Add("brandError");
+                //skusWithErrors.Columns.Add("modelError");
+                //skusWithErrors.Columns.Add("identifierError");
+                //This datatable can hold all items
+                using (System.Data.DataTable listItems = new System.Data.DataTable())
                 {
-                    con = new SqlConnection(connectionString);
-                    // get the first worksheet in the workbook
-                    ExcelWorksheet worksheet = xlPackage.Workbook.Worksheets[1];
-                    var rowCnt = worksheet.Dimension.End.Row; //Gets the row count                   
-                    var colCnt = worksheet.Dimension.End.Column; //Gets the column count
+                    listItems.Columns.Add("varSku"); //("sku");
+                    listItems.Columns.Add("varBrandName"); //("brandName");
+                    listItems.Columns.Add("varModelName"); //("modelName");
+                    listItems.Columns.Add("fltCost"); //("cost");
+                    listItems.Columns.Add("fltPrice"); //("price");
+                    listItems.Columns.Add("intQuantity"); //("quantity");
+                    listItems.Columns.Add("varAdditionalInformation"); //("comments");
+                    listItems.Columns.Add("fltPremiumCharge"); //("premium");
+                    listItems.Columns.Add("varTypeOfClub"); //("clubType");
+                    listItems.Columns.Add("varShaftType"); //("shaft");
+                    listItems.Columns.Add("varNumberOfClubs"); //("numberOfClubs");
+                    listItems.Columns.Add("varClubSpecification"); //("clubSpec");
+                    listItems.Columns.Add("varShaftSpecification"); //("shaftSpec");
+                    listItems.Columns.Add("varShaftFlexability"); //("shaftFlex");
+                    listItems.Columns.Add("varClubDexterity"); //("dexterity");
+                    listItems.Columns.Add("varLocationName"); //("locationName");
+                    listItems.Columns.Add("varItemType"); //("itemType");
+                    listItems.Columns.Add("bitIsUsedProduct"); //
+                                                               //listItems.Columns.Add//("size");
+                                                               //listItems.Columns.Add//("colour");
 
-                    //***************************************************************************************************
-                    //Step 4: Looping through the data found in the excel sheet and storing it in the datatable
-                    //***************************************************************************************************
-
-                    //Beginning the loop for data gathering
-                    for (int i = 2; i <= rowCnt; i++) //Starts on 2 because excel starts at 1, and line 1 is headers
+                    //Database connections
+                    using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        string itemType = (worksheet.Cells[i, 5].Value).ToString(); //Column 25 = itemType
-                        //Adding items to the datatables 
-                        //***************************************************************************************************
-                        //Step 4: Option A: The item type is Apparel
-                        //***************************************************************************************************
-                        if (itemType.Equals("Apparel"))
+                        SqlConnection conTempDB = new SqlConnection(connectionString);
+                        using (SqlConnection conInsert = new SqlConnection(connectionString))
                         {
-                            listItems.Rows.Add(
-                                //***************SKU**********************
-                                worksheet.Cells[i, 3].Value.ToNullSafeString(),
-                                //***************BRAND NAME***************
-                                itemType.ToString(),
-                                //***************MODEL NAME***************        
-                                (string)(worksheet.Cells[i, 6].Value.ToNullSafeString()), //'N/A'
-                                //***************COST*********************
-                                Convert.ToDouble(worksheet.Cells[i, 12].Value),
-                                //***************PRICE********************
-                                Convert.ToDouble(worksheet.Cells[i, 15].Value),
-                                //***************QUANTITY*****************
-                                Convert.ToInt32(worksheet.Cells[i, 13].Value),
-                                //***************COMMENTS*****************
-                                (string)(worksheet.Cells[i, 16].Value.ToNullSafeString()),
-                                //***************PREMIUM******************
-                                Convert.ToDouble(0),
-                                //***************CLUB TYPE****************
-                                (string)(worksheet.Cells[i, 7].Value.ToNullSafeString()), //Style for clothing
-                                //***************SHAFT********************
-                                (string)(worksheet.Cells[i, 8].Value.ToNullSafeString()), //Colour for clothing
-                                //***************NUMBER OF CLUBS**********
-                                (string)(worksheet.Cells[i, 9].Value.ToNullSafeString()), //Size for clothing
-                                //***************CLUB SPEC****************
-                                (string)(worksheet.Cells[i, 18].Value.ToNullSafeString()), //Gender for clothing
-                                //***************SHAFT SPEC***************
-                                "",
-                                //***************SHAFT FLEX***************
-                                "",
-                                //***************DEXTERITY****************
-                                "",
-                                //***************LOCATION NAME************
-                                (string)(worksheet.Cells[i, 22].Value.ToNullSafeString()), //Second Location
-                                //***************ITEM TYPE****************
-                                3,
-                                //***************USED PRODUCT*************
-                                Convert.ToBoolean(worksheet.Cells[i, 26].Value)
-                            );
                         }
-                        //***************************************************************************************************
-                        //Step 4: Option B: The item type is Accessories
-                        //***************************************************************************************************
-                        else if (itemType.Equals("Accessories"))
+                        using (SqlCommand cmd = new SqlCommand())
                         {
-                            listItems.Rows.Add(
-                                //***************SKU***************
-                                worksheet.Cells[i, 3].Value.ToNullSafeString(),
-                                //***************BRAND NAME***************
-                                itemType.ToString(),
-                                //***************MODEL Name***************        
-                                (string)(worksheet.Cells[i, 6].Value.ToNullSafeString()),
-                                //***************COST***************
-                                Convert.ToDouble(worksheet.Cells[i, 12].Value),
-                                //***************PRICE***************
-                                Convert.ToDouble(worksheet.Cells[i, 15].Value),
-                                //***************QUANTITY***************
-                                Convert.ToInt32(worksheet.Cells[i, 13].Value),
-                                //***************COMMENTS***************
-                                (string)(worksheet.Cells[i, 16].Value.ToNullSafeString()),
-                                //***************PREMIUM***************
-                                Convert.ToDouble(0), 
-                                //***************CLUB TYPE***************
-                                (string)(worksheet.Cells[i, 7].Value.ToNullSafeString()), //accessoryType
-                                //***************SHAFT***************
-                                (string)(worksheet.Cells[i, 8].Value.ToNullSafeString()), //Colour for accessory
-                                //***************NUMBER OF CLUBS***************
-                                (string)(worksheet.Cells[i, 9].Value.ToNullSafeString()), //Size for accessory
-                                //***************CLUB SPEC***************
-                                "",
-                                //***************SHAFT SPEC***************
-                                "",
-                                //***************SHAFT FLEX***************
-                                "",
-                                //***************DEXTERITY***************
-                                "",
-                                //***************LOCATION NAME***************
-                                (string)(worksheet.Cells[i, 22].Value.ToNullSafeString()),
-                                //***************ITEM TYPE***************
-                                2,
-                                //***************USED PRODUCT*************
-                                Convert.ToBoolean(worksheet.Cells[i, 26].Value)
-                            );
+                            SqlDataReader reader;
+
+                            cmd.CommandText = "IF OBJECT_ID('tempItemStorage', 'U') IS NOT NULL DROP TABLE tempItemStorage; IF OBJECT_ID('tempErrorSkus', 'U') IS NOT NULL DROP TABLE tempErrorSkus;";
+                            conTempDB.Open();
+                            cmd.Connection = conTempDB;
+                            reader = cmd.ExecuteReader();
+                            conTempDB.Close();
+
+                            //***************************************************************************************************
+                            //Step 2: Check to see if there is any data in the uploaded file
+                            //***************************************************************************************************
+
+                            //If there are files, proceed
+                            if (fup.HasFiles)
+                            {
+
+                                //***************************************************************************************************
+                                //Step 3: Create an excel sheet and set its content to the uploaded file
+                                //***************************************************************************************************
+
+                                //Load the uploaded file into the memorystream
+                                using (MemoryStream stream = new MemoryStream(fup.FileBytes))
+                                //Lets the server know to use the excel package
+                                using (ExcelPackage xlPackage = new ExcelPackage(stream))
+                                {
+                                    //con = new SqlConnection(connectionString);
+                                    // get the first worksheet in the workbook
+                                    ExcelWorksheet worksheet = xlPackage.Workbook.Worksheets[1];
+                                    var rowCnt = worksheet.Dimension.End.Row; //Gets the row count                   
+                                    var colCnt = worksheet.Dimension.End.Column; //Gets the column count
+
+                                    //***************************************************************************************************
+                                    //Step 4: Looping through the data found in the excel sheet and storing it in the datatable
+                                    //***************************************************************************************************
+
+                                    //Beginning the loop for data gathering
+                                    for (int i = 2; i <= rowCnt; i++) //Starts on 2 because excel starts at 1, and line 1 is headers
+                                    {
+                                        string itemType = (worksheet.Cells[i, 5].Value).ToString(); //Column 25 = itemType
+                                                                                                    //Adding items to the datatables 
+                                                                                                    //***************************************************************************************************
+                                                                                                    //Step 4: Option A: The item type is Apparel
+                                                                                                    //***************************************************************************************************
+                                        if (itemType.Equals("Apparel"))
+                                        {
+                                            listItems.Rows.Add(
+                                                //***************SKU**********************
+                                                worksheet.Cells[i, 3].Value.ToNullSafeString(),
+                                                //***************BRAND NAME***************
+                                                itemType.ToString(),
+                                                //***************MODEL NAME***************        
+                                                (string)(worksheet.Cells[i, 6].Value.ToNullSafeString()), //'N/A'
+                                                                                                          //***************COST*********************
+                                                Convert.ToDouble(worksheet.Cells[i, 12].Value),
+                                                //***************PRICE********************
+                                                Convert.ToDouble(worksheet.Cells[i, 15].Value),
+                                                //***************QUANTITY*****************
+                                                Convert.ToInt32(worksheet.Cells[i, 13].Value),
+                                                //***************COMMENTS*****************
+                                                (string)(worksheet.Cells[i, 16].Value.ToNullSafeString()),
+                                                //***************PREMIUM******************
+                                                Convert.ToDouble(0),
+                                                //***************CLUB TYPE****************
+                                                (string)(worksheet.Cells[i, 7].Value.ToNullSafeString()), //Style for clothing
+                                                                                                          //***************SHAFT********************
+                                                (string)(worksheet.Cells[i, 8].Value.ToNullSafeString()), //Colour for clothing
+                                                                                                          //***************NUMBER OF CLUBS**********
+                                                (string)(worksheet.Cells[i, 9].Value.ToNullSafeString()), //Size for clothing
+                                                                                                          //***************CLUB SPEC****************
+                                                (string)(worksheet.Cells[i, 18].Value.ToNullSafeString()), //Gender for clothing
+                                                                                                           //***************SHAFT SPEC***************
+                                                "",
+                                                //***************SHAFT FLEX***************
+                                                "",
+                                                //***************DEXTERITY****************
+                                                "",
+                                                //***************LOCATION NAME************
+                                                (string)(worksheet.Cells[i, 22].Value.ToNullSafeString()), //Second Location
+                                                                                                           //***************ITEM TYPE****************
+                                                3,
+                                                //***************USED PRODUCT*************
+                                                Convert.ToBoolean(worksheet.Cells[i, 26].Value)
+                                            );
+                                        }
+                                        //***************************************************************************************************
+                                        //Step 4: Option B: The item type is Accessories
+                                        //***************************************************************************************************
+                                        else if (itemType.Equals("Accessories"))
+                                        {
+                                            listItems.Rows.Add(
+                                                //***************SKU***************
+                                                worksheet.Cells[i, 3].Value.ToNullSafeString(),
+                                                //***************BRAND NAME***************
+                                                itemType.ToString(),
+                                                //***************MODEL Name***************        
+                                                (string)(worksheet.Cells[i, 6].Value.ToNullSafeString()),
+                                                //***************COST***************
+                                                Convert.ToDouble(worksheet.Cells[i, 12].Value),
+                                                //***************PRICE***************
+                                                Convert.ToDouble(worksheet.Cells[i, 15].Value),
+                                                //***************QUANTITY***************
+                                                Convert.ToInt32(worksheet.Cells[i, 13].Value),
+                                                //***************COMMENTS***************
+                                                (string)(worksheet.Cells[i, 16].Value.ToNullSafeString()),
+                                                //***************PREMIUM***************
+                                                Convert.ToDouble(0),
+                                                //***************CLUB TYPE***************
+                                                (string)(worksheet.Cells[i, 7].Value.ToNullSafeString()), //accessoryType
+                                                                                                          //***************SHAFT***************
+                                                (string)(worksheet.Cells[i, 8].Value.ToNullSafeString()), //Colour for accessory
+                                                                                                          //***************NUMBER OF CLUBS***************
+                                                (string)(worksheet.Cells[i, 9].Value.ToNullSafeString()), //Size for accessory
+                                                                                                          //***************CLUB SPEC***************
+                                                "",
+                                                //***************SHAFT SPEC***************
+                                                "",
+                                                //***************SHAFT FLEX***************
+                                                "",
+                                                //***************DEXTERITY***************
+                                                "",
+                                                //***************LOCATION NAME***************
+                                                (string)(worksheet.Cells[i, 22].Value.ToNullSafeString()),
+                                                //***************ITEM TYPE***************
+                                                2,
+                                                //***************USED PRODUCT*************
+                                                Convert.ToBoolean(worksheet.Cells[i, 26].Value)
+                                            );
+                                        }
+                                        //***************************************************************************************************
+                                        //Step 3: Option D: The item type is a club
+                                        //***************************************************************************************************
+                                        else
+                                        {
+                                            listItems.Rows.Add(
+                                                //***************SKU***************
+                                                worksheet.Cells[i, 3].Value.ToNullSafeString(),
+                                                //***************BRAND NAME***************
+                                                itemType.ToString(),
+                                                //***************MODEL Name***************        
+                                                (string)(worksheet.Cells[i, 6].Value.ToNullSafeString()),
+                                                //***************COST***************
+                                                Convert.ToDouble(worksheet.Cells[i, 12].Value),
+                                                //***************PRICE***************
+                                                Convert.ToDouble(worksheet.Cells[i, 15].Value),
+                                                //***************QUANTITY***************
+                                                Convert.ToInt32(worksheet.Cells[i, 13].Value),
+                                                //***************COMMENTS***************
+                                                (string)(worksheet.Cells[i, 16].Value.ToNullSafeString()),
+                                                //***************PREMIUM***************
+                                                Convert.ToDouble(worksheet.Cells[i, 11].Value),
+                                                //***************CLUB TYPE***************
+                                                (string)(worksheet.Cells[i, 7].Value.ToNullSafeString()),
+                                                //***************SHAFT***************
+                                                (string)(worksheet.Cells[i, 8].Value.ToNullSafeString()),
+                                                //***************NUMBER OF CLUBS***************
+                                                (string)(worksheet.Cells[i, 9].Value.ToNullSafeString()),
+                                                //***************CLUB SPEC***************
+                                                (string)(worksheet.Cells[i, 18].Value.ToNullSafeString()),
+                                                //***************SHAFT SPEC***************
+                                                (string)(worksheet.Cells[i, 19].Value.ToNullSafeString()),
+                                                //***************SHAFT FLEX***************
+                                                (string)(worksheet.Cells[i, 20].Value.ToNullSafeString()),
+                                                //***************DEXTERITY***************
+                                                (string)(worksheet.Cells[i, 21].Value.ToNullSafeString()),
+                                                //***************LOCATION NAME***************
+                                                (string)(worksheet.Cells[i, 22].Value.ToNullSafeString()),
+                                                //***************ITEM TYPE***************
+                                                1,
+                                                //***************USED PRODUCT*************
+                                                Convert.ToBoolean(worksheet.Cells[i, 26].Value)
+                                            );
+                                        }
+                                    }
+
+                                    //***************************************************************************************************
+                                    //Step 5: Create the temp tables for storing the items and skus that cause an error
+                                    //***************************************************************************************************
+
+                                    //Creating the temp tables  
+                                    conTempDB.Open();
+                                    cmd.CommandText = "CREATE TABLE tempItemStorage(varSku VARCHAR(25), intBrandID INT, intModelID INT, varTypeOfClub VARCHAR(150), varShaftType VARCHAR(150), "
+                                        + "varNumberOfClubs VARCHAR(150), fltPremiumCharge FLOAT, fltCost FLOAT, fltPrice FLOAT, intQuantity INT, varClubSpecification VARCHAR(150), "
+                                        + "varShaftSpecification VARCHAR(150), varShaftFlexability VARCHAR(150), varClubDexterity VARCHAR(150), intItemTypeID INT, intLocationID INT, "
+                                        + "varAdditionalInformation VARCHAR(500), bitIsUsedProduct BIT); CREATE TABLE tempErrorSkus(varSku VARCHAR(25), intBrandError INT, intModelError INT, "
+                                        + "intIdentifierError INT)";
+                                    cmd.Connection = conTempDB;
+                                    reader = cmd.ExecuteReader();
+                                    conTempDB.Close();
+
+                                    //***************************************************************************************************
+                                    //Step 6: Check each item in the datatable to see if it will cause an error. If not, insert into the temp item table
+                                    //***************************************************************************************************
+
+                                    foreach (DataRow row in listItems.Rows)
+                                    {
+                                        con.Open();
+                                        //This query will look up the brand, model, and locationID of the item being passed in. 
+                                        //If all three are found, it will insert the item into the tempItemStorage table.
+                                        //If not, it is added to the tempErrorSkus table
+                                        cmd.CommandText = "IF((SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) >= 0 AND " +
+                                                            "(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) >= 0 AND " +
+                                                            "(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID) >= 0) " +
+                                                            "BEGIN " +
+                                                                "INSERT INTO tempItemStorage VALUES( " +
+                                                                    "@varSku, " +
+                                                                    "(SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName), " +
+                                                                    "(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName), " +
+                                                                    "@varTypeOfClub, @varShaftType, @varNumberOfClubs, @fltPremiumCharge, @fltCost, @fltPrice, @intQuantity, "
+                                                                    + "@varClubSpecification, @varShaftSpecification, @varShaftFlexability, @varClubDexterity, @intItemTypeID, " +
+                                                                    "(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID), "
+                                                                    + "@varAdditionalInformation, @bitIsUsedProduct) " +
+                                                            "END " +
+                                                        "ELSE IF(NOT EXISTS(SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) AND " +
+                                                                "(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) >= 0 AND " +
+                                                                "(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID) >= 0) " +
+                                                            "BEGIN " +
+                                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 1, 0, 0) " +
+                                                            "END " +
+                                                        "ELSE IF ((SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) >= 0 AND " +
+                                                                 "NOT EXISTS(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) AND " +
+                                                                 "(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID) >= 0) " +
+                                                            "BEGIN " +
+                                                                    "INSERT INTO tempErrorSkus VALUES(@varSku, 0, 1, 0) " +
+                                                            "END " +
+                                                        "ELSE IF ((SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) >= 0 AND " +
+                                                                 "(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) >= 0 AND " +
+                                                                 "NOT EXISTS(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID)) " +
+                                                            "BEGIN " +
+                                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 0, 0, 1) " +
+                                                            "END " +
+                                                        "ELSE IF (NOT EXISTS(SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) AND " +
+                                                                 "NOT EXISTS(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) AND " +
+                                                                 "(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID) >= 0) " +
+                                                            "BEGIN " +
+                                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 1, 1, 0) " +
+                                                            "END " +
+                                                        "ELSE IF (NOT EXISTS(SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) AND " +
+                                                                 "(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) >= 0 AND " +
+                                                                 "NOT EXISTS(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID)) " +
+                                                            "BEGIN " +
+                                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 1, 0, 1) " +
+                                                            "END " +
+                                                        "ELSE IF ((SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) >= 0 AND " +
+                                                                 "NOT EXISTS(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) AND " +
+                                                                 "NOT EXISTS(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID)) " +
+                                                            "BEGIN " +
+                                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 0, 1, 1) " +
+                                                            "END " +
+                                                        "ELSE IF (NOT EXISTS(SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) AND " +
+                                                                 "NOT EXISTS(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) AND " +
+                                                                 "NOT EXISTS(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID)) " +
+                                                            "BEGIN " +
+                                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 1, 1, 1) " +
+                                                            "END";
+                                        cmd.Connection = con;
+                                        cmd.Parameters.AddWithValue("@varSku", row[0]);
+                                        cmd.Parameters.AddWithValue("@varBrandName", row[1]);
+                                        cmd.Parameters.AddWithValue("@varModelName", row[2]);
+                                        cmd.Parameters.AddWithValue("@fltCost", row[3]);
+                                        cmd.Parameters.AddWithValue("@fltPrice", row[4]);
+                                        cmd.Parameters.AddWithValue("@intQuantity", row[5]);
+                                        cmd.Parameters.AddWithValue("@varAdditionalInformation", row[6]);
+                                        cmd.Parameters.AddWithValue("@fltPremiumCharge", row[7]);
+                                        cmd.Parameters.AddWithValue("@varTypeOfClub", row[8]);
+                                        cmd.Parameters.AddWithValue("@varShaftType", row[9]);
+                                        cmd.Parameters.AddWithValue("@varNumberOfClubs", row[10]);
+                                        cmd.Parameters.AddWithValue("@varClubSpecification", row[11]);
+                                        cmd.Parameters.AddWithValue("@varShaftSpecification", row[12]);
+                                        cmd.Parameters.AddWithValue("@varShaftFlexability", row[13]);
+                                        cmd.Parameters.AddWithValue("@varClubDexterity", row[14]);
+                                        cmd.Parameters.AddWithValue("@varSecondLocationID", row[15]);
+                                        cmd.Parameters.AddWithValue("@intItemTypeID", row[16]);
+                                        cmd.Parameters.AddWithValue("@bitIsUsedProduct", row[17]);
+                                        reader = cmd.ExecuteReader();
+                                        con.Close();
+                                    };
+
+                                    //***************************************************************************************************
+                                    //Step 7: Check the error list for any data
+                                    //***************************************************************************************************
+
+                                    //Reading the error list
+                                    using (SqlCommand cmd2 = new SqlCommand("SELECT * FROM tempErrorSkus", con)) //Calling the SP
+                                    using (var da = new SqlDataAdapter(cmd))
+                                    {
+                                        //Filling the table with what is found
+                                        da.Fill(skusWithErrors);
+                                    }
+                                    //***************************************************************************************************
+                                    //Step 7: If no data is found in the error table
+                                    //***************************************************************************************************
+                                    //Start inserting into actual tables
+                                    con.Open();
+                                    cmd.CommandText = "SELECT * FROM tempItemStorage";
+                                    System.Data.DataTable temp = new System.Data.DataTable();
+                                    using (var dataTable = new SqlDataAdapter(cmd))
+                                    {
+                                        cmd.CommandType = CommandType.Text;
+                                        dataTable.Fill(temp);
+                                    }
+                                    con.Close();
+
+                                    //***************************************************************************************************
+                                    //Step 8: Loop through the temp datatable and insert the rows into the database
+                                    //***************************************************************************************************
+
+                                    ImportExport IE = new ImportExport();
+                                    foreach (DataRow row in temp.Rows)
+                                    {
+                                        //loop through just one, and it will know the itemID because we set it ealier in the process                            
+                                        IE.ImportNewItem(row, cu, objPageDetails);
+                                        //Set club parameters here
+                                        //cmd.Parameters.Clear();//Clearing the parameters. It was giving me an error(ID=1500)
+
+                                        //cmd.Parameters.AddWithValue("varSku", row[0]);
+                                        //cmd.Parameters.AddWithValue("intBrandID", row[1]);
+                                        //cmd.Parameters.AddWithValue("intModelID", row[2]);
+                                        //cmd.Parameters.AddWithValue("varTypeOfClub", row[3]);
+                                        //cmd.Parameters.AddWithValue("varShaftType", row[4]);
+                                        //cmd.Parameters.AddWithValue("varNumberOfClubs", row[5]);
+                                        //cmd.Parameters.AddWithValue("fltPremiumCharge", row[6]);
+                                        //cmd.Parameters.AddWithValue("fltCost", row[7]);
+                                        //cmd.Parameters.AddWithValue("fltPrice", row[8]);
+                                        //cmd.Parameters.AddWithValue("intQuantity", row[9]);
+                                        //cmd.Parameters.AddWithValue("varClubSpecification", row[10]);
+                                        //cmd.Parameters.AddWithValue("varShaftSpecification", row[11]);
+                                        //cmd.Parameters.AddWithValue("varShaftFlexability", row[12]);
+                                        //cmd.Parameters.AddWithValue("varClubDexterity", row[13]);
+                                        //cmd.Parameters.AddWithValue("intItemTypeID", row[14]);
+                                        //cmd.Parameters.AddWithValue("intLocationID", row[15]);
+                                        //cmd.Parameters.AddWithValue("bitIsUsedProduct", 0);
+                                        //cmd.Parameters.AddWithValue("varAdditionalInformation", row[16]);
+
+                                        //conInsert.Open();
+                                        //cmd.Connection = conInsert;
+                                        ////This query/insert statement will first look at the typeID of the item being sent in. 
+                                        ////It then looks to see if the items sku is in the table already. If it is, it updates. 
+                                        ////If it is not, it inserts the item into the table
+                                        //cmd.CommandText =
+                                        //    "IF(@intItemTypeID = 1) " +
+                                        //        "BEGIN " +
+                                        //            "IF EXISTS(SELECT varSku FROM tbl_clubs WHERE varSku = @varSku) " +
+                                        //                "BEGIN " +
+                                        //                    "UPDATE tbl_clubs SET intBrandID = @intBrandID, intModelID = @intModelID, varTypeOfClub = @varTypeOfClub, "
+                                        //                    + "varShaftType = @varShaftType, varNumberOfClubs = @varNumberOfClubs, fltPremiumCharge = @fltPremiumCharge, "
+                                        //                    + "fltCost = @fltCost, fltPrice = @fltPrice, intQuantity = @intQuantity, varClubSpecification = "
+                                        //                    + "@varClubSpecification, varShaftSpecification = @varShaftSpecification, varShaftFlexability = "
+                                        //                    + "@varShaftFlexability, varClubDexterity = @varClubDexterity, intLocationID = @intLocationID, "
+                                        //                    + "bitIsUsedProduct = @bitIsUsedProduct, varAdditionalInformation = @varAdditionalInformation WHERE varSku = "
+                                        //                    + "@varSku " +
+                                        //                "END " +
+                                        //            "ELSE " +
+                                        //                "BEGIN " +
+                                        //                    "INSERT INTO tbl_clubs VALUES(@varSku, @intBrandID, @intModelID, @varTypeOfClub, @varShaftType, "
+                                        //                    + "@varNumberOfClubs, @fltPremiumCharge, @fltCost, @fltPrice, @intQuantity, @varClubSpecification, "
+                                        //                    + "@varShaftSpecification, @varShaftFlexability, @varClubDexterity, @intItemTypeID, @intLocationID, "
+                                        //                    + "@bitIsUsedProduct, @varAdditionalInformation) " +
+                                        //                "END " +
+                                        //        "END " +
+                                        //    "ELSE IF (@intItemTypeID = 2) " +
+                                        //        "BEGIN " +
+                                        //            "IF EXISTS(SELECT VarSku FROM tbl_accessories WHERE varSku = @varSku) " +
+                                        //                "BEGIN " +
+                                        //                    "UPDATE tbl_accessories SET varSize = @varNumberOfClubs, varColour = @varShaftType, fltPrice = @fltPrice, "
+                                        //                    + "fltCost = @fltCost, intBrandID = @intBrandID, intModelID = @intModelID, varTypeOfAcessory = "
+                                        //                    + "@varTypeOfClub, intQuantity = @intQuantity, intLocationID = @intLocationID, varAdditionalInformation = "
+                                        //                    + "@varAdditionalInformation WHERE varSku = @varSku " +
+                                        //                "END " +
+                                        //            "ELSE " +
+                                        //                "BEGIN " +
+                                        //                    "INSERT INTO tbl_accessories VALUES(@varSku, @varNumberOfClubs, @varShaftType, @fltPrice, @fltCost, @intBrandID, "
+                                        //                    + "@intModelID, @varTypeOfClub, @intQuantity, @intItemTypeID, @intLocationID, @varAdditionalInformation) "
+                                        //                + "END " +
+                                        //        "END " +
+                                        //    "ELSE IF (@intItemTypeID = 3) " +
+                                        //        "BEGIN " +
+                                        //            "IF EXISTS(SELECT varSku FROM tbl_clothing WHERE varSku = @varSku) " +
+                                        //                "BEGIN " +
+                                        //                    "UPDATE tbl_clothing SET varSize = @varNumberOfClubs, varColour = @varShaftType, varGender = @varClubSpecification, "
+                                        //                    + "varStyle = @varTypeOfClub, fltPrice = @fltPrice, fltCost = @fltCost, intBrandID = @intBrandID, intQuantity = "
+                                        //                    + "@intQuantity, intLocationID = @intLocationID, varAdditionalInformation = @varAdditionalInformation WHERE varSku = "
+                                        //                    + "@varSku " +
+                                        //                "END " +
+                                        //            "ELSE " +
+                                        //                "BEGIN " +
+                                        //                    "INSERT INTO tbl_clothing VALUES(@varSku, @varNumberOfClubs, @varShaftType, @varClubSpecification, @varTypeOfClub, "
+                                        //                    + "@fltPrice, @fltCost, @intBrandID, @intQuantity, @intItemTypeID, @intLocationID, @varAdditionalInformation) " +
+                                        //                "END " +
+                                        //        "END";
+                                        //reader = cmd.ExecuteReader();
+                                        //conInsert.Close();
+                                    }
+                                }
+                            }
+                            //***************************************************************************************************
+                            //Step 9: Delete the temp tables that were used for storage
+                            //***************************************************************************************************
+
+                            cmd.CommandText = "DROP TABLE tempItemStorage; DROP TABLE tempErrorSkus;";
+                            conTempDB.Open();
+                            cmd.Connection = conTempDB;
+                            reader = cmd.ExecuteReader();
                         }
-                        //***************************************************************************************************
-                        //Step 3: Option D: The item type is a club
-                        //***************************************************************************************************
-                        else
-                        {
-                            listItems.Rows.Add(
-                                //***************SKU***************
-                                worksheet.Cells[i, 3].Value.ToNullSafeString(),
-                                //***************BRAND NAME***************
-                                itemType.ToString(),
-                                //***************MODEL Name***************        
-                                (string)(worksheet.Cells[i, 6].Value.ToNullSafeString()),
-                                //***************COST***************
-                                Convert.ToDouble(worksheet.Cells[i, 12].Value),
-                                //***************PRICE***************
-                                Convert.ToDouble(worksheet.Cells[i, 15].Value),
-                                //***************QUANTITY***************
-                                Convert.ToInt32(worksheet.Cells[i, 13].Value),
-                                //***************COMMENTS***************
-                                (string)(worksheet.Cells[i, 16].Value.ToNullSafeString()),
-                                //***************PREMIUM***************
-                                Convert.ToDouble(worksheet.Cells[i, 11].Value),
-                                //***************CLUB TYPE***************
-                                (string)(worksheet.Cells[i, 7].Value.ToNullSafeString()),
-                                //***************SHAFT***************
-                                (string)(worksheet.Cells[i, 8].Value.ToNullSafeString()),
-                                //***************NUMBER OF CLUBS***************
-                                (string)(worksheet.Cells[i, 9].Value.ToNullSafeString()),
-                                //***************CLUB SPEC***************
-                                (string)(worksheet.Cells[i, 18].Value.ToNullSafeString()),
-                                //***************SHAFT SPEC***************
-                                (string)(worksheet.Cells[i, 19].Value.ToNullSafeString()),
-                                //***************SHAFT FLEX***************
-                                (string)(worksheet.Cells[i, 20].Value.ToNullSafeString()),
-                                //***************DEXTERITY***************
-                                (string)(worksheet.Cells[i, 21].Value.ToNullSafeString()),
-                                //***************LOCATION NAME***************
-                                (string)(worksheet.Cells[i, 22].Value.ToNullSafeString()),
-                                //***************ITEM TYPE***************
-                                1,
-                                //***************USED PRODUCT*************
-                                Convert.ToBoolean(worksheet.Cells[i, 26].Value)
-                            );
-                        }
-                    }
-
-                    //***************************************************************************************************
-                    //Step 5: Create the temp tables for storing the items and skus that cause an error
-                    //***************************************************************************************************
-
-                    //Creating the temp tables  
-                    conTempDB.Open();
-                    cmd.CommandText = "CREATE TABLE tempItemStorage(varSku VARCHAR(25), intBrandID INT, intModelID INT, varTypeOfClub VARCHAR(150), varShaftType VARCHAR(150), "
-                        + "varNumberOfClubs VARCHAR(150), fltPremiumCharge FLOAT, fltCost FLOAT, fltPrice FLOAT, intQuantity INT, varClubSpecification VARCHAR(150), "
-                        + "varShaftSpecification VARCHAR(150), varShaftFlexability VARCHAR(150), varClubDexterity VARCHAR(150), intItemTypeID INT, intLocationID INT, "
-                        + "varAdditionalInformation VARCHAR(500), bitIsUsedProduct BIT); CREATE TABLE tempErrorSkus(varSku VARCHAR(25), intBrandError INT, intModelError INT, "
-                        + "intIdentifierError INT)";
-                    cmd.Connection = conTempDB;
-                    reader = cmd.ExecuteReader();
-                    conTempDB.Close();
-
-                    //***************************************************************************************************
-                    //Step 6: Check each item in the datatable to see if it will cause an error. If not, insert into the temp item table
-                    //***************************************************************************************************
-
-                    foreach (DataRow row in listItems.Rows)
-                    {
-                        con.Open();
-                        //This query will look up the brand, model, and locationID of the item being passed in. 
-                        //If all three are found, it will insert the item into the tempItemStorage table.
-                        //If not, it is added to the tempErrorSkus table
-                        cmd.CommandText = "IF((SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) >= 0 AND " +
-                                            "(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) >= 0 AND " +
-                                            "(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID) >= 0) " +
-                                            "BEGIN " +
-                                                "INSERT INTO tempItemStorage VALUES( " +
-                                                    "@varSku, " +
-                                                    "(SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName), " +
-                                                    "(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName), " +
-                                                    "@varTypeOfClub, @varShaftType, @varNumberOfClubs, @fltPremiumCharge, @fltCost, @fltPrice, @intQuantity, "
-                                                    + "@varClubSpecification, @varShaftSpecification, @varShaftFlexability, @varClubDexterity, @intItemTypeID, " +
-                                                    "(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID), "
-                                                    + "@varAdditionalInformation, @bitIsUsedProduct) " +
-                                            "END " +
-                                        "ELSE IF(NOT EXISTS(SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) AND " +
-                                                "(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) >= 0 AND " +
-                                                "(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID) >= 0) " +
-                                            "BEGIN " +
-                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 1, 0, 0) " +
-                                            "END " +
-                                        "ELSE IF ((SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) >= 0 AND " +
-                                                 "NOT EXISTS(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) AND " +
-                                                 "(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID) >= 0) " +
-                                            "BEGIN " +
-                                                    "INSERT INTO tempErrorSkus VALUES(@varSku, 0, 1, 0) " +
-                                            "END " +
-                                        "ELSE IF ((SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) >= 0 AND " +
-                                                 "(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) >= 0 AND " +
-                                                 "NOT EXISTS(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID)) " +
-                                            "BEGIN " +
-                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 0, 0, 1) " +
-                                            "END " +
-                                        "ELSE IF (NOT EXISTS(SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) AND " +
-                                                 "NOT EXISTS(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) AND " +
-                                                 "(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID) >= 0) " +
-                                            "BEGIN " +
-                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 1, 1, 0) " +
-                                            "END " +
-                                        "ELSE IF (NOT EXISTS(SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) AND " +
-                                                 "(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) >= 0 AND " +
-                                                 "NOT EXISTS(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID)) " +
-                                            "BEGIN " +
-                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 1, 0, 1) " +
-                                            "END " +
-                                        "ELSE IF ((SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) >= 0 AND " +
-                                                 "NOT EXISTS(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) AND " +
-                                                 "NOT EXISTS(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID)) " +
-                                            "BEGIN " +
-                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 0, 1, 1) " +
-                                            "END " +
-                                        "ELSE IF (NOT EXISTS(SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) AND " +
-                                                 "NOT EXISTS(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) AND " +
-                                                 "NOT EXISTS(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID)) " +
-                                            "BEGIN " +
-                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 1, 1, 1) " +
-                                            "END";
-                        cmd.Connection = con;
-                        cmd.Parameters.AddWithValue("@varSku", row[0]);
-                        cmd.Parameters.AddWithValue("@varBrandName", row[1]);
-                        cmd.Parameters.AddWithValue("@varModelName", row[2]);
-                        cmd.Parameters.AddWithValue("@fltCost", row[3]);
-                        cmd.Parameters.AddWithValue("@fltPrice", row[4]);
-                        cmd.Parameters.AddWithValue("@intQuantity", row[5]);
-                        cmd.Parameters.AddWithValue("@varAdditionalInformation", row[6]);
-                        cmd.Parameters.AddWithValue("@fltPremiumCharge", row[7]);
-                        cmd.Parameters.AddWithValue("@varTypeOfClub", row[8]);
-                        cmd.Parameters.AddWithValue("@varShaftType", row[9]);
-                        cmd.Parameters.AddWithValue("@varNumberOfClubs", row[10]);
-                        cmd.Parameters.AddWithValue("@varClubSpecification", row[11]);
-                        cmd.Parameters.AddWithValue("@varShaftSpecification", row[12]);
-                        cmd.Parameters.AddWithValue("@varShaftFlexability", row[13]);
-                        cmd.Parameters.AddWithValue("@varClubDexterity", row[14]);
-                        cmd.Parameters.AddWithValue("@varSecondLocationID", row[15]);
-                        cmd.Parameters.AddWithValue("@intItemTypeID", row[16]);
-                        cmd.Parameters.AddWithValue("@bitIsUsedProduct", row[17]);
-                        reader = cmd.ExecuteReader();
-                        con.Close();
-                        cmd = new SqlCommand();
-                    };
-
-                    //***************************************************************************************************
-                    //Step 7: Check the error list for any data
-                    //***************************************************************************************************
-
-                    //Reading the error list
-                    using (cmd = new SqlCommand("SELECT * FROM tempErrorSkus", con)) //Calling the SP
-                    using (var da = new SqlDataAdapter(cmd))
-                    {
-                        //Filling the table with what is found
-                        da.Fill(skusWithErrors);
-                    }
-                    //***************************************************************************************************
-                    //Step 7: If no data is found in the error table
-                    //***************************************************************************************************
-                    //Start inserting into actual tables
-                    con.Open();
-                    cmd.CommandText = "SELECT * FROM tempItemStorage";
-                    System.Data.DataTable temp = new System.Data.DataTable();
-                    using (var dataTable = new SqlDataAdapter(cmd))
-                    {
-                        cmd.CommandType = CommandType.Text;
-                        dataTable.Fill(temp);
-                    }
-                    con.Close();
-
-                    //***************************************************************************************************
-                    //Step 8: Loop through the temp datatable and insert the rows into the database
-                    //***************************************************************************************************
-
-                    ImportExport IE = new ImportExport();
-                    foreach (DataRow row in temp.Rows)
-                    {
-                        //loop through just one, and it will know the itemID because we set it ealier in the process                            
-                        IE.ImportNewItem(row, cu, objPageDetails);
-                        //Set club parameters here
-                        //cmd.Parameters.Clear();//Clearing the parameters. It was giving me an error(ID=1500)
-
-                        //cmd.Parameters.AddWithValue("varSku", row[0]);
-                        //cmd.Parameters.AddWithValue("intBrandID", row[1]);
-                        //cmd.Parameters.AddWithValue("intModelID", row[2]);
-                        //cmd.Parameters.AddWithValue("varTypeOfClub", row[3]);
-                        //cmd.Parameters.AddWithValue("varShaftType", row[4]);
-                        //cmd.Parameters.AddWithValue("varNumberOfClubs", row[5]);
-                        //cmd.Parameters.AddWithValue("fltPremiumCharge", row[6]);
-                        //cmd.Parameters.AddWithValue("fltCost", row[7]);
-                        //cmd.Parameters.AddWithValue("fltPrice", row[8]);
-                        //cmd.Parameters.AddWithValue("intQuantity", row[9]);
-                        //cmd.Parameters.AddWithValue("varClubSpecification", row[10]);
-                        //cmd.Parameters.AddWithValue("varShaftSpecification", row[11]);
-                        //cmd.Parameters.AddWithValue("varShaftFlexability", row[12]);
-                        //cmd.Parameters.AddWithValue("varClubDexterity", row[13]);
-                        //cmd.Parameters.AddWithValue("intItemTypeID", row[14]);
-                        //cmd.Parameters.AddWithValue("intLocationID", row[15]);
-                        //cmd.Parameters.AddWithValue("bitIsUsedProduct", 0);
-                        //cmd.Parameters.AddWithValue("varAdditionalInformation", row[16]);
-
-                        //conInsert.Open();
-                        //cmd.Connection = conInsert;
-                        ////This query/insert statement will first look at the typeID of the item being sent in. 
-                        ////It then looks to see if the items sku is in the table already. If it is, it updates. 
-                        ////If it is not, it inserts the item into the table
-                        //cmd.CommandText =
-                        //    "IF(@intItemTypeID = 1) " +
-                        //        "BEGIN " +
-                        //            "IF EXISTS(SELECT varSku FROM tbl_clubs WHERE varSku = @varSku) " +
-                        //                "BEGIN " +
-                        //                    "UPDATE tbl_clubs SET intBrandID = @intBrandID, intModelID = @intModelID, varTypeOfClub = @varTypeOfClub, "
-                        //                    + "varShaftType = @varShaftType, varNumberOfClubs = @varNumberOfClubs, fltPremiumCharge = @fltPremiumCharge, "
-                        //                    + "fltCost = @fltCost, fltPrice = @fltPrice, intQuantity = @intQuantity, varClubSpecification = "
-                        //                    + "@varClubSpecification, varShaftSpecification = @varShaftSpecification, varShaftFlexability = "
-                        //                    + "@varShaftFlexability, varClubDexterity = @varClubDexterity, intLocationID = @intLocationID, "
-                        //                    + "bitIsUsedProduct = @bitIsUsedProduct, varAdditionalInformation = @varAdditionalInformation WHERE varSku = "
-                        //                    + "@varSku " +
-                        //                "END " +
-                        //            "ELSE " +
-                        //                "BEGIN " +
-                        //                    "INSERT INTO tbl_clubs VALUES(@varSku, @intBrandID, @intModelID, @varTypeOfClub, @varShaftType, "
-                        //                    + "@varNumberOfClubs, @fltPremiumCharge, @fltCost, @fltPrice, @intQuantity, @varClubSpecification, "
-                        //                    + "@varShaftSpecification, @varShaftFlexability, @varClubDexterity, @intItemTypeID, @intLocationID, "
-                        //                    + "@bitIsUsedProduct, @varAdditionalInformation) " +
-                        //                "END " +
-                        //        "END " +
-                        //    "ELSE IF (@intItemTypeID = 2) " +
-                        //        "BEGIN " +
-                        //            "IF EXISTS(SELECT VarSku FROM tbl_accessories WHERE varSku = @varSku) " +
-                        //                "BEGIN " +
-                        //                    "UPDATE tbl_accessories SET varSize = @varNumberOfClubs, varColour = @varShaftType, fltPrice = @fltPrice, "
-                        //                    + "fltCost = @fltCost, intBrandID = @intBrandID, intModelID = @intModelID, varTypeOfAcessory = "
-                        //                    + "@varTypeOfClub, intQuantity = @intQuantity, intLocationID = @intLocationID, varAdditionalInformation = "
-                        //                    + "@varAdditionalInformation WHERE varSku = @varSku " +
-                        //                "END " +
-                        //            "ELSE " +
-                        //                "BEGIN " +
-                        //                    "INSERT INTO tbl_accessories VALUES(@varSku, @varNumberOfClubs, @varShaftType, @fltPrice, @fltCost, @intBrandID, "
-                        //                    + "@intModelID, @varTypeOfClub, @intQuantity, @intItemTypeID, @intLocationID, @varAdditionalInformation) "
-                        //                + "END " +
-                        //        "END " +
-                        //    "ELSE IF (@intItemTypeID = 3) " +
-                        //        "BEGIN " +
-                        //            "IF EXISTS(SELECT varSku FROM tbl_clothing WHERE varSku = @varSku) " +
-                        //                "BEGIN " +
-                        //                    "UPDATE tbl_clothing SET varSize = @varNumberOfClubs, varColour = @varShaftType, varGender = @varClubSpecification, "
-                        //                    + "varStyle = @varTypeOfClub, fltPrice = @fltPrice, fltCost = @fltCost, intBrandID = @intBrandID, intQuantity = "
-                        //                    + "@intQuantity, intLocationID = @intLocationID, varAdditionalInformation = @varAdditionalInformation WHERE varSku = "
-                        //                    + "@varSku " +
-                        //                "END " +
-                        //            "ELSE " +
-                        //                "BEGIN " +
-                        //                    "INSERT INTO tbl_clothing VALUES(@varSku, @varNumberOfClubs, @varShaftType, @varClubSpecification, @varTypeOfClub, "
-                        //                    + "@fltPrice, @fltCost, @intBrandID, @intQuantity, @intItemTypeID, @intLocationID, @varAdditionalInformation) " +
-                        //                "END " +
-                        //        "END";
-                        //reader = cmd.ExecuteReader();
-                        //conInsert.Close();
                     }
                 }
+                return skusWithErrors;
             }
-
-            //***************************************************************************************************
-            //Step 9: Delete the temp tables that were used for storage
-            //***************************************************************************************************
-
-            cmd.CommandText = "DROP TABLE tempItemStorage; DROP TABLE tempErrorSkus;";
-            conTempDB.Open();
-            cmd.Connection = conTempDB;
-            reader = cmd.ExecuteReader();
-            conTempDB.Close();
-            return skusWithErrors;
+        }
+        public System.Data.DataTable CallUploadItems(FileUpload fup, CurrentUser cu, object[] objPageDetails)
+        {
+            return UploadItems(fup, cu, objPageDetails);
         }
 
         //******************COGS and PM REPORTING*******************************************************
-        private System.Data.DataTable returnExtensiveInvoices(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
-        {
-            string strQueryName = "returnExtensiveInvoices";
-            //This method returns a collection of relevant data to be used in the forming of an extensive invoice
-            //string sqlCmd = "SELECT tbl_invoice.intInvoiceID, CONCAT(tbl_invoice.varInvoiceNumber, '-', tbl_invoice.intInvoiceSubNumber) AS 'varInvoiceNumber', tbl_invoice.fltShippingCharges, "
-            //    + "(tbl_invoice.fltTotalTradeIn * -1) AS 'fltTotalTradeIn', CASE WHEN EXISTS(SELECT tbl_invoiceItem.intInvoiceID FROM tbl_invoiceItem WHERE tbl_invoiceItem.intInvoiceID = "
-            //    + "tbl_invoice.intInvoiceID) THEN (SELECT SUM(CASE WHEN bitIsDiscountPercent = 1 AND fltItemDiscount <> 0 THEN (fltItemPrice * (fltItemDiscount / 100)) WHEN bitIsDiscountPercent "
-            //    + "= 0 AND fltItemDiscount <> 0 THEN fltItemDiscount ELSE 0 END) FROM tbl_invoiceItem WHERE tbl_invoiceItem.intInvoiceID = tbl_invoice.intInvoiceID) WHEN EXISTS(SELECT "
-            //    + "tbl_invoiceItemReturns.intInvoiceID FROM tbl_invoiceItemReturns WHERE tbl_invoiceItemReturns.intInvoiceID = tbl_invoice.intInvoiceID) THEN (SELECT SUM(CASE WHEN "
-            //    + "bitIsDiscountPercent = 1 AND fltItemDiscount <> 0 THEN (fltItemPrice * (fltItemDiscount / 100)) WHEN bitIsDiscountPercent = 0 AND fltItemDiscount <> 0 THEN fltItemDiscount "
-            //    + "ELSE 0 END) FROM tbl_invoiceItemReturns WHERE tbl_invoiceItemReturns.intInvoiceID = tbl_invoice.intInvoiceID) ELSE 0 END AS 'fltTotalDiscount', ROUND(fltSubTotal + "
-            //    + "(fltTotalTradeIn * -1), 2) AS 'fltPreTax', CASE WHEN tbl_invoice.bitChargeGST = 1 THEN tbl_invoice.fltGovernmentTaxAmount ELSE 0 END AS fltGovernmentTaxAmount, CASE WHEN "
-            //    + "tbl_invoice.bitChargePST = 1 THEN tbl_invoice.fltProvincialTaxAmount ELSE 0 END AS fltProvincialTaxAmount, CASE WHEN tbl_invoice.bitChargeLCT = 1 THEN "
-            //    + "tbl_invoice.fltLiquorTaxAmount ELSE 0 END AS fltLiquorTaxAmount, ROUND(tbl_invoice.fltBalanceDue + (CASE WHEN tbl_invoice.bitChargeGST = 1 THEN "
-            //    + "tbl_invoice.fltGovernmentTaxAmount ELSE 0 END) + (CASE WHEN tbl_invoice.bitChargePST = 1 THEN tbl_invoice.fltProvincialTaxAmount ELSE 0 END) + (CASE WHEN "
-            //    + "tbl_invoice.bitChargeLCT = 1 THEN tbl_invoice.fltLiquorTaxAmount ELSE 0 END) + (fltTotalTradeIn * -1), 2) AS 'fltTotalSales', CASE WHEN EXISTS(SELECT "
-            //    + "tbl_invoiceItem.intInvoiceID FROM tbl_invoiceItem WHERE tbl_invoiceItem.intInvoiceID = tbl_invoice.intInvoiceID) THEN (SELECT SUM(fltItemCost * intItemQuantity) FROM "
-            //    + "tbl_invoiceItem WHERE tbl_invoiceItem.intInvoiceID = tbl_invoice.intInvoiceID) WHEN EXISTS(SELECT tbl_invoiceItemReturns.intInvoiceID FROM tbl_invoiceItemReturns WHERE "
-            //    + "tbl_invoiceItemReturns.intInvoiceID = tbl_invoice.intInvoiceID) THEN (SELECT SUM(fltItemCost * intItemQuantity) FROM tbl_invoiceItemReturns WHERE "
-            //    + "tbl_invoiceItemReturns.intInvoiceID = tbl_invoice.intInvoiceID) ELSE 0 END AS 'fltCostofGoods', CASE WHEN EXISTS(SELECT tbl_invoiceItem.intInvoiceID FROM tbl_invoiceItem "
-            //    + "WHERE tbl_invoiceItem.intInvoiceID = tbl_invoice.intInvoiceID) THEN (tbl_invoice.fltSubTotal + (-1 * tbl_invoice.fltTotalTradeIn)) - (SELECT SUM(fltItemCost * "
-            //    + "intItemQuantity) FROM tbl_invoiceItem WHERE tbl_invoiceItem.intInvoiceID = tbl_invoice.intInvoiceID) WHEN EXISTS(SELECT tbl_invoiceItemReturns.intInvoiceID FROM "
-            //    + "tbl_invoiceItemReturns WHERE tbl_invoiceItemReturns.intInvoiceID = tbl_invoice.intInvoiceID) THEN (tbl_invoice.fltSubTotal + (-1 * tbl_invoice.fltTotalTradeIn)) - (SELECT "
-            //    + "SUM(fltItemCost * intItemQuantity) FROM tbl_invoiceItemReturns WHERE tbl_invoiceItemReturns.intInvoiceID = tbl_invoice.intInvoiceID) ELSE 0 END AS 'fltRevenueEarned', (SELECT "
-            //    + "CONCAT(varFirstName, ' ', varLastName) FROM tbl_customers WHERE tbl_customers.intCustomerID = tbl_invoice.intCustomerID) AS 'varCustomerName', (SELECT CONCAT(varFirstName, "
-            //    + "' ', varLastName) FROM tbl_employee WHERE tbl_employee.intEmployeeID = tbl_invoice.intEmployeeID) AS 'varEmployeeName', tbl_invoice.dtmInvoiceDate FROM tbl_invoice WHERE "
-            //    + "tbl_invoice.dtmInvoiceDate BETWEEN @dtmStartDate AND @dtmEndDate AND tbl_invoice.intLocationID = @intLocationID";
+        //private System.Data.DataTable ReturnExtensiveInvoices(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
+        //{
+        //    string strQueryName = "returnExtensiveInvoices";
+        //    //This method returns a collection of relevant data to be used in the forming of an extensive invoice
+        //    //string sqlCmd = "SELECT tbl_invoice.intInvoiceID, CONCAT(tbl_invoice.varInvoiceNumber, '-', tbl_invoice.intInvoiceSubNumber) AS 'varInvoiceNumber', tbl_invoice.fltShippingCharges, "
+        //    //    + "(tbl_invoice.fltTotalTradeIn * -1) AS 'fltTotalTradeIn', CASE WHEN EXISTS(SELECT tbl_invoiceItem.intInvoiceID FROM tbl_invoiceItem WHERE tbl_invoiceItem.intInvoiceID = "
+        //    //    + "tbl_invoice.intInvoiceID) THEN (SELECT SUM(CASE WHEN bitIsDiscountPercent = 1 AND fltItemDiscount <> 0 THEN (fltItemPrice * (fltItemDiscount / 100)) WHEN bitIsDiscountPercent "
+        //    //    + "= 0 AND fltItemDiscount <> 0 THEN fltItemDiscount ELSE 0 END) FROM tbl_invoiceItem WHERE tbl_invoiceItem.intInvoiceID = tbl_invoice.intInvoiceID) WHEN EXISTS(SELECT "
+        //    //    + "tbl_invoiceItemReturns.intInvoiceID FROM tbl_invoiceItemReturns WHERE tbl_invoiceItemReturns.intInvoiceID = tbl_invoice.intInvoiceID) THEN (SELECT SUM(CASE WHEN "
+        //    //    + "bitIsDiscountPercent = 1 AND fltItemDiscount <> 0 THEN (fltItemPrice * (fltItemDiscount / 100)) WHEN bitIsDiscountPercent = 0 AND fltItemDiscount <> 0 THEN fltItemDiscount "
+        //    //    + "ELSE 0 END) FROM tbl_invoiceItemReturns WHERE tbl_invoiceItemReturns.intInvoiceID = tbl_invoice.intInvoiceID) ELSE 0 END AS 'fltTotalDiscount', ROUND(fltSubTotal + "
+        //    //    + "(fltTotalTradeIn * -1), 2) AS 'fltPreTax', CASE WHEN tbl_invoice.bitChargeGST = 1 THEN tbl_invoice.fltGovernmentTaxAmount ELSE 0 END AS fltGovernmentTaxAmount, CASE WHEN "
+        //    //    + "tbl_invoice.bitChargePST = 1 THEN tbl_invoice.fltProvincialTaxAmount ELSE 0 END AS fltProvincialTaxAmount, CASE WHEN tbl_invoice.bitChargeLCT = 1 THEN "
+        //    //    + "tbl_invoice.fltLiquorTaxAmount ELSE 0 END AS fltLiquorTaxAmount, ROUND(tbl_invoice.fltBalanceDue + (CASE WHEN tbl_invoice.bitChargeGST = 1 THEN "
+        //    //    + "tbl_invoice.fltGovernmentTaxAmount ELSE 0 END) + (CASE WHEN tbl_invoice.bitChargePST = 1 THEN tbl_invoice.fltProvincialTaxAmount ELSE 0 END) + (CASE WHEN "
+        //    //    + "tbl_invoice.bitChargeLCT = 1 THEN tbl_invoice.fltLiquorTaxAmount ELSE 0 END) + (fltTotalTradeIn * -1), 2) AS 'fltTotalSales', CASE WHEN EXISTS(SELECT "
+        //    //    + "tbl_invoiceItem.intInvoiceID FROM tbl_invoiceItem WHERE tbl_invoiceItem.intInvoiceID = tbl_invoice.intInvoiceID) THEN (SELECT SUM(fltItemCost * intItemQuantity) FROM "
+        //    //    + "tbl_invoiceItem WHERE tbl_invoiceItem.intInvoiceID = tbl_invoice.intInvoiceID) WHEN EXISTS(SELECT tbl_invoiceItemReturns.intInvoiceID FROM tbl_invoiceItemReturns WHERE "
+        //    //    + "tbl_invoiceItemReturns.intInvoiceID = tbl_invoice.intInvoiceID) THEN (SELECT SUM(fltItemCost * intItemQuantity) FROM tbl_invoiceItemReturns WHERE "
+        //    //    + "tbl_invoiceItemReturns.intInvoiceID = tbl_invoice.intInvoiceID) ELSE 0 END AS 'fltCostofGoods', CASE WHEN EXISTS(SELECT tbl_invoiceItem.intInvoiceID FROM tbl_invoiceItem "
+        //    //    + "WHERE tbl_invoiceItem.intInvoiceID = tbl_invoice.intInvoiceID) THEN (tbl_invoice.fltSubTotal + (-1 * tbl_invoice.fltTotalTradeIn)) - (SELECT SUM(fltItemCost * "
+        //    //    + "intItemQuantity) FROM tbl_invoiceItem WHERE tbl_invoiceItem.intInvoiceID = tbl_invoice.intInvoiceID) WHEN EXISTS(SELECT tbl_invoiceItemReturns.intInvoiceID FROM "
+        //    //    + "tbl_invoiceItemReturns WHERE tbl_invoiceItemReturns.intInvoiceID = tbl_invoice.intInvoiceID) THEN (tbl_invoice.fltSubTotal + (-1 * tbl_invoice.fltTotalTradeIn)) - (SELECT "
+        //    //    + "SUM(fltItemCost * intItemQuantity) FROM tbl_invoiceItemReturns WHERE tbl_invoiceItemReturns.intInvoiceID = tbl_invoice.intInvoiceID) ELSE 0 END AS 'fltRevenueEarned', (SELECT "
+        //    //    + "CONCAT(varFirstName, ' ', varLastName) FROM tbl_customers WHERE tbl_customers.intCustomerID = tbl_invoice.intCustomerID) AS 'varCustomerName', (SELECT CONCAT(varFirstName, "
+        //    //    + "' ', varLastName) FROM tbl_employee WHERE tbl_employee.intEmployeeID = tbl_invoice.intEmployeeID) AS 'varEmployeeName', tbl_invoice.dtmInvoiceDate FROM tbl_invoice WHERE "
+        //    //    + "tbl_invoice.dtmInvoiceDate BETWEEN @dtmStartDate AND @dtmEndDate AND tbl_invoice.intLocationID = @intLocationID";
 
-            //New Trial Query **, CASE WHEN fltPreTax = 0 THEN 0 ELSE ROUND(((fltPreTax - fltCostofGoods) / fltPreTax), 2) END AS fltProfitMargin 
-            string sqlCmd = "SELECT intInvoiceID, dtmInvoiceDate, varInvoiceNumber, fltShippingCharges, fltTotalTradeIn, fltTotalDiscount, fltPreTax, fltGovernmentTaxAmount, "
-                + "fltProvincialTaxAmount, fltLiquorTaxAmount, fltCostofGoods, (fltPreTax + fltGovernmentTaxAmount + fltProvincialTaxAmount + fltLiquorTaxAmount) AS fltTotalSales, "
-                + "(fltPreTax - fltCostofGoods) AS fltRevenueEarned, varCustomerName, varEmployeeName FROM "
-                + "(SELECT I.intInvoiceID, I.dtmInvoiceDate, CONCAT(I.varInvoiceNumber, '-', I.intInvoiceSubNumber) AS 'varInvoiceNumber', I.fltShippingCharges, (I.fltTotalTradeIn * "
-                + "-1) AS 'fltTotalTradeIn', CASE WHEN EXISTS(SELECT II.intInvoiceID FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(CASE WHEN "
-                + "bitIsDiscountPercent = 1 THEN (fltItemPrice * (fltItemDiscount / 100)) ELSE fltItemDiscount END) FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) "
-                + "WHEN EXISTS(SELECT IIR.intInvoiceID FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(CASE WHEN bitIsDiscountPercent = 1 "
-                + "THEN (fltItemPrice * (fltItemDiscount / 100)) ELSE fltItemDiscount END) FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) ELSE 0 END AS "
-                + "'fltTotalDiscount', ROUND(fltSubTotal, 2) AS 'fltPreTax', CASE WHEN I.bitChargeGST = 1 THEN I.fltGovernmentTaxAmount ELSE 0 END AS fltGovernmentTaxAmount, CASE "
-                + "WHEN I.bitChargePST = 1 THEN I.fltProvincialTaxAmount ELSE 0 END AS fltProvincialTaxAmount, CASE WHEN I.bitChargeLCT = 1 THEN I.fltLiquorTaxAmount ELSE 0 END AS "
-                + "fltLiquorTaxAmount, CASE WHEN EXISTS(SELECT II.intInvoiceID FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(fltItemCost * "
-                + "intItemQuantity) FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) WHEN EXISTS(SELECT IIR.intInvoiceID FROM tbl_invoiceItemReturns IIR WHERE "
-                + "IIR.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(fltItemCost * intItemQuantity) FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) ELSE "
-                + "0 END AS 'fltCostofGoods', (SELECT CONCAT(varFirstName, ' ', varLastName) FROM tbl_customers C WHERE C.intCustomerID = I.intCustomerID) AS 'varCustomerName', ("
-                + "SELECT CONCAT(varFirstName, ' ', varLastName) FROM tbl_employee E WHERE E.intEmployeeID = I.intEmployeeID) AS 'varEmployeeName' FROM tbl_invoice I WHERE "
-                + "I.dtmInvoiceDate BETWEEN @dtmStartDate AND @dtmEndDate AND I.intLocationID = @intLocationID) tblTable";
+        //    //New Trial Query **, CASE WHEN fltPreTax = 0 THEN 0 ELSE ROUND(((fltPreTax - fltCostofGoods) / fltPreTax), 2) END AS fltProfitMargin 
+        //    string sqlCmd = "SELECT intInvoiceID, dtmInvoiceDate, varInvoiceNumber, fltShippingCharges, fltTotalTradeIn, fltTotalDiscount, fltPreTax, fltGovernmentTaxAmount, "
+        //        + "fltProvincialTaxAmount, fltLiquorTaxAmount, fltCostofGoods, (fltPreTax + fltGovernmentTaxAmount + fltProvincialTaxAmount + fltLiquorTaxAmount) AS fltTotalSales, "
+        //        + "(fltPreTax - fltCostofGoods) AS fltRevenueEarned, varCustomerName, varEmployeeName FROM "
+        //        + "(SELECT I.intInvoiceID, I.dtmInvoiceDate, CONCAT(I.varInvoiceNumber, '-', I.intInvoiceSubNumber) AS 'varInvoiceNumber', I.fltShippingCharges, (I.fltTotalTradeIn * "
+        //        + "-1) AS 'fltTotalTradeIn', CASE WHEN EXISTS(SELECT II.intInvoiceID FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(CASE WHEN "
+        //        + "bitIsDiscountPercent = 1 THEN (fltItemPrice * (fltItemDiscount / 100)) ELSE fltItemDiscount END) FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) "
+        //        + "WHEN EXISTS(SELECT IIR.intInvoiceID FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(CASE WHEN bitIsDiscountPercent = 1 "
+        //        + "THEN (fltItemPrice * (fltItemDiscount / 100)) ELSE fltItemDiscount END) FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) ELSE 0 END AS "
+        //        + "'fltTotalDiscount', ROUND(fltSubTotal, 2) AS 'fltPreTax', CASE WHEN I.bitChargeGST = 1 THEN I.fltGovernmentTaxAmount ELSE 0 END AS fltGovernmentTaxAmount, CASE "
+        //        + "WHEN I.bitChargePST = 1 THEN I.fltProvincialTaxAmount ELSE 0 END AS fltProvincialTaxAmount, CASE WHEN I.bitChargeLCT = 1 THEN I.fltLiquorTaxAmount ELSE 0 END AS "
+        //        + "fltLiquorTaxAmount, CASE WHEN EXISTS(SELECT II.intInvoiceID FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(fltItemCost * "
+        //        + "intItemQuantity) FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) WHEN EXISTS(SELECT IIR.intInvoiceID FROM tbl_invoiceItemReturns IIR WHERE "
+        //        + "IIR.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(fltItemCost * intItemQuantity) FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) ELSE "
+        //        + "0 END AS 'fltCostofGoods', (SELECT CONCAT(varFirstName, ' ', varLastName) FROM tbl_customers C WHERE C.intCustomerID = I.intCustomerID) AS 'varCustomerName', ("
+        //        + "SELECT CONCAT(varFirstName, ' ', varLastName) FROM tbl_employee E WHERE E.intEmployeeID = I.intEmployeeID) AS 'varEmployeeName' FROM tbl_invoice I WHERE "
+        //        + "I.dtmInvoiceDate BETWEEN @dtmStartDate AND @dtmEndDate AND I.intLocationID = @intLocationID) tblTable";
 
-            object[][] parms =
-            {
-                new object[] { "@dtmStartDate", startDate },
-                new object[] { "@dtmEndDate", endDate },
-                new object[] { "@intLocationID", locationID }
-            };
-            return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
-            //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
-        }
-
-        private System.Data.DataTable returnExtensiveInvoices2(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
+        //    object[][] parms =
+        //    {
+        //        new object[] { "@dtmStartDate", startDate },
+        //        new object[] { "@dtmEndDate", endDate },
+        //        new object[] { "@intLocationID", locationID }
+        //    };
+        //    return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
+        //    //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
+        //}
+        private System.Data.DataTable ReturnExtensiveInvoices2(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
         {
             string strQueryName = "returnExtensiveInvoices";
             //New Trial Query **, CASE WHEN fltPreTax = 0 THEN 0 ELSE ROUND(((fltPreTax - fltCostofGoods) / fltPreTax), 2) END AS fltProfitMargin 
@@ -1185,7 +1236,7 @@ namespace SweetSpotDiscountGolfPOS.FP
 
                 + "I.fltShippingCharges, "
                 + "(I.fltTotalTradeIn * -1) AS 'fltTotalTradeIn', "
-                
+
                 + "CASE WHEN EXISTS(SELECT II.intInvoiceID FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(CASE WHEN "
                 + "bitIsDiscountPercent = 1 THEN ((fltItemPrice * (fltItemDiscount / 100)) * intItemQuantity) ELSE fltItemDiscount * intItemQuantity END) FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) "
                 + "WHEN EXISTS(SELECT IIR.intInvoiceID FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(CASE WHEN bitIsDiscountPercent = 1 "
@@ -1214,10 +1265,14 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@dtmEndDate", endDate },
                 new object[] { "@intLocationID", locationID }
             };
-            return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);            
+            return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
+        }
+        public System.Data.DataTable CallReturnExtensiveInvoices2(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
+        {
+            return ReturnExtensiveInvoices2(startDate, endDate, locationID, objPageDetails);
         }
         //*******GST, PST, and LCT totals********
-        private List<TaxReport> returnTaxReportDetails(DateTime dtmStartDate, DateTime dtmEndDate, int locationID, object[] objPageDetails)
+        private List<TaxReport> ReturnTaxReportDetails(DateTime dtmStartDate, DateTime dtmEndDate, int locationID, object[] objPageDetails)
         {
             string strQueryName = "returnTaxReportDetails";
             string sqlCmd = "SELECT D.dtmInvoiceDate, ISNULL(C.fltGovernmentTaxAmountCollected, 0) AS fltGovernmentTaxAmountCollected, ISNULL(C.fltProvincialTaxAmountCollected, 0) "
@@ -1247,10 +1302,14 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@dtmEndDate", dtmEndDate },
                 new object[] { "@intLocationID", locationID }
             };
-            return convertTaxReportFromDataTable(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
+            return ConvertTaxReportFromDataTable(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
             //return convertTaxReportFromDataTable(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
-        private List<TaxReport> convertTaxReportFromDataTable(System.Data.DataTable dt)
+        public List<TaxReport> CallReturnTaxReportDetails(DateTime dtmStartDate, DateTime dtmEndDate, int locationID, object[] objPageDetails)
+        {
+            return ReturnTaxReportDetails(dtmStartDate, dtmEndDate, locationID, objPageDetails);
+        }
+        private List<TaxReport> ConvertTaxReportFromDataTable(System.Data.DataTable dt)
         {
             List<TaxReport> taxReport = dt.AsEnumerable().Select(row =>
             new TaxReport
@@ -1265,16 +1324,16 @@ namespace SweetSpotDiscountGolfPOS.FP
             }).ToList();
             return taxReport;
         }
-        public int verifyTaxesCharged(object[] repInfo, object[] objPageDetails)
+        public int VerifyTaxesCharged(object[] repInfo, object[] objPageDetails)
         {
             int indicator = 0;
-            if (!taxesAvailable(repInfo, objPageDetails))
+            if (!TaxesAvailable(repInfo, objPageDetails))
             {
                 indicator = 1;
             }
             return indicator;
         }
-        private bool taxesAvailable(object[] repInfo, object[] objPageDetails)
+        private bool TaxesAvailable(object[] repInfo, object[] objPageDetails)
         {
             string strQueryName = "taxesAvailable";
             bool bolData = false;
@@ -1298,7 +1357,7 @@ namespace SweetSpotDiscountGolfPOS.FP
         }
 
         //******************ITEMS SOLD REPORTING*******************************************************
-        private System.Data.DataTable returnItemsSold(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
+        private System.Data.DataTable ReturnItemsSold(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
         {
             string strQueryName = "returnItemsSold";
             string sqlCmd = "SELECT CONCAT(I.invoiceNum, '-', I.invoiceSubNum) AS 'invoice', II.sku, II.totalCost AS cost, II.totalPrice AS price, II.totalDiscount AS "
@@ -1317,9 +1376,13 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
+        public System.Data.DataTable CallReturnItemsSold(DateTime startDate, DateTime endDate, int locationID, object[] objPageDetails)
+        {
+            return ReturnItemsSold(startDate, endDate, locationID, objPageDetails);
+        }
 
         //******************DISCOUNT REPORTING*******************************************************
-        private System.Data.DataTable returnDiscountsBetweenDates(object[] repInfo, object[] objPageDetails)
+        private System.Data.DataTable ReturnDiscountsBetweenDates(object[] repInfo, object[] objPageDetails)
         {
             string strQueryName = "returnDiscountsBetweenDates";
             DateTime[] reportDates = (DateTime[])repInfo[0];
@@ -1346,6 +1409,10 @@ namespace SweetSpotDiscountGolfPOS.FP
             };
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
+        }
+        public System.Data.DataTable CallReturnDiscountsBetweenDates(object[] repInfo, object[] objPageDetails)
+        {
+            return ReturnDiscountsBetweenDates(repInfo, objPageDetails);
         }
 
         //******************CASHOUT REPORTING*******************************************************
@@ -1381,7 +1448,7 @@ namespace SweetSpotDiscountGolfPOS.FP
         }
 
         //******************STORE STATS REPORT***********************
-        private System.Data.DataTable returnStoreStats(DateTime startDate, DateTime endDate, int timeFrame, int locationID, object[] objPageDetails)
+        private System.Data.DataTable ReturnStoreStats(DateTime startDate, DateTime endDate, int timeFrame, object[] objPageDetails)
         {
             string strQueryName = "returnStoreStats";
             string sqlCmd = "(SELECT I.intInvoiceID, YEAR(dtmInvoiceDate) AS dtmInvoiceYear, DATENAME(MONTH, dtmInvoiceDate) AS varMonthName, DATEADD(MONTH, DATEDIFF(MONTH, "
@@ -1391,13 +1458,13 @@ namespace SweetSpotDiscountGolfPOS.FP
 
                 + "I.fltShippingCharges, "
                 + "(I.fltTotalTradeIn * -1) AS 'fltTotalTradeIn', "
-                
+
                 + "CASE WHEN EXISTS(SELECT II.intInvoiceID FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(CASE WHEN bitIsDiscountPercent = 1 "
                 + "THEN ((fltItemPrice * (fltItemDiscount / 100)) * intItemQuantity) ELSE fltItemDiscount * intItemQuantity END) FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) WHEN EXISTS(SELECT "
                 + "IIR.intInvoiceID FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(CASE WHEN bitIsDiscountPercent = 1 THEN ("
                 + "(fltItemPrice * (fltItemDiscount / 100)) * intItemQuantity) ELSE fltItemDiscount * intItemQuantity END) FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) ELSE 0 END AS "
                 + "'fltTotalDiscount', "
-                
+
                 + "ROUND(fltSubTotal, 2) AS 'fltSubTotal', "
 
                 + "CASE WHEN EXISTS(SELECT II.intInvoiceID FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(CASE WHEN bitIsClubTradeIn = 1 THEN 0 ELSE (fltItemPrice - CASE WHEN "
@@ -1413,12 +1480,12 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "fltItemCost * intItemQuantity) FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) WHEN EXISTS(SELECT IIR.intInvoiceID FROM "
                 + "tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(fltItemCost * intItemQuantity) FROM tbl_invoiceItemReturns IIR WHERE "
                 + "IIR.intInvoiceID = I.intInvoiceID) ELSE 0 END AS 'fltCostofGoods', "
-                
+
                 + "(SELECT CONCAT(varFirstName, ' ', varLastName) FROM tbl_customers C WHERE "
                 + "C.intCustomerID = I.intCustomerID) AS 'varCustomerName', (SELECT CONCAT(varFirstName, ' ', varLastName) FROM tbl_employee E WHERE E.intEmployeeID = "
                 + "I.intEmployeeID) AS 'varEmployeeName' FROM tbl_invoice I WHERE I.dtmInvoiceDate BETWEEN @dtmStartDate AND @dtmEndDate) AS ABC ";
-            string startQuery = "";
-            string endQuery = "";
+            string startQuery;
+            string endQuery;
 
             object[][] parms =
             {
@@ -1435,7 +1502,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                     + "fltTotalSales, ROUND(SUM(fltSalesDollars), 2) AS fltSalesDollars FROM ";
                 endQuery = "GROUP BY dtmSelectedDate, varLocationName ORDER BY dtmSelectedDate, varLocationName";
             }
-            else if( timeFrame == 2)
+            else if (timeFrame == 2)
             {
                 startQuery = "SELECT FORMAT(CAST(dtmWeekStartDate AS DATE), 'dd/MM/yyyy') AS selection, varLocationName, ROUND(SUM(fltGovernmentTaxAmount), 2) AS "
                     + "fltGovernmentTaxAmount, ROUND(SUM(fltProvincialTaxAmount), 2) AS fltProvincialTaxAmount, ROUND(SUM(fltLiquorTaxAmount), 2) AS fltLiquorTaxAmount, ROUND("
@@ -1457,16 +1524,20 @@ namespace SweetSpotDiscountGolfPOS.FP
             sqlCmd = startQuery + sqlCmd + endQuery;
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public int verifyStatsAvailable(object[] repInfo, object[] objPageDetails)
+        public System.Data.DataTable CallReturnStoreStats(DateTime startDate, DateTime endDate, int timeFrame, object[] objPageDetails)
+        {
+            return ReturnStoreStats(startDate, endDate, timeFrame, objPageDetails);
+        }
+        public int VerifyStatsAvailable(object[] repInfo, object[] objPageDetails)
         {
             int indicator = 0;
-            if (!statsAvailable(repInfo, objPageDetails))
+            if (!StatsAvailable(repInfo, objPageDetails))
             {
                 indicator = 1;
             }
             return indicator;
         }
-        private bool statsAvailable(object[] repInfo, object[] objPageDetails)
+        private bool StatsAvailable(object[] repInfo, object[] objPageDetails)
         {
             string strQueryName = "statsAvailable";
             bool bolTA = false;
@@ -1487,7 +1558,7 @@ namespace SweetSpotDiscountGolfPOS.FP
         }
 
         //*************Specific Apparel Report********* w/CORRECT profit margin calculation
-        private System.Data.DataTable returnSpecificApparelDataTableForReport(DateTime dtmStartDate, DateTime dtmEndDate, object[] objPageDetails)
+        private System.Data.DataTable ReturnSpecificApparelDataTableForReport(DateTime dtmStartDate, DateTime dtmEndDate, object[] objPageDetails)
         {
             string strQueryName = "returnSpecificApparelDataTableForReport";
             string sqlCmd = "SELECT L.varLocationName, FQ.intInventoryID, CASE WHEN EXISTS(SELECT A.intInventoryID FROM tbl_accessories A WHERE "
@@ -1517,16 +1588,20 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public int verifySpecificApparel(object[] repInfo, object[] objPageDetails)
+        public System.Data.DataTable CallReturnSpecificApparelDataTableForReport(DateTime dtmStartDate, DateTime dtmEndDate, object[] objPageDetails)
+        {
+            return ReturnSpecificApparelDataTableForReport(dtmStartDate, dtmEndDate, objPageDetails);
+        }
+        public int VerifySpecificApparel(object[] repInfo, object[] objPageDetails)
         {
             int indicator = 0;
-            if (!specificApparelAvailable(repInfo, objPageDetails))
+            if (!SpecificApparelAvailable(repInfo, objPageDetails))
             {
                 indicator = 1;
             }
             return indicator;
         }
-        private bool specificApparelAvailable(object[] repInfo, object[] objPageDetails)
+        private bool SpecificApparelAvailable(object[] repInfo, object[] objPageDetails)
         {
             string strQueryName = "specificApparelAvailable";
             bool bolData = false;
@@ -1550,7 +1625,7 @@ namespace SweetSpotDiscountGolfPOS.FP
         }
 
         //*************Specific Grip Report********* w/CORRECT profit margin calculation
-        private System.Data.DataTable returnSpecificGripDataTableForReport(DateTime dtmStartDate, DateTime dtmEndDate, object[] objPageDetails)
+        private System.Data.DataTable ReturnSpecificGripDataTableForReport(DateTime dtmStartDate, DateTime dtmEndDate, object[] objPageDetails)
         {
             string strQueryName = "returnSpecificGripDataTableForReport";
             string sqlCmd = "SELECT L.varLocationName, FQ.intInventoryID, CASE WHEN EXISTS(SELECT A.intInventoryID FROM tbl_accessories A WHERE "
@@ -1580,16 +1655,20 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public int verifySpecificGrip(object[] repInfo, object[] objPageDetails)
+        public System.Data.DataTable CallReturnSpecificGripDataTableForReport(DateTime dtmStartDate, DateTime dtmEndDate, object[] objPageDetails)
+        {
+            return ReturnSpecificGripDataTableForReport(dtmStartDate, dtmEndDate, objPageDetails);
+        }
+        public int VerifySpecificGrip(object[] repInfo, object[] objPageDetails)
         {
             int indicator = 0;
-            if (!specificGripAvailable(repInfo, objPageDetails))
+            if (!SpecificGripAvailable(repInfo, objPageDetails))
             {
                 indicator = 1;
             }
             return indicator;
         }
-        private bool specificGripAvailable(object[] repInfo, object[] objPageDetails)
+        private bool SpecificGripAvailable(object[] repInfo, object[] objPageDetails)
         {
             string strQueryName = "specificGripAvailable";
             bool bolData = false;
@@ -1614,7 +1693,7 @@ namespace SweetSpotDiscountGolfPOS.FP
         private System.Data.DataTable ReturnCashoutsForSelectedDates(object[] passing, object[] objPageDetails)
         {
             string strQueryName = "ReturnCashoutsForSelectedDates";
-         
+
             string sqlCmd = "SELECT dtmCashoutDate, intLocationID, fltSystemCountedBasedOnSystemTradeIn, fltManuallyCountedBasedOnReceiptsTradeIn, "
                 + "fltSystemCountedBasedOnSystemGiftCard, fltManuallyCountedBasedOnReceiptsGiftCard, fltSystemCountedBasedOnSystemCash, "
                 + "fltManuallyCountedBasedOnReceiptsCash, fltSystemCountedBasedOnSystemDebit, fltManuallyCountedBasedOnReceiptsDebit, "
@@ -1631,6 +1710,10 @@ namespace SweetSpotDiscountGolfPOS.FP
             };
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
+        }
+        public System.Data.DataTable CallReturnCashoutsForSelectedDates(object[] passing, object[] objPageDetails)
+        {
+            return ReturnCashoutsForSelectedDates(passing, objPageDetails);
         }
         public int CashoutsProcessed(object[] repInfo, object[] objPageDetails)
         {
@@ -1676,13 +1759,17 @@ namespace SweetSpotDiscountGolfPOS.FP
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
+        public void CallFinalizeCashout(string args, object[] objPageDetails)
+        {
+            FinalizeCashout(args, objPageDetails);
+        }
 
         public Cashout CallSelectedCashoutToReturn(object[] args, object[] objPageDetails)
         {
             Cashout cOut;
             //if (CheckForNewSales(args, objPageDetails))
             //{
-                cOut = RecalculateCashoutTotals(args, objPageDetails);
+            cOut = RecalculateCashoutTotals(args, objPageDetails);
             //}
             //else
             //{
@@ -1690,25 +1777,25 @@ namespace SweetSpotDiscountGolfPOS.FP
             //}
             return cOut;
         }
-        private bool CheckForNewSales(object[] args, object[] objPageDetails)
-        {
-            string strQueryName = "CheckForNewSales";
-            bool newSales = false;
+        //private bool CheckForNewSales(object[] args, object[] objPageDetails)
+        //{
+        //    string strQueryName = "CheckForNewSales";
+        //    bool newSales = false;
 
-            string sqlCmd = "SELECT (SELECT COUNT(intInvoiceID) FROM tbl_invoice WHERE dtmInvoiceDate = @dtmSelectedDate AND intLocationID = @intLocationID) "
-                + "- C.intSalesCount FROM tbl_cashout C WHERE C.dtmCashoutDate = @dtmSelectedDate AND C.intLocationID = @intLocationID";
-            object[][] parms =
-            {
-                new object[] { "@dtmSelectedDate", DateTime.Parse(args[0].ToString()).ToShortDateString() },
-                new object[] { "@intLocationID", Convert.ToInt32(args[1]) }
-            };
+        //    string sqlCmd = "SELECT (SELECT COUNT(intInvoiceID) FROM tbl_invoice WHERE dtmInvoiceDate = @dtmSelectedDate AND intLocationID = @intLocationID) "
+        //        + "- C.intSalesCount FROM tbl_cashout C WHERE C.dtmCashoutDate = @dtmSelectedDate AND C.intLocationID = @intLocationID";
+        //    object[][] parms =
+        //    {
+        //        new object[] { "@dtmSelectedDate", DateTime.Parse(args[0].ToString()).ToShortDateString() },
+        //        new object[] { "@intLocationID", Convert.ToInt32(args[1]) }
+        //    };
 
-            if (DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) > 0)            
-            {
-                newSales = true;
-            }
-            return newSales;
-        }
+        //    if (DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) > 0)
+        //    {
+        //        newSales = true;
+        //    }
+        //    return newSales;
+        //}
         private Cashout RecalculateCashoutTotals(object[] args, object[] objPageDetails)
         {
             Cashout cOut = CreateNewCashout(DateTime.Parse(args[0].ToString()), Convert.ToInt32(args[1]), objPageDetails);
@@ -1724,12 +1811,12 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "= @fltSystemCountedBasedOnSystemDebit, fltSystemCountedBasedOnSystemMastercard = @fltSystemCountedBasedOnSystemMastercard, "
                 + "fltSystemCountedBasedOnSystemVisa = @fltSystemCountedBasedOnSystemVisa, fltSalesSubTotal = @fltSalesSubTotal, fltGovernmentTaxAmount = "
                 + "@fltGovernmentTaxAmount, fltProvincialTaxAmount = @fltProvincialTaxAmount, fltLiquorTaxAmount = @fltLiquorTaxAmount " //, fltHarmonizedTaxAmount = "
-                //+ "@fltHarmonizedTaxAmount, fltQuebecTaxAmount = @fltQuebecTaxAmount, fltRetailTaxAmount = @fltRetailTaxAmount, intSalesCount = @intSalesCount "
+                                                                                                                                         //+ "@fltHarmonizedTaxAmount, fltQuebecTaxAmount = @fltQuebecTaxAmount, fltRetailTaxAmount = @fltRetailTaxAmount, intSalesCount = @intSalesCount "
                 + "WHERE dtmCashoutDate = @dtmCashoutDate AND intLocationID = @intLocationID";
 
             object[][] parms =
             {
-                new object[] { "@dtmCashoutDate", cashout.dtmCashoutDate.ToShortDateString() },                
+                new object[] { "@dtmCashoutDate", cashout.dtmCashoutDate.ToShortDateString() },
                 new object[] { "@fltSystemCountedBasedOnSystemTradeIn", cashout.fltSystemCountedBasedOnSystemTradeIn },
                 new object[] { "@fltSystemCountedBasedOnSystemGiftCard", cashout.fltSystemCountedBasedOnSystemGiftCard },
                 new object[] { "@fltSystemCountedBasedOnSystemCash", cashout.fltSystemCountedBasedOnSystemCash },
@@ -1788,6 +1875,10 @@ namespace SweetSpotDiscountGolfPOS.FP
             }
             return exists;
         }
+        public bool CallCashoutExists(object[] args, object[] objPageDetails)
+        {
+            return CashoutExists(args, objPageDetails);
+        }
         private void UpdateCashout(Cashout cashout, object[] objPageDetails)
         {
             string strQueryName = "UpdateCashout";
@@ -1832,10 +1923,14 @@ namespace SweetSpotDiscountGolfPOS.FP
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
+        public void CallUpdateCashout(Cashout cashout, object[] objPageDetails)
+        {
+            UpdateCashout(cashout, objPageDetails);
+        }
 
 
         //************Change Inventory Reort***********************
-        private System.Data.DataTable returnChangedInventoryForDateRange(DateTime dtmStartDate, DateTime dtmEndDate, object[] objPageDetails)
+        private System.Data.DataTable ReturnChangedInventoryForDateRange(DateTime dtmStartDate, DateTime dtmEndDate, object[] objPageDetails)
         {
             string strQueryName = "returnChangedInventoryForDateRange";
             string sqlCmd = "SELECT ICT.dtmChangeDate, ICT.dtmChangeTime, CONCAT(E.varFirstName, ', ', E.varLastName) AS employeeName, L.varCityName, "
@@ -1855,16 +1950,20 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public int verifyInventoryChange(object[] repInfo, object[] objPageDetails)
+        public System.Data.DataTable CallReturnChangedInventoryForDateRange(DateTime dtmStartDate, DateTime dtmEndDate, object[] objPageDetails)
+        {
+            return ReturnChangedInventoryForDateRange(dtmStartDate, dtmEndDate, objPageDetails);
+        }
+        public int VerifyInventoryChange(object[] repInfo, object[] objPageDetails)
         {
             int indicator = 0;
-            if (!inventoryChangeAvailable(repInfo, objPageDetails))
+            if (!InventoryChangeAvailable(repInfo, objPageDetails))
             {
                 indicator = 1;
             }
             return indicator;
         }
-        private bool inventoryChangeAvailable(object[] repInfo, object[] objPageDetails)
+        private bool InventoryChangeAvailable(object[] repInfo, object[] objPageDetails)
         {
             string strQueryName = "inventoryChangeAvailable";
             bool bolData = false;
@@ -2060,25 +2159,25 @@ namespace SweetSpotDiscountGolfPOS.FP
         //    }
         //    conn.Close();
         //}
-        private void itemExports(string selection, FileInfo newFile, string fileName, object[] objPageDetails)
+        private void ItemExports(string selection, FileInfo newFile, string fileName, object[] objPageDetails)
         {
             //This is the table that has all of the information lined up the way Caspio needs it to be
             System.Data.DataTable exportTable = new System.Data.DataTable();
             if (selection.Equals("all"))
             {
-                exportTable = exportAllInventory(objPageDetails);
+                exportTable = ExportAllInventory(objPageDetails);
             }
             else if (selection.Equals("clubs"))
             {
-                exportTable = exportAllAdd_Clubs(objPageDetails);
+                exportTable = ExportAllAdd_Clubs(objPageDetails);
             }
             else if (selection.Equals("accessories"))
             {
-                exportTable = exportAllAdd_Accessories(objPageDetails);
+                exportTable = ExportAllAdd_Accessories(objPageDetails);
             }
             else if (selection.Equals("clothing"))
             {
-                exportTable = exportAllAdd_Clothing(objPageDetails);
+                exportTable = ExportAllAdd_Clothing(objPageDetails);
             }
             string[] itemExportColumns = { "Vendor", "Store_ID", "ItemNumber", "Shipment_Date", "Brand", "Model", "Club_Type", "Shaft",
                     "Number_of_Clubs", "Tradein_Price", "Premium", "WE PAY", "QUANTITY", "Ext'd Price", "RetailPrice", "Comments",
@@ -2132,17 +2231,21 @@ namespace SweetSpotDiscountGolfPOS.FP
                 HttpContext.Current.Response.End();
             }
         }
+        public void CallItemExports(string selection, FileInfo newFile, string fileName, object[] objPageDetails)
+        {
+            ItemExports(selection, newFile, fileName, objPageDetails);
+        }
         //Puts the clubs in the export table
-        public System.Data.DataTable exportAllAdd_Clubs(object[] objPageDetails)
+        public System.Data.DataTable ExportAllAdd_Clubs(object[] objPageDetails)
         {
             string strQueryName = "exportAllAdd_Clubs";
-            string sqlCmd = exportClubString();
+            string sqlCmd = ExportClubString();
             object[][] parms = { };
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private string exportClubString()
-        {            
+        private string ExportClubString()
+        {
             string sqlCmd = "SELECT '' AS Vendor, (SELECT tbl_location.varLocationName FROM tbl_location WHERE tbl_location.intLocationID = tbl_clubs.intLocationID) AS varLocationName, "
                 + "tbl_clubs.varSku, '' AS ShipmentDate, (SELECT tbl_brand.varBrandName FROM tbl_brand WHERE tbl_brand.intBrandID = tbl_clubs.intBrandID ) AS varBrandName , (SELECT "
                 + "tbl_model.varModelName FROM tbl_model WHERE tbl_model.intModelID = tbl_clubs.intModelID) AS varModelName, tbl_clubs.varTypeOfClub, tbl_clubs.varShaftType, "
@@ -2150,21 +2253,21 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "tbl_clubs.varAdditionalInformation, '' AS Image, tbl_clubs.varClubSpecification, tbl_clubs.varShaftSpecification, tbl_clubs.varShaftFlexability, "
                 + "tbl_clubs.varClubDexterity, (SELECT tbl_location.varSecondLocationID FROM tbl_location WHERE tbl_location.intLocationID = tbl_clubs.intLocationID) AS "
                 + "locationSecondary, '' AS Received, 0 AS Paid, (SELECT tbl_itemType.varItemTypeName FROM tbl_itemType WHERE tbl_itemType.intItemTypeID = tbl_clubs.intItemTypeID) AS "
-                + "itemType, tbl_clubs.bitIsUsedProduct FROM tbl_clubs";         
+                + "itemType, tbl_clubs.bitIsUsedProduct FROM tbl_clubs";
             return sqlCmd;
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
         //Puts the accessories in the export table
-        public System.Data.DataTable exportAllAdd_Accessories(object[] objPageDetails)
+        public System.Data.DataTable ExportAllAdd_Accessories(object[] objPageDetails)
         {
             string strQueryName = "exportAllAdd_Accessories";
-            string sqlCmd = exportAccessoryString();
+            string sqlCmd = ExportAccessoryString();
             object[][] parms = { };
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private string exportAccessoryString()
-        {            
+        private string ExportAccessoryString()
+        {
             string sqlCmd = "SELECT '' AS Vendor, (SELECT tbl_location.varLocationName FROM tbl_location WHERE tbl_location.intLocationID = tbl_accessories.intLocationID) AS varLocationName, "
                 + "tbl_accessories.varSku, '' AS ShipmentDate, (SELECT tbl_brand.varBrandName FROM tbl_brand WHERE tbl_brand.intBrandID = tbl_accessories.intBrandID) AS varBrandName, (SELECT "
                 + "tbl_model.varModelName FROM tbl_model WHERE tbl_model.intModelID = tbl_accessories.intModelID) AS varModelName, tbl_accessories.varTypeOfAccessory AS varTypeOfClub, "
@@ -2177,15 +2280,15 @@ namespace SweetSpotDiscountGolfPOS.FP
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
         //Puts the clothing in the export table
-        public System.Data.DataTable exportAllAdd_Clothing(object[] objPageDetails)
+        public System.Data.DataTable ExportAllAdd_Clothing(object[] objPageDetails)
         {
             string strQueryName = "exportAllAdd_Clothing";
-            string sqlCmd = exportClothingString();
+            string sqlCmd = ExportClothingString();
             object[][] parms = { };
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private string exportClothingString()
+        private string ExportClothingString()
         {
             string sqlCmd = "SELECT '' AS Vendor, (SELECT tbl_location.varLocationName FROM tbl_location WHERE tbl_location.intLocationID = tbl_clothing.intLocationID) AS varLocationName, "
                 + "tbl_clothing.varSku, '' AS ShipmentDate, (SELECT tbl_brand.varBrandName FROM tbl_brand WHERE tbl_brand.intBrandID = tbl_clothing.intBrandID) AS varBrandName, '' AS "
@@ -2197,15 +2300,15 @@ namespace SweetSpotDiscountGolfPOS.FP
             return sqlCmd;
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private System.Data.DataTable exportAllInventory(object[] objPageDetails)
+        private System.Data.DataTable ExportAllInventory(object[] objPageDetails)
         {
             string strQueryName = "exportAllInventory";
             string sqlCmd = "";
-            sqlCmd += exportClubString();
+            sqlCmd += ExportClubString();
             sqlCmd += " UNION ";
-            sqlCmd += exportAccessoryString();
+            sqlCmd += ExportAccessoryString();
             sqlCmd += " UNION ";
-            sqlCmd += exportClothingString();
+            sqlCmd += ExportClothingString();
 
             object[][] parms = { };
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);

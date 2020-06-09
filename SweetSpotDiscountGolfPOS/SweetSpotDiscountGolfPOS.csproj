@@ -165,7 +165,7 @@
     <Compile Include="ClassLibrary\Junk\CustomMessageBox.cs" />
     <Compile Include="ClassLibrary\Objects\Employee.cs" />
     <Compile Include="ClassLibrary\FunctionsProcedures\EmployeeManager.cs" />
-    <Compile Include="ClassLibrary\FunctionsProcedures\ErrorReporting.cs" />
+    <Compile Include="ClassLibrary\Misc\ErrorReporting.cs" />
     <Compile Include="ClassLibrary\Objects\Invoice.cs" />
     <Compile Include="ClassLibrary\Objects\InvoiceItems.cs" />
     <Compile Include="ClassLibrary\Objects\InvoiceMOPs.cs" />

@@ -1,7 +1,4 @@
-﻿using SweetShop;
-using SweetSpotDiscountGolfPOS.ClassLibrary;
-using SweetSpotProShop;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -11,6 +8,10 @@ using System.Web;
 using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using SweetSpotDiscountGolfPOS.FP;
+using SweetSpotDiscountGolfPOS.OB;
+using SweetSpotDiscountGolfPOS.Misc;
+
 
 namespace SweetSpotDiscountGolfPOS
 {
@@ -52,7 +53,7 @@ namespace SweetSpotDiscountGolfPOS
                     CU = (CurrentUser)Session["currentUser"];
                     if (!IsPostBack)
                     {
-                        ddlLocation.DataSource = LM.ReturnLocationDropDown(objPageDetails);
+                        ddlLocation.DataSource = LM.CallReturnLocationDropDown(objPageDetails);
                         ddlLocation.DataBind();
                         ddlLocation.SelectedValue = CU.location.intLocationID.ToString();
                     }
@@ -63,7 +64,7 @@ namespace SweetSpotDiscountGolfPOS
                         ddlLocation.Enabled = true;
                     }
                     //populate gridview with todays sales
-                    grdSameDaySales.DataSource = R.getInvoiceBySaleDate(DateTime.Today, DateTime.Today, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                    grdSameDaySales.DataSource = R.CallGetInvoiceBySaleDate(DateTime.Today, DateTime.Today, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
                     grdSameDaySales.DataBind();
                     MergeRows(grdSameDaySales);
                 }
@@ -73,7 +74,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -148,7 +149,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -190,7 +191,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -206,7 +207,7 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 InvoiceManager IM = new InvoiceManager();
-                if (IM.invoiceIsReturn(Convert.ToInt32(e.CommandArgument.ToString()), objPageDetails))
+                if (IM.InvoiceIsReturn(Convert.ToInt32(e.CommandArgument.ToString()), objPageDetails))
                 {
                     //Changes page to display a printable invoice
                     Response.Redirect("PrintableInvoiceReturn.aspx?invoice=" + e.CommandArgument.ToString(), false);
@@ -222,7 +223,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

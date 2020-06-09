@@ -1,13 +1,13 @@
-﻿using SweetShop;
-using SweetSpotDiscountGolfPOS.ClassLibrary;
-using SweetSpotProShop;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using SweetSpotDiscountGolfPOS.FP;
+using SweetSpotDiscountGolfPOS.OB;
+using SweetSpotDiscountGolfPOS.Misc;
 
 namespace SweetSpotDiscountGolfPOS
 {
@@ -30,16 +30,16 @@ namespace SweetSpotDiscountGolfPOS
                 CU = (CurrentUser)Session["currentUser"];
                 if (!IsPostBack)
                 {
-                    invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"]), CU.location.intProvinceID, objPageDetails)[0];
+                    invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"]), CU.location.intProvinceID, objPageDetails)[0];
 
-                    string[] inventoryInfo = ItM.ReserveTradeInSKU(CU, objPageDetails);
+                    string[] inventoryInfo = ItM.CallReserveTradeInSKU(CU, objPageDetails);
                     inventoryID = Convert.ToInt32(inventoryInfo[1]);
 
                     lblSKUDisplay.Text = inventoryInfo[0].ToString();
-                    ddlBrand.DataSource = ItM.ReturnDropDownForBrand(objPageDetails);
+                    ddlBrand.DataSource = ItM.CallReturnDropDownForBrand(objPageDetails);
                     ddlBrand.DataBind();
 
-                    ddlModel.DataSource = ItM.ReturnDropDownForModel(objPageDetails);
+                    ddlModel.DataSource = ItM.CallReturnDropDownForModel(objPageDetails);
                     ddlModel.DataBind();
                     ddlModel.SelectedValue = "2624"; //"2426"; // is the testing value for 'Customer Trade'
 
@@ -48,7 +48,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //string prevPage = Convert.ToString(Session["prevPage"]);
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -68,7 +68,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
@@ -105,7 +105,7 @@ namespace SweetSpotDiscountGolfPOS
                 tradeIN.intLocationID = CU.location.intLocationID;
 
                 //this adds to the temp tradeIncart
-                ItM.AddTradeInItemToTempTable(tradeIN, objPageDetails);
+                ItM.CallAddTradeInItemToTempTable(tradeIN, objPageDetails);
 
                 //change cost and price for cart
                 InvoiceItemsManager IIM = new InvoiceItemsManager();
@@ -114,8 +114,8 @@ namespace SweetSpotDiscountGolfPOS
                 selectedTradeIn.intInventoryID = tradeIN.intInventoryID;
                 selectedTradeIn.varSku = tradeIN.varSku;
                 selectedTradeIn.intItemQuantity = tradeIN.intQuantity;
-                selectedTradeIn.varItemDescription = ItM.ReturnBrandlNameFromBrandID(tradeIN.intBrandID, objPageDetails) + " " 
-                    + ItM.ReturnModelNameFromModelID(tradeIN.intModelID, objPageDetails) + " " + tradeIN.varClubSpecification + " " 
+                selectedTradeIn.varItemDescription = ItM.CallReturnBrandlNameFromBrandID(tradeIN.intBrandID, objPageDetails) + " " 
+                    + ItM.CallReturnModelNameFromModelID(tradeIN.intModelID, objPageDetails) + " " + tradeIN.varClubSpecification + " " 
                     + tradeIN.varTypeOfClub + " " + tradeIN.varShaftSpecification + " " + tradeIN.varShaftFlexability + " " 
                     + tradeIN.varClubDexterity;
                 selectedTradeIn.fltItemCost = 0;
@@ -126,7 +126,7 @@ namespace SweetSpotDiscountGolfPOS
                 selectedTradeIn.bitIsClubTradeIn = true;
                 selectedTradeIn.intItemTypeID = 1;
 
-                IIM.InsertItemIntoSalesCart(selectedTradeIn, invoice.intTransactionTypeID, invoice.dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
+                IIM.CallInsertItemIntoSalesCart(selectedTradeIn, invoice.intTransactionTypeID, invoice.dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
 
                 //IIM.NewTradeInChangeChargeTaxToFalse(selectedTradeIn, invoice.dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
 
@@ -137,7 +137,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 MessageBox.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
