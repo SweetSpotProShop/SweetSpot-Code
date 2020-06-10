@@ -17,16 +17,16 @@
                         <asp:TextBox ID="txtSearch" runat="server" AutoComplete="off" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnCustomerSearch" runat="server" Width="150" Text="Customer Search" OnClick="btnCustomerSearch_Click" />
+                        <asp:Button ID="BtnCustomerSearch" runat="server" Width="150" Text="Customer Search" OnClick="BtnCustomerSearch_Click" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnAddNewCustomer" runat="server" Width="150" Text="Add New Customer" OnClick="btnAddNewCustomer_Click" />
+                        <asp:Button ID="BtnAddNewCustomer" runat="server" Width="150" Text="Add New Customer" OnClick="BtnAddNewCustomer_Click" />
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
             <hr />
-            <asp:GridView ID="grdCustomersSearched" runat="server" AutoGenerateColumns="false" OnRowCommand="grdCustomersSearched_RowCommand" 
-				AllowPaging="True" PageSize="25" OnPageIndexChanging="grdCustomersSearched_PageIndexChanging" RowStyle-HorizontalAlign="Center">
+            <asp:GridView ID="GrdCustomersSearched" runat="server" AutoGenerateColumns="false" OnRowCommand="GrdCustomersSearched_RowCommand" 
+				AllowPaging="True" PageSize="25" OnPageIndexChanging="GrdCustomersSearched_PageIndexChanging" RowStyle-HorizontalAlign="Center">
                 <Columns>
                     <asp:TemplateField HeaderText="Sale">
                         <ItemTemplate>

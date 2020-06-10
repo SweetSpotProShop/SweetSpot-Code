@@ -8,10 +8,10 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsHomePage : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly LocationManager LM = new LocationManager();
+        readonly Reports R = new Reports();
         CurrentUser CU;
-        LocationManager LM = new LocationManager();
-        Reports R = new Reports();
 
         //Add counter to record how many times each report gets viewed.
 
@@ -65,11 +65,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void calStart_SelectionChanged(object sender, EventArgs e)
+        protected void CalStart_SelectionChanged(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "calStart_SelectionChanged";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try { }
             //Exception catch
             catch (ThreadAbortException) { }
@@ -83,11 +83,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void calEnd_SelectionChanged(object sender, EventArgs e)
+        protected void CalEnd_SelectionChanged(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "calEnd_SelectionChanged";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try { }
             //Exception catch
             catch (ThreadAbortException) { }
@@ -103,7 +103,7 @@ namespace SweetSpotDiscountGolfPOS
         }
 
         //This is the Cashout Report
-        protected void btnCashOutReport_Click(object sender, EventArgs e)
+        protected void BtnCashOutReport_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "btnCashOutReport_Click";
@@ -113,7 +113,7 @@ namespace SweetSpotDiscountGolfPOS
                 object[] reportLog = { 1, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
                 //Stores report dates into Session
-                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
+                DateTime[] dtm = GetDateRange();
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
                 int indicator = R.CashoutsProcessed(repInfo, objPageDetails);
                 ////Check to see if there are sales first
@@ -141,7 +141,7 @@ namespace SweetSpotDiscountGolfPOS
         }
         
         //Displays taxes charged
-        protected void btnTaxReport_Click(object sender, EventArgs e)
+        protected void BtnTaxReport_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "btnTesting_Click";
@@ -150,9 +150,9 @@ namespace SweetSpotDiscountGolfPOS
             {
                 object[] reportLog = { 3, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
-                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
+                DateTime[] dtm = GetDateRange();
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                int indicator = R.verifyTaxesCharged(repInfo, objPageDetails);
+                int indicator = R.VerifyTaxesCharged(repInfo, objPageDetails);
                 if (indicator == 0)
                 {
                     Session["reportInfo"] = repInfo;
@@ -177,7 +177,7 @@ namespace SweetSpotDiscountGolfPOS
         }
 
         //Displays the Discounts given
-        protected void btnDiscountReport_Click(object sender, EventArgs e)
+        protected void BtnDiscountReport_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "btnDiscountReport_Click";
@@ -187,9 +187,9 @@ namespace SweetSpotDiscountGolfPOS
                 object[] reportLog = { 6, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
                 //Stores report dates into Session
-                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
+                DateTime[] dtm = GetDateRange();
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                int indicator = R.verifyInvoicesCompleted(repInfo, objPageDetails);
+                int indicator = R.VerifyInvoicesCompleted(repInfo, objPageDetails);
                 if (indicator == 0)
                 {
                     Session["reportInfo"] = repInfo;
@@ -214,7 +214,7 @@ namespace SweetSpotDiscountGolfPOS
         }
 
         //Displays sales totals grouped by date
-        protected void btnSalesByDate_Click(object sendr, EventArgs e)
+        protected void BtnSalesByDate_Click(object sendr, EventArgs e)
         {
             //Collects current method and page for error tracking
             string method = "btnSalesByDate_Click";
@@ -224,9 +224,9 @@ namespace SweetSpotDiscountGolfPOS
                 object[] reportLog = { 7, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
                 //Stores report dates into Session
-                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
+                DateTime[] dtm = GetDateRange();
                 object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
-                int indicator = R.verifySalesHaveBeenMade(repInfo, objPageDetails);
+                int indicator = R.VerifySalesHaveBeenMade(repInfo, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
                 {
@@ -253,7 +253,7 @@ namespace SweetSpotDiscountGolfPOS
 
         //Similar to the COGSvsPM report with a little more detail
         //only fixed download
-        protected void btnExtensiveInvoice_Click(object sender, EventArgs e)
+        protected void BtnExtensiveInvoice_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
             string method = "btnExtensiveInvoice_Click";
@@ -262,10 +262,10 @@ namespace SweetSpotDiscountGolfPOS
             {
                 object[] reportLog = { 11, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
-                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
+                DateTime[] dtm = GetDateRange();
                 int loc = Convert.ToInt32(ddlLocation.SelectedValue);
                 object[] repInfo = new object[] { dtm, loc };
-                int indicator = R.verifySalesHaveBeenMade(repInfo, objPageDetails);
+                int indicator = R.VerifySalesHaveBeenMade(repInfo, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
                 {
@@ -294,7 +294,7 @@ namespace SweetSpotDiscountGolfPOS
 
         //Displays the total cost of currently stocked inventory
         //only fixed download
-        protected void btnCostOfInventory_Click(object sender, EventArgs e)
+        protected void BtnCostOfInventory_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
             string method = "btnCostOfInventory_Click";
@@ -322,7 +322,7 @@ namespace SweetSpotDiscountGolfPOS
 
         //Another report similar to COGSvsPM and Extensive Invoice, can be broken out by month, week, or day.
         //only fixed download
-        protected void btnStoreStatsReport_Click(object sender, EventArgs e)
+        protected void BtnStoreStatsReport_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
             string method = "btnStoreStatsReport_Click";
@@ -331,10 +331,10 @@ namespace SweetSpotDiscountGolfPOS
             {
                 object[] reportLog = { 13, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
-                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
+                DateTime[] dtm = GetDateRange();
                 int loc = Convert.ToInt32(ddlLocation.SelectedValue);
                 object[] repInfo = new object[] { dtm, loc, ddlDatePeriod.SelectedValue.ToString() };
-                int indicator = R.verifyStatsAvailable(repInfo, objPageDetails);
+                int indicator = R.VerifyStatsAvailable(repInfo, objPageDetails);
                 if (indicator == 0)
                 {
                     Session["reportInfo"] = repInfo;
@@ -360,7 +360,7 @@ namespace SweetSpotDiscountGolfPOS
 
         //Displays chnages made to inventory items in a date range
         //only fixed download
-        protected void btnInventoryChangeReport_Click(object sender, EventArgs e)
+        protected void BtnInventoryChangeReport_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
             string method = "btnInventoryChangeReport_Click";
@@ -369,9 +369,9 @@ namespace SweetSpotDiscountGolfPOS
             {
                 object[] reportLog = { 16, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
-                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
+                DateTime[] dtm = GetDateRange();
                 object[] repInfo = new object[] { dtm };
-                int indicator = R.verifyInventoryChange(repInfo, objPageDetails);
+                int indicator = R.VerifyInventoryChange(repInfo, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
                 {
@@ -398,7 +398,7 @@ namespace SweetSpotDiscountGolfPOS
 
         //Displays specific apparel skus sold, their average cost, average price, and profit margin
         //only fixed download
-        protected void btnSpecificApparelReport_Click(object sender, EventArgs e)
+        protected void BtnSpecificApparelReport_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
             string method = "btnSpecificApparelReport_Click";
@@ -407,9 +407,9 @@ namespace SweetSpotDiscountGolfPOS
             {
                 object[] reportLog = { 14, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
-                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
+                DateTime[] dtm = GetDateRange();
                 object[] repInfo = new object[] { dtm };
-                int indicator = R.verifySpecificApparel(repInfo, objPageDetails);
+                int indicator = R.VerifySpecificApparel(repInfo, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
                 {
@@ -436,7 +436,7 @@ namespace SweetSpotDiscountGolfPOS
 
         //Displays specific apparel skus sold, their average cost, average price, and profit margin
         //only fixed download
-        protected void btnSpecificGripReport_Click(object sender, EventArgs e)
+        protected void BtnSpecificGripReport_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
             string method = "btnSpecificGripReport_Click";
@@ -445,9 +445,9 @@ namespace SweetSpotDiscountGolfPOS
             {
                 object[] reportLog = { 15, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
-                DateTime[] dtm = getDateRange(calStartDate.SelectedDate, calEndDate.SelectedDate);
+                DateTime[] dtm = GetDateRange();
                 object[] repInfo = new object[] { dtm };
-                int indicator = R.verifySpecificGrip(repInfo, objPageDetails);
+                int indicator = R.VerifySpecificGrip(repInfo, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
                 {
@@ -472,7 +472,7 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
 
-        protected DateTime[] getDateRange(DateTime startDate, DateTime endDate)
+        protected DateTime[] GetDateRange()
         {
             if (ddlDatePeriod.SelectedItem.Text.Equals("Month"))
             {

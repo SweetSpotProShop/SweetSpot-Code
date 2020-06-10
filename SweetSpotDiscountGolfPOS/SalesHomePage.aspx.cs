@@ -15,9 +15,9 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class SalesHomePage : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        InvoiceManager IM = new InvoiceManager();
-        LocationManager LM = new LocationManager();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly InvoiceManager IM = new InvoiceManager();
+        //LocationManager LM = new LocationManager();
         CurrentUser CU;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -59,11 +59,11 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
 
-        protected void btnQuickSale_Click(object sender, EventArgs e)
+        protected void BtnQuickSale_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "btnQuickSale_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
@@ -85,11 +85,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnReturns_Click(object sender, EventArgs e)
+        protected void BtnReturns_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "btnReturns_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Changes page to Returns Home Page
@@ -107,11 +107,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnInvoiceSearch_Click(object sender, EventArgs e)
+        protected void BtnInvoiceSearch_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "btnInvoiceSearch_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 Response.Redirect("InvoiceSearch.aspx", false);
@@ -128,7 +128,7 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnProcessCashOut_Click(object sender, EventArgs e)
+        protected void BtnProcessCashOut_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "btnProcessCashOut_Click";
@@ -136,11 +136,11 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 Reports R = new Reports();
-                int indicator = R.verifyCashoutCanBeProcessed(CU.location.intLocationID, calSearchDate.SelectedDate, objPageDetails);
+                int indicator = R.VerifyCashoutCanBeProcessed(CU.location.intLocationID, calSearchDate.SelectedDate, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
                 {
-                    R.removeUnprocessedReturns(CU.location.intLocationID, calSearchDate.SelectedDate, objPageDetails);
+                    R.RemoveUnprocessedReturns(CU.location.intLocationID, calSearchDate.SelectedDate, objPageDetails);
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                     nameValues.Set("selectedDate", calSearchDate.SelectedDate.ToShortDateString());
                     nameValues.Set("location", CU.location.intLocationID.ToString());
@@ -172,11 +172,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }        
-        protected void grdCurrentOpenSales_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void GrdCurrentOpenSales_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method for error tracking
-            string method = "grdCurrentOpenSales_RowCommand";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "GrdCurrentOpenSales_RowCommand";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
@@ -202,10 +202,10 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void calSearchDate_SelectionChanged(object sender, EventArgs e)
+        protected void CalSearchDate_SelectionChanged(object sender, EventArgs e)
         {
-            string method = "calSearchDate_SelectionChanged";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "CalSearchDate_SelectionChanged";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try { }
             catch (ThreadAbortException tae) { }
             catch (Exception ex)

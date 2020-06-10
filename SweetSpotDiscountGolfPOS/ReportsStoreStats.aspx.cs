@@ -16,9 +16,9 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsStoreStats : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        Reports R = new Reports();
-        LocationManager LM = new LocationManager();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly Reports R = new Reports();
+        readonly LocationManager LM = new LocationManager();
         CurrentUser CU;
 
         double governmentTax;
@@ -64,7 +64,7 @@ namespace SweetSpotDiscountGolfPOS
                         lblDates.Text = "Store stats on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy"); //+ " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     }
                     //Binding the gridview
-                    DataTable stats = R.CallReturnStoreStats(startDate, endDate, timeFrame, locationID, objPageDetails);
+                    DataTable stats = R.CallReturnStoreStats(startDate, endDate, timeFrame, objPageDetails);
 
                     grdStats.DataSource = stats;
                     grdStats.DataBind();
@@ -82,10 +82,10 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void grdStats_RowDataBound(object sender, GridViewRowEventArgs e)
+        protected void GrdStats_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             string method = "grdStats_RowDataBound";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
@@ -123,7 +123,7 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnDownload_Click(object sender, EventArgs e)
+        protected void BtnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "btnDownload_Click";
@@ -141,7 +141,7 @@ namespace SweetSpotDiscountGolfPOS
                 int locationID = Convert.ToInt32(passing[1]);
                 int timeFrame = Convert.ToInt32(passing[2]);
 
-                DataTable stats = R.CallReturnStoreStats(startDate, endDate, timeFrame, locationID, objPageDetails);
+                DataTable stats = R.CallReturnStoreStats(startDate, endDate, timeFrame, objPageDetails);
 
                 string fileName = "Store Stats Report-" + LM.CallReturnLocationName(locationID, objPageDetails) + "_" + startDate.ToShortDateString() + " - " + endDate.ToShortDateString() + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);

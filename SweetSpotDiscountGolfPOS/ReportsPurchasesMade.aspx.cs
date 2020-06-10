@@ -13,9 +13,9 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsPurchasesMade : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
+        readonly ErrorReporting ER = new ErrorReporting();
         CurrentUser CU;
-        readonly Reports R = new Reports();
+        //readonly Reports R = new Reports();
         readonly LocationManager LM = new LocationManager();
 
         double totalPurchAmount = 0;
@@ -76,7 +76,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void GrdPurchasesMade_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             string method = "GrdPurchasesMade_RowDataBound";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 // check row type
@@ -112,7 +112,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "PrintReport";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             //Current method does nothing
             try
             { }
@@ -132,7 +132,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "lbtnReceiptNumber_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 LinkButton btn = sender as LinkButton;

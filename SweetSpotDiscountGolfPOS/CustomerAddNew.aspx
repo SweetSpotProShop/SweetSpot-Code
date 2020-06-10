@@ -117,9 +117,9 @@
                         <asp:Label ID="lblCountry" runat="server" Text="Country:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlCountry" runat="server" AutoPostBack="true"
+                        <asp:DropDownList ID="DdlCountry" runat="server" AutoPostBack="true"
                             DataTextField = "varCountryName" DataValueField = "intCountryID" Enabled="false" 
-                            OnSelectedIndexChanged="ddlCountry_SelectedIndexChanged" />
+                            OnSelectedIndexChanged="DdlCountry_SelectedIndexChanged" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -129,16 +129,16 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:Button ID="btnAddCustomer" runat="server" Text="Add Customer" OnClick="btnAddCustomer_Click" Visible="false" CausesValidation="true"/>
-                        <asp:Button ID="btnEditCustomer" runat="server" Text="Edit Customer" OnClick="btnEditCustomer_Click" Visible="true" CausesValidation="false"/>
-                        <asp:Button ID="btnSaveCustomer" runat="server" Text="Save Changes" OnClick="btnSaveCustomer_Click" Visible="false" CausesValidation="true"/>
+                        <asp:Button ID="BtnAddCustomer" runat="server" Text="Add Customer" OnClick="BtnAddCustomer_Click" Visible="false" CausesValidation="true"/>
+                        <asp:Button ID="BtnEditCustomer" runat="server" Text="Edit Customer" OnClick="BtnEditCustomer_Click" Visible="true" CausesValidation="false"/>
+                        <asp:Button ID="BtnSaveCustomer" runat="server" Text="Save Changes" OnClick="BtnSaveCustomer_Click" Visible="false" CausesValidation="true"/>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnStartSale" runat="server" Text="Start Sale" OnClick="btnStartSale_Click" Visible="true" CausesValidation="false"/>
+                        <asp:Button ID="BtnStartSale" runat="server" Text="Start Sale" OnClick="BtnStartSale_Click" Visible="true" CausesValidation="false"/>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnBackToSearch" runat="server" Text="Exit Customer" OnClick="btnBackToSearch_Click" Visible="true" CausesValidation="false"/>
-                        <asp:Button ID="btnCancel" runat="server" Text="Cancel" OnClick="btnCancel_Click" Visible="false" CausesValidation="false"/>
+                        <asp:Button ID="BtnBackToSearch" runat="server" Text="Exit Customer" OnClick="BtnBackToSearch_Click" Visible="true" CausesValidation="false"/>
+                        <asp:Button ID="BtnCancel" runat="server" Text="Cancel" OnClick="BtnCancel_Click" Visible="false" CausesValidation="false"/>
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
@@ -146,7 +146,7 @@
             <%--Gridview for the invoices--%>
             <h2>Customer Invoices</h2>
             <div>
-                <asp:GridView ID="grdInvoiceSelection" runat="server" AutoGenerateColumns="false" Width="100%" OnRowCommand="grdInvoiceSelection_RowCommand" RowStyle-HorizontalAlign="Center" >
+                <asp:GridView ID="GrdInvoiceSelection" runat="server" AutoGenerateColumns="false" Width="100%" OnRowCommand="GrdInvoiceSelection_RowCommand" RowStyle-HorizontalAlign="Center" >
                     <Columns>
                         <asp:TemplateField HeaderText=" View Invoice">
                             <ItemTemplate>

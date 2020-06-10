@@ -13,8 +13,8 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class CustomerHomePage : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        CustomerManager CM = new CustomerManager();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly CustomerManager CM = new CustomerManager();
         CurrentUser CU;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -22,7 +22,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "CustomerHomePage";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -48,19 +48,19 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnCustomerSearch_Click(object sender, EventArgs e)
+        protected void BtnCustomerSearch_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "btnCustomerSearch_Click";
+            string method = "BtnCustomerSearch_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Looks through database and returns a list of customers
                 //based on the search criteria entered
                 //Binds the results to the gridview
-                grdCustomersSearched.Visible = true;
-                grdCustomersSearched.DataSource = CM.CallReturnCustomerBasedOnText(txtSearch.Text, objPageDetails);
-                grdCustomersSearched.DataBind();
+                GrdCustomersSearched.Visible = true;
+                GrdCustomersSearched.DataSource = CM.CallReturnCustomerBasedOnText(txtSearch.Text, objPageDetails);
+                GrdCustomersSearched.DataBind();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -74,11 +74,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnAddNewCustomer_Click(object sender, EventArgs e)
+        protected void BtnAddNewCustomer_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "btnAddNewCustomer_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnAddNewCustomer_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Opens the page to add a new customer
@@ -96,11 +96,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void grdCustomersSearched_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void GrdCustomersSearched_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "grdCustomersSearched_RowCommand";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "GrdCustomersSearched_RowCommand";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (e.CommandName == "ViewProfile")
@@ -132,20 +132,20 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void grdCustomersSearched_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        protected void GrdCustomersSearched_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "grdCustomersSearched_PageIndexChanging";
+            string method = "GrdCustomersSearched_PageIndexChanging";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                grdCustomersSearched.PageIndex = e.NewPageIndex;
+                GrdCustomersSearched.PageIndex = e.NewPageIndex;
                 //Looks through database and returns a list of customers
                 //based on the search criteria entered
                 //Binds the results to the gridview
-                grdCustomersSearched.Visible = true;
-                grdCustomersSearched.DataSource = CM.CallReturnCustomerBasedOnText(txtSearch.Text, objPageDetails);
-                grdCustomersSearched.DataBind();
+                GrdCustomersSearched.Visible = true;
+                GrdCustomersSearched.DataSource = CM.CallReturnCustomerBasedOnText(txtSearch.Text, objPageDetails);
+                GrdCustomersSearched.DataBind();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

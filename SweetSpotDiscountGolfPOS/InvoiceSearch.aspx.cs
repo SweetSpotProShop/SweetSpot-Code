@@ -15,9 +15,9 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class InvoiceSearch : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        InvoiceManager IM = new InvoiceManager();
-        LocationManager LM = new LocationManager();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly InvoiceManager IM = new InvoiceManager();
+        readonly LocationManager LM = new LocationManager();
         CurrentUser CU;
 
         string oldInvoice = string.Empty;
@@ -63,11 +63,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void calStart_SelectionChanged(object sender, EventArgs e)
+        protected void CalStart_SelectionChanged(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "calStart_SelectionChanged";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try {}
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -81,11 +81,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void calEnd_SelectionChanged(object sender, EventArgs e)
+        protected void CalEnd_SelectionChanged(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "calEnd_SelectionChanged";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try {}
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -99,7 +99,7 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnInvoiceSearch_Click(object sender, EventArgs e)
+        protected void BtnInvoiceSearch_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "btnInvoiceSearch_Click";
@@ -124,10 +124,10 @@ namespace SweetSpotDiscountGolfPOS
         }
 
         //Still Needs to be Updated
-        protected void grdInvoiceSelection_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void GrdInvoiceSelection_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method for error tracking
-            string method = "grdInvoiceSelection_RowCommand";
+            string method = "GrdInvoiceSelection_RowCommand";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -135,7 +135,7 @@ namespace SweetSpotDiscountGolfPOS
                 int invoiceID = Convert.ToInt32(e.CommandArgument.ToString());
 
                 InvoiceManager IM = new InvoiceManager();
-                if (IM.invoiceIsReturn(invoiceID, objPageDetails))
+                if (IM.InvoiceIsReturn(invoiceID, objPageDetails))
                 {
                     //Changes page to display a printable invoice
                     Response.Redirect("PrintableInvoiceReturn.aspx?invoice=" + invoiceID.ToString(), false);
@@ -159,12 +159,12 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
 
-        protected void grdInvoiceSelection_RowDataBound(object sender, GridViewRowEventArgs e)
+        protected void GrdInvoiceSelection_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             //Problems with looping
             //Collects current method for error tracking
-            string method = "grdSameDaySales_RowDataBound";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "GrdInvoiceSelection_RowDataBound";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             //Current method does nothing
             try
             {

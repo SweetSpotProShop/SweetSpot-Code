@@ -2,22 +2,18 @@
 using SweetSpotDiscountGolfPOS.OB;
 using SweetSpotDiscountGolfPOS.Misc;
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Threading;
 using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace SweetSpotDiscountGolfPOS
 {
     public partial class CustomerAddNew : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        LocationManager LM = new LocationManager();
-        CustomerManager CM = new CustomerManager();
-        EmployeeManager EM = new EmployeeManager();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly LocationManager LM = new LocationManager();
+        readonly CustomerManager CM = new CustomerManager();
+        //EmployeeManager EM = new EmployeeManager();
         CurrentUser CU;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -54,9 +50,9 @@ namespace SweetSpotDiscountGolfPOS
                             txtEmail.Text = customer.varEmailAddress.ToString();
                             txtCity.Text = customer.varCityName.ToString();
 
-                            ddlCountry.DataSource = LM.CallReturnCountryDropDown(objPageDetails);
-                            ddlCountry.DataBind();
-                            ddlCountry.SelectedValue = customer.intCountryID.ToString();
+                            DdlCountry.DataSource = LM.CallReturnCountryDropDown(objPageDetails);
+                            DdlCountry.DataBind();
+                            DdlCountry.SelectedValue = customer.intCountryID.ToString();
                             ddlProvince.DataSource = LM.CallReturnProvinceDropDown(customer.intCountryID, objPageDetails);
                             ddlProvince.SelectedValue = customer.intProvinceID.ToString();
                             ddlProvince.DataBind();
@@ -65,8 +61,8 @@ namespace SweetSpotDiscountGolfPOS
                             chkEmailList.Checked = customer.bitSendMarketing;
 
                             //Binds invoice list to the grid view
-                            grdInvoiceSelection.DataSource = customer.invoices;
-                            grdInvoiceSelection.DataBind();
+                            GrdInvoiceSelection.DataSource = customer.invoices;
+                            GrdInvoiceSelection.DataBind();
                         }
                     }
                     else
@@ -74,9 +70,9 @@ namespace SweetSpotDiscountGolfPOS
                         //no cust number
                         if (!IsPostBack)
                         {
-                            ddlCountry.DataSource = LM.CallReturnCountryDropDown(objPageDetails);
-                            ddlCountry.DataBind();
-                            ddlCountry.SelectedValue = CU.location.intCountryID.ToString();
+                            DdlCountry.DataSource = LM.CallReturnCountryDropDown(objPageDetails);
+                            DdlCountry.DataBind();
+                            DdlCountry.SelectedValue = CU.location.intCountryID.ToString();
 
                             ddlProvince.DataSource = LM.CallReturnProvinceDropDown(0, objPageDetails);
                             ddlProvince.DataBind();
@@ -91,17 +87,17 @@ namespace SweetSpotDiscountGolfPOS
                         txtEmail.Enabled = true;
                         txtCity.Enabled = true;
                         ddlProvince.Enabled = true;
-                        ddlCountry.Enabled = true;
+                        DdlCountry.Enabled = true;
                         chkEmailList.Enabled = true;
                         txtPostalCode.Enabled = true;
                         //hides and displays the proper buttons for access
-                        btnSaveCustomer.Visible = false;
-                        btnAddCustomer.Visible = true;
+                        BtnSaveCustomer.Visible = false;
+                        BtnAddCustomer.Visible = true;
                         pnlDefaultButton.DefaultButton = "btnAddCustomer";
-                        btnEditCustomer.Visible = false;
-                        btnStartSale.Visible = false;
-                        btnCancel.Visible = false;
-                        btnBackToSearch.Visible = true;
+                        BtnEditCustomer.Visible = false;
+                        BtnStartSale.Visible = false;
+                        BtnCancel.Visible = false;
+                        BtnBackToSearch.Visible = true;
                     }
                 }
             }
@@ -117,27 +113,29 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnAddCustomer_Click(object sender, EventArgs e)
+        protected void BtnAddCustomer_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnAddCustomer_Click";
+            string method = "BtnAddCustomer_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Collects new customer data to add to database
-                Customer customer = new Customer();
-                customer.varFirstName = txtFirstName.Text;
-                customer.varLastName = txtLastName.Text;
-                customer.varAddress = txtPrimaryAddress.Text;
-                customer.secondaryAddress = txtSecondaryAddress.Text;
-                customer.varContactNumber = txtPrimaryPhoneNumber.Text;
-                customer.secondaryPhoneNumber = txtSecondaryPhoneNumber.Text;
-                customer.bitSendMarketing = chkEmailList.Checked;
-                customer.varEmailAddress = txtEmail.Text;
-                customer.varCityName = txtCity.Text;
-                customer.intProvinceID = Convert.ToInt32(ddlProvince.SelectedValue);
-                customer.intCountryID = Convert.ToInt32(ddlCountry.SelectedValue);
-                customer.varPostalCode = txtPostalCode.Text;
+                Customer customer = new Customer
+                {
+                    varFirstName = txtFirstName.Text,
+                    varLastName = txtLastName.Text,
+                    varAddress = txtPrimaryAddress.Text,
+                    secondaryAddress = txtSecondaryAddress.Text,
+                    varContactNumber = txtPrimaryPhoneNumber.Text,
+                    secondaryPhoneNumber = txtSecondaryPhoneNumber.Text,
+                    bitSendMarketing = chkEmailList.Checked,
+                    varEmailAddress = txtEmail.Text,
+                    varCityName = txtCity.Text,
+                    intProvinceID = Convert.ToInt32(ddlProvince.SelectedValue),
+                    intCountryID = Convert.ToInt32(DdlCountry.SelectedValue),
+                    varPostalCode = txtPostalCode.Text
+                };
 
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("customer", CM.CallAddCustomer(customer, objPageDetails).ToString());
@@ -155,11 +153,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnEditCustomer_Click(object sender, EventArgs e)
+        protected void BtnEditCustomer_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnEditCustomer_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnEditCustomer_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //transfers data from label into textbox for editing
@@ -172,17 +170,17 @@ namespace SweetSpotDiscountGolfPOS
                 txtEmail.Enabled = true;
                 chkEmailList.Enabled = true;
                 txtCity.Enabled = true;
-                ddlCountry.Enabled = true;
+                DdlCountry.Enabled = true;
                 ddlProvince.Enabled = true;
                 txtPostalCode.Enabled = true;
                 //hides and displays the proper buttons for access
-                btnSaveCustomer.Visible = true;
+                BtnSaveCustomer.Visible = true;
                 pnlDefaultButton.DefaultButton = "btnSaveCustomer";
-                btnEditCustomer.Visible = false;
-                btnAddCustomer.Visible = false;
-                btnStartSale.Visible = false;
-                btnCancel.Visible = true;
-                btnBackToSearch.Visible = false;
+                BtnEditCustomer.Visible = false;
+                BtnAddCustomer.Visible = false;
+                BtnStartSale.Visible = false;
+                BtnCancel.Visible = true;
+                BtnBackToSearch.Visible = false;
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -196,28 +194,30 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnSaveCustomer_Click(object sender, EventArgs e)
+        protected void BtnSaveCustomer_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnSaveCustomer_Click";
+            string method = "BtnSaveCustomer_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Collects customer data to add to database
-                Customer customer = new Customer();
-                customer.intCustomerID = Convert.ToInt32(Request.QueryString["customer"].ToString());
-                customer.varFirstName = txtFirstName.Text;
-                customer.varLastName = txtLastName.Text;
-                customer.varAddress = txtPrimaryAddress.Text;
-                customer.secondaryAddress = txtSecondaryAddress.Text;
-                customer.varContactNumber = txtPrimaryPhoneNumber.Text;
-                customer.secondaryPhoneNumber = txtSecondaryPhoneNumber.Text;
-                customer.bitSendMarketing = chkEmailList.Checked;
-                customer.varEmailAddress = txtEmail.Text;
-                customer.varCityName = txtCity.Text;
-                customer.intProvinceID = Convert.ToInt32(ddlProvince.SelectedValue);
-                customer.intCountryID = Convert.ToInt32(ddlCountry.SelectedValue);
-                customer.varPostalCode = txtPostalCode.Text;
+                Customer customer = new Customer
+                {
+                    intCustomerID = Convert.ToInt32(Request.QueryString["customer"].ToString()),
+                    varFirstName = txtFirstName.Text,
+                    varLastName = txtLastName.Text,
+                    varAddress = txtPrimaryAddress.Text,
+                    secondaryAddress = txtSecondaryAddress.Text,
+                    varContactNumber = txtPrimaryPhoneNumber.Text,
+                    secondaryPhoneNumber = txtSecondaryPhoneNumber.Text,
+                    bitSendMarketing = chkEmailList.Checked,
+                    varEmailAddress = txtEmail.Text,
+                    varCityName = txtCity.Text,
+                    intProvinceID = Convert.ToInt32(ddlProvince.SelectedValue),
+                    intCountryID = Convert.ToInt32(DdlCountry.SelectedValue),
+                    varPostalCode = txtPostalCode.Text
+                };
                 //updates the customer info in tables
                 CM.CallUpdateCustomer(customer, objPageDetails);
                 //changes all text boxes and dropdowns to labels
@@ -231,16 +231,16 @@ namespace SweetSpotDiscountGolfPOS
                 chkEmailList.Enabled = false;
                 txtCity.Enabled = false;
                 ddlProvince.Enabled = false;
-                ddlCountry.Enabled = false;
+                DdlCountry.Enabled = false;
                 txtPostalCode.Enabled = false;
                 //hides and displays the proper buttons for access
                 pnlDefaultButton.DefaultButton = "btnEditCustomer";
-                btnAddCustomer.Visible = false;
-                btnBackToSearch.Visible = true;
-                btnCancel.Visible = false;
-                btnEditCustomer.Visible = true;
-                btnSaveCustomer.Visible = false;
-                btnStartSale.Visible = true;
+                BtnAddCustomer.Visible = false;
+                BtnBackToSearch.Visible = true;
+                BtnCancel.Visible = false;
+                BtnEditCustomer.Visible = true;
+                BtnSaveCustomer.Visible = false;
+                BtnStartSale.Visible = true;
                 
                 //reloads current page
                 Response.Redirect(Request.RawUrl, false);
@@ -257,11 +257,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnCancel_Click(object sender, EventArgs e)
+        protected void BtnCancel_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnCancel_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnCancel_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //no chnages saved and moves to customer home page
@@ -279,12 +279,12 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnStartSale_Click(object sender, EventArgs e)
+        protected void BtnStartSale_Click(object sender, EventArgs e)
         {
             //****Still need this updated with new process****
             //Collects current method and page for error tracking
-            string method = "btnStartSale_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnStartSale_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
@@ -306,11 +306,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnBackToSearch_Click(object sender, EventArgs e)
+        protected void BtnBackToSearch_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "btnBackToSearch_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnBackToSearch_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //opens the Customer home page
@@ -328,11 +328,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void grdInvoiceSelection_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void GrdInvoiceSelection_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method for error tracking
-            string method = "grdInvoiceSelection_RowCommand";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "GrdInvoiceSelection_RowCommand";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Sets the string of the command argument(invoice number
@@ -353,14 +353,14 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void ddlCountry_SelectedIndexChanged(object sender, EventArgs e)
+        protected void DdlCountry_SelectedIndexChanged(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "ddlCountry_SelectedIndexChanged";
+            string method = "DdlCountry_SelectedIndexChanged";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                ddlProvince.DataSource = LM.CallReturnProvinceDropDown(Convert.ToInt32(ddlCountry.SelectedValue), objPageDetails);
+                ddlProvince.DataSource = LM.CallReturnProvinceDropDown(Convert.ToInt32(DdlCountry.SelectedValue), objPageDetails);
                 ddlProvince.DataBind();
             }
             //Exception catch
