@@ -723,452 +723,360 @@ namespace SweetSpotDiscountGolfPOS.FP
             //***************************************************************************************************
             string connectionString = ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString;
             //Datatable to hold any skus that have errors
-            using (System.Data.DataTable skusWithErrors = new System.Data.DataTable())
+            System.Data.DataTable skusWithErrors = new System.Data.DataTable();
+            System.Data.DataTable listItems = new System.Data.DataTable();
+
+            listItems.Columns.Add("varSku"); //("sku");
+            listItems.Columns.Add("varBrandName"); //("brandName");
+            listItems.Columns.Add("varModelName"); //("modelName");
+            listItems.Columns.Add("fltCost"); //("cost");
+            listItems.Columns.Add("fltPrice"); //("price");
+            listItems.Columns.Add("intQuantity"); //("quantity");
+            listItems.Columns.Add("varAdditionalInformation"); //("comments");
+            listItems.Columns.Add("fltPremiumCharge"); //("premium");
+            listItems.Columns.Add("varTypeOfClub"); //("clubType");
+            listItems.Columns.Add("varShaftType"); //("shaft");
+            listItems.Columns.Add("varNumberOfClubs"); //("numberOfClubs");
+            listItems.Columns.Add("varClubSpecification"); //("clubSpec");
+            listItems.Columns.Add("varShaftSpecification"); //("shaftSpec");
+            listItems.Columns.Add("varShaftFlexability"); //("shaftFlex");
+            listItems.Columns.Add("varClubDexterity"); //("dexterity");
+            listItems.Columns.Add("varLocationName"); //("locationName");
+            listItems.Columns.Add("varItemType"); //("itemType");
+            listItems.Columns.Add("bitIsUsedProduct"); //
+                                                       //listItems.Columns.Add//("size");
+                                                       //listItems.Columns.Add//("colour");
+
+            //Database connections
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlConnection conTempDB = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand();
+            SqlDataReader reader;
+
+            cmd.CommandText = "IF OBJECT_ID('tempItemStorage', 'U') IS NOT NULL DROP TABLE tempItemStorage; IF OBJECT_ID('tempErrorSkus', 'U') IS NOT NULL DROP TABLE tempErrorSkus;";
+            conTempDB.Open();
+            cmd.Connection = conTempDB;
+            reader = cmd.ExecuteReader();
+            conTempDB.Close();
+
+            //***************************************************************************************************
+            //Step 2: Check to see if there is any data in the uploaded file
+            //***************************************************************************************************
+
+            //If there are files, proceed
+            if (fup.HasFiles)
             {
-                //skusWithErrors.Columns.Add("sku");
-                //skusWithErrors.Columns.Add("brandError");
-                //skusWithErrors.Columns.Add("modelError");
-                //skusWithErrors.Columns.Add("identifierError");
-                //This datatable can hold all items
-                using (System.Data.DataTable listItems = new System.Data.DataTable())
+
+                //***************************************************************************************************
+                //Step 3: Create an excel sheet and set its content to the uploaded file
+                //***************************************************************************************************
+
+                //Load the uploaded file into the memorystream
+                using (MemoryStream stream = new MemoryStream(fup.FileBytes))
+                //Lets the server know to use the excel package
+                using (ExcelPackage xlPackage = new ExcelPackage(stream))
                 {
-                    listItems.Columns.Add("varSku"); //("sku");
-                    listItems.Columns.Add("varBrandName"); //("brandName");
-                    listItems.Columns.Add("varModelName"); //("modelName");
-                    listItems.Columns.Add("fltCost"); //("cost");
-                    listItems.Columns.Add("fltPrice"); //("price");
-                    listItems.Columns.Add("intQuantity"); //("quantity");
-                    listItems.Columns.Add("varAdditionalInformation"); //("comments");
-                    listItems.Columns.Add("fltPremiumCharge"); //("premium");
-                    listItems.Columns.Add("varTypeOfClub"); //("clubType");
-                    listItems.Columns.Add("varShaftType"); //("shaft");
-                    listItems.Columns.Add("varNumberOfClubs"); //("numberOfClubs");
-                    listItems.Columns.Add("varClubSpecification"); //("clubSpec");
-                    listItems.Columns.Add("varShaftSpecification"); //("shaftSpec");
-                    listItems.Columns.Add("varShaftFlexability"); //("shaftFlex");
-                    listItems.Columns.Add("varClubDexterity"); //("dexterity");
-                    listItems.Columns.Add("varLocationName"); //("locationName");
-                    listItems.Columns.Add("varItemType"); //("itemType");
-                    listItems.Columns.Add("bitIsUsedProduct"); //
-                                                               //listItems.Columns.Add//("size");
-                                                               //listItems.Columns.Add//("colour");
+                    con = new SqlConnection(connectionString);
+                    // get the first worksheet in the workbook
+                    ExcelWorksheet worksheet = xlPackage.Workbook.Worksheets[1];
+                    var rowCnt = worksheet.Dimension.End.Row; //Gets the row count                   
+                    var colCnt = worksheet.Dimension.End.Column; //Gets the column count
 
-                    //Database connections
-                    using (SqlConnection con = new SqlConnection(connectionString))
+                    //***************************************************************************************************
+                    //Step 4: Looping through the data found in the excel sheet and storing it in the datatable
+                    //***************************************************************************************************
+
+                    //Beginning the loop for data gathering
+                    for (int i = 2; i <= rowCnt; i++) //Starts on 2 because excel starts at 1, and line 1 is headers
                     {
-                        SqlConnection conTempDB = new SqlConnection(connectionString);
-                        using (SqlConnection conInsert = new SqlConnection(connectionString))
+                        string itemType = (worksheet.Cells[i, 5].Value).ToString(); //Column 25 = itemType
+                        //Adding items to the datatables 
+                        //***************************************************************************************************
+                        //Step 4: Option A: The item type is Apparel
+                        //***************************************************************************************************
+                        if (itemType.Equals("Apparel"))
                         {
+                            listItems.Rows.Add(
+                                //***************SKU**********************
+                                worksheet.Cells[i, 3].Value.ToNullSafeString(),
+                                //***************BRAND NAME***************
+                                itemType.ToString(),
+                                //***************MODEL NAME***************        
+                                (string)(worksheet.Cells[i, 6].Value.ToNullSafeString()), //'N/A'
+                                //***************COST*********************
+                                Convert.ToDouble(worksheet.Cells[i, 12].Value),
+                                //***************PRICE********************
+                                Convert.ToDouble(worksheet.Cells[i, 15].Value),
+                                //***************QUANTITY*****************
+                                Convert.ToInt32(worksheet.Cells[i, 13].Value),
+                                //***************COMMENTS*****************
+                                (string)(worksheet.Cells[i, 16].Value.ToNullSafeString()),
+                                //***************PREMIUM******************
+                                Convert.ToDouble(0),
+                                //***************CLUB TYPE****************
+                                (string)(worksheet.Cells[i, 7].Value.ToNullSafeString()), //Style for clothing
+                                //***************SHAFT********************
+                                (string)(worksheet.Cells[i, 8].Value.ToNullSafeString()), //Colour for clothing
+                                //***************NUMBER OF CLUBS**********
+                                (string)(worksheet.Cells[i, 9].Value.ToNullSafeString()), //Size for clothing
+                                //***************CLUB SPEC****************
+                                (string)(worksheet.Cells[i, 18].Value.ToNullSafeString()), //Gender for clothing
+                                //***************SHAFT SPEC***************
+                                "",
+                                //***************SHAFT FLEX***************
+                                "",
+                                //***************DEXTERITY****************
+                                "",
+                                //***************LOCATION NAME************
+                                (string)(worksheet.Cells[i, 22].Value.ToNullSafeString()), //Second Location
+                                //***************ITEM TYPE****************
+                                3,
+                                //***************USED PRODUCT*************
+                                Convert.ToBoolean(worksheet.Cells[i, 26].Value)
+                            );
                         }
-                        using (SqlCommand cmd = new SqlCommand())
+                        //***************************************************************************************************
+                        //Step 4: Option B: The item type is Accessories
+                        //***************************************************************************************************
+                        else if (itemType.Equals("Accessories"))
                         {
-                            SqlDataReader reader;
-
-                            cmd.CommandText = "IF OBJECT_ID('tempItemStorage', 'U') IS NOT NULL DROP TABLE tempItemStorage; IF OBJECT_ID('tempErrorSkus', 'U') IS NOT NULL DROP TABLE tempErrorSkus;";
-                            conTempDB.Open();
-                            cmd.Connection = conTempDB;
-                            reader = cmd.ExecuteReader();
-                            conTempDB.Close();
-
-                            //***************************************************************************************************
-                            //Step 2: Check to see if there is any data in the uploaded file
-                            //***************************************************************************************************
-
-                            //If there are files, proceed
-                            if (fup.HasFiles)
-                            {
-
-                                //***************************************************************************************************
-                                //Step 3: Create an excel sheet and set its content to the uploaded file
-                                //***************************************************************************************************
-
-                                //Load the uploaded file into the memorystream
-                                using (MemoryStream stream = new MemoryStream(fup.FileBytes))
-                                //Lets the server know to use the excel package
-                                using (ExcelPackage xlPackage = new ExcelPackage(stream))
-                                {
-                                    //con = new SqlConnection(connectionString);
-                                    // get the first worksheet in the workbook
-                                    ExcelWorksheet worksheet = xlPackage.Workbook.Worksheets[1];
-                                    var rowCnt = worksheet.Dimension.End.Row; //Gets the row count                   
-                                    var colCnt = worksheet.Dimension.End.Column; //Gets the column count
-
-                                    //***************************************************************************************************
-                                    //Step 4: Looping through the data found in the excel sheet and storing it in the datatable
-                                    //***************************************************************************************************
-
-                                    //Beginning the loop for data gathering
-                                    for (int i = 2; i <= rowCnt; i++) //Starts on 2 because excel starts at 1, and line 1 is headers
-                                    {
-                                        string itemType = (worksheet.Cells[i, 5].Value).ToString(); //Column 25 = itemType
-                                                                                                    //Adding items to the datatables 
-                                                                                                    //***************************************************************************************************
-                                                                                                    //Step 4: Option A: The item type is Apparel
-                                                                                                    //***************************************************************************************************
-                                        if (itemType.Equals("Apparel"))
-                                        {
-                                            listItems.Rows.Add(
-                                                //***************SKU**********************
-                                                worksheet.Cells[i, 3].Value.ToNullSafeString(),
-                                                //***************BRAND NAME***************
-                                                itemType.ToString(),
-                                                //***************MODEL NAME***************        
-                                                (string)(worksheet.Cells[i, 6].Value.ToNullSafeString()), //'N/A'
-                                                                                                          //***************COST*********************
-                                                Convert.ToDouble(worksheet.Cells[i, 12].Value),
-                                                //***************PRICE********************
-                                                Convert.ToDouble(worksheet.Cells[i, 15].Value),
-                                                //***************QUANTITY*****************
-                                                Convert.ToInt32(worksheet.Cells[i, 13].Value),
-                                                //***************COMMENTS*****************
-                                                (string)(worksheet.Cells[i, 16].Value.ToNullSafeString()),
-                                                //***************PREMIUM******************
-                                                Convert.ToDouble(0),
-                                                //***************CLUB TYPE****************
-                                                (string)(worksheet.Cells[i, 7].Value.ToNullSafeString()), //Style for clothing
-                                                                                                          //***************SHAFT********************
-                                                (string)(worksheet.Cells[i, 8].Value.ToNullSafeString()), //Colour for clothing
-                                                                                                          //***************NUMBER OF CLUBS**********
-                                                (string)(worksheet.Cells[i, 9].Value.ToNullSafeString()), //Size for clothing
-                                                                                                          //***************CLUB SPEC****************
-                                                (string)(worksheet.Cells[i, 18].Value.ToNullSafeString()), //Gender for clothing
-                                                                                                           //***************SHAFT SPEC***************
-                                                "",
-                                                //***************SHAFT FLEX***************
-                                                "",
-                                                //***************DEXTERITY****************
-                                                "",
-                                                //***************LOCATION NAME************
-                                                (string)(worksheet.Cells[i, 22].Value.ToNullSafeString()), //Second Location
-                                                                                                           //***************ITEM TYPE****************
-                                                3,
-                                                //***************USED PRODUCT*************
-                                                Convert.ToBoolean(worksheet.Cells[i, 26].Value)
-                                            );
-                                        }
-                                        //***************************************************************************************************
-                                        //Step 4: Option B: The item type is Accessories
-                                        //***************************************************************************************************
-                                        else if (itemType.Equals("Accessories"))
-                                        {
-                                            listItems.Rows.Add(
-                                                //***************SKU***************
-                                                worksheet.Cells[i, 3].Value.ToNullSafeString(),
-                                                //***************BRAND NAME***************
-                                                itemType.ToString(),
-                                                //***************MODEL Name***************        
-                                                (string)(worksheet.Cells[i, 6].Value.ToNullSafeString()),
-                                                //***************COST***************
-                                                Convert.ToDouble(worksheet.Cells[i, 12].Value),
-                                                //***************PRICE***************
-                                                Convert.ToDouble(worksheet.Cells[i, 15].Value),
-                                                //***************QUANTITY***************
-                                                Convert.ToInt32(worksheet.Cells[i, 13].Value),
-                                                //***************COMMENTS***************
-                                                (string)(worksheet.Cells[i, 16].Value.ToNullSafeString()),
-                                                //***************PREMIUM***************
-                                                Convert.ToDouble(0),
-                                                //***************CLUB TYPE***************
-                                                (string)(worksheet.Cells[i, 7].Value.ToNullSafeString()), //accessoryType
-                                                                                                          //***************SHAFT***************
-                                                (string)(worksheet.Cells[i, 8].Value.ToNullSafeString()), //Colour for accessory
-                                                                                                          //***************NUMBER OF CLUBS***************
-                                                (string)(worksheet.Cells[i, 9].Value.ToNullSafeString()), //Size for accessory
-                                                                                                          //***************CLUB SPEC***************
-                                                "",
-                                                //***************SHAFT SPEC***************
-                                                "",
-                                                //***************SHAFT FLEX***************
-                                                "",
-                                                //***************DEXTERITY***************
-                                                "",
-                                                //***************LOCATION NAME***************
-                                                (string)(worksheet.Cells[i, 22].Value.ToNullSafeString()),
-                                                //***************ITEM TYPE***************
-                                                2,
-                                                //***************USED PRODUCT*************
-                                                Convert.ToBoolean(worksheet.Cells[i, 26].Value)
-                                            );
-                                        }
-                                        //***************************************************************************************************
-                                        //Step 3: Option D: The item type is a club
-                                        //***************************************************************************************************
-                                        else
-                                        {
-                                            listItems.Rows.Add(
-                                                //***************SKU***************
-                                                worksheet.Cells[i, 3].Value.ToNullSafeString(),
-                                                //***************BRAND NAME***************
-                                                itemType.ToString(),
-                                                //***************MODEL Name***************        
-                                                (string)(worksheet.Cells[i, 6].Value.ToNullSafeString()),
-                                                //***************COST***************
-                                                Convert.ToDouble(worksheet.Cells[i, 12].Value),
-                                                //***************PRICE***************
-                                                Convert.ToDouble(worksheet.Cells[i, 15].Value),
-                                                //***************QUANTITY***************
-                                                Convert.ToInt32(worksheet.Cells[i, 13].Value),
-                                                //***************COMMENTS***************
-                                                (string)(worksheet.Cells[i, 16].Value.ToNullSafeString()),
-                                                //***************PREMIUM***************
-                                                Convert.ToDouble(worksheet.Cells[i, 11].Value),
-                                                //***************CLUB TYPE***************
-                                                (string)(worksheet.Cells[i, 7].Value.ToNullSafeString()),
-                                                //***************SHAFT***************
-                                                (string)(worksheet.Cells[i, 8].Value.ToNullSafeString()),
-                                                //***************NUMBER OF CLUBS***************
-                                                (string)(worksheet.Cells[i, 9].Value.ToNullSafeString()),
-                                                //***************CLUB SPEC***************
-                                                (string)(worksheet.Cells[i, 18].Value.ToNullSafeString()),
-                                                //***************SHAFT SPEC***************
-                                                (string)(worksheet.Cells[i, 19].Value.ToNullSafeString()),
-                                                //***************SHAFT FLEX***************
-                                                (string)(worksheet.Cells[i, 20].Value.ToNullSafeString()),
-                                                //***************DEXTERITY***************
-                                                (string)(worksheet.Cells[i, 21].Value.ToNullSafeString()),
-                                                //***************LOCATION NAME***************
-                                                (string)(worksheet.Cells[i, 22].Value.ToNullSafeString()),
-                                                //***************ITEM TYPE***************
-                                                1,
-                                                //***************USED PRODUCT*************
-                                                Convert.ToBoolean(worksheet.Cells[i, 26].Value)
-                                            );
-                                        }
-                                    }
-
-                                    //***************************************************************************************************
-                                    //Step 5: Create the temp tables for storing the items and skus that cause an error
-                                    //***************************************************************************************************
-
-                                    //Creating the temp tables  
-                                    conTempDB.Open();
-                                    cmd.CommandText = "CREATE TABLE tempItemStorage(varSku VARCHAR(25), intBrandID INT, intModelID INT, varTypeOfClub VARCHAR(150), varShaftType VARCHAR(150), "
-                                        + "varNumberOfClubs VARCHAR(150), fltPremiumCharge FLOAT, fltCost FLOAT, fltPrice FLOAT, intQuantity INT, varClubSpecification VARCHAR(150), "
-                                        + "varShaftSpecification VARCHAR(150), varShaftFlexability VARCHAR(150), varClubDexterity VARCHAR(150), intItemTypeID INT, intLocationID INT, "
-                                        + "varAdditionalInformation VARCHAR(500), bitIsUsedProduct BIT); CREATE TABLE tempErrorSkus(varSku VARCHAR(25), intBrandError INT, intModelError INT, "
-                                        + "intIdentifierError INT)";
-                                    cmd.Connection = conTempDB;
-                                    reader = cmd.ExecuteReader();
-                                    conTempDB.Close();
-
-                                    //***************************************************************************************************
-                                    //Step 6: Check each item in the datatable to see if it will cause an error. If not, insert into the temp item table
-                                    //***************************************************************************************************
-
-                                    foreach (DataRow row in listItems.Rows)
-                                    {
-                                        con.Open();
-                                        //This query will look up the brand, model, and locationID of the item being passed in. 
-                                        //If all three are found, it will insert the item into the tempItemStorage table.
-                                        //If not, it is added to the tempErrorSkus table
-                                        cmd.CommandText = "IF((SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) >= 0 AND " +
-                                                            "(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) >= 0 AND " +
-                                                            "(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID) >= 0) " +
-                                                            "BEGIN " +
-                                                                "INSERT INTO tempItemStorage VALUES( " +
-                                                                    "@varSku, " +
-                                                                    "(SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName), " +
-                                                                    "(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName), " +
-                                                                    "@varTypeOfClub, @varShaftType, @varNumberOfClubs, @fltPremiumCharge, @fltCost, @fltPrice, @intQuantity, "
-                                                                    + "@varClubSpecification, @varShaftSpecification, @varShaftFlexability, @varClubDexterity, @intItemTypeID, " +
-                                                                    "(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID), "
-                                                                    + "@varAdditionalInformation, @bitIsUsedProduct) " +
-                                                            "END " +
-                                                        "ELSE IF(NOT EXISTS(SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) AND " +
-                                                                "(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) >= 0 AND " +
-                                                                "(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID) >= 0) " +
-                                                            "BEGIN " +
-                                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 1, 0, 0) " +
-                                                            "END " +
-                                                        "ELSE IF ((SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) >= 0 AND " +
-                                                                 "NOT EXISTS(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) AND " +
-                                                                 "(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID) >= 0) " +
-                                                            "BEGIN " +
-                                                                    "INSERT INTO tempErrorSkus VALUES(@varSku, 0, 1, 0) " +
-                                                            "END " +
-                                                        "ELSE IF ((SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) >= 0 AND " +
-                                                                 "(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) >= 0 AND " +
-                                                                 "NOT EXISTS(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID)) " +
-                                                            "BEGIN " +
-                                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 0, 0, 1) " +
-                                                            "END " +
-                                                        "ELSE IF (NOT EXISTS(SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) AND " +
-                                                                 "NOT EXISTS(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) AND " +
-                                                                 "(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID) >= 0) " +
-                                                            "BEGIN " +
-                                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 1, 1, 0) " +
-                                                            "END " +
-                                                        "ELSE IF (NOT EXISTS(SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) AND " +
-                                                                 "(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) >= 0 AND " +
-                                                                 "NOT EXISTS(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID)) " +
-                                                            "BEGIN " +
-                                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 1, 0, 1) " +
-                                                            "END " +
-                                                        "ELSE IF ((SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) >= 0 AND " +
-                                                                 "NOT EXISTS(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) AND " +
-                                                                 "NOT EXISTS(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID)) " +
-                                                            "BEGIN " +
-                                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 0, 1, 1) " +
-                                                            "END " +
-                                                        "ELSE IF (NOT EXISTS(SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) AND " +
-                                                                 "NOT EXISTS(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) AND " +
-                                                                 "NOT EXISTS(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID)) " +
-                                                            "BEGIN " +
-                                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 1, 1, 1) " +
-                                                            "END";
-                                        cmd.Connection = con;
-                                        cmd.Parameters.AddWithValue("@varSku", row[0]);
-                                        cmd.Parameters.AddWithValue("@varBrandName", row[1]);
-                                        cmd.Parameters.AddWithValue("@varModelName", row[2]);
-                                        cmd.Parameters.AddWithValue("@fltCost", row[3]);
-                                        cmd.Parameters.AddWithValue("@fltPrice", row[4]);
-                                        cmd.Parameters.AddWithValue("@intQuantity", row[5]);
-                                        cmd.Parameters.AddWithValue("@varAdditionalInformation", row[6]);
-                                        cmd.Parameters.AddWithValue("@fltPremiumCharge", row[7]);
-                                        cmd.Parameters.AddWithValue("@varTypeOfClub", row[8]);
-                                        cmd.Parameters.AddWithValue("@varShaftType", row[9]);
-                                        cmd.Parameters.AddWithValue("@varNumberOfClubs", row[10]);
-                                        cmd.Parameters.AddWithValue("@varClubSpecification", row[11]);
-                                        cmd.Parameters.AddWithValue("@varShaftSpecification", row[12]);
-                                        cmd.Parameters.AddWithValue("@varShaftFlexability", row[13]);
-                                        cmd.Parameters.AddWithValue("@varClubDexterity", row[14]);
-                                        cmd.Parameters.AddWithValue("@varSecondLocationID", row[15]);
-                                        cmd.Parameters.AddWithValue("@intItemTypeID", row[16]);
-                                        cmd.Parameters.AddWithValue("@bitIsUsedProduct", row[17]);
-                                        reader = cmd.ExecuteReader();
-                                        con.Close();
-                                    };
-
-                                    //***************************************************************************************************
-                                    //Step 7: Check the error list for any data
-                                    //***************************************************************************************************
-
-                                    //Reading the error list
-                                    using (SqlCommand cmd2 = new SqlCommand("SELECT * FROM tempErrorSkus", con)) //Calling the SP
-                                    using (var da = new SqlDataAdapter(cmd))
-                                    {
-                                        //Filling the table with what is found
-                                        da.Fill(skusWithErrors);
-                                    }
-                                    //***************************************************************************************************
-                                    //Step 7: If no data is found in the error table
-                                    //***************************************************************************************************
-                                    //Start inserting into actual tables
-                                    con.Open();
-                                    cmd.CommandText = "SELECT * FROM tempItemStorage";
-                                    System.Data.DataTable temp = new System.Data.DataTable();
-                                    using (var dataTable = new SqlDataAdapter(cmd))
-                                    {
-                                        cmd.CommandType = CommandType.Text;
-                                        dataTable.Fill(temp);
-                                    }
-                                    con.Close();
-
-                                    //***************************************************************************************************
-                                    //Step 8: Loop through the temp datatable and insert the rows into the database
-                                    //***************************************************************************************************
-
-                                    ImportExport IE = new ImportExport();
-                                    foreach (DataRow row in temp.Rows)
-                                    {
-                                        //loop through just one, and it will know the itemID because we set it ealier in the process                            
-                                        IE.ImportNewItem(row, cu, objPageDetails);
-                                        //Set club parameters here
-                                        //cmd.Parameters.Clear();//Clearing the parameters. It was giving me an error(ID=1500)
-
-                                        //cmd.Parameters.AddWithValue("varSku", row[0]);
-                                        //cmd.Parameters.AddWithValue("intBrandID", row[1]);
-                                        //cmd.Parameters.AddWithValue("intModelID", row[2]);
-                                        //cmd.Parameters.AddWithValue("varTypeOfClub", row[3]);
-                                        //cmd.Parameters.AddWithValue("varShaftType", row[4]);
-                                        //cmd.Parameters.AddWithValue("varNumberOfClubs", row[5]);
-                                        //cmd.Parameters.AddWithValue("fltPremiumCharge", row[6]);
-                                        //cmd.Parameters.AddWithValue("fltCost", row[7]);
-                                        //cmd.Parameters.AddWithValue("fltPrice", row[8]);
-                                        //cmd.Parameters.AddWithValue("intQuantity", row[9]);
-                                        //cmd.Parameters.AddWithValue("varClubSpecification", row[10]);
-                                        //cmd.Parameters.AddWithValue("varShaftSpecification", row[11]);
-                                        //cmd.Parameters.AddWithValue("varShaftFlexability", row[12]);
-                                        //cmd.Parameters.AddWithValue("varClubDexterity", row[13]);
-                                        //cmd.Parameters.AddWithValue("intItemTypeID", row[14]);
-                                        //cmd.Parameters.AddWithValue("intLocationID", row[15]);
-                                        //cmd.Parameters.AddWithValue("bitIsUsedProduct", 0);
-                                        //cmd.Parameters.AddWithValue("varAdditionalInformation", row[16]);
-
-                                        //conInsert.Open();
-                                        //cmd.Connection = conInsert;
-                                        ////This query/insert statement will first look at the typeID of the item being sent in. 
-                                        ////It then looks to see if the items sku is in the table already. If it is, it updates. 
-                                        ////If it is not, it inserts the item into the table
-                                        //cmd.CommandText =
-                                        //    "IF(@intItemTypeID = 1) " +
-                                        //        "BEGIN " +
-                                        //            "IF EXISTS(SELECT varSku FROM tbl_clubs WHERE varSku = @varSku) " +
-                                        //                "BEGIN " +
-                                        //                    "UPDATE tbl_clubs SET intBrandID = @intBrandID, intModelID = @intModelID, varTypeOfClub = @varTypeOfClub, "
-                                        //                    + "varShaftType = @varShaftType, varNumberOfClubs = @varNumberOfClubs, fltPremiumCharge = @fltPremiumCharge, "
-                                        //                    + "fltCost = @fltCost, fltPrice = @fltPrice, intQuantity = @intQuantity, varClubSpecification = "
-                                        //                    + "@varClubSpecification, varShaftSpecification = @varShaftSpecification, varShaftFlexability = "
-                                        //                    + "@varShaftFlexability, varClubDexterity = @varClubDexterity, intLocationID = @intLocationID, "
-                                        //                    + "bitIsUsedProduct = @bitIsUsedProduct, varAdditionalInformation = @varAdditionalInformation WHERE varSku = "
-                                        //                    + "@varSku " +
-                                        //                "END " +
-                                        //            "ELSE " +
-                                        //                "BEGIN " +
-                                        //                    "INSERT INTO tbl_clubs VALUES(@varSku, @intBrandID, @intModelID, @varTypeOfClub, @varShaftType, "
-                                        //                    + "@varNumberOfClubs, @fltPremiumCharge, @fltCost, @fltPrice, @intQuantity, @varClubSpecification, "
-                                        //                    + "@varShaftSpecification, @varShaftFlexability, @varClubDexterity, @intItemTypeID, @intLocationID, "
-                                        //                    + "@bitIsUsedProduct, @varAdditionalInformation) " +
-                                        //                "END " +
-                                        //        "END " +
-                                        //    "ELSE IF (@intItemTypeID = 2) " +
-                                        //        "BEGIN " +
-                                        //            "IF EXISTS(SELECT VarSku FROM tbl_accessories WHERE varSku = @varSku) " +
-                                        //                "BEGIN " +
-                                        //                    "UPDATE tbl_accessories SET varSize = @varNumberOfClubs, varColour = @varShaftType, fltPrice = @fltPrice, "
-                                        //                    + "fltCost = @fltCost, intBrandID = @intBrandID, intModelID = @intModelID, varTypeOfAcessory = "
-                                        //                    + "@varTypeOfClub, intQuantity = @intQuantity, intLocationID = @intLocationID, varAdditionalInformation = "
-                                        //                    + "@varAdditionalInformation WHERE varSku = @varSku " +
-                                        //                "END " +
-                                        //            "ELSE " +
-                                        //                "BEGIN " +
-                                        //                    "INSERT INTO tbl_accessories VALUES(@varSku, @varNumberOfClubs, @varShaftType, @fltPrice, @fltCost, @intBrandID, "
-                                        //                    + "@intModelID, @varTypeOfClub, @intQuantity, @intItemTypeID, @intLocationID, @varAdditionalInformation) "
-                                        //                + "END " +
-                                        //        "END " +
-                                        //    "ELSE IF (@intItemTypeID = 3) " +
-                                        //        "BEGIN " +
-                                        //            "IF EXISTS(SELECT varSku FROM tbl_clothing WHERE varSku = @varSku) " +
-                                        //                "BEGIN " +
-                                        //                    "UPDATE tbl_clothing SET varSize = @varNumberOfClubs, varColour = @varShaftType, varGender = @varClubSpecification, "
-                                        //                    + "varStyle = @varTypeOfClub, fltPrice = @fltPrice, fltCost = @fltCost, intBrandID = @intBrandID, intQuantity = "
-                                        //                    + "@intQuantity, intLocationID = @intLocationID, varAdditionalInformation = @varAdditionalInformation WHERE varSku = "
-                                        //                    + "@varSku " +
-                                        //                "END " +
-                                        //            "ELSE " +
-                                        //                "BEGIN " +
-                                        //                    "INSERT INTO tbl_clothing VALUES(@varSku, @varNumberOfClubs, @varShaftType, @varClubSpecification, @varTypeOfClub, "
-                                        //                    + "@fltPrice, @fltCost, @intBrandID, @intQuantity, @intItemTypeID, @intLocationID, @varAdditionalInformation) " +
-                                        //                "END " +
-                                        //        "END";
-                                        //reader = cmd.ExecuteReader();
-                                        //conInsert.Close();
-                                    }
-                                }
-                            }
-                            //***************************************************************************************************
-                            //Step 9: Delete the temp tables that were used for storage
-                            //***************************************************************************************************
-
-                            cmd.CommandText = "DROP TABLE tempItemStorage; DROP TABLE tempErrorSkus;";
-                            conTempDB.Open();
-                            cmd.Connection = conTempDB;
-                            reader = cmd.ExecuteReader();
+                            listItems.Rows.Add(
+                                //***************SKU***************
+                                worksheet.Cells[i, 3].Value.ToNullSafeString(),
+                                //***************BRAND NAME***************
+                                itemType.ToString(),
+                                //***************MODEL Name***************        
+                                (string)(worksheet.Cells[i, 6].Value.ToNullSafeString()),
+                                //***************COST***************
+                                Convert.ToDouble(worksheet.Cells[i, 12].Value),
+                                //***************PRICE***************
+                                Convert.ToDouble(worksheet.Cells[i, 15].Value),
+                                //***************QUANTITY***************
+                                Convert.ToInt32(worksheet.Cells[i, 13].Value),
+                                //***************COMMENTS***************
+                                (string)(worksheet.Cells[i, 16].Value.ToNullSafeString()),
+                                //***************PREMIUM***************
+                                Convert.ToDouble(0),
+                                //***************CLUB TYPE***************
+                                (string)(worksheet.Cells[i, 7].Value.ToNullSafeString()), //accessoryType
+                                //***************SHAFT***************
+                                (string)(worksheet.Cells[i, 8].Value.ToNullSafeString()), //Colour for accessory
+                                //***************NUMBER OF CLUBS***************
+                                (string)(worksheet.Cells[i, 9].Value.ToNullSafeString()), //Size for accessory
+                                //***************CLUB SPEC***************
+                                "",
+                                //***************SHAFT SPEC***************
+                                "",
+                                //***************SHAFT FLEX***************
+                                "",
+                                //***************DEXTERITY***************
+                                "",
+                                //***************LOCATION NAME***************
+                                (string)(worksheet.Cells[i, 22].Value.ToNullSafeString()),
+                                //***************ITEM TYPE***************
+                                2,
+                                //***************USED PRODUCT*************
+                                Convert.ToBoolean(worksheet.Cells[i, 26].Value)
+                            );
+                        }
+                        //***************************************************************************************************
+                        //Step 4: Option C: The item type is a club
+                        //***************************************************************************************************
+                        else
+                        {
+                            listItems.Rows.Add(
+                                //***************SKU***************
+                                worksheet.Cells[i, 3].Value.ToNullSafeString(),
+                                //***************BRAND NAME***************
+                                itemType.ToString(),
+                                //***************MODEL Name***************        
+                                (string)(worksheet.Cells[i, 6].Value.ToNullSafeString()),
+                                //***************COST***************
+                                Convert.ToDouble(worksheet.Cells[i, 12].Value),
+                                //***************PRICE***************
+                                Convert.ToDouble(worksheet.Cells[i, 15].Value),
+                                //***************QUANTITY***************
+                                Convert.ToInt32(worksheet.Cells[i, 13].Value),
+                                //***************COMMENTS***************
+                                (string)(worksheet.Cells[i, 16].Value.ToNullSafeString()),
+                                //***************PREMIUM***************
+                                Convert.ToDouble(worksheet.Cells[i, 11].Value),
+                                //***************CLUB TYPE***************
+                                (string)(worksheet.Cells[i, 7].Value.ToNullSafeString()),
+                                //***************SHAFT***************
+                                (string)(worksheet.Cells[i, 8].Value.ToNullSafeString()),
+                                //***************NUMBER OF CLUBS***************
+                                (string)(worksheet.Cells[i, 9].Value.ToNullSafeString()),
+                                //***************CLUB SPEC***************
+                                (string)(worksheet.Cells[i, 18].Value.ToNullSafeString()),
+                                //***************SHAFT SPEC***************
+                                (string)(worksheet.Cells[i, 19].Value.ToNullSafeString()),
+                                //***************SHAFT FLEX***************
+                                (string)(worksheet.Cells[i, 20].Value.ToNullSafeString()),
+                                //***************DEXTERITY***************
+                                (string)(worksheet.Cells[i, 21].Value.ToNullSafeString()),
+                                //***************LOCATION NAME***************
+                                (string)(worksheet.Cells[i, 22].Value.ToNullSafeString()),
+                                //***************ITEM TYPE***************
+                                1,
+                                //***************USED PRODUCT*************
+                                Convert.ToBoolean(worksheet.Cells[i, 26].Value)
+                            );
                         }
                     }
+
+                    //***************************************************************************************************
+                    //Step 5: Create the temp tables for storing the items and skus that cause an error
+                    //***************************************************************************************************
+
+                    //Creating the temp tables  
+                    conTempDB.Open();
+                    cmd.CommandText = "CREATE TABLE tempItemStorage(varSku VARCHAR(25), intBrandID INT, intModelID INT, varTypeOfClub VARCHAR(150), varShaftType VARCHAR(150), "
+                        + "varNumberOfClubs VARCHAR(150), fltPremiumCharge FLOAT, fltCost FLOAT, fltPrice FLOAT, intQuantity INT, varClubSpecification VARCHAR(150), "
+                        + "varShaftSpecification VARCHAR(150), varShaftFlexability VARCHAR(150), varClubDexterity VARCHAR(150), intItemTypeID INT, intLocationID INT, "
+                        + "varAdditionalInformation VARCHAR(500), bitIsUsedProduct BIT); CREATE TABLE tempErrorSkus(varSku VARCHAR(25), intBrandError INT, intModelError INT, "
+                        + "intIdentifierError INT)";
+                    cmd.Connection = conTempDB;
+                    reader = cmd.ExecuteReader();
+                    conTempDB.Close();
+
+                    //***************************************************************************************************
+                    //Step 6: Check each item in the datatable to see if it will cause an error. If not, insert into the temp item table
+                    //***************************************************************************************************
+
+                    foreach (DataRow row in listItems.Rows)
+                    {
+                        con.Open();
+                        //This query will look up the brand, model, and locationID of the item being passed in. 
+                        //If all three are found, it will insert the item into the tempItemStorage table.
+                        //If not, it is added to the tempErrorSkus table
+                        cmd.CommandText = "IF((SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) >= 0 AND " +
+                                            "(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) >= 0 AND " +
+                                            "(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID) >= 0) " +
+                                            "BEGIN " +
+                                                "INSERT INTO tempItemStorage VALUES( " +
+                                                    "@varSku, " +
+                                                    "(SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName), " +
+                                                    "(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName), " +
+                                                    "@varTypeOfClub, @varShaftType, @varNumberOfClubs, @fltPremiumCharge, @fltCost, @fltPrice, @intQuantity, "
+                                                    + "@varClubSpecification, @varShaftSpecification, @varShaftFlexability, @varClubDexterity, @intItemTypeID, " +
+                                                    "(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID), "
+                                                    + "@varAdditionalInformation, @bitIsUsedProduct) " +
+                                            "END " +
+                                        "ELSE IF(NOT EXISTS(SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) AND " +
+                                                "(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) >= 0 AND " +
+                                                "(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID) >= 0) " +
+                                            "BEGIN " +
+                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 1, 0, 0) " +
+                                            "END " +
+                                        "ELSE IF ((SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) >= 0 AND " +
+                                                 "NOT EXISTS(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) AND " +
+                                                 "(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID) >= 0) " +
+                                            "BEGIN " +
+                                                    "INSERT INTO tempErrorSkus VALUES(@varSku, 0, 1, 0) " +
+                                            "END " +
+                                        "ELSE IF ((SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) >= 0 AND " +
+                                                 "(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) >= 0 AND " +
+                                                 "NOT EXISTS(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID)) " +
+                                            "BEGIN " +
+                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 0, 0, 1) " +
+                                            "END " +
+                                        "ELSE IF (NOT EXISTS(SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) AND " +
+                                                 "NOT EXISTS(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) AND " +
+                                                 "(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID) >= 0) " +
+                                            "BEGIN " +
+                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 1, 1, 0) " +
+                                            "END " +
+                                        "ELSE IF (NOT EXISTS(SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) AND " +
+                                                 "(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) >= 0 AND " +
+                                                 "NOT EXISTS(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID)) " +
+                                            "BEGIN " +
+                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 1, 0, 1) " +
+                                            "END " +
+                                        "ELSE IF ((SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) >= 0 AND " +
+                                                 "NOT EXISTS(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) AND " +
+                                                 "NOT EXISTS(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID)) " +
+                                            "BEGIN " +
+                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 0, 1, 1) " +
+                                            "END " +
+                                        "ELSE IF (NOT EXISTS(SELECT TOP 1 tbl_brand.intBrandID FROM tbl_brand WHERE tbl_brand.varBrandName = @varBrandName) AND " +
+                                                 "NOT EXISTS(SELECT TOP 1 tbl_model.intModelID FROM tbl_model WHERE tbl_model.varModelName = @varModelName) AND " +
+                                                 "NOT EXISTS(SELECT TOP 1 tbl_location.intLocationID FROM tbl_location WHERE tbl_location.varSecondLocationID = @varSecondLocationID)) " +
+                                            "BEGIN " +
+                                                "INSERT INTO tempErrorSkus VALUES(@varSku, 1, 1, 1) " +
+                                            "END";
+                        cmd.Connection = con;
+                        cmd.Parameters.AddWithValue("@varSku", row[0]);
+                        cmd.Parameters.AddWithValue("@varBrandName", row[1]);
+                        cmd.Parameters.AddWithValue("@varModelName", row[2]);
+                        cmd.Parameters.AddWithValue("@fltCost", row[3]);
+                        cmd.Parameters.AddWithValue("@fltPrice", row[4]);
+                        cmd.Parameters.AddWithValue("@intQuantity", row[5]);
+                        cmd.Parameters.AddWithValue("@varAdditionalInformation", row[6]);
+                        cmd.Parameters.AddWithValue("@fltPremiumCharge", row[7]);
+                        cmd.Parameters.AddWithValue("@varTypeOfClub", row[8]);
+                        cmd.Parameters.AddWithValue("@varShaftType", row[9]);
+                        cmd.Parameters.AddWithValue("@varNumberOfClubs", row[10]);
+                        cmd.Parameters.AddWithValue("@varClubSpecification", row[11]);
+                        cmd.Parameters.AddWithValue("@varShaftSpecification", row[12]);
+                        cmd.Parameters.AddWithValue("@varShaftFlexability", row[13]);
+                        cmd.Parameters.AddWithValue("@varClubDexterity", row[14]);
+                        cmd.Parameters.AddWithValue("@varSecondLocationID", row[15]);
+                        cmd.Parameters.AddWithValue("@intItemTypeID", row[16]);
+                        cmd.Parameters.AddWithValue("@bitIsUsedProduct", row[17]);
+                        reader = cmd.ExecuteReader();
+                        con.Close();
+                        cmd = new SqlCommand();
+                    };
+
+                    //***************************************************************************************************
+                    //Step 7: Check the error list for any data
+                    //***************************************************************************************************
+
+                    //Reading the error list
+                    using (cmd = new SqlCommand("SELECT * FROM tempErrorSkus", con)) //Calling the SP
+                    using (var da = new SqlDataAdapter(cmd))
+                    {
+                        //Filling the table with what is found
+                        da.Fill(skusWithErrors);
+                    }
+                    //***************************************************************************************************
+                    //Step 8: If no data is found in the error table
+                    //***************************************************************************************************
+                    //Start inserting into actual tables
+                    con.Open();
+                    cmd.CommandText = "SELECT * FROM tempItemStorage";
+                    System.Data.DataTable temp = new System.Data.DataTable();
+                    using (var dataTable = new SqlDataAdapter(cmd))
+                    {
+                        cmd.CommandType = CommandType.Text;
+                        dataTable.Fill(temp);
+                    }
+                    con.Close();
+
+                    //***************************************************************************************************
+                    //Step 9: Loop through the temp datatable and insert the rows into the database
+                    //***************************************************************************************************
+
+                    ImportExport IE = new ImportExport();
+                    foreach (DataRow row in temp.Rows)
+                    {
+                        //loop through just one, and it will know the itemID because we set it ealier in the process                            
+                        IE.ImportNewItem(row, cu, objPageDetails);
+                    }
                 }
-                return skusWithErrors;
             }
+            //***************************************************************************************************
+            //Step 10: Delete the temp tables that were used for storage
+            //***************************************************************************************************
+
+            cmd.CommandText = "DROP TABLE tempItemStorage; DROP TABLE tempErrorSkus;";
+            conTempDB.Open();
+            cmd.Connection = conTempDB;
+            reader = cmd.ExecuteReader();
+            conTempDB.Close();
+            return skusWithErrors;
+
         }
         public System.Data.DataTable CallUploadItems(FileUpload fup, CurrentUser cu, object[] objPageDetails)
         {
