@@ -33,27 +33,27 @@
                             </asp:TableRow>
                             <asp:TableRow>
                                 <asp:TableCell>
-                                    <asp:Button ID="mopCash" runat="server" Text="Cash" OnClick="mopCash_Click" Width="163px" 
+                                    <asp:Button ID="MopCash" runat="server" Text="Cash" OnClick="MopCash_Click" Width="163px" 
 										OnClientClick="return confirm('Confirm Cash');" CausesValidation="false" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:Button ID="mopVisa" runat="server" Text="Visa" OnClick="mopVisa_Click" Width="163px"
+                                    <asp:Button ID="MopVisa" runat="server" Text="Visa" OnClick="MopVisa_Click" Width="163px"
 										OnClientClick="return confirm('Confirm Visa');" CausesValidation="false" />
                                 </asp:TableCell>
                             </asp:TableRow>
                             <asp:TableRow>
                                 <asp:TableCell>
-                                    <asp:Button ID="mopMasterCard" runat="server" Text="MasterCard" OnClick="mopMasterCard_Click" Width="163px"
+                                    <asp:Button ID="MopMasterCard" runat="server" Text="MasterCard" OnClick="MopMasterCard_Click" Width="163px"
 										OnClientClick="return confirm('Confirm MasterCard');" CausesValidation="false" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:Button ID="mopDebit" runat="server" Text="Debit" OnClick="mopDebit_Click" Width="163px"
+                                    <asp:Button ID="MopDebit" runat="server" Text="Debit" OnClick="MopDebit_Click" Width="163px"
 										OnClientClick="return confirm('Confirm Debit');" CausesValidation="false" />
                                 </asp:TableCell>
                             </asp:TableRow>
                             <asp:TableRow>
                                 <asp:TableCell>
-                                    <asp:Button ID="mopGiftCard" runat="server" Text="Gift Card" OnClick="mopGiftCard_Click" Width="163px"
+                                    <asp:Button ID="MopGiftCard" runat="server" Text="Gift Card" OnClick="MopGiftCard_Click" Width="163px"
 										OnClientClick="return confirm('Confirm Gift Card');" CausesValidation="false" />
                                 </asp:TableCell>
                             </asp:TableRow>
@@ -67,7 +67,7 @@
                                     <asp:Label ID="lblRefundAmount" runat="server" Text="Refund Amount:" Width="163px" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:TextBox ID="txtAmountRefunding" runat="server" AutoComplete="off" Width="159px" />
+                                    <asp:TextBox ID="txtAmountRefunding" runat="server" AutoCompleteType="Disabled" Width="159px" />
                                 </asp:TableCell>
                             </asp:TableRow>
                         </asp:Table>
@@ -151,15 +151,15 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:Button ID="btnCancelReturn" runat="server" Text="Void Transaction" OnClick="btnCancelReturn_Click" Width="163px" CausesValidation="false" />
+                        <asp:Button ID="BtnCancelReturn" runat="server" Text="Void Transaction" OnClick="BtnCancelReturn_Click" Width="163px" CausesValidation="false" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnReturnToCart" runat="server" Text="Cart" OnClick="btnReturnToCart_Click" Width="163px" CausesValidation="false" />
+                        <asp:Button ID="BtnReturnToCart" runat="server" Text="Cart" OnClick="BtnReturnToCart_Click" Width="163px" CausesValidation="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnFinalize" runat="server" Text="Process Refund" OnClick="btnFinalize_Click" Width="163px" CausesValidation="true" />
+                        <asp:Button ID="BtnFinalize" runat="server" Text="Process Refund" OnClick="BtnFinalize_Click" Width="163px" CausesValidation="true" />
                     </asp:TableCell>
                 </asp:TableRow>
 				<asp:TableRow>
@@ -167,7 +167,7 @@
                         <asp:Label ID="lblConfirmEmployee" runat="server" Text="Enter Employee Passcode:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtEmployeePasscode" runat="server" AutoComplete="off" TextMode="Password" />
+                        <asp:TextBox ID="txtEmployeePasscode" runat="server" AutoCompleteType="Disabled" TextMode="Password" />
                     </asp:TableCell>
                     <asp:TableCell>
                          <asp:RequiredFieldValidator ID="valEmployeePasscode" runat="server" ForeColor="red" ErrorMessage="Must Enter Passcode" ControlToValidate="txtEmployeePasscode" />
@@ -177,7 +177,7 @@
             <p>
                 Comments:
                <br />
-                <asp:TextBox ID="txtComments" runat="server" AutoComplete="off" TextMode="MultiLine" />
+                <asp:TextBox ID="txtComments" runat="server" AutoCompleteType="Disabled" TextMode="MultiLine" />
             </p>
         </asp:Panel>
     </div>

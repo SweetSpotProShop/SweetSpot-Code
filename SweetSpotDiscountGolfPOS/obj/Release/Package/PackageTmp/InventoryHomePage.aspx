@@ -25,16 +25,16 @@
                         </asp:TableRow>
                         <asp:TableRow>
                             <asp:TableCell>
-                                <asp:TextBox ID="txtSearch" runat="server" AutoComplete="off" />
+                                <asp:TextBox ID="txtSearch" runat="server" AutoCompleteType="Disabled" />
                             </asp:TableCell>
                             <asp:TableCell>
-                                <asp:Button ID="btnInventorySearch" runat="server" Width="150" Text="Inventory Search" OnClick="btnInventorySearch_Click" />                                
+                                <asp:Button ID="BtnInventorySearch" runat="server" Width="150" Text="Inventory Search" OnClick="BtnInventorySearch_Click" />                                
                             </asp:TableCell>
                             <asp:TableCell>
-                                <asp:Button ID="btnAddNewInventory" runat="server" Width="150" Text="Add New Inventory" OnClick="btnAddNewInventory_Click" />
+                                <asp:Button ID="BtnAddNewInventory" runat="server" Width="150" Text="Add New Inventory" OnClick="BtnAddNewInventory_Click" />
                             </asp:TableCell>
                             <asp:TableCell>
-                                <asp:Button ID="btnMakePurchase" runat="server" Width="150" Text="Make Purchase" OnClick="btnMakePurchase_Click" />
+                                <asp:Button ID="BtnMakePurchase" runat="server" Width="150" Text="Make Purchase" OnClick="BtnMakePurchase_Click" />
                             </asp:TableCell>
                         </asp:TableRow>
                     </asp:Table>
@@ -46,8 +46,8 @@
                         </ProgressTemplate>
                     </asp:UpdateProgress>
                     <hr />
-                    <asp:GridView ID="grdInventorySearched" runat="server" AutoGenerateColumns="False" OnRowCommand="grdInventorySearched_RowCommand" 
-						AllowPaging="True" PageSize="50" OnPageIndexChanging="grdInventorySearched_PageIndexChanging" >
+                    <asp:GridView ID="GrdInventorySearched" runat="server" AutoGenerateColumns="False" OnRowCommand="GrdInventorySearched_RowCommand" 
+						AllowPaging="True" PageSize="50" OnPageIndexChanging="GrdInventorySearched_PageIndexChanging" >
                         <Columns>
                             <asp:TemplateField HeaderText="View Item">
                                 <ItemTemplate>
@@ -56,7 +56,7 @@
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="SKU">
                                 <HeaderTemplate>
-                                    <asp:Button ID="btnSKU" runat="server" OnClick="lbtnSKU_Click" Width="100px" Text="SKU" />
+                                    <asp:Button ID="BtnSKU" runat="server" OnClick="BtnSKU_Click" Width="100px" Text="SKU" />
                                 </HeaderTemplate>
                                 <ItemTemplate>
                                     <asp:Label runat="server" Text='<%#Eval("varSku")%>' />
@@ -64,7 +64,7 @@
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Description">
                                 <HeaderTemplate>
-                                    <asp:Button ID="btnDescription" runat="server" OnClick="btnDescription_Click" Width="100px" Text="Description" />
+                                    <asp:Button ID="BtnDescription" runat="server" OnClick="BtnDescription_Click" Width="100px" Text="Description" />
                                 </HeaderTemplate>
                                 <ItemTemplate>
                                     <asp:Label runat="server" Text='<%#Eval("varItemDescription")%>' />
@@ -72,7 +72,7 @@
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Store">
                                 <HeaderTemplate>
-                                    <asp:Button ID="btnStore" runat="server" OnClick="btnStore_Click" Width="100px" Text="Store" />
+                                    <asp:Button ID="BtnStore" runat="server" OnClick="BtnStore_Click" Width="100px" Text="Store" />
                                 </HeaderTemplate>
                                 <ItemTemplate>
                                     <asp:Label runat="server" Text='<%#Eval("varLocationName")%>' />
@@ -80,7 +80,7 @@
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Quantity">
                                 <HeaderTemplate>
-                                    <asp:Button ID="btnQuantity" runat="server" OnClick="btnQuantity_Click" Width="100px" Text="Quantity" />
+                                    <asp:Button ID="BtnQuantity" runat="server" OnClick="BtnQuantity_Click" Width="100px" Text="Quantity" />
                                 </HeaderTemplate>
                                 <ItemTemplate>
                                     <asp:Label runat="server" Text='<%#Eval("intItemQuantity")%>' />
@@ -88,7 +88,7 @@
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Price">
                                 <HeaderTemplate>
-                                    <asp:Button ID="btnPrice" runat="server" OnClick="btnPrice_Click" Width="100px" Text="Price" />
+                                    <asp:Button ID="BtnPrice" runat="server" OnClick="BtnPrice_Click" Width="100px" Text="Price" />
                                 </HeaderTemplate>
                                 <ItemTemplate>
                                     <asp:Label runat="server" Text='<%#Eval("fltItemPrice","{0:C}")%>' />
@@ -96,7 +96,7 @@
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Cost">
                                 <HeaderTemplate>
-                                    <asp:Button ID="btnCost" runat="server" OnClick="btnCost_Click" Width="100px" Text="Cost" />
+                                    <asp:Button ID="BtnCost" runat="server" OnClick="BtnCost_Click" Width="100px" Text="Cost" />
                                 </HeaderTemplate>
                                 <ItemTemplate>
                                     <asp:Label runat="server" Text='<%#Eval("fltItemCost","{0:C}")%>' />
@@ -104,7 +104,7 @@
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Comments">
                                 <HeaderTemplate>
-                                    <asp:Button ID="btnComments" runat="server" OnClick="btnComments_Click" Width="100px" Text="Comments" />
+                                    <asp:Button ID="BtnComments" runat="server" OnClick="BtnComments_Click" Width="100px" Text="Comments" />
                                 </HeaderTemplate>
                                 <ItemTemplate>
                                     <asp:Label runat="server" Text='<%#Eval("varAdditionalInformation")%>' />
@@ -118,7 +118,7 @@
                 </ContentTemplate>
             </asp:UpdatePanel>
             <hr />
-            <asp:Button class="noPrint" ID="btnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="btnDownload_Click" />
+            <asp:Button CssClass="noPrint" ID="BtnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="BtnDownload_Click" />
         </asp:Panel>
     </div>
 </asp:Content>

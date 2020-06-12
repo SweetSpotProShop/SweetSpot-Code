@@ -120,9 +120,9 @@
                         <asp:Label ID="lblCountry" runat="server" Text="Country:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:DropDownList ID="ddlCountry" runat="server" AutoPostBack="True" 
+                        <asp:DropDownList ID="DdlCountry" runat="server" AutoPostBack="True" 
                             DataTextField="varCountryName" DataValueField="intCountryID" Enabled="false" 
-                            OnSelectedIndexChanged="ddlCountry_SelectedIndexChanged" />
+                            OnSelectedIndexChanged="DdlCountry_SelectedIndexChanged" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -149,7 +149,7 @@
                         <asp:TextBox ID="txtNewPassword2" TextMode="Password" runat="server" AutoComplete="off" Visible="false" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnSavePassword" runat="server" Text="Save New Password" Visible="false" OnClick="btnSavePassword_Click" CausesValidation="false" />
+                        <asp:Button ID="BtnSavePassword" runat="server" Text="Save New Password" Visible="false" OnClick="BtnSavePassword_Click" CausesValidation="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -159,13 +159,13 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:Button ID="btnAddEmployee" runat="server" Text="Add Employee" OnClick="btnAddEmployee_Click" Visible="false" CausesValidation="true"/>
-                        <asp:Button ID="btnEditEmployee" runat="server" Text="Edit Employee" OnClick="btnEditEmployee_Click" Visible="true" CausesValidation="false"/>
-                        <asp:Button ID="btnSaveEmployee" runat="server" Text="Save Changes" OnClick="btnSaveEmployee_Click" Visible="false" CausesValidation="true"/>
+                        <asp:Button ID="BtnAddEmployee" runat="server" Text="Add Employee" OnClick="BtnAddEmployee_Click" Visible="false" CausesValidation="true"/>
+                        <asp:Button ID="BtnEditEmployee" runat="server" Text="Edit Employee" OnClick="BtnEditEmployee_Click" Visible="true" CausesValidation="false"/>
+                        <asp:Button ID="BtnSaveEmployee" runat="server" Text="Save Changes" OnClick="BtnSaveEmployee_Click" Visible="false" CausesValidation="true"/>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnBackToSearch" runat="server" Text="Exit Employee" OnClick="btnBackToSearch_Click" Visible="true" CausesValidation="false"/>
-                        <asp:Button ID="btnCancel" runat="server" Text="Cancel" OnClick="btnCancel_Click" Visible="false" CausesValidation="false"/>
+                        <asp:Button ID="BtnBackToSearch" runat="server" Text="Exit Employee" OnClick="BtnBackToSearch_Click" Visible="true" CausesValidation="false"/>
+                        <asp:Button ID="BtnCancel" runat="server" Text="Cancel" OnClick="BtnCancel_Click" Visible="false" CausesValidation="false"/>
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>

@@ -21,7 +21,7 @@
                             <asp:Label ID="lblCost" runat="server" Text="Cost:" />
                         </asp:TableCell>
                         <asp:TableCell Width="25%">
-                            <asp:TextBox ID="txtCost" runat="server" AutoComplete="off" Visible="true" Text="0.00" />
+                            <asp:TextBox ID="txtCost" runat="server" AutoCompleteType="Disabled" Visible="true" Text="0.00" />
                             <asp:RequiredFieldValidator ID="rfvCost"
                                 runat="server" ControlToValidate="txtCost"
                                 ErrorMessage="Cost Required"
@@ -51,7 +51,7 @@
                             <asp:Label ID="lblPrice" runat="server" Text="Price:" />                            
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtPrice" runat="server" AutoComplete="off" Visible="true" Text="0.00" />
+                            <asp:TextBox ID="txtPrice" runat="server" AutoCompleteType="Disabled" Visible="true" Text="0.00" />
                             <asp:RegularExpressionValidator ID="revPrice"
                                 ControlToValidate="txtPrice"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -66,7 +66,7 @@
                             <asp:Label ID="lblQuantity" runat="server" Text="Quantity:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtQuantity" runat="server" AutoComplete="off" Visible="True" Text="1" />
+                            <asp:TextBox ID="txtQuantity" runat="server" AutoCompleteType="Disabled" Visible="True" Text="1" />
                             <asp:RequiredFieldValidator ID="rfvQuantity"
                                 runat="server" ControlToValidate="txtQuantity"
                                 ErrorMessage="Quantity Required"
@@ -90,7 +90,7 @@
                             <asp:Label ID="lblClubType" runat="server" Text="Club Type:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtClubType" runat="server" AutoComplete="off" Visible="True" />
+                            <asp:TextBox ID="txtClubType" runat="server" AutoCompleteType="Disabled" Visible="True" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label ID="lblModel" runat="server" Text="Model:" Visible="true" />
@@ -109,13 +109,13 @@
                             <asp:Label ID="lblShaft" runat="server" Text="Shaft:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtShaft" runat="server" AutoComplete="off" Visible="True" />
+                            <asp:TextBox ID="txtShaft" runat="server" AutoCompleteType="Disabled" Visible="True" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label ID="lblNumberofClubs" runat="server" Text="Number of Clubs:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtNumberofClubs" runat="server" AutoComplete="off" Visible="True" />
+                            <asp:TextBox ID="txtNumberofClubs" runat="server" AutoCompleteType="Disabled" Visible="True" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
@@ -123,13 +123,13 @@
                             <asp:Label ID="lblClubSpec" runat="server" Text="Club Spec:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtClubSpec" runat="server" AutoComplete="off" Visible="True" />
+                            <asp:TextBox ID="txtClubSpec" runat="server" AutoCompleteType="Disabled" Visible="True" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label ID="lblShaftSpec" runat="server" Text="Shaft Spec:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtShaftSpec" runat="server" AutoComplete="off" Visible="True" />
+                            <asp:TextBox ID="txtShaftSpec" runat="server" AutoCompleteType="Disabled" Visible="True" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
@@ -137,13 +137,13 @@
                             <asp:Label ID="lblShaftFlex" runat="server" Text="ShaftFlex:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtShaftFlex" runat="server" AutoComplete="off" Visible="True" />
+                            <asp:TextBox ID="txtShaftFlex" runat="server" AutoCompleteType="Disabled" Visible="True" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label ID="lblDexterity" runat="server" Text="Dexterity:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtDexterity" runat="server" AutoComplete="off" Visible="True" />
+                            <asp:TextBox ID="txtDexterity" runat="server" AutoCompleteType="Disabled" Visible="True" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
@@ -161,7 +161,7 @@
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell ColumnSpan="4">
-                            <asp:TextBox ID="txtComments" runat="server" AutoComplete="off" Visible="true" Height="30px" Width="100%" />
+                            <asp:TextBox ID="txtComments" runat="server" AutoCompleteType="Disabled" Visible="true" Height="30px" Width="100%" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
@@ -171,10 +171,10 @@
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:Button ID="btnAddItem" runat="server" Text="Add Item" OnClick="btnAddTradeIN_Click" Visible="true" CausesValidation="True" />
+                            <asp:Button ID="BtnAddItem" runat="server" Text="Add Item" OnClick="BtnAddTradeIN_Click" Visible="true" CausesValidation="True" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Button ID="btnCancel" runat="server" Text="Cancel" OnClick="btnCancel_Click" Visible="true" CausesValidation="false" />
+                            <asp:Button ID="BtnCancel" runat="server" Text="Cancel" OnClick="BtnCancel_Click" Visible="true" CausesValidation="false" />
                         </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>

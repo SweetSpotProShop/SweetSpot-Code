@@ -9,8 +9,8 @@
         </div>
         <hr />
 
-        <asp:GridView ID="grdInvoices" runat="server" AutoGenerateColumns="false" ShowFooter="true" OnRowDataBound="grdInvoices_RowDataBound" 
-			AlternatingRowStyle-BackColor="WhiteSmoke" Width="100%" OnRowCommand="grdInvoices_RowCommand">
+        <asp:GridView ID="GrdInvoices" runat="server" AutoGenerateColumns="false" ShowFooter="true" OnRowDataBound="GrdInvoices_RowDataBound" 
+			AlternatingRowStyle-BackColor="WhiteSmoke" Width="100%" OnRowCommand="GrdInvoices_RowCommand" FooterStyle-Font-Bold="true" FooterStyle-HorizontalAlign="Center">
             <Columns>
                 <asp:TemplateField HeaderText="Invoice">
                     <ItemTemplate>
@@ -101,8 +101,8 @@
     <br />
     <hr />
 
-    <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('extensiveInvoice');" />
-    <asp:Button class="noPrint" ID="btnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="btnDownload_Click" />
+    <asp:Button CssClass="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('extensiveInvoice');" />
+    <asp:Button CssClass="noPrint" ID="BtnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="BtnDownload_Click" />
     <style media="print">
         .noPrint {
             display: none;
