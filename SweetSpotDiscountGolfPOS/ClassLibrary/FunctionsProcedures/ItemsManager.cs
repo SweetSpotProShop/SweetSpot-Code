@@ -537,7 +537,7 @@ namespace SweetSpotDiscountGolfPOS.FP
         //Public Calls
         public List<InvoiceItems> CallConvertFromDataTableToCartItems(DataTable dt)
         {
-            return CallConvertFromDataTableToCartItems(dt);
+            return ConvertFromDataTableToCartItems(dt);
         }
         public string[] CallReserveTradeInSKU(CurrentUser cu, object[] objPageDetails)
         {

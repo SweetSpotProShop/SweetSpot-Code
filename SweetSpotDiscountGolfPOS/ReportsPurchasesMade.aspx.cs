@@ -14,9 +14,9 @@ namespace SweetSpotDiscountGolfPOS
     public partial class ReportsPurchasesMade : System.Web.UI.Page
     {
         readonly ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU;
-        //readonly Reports R = new Reports();
         readonly LocationManager LM = new LocationManager();
+        //readonly Reports R = new Reports();
+        CurrentUser CU;
 
         double totalPurchAmount = 0;
         int totalPurchases = 0;

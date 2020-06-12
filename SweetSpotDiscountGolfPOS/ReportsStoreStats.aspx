@@ -24,7 +24,8 @@
             <asp:Label ID="lblDates" runat="server" Font-Bold="true" />
         </div>
         <div>
-            <asp:GridView ID="grdStats" runat="server" AutoGenerateColumns="false" ShowFooter="true" RowStyle-HorizontalAlign="Center" OnRowDataBound="grdStats_RowDataBound">
+            <asp:GridView ID="GrdStats" runat="server" AutoGenerateColumns="false" ShowFooter="true" RowStyle-HorizontalAlign="Center" OnRowDataBound="GrdStats_RowDataBound"
+				FooterStyle-Font-Bold="true" FooterStyle-HorizontalAlign="Center">
                 <Columns>
                     <asp:TemplateField HeaderText="Grouped By">
                         <ItemTemplate>
@@ -84,10 +85,10 @@
         <asp:Table runat="server">
             <asp:TableRow>
                 <asp:TableCell>
-                    <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('print');" />
+                    <asp:Button CssClass="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('print');" />
                 </asp:TableCell>
                 <asp:TableCell>
-                    <asp:Button class="noPrint" ID="btnDownload" runat="server" Text="Download" Visible="true" Width="200px" Onclick="btnDownload_Click"/>
+                    <asp:Button CssClass="noPrint" ID="BtnDownload" runat="server" Text="Download" Visible="true" Width="200px" Onclick="BtnDownload_Click"/>
                 </asp:TableCell>
             </asp:TableRow>
         </asp:Table>

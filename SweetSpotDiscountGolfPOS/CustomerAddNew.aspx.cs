@@ -332,14 +332,22 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "GrdInvoiceSelection_RowCommand";
-            //object[] objPageDetails = { Session["currPage"].ToString(), method };
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Sets the string of the command argument(invoice number
-                string strInvoice = Convert.ToString(e.CommandArgument);
-                //Splits the invoice string into numbers
-                //Checks that the command name is return invoice
-                Response.Redirect("PrintableInvoice.aspx?invoice=" + strInvoice, false);
+                int invoiceID = Convert.ToInt32(e.CommandArgument.ToString());
+                InvoiceManager IM = new InvoiceManager();
+                if (IM.InvoiceIsReturn(invoiceID, objPageDetails))
+                {
+                    //Changes page to display a printable invoice
+                    Response.Redirect("PrintableInvoiceReturn.aspx?invoice=" + invoiceID.ToString(), false);
+                }
+                else
+                {
+                    //Changes page to display a printable invoice
+                    Response.Redirect("PrintableInvoice.aspx?invoice=" + invoiceID.ToString(), false);
+                }
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

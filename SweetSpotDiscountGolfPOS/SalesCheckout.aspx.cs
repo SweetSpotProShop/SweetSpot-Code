@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.UI;
@@ -240,7 +237,7 @@ namespace SweetSpotDiscountGolfPOS
                 TaxManager TM = new TaxManager();
                 Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
                 bool chargeGST;
-                if (!btnRemoveGov.Text.Contains("Remove"))
+                if (!BtnRemoveGov.Text.Contains("Remove"))
                 {
                     chargeGST = true;
                 }
@@ -286,7 +283,7 @@ namespace SweetSpotDiscountGolfPOS
                 TaxManager TM = new TaxManager();                
                 Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
                 bool chargePST;
-                if (!btnRemoveProv.Text.Contains("Remove"))
+                if (!BtnRemoveProv.Text.Contains("Remove"))
                 {
                     chargePST = true;
                 }
@@ -331,7 +328,7 @@ namespace SweetSpotDiscountGolfPOS
                 TaxManager TM = new TaxManager();                
                 Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
                 bool chargeLCT;
-                if (!btnRemoveLiq.Text.Contains("Remove"))
+                if (!BtnRemoveLiq.Text.Contains("Remove"))
                 {
                     chargeLCT = true;
                 }
@@ -586,25 +583,25 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     if (IM.CallVerifyMOPHasBeenAdded(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails))
                     {
-                        mopCash.Enabled = false;
+                        MopCash.Enabled = false;
                     }
                     else
                     {
                         MessageBox.ShowMessage("At least one method of payment "
                             + "is required even for a $0.00 sale.", this);
                     }
-                    mopDebit.Enabled = false;
-                    mopGiftCard.Enabled = false;
-                    mopMasterCard.Enabled = false;
-                    mopVisa.Enabled = false;
+                    MopDebit.Enabled = false;
+                    MopGiftCard.Enabled = false;
+                    MopMasterCard.Enabled = false;
+                    MopVisa.Enabled = false;
                 }
                 else
                 {
-                    mopCash.Enabled = true;
-                    mopDebit.Enabled = true;
-                    mopGiftCard.Enabled = true;
-                    mopMasterCard.Enabled = true;
-                    mopVisa.Enabled = true;
+                    MopCash.Enabled = true;
+                    MopDebit.Enabled = true;
+                    MopGiftCard.Enabled = true;
+                    MopMasterCard.Enabled = true;
+                    MopVisa.Enabled = true;
                 }
             }
             //Exception catch
@@ -656,8 +653,8 @@ namespace SweetSpotDiscountGolfPOS
                                 lblGovernment.Visible = true;
                                 lblGovernment.Text = invoiceItemTax.varTaxName;
                                 lblGovernmentAmount.Visible = true;
-                                btnRemoveGov.Visible = true;
-                                btnRemoveGov.Text = "Remove " + invoiceItemTax.varTaxName.ToString();
+                                BtnRemoveGov.Visible = true;
+                                BtnRemoveGov.Text = "Remove " + invoiceItemTax.varTaxName.ToString();
                             }
                             governmentName = invoiceItemTax.varTaxName.ToString();
                         }
@@ -669,8 +666,8 @@ namespace SweetSpotDiscountGolfPOS
                                 lblProvincial.Visible = true;
                                 lblProvincial.Text = invoiceItemTax.varTaxName;
                                 lblProvincialAmount.Visible = true;
-                                btnRemoveProv.Visible = true;
-                                btnRemoveProv.Text = "Remove " + invoiceItemTax.varTaxName.ToString();
+                                BtnRemoveProv.Visible = true;
+                                BtnRemoveProv.Text = "Remove " + invoiceItemTax.varTaxName.ToString();
                             }
                             provincialName = invoiceItemTax.varTaxName.ToString();
                         }
@@ -682,8 +679,8 @@ namespace SweetSpotDiscountGolfPOS
                                 lblLiquorTax.Visible = true;
                                 lblLiquorTax.Text = invoiceItemTax.varTaxName;
                                 lblLiquorTaxAmount.Visible = true;
-                                btnRemoveLiq.Visible = true;
-                                btnRemoveLiq.Text = "Remove " + invoiceItemTax.varTaxName.ToString();
+                                BtnRemoveLiq.Visible = true;
+                                BtnRemoveLiq.Text = "Remove " + invoiceItemTax.varTaxName.ToString();
                             }
                             liquorName = invoiceItemTax.varTaxName.ToString();
                         }
@@ -692,15 +689,15 @@ namespace SweetSpotDiscountGolfPOS
 
                 if (governmentTax == 0)
                 {
-                    btnRemoveGov.Text = "Add " + governmentName.ToString();
+                    BtnRemoveGov.Text = "Add " + governmentName.ToString();
                 }
                 if (provincialTax == 0)
                 {
-                    btnRemoveProv.Text = "Add " + provincialName.ToString();
+                    BtnRemoveProv.Text = "Add " + provincialName.ToString();
                 }
                 if (liquorTax == 0)
                 {
-                    btnRemoveLiq.Text = "Add " + liquorName.ToString();
+                    BtnRemoveLiq.Text = "Add " + liquorName.ToString();
                 }
 
                 lblGovernmentAmount.Text = governmentTax.ToString("C");

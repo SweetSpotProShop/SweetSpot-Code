@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Threading;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using SweetSpotDiscountGolfPOS.FP;
 using SweetSpotDiscountGolfPOS.OB;
 using SweetSpotDiscountGolfPOS.Misc;
@@ -14,8 +9,8 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsCostOfInventory : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        Reports R = new Reports();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly Reports R = new Reports();
         CurrentUser CU;
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -35,7 +30,9 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     CU = (CurrentUser)Session["currentUser"];
                     //Binding the gridview
+#pragma warning disable IDE0067 // Dispose objects before losing scope
                     DataTable list = new DataTable();
+#pragma warning restore IDE0067 // Dispose objects before losing scope
                     list = R.CallCostOfInventoryReport(objPageDetails);
                     //Checking if there are any values
                     if (list.Rows.Count > 0)

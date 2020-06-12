@@ -22,40 +22,40 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Panel pnlDefaultButton;
         
         /// <summary>
-        /// mopCash control.
+        /// MopCash control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button mopCash;
+        protected global::System.Web.UI.WebControls.Button MopCash;
         
         /// <summary>
-        /// mopCheque control.
+        /// MopCheque control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button mopCheque;
+        protected global::System.Web.UI.WebControls.Button MopCheque;
         
         /// <summary>
-        /// mopDebit control.
+        /// MopDebit control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button mopDebit;
+        protected global::System.Web.UI.WebControls.Button MopDebit;
         
         /// <summary>
-        /// mopGiftCard control.
+        /// MopGiftCard control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button mopGiftCard;
+        protected global::System.Web.UI.WebControls.Button MopGiftCard;
         
         /// <summary>
         /// lblPurchaseAmount control.
@@ -157,31 +157,31 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblRemainingPurchaseDueDisplay;
         
         /// <summary>
-        /// btnCancelPurchase control.
+        /// BtnCancelPurchase control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCancelPurchase;
+        protected global::System.Web.UI.WebControls.Button BtnCancelPurchase;
         
         /// <summary>
-        /// btnReturnToPurchaseCart control.
+        /// BtnReturnToPurchaseCart control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnReturnToPurchaseCart;
+        protected global::System.Web.UI.WebControls.Button BtnReturnToPurchaseCart;
         
         /// <summary>
-        /// btnFinalizePurchase control.
+        /// BtnFinalizePurchase control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnFinalizePurchase;
+        protected global::System.Web.UI.WebControls.Button BtnFinalizePurchase;
         
         /// <summary>
         /// txtComments control.

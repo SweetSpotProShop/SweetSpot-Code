@@ -22,57 +22,57 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Panel pnlDefaultButton;
         
         /// <summary>
-        /// btnQuickSale control.
+        /// BtnQuickSale control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnQuickSale;
+        protected global::System.Web.UI.WebControls.Button BtnQuickSale;
         
         /// <summary>
-        /// btnReturns control.
+        /// BtnReturns control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnReturns;
+        protected global::System.Web.UI.WebControls.Button BtnReturns;
         
         /// <summary>
-        /// btnInvoiceSearch control.
+        /// BtnInvoiceSearch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnInvoiceSearch;
+        protected global::System.Web.UI.WebControls.Button BtnInvoiceSearch;
         
         /// <summary>
-        /// btnProcessCashOut control.
+        /// BtnProcessCashOut control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnProcessCashOut;
+        protected global::System.Web.UI.WebControls.Button BtnProcessCashOut;
         
         /// <summary>
-        /// calSearchDate control.
+        /// CalSearchDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Calendar calSearchDate;
+        protected global::System.Web.UI.WebControls.Calendar CalSearchDate;
         
         /// <summary>
-        /// grdCurrentOpenSales control.
+        /// GrdCurrentOpenSales control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView grdCurrentOpenSales;
+        protected global::System.Web.UI.WebControls.GridView GrdCurrentOpenSales;
     }
 }

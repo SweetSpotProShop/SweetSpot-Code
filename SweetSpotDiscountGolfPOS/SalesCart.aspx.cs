@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Data;
-using System.Threading.Tasks;
 using System.Threading;
 using System.Globalization;
 using SweetSpotDiscountGolfPOS.FP;
@@ -16,13 +13,13 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class SalesCart : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        CustomerManager CM = new CustomerManager();
-        LocationManager LM = new LocationManager();
-        InvoiceManager IM = new InvoiceManager();
-        ItemsManager ITM = new ItemsManager();
-        InvoiceItemsManager IIM = new InvoiceItemsManager();
-        TaxManager TM = new TaxManager();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly CustomerManager CM = new CustomerManager();
+        readonly LocationManager LM = new LocationManager();
+        readonly InvoiceManager IM = new InvoiceManager();
+        readonly ItemsManager ITM = new ItemsManager();
+        readonly InvoiceItemsManager IIM = new InvoiceItemsManager();
+        readonly TaxManager TM = new TaxManager();
         //private static Invoice invoice;
         CurrentUser CU;
 
@@ -52,21 +49,23 @@ namespace SweetSpotDiscountGolfPOS
                         Invoice invoice = new Invoice();
                         if (Request.QueryString["invoice"].ToString() == "-10")
                         {
-                            Invoice newInvoice = new Invoice();
-                            newInvoice.varInvoiceNumber = IM.CallReturnNextInvoiceNumberForNewInvoice(CU, objPageDetails);
-                            newInvoice.intInvoiceSubNumber = 1;
-                            newInvoice.customer = CM.CallReturnCustomer(Convert.ToInt32(Request.QueryString["customer"].ToString()), objPageDetails)[0];
-                            newInvoice.employee = CU.employee;
-                            newInvoice.location = CU.location;
-                            newInvoice.fltGovernmentTaxAmount = 0;
-                            newInvoice.fltProvincialTaxAmount = 0;
-                            newInvoice.fltLiquorTaxAmount = 0;
-                            newInvoice.bitIsShipping = false;
-                            //newInvoice.bitChargeGST = true;
-                            //newInvoice.bitChargePST = true;
-                            //newInvoice.bitChargeLCT = true;
-                            newInvoice.intTransactionTypeID = 1;
-                            newInvoice.varAdditionalInformation = "";
+                            Invoice newInvoice = new Invoice
+                            {
+                                varInvoiceNumber = IM.CallReturnNextInvoiceNumberForNewInvoice(CU, objPageDetails),
+                                intInvoiceSubNumber = 1,
+                                customer = CM.CallReturnCustomer(Convert.ToInt32(Request.QueryString["customer"].ToString()), objPageDetails)[0],
+                                employee = CU.employee,
+                                location = CU.location,
+                                fltGovernmentTaxAmount = 0,
+                                fltProvincialTaxAmount = 0,
+                                fltLiquorTaxAmount = 0,
+                                bitIsShipping = false,
+                                //newInvoice.bitChargeGST = true;
+                                //newInvoice.bitChargePST = true;
+                                //newInvoice.bitChargeLCT = true;
+                                intTransactionTypeID = 1,
+                                varAdditionalInformation = ""
+                            };
                             invoice = IM.CallCreateInitialTotalsForTable(newInvoice, objPageDetails)[0];
 
                             var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
@@ -79,27 +78,27 @@ namespace SweetSpotDiscountGolfPOS
                             invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
                         }
 
-                        ddlShippingProvince.DataSource = LM.CallReturnProvinceDropDown(invoice.location.intCountryID, objPageDetails);
-                        ddlShippingProvince.SelectedValue = invoice.intShippingProvinceID.ToString();
-                        ddlShippingProvince.DataBind();
+                        DdlShippingProvince.DataSource = LM.CallReturnProvinceDropDown(invoice.location.intCountryID, objPageDetails);
+                        DdlShippingProvince.SelectedValue = invoice.intShippingProvinceID.ToString();
+                        DdlShippingProvince.DataBind();
 
                         txtCustomer.Text = invoice.customer.varFirstName + " " + invoice.customer.varLastName;
                         lblDateDisplay.Text = DateTime.Today.ToString("dd/MMM/yy");
                         lblInvoiceNumberDisplay.Text = invoice.varInvoiceNumber + "-" + invoice.intInvoiceSubNumber;
                         //change to gather the items from table
-                        grdCartItems.DataSource = invoice.invoiceItems;
-                        grdCartItems.DataBind();
+                        GrdCartItems.DataSource = invoice.invoiceItems;
+                        GrdCartItems.DataBind();
                         if (invoice.bitIsShipping)
                         {
-                            rdbShipping.Checked = true;
-                            ddlShippingProvince.Visible = true;
-                            ddlShippingProvince.Enabled = true;
+                            RdbShipping.Checked = true;
+                            DdlShippingProvince.Visible = true;
+                            DdlShippingProvince.Enabled = true;
                         }
                         else
                         {
-                            rdbInStorePurchase.Checked = true;
-                            ddlShippingProvince.Visible = false;
-                            ddlShippingProvince.Enabled = false;
+                            RdbInStorePurchase.Checked = true;
+                            DdlShippingProvince.Visible = false;
+                            DdlShippingProvince.Enabled = false;
                         }
                         txtShippingAmount.Text = invoice.fltShippingCharges.ToString();
                         lblSubtotalDisplay.Text = invoice.fltSubTotal.ToString("C");
@@ -122,26 +121,26 @@ namespace SweetSpotDiscountGolfPOS
 
 
         //these are page processes
-        protected void btnCustomerSelect_Click(object sender, EventArgs e)
+        protected void BtnCustomerSelect_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnCustomerSelect_Click";
+            string method = "BtnCustomerSelect_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                if (btnCustomerSelect.Text == "Cancel")
+                if (BtnCustomerSelect.Text == "Cancel")
                 {
-                    btnCustomerSelect.Text = "Change Customer";
-                    grdCustomersSearched.Visible = false;
+                    BtnCustomerSelect.Text = "Change Customer";
+                    GrdCustomersSearched.Visible = false;
                 }
                 else
                 {
-                    grdCustomersSearched.Visible = true;
-                    grdCustomersSearched.DataSource = CM.CallReturnCustomerBasedOnText(txtCustomer.Text, objPageDetails);
-                    grdCustomersSearched.DataBind();
-                    if (grdCustomersSearched.Rows.Count > 0)
+                    GrdCustomersSearched.Visible = true;
+                    GrdCustomersSearched.DataSource = CM.CallReturnCustomerBasedOnText(txtCustomer.Text, objPageDetails);
+                    GrdCustomersSearched.DataBind();
+                    if (GrdCustomersSearched.Rows.Count > 0)
                     {
-                        btnCustomerSelect.Text = "Cancel";
+                        BtnCustomerSelect.Text = "Cancel";
                     }
                 }
             }
@@ -157,16 +156,16 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void grdCustomersSearched_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        protected void GrdCustomersSearched_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
-            string method = "grdCustomersSearched_PageIndexChanging";
+            string method = "GrdCustomersSearched_PageIndexChanging";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                grdCustomersSearched.PageIndex = e.NewPageIndex;
-                grdCustomersSearched.Visible = true;
-                grdCustomersSearched.DataSource = CM.CallReturnCustomerBasedOnText(txtCustomer.Text, objPageDetails);
-                grdCustomersSearched.DataBind();
+                GrdCustomersSearched.PageIndex = e.NewPageIndex;
+                GrdCustomersSearched.Visible = true;
+                GrdCustomersSearched.DataSource = CM.CallReturnCustomerBasedOnText(txtCustomer.Text, objPageDetails);
+                GrdCustomersSearched.DataBind();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -180,18 +179,18 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnInventorySearch_Click(object sender, EventArgs e)
+        protected void BtnInventorySearch_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnInventorySearch_Click";
+            string method = "BtnInventorySearch_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (txtSearch.Text != "")
                 {
                     lblInvalidQty.Visible = false;
-                    grdInventorySearched.DataSource = ITM.CallReturnInvoiceItemsFromSearchStringForSale(txtSearch.Text, objPageDetails);
-                    grdInventorySearched.DataBind();
+                    GrdInventorySearched.DataSource = ITM.CallReturnInvoiceItemsFromSearchStringForSale(txtSearch.Text, objPageDetails);
+                    GrdInventorySearched.DataBind();
                     txtSearch.Text = "";
                 }
             }
@@ -216,10 +215,10 @@ namespace SweetSpotDiscountGolfPOS
             {
                 Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
                 //lblInvalidQty.Visible = false;
-                grdCartItems.DataSource = invoice.invoiceItems;
-                grdCartItems.EditIndex = e.NewEditIndex;
-                grdCartItems.DataBind();
-                ((CheckBoxList)grdCartItems.Rows[e.NewEditIndex].Cells[9].FindControl("cblTaxes")).Enabled = true;
+                GrdCartItems.DataSource = invoice.invoiceItems;
+                GrdCartItems.EditIndex = e.NewEditIndex;
+                GrdCartItems.DataBind();
+                ((CheckBoxList)GrdCartItems.Rows[e.NewEditIndex].Cells[9].FindControl("cblTaxes")).Enabled = true;
 
             }
             //Exception catch
@@ -243,12 +242,12 @@ namespace SweetSpotDiscountGolfPOS
             {
                 Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
                 //lblInvalidQty.Visible = false;
-                ((CheckBoxList)grdCartItems.Rows[grdCartItems.EditIndex].Cells[9].FindControl("cblTaxes")).Enabled = false;
+                ((CheckBoxList)GrdCartItems.Rows[GrdCartItems.EditIndex].Cells[9].FindControl("cblTaxes")).Enabled = false;
                 //Clears the indexed row
-                grdCartItems.EditIndex = -1;
+                GrdCartItems.EditIndex = -1;
                 //Binds gridview to Session items in cart
-                grdCartItems.DataSource = invoice.invoiceItems;
-                grdCartItems.DataBind();
+                GrdCartItems.DataSource = invoice.invoiceItems;
+                GrdCartItems.DataBind();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -262,15 +261,15 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnCancelSale_Click(object sender, EventArgs e)
+        protected void BtnCancelSale_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnCancelSale_Click";
+            string method = "BtnCancelSale_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
-                IIM.LoopThroughTheItemsToReturnToInventory(invoice.intInvoiceID, invoice.dtmInvoiceDate, Convert.ToInt32(ddlShippingProvince.SelectedValue), objPageDetails);
+                IIM.LoopThroughTheItemsToReturnToInventory(invoice.intInvoiceID, invoice.dtmInvoiceDate, Convert.ToInt32(DdlShippingProvince.SelectedValue), objPageDetails);
                 IIM.CallRemoveInitialTotalsForTable(invoice.intInvoiceID, objPageDetails);
                 Response.Redirect("SalesHomePage.aspx", false);
             }
@@ -286,11 +285,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnExitSale_Click(object sender, EventArgs e)
+        protected void BtnExitSale_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnExitSale_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnExitSale_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 Response.Redirect("SalesHomePage.aspx", false);
@@ -307,10 +306,10 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnProceedToCheckout_Click(object sender, EventArgs e)
+        protected void BtnProceedToCheckout_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnProceedToCheckout_Click";
+            string method = "BtnProceedToCheckout_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -341,11 +340,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnJumpToInventory_Click(object sender, EventArgs e)
+        protected void BtnJumpToInventory_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnJumpToInventory_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnJumpToInventory_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Inventory screen in new window/tab
@@ -364,14 +363,14 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnClearSearch_Click(object sender, EventArgs e)
+        protected void BtnClearSearch_Click(object sender, EventArgs e)
         {
-            string method = "btnClearSearch_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnClearSearch_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                grdInventorySearched.DataSource = null;
-                grdInventorySearched.DataBind();
+                GrdInventorySearched.DataSource = null;
+                GrdInventorySearched.DataBind();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -385,7 +384,7 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void grdCartItems_RowDataBound(object sender, GridViewRowEventArgs e)
+        protected void GrdCartItems_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
@@ -397,14 +396,14 @@ namespace SweetSpotDiscountGolfPOS
             }
 
         }
-        protected void btnAddTradeIn_Click(object sender, EventArgs e)
+        protected void BtnAddTradeIn_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "grdInventorySearched_RowCommand";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnAddTradeIn_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                btnRefreshCart.Visible = true;
+                BtnRefreshCart.Visible = true;
                 //Trade In Sku to add in SK
                 string redirect = "<script>window.open('TradeINEntry.aspx?invoice=" + Request.QueryString["invoice"].ToString() + "');</script>";
                 Response.Write(redirect);
@@ -424,27 +423,29 @@ namespace SweetSpotDiscountGolfPOS
 
 
         //These update the invoice        
-        protected void btnAddCustomer_Click(object sender, EventArgs e)
+        protected void BtnAddCustomer_Click(object sender, EventArgs e)
         {
-            string method = "btnAddCustomer_Click";
+            string method = "BtnAddCustomer_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
-                Customer customer = new Customer();
-                customer.varFirstName = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtFirstName")).Text;
-                customer.varLastName = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtLastName")).Text;
-                customer.varAddress = "";
-                customer.secondaryAddress = "";
-                customer.varContactNumber = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtPhoneNumber")).Text;
-                customer.secondaryPhoneNumber = "";
-                customer.bitSendMarketing = ((CheckBox)grdCustomersSearched.FooterRow.FindControl("chkMarketingEnrollment")).Checked;
-                customer.varEmailAddress = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtEmail")).Text;
-                customer.billingAddress = "";
-                customer.varCityName = "";
-                customer.intProvinceID = CU.location.intProvinceID;
-                customer.intCountryID = CU.location.intCountryID;
-                customer.varPostalCode = "";
+                Customer customer = new Customer
+                {
+                    varFirstName = ((TextBox)GrdCustomersSearched.FooterRow.FindControl("txtFirstName")).Text,
+                    varLastName = ((TextBox)GrdCustomersSearched.FooterRow.FindControl("txtLastName")).Text,
+                    varAddress = "",
+                    secondaryAddress = "",
+                    varContactNumber = ((TextBox)GrdCustomersSearched.FooterRow.FindControl("txtPhoneNumber")).Text,
+                    secondaryPhoneNumber = "",
+                    bitSendMarketing = ((CheckBox)GrdCustomersSearched.FooterRow.FindControl("chkMarketingEnrollment")).Checked,
+                    varEmailAddress = ((TextBox)GrdCustomersSearched.FooterRow.FindControl("txtEmail")).Text,
+                    billingAddress = "",
+                    varCityName = "",
+                    intProvinceID = CU.location.intProvinceID,
+                    intCountryID = CU.location.intCountryID,
+                    varPostalCode = ""
+                };
                 int custNum = CM.CallAddCustomer(customer, objPageDetails);                
                 customer.intCustomerID = custNum;
                 invoice.customer = customer;
@@ -468,10 +469,10 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void grdCustomersSearched_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void GrdCustomersSearched_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "grdCustomersSearched_RowCommand";
+            string method = "GrdCustomersSearched_RowCommand";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -514,16 +515,16 @@ namespace SweetSpotDiscountGolfPOS
             {
                 Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
                 lblInvalidQty.Visible = false;
-                int currentInvoiceItemID = Convert.ToInt32(((Label)grdCartItems.Rows[e.RowIndex].Cells[0].FindControl("lblInvoiceItemID")).Text);
+                int currentInvoiceItemID = Convert.ToInt32(((Label)GrdCartItems.Rows[e.RowIndex].Cells[0].FindControl("lblInvoiceItemID")).Text);
                 IIM.ReturnQTYToInventory(currentInvoiceItemID, invoice.dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);
                 //Remove the indexed pointer
-                grdCartItems.EditIndex = -1;
+                GrdCartItems.EditIndex = -1;
                 IM.CalculateNewInvoiceTotalsToUpdate(IM.CallReturnCurrentInvoice(invoice.intInvoiceID, objPageDetails)[0], objPageDetails);
                 invoice = IM.CallReturnCurrentInvoice(invoice.intInvoiceID, objPageDetails)[0];
 
                 //bind items back to grid view
-                grdCartItems.DataSource = invoice.invoiceItems;
-                grdCartItems.DataBind();
+                GrdCartItems.DataSource = invoice.invoiceItems;
+                GrdCartItems.DataBind();
                 //Calculate new subtotal
                 lblSubtotalDisplay.Text = invoice.fltSubTotal.ToString("C");
                 Session["currentInvoice"] = invoice;
@@ -550,23 +551,27 @@ namespace SweetSpotDiscountGolfPOS
                 Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
                 lblInvalidQty.Visible = false;
                 //Stores all the data for each element in the row
+#pragma warning disable IDE0017 // Simplify object initialization
                 InvoiceItems newItemInfo = new InvoiceItems();
+#pragma warning restore IDE0017 // Simplify object initialization
                 newItemInfo.intInvoiceID = invoice.intInvoiceID;
-                newItemInfo.intInvoiceItemID = Convert.ToInt32(((Label)grdCartItems.Rows[e.RowIndex].Cells[0].FindControl("lblInvoiceItemID")).Text);
+                newItemInfo.intInvoiceItemID = Convert.ToInt32(((Label)GrdCartItems.Rows[e.RowIndex].Cells[0].FindControl("lblInvoiceItemID")).Text);
                 newItemInfo.intInventoryID = IIM.CallReturnInventoryIDFromInvoiceItemID(newItemInfo.intInvoiceItemID, objPageDetails);
                 //newItemInfo.fltItemPrice = Convert.ToDouble(((Label)grdCartItems.Rows[e.RowIndex].Cells[5].FindControl("price")).Text.Replace("$",""));
-                newItemInfo.fltItemDiscount = Convert.ToDouble(((TextBox)grdCartItems.Rows[e.RowIndex].Cells[6].FindControl("txtAmnt")).Text);
-                newItemInfo.intItemQuantity = Convert.ToInt32(((TextBox)grdCartItems.Rows[e.RowIndex].Cells[3].Controls[0]).Text);
-                newItemInfo.bitIsDiscountPercent = ((CheckBox)grdCartItems.Rows[e.RowIndex].Cells[6].FindControl("ckbPercentageEdit")).Checked;
-                newItemInfo.bitIsClubTradeIn = ((CheckBox)grdCartItems.Rows[e.RowIndex].Cells[7].FindControl("chkTradeIn")).Checked;
-                newItemInfo.intItemTypeID = Convert.ToInt32(((Label)grdCartItems.Rows[e.RowIndex].Cells[8].FindControl("lblTypeID")).Text);
+                newItemInfo.fltItemDiscount = Convert.ToDouble(((TextBox)GrdCartItems.Rows[e.RowIndex].Cells[6].FindControl("txtAmnt")).Text);
+                newItemInfo.intItemQuantity = Convert.ToInt32(((TextBox)GrdCartItems.Rows[e.RowIndex].Cells[3].Controls[0]).Text);
+                newItemInfo.bitIsDiscountPercent = ((CheckBox)GrdCartItems.Rows[e.RowIndex].Cells[6].FindControl("ckbPercentageEdit")).Checked;
+                newItemInfo.bitIsClubTradeIn = ((CheckBox)GrdCartItems.Rows[e.RowIndex].Cells[7].FindControl("chkTradeIn")).Checked;
+                newItemInfo.intItemTypeID = Convert.ToInt32(((Label)GrdCartItems.Rows[e.RowIndex].Cells[8].FindControl("lblTypeID")).Text);
                 newItemInfo.invoiceItemTaxes = new List<InvoiceItemTax>();
 
-                CheckBoxList checkboxTaxes = (CheckBoxList)grdCartItems.Rows[e.RowIndex].Cells[9].FindControl("cblTaxes");
+                CheckBoxList checkboxTaxes = (CheckBoxList)GrdCartItems.Rows[e.RowIndex].Cells[9].FindControl("cblTaxes");
 
                 foreach (ListItem item in checkboxTaxes.Items)
                 {
+#pragma warning disable IDE0017 // Simplify object initialization
                     InvoiceItemTax iit = new InvoiceItemTax();
+#pragma warning restore IDE0017 // Simplify object initialization
                     iit.intInvoiceItemID = newItemInfo.intInvoiceItemID;
                     iit.varTaxName = item.Text;
                     iit.bitIsTaxCharged = Convert.ToBoolean(item.Selected);
@@ -608,7 +613,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
 
                 //Clears the indexed row
-                grdCartItems.EditIndex = -1;
+                GrdCartItems.EditIndex = -1;
                 //Recalculates the new subtotal and Binds cart items to grid view
                 //Session["currentInvoice"] = invoice;
                 UpdateInvoiceTotals();
@@ -625,10 +630,10 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void grdInventorySearched_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void GrdInventorySearched_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method for error tracking
-            string method = "grdInventorySearched_RowCommand";
+            string method = "GrdInventorySearched_RowCommand";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -636,7 +641,7 @@ namespace SweetSpotDiscountGolfPOS
                 lblInvalidQty.Visible = false;
                 int index = ((GridViewRow)((LinkButton)e.CommandSource).NamingContainer).RowIndex;
                 int quantity = 1;
-                string qty = ((TextBox)grdInventorySearched.Rows[index].Cells[2].FindControl("quantityToAdd")).Text;
+                string qty = ((TextBox)GrdInventorySearched.Rows[index].Cells[2].FindControl("quantityToAdd")).Text;
                 if (qty != "")
                 {
                     if (int.TryParse(qty, out quantity))
@@ -644,20 +649,22 @@ namespace SweetSpotDiscountGolfPOS
                         quantity = Convert.ToInt32(qty);
                     }
                 }
-                int currentQty = Convert.ToInt32(((Label)grdInventorySearched.Rows[index].Cells[2].FindControl("QuantityInOrder")).Text);
+                int currentQty = Convert.ToInt32(((Label)GrdInventorySearched.Rows[index].Cells[2].FindControl("QuantityInOrder")).Text);
                 if (quantity > currentQty || quantity < 1)
                 {
                     lblInvalidQty.Visible = true;
                 }
                 else
                 {
+#pragma warning disable IDE0017 // Simplify object initialization
                     InvoiceItems selectedSku = new InvoiceItems();
+#pragma warning restore IDE0017 // Simplify object initialization
                     selectedSku.intInventoryID = Convert.ToInt32(e.CommandArgument);
                     selectedSku.intInvoiceID = invoice.intInvoiceID;
                     if (!IIM.CallItemAlreadyInCart(selectedSku, objPageDetails))
                     {
                         double discount = 0;
-                        string discountAmount = ((TextBox)grdInventorySearched.Rows[index].Cells[5].FindControl("txtAmountDiscount")).Text;
+                        string discountAmount = ((TextBox)GrdInventorySearched.Rows[index].Cells[5].FindControl("txtAmountDiscount")).Text;
                         if (discountAmount != "")
                         {
                             if (double.TryParse(discountAmount, out discount))
@@ -666,23 +673,23 @@ namespace SweetSpotDiscountGolfPOS
                             }
                         }
                         selectedSku.fltItemDiscount = discount;
-                        selectedSku.varItemDescription = ((Label)grdInventorySearched.Rows[index].Cells[3].FindControl("Description")).Text;
+                        selectedSku.varItemDescription = ((Label)GrdInventorySearched.Rows[index].Cells[3].FindControl("Description")).Text;
                         selectedSku.fltItemRefund = 0;
-                        selectedSku.fltItemPrice = double.Parse(((Label)grdInventorySearched.Rows[index].Cells[4].FindControl("rollPrice")).Text, NumberStyles.Currency);
-                        selectedSku.fltItemCost = double.Parse(((Label)grdInventorySearched.Rows[index].Cells[4].FindControl("rollCost")).Text, NumberStyles.Currency);
-                        selectedSku.bitIsDiscountPercent = ((CheckBox)grdInventorySearched.Rows[index].Cells[5].FindControl("chkDiscountPercent")).Checked;
-                        selectedSku.bitIsClubTradeIn = ((CheckBox)grdInventorySearched.Rows[index].Cells[6].FindControl("chkTradeInSearch")).Checked;
-                        selectedSku.intItemTypeID = Convert.ToInt32(((Label)grdInventorySearched.Rows[index].Cells[7].FindControl("lblTypeIDSearch")).Text);
+                        selectedSku.fltItemPrice = double.Parse(((Label)GrdInventorySearched.Rows[index].Cells[4].FindControl("rollPrice")).Text, NumberStyles.Currency);
+                        selectedSku.fltItemCost = double.Parse(((Label)GrdInventorySearched.Rows[index].Cells[4].FindControl("rollCost")).Text, NumberStyles.Currency);
+                        selectedSku.bitIsDiscountPercent = ((CheckBox)GrdInventorySearched.Rows[index].Cells[5].FindControl("chkDiscountPercent")).Checked;
+                        selectedSku.bitIsClubTradeIn = ((CheckBox)GrdInventorySearched.Rows[index].Cells[6].FindControl("chkTradeInSearch")).Checked;
+                        selectedSku.intItemTypeID = Convert.ToInt32(((Label)GrdInventorySearched.Rows[index].Cells[7].FindControl("lblTypeIDSearch")).Text);
                         selectedSku.intItemQuantity = quantity;
 
                         //add item to table and remove the added qty from current inventory
-                        IIM.CallInsertItemIntoSalesCart(selectedSku, invoice.intTransactionTypeID, invoice.dtmInvoiceDate, Convert.ToInt32(ddlShippingProvince.SelectedValue), objPageDetails);
+                        IIM.CallInsertItemIntoSalesCart(selectedSku, invoice.intTransactionTypeID, invoice.dtmInvoiceDate, Convert.ToInt32(DdlShippingProvince.SelectedValue), objPageDetails);
                         IIM.CallRemoveQTYFromInventoryWithSKU(selectedSku.intInventoryID, selectedSku.intItemTypeID, (currentQty - quantity), objPageDetails);
 
                         invoice = IM.CallReturnCurrentInvoice(invoice.intInvoiceID, objPageDetails)[0];
                         //Set an empty variable to bind to the searched items grid view so it is empty
-                        grdInventorySearched.DataSource = null;
-                        grdInventorySearched.DataBind();
+                        GrdInventorySearched.DataSource = null;
+                        GrdInventorySearched.DataBind();
                         Session["currentInvoice"] = invoice;
                         //Recalculate the new subtotal
                         UpdateInvoiceTotals();
@@ -705,13 +712,13 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnRefreshCart_Click(object sender, EventArgs e)
+        protected void BtnRefreshCart_Click(object sender, EventArgs e)
         {
-            string method = "btnRefreshCart_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnRefreshCart_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                btnRefreshCart.Visible = false;
+                BtnRefreshCart.Visible = false;
                 UpdateInvoiceTotals();
             }
             //Exception catch
@@ -726,21 +733,21 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void rdbInStorePurchase_CheckedChanged(object sender, EventArgs e)
+        protected void RdbInStorePurchase_CheckedChanged(object sender, EventArgs e)
         {
-            string method = "rdbInStorePurchase_CheckedChanged";
+            string method = "RdbInStorePurchase_CheckedChanged";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                if (rdbShipping.Checked)
+                if (RdbShipping.Checked)
                 {
-                    ddlShippingProvince.Enabled = true;
-                    ddlShippingProvince.Visible = true;
+                    DdlShippingProvince.Enabled = true;
+                    DdlShippingProvince.Visible = true;
                 }
                 else
                 {
-                    ddlShippingProvince.Enabled = false;
-                    ddlShippingProvince.Visible = false;
+                    DdlShippingProvince.Enabled = false;
+                    DdlShippingProvince.Visible = false;
 
                     Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
                     invoice.intShippingProvinceID = CU.location.intProvinceID;
@@ -748,7 +755,7 @@ namespace SweetSpotDiscountGolfPOS
                     txtShippingAmount.Text = invoice.fltShippingCharges.ToString();
                     TM.ChangeProvinceTaxesBasedOnShipping(Convert.ToInt32(Request.QueryString["invoice"].ToString()), invoice.intShippingProvinceID, objPageDetails);
                     //Session["currentInvoice"] = invoice;
-                    ddlShippingProvince.SelectedValue = CU.location.intProvinceID.ToString();
+                    DdlShippingProvince.SelectedValue = CU.location.intProvinceID.ToString();
                 }
                 UpdateInvoiceTotals();
             }
@@ -764,28 +771,28 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void rdbShipping_CheckedChanged(object sender, EventArgs e)
+        protected void RdbShipping_CheckedChanged(object sender, EventArgs e)
         {
-            string method = "rdbShipping_CheckedChanged";
+            string method = "RdbShipping_CheckedChanged";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                if (rdbShipping.Checked)
+                if (RdbShipping.Checked)
                 {
-                    ddlShippingProvince.Enabled = true;
-                    ddlShippingProvince.Visible = true;
+                    DdlShippingProvince.Enabled = true;
+                    DdlShippingProvince.Visible = true;
                 }
                 else
                 {
                     Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
-                    ddlShippingProvince.Enabled = false;
-                    ddlShippingProvince.Visible = false;                    
+                    DdlShippingProvince.Enabled = false;
+                    DdlShippingProvince.Visible = false;                    
                     invoice.intShippingProvinceID = CU.location.intProvinceID;
                     invoice.fltShippingCharges = 0;
                     txtShippingAmount.Text = invoice.fltShippingCharges.ToString();
                     TM.ChangeProvinceTaxesBasedOnShipping(Convert.ToInt32(Request.QueryString["invoice"].ToString()), invoice.intShippingProvinceID, objPageDetails);
                     //Session["currentInvoice"] = invoice;
-                    ddlShippingProvince.SelectedValue = CU.location.intProvinceID.ToString();
+                    DdlShippingProvince.SelectedValue = CU.location.intProvinceID.ToString();
                 }                
                 UpdateInvoiceTotals();
             }
@@ -801,15 +808,15 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void ddlShippingProvince_SelectedIndexChanged(object sender, EventArgs e)
+        protected void DdlShippingProvince_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string method = "ddlShippingProvince_SelectedIndexChanged";
+            string method = "DdlShippingProvince_SelectedIndexChanged";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //needs to go through and remove all current taxes then apply taxes for new delected province
                 Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
-                invoice.intShippingProvinceID = Convert.ToInt32(ddlShippingProvince.SelectedValue);
+                invoice.intShippingProvinceID = Convert.ToInt32(DdlShippingProvince.SelectedValue);
                 TM.ChangeProvinceTaxesBasedOnShipping(Convert.ToInt32(Request.QueryString["invoice"].ToString()), invoice.intShippingProvinceID, objPageDetails);
                 IM.CallUpdateCurrentInvoice(invoice, objPageDetails);
                 UpdateInvoiceTotals();
@@ -826,7 +833,6 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        
         protected void UpdateInvoiceTotals()
         {
             string method = "UpdateInvoiceTotal";
@@ -836,7 +842,7 @@ namespace SweetSpotDiscountGolfPOS
                 Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
                 invoice.fltShippingCharges = Convert.ToDouble(txtShippingAmount.Text);
                 bool bolShip = false;
-                if (rdbShipping.Checked)
+                if (RdbShipping.Checked)
                 {
                     bolShip = true;
                 }
@@ -844,8 +850,8 @@ namespace SweetSpotDiscountGolfPOS
                 IM.CalculateNewInvoiceTotalsToUpdate(invoice, objPageDetails);
                 invoice = IM.CallReturnCurrentInvoice(invoice.intInvoiceID, objPageDetails)[0];
                 lblSubtotalDisplay.Text = invoice.fltSubTotal.ToString("C");
-                grdCartItems.DataSource = invoice.invoiceItems;
-                grdCartItems.DataBind();
+                GrdCartItems.DataSource = invoice.invoiceItems;
+                GrdCartItems.DataBind();
                 //Session["currentInvoice"] = invoice;
             }
             //Exception catch

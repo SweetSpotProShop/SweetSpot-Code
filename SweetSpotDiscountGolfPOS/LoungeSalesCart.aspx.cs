@@ -876,8 +876,11 @@ namespace SweetSpotDiscountGolfPOS
             List<InvoiceItems> programmed = (List<InvoiceItems>)Session["programButtons"];
             foreach (Control c in control.Controls)
             {
-                if (c is Button btn)
+                if (c is Button)
                 {
+#pragma warning disable IDE0020 // Use pattern matching
+                    Button btn = (Button)c;
+#pragma warning restore IDE0020 // Use pattern matching
                     foreach (InvoiceItems i in programmed)
                     {
                         if (btn.ID.ToString() == i.varAdditionalInformation.ToString())

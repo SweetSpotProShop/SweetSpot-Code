@@ -13,10 +13,11 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsExtensiveInvoice : System.Web.UI.Page
     {
+        
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly LocationManager LM = new LocationManager();
+        readonly Reports R = new Reports();
         CurrentUser CU;
-        ErrorReporting ER = new ErrorReporting();
-        Reports R = new Reports();
-        LocationManager LM = new LocationManager();
 
         double shipping;
         double tradein;
@@ -65,8 +66,8 @@ namespace SweetSpotDiscountGolfPOS
                     //DataTable invoices = R.returnExtensiveInvoices(startDate, endDate, locationID, objPageDetails);
 
                     DataTable invoices2 = R.CallReturnExtensiveInvoices2(startDate, endDate, locationID, objPageDetails);
-                    grdInvoices.DataSource = invoices2;
-                    grdInvoices.DataBind();
+                    GrdInvoices.DataSource = invoices2;
+                    GrdInvoices.DataBind();
                 }
             }
             //Exception catch
@@ -81,11 +82,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void grdInvoices_RowDataBound(object sender, GridViewRowEventArgs e)
+        protected void GrdInvoices_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             //Collects current method for error tracking
-            string method = "grdInvoices_RowDataBound";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "GrdInvoices_RowDataBound";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
@@ -137,10 +138,10 @@ namespace SweetSpotDiscountGolfPOS
                                 + "your system administrator.", this);
             }
         }
-        protected void btnDownload_Click(object sender, EventArgs e)
+        protected void BtnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnDownload_Click";
+            string method = "BtnDownload_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -232,17 +233,26 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-
-        protected void grdInvoices_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void GrdInvoices_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method for error tracking
-            string method = "lbtnInvoiceNumber_Click";
+            string method = "GrdInvoices_RowCommand";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                string invoice = e.CommandArgument.ToString();
-                //Changes page to display a printable invoice
-                Response.Redirect("PrintableInvoice.aspx?invoice=" + invoice, false);
+                //Sets the string of the command argument(invoice number
+                int invoiceID = Convert.ToInt32(e.CommandArgument.ToString());
+                InvoiceManager IM = new InvoiceManager();
+                if (IM.InvoiceIsReturn(invoiceID, objPageDetails))
+                {
+                    //Changes page to display a printable invoice
+                    Response.Redirect("PrintableInvoiceReturn.aspx?invoice=" + invoiceID.ToString(), false);
+                }
+                else
+                {
+                    //Changes page to display a printable invoice
+                    Response.Redirect("PrintableInvoice.aspx?invoice=" + invoiceID.ToString(), false);
+                }
             }
             //Exception catch
             catch (ThreadAbortException) { }

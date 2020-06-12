@@ -85,22 +85,22 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblInvalidQty;
         
         /// <summary>
-        /// grdInvoicedItems control.
+        /// GrdInvoicedItems control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView grdInvoicedItems;
+        protected global::System.Web.UI.WebControls.GridView GrdInvoicedItems;
         
         /// <summary>
-        /// grdReturningItems control.
+        /// GrdReturningItems control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView grdReturningItems;
+        protected global::System.Web.UI.WebControls.GridView GrdReturningItems;
         
         /// <summary>
         /// lblReturnSubtotal control.
@@ -121,21 +121,21 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblReturnSubtotalDisplay;
         
         /// <summary>
-        /// btnCancelReturn control.
+        /// BtnCancelReturn control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCancelReturn;
+        protected global::System.Web.UI.WebControls.Button BtnCancelReturn;
         
         /// <summary>
-        /// btnProceedToReturnCheckout control.
+        /// BtnProceedToReturnCheckout control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnProceedToReturnCheckout;
+        protected global::System.Web.UI.WebControls.Button BtnProceedToReturnCheckout;
     }
 }

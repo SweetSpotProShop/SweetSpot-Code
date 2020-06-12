@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Configuration;
-using System.Data.SqlClient;
 using System.Threading;
 using SweetSpotDiscountGolfPOS.FP;
 using SweetSpotDiscountGolfPOS.OB;
@@ -15,16 +10,15 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReturnsHomePage : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly InvoiceManager IM = new InvoiceManager();
         CurrentUser CU;
-        InvoiceManager IM = new InvoiceManager();
-        
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "SalesHomePage.aspx";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -36,7 +30,7 @@ namespace SweetSpotDiscountGolfPOS
                 else
                 {
                     CU = (CurrentUser)Session["currentUser"];
-                    if (!IsPostBack) { calSearchDate.SelectedDate = DateTime.Today; }
+                    if (!IsPostBack) { CalSearchDate.SelectedDate = DateTime.Today; }
                 }
             }
             //Exception catch
@@ -53,15 +47,15 @@ namespace SweetSpotDiscountGolfPOS
         }
         //Searches invoices and displays them 
         //By date or customer
-        protected void btnSearch_Click(object sender, EventArgs e)
+        protected void BtnSearch_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnSearch_Click";
+            string method = "BtnSearch_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                grdInvoiceSelection.DataSource = IM.CallReturnInvoicesBasedOnSearchForReturns(txtInvoiceSearch.Text, calSearchDate.SelectedDate, objPageDetails);
-                grdInvoiceSelection.DataBind();
+                GrdInvoiceSelection.DataSource = IM.CallReturnInvoicesBasedOnSearchForReturns(txtInvoiceSearch.Text, CalSearchDate.SelectedDate, objPageDetails);
+                GrdInvoiceSelection.DataBind();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -75,11 +69,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void grdInvoiceSelection_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void GrdInvoiceSelection_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method for error tracking
-            string method = "grdInvoiceSelection_RowCommand";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "GrdInvoiceSelection_RowCommand";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Checks that the command name is return invoice
@@ -103,10 +97,10 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void calSearchDate_SelectionChanged(object sender, EventArgs e)
+        protected void CalSearchDate_SelectionChanged(object sender, EventArgs e)
         {
-            string method = "calSearchDate_SelectionChanged";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "CalSearchDate_SelectionChanged";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try { }
             catch (ThreadAbortException tae) { }
             catch (Exception ex)

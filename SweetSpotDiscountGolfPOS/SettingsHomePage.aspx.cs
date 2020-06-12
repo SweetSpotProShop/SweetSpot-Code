@@ -3,15 +3,12 @@ using OfficeOpenXml.Style;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using SweetSpotDiscountGolfPOS.FP;
@@ -23,14 +20,14 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class SettingsHomePage : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly EmployeeManager EM = new EmployeeManager();
+        readonly Reports R = new Reports();
+        readonly TaxManager TM = new TaxManager();
+        readonly LocationManager LM = new LocationManager();
+        readonly DatabaseCalls DBC = new DatabaseCalls();
+        readonly CustomerManager CM = new CustomerManager();
         CurrentUser CU;
-        EmployeeManager EM = new EmployeeManager();
-        Reports R = new Reports();
-        TaxManager TM = new TaxManager();
-        LocationManager LM = new LocationManager();
-        DatabaseCalls DBC = new DatabaseCalls();
-        CustomerManager CM = new CustomerManager();
 
         internal static readonly Page aspx;
         public int counter;
@@ -63,16 +60,16 @@ namespace SweetSpotDiscountGolfPOS
                     //Checks if the user is an Admin
                     if (CU.employee.intJobID != 0)
                     {
-                        btnAddNewEmployee.Enabled = false;
-                        btnLoadItems.Enabled = false;
+                        BtnAddNewEmployee.Enabled = false;
+                        BtnLoadItems.Enabled = false;
                     }
                     if (!IsPostBack)
                     {
-                        ddlProvince.DataSource = LM.CallReturnProvinceDropDown(0, objPageDetails);
-                        ddlProvince.DataBind();
-                        ddlProvince.SelectedValue = CU.location.intProvinceID.ToString();
-                        ddlTax.DataSource = TM.GatherTaxListFromDateAndProvince(CU.location.intProvinceID, Convert.ToDateTime(lblCurrentDate.Text), objPageDetails);
-                        ddlTax.DataBind();
+                        DdlProvince.DataSource = LM.CallReturnProvinceDropDown(0, objPageDetails);
+                        DdlProvince.DataBind();
+                        DdlProvince.SelectedValue = CU.location.intProvinceID.ToString();
+                        DdlTax.DataSource = TM.GatherTaxListFromDateAndProvince(CU.location.intProvinceID, Convert.ToDateTime(lblCurrentDate.Text), objPageDetails);
+                        DdlTax.DataBind();
                     }
                 }
             }
@@ -88,11 +85,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnAddNewEmployee_Click(object sender, EventArgs e)
+        protected void BtnAddNewEmployee_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnAddNewEmployee_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnAddNewEmployee_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Change to Employee add new page
@@ -110,11 +107,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void grdEmployeesSearched_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void GrdEmployeesSearched_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method for error tracking
-            string method = "grdEmployeesSearched_RowCommand";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "GrdEmployeesSearched_RowCommand";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Checks if the string is view profile
@@ -136,17 +133,17 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnEmployeeSearch_Click(object sender, EventArgs e)
+        protected void BtnEmployeeSearch_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnEmployeeSearch_Click";
+            string method = "BtnEmployeeSearch_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                grdEmployeesSearched.Visible = true;
+                GrdEmployeesSearched.Visible = true;
                 //Binds the employee list to grid view
-                grdEmployeesSearched.DataSource = EM.CallReturnEmployeeBasedOnText(txtSearch.Text, objPageDetails);
-                grdEmployeesSearched.DataBind();
+                GrdEmployeesSearched.DataSource = EM.CallReturnEmployeeBasedOnText(txtSearch.Text, objPageDetails);
+                GrdEmployeesSearched.DataBind();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -162,10 +159,10 @@ namespace SweetSpotDiscountGolfPOS
         }
 
         //Importing
-        protected void btnLoadItems_Click(object sender, EventArgs e)
+        protected void BtnLoadItems_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnLoadItems_Click";
+            string method = "BtnLoadItems_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -213,11 +210,13 @@ namespace SweetSpotDiscountGolfPOS
                         else
                         {
                             //Calls method to import the requested file
+#pragma warning disable IDE0067 // Dispose objects before losing scope
                             DataTable errors = new DataTable();
-                            //errors.Columns.Add("sku");
-                            //errors.Columns.Add("brandError");
-                            //errors.Columns.Add("modelError");
-                            //errors.Columns.Add("identifierError");
+#pragma warning restore IDE0067 // Dispose objects before losing scope
+                               //errors.Columns.Add("sku");
+                               //errors.Columns.Add("brandError");
+                               //errors.Columns.Add("modelError");
+                               //errors.Columns.Add("identifierError");
                             errors = R.CallUploadItems(fupItemSheet, CU, objPageDetails);
                             if (errors.Rows.Count != 0)
                             {
@@ -306,10 +305,10 @@ namespace SweetSpotDiscountGolfPOS
         }
 
         //Exporting
-        protected void btnExportAll_Click(object sender, EventArgs e)
+        protected void BtnExportAll_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnExportAll_Click";
+            string method = "BtnExportAll_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -333,10 +332,10 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnExportClubs_Click(object sender, EventArgs e)
+        protected void BtnExportClubs_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnExportClubs_Click";
+            string method = "BtnExportClubs_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -360,10 +359,10 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnExportClothing_Click(object sender, EventArgs e)
+        protected void BtnExportClothing_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnExportClothing_Click";
+            string method = "BtnExportClothing_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -387,10 +386,10 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnExportAccessories_Click(object sender, EventArgs e)
+        protected void BtnExportAccessories_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnExportAccessories_Click";
+            string method = "BtnExportAccessories_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -414,11 +413,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnExportInvoices_Click(object sender, EventArgs e)
+        protected void BtnExportInvoices_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnExportInvoices_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnExportInvoices_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Sets up database connection
@@ -530,14 +529,14 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void ddlProvince_SelectedIndexChanged(object sender, EventArgs e)
+        protected void DdlProvince_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string method = "ddlProvince_SelectedIndexChanged";
+            string method = "DdlProvince_SelectedIndexChanged";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                ddlTax.DataSource = TM.GatherTaxListFromDateAndProvince(Convert.ToInt32(ddlProvince.SelectedValue), Convert.ToDateTime(lblCurrentDate.Text), objPageDetails);
-                ddlTax.DataBind();
+                DdlTax.DataSource = TM.GatherTaxListFromDateAndProvince(Convert.ToInt32(DdlProvince.SelectedValue), Convert.ToDateTime(lblCurrentDate.Text), objPageDetails);
+                DdlTax.DataBind();
             }
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
@@ -550,16 +549,16 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void ddlTax_SelectedIndexChanged(object sender, EventArgs e)
+        protected void DdlTax_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string method = "ddlTax_SelectedIndexChanged";
+            string method = "DdlTax_SelectedIndexChanged";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                List<Tax> taxes = TM.ReturnTaxListBasedOnDate(Convert.ToDateTime(lblCurrentDate.Text), Convert.ToInt32(ddlProvince.SelectedValue), objPageDetails);
+                List<Tax> taxes = TM.ReturnTaxListBasedOnDate(Convert.ToDateTime(lblCurrentDate.Text), Convert.ToInt32(DdlProvince.SelectedValue), objPageDetails);
                 foreach (var tax in taxes)
                 {
-                    if (tax.intTaxID == Convert.ToInt32(ddlTax.SelectedValue))
+                    if (tax.intTaxID == Convert.ToInt32(DdlTax.SelectedValue))
                     {
                         lblCurrentDisplay.Text = tax.fltTaxRate.ToString("#0.00");
                     }
@@ -577,13 +576,13 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnSaveTheTax_Click(object sender, EventArgs e)
+        protected void BtnSaveTheTax_Click(object sender, EventArgs e)
         {
-            string method = "btnSaveTheTax_Click";
+            string method = "BtnSaveTheTax_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                TM.CallInsertNewTaxRate(Convert.ToInt32(ddlProvince.SelectedValue), Convert.ToInt32(ddlTax.SelectedValue), Convert.ToDateTime(txtDate.Text), Convert.ToDouble(txtNewRate.Text), objPageDetails);
+                TM.CallInsertNewTaxRate(Convert.ToInt32(DdlProvince.SelectedValue), Convert.ToInt32(DdlTax.SelectedValue), Convert.ToDateTime(txtDate.Text), Convert.ToDouble(txtNewRate.Text), objPageDetails);
                 txtDate.Text = "";
                 txtNewRate.Text = "";
             }
@@ -600,10 +599,10 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
 
-        public void callJS()
+        public void CallJS()
         {
-            string method = "callJS";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "CallJS";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 Page.ClientScript.RegisterStartupScript(GetType(), "upl", "UpdateProgressLabel();", true);
@@ -620,10 +619,10 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnExportEmails_Click(object sender, EventArgs e)
+        protected void BtnExportEmails_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnExportEmails_Click";
+            string method = "BtnExportEmails_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -674,10 +673,10 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
 
-        protected void btnAddModel_Click(object sender, EventArgs e)
+        protected void BtnAddModel_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnAddModel_Click";
+            string method = "BtnAddModel_Click";
             string strQueryName = "btnAddModel_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
@@ -720,10 +719,10 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnAddBrand_Click(object sender, EventArgs e)
+        protected void BtnAddBrand_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnAddBrand_Click";
+            string method = "BtnAddBrand_Click";
             string strQueryName = "btnAddBrand_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try

@@ -16,13 +16,13 @@
                         <asp:Label ID="lblFirstName" runat="server" Text="First Name:" />
                     </asp:TableCell>
                     <asp:TableCell Width="25%">
-                        <asp:TextBox ID="txtFirstName" runat="server" AutoComplete="off" ValidateRequestMode="Enabled" ViewStateMode="Enabled" Enabled="false" />
+                        <asp:TextBox ID="txtFirstName" runat="server" AutoCompleteType="Disabled" ValidateRequestMode="Enabled" ViewStateMode="Enabled" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell Width="25%">
                         <asp:Label ID="lblLastName" runat="server" Text="Last Name:" />
                     </asp:TableCell>
                     <asp:TableCell Width="25%">
-                        <asp:TextBox ID="txtLastName" runat="server" AutoComplete="off" ValidateRequestMode="Enabled" ViewStateMode="Enabled" Enabled="false" />
+                        <asp:TextBox ID="txtLastName" runat="server" AutoCompleteType="Disabled" ValidateRequestMode="Enabled" ViewStateMode="Enabled" Enabled="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -30,13 +30,13 @@
                         <asp:Label ID="lblPrimaryPhoneNumber" runat="server" Text="Primary Phone Number:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtPrimaryPhoneNumber" runat="server" AutoComplete="off" ValidateRequestMode="Enabled" Enabled="false" />
+                        <asp:TextBox ID="txtPrimaryPhoneNumber" runat="server" AutoCompleteType="Disabled" ValidateRequestMode="Enabled" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblSecondaryPhoneNumber" runat="server" Text="Secondary Phone Number:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtSecondaryPhoneNumber" runat="server" AutoComplete="off" ValidateRequestMode="Enabled" Enabled="false" />
+                        <asp:TextBox ID="txtSecondaryPhoneNumber" runat="server" AutoCompleteType="Disabled" ValidateRequestMode="Enabled" Enabled="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -56,7 +56,7 @@
                         <asp:Label ID="lblEmail" runat="server" Text="Email:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtEmail" runat="server" AutoComplete="off" Enabled="false" />
+                        <asp:TextBox ID="txtEmail" runat="server" AutoCompleteType="Disabled" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                     </asp:TableCell>
@@ -74,13 +74,13 @@
                         <asp:Label ID="lblPrimaryAddress" runat="server" Text="Primary Address:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtPrimaryAddress" runat="server" AutoComplete="off" Enabled="false" />
+                        <asp:TextBox ID="txtPrimaryAddress" runat="server" AutoCompleteType="Disabled" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblSecondaryAddress" runat="server" Text="Secondary Address:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtSecondaryAddress" runat="server" AutoComplete="off" Enabled="false" />
+                        <asp:TextBox ID="txtSecondaryAddress" runat="server" AutoCompleteType="Disabled" Enabled="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -96,13 +96,13 @@
                         <asp:Label ID="lblCity" runat="server" Text="City:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtCity" runat="server" AutoComplete="off" Enabled="false" />
+                        <asp:TextBox ID="txtCity" runat="server" AutoCompleteType="Disabled" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblPostalCode" runat="server" Text="PostalCode:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtPostalCode" runat="server" AutoComplete="off" Enabled="false" />
+                        <asp:TextBox ID="txtPostalCode" runat="server" AutoCompleteType="Disabled" Enabled="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>

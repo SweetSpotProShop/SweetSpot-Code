@@ -1,9 +1,7 @@
 ﻿using OfficeOpenXml;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.UI;
@@ -16,11 +14,11 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsCashOut : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        LocationManager LM = new LocationManager();
-        Reports R = new Reports();
-        CurrentUser CU;
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly LocationManager LM = new LocationManager();
+        readonly Reports R = new Reports();
         DataTable dt = new DataTable();
+        CurrentUser CU;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -48,8 +46,8 @@ namespace SweetSpotDiscountGolfPOS
                         DateTime endDate = reportDates[1];
                         lblDates.Text = "Cashout report for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
                         dt = R.CallReturnCashoutsForSelectedDates(passing, objPageDetails);
-                        grdCashoutByDate.DataSource = dt;
-                        grdCashoutByDate.DataBind();
+                        GrdCashoutByDate.DataSource = dt;
+                        GrdCashoutByDate.DataBind();
                     }
                 }
             }
@@ -65,10 +63,10 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnDownload_Click(object sender, EventArgs e)
+        protected void BtnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnDownload_Click";
+            string method = "BtnDownload_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -161,7 +159,7 @@ namespace SweetSpotDiscountGolfPOS
                         //Autofit columns
                         salesExport.Cells[2, 1, recordIndex + 1, 11].AutoFitColumns();
                         //Incrementng the row
-                        recordIndex = recordIndex + 2;
+                        recordIndex += 2;
                     }
                     Response.Clear();
                     Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
@@ -182,10 +180,10 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void grdCashoutByDate_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void GrdCashoutByDate_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "grdCashoutByDate_RowCommand";
+            string method = "GrdCashoutByDate_RowCommand";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -207,8 +205,8 @@ namespace SweetSpotDiscountGolfPOS
                     DateTime endDate = reportDates[1];
                     int locationID = Convert.ToInt32(passing[1]);
                     dt = R.CallReturnCashoutsForSelectedDates(passing, objPageDetails);
-                    grdCashoutByDate.DataSource = dt;
-                    grdCashoutByDate.DataBind();
+                    GrdCashoutByDate.DataSource = dt;
+                    GrdCashoutByDate.DataBind();
                 }
             }
             //Exception catch
@@ -223,11 +221,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void grdCashoutByDate_RowDataBound(object sender, GridViewRowEventArgs e)
+        protected void GrdCashoutByDate_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "grdCashoutByDate_RowDataBound";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "GrdCashoutByDate_RowDataBound";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)

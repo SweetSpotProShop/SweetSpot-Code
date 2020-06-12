@@ -151,7 +151,7 @@
                 <%--added a cssclass here for testing--%>
                 <asp:Button ID="btnPrint" CssClass="noPrint" runat="server" Text="Print" Width="100px" OnClientClick="printReport()" />
                 <br />
-                <asp:Button ID="btnHome" runat="server" Text="Home" Width="100px" OnClick="btnHome_Click" />
+                <asp:Button ID="BtnHome" runat="server" Text="Home" Width="100px" OnClick="BtnHome_Click" />
                 <br />
             </div>
         </div>

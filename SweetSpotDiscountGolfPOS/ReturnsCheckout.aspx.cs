@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Web;
 using System.Web.UI;
@@ -359,19 +358,19 @@ namespace SweetSpotDiscountGolfPOS
             {
                 if (rb >= -.001 && rb <= 0.001)
                 {
-                    mopCash.Enabled = false;
-                    mopDebit.Enabled = false;
-                    mopGiftCard.Enabled = false;
-                    mopMasterCard.Enabled = false;
-                    mopVisa.Enabled = false;
+                    MopCash.Enabled = false;
+                    MopDebit.Enabled = false;
+                    MopGiftCard.Enabled = false;
+                    MopMasterCard.Enabled = false;
+                    MopVisa.Enabled = false;
                 }
                 else
                 {
-                    mopCash.Enabled = true;
-                    mopDebit.Enabled = true;
-                    mopGiftCard.Enabled = true;
-                    mopMasterCard.Enabled = true;
-                    mopVisa.Enabled = true;
+                    MopCash.Enabled = true;
+                    MopDebit.Enabled = true;
+                    MopGiftCard.Enabled = true;
+                    MopMasterCard.Enabled = true;
+                    MopVisa.Enabled = true;
                 }
             }
             //Exception catch

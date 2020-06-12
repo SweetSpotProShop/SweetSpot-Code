@@ -1,11 +1,8 @@
 ﻿using OfficeOpenXml;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using SweetSpotDiscountGolfPOS.FP;
@@ -16,11 +13,11 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsPaymentType : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly LocationManager LM = new LocationManager();
+        readonly Reports R = new Reports();
         CurrentUser CU;
-        Reports R = new Reports();
-        LocationManager LM = new LocationManager();
-      
+
         double salesCash;
         double salesDebit;
         double salesGiftCard;
@@ -61,8 +58,8 @@ namespace SweetSpotDiscountGolfPOS
                         lblDates.Text = "Items sold on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
                     }
                     dt = R.CallReturnSalesByPaymentTypeForSelectedDate(passing, objPageDetails);
-                    grdSalesByDate.DataSource = dt;
-                    grdSalesByDate.DataBind();
+                    GrdSalesByDate.DataSource = dt;
+                    GrdSalesByDate.DataBind();
                 }
             }
             //Exception catch
@@ -77,10 +74,10 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void grdSalesByDate_RowDataBound(object sender, GridViewRowEventArgs e)
+        protected void GrdSalesByDate_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            string method = "grdSalesByDate_RowDataBound";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "GrdSalesByDate_RowDataBound";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
@@ -112,10 +109,10 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnDownload_Click(object sender, EventArgs e)
+        protected void BtnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnDownload_Click";
+            string method = "BtnDownload_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {

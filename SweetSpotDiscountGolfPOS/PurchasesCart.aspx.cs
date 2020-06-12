@@ -11,13 +11,13 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class PurchasesCart : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly CustomerManager CM = new CustomerManager();
+        readonly InvoiceItemsManager IIM = new InvoiceItemsManager();
+        readonly InvoiceManager IM = new InvoiceManager();
+        readonly ItemsManager ItM = new ItemsManager();
+        //LocationManager LM = new LocationManager();
         CurrentUser CU;
-        CustomerManager CM = new CustomerManager();
-        InvoiceItemsManager IIM = new InvoiceItemsManager();
-        InvoiceManager IM = new InvoiceManager();
-        LocationManager LM = new LocationManager();
-        ItemsManager ItM = new ItemsManager();
         //private static Invoice receipt;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -83,29 +83,29 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnCustomerSelect_Click(object sender, EventArgs e)
+        protected void BtnCustomerSelect_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnCustomerSelect_Click";
+            string method = "BtnCustomerSelect_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                if (btnCustomerSelect.Text == "Cancel")
+                if (BtnCustomerSelect.Text == "Cancel")
                 {
-                    btnCustomerSelect.Text = "Change Customer";
-                    grdCustomersSearched.Visible = false;
+                    BtnCustomerSelect.Text = "Change Customer";
+                    GrdCustomersSearched.Visible = false;
                     Customer C = CM.CallReturnCustomer(Convert.ToInt32(Request.QueryString["customer"].ToString()), objPageDetails)[0];
                     //Set name in text box
                     txtCustomer.Text = C.varFirstName + " " + C.varLastName;
                 }
                 else
                 {
-                    grdCustomersSearched.Visible = true;
-                    grdCustomersSearched.DataSource = CM.CallReturnCustomerBasedOnText(txtCustomer.Text, objPageDetails);
-                    grdCustomersSearched.DataBind();
-                    if (grdCustomersSearched.Rows.Count > 0)
+                    GrdCustomersSearched.Visible = true;
+                    GrdCustomersSearched.DataSource = CM.CallReturnCustomerBasedOnText(txtCustomer.Text, objPageDetails);
+                    GrdCustomersSearched.DataBind();
+                    if (GrdCustomersSearched.Rows.Count > 0)
                     {
-                        btnCustomerSelect.Text = "Cancel";
+                        BtnCustomerSelect.Text = "Cancel";
                     }
                 }
             }
@@ -121,23 +121,23 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnAddCustomer_Click(object sender, EventArgs e)
+        protected void BtnAddCustomer_Click(object sender, EventArgs e)
         {
-            string method = "btnAddCustomer_Click";
+            string method = "BtnAddCustomer_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 Invoice receipt = IM.CallReturnCurrentPurchaseInvoice(Convert.ToInt32(Request.QueryString["receipt"]), CU.location.intProvinceID, objPageDetails)[0];
                 Customer C = new Customer
                 {
-                    varFirstName = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtFirstName")).Text,
-                    varLastName = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtLastName")).Text,
+                    varFirstName = ((TextBox)GrdCustomersSearched.FooterRow.FindControl("txtFirstName")).Text,
+                    varLastName = ((TextBox)GrdCustomersSearched.FooterRow.FindControl("txtLastName")).Text,
                     varAddress = "",
                     secondaryAddress = "",
-                    varContactNumber = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtPhoneNumber")).Text,
+                    varContactNumber = ((TextBox)GrdCustomersSearched.FooterRow.FindControl("txtPhoneNumber")).Text,
                     secondaryPhoneNumber = "",
-                    bitSendMarketing = ((CheckBox)grdCustomersSearched.FooterRow.FindControl("chkMarketingEnrollment")).Checked,
-                    varEmailAddress = ((TextBox)grdCustomersSearched.FooterRow.FindControl("txtEmail")).Text,
+                    bitSendMarketing = ((CheckBox)GrdCustomersSearched.FooterRow.FindControl("chkMarketingEnrollment")).Checked,
+                    varEmailAddress = ((TextBox)GrdCustomersSearched.FooterRow.FindControl("txtEmail")).Text,
                     varCityName = "",
                     intProvinceID = CU.location.intProvinceID,
                     intCountryID = CU.location.intCountryID,
@@ -163,16 +163,16 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void grdCustomersSearched_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        protected void GrdCustomersSearched_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
-            string method = "grdCustomersSearched_PageIndexChanging";
+            string method = "GrdCustomersSearched_PageIndexChanging";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                grdCustomersSearched.PageIndex = e.NewPageIndex;
-                grdCustomersSearched.Visible = true;
-                grdCustomersSearched.DataSource = CM.CallReturnCustomerBasedOnText(txtCustomer.Text, objPageDetails);
-                grdCustomersSearched.DataBind();
+                GrdCustomersSearched.PageIndex = e.NewPageIndex;
+                GrdCustomersSearched.Visible = true;
+                GrdCustomersSearched.DataSource = CM.CallReturnCustomerBasedOnText(txtCustomer.Text, objPageDetails);
+                GrdCustomersSearched.DataBind();
             }
             //Exception catch
             catch (ThreadAbortException) { }
@@ -186,10 +186,10 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void grdCustomersSearched_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void GrdCustomersSearched_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "grdCustomersSearched_RowCommand";
+            string method = "GrdCustomersSearched_RowCommand";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -206,7 +206,7 @@ namespace SweetSpotDiscountGolfPOS
                     nameValues.Set("receipt", receipt.intInvoiceID.ToString());
                     Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
                 }
-                btnCustomerSelect.Text = "Change Customer";
+                BtnCustomerSelect.Text = "Change Customer";
             }
             //Exception catch
             catch (ThreadAbortException) { }
@@ -221,10 +221,10 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
 
-        protected void btnAddPurchase_Click(object sender, EventArgs e)
+        protected void BtnAddPurchase_Click(object sender, EventArgs e)
         {
             //Collects current method error tracking
-            string method = "btnAddPurchase_Click";
+            string method = "BtnAddPurchase_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -356,10 +356,10 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnCancelPurchase_Click(object sender, EventArgs e)
+        protected void BtnCancelPurchase_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnCancelSale_Click";
+            string method = "BtnCancelSale_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -379,11 +379,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnProceedToPayOut_Click(object sender, EventArgs e)
+        protected void BtnProceedToPayOut_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnProceedToCheckout_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnProceedToCheckout_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());

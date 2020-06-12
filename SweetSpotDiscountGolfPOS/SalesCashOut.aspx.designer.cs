@@ -355,22 +355,22 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.TextBox txtVisa;
         
         /// <summary>
-        /// btnCalculate control.
+        /// BtnCalculate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCalculate;
+        protected global::System.Web.UI.WebControls.Button BtnCalculate;
         
         /// <summary>
-        /// btnClear control.
+        /// BtnClear control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnClear;
+        protected global::System.Web.UI.WebControls.Button BtnClear;
         
         /// <summary>
         /// tblSumm control.
@@ -418,13 +418,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblOverShortFinal;
         
         /// <summary>
-        /// btnProcessReport control.
+        /// BtnProcessReport control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnProcessReport;
+        protected global::System.Web.UI.WebControls.Button BtnProcessReport;
         
         /// <summary>
         /// btnPrint control.

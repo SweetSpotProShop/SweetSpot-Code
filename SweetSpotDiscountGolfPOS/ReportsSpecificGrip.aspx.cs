@@ -1,11 +1,5 @@
-﻿using OfficeOpenXml;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.Linq;
+﻿using System;
 using System.Threading;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using SweetSpotDiscountGolfPOS.FP;
@@ -16,8 +10,8 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsSpecificGrip : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        Reports R = new Reports();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly Reports R = new Reports();
         CurrentUser CU;
 
         double pmCost;
@@ -48,8 +42,8 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     if (startDate == endDate) { lblDates.Text = "Grips Sold through: " + startDate.ToString("dd/MMM/yy"); }
                     else { lblDates.Text = "Grips sold through: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy"); }
-                    grdStats.DataSource = R.CallReturnSpecificGripDataTableForReport(startDate, endDate, objPageDetails);
-                    grdStats.DataBind();
+                    GrdStats.DataSource = R.CallReturnSpecificGripDataTableForReport(startDate, endDate, objPageDetails);
+                    GrdStats.DataBind();
                 }
             }
             //Exception catch
@@ -64,11 +58,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void grdStats_RowDataBound(object sender, GridViewRowEventArgs e)
+        protected void GrdStats_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             //Collects current method for error tracking
-            string method = "grdStats_RowDataBound";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "GrdStats_RowDataBound";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
@@ -98,11 +92,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnDownload_Click(object sender, EventArgs e)
+        protected void BtnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnDownload_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnDownload_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 MessageBox.ShowMessage("Download for this report is currently not available.", this);

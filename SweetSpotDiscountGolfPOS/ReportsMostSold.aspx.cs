@@ -1,13 +1,8 @@
 ﻿using OfficeOpenXml;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using SweetSpotDiscountGolfPOS.FP;
 using SweetSpotDiscountGolfPOS.OB;
 using SweetSpotDiscountGolfPOS.Misc;
@@ -16,10 +11,10 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsMSI : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly LocationManager LM = new LocationManager();
+        readonly Reports R = new Reports();
         CurrentUser CU;
-        Reports R = new Reports();
-        LocationManager LM = new LocationManager();
 
         DataTable items = new DataTable();
         DataTable models = new DataTable();
@@ -81,10 +76,10 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnDownload_Click(object sender, EventArgs e)
+        protected void BtnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnDownload_Click";
+            string method = "BtnDownload_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {

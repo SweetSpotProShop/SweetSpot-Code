@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Configuration;
-using System.Data.SqlClient;
 using System.Threading;
 using SweetSpotDiscountGolfPOS.FP;
 using SweetSpotDiscountGolfPOS.OB;
@@ -39,10 +34,10 @@ namespace SweetSpotDiscountGolfPOS
                     CU = (CurrentUser)Session["currentUser"];
                     if (!IsPostBack)
                     {
-                        calSearchDate.SelectedDate = DateTime.Today;
+                        CalSearchDate.SelectedDate = DateTime.Today;
                         //Binds invoice list to the grid view
-                        grdCurrentOpenSales.DataSource = IM.CallReturnCurrentOpenInvoices(CU.location.intLocationID, CU.location.intProvinceID, objPageDetails);
-                        grdCurrentOpenSales.DataBind();
+                        GrdCurrentOpenSales.DataSource = IM.CallReturnCurrentOpenInvoices(CU.location.intLocationID, CU.location.intProvinceID, objPageDetails);
+                        GrdCurrentOpenSales.DataBind();
                     }
                 }
             }
@@ -136,13 +131,13 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 Reports R = new Reports();
-                int indicator = R.VerifyCashoutCanBeProcessed(CU.location.intLocationID, calSearchDate.SelectedDate, objPageDetails);
+                int indicator = R.VerifyCashoutCanBeProcessed(CU.location.intLocationID, CalSearchDate.SelectedDate, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
                 {
-                    R.RemoveUnprocessedReturns(CU.location.intLocationID, calSearchDate.SelectedDate, objPageDetails);
+                    R.RemoveUnprocessedReturns(CU.location.intLocationID, CalSearchDate.SelectedDate, objPageDetails);
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                    nameValues.Set("selectedDate", calSearchDate.SelectedDate.ToShortDateString());
+                    nameValues.Set("selectedDate", CalSearchDate.SelectedDate.ToShortDateString());
                     nameValues.Set("location", CU.location.intLocationID.ToString());
                     //Changes to the Reports Cash Out page
                     Response.Redirect("SalesCashOut.aspx?" + nameValues, false);
@@ -182,13 +177,12 @@ namespace SweetSpotDiscountGolfPOS
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 //Still need to get the cust on the Invoice
                 int index = ((GridViewRow)(((LinkButton)e.CommandSource).NamingContainer)).RowIndex;
-                nameValues.Set("customer", ((Label)grdCurrentOpenSales.Rows[index].Cells[11].FindControl("lblCustID")).Text);
+                nameValues.Set("customer", ((Label)GrdCurrentOpenSales.Rows[index].Cells[11].FindControl("lblCustID")).Text);
                 int invoiceID = Convert.ToInt32(e.CommandArgument);
                 nameValues.Set("invoice", invoiceID.ToString());
                 Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
                 //Changes page to Sales Cart
                 Response.Redirect("SalesCart.aspx?" + nameValues, false);
-
             }
             //Exception catch
             catch (ThreadAbortException tae) { }

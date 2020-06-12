@@ -37,8 +37,8 @@
             <hr />
             <asp:Label ID="lblReportDate" runat="server" Font-Bold="true" Text="Date" />
             <hr />
-            <asp:GridView ID="grdInvoiceDisplay" runat="server" AutoGenerateColumns="false" Width="100%" ShowFooter="true" 
-				RowStyle-HorizontalAlign="Center" OnRowDataBound="grdInvoiceDisplay_RowDataBound">
+            <asp:GridView ID="GrdInvoiceDisplay" runat="server" AutoGenerateColumns="false" Width="100%" ShowFooter="true" 
+				RowStyle-HorizontalAlign="Center" OnRowDataBound="GrdInvoiceDisplay_RowDataBound">
                 <Columns>
                     <asp:TemplateField HeaderText="Invoice Number" HeaderStyle-Width="18%">
                         <ItemTemplate>
@@ -81,10 +81,10 @@
         <asp:Table runat="server">
             <asp:TableRow>
                 <asp:TableCell>
-                    <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('print');" />
+                    <asp:Button CssClass="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('print');" />
                 </asp:TableCell>
                 <asp:TableCell>
-                    <asp:Button class="noPrint" ID="btnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="btnDownload_Click" />
+                    <asp:Button CssClass="noPrint" ID="BtnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="BtnDownload_Click" />
                 </asp:TableCell>
             </asp:TableRow>
         </asp:Table>

@@ -35,8 +35,8 @@ namespace SweetSpotDiscountGolfPOS
                     if (!IsPostBack)
                     {
                         //Sets the calendar and text boxes start and end dates
-                        calStartDate.SelectedDate = DateTime.Today;
-                        calEndDate.SelectedDate = DateTime.Today;
+                        CalStartDate.SelectedDate = DateTime.Today;
+                        CalEndDate.SelectedDate = DateTime.Today;
                         ddlLocation.DataSource = LM.CallReturnLocationDropDown(objPageDetails);
                         ddlLocation.DataBind();
                         ddlLocation.SelectedValue = CU.location.intLocationID.ToString();
@@ -48,7 +48,7 @@ namespace SweetSpotDiscountGolfPOS
                         lblReport.Visible = true;
                         lblReport.ForeColor = System.Drawing.Color.Red;
                         //Disables buttons
-                        btnCashOutReport.Visible = false;
+                        BtnCashOutReport.Visible = false;
                         pnlDefaultButton.Visible = false;
                     }
                 }
@@ -476,15 +476,15 @@ namespace SweetSpotDiscountGolfPOS
         {
             if (ddlDatePeriod.SelectedItem.Text.Equals("Month"))
             {
-                return new DateTime[2] { calStartDate.SelectedDate.GetMonthStart(), calEndDate.SelectedDate.GetMonthEnd() };
+                return new DateTime[2] { CalStartDate.SelectedDate.GetMonthStart(), CalEndDate.SelectedDate.GetMonthEnd() };
             }
             else if (ddlDatePeriod.SelectedItem.Text.Equals("Week"))
             {
-                return new DateTime[2] { calStartDate.SelectedDate.GetWeekStart(), calEndDate.SelectedDate.GetWeekEnd() };
+                return new DateTime[2] { CalStartDate.SelectedDate.GetWeekStart(), CalEndDate.SelectedDate.GetWeekEnd() };
             }
             else
             {
-                return new DateTime[2] { calStartDate.SelectedDate, calEndDate.SelectedDate };
+                return new DateTime[2] { CalStartDate.SelectedDate, CalEndDate.SelectedDate };
             }
         }
     }

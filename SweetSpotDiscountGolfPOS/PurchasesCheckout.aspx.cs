@@ -11,8 +11,8 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class PurchasesCheckout : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        InvoiceManager IM = new InvoiceManager();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly InvoiceManager IM = new InvoiceManager();
         CurrentUser CU;
         //private static Invoice receipt;
 
@@ -21,7 +21,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "PurchasesCheckout.aspx";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -52,18 +52,18 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
         //Cash
-        protected void mopCash_Click(object sender, EventArgs e)
+        protected void MopCash_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "mopCash_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "MopCash_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Checks that string is not empty
                 if (txtPurchaseAmount.Text != "")
                 {
                     //Calls procedure to add it to a grid view
-                    populateGridviewMOP(Convert.ToDouble(txtPurchaseAmount.Text), 5, 0);
+                    PopulateGridviewMOP(Convert.ToDouble(txtPurchaseAmount.Text), 5, 0);
                 }
             }
             //Exception catch
@@ -79,18 +79,18 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
         //Cheque
-        protected void mopCheque_Click(object sender, EventArgs e)
+        protected void MopCheque_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "mopCheque_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "MopCheque_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Checks that string is not empty
                 if (txtPurchaseAmount.Text != "")
                 {
                     //Calls procedure to add it to a grid view
-                    populateGridviewMOP(Convert.ToDouble(txtPurchaseAmount.Text), 8, Convert.ToInt32(txtChequeNumber.Text));
+                    PopulateGridviewMOP(Convert.ToDouble(txtPurchaseAmount.Text), 8, Convert.ToInt32(txtChequeNumber.Text));
                     txtChequeNumber.Text = "0000";
                 }
             }
@@ -107,18 +107,18 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
         //Debit
-        protected void mopDebit_Click(object sender, EventArgs e)
+        protected void MopDebit_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "mopDebit_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "MopDebit_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Checks that string is not empty
                 if (txtPurchaseAmount.Text != "")
                 {
                     //Calls procedure to add it to a grid view
-                    populateGridviewMOP(Convert.ToDouble(txtPurchaseAmount.Text), 7, 0);
+                    PopulateGridviewMOP(Convert.ToDouble(txtPurchaseAmount.Text), 7, 0);
                 }
             }
             //Exception catch
@@ -134,18 +134,18 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
         //Gift Card
-        protected void mopGiftCard_Click(object sender, EventArgs e)
+        protected void MopGiftCard_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "mopGiftCard_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "MopGiftCard_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Checks that string is not empty
                 if (txtPurchaseAmount.Text != "")
                 {
                     //Calls procedure to add it to a grid view
-                    populateGridviewMOP(Convert.ToDouble(txtPurchaseAmount.Text), 6, 0);
+                    PopulateGridviewMOP(Convert.ToDouble(txtPurchaseAmount.Text), 6, 0);
                 }
             }
             //Exception catch
@@ -161,23 +161,25 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
         //Populating gridview with MOPs
-        protected void populateGridviewMOP(double amountPaid, int paymentID, int chequeNumber)
+        protected void PopulateGridviewMOP(double amountPaid, int paymentID, int chequeNumber)
         {
             //Collects current method for error tracking
-            string method = "populateGridviewMOP";
+            string method = "PopulateGridviewMOP";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (amountPaid > 0)
                 {
-                    amountPaid = amountPaid * -1;
+                    amountPaid *= -1;
                 }
                 InvoiceMOPsManager IMM = new InvoiceMOPsManager();
-                InvoiceMOPs payment = new InvoiceMOPs();
-                payment.intInvoiceID = Convert.ToInt32(Request.QueryString["receipt"]);
-                payment.fltAmountPaid = amountPaid;
-                payment.intPaymentID = paymentID;
-                payment.intChequeNumber = chequeNumber;
+                InvoiceMOPs payment = new InvoiceMOPs
+                {
+                    intInvoiceID = Convert.ToInt32(Request.QueryString["receipt"]),
+                    fltAmountPaid = amountPaid,
+                    intPaymentID = paymentID,
+                    intChequeNumber = chequeNumber
+                };
                 IMM.CallAddNewMopToReceiptList(payment, objPageDetails);
                 //Center the mop grid view
                 UpdatePageTotals();
@@ -243,7 +245,7 @@ namespace SweetSpotDiscountGolfPOS
                 lblRemainingPurchaseDueDisplay.Text = "$ " + (receipt.fltBalanceDue - dblAmountPaid).ToString("#0.00");
                 //Updates the amount paying with the remaining balance
                 txtPurchaseAmount.Text = (receipt.fltBalanceDue - dblAmountPaid).ToString("#0.00");
-                buttonDisable(receipt.fltBalanceDue - dblAmountPaid);
+                ButtonDisable(receipt.fltBalanceDue - dblAmountPaid);
             }
             //Exception catch
             catch (ThreadAbortException) { }
@@ -257,9 +259,9 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        private void buttonDisable(double rb)
+        private void ButtonDisable(double rb)
         {
-            string method = "buttonDisable";
+            string method = "ButtonDisable";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -267,23 +269,23 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     if (IM.CallVerifyPurchaseMOPHasBeenAdded(Convert.ToInt32(Request.QueryString["receipt"].ToString()), objPageDetails))
                     {
-                        mopCash.Enabled = false;
+                        MopCash.Enabled = false;
                     }
                     else
                     {
                         MessageBox.ShowMessage("At least one method of payment "
                             + "is required even for a $0.00 sale.", this);
                     }
-                    mopDebit.Enabled = false;
-                    mopGiftCard.Enabled = false;
-                    mopCheque.Enabled = false;
+                    MopDebit.Enabled = false;
+                    MopGiftCard.Enabled = false;
+                    MopCheque.Enabled = false;
                 }
                 else
                 {
-                    mopCash.Enabled = true;
-                    mopDebit.Enabled = true;
-                    mopGiftCard.Enabled = true;
-                    mopCheque.Enabled = true;
+                    MopCash.Enabled = true;
+                    MopDebit.Enabled = true;
+                    MopGiftCard.Enabled = true;
+                    MopCheque.Enabled = true;
                 }
             }
             //Exception catch
@@ -299,10 +301,10 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
         //Other functionality
-        protected void btnCancelPurchase_Click(object sender, EventArgs e)
+        protected void BtnCancelPurchase_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnCancelPurchase_Click";
+            string method = "BtnCancelPurchase_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -322,11 +324,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnReturnToPurchaseCart_Click(object sender, EventArgs e)
+        protected void BtnReturnToPurchaseCart_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnReturnToPurchaseCart_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnReturnToPurchaseCart_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
@@ -346,10 +348,10 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnFinalizePurchase_Click(object sender, EventArgs e)
+        protected void BtnFinalizePurchase_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnFinalizePurchase_Click";
+            string method = "BtnFinalizePurchase_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {

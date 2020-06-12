@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
 using System.Threading;
-using System.Web;
-using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using SweetSpotDiscountGolfPOS.FP;
@@ -17,9 +11,9 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class HomePage : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        LocationManager LM = new LocationManager();
-        Reports R = new Reports();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly LocationManager LM = new LocationManager();
+        readonly Reports R = new Reports();
         CurrentUser CU;
 
         int totalSales = 0;
@@ -32,7 +26,6 @@ namespace SweetSpotDiscountGolfPOS
         double totalMOPAmount = 0;
         string oldInvoice = string.Empty;
         string newInvoice = string.Empty;
-        int currentRow = 0;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -64,9 +57,9 @@ namespace SweetSpotDiscountGolfPOS
                         ddlLocation.Enabled = true;
                     }
                     //populate gridview with todays sales
-                    grdSameDaySales.DataSource = R.CallGetInvoiceBySaleDate(DateTime.Today, DateTime.Today, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
-                    grdSameDaySales.DataBind();
-                    MergeRows(grdSameDaySales);
+                    GrdSameDaySales.DataSource = R.CallGetInvoiceBySaleDate(DateTime.Today, DateTime.Today, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                    GrdSameDaySales.DataBind();
+                    MergeRows(GrdSameDaySales);
                 }
             }
             //Exception catch
@@ -81,13 +74,13 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void grdSameDaySales_RowDataBound(object sender, GridViewRowEventArgs e)
+        protected void GrdSameDaySales_RowDataBound(object sender, GridViewRowEventArgs e)
         {
 
             //Problems with looping 
             //Collects current method for error tracking
-            string method = "grdSameDaySales_RowDataBound";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "GrdSameDaySales_RowDataBound";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             //Current method does nothing
             try
             {
@@ -142,7 +135,6 @@ namespace SweetSpotDiscountGolfPOS
                     e.Row.Cells[8].Text = String.Format("{0:C}", totalBalancePaid);
                     e.Row.Cells[10].Text = String.Format("{0:C}", totalMOPAmount);
                 }
-                currentRow++;
             }            
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -159,7 +151,7 @@ namespace SweetSpotDiscountGolfPOS
         private void MergeRows(GridView gridView)
         {
             string method = "MergeRows";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 for (int rowIndex = gridView.Rows.Count - 2; rowIndex >= 0; rowIndex--)
@@ -198,11 +190,10 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-
-        protected void grdSameDaySales_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void GrdSameDaySales_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method for error tracking
-            string method = "grdSameDaySales_RowCommand";
+            string method = "GrdSameDaySales_RowCommand";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {

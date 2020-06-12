@@ -634,20 +634,26 @@ namespace SweetSpotDiscountGolfPOS.FP
         private InvoiceItems ReturnInvoiceItemForReturnProcess(int invoiceItemID, object[] objPageDetails)
         {
             string strQueryName = "ReturnInvoiceItemForReturnProcess";
-            string sqlCmd = "SELECT I.intInventoryID, CASE WHEN EXISTS(SELECT A.intInventoryID FROM tbl_accessories A WHERE A.intInventoryID = I.intInventoryID) "
-                + "THEN (SELECT A.varSku FROM tbl_accessories A WHERE A.intInventoryID = I.intInventoryID) WHEN EXISTS(SELECT CL.intInventoryID FROM tbl_clothing "
-                + "CL WHERE CL.intInventoryID = I.intInventoryID) THEN (SELECT CL.varSku FROM tbl_clothing CL WHERE CL.intInventoryID = I.intInventoryID) WHEN "
-                + "EXISTS(SELECT C.intInventoryID FROM tbl_clubs C WHERE C.intInventoryID = I.intInventoryID) THEN (SELECT C.varSku FROM tbl_clubs C WHERE "
-                + "C.intInventoryID = I.intInventoryID) WHEN EXISTS(SELECT TI.intTradeInID FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = "
-                + "I.intInventoryID) THEN (SELECT TI.varSku FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = I.intInventoryID) END AS varSku, "
-                + "intItemQuantity, fltItemCost, fltItemPrice, fltItemDiscount, fltItemRefund, bitIsDiscountPercent, varItemDescription, intItemTypeID, "
-                + "bitIsClubTradeIn, CASE WHEN EXISTS(SELECT A.intInventoryID FROM tbl_accessories A WHERE A.intInventoryID = I.intInventoryID) THEN (SELECT "
-                + "A.varAdditionalInformation FROM tbl_accessories A WHERE A.intInventoryID = I.intInventoryID) WHEN EXISTS(SELECT CL.intInventoryID FROM "
-                + "tbl_clothing CL WHERE CL.intInventoryID = I.intInventoryID) THEN (SELECT CL.varAdditionalInformation FROM tbl_clothing CL WHERE "
-                + "CL.intInventoryID = I.intInventoryID) WHEN EXISTS(SELECT C.intInventoryID FROM tbl_clubs C WHERE C.intInventoryID = I.intInventoryID) THEN "
-                + "(SELECT C.varAdditionalInformation FROM tbl_clubs C WHERE C.intInventoryID = I.intInventoryID) WHEN EXISTS(SELECT TI.intTradeInID FROM "
-                + "tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = I.intInventoryID) THEN (SELECT TI.varSku FROM tbl_tempTradeInCartSkus TI WHERE "
-                + "TI.intTradeInID = I.intInventoryID) END AS varAdditionalInformation FROM tbl_invoiceItem I WHERE intInvoiceItemID = @intInvoiceItemID";
+            string sqlCmd = "SELECT I.intInventoryID, CASE WHEN EXISTS(SELECT A.intInventoryID FROM tbl_accessories A WHERE "
+                + "A.intInventoryID = I.intInventoryID) THEN (SELECT A.varSku FROM tbl_accessories A WHERE A.intInventoryID "
+                + "= I.intInventoryID) WHEN EXISTS(SELECT CL.intInventoryID FROM tbl_clothing CL WHERE CL.intInventoryID = "
+                + "I.intInventoryID) THEN (SELECT CL.varSku FROM tbl_clothing CL WHERE CL.intInventoryID = I.intInventoryID) "
+                + "WHEN EXISTS(SELECT C.intInventoryID FROM tbl_clubs C WHERE C.intInventoryID = I.intInventoryID) THEN ("
+                + "SELECT C.varSku FROM tbl_clubs C WHERE C.intInventoryID = I.intInventoryID) WHEN EXISTS(SELECT "
+                + "TI.intTradeInID FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = I.intInventoryID) THEN (SELECT "
+                + "TI.varSku FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = I.intInventoryID) END AS varSku, "
+                + "intItemQuantity, fltItemCost, CASE WHEN bitIsDiscountPercent = 1 THEN fltItemPrice - ((fltItemDiscount / "
+                + "100) * fltItemPrice) ELSE fltItemPrice - fltItemDiscount END AS fltItemPrice, fltItemRefund, "
+                + "bitIsDiscountPercent, varItemDescription, intItemTypeID, bitIsClubTradeIn, CASE WHEN EXISTS(SELECT "
+                + "A.intInventoryID FROM tbl_accessories A WHERE A.intInventoryID = I.intInventoryID) THEN (SELECT "
+                + "A.varAdditionalInformation FROM tbl_accessories A WHERE A.intInventoryID = I.intInventoryID) WHEN EXISTS("
+                + "SELECT CL.intInventoryID FROM tbl_clothing CL WHERE CL.intInventoryID = I.intInventoryID) THEN (SELECT "
+                + "CL.varAdditionalInformation FROM tbl_clothing CL WHERE CL.intInventoryID = I.intInventoryID) WHEN EXISTS("
+                + "SELECT C.intInventoryID FROM tbl_clubs C WHERE C.intInventoryID = I.intInventoryID) THEN (SELECT "
+                + "C.varAdditionalInformation FROM tbl_clubs C WHERE C.intInventoryID = I.intInventoryID) WHEN EXISTS("
+                + "SELECT TI.intTradeInID FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = I.intInventoryID) THEN ("
+                + "SELECT TI.varSku FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = I.intInventoryID) END AS "
+                + "varAdditionalInformation FROM tbl_invoiceItem I WHERE intInvoiceItemID = @intInvoiceItemID";
 
             object[][] parms =
             {

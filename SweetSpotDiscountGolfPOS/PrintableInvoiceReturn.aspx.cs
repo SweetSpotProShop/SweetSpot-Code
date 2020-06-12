@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using SweetSpotDiscountGolfPOS.FP;
 using SweetSpotDiscountGolfPOS.OB;
 using SweetSpotDiscountGolfPOS.Misc;
@@ -13,10 +8,10 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class PrintableInvoiceReturn : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly LocationManager LM = new LocationManager();
+        readonly InvoiceManager IM = new InvoiceManager();
         CurrentUser CU;
-        LocationManager LM = new LocationManager();
-        InvoiceManager IM = new InvoiceManager();
         //private static Invoice invoice;
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -145,11 +140,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnHome_Click(object sender, EventArgs e)
+        protected void BtnHome_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnHome_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnHome_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Change to the Home Page

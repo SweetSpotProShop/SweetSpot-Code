@@ -67,31 +67,31 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.TextBox txtSearch;
         
         /// <summary>
-        /// btnInventorySearch control.
+        /// BtnInventorySearch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnInventorySearch;
+        protected global::System.Web.UI.WebControls.Button BtnInventorySearch;
         
         /// <summary>
-        /// btnAddNewInventory control.
+        /// BtnAddNewInventory control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddNewInventory;
+        protected global::System.Web.UI.WebControls.Button BtnAddNewInventory;
         
         /// <summary>
-        /// btnMakePurchase control.
+        /// BtnMakePurchase control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnMakePurchase;
+        protected global::System.Web.UI.WebControls.Button BtnMakePurchase;
         
         /// <summary>
         /// UpdateProgress1 control.
@@ -103,21 +103,21 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.UpdateProgress UpdateProgress1;
         
         /// <summary>
-        /// grdInventorySearched control.
+        /// GrdInventorySearched control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView grdInventorySearched;
+        protected global::System.Web.UI.WebControls.GridView GrdInventorySearched;
         
         /// <summary>
-        /// btnDownload control.
+        /// BtnDownload control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnDownload;
+        protected global::System.Web.UI.WebControls.Button BtnDownload;
     }
 }

@@ -44,7 +44,7 @@
 		<hr />
 
 		<div>
-			<asp:GridView ID="grdTaxList" runat="server" Width="100%" AutoGenerateColumns="false" ShowFooter="true" OnRowDataBound="grdTaxList_RowDataBound">
+			<asp:GridView ID="GrdTaxList" runat="server" Width="100%" AutoGenerateColumns="false" ShowFooter="true" OnRowDataBound="GrdTaxList_RowDataBound">
 				<Columns>
 					<asp:BoundField HeaderText="Date" HeaderStyle-Width="10%" DataField="dtmInvoiceDate" FooterText="Totals:" DataFormatString="{0:d}" />
 					<asp:BoundField HeaderText="GST Collected" HeaderStyle-Width="10%" DataField="fltGovernmentTaxAmountCollected" DataFormatString="{0:C}" />
@@ -74,8 +74,8 @@
 		<br />
 		<hr />
 	</div>
-	<asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('Taxes');" />
-	<asp:Button class="noPrint" ID="btnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="btnDownload_Click" />
+	<asp:Button CssClass="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('Taxes');" />
+	<asp:Button CssClass="noPrint" ID="BtnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="BtnDownload_Click" />
 	<script>
 		function printReport(printable) {
 			window.print();

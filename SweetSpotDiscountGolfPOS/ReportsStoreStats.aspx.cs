@@ -1,11 +1,8 @@
 ﻿using OfficeOpenXml;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using SweetSpotDiscountGolfPOS.FP;
@@ -66,8 +63,8 @@ namespace SweetSpotDiscountGolfPOS
                     //Binding the gridview
                     DataTable stats = R.CallReturnStoreStats(startDate, endDate, timeFrame, objPageDetails);
 
-                    grdStats.DataSource = stats;
-                    grdStats.DataBind();
+                    GrdStats.DataSource = stats;
+                    GrdStats.DataBind();
                 }
             }
             //Exception catch

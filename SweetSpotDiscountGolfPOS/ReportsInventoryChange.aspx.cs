@@ -1,10 +1,5 @@
-﻿using OfficeOpenXml;
-using System;
-using System.Data;
-using System.IO;
+﻿using System;
 using System.Threading;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using SweetSpotDiscountGolfPOS.FP;
 using SweetSpotDiscountGolfPOS.OB;
 using SweetSpotDiscountGolfPOS.Misc;
@@ -13,8 +8,8 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsInventoryChange : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        Reports R = new Reports();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly Reports R = new Reports();
         CurrentUser CU;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -59,11 +54,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnDownload_Click(object sender, EventArgs e)
+        protected void BtnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnDownload_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnDownload_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 MessageBox.ShowMessage("Download for this report is currently not available.", this);

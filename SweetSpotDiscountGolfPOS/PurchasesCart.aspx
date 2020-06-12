@@ -57,21 +57,21 @@
     <div id="Cart">
         <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnAddPurchase" >
             <asp:Label ID="lblCustomer" runat="server" Text="Customer Name:" />
-            <asp:TextBox ID="txtCustomer" runat="server" AutoComplete="off" />
-            <asp:Button ID="btnCustomerSelect" runat="server" Text="Select Different Customer" OnClick="btnCustomerSelect_Click" CausesValidation="false" />
+            <asp:TextBox ID="txtCustomer" runat="server" AutoCompleteType="Disabled" />
+            <asp:Button ID="BtnCustomerSelect" runat="server" Text="Select Different Customer" OnClick="BtnCustomerSelect_Click" CausesValidation="false" />
             <div>
                 <br />
                 <div>
-                    <asp:GridView ID="grdCustomersSearched" runat="server" AutoGenerateColumns="false" ShowFooter="true" 
-                        OnRowCommand="grdCustomersSearched_RowCommand" AllowPaging="True" PageSize="5" 
-                        OnPageIndexChanging="grdCustomersSearched_PageIndexChanging" >
+                    <asp:GridView ID="GrdCustomersSearched" runat="server" AutoGenerateColumns="false" ShowFooter="true" 
+                        OnRowCommand="GrdCustomersSearched_RowCommand" AllowPaging="True" PageSize="5" 
+                        OnPageIndexChanging="GrdCustomersSearched_PageIndexChanging" >
                         <Columns>
                             <asp:TemplateField HeaderText="Switch Customer">
                                 <ItemTemplate>
                                     <asp:LinkButton ID="lbtnSwitchCustomer" CommandName="SwitchCustomer" CommandArgument='<%#Eval("CustomerId") %>' Text="Switch Customer" runat="server" />
                                 </ItemTemplate>
                                 <FooterTemplate>
-                                    <asp:Button ID="btnAddCustomer" runat="server" Text="Add Customer" OnClick="btnAddCustomer_Click" />
+                                    <asp:Button ID="BtnAddCustomer" runat="server" Text="Add Customer" OnClick="BtnAddCustomer_Click" />
                                 </FooterTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Customer Name">
@@ -80,10 +80,10 @@
                                 </ItemTemplate>
                                 <FooterTemplate>
                                     <div>
-                                        <asp:TextBox ID="txtFirstName" runat="server" AutoComplete="off" placeholder="First Name" ToolTip="First Name" />
+                                        <asp:TextBox ID="txtFirstName" runat="server" AutoCompleteType="Disabled" placeholder="First Name" ToolTip="First Name" />
                                     </div>
                                     <div>
-                                        <asp:TextBox ID="txtLastName" runat="server" AutoComplete="off" placeholder="Last Name" ToolTip="Last Name" />
+                                        <asp:TextBox ID="txtLastName" runat="server" AutoCompleteType="Disabled" placeholder="Last Name" ToolTip="Last Name" />
                                     </div>
                                 </FooterTemplate>
                             </asp:TemplateField>
@@ -92,7 +92,7 @@
                                     <asp:Label runat="server" Text='<%#Eval("primaryPhoneNumber") %>' />
                                 </ItemTemplate>
                                 <FooterTemplate>
-                                    <asp:TextBox ID="txtPhoneNumber" runat="server" AutoComplete="off" placeholder="Phone Number" ToolTip="Phone Number" />
+                                    <asp:TextBox ID="txtPhoneNumber" runat="server" AutoCompleteType="Disabled" placeholder="Phone Number" ToolTip="Phone Number" />
                                 </FooterTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Email Address" >
@@ -101,8 +101,8 @@
                                 </ItemTemplate>
                                 <FooterTemplate>
                                     <div>
-                                        <asp:TextBox ID="txtEmail" runat="server" AutoComplete="off" placeholder="Email" ToolTip="Email" />
-                                    </div>     
+                                        <asp:TextBox ID="txtEmail" runat="server" AutoCompleteType="Disabled" placeholder="Email" ToolTip="Email" />
+                                    </div>
                                     <div>
                                         <asp:CheckBox ID="chkMarketingEnrollment" runat="server" Text="Marketing Enrollment" />
                                     </div>                                    
@@ -122,7 +122,7 @@
                 <hr />
             </div>
             <h3>Purchases</h3>
-            <asp:Button ID="btnAddPurchase" runat="server" Text="Add Purchase" OnClick="btnAddPurchase_Click" />
+            <asp:Button ID="BtnAddPurchase" runat="server" Text="Add Purchase" OnClick="BtnAddPurchase_Click" />
             <hr />
             <asp:GridView ID="grdPurchasedItems" runat="server" AutoGenerateColumns="false" Style="margin-right: 0px" 
                 OnRowEditing="OnRowEditing" OnRowUpdating="OnRowUpdating" OnRowCancelingEdit="OnRowCanceling" >
@@ -146,8 +146,8 @@
             <asp:Label ID="lblPurchaseAmount" runat="server" Text="Purchase Amount:" />
             <asp:Label ID="lblPurchaseAmountDisplay" runat="server" />
             <hr />
-            <asp:Button ID="btnCancelPurchase" runat="server" Text="Cancel Purchase" OnClick="btnCancelPurchase_Click" CausesValidation="false" />
-            <asp:Button ID="btnProceedToPayOut" runat="server" Text="Proceed to Pay Out" OnClick="btnProceedToPayOut_Click" CausesValidation="false" />
+            <asp:Button ID="BtnCancelPurchase" runat="server" Text="Cancel Purchase" OnClick="BtnCancelPurchase_Click" CausesValidation="false" />
+            <asp:Button ID="BtnProceedToPayOut" runat="server" Text="Proceed to Pay Out" OnClick="BtnProceedToPayOut_Click" CausesValidation="false" />
         </asp:Panel>
     </div>
 </asp:Content>

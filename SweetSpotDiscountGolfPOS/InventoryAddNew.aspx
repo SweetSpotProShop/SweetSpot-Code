@@ -27,7 +27,7 @@
                         <asp:Label ID="lblCost" runat="server" Text="Cost:  $" />
                     </asp:TableCell>
                     <asp:TableCell Width="25%">
-                        <asp:TextBox ID="txtCost" runat="server" AutoComplete="off" Enabled="false" Text="0.00" />
+                        <asp:TextBox ID="txtCost" runat="server" AutoCompleteType="Disabled" Enabled="false" Text="0.00" />
                         <asp:RegularExpressionValidator ID="revCost"
                                 ControlToValidate="txtCost"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -49,7 +49,7 @@
                         <asp:Label ID="lblPrice" runat="server" Text="Price:  $" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtPrice" runat="server" AutoComplete="off" Enabled="false" Text="0.00" />
+                        <asp:TextBox ID="txtPrice" runat="server" AutoCompleteType="Disabled" Enabled="false" Text="0.00" />
                         <asp:RegularExpressionValidator ID="revPrice"
                                 ControlToValidate="txtPrice"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -64,7 +64,7 @@
                         <asp:Label ID="lblQuantity" runat="server" Text="Quantity:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtQuantity" runat="server" AutoComplete="off" Enabled="false" Text="0" />
+                        <asp:TextBox ID="txtQuantity" runat="server" AutoCompleteType="Disabled" Enabled="false" Text="0" />
                         <asp:RegularExpressionValidator ID="revQuantity"
                                 ControlToValidate="txtQuantity"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -91,7 +91,7 @@
                         <asp:Label ID="lblClubType" runat="server" Text="Club Type:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtClubType" runat="server" AutoComplete="off" Enabled="false" />
+                        <asp:TextBox ID="txtClubType" runat="server" AutoCompleteType="Disabled" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblModel" runat="server" Text="Model:" Visible="true" />
@@ -106,13 +106,13 @@
                         <asp:Label ID="lblShaft" runat="server" Text="Shaft:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtShaft" runat="server" AutoComplete="off" Enabled="false" />
+                        <asp:TextBox ID="txtShaft" runat="server" AutoCompleteType="Disabled" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblNumberofClubs" runat="server" Text="Number of Clubs:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtNumberofClubs" runat="server" AutoComplete="off" Enabled="false" />
+                        <asp:TextBox ID="txtNumberofClubs" runat="server" AutoCompleteType="Disabled" Enabled="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -120,13 +120,13 @@
                         <asp:Label ID="lblClubSpec" runat="server" Text="Club Spec:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtClubSpec" runat="server" AutoComplete="off" Enabled="false" />
+                        <asp:TextBox ID="txtClubSpec" runat="server" AutoCompleteType="Disabled" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblShaftSpec" runat="server" Text="Shaft Spec:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtShaftSpec" runat="server" AutoComplete="off" Enabled="false" />
+                        <asp:TextBox ID="txtShaftSpec" runat="server" AutoCompleteType="Disabled" Enabled="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -134,13 +134,13 @@
                         <asp:Label ID="lblShaftFlex" runat="server" Text="ShaftFlex:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtShaftFlex" runat="server" AutoComplete="off" Enabled="false" />
+                        <asp:TextBox ID="txtShaftFlex" runat="server" AutoCompleteType="Disabled" Enabled="false" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblDexterity" runat="server" Text="Dexterity:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtDexterity" runat="server" AutoComplete="off" Enabled="false" />
+                        <asp:TextBox ID="txtDexterity" runat="server" AutoCompleteType="Disabled" Enabled="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -157,9 +157,9 @@
                     </asp:TableCell>
 					<asp:TableCell ColumnSpan="2" RowSpan="2" HorizontalAlign="Center">
 						<asp:Label ID="lblTaxesChargedAtSale" runat="server" Text="Taxes Charged At Sale" Font-Bold="true" />
-						<asp:GridView ID="grdInventoryTaxes" runat="server" AutoGenerateColumns="false" Width="80%"
-							RowStyle-HorizontalAlign="Center" OnRowDataBound="grdInventoryTaxes_RowDataBound"
-							OnRowCommand="grdInventoryTaxes_RowCommand">
+						<asp:GridView ID="GrdInventoryTaxes" runat="server" AutoGenerateColumns="false" Width="80%"
+							RowStyle-HorizontalAlign="Center" OnRowDataBound="GrdInventoryTaxes_RowDataBound"
+							OnRowCommand="GrdInventoryTaxes_RowCommand">
 							<Columns>
 								<asp:TemplateField>
 									<ItemTemplate>
@@ -179,7 +179,7 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell ColumnSpan="2">
-                        <asp:TextBox Height="30px" Width="100%" ID="txtComments" runat="server" AutoComplete="off" Enabled="false" />
+                        <asp:TextBox Height="30px" Width="100%" ID="txtComments" runat="server" AutoCompleteType="Disabled" Enabled="false" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -189,16 +189,16 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:Button ID="btnAddItem" runat="server" Text="Add Item" OnClick="btnAddItem_Click" Visible="false" />
-                        <asp:Button ID="btnEditItem" runat="server" Text="Edit Item" OnClick="btnEditItem_Click" Visible="true" />
-                        <asp:Button ID="btnSaveItem" runat="server" Text="Save Changes" OnClick="btnSaveItem_Click" Visible="false" />
+                        <asp:Button ID="BtnAddItem" runat="server" Text="Add Item" OnClick="BtnAddItem_Click" Visible="false" />
+                        <asp:Button ID="BtnEditItem" runat="server" Text="Edit Item" OnClick="BtnEditItem_Click" Visible="true" />
+                        <asp:Button ID="BtnSaveItem" runat="server" Text="Save Changes" OnClick="BtnSaveItem_Click" Visible="false" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnBackToSearch" runat="server" Text="Exit Item" OnClick="btnBackToSearch_Click" Visible="true" />
-                        <asp:Button ID="btnCancel" runat="server" Text="Cancel" OnClick="btnCancel_Click" Visible="false" CausesValidation="false"/>
+                        <asp:Button ID="BtnBackToSearch" runat="server" Text="Exit Item" OnClick="BtnBackToSearch_Click" Visible="true" />
+                        <asp:Button ID="BtnCancel" runat="server" Text="Cancel" OnClick="BtnCancel_Click" Visible="false" CausesValidation="false"/>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnCreateSimilar" runat="server" Text="Create Similar" OnClick="btnCreateSimilar_Click" Visible="true" />
+                        <asp:Button ID="BtnCreateSimilar" runat="server" Text="Create Similar" OnClick="BtnCreateSimilar_Click" Visible="true" />
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>

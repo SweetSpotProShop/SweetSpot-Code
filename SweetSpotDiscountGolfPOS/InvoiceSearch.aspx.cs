@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Configuration;
-using System.Data.SqlClient;
 using System.Threading;
 using SweetSpotDiscountGolfPOS.FP;
 using SweetSpotDiscountGolfPOS.OB;
@@ -43,8 +37,8 @@ namespace SweetSpotDiscountGolfPOS
                     if (!IsPostBack)
                     {
                         //Sets the calendar and text boxes start and end dates
-                        calStartDate.SelectedDate = DateTime.Today;
-                        calEndDate.SelectedDate = DateTime.Today;
+                        CalStartDate.SelectedDate = DateTime.Today;
+                        CalEndDate.SelectedDate = DateTime.Today;
                         ddlLocation.DataSource = LM.CallReturnLocationDropDown(objPageDetails);
                         ddlLocation.DataBind();
                         ddlLocation.SelectedValue = CU.location.intLocationID.ToString();
@@ -66,7 +60,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void CalStart_SelectionChanged(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "calStart_SelectionChanged";
+            string method = "CalStart_SelectionChanged";
             //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try {}
             //Exception catch
@@ -84,7 +78,7 @@ namespace SweetSpotDiscountGolfPOS
         protected void CalEnd_SelectionChanged(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "calEnd_SelectionChanged";
+            string method = "CalEnd_SelectionChanged";
             //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try {}
             //Exception catch
@@ -102,13 +96,14 @@ namespace SweetSpotDiscountGolfPOS
         protected void BtnInvoiceSearch_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnInvoiceSearch_Click";
+            string method = "BtnInvoiceSearch_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Binds invoice list to the grid view
-                grdInvoiceSelection.DataSource = IM.CallReturnInvoicesBasedOnSearchCriteria(calStartDate.SelectedDate, calEndDate.SelectedDate, txtInvoiceNum.Text, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
-                grdInvoiceSelection.DataBind();
+                GrdInvoiceSelection.DataSource = IM.CallReturnInvoicesBasedOnSearchCriteria(CalStartDate.SelectedDate, CalEndDate.SelectedDate, txtInvoiceNum.Text, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                GrdInvoiceSelection.DataBind();
+                MergeRows(GrdInvoiceSelection);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -122,8 +117,6 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-
-        //Still Needs to be Updated
         protected void GrdInvoiceSelection_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method for error tracking
@@ -158,7 +151,6 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-
         protected void GrdInvoiceSelection_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             //Problems with looping
@@ -195,6 +187,51 @@ namespace SweetSpotDiscountGolfPOS
                     else
                     {
                         newInvoice = oldInvoice;
+                    }
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                //Display message box
+                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+        private void MergeRows(GridView gridView)
+        {
+            string method = "MergeRows";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
+            {
+                for (int rowIndex = gridView.Rows.Count - 2; rowIndex >= 0; rowIndex--)
+                {
+                    GridViewRow row = gridView.Rows[rowIndex];
+                    GridViewRow previousRow = gridView.Rows[rowIndex + 1];
+                    //string rowText = row.Cells[1].Text;
+                    //string previousRowText = previousRow.Cells[1].Text;
+                    string rowInvoice = "";
+                    string prevRowInvoice = "";
+                    LinkButton lbtnRow = (LinkButton)row.FindControl("lkbInvoiceNum");
+                    LinkButton lbtnPrevRow = (LinkButton)previousRow.FindControl("lkbInvoiceNum");
+                    if (lbtnRow != null) { rowInvoice = lbtnRow.Text; }
+                    if (lbtnPrevRow != null) { prevRowInvoice = lbtnPrevRow.Text; }
+                    if (rowInvoice.Equals(prevRowInvoice) || prevRowInvoice.Equals(""))
+                    {
+                        for (int i = 0; i < 8; i++)
+                        {
+                            row.Cells[i].RowSpan = previousRow.Cells[i].RowSpan < 2 ? 2 // merge the first two cells
+                                             : previousRow.Cells[i].RowSpan + 1; //any subsequent merging
+                            previousRow.Cells[i].Visible = false;
+
+                        }
+                        row.Cells[10].RowSpan = previousRow.Cells[10].RowSpan < 2 ? 2 // merge the first two cells
+                                             : previousRow.Cells[10].RowSpan + 1; //any subsequent merging
+                        previousRow.Cells[10].Visible = false;
                     }
                 }
             }

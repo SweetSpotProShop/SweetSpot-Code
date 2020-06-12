@@ -40,31 +40,31 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.TextBox txtSearch;
         
         /// <summary>
-        /// btnEmployeeSearch control.
+        /// BtnEmployeeSearch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnEmployeeSearch;
+        protected global::System.Web.UI.WebControls.Button BtnEmployeeSearch;
         
         /// <summary>
-        /// btnAddNewEmployee control.
+        /// BtnAddNewEmployee control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddNewEmployee;
+        protected global::System.Web.UI.WebControls.Button BtnAddNewEmployee;
         
         /// <summary>
-        /// grdEmployeesSearched control.
+        /// GrdEmployeesSearched control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView grdEmployeesSearched;
+        protected global::System.Web.UI.WebControls.GridView GrdEmployeesSearched;
         
         /// <summary>
         /// lblProvince control.
@@ -76,13 +76,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblProvince;
         
         /// <summary>
-        /// ddlProvince control.
+        /// DdlProvince control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlProvince;
+        protected global::System.Web.UI.WebControls.DropDownList DdlProvince;
         
         /// <summary>
         /// lblTax control.
@@ -94,13 +94,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblTax;
         
         /// <summary>
-        /// ddlTax control.
+        /// DdlTax control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlTax;
+        protected global::System.Web.UI.WebControls.DropDownList DdlTax;
         
         /// <summary>
         /// lblCurrentDate control.
@@ -166,13 +166,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.TextBox txtDate;
         
         /// <summary>
-        /// btnSaveTheTax control.
+        /// BtnSaveTheTax control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSaveTheTax;
+        protected global::System.Web.UI.WebControls.Button BtnSaveTheTax;
         
         /// <summary>
         /// lblModel control.
@@ -202,13 +202,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.TextBox txtModelTwo;
         
         /// <summary>
-        /// btnAddModel control.
+        /// BtnAddModel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddModel;
+        protected global::System.Web.UI.WebControls.Button BtnAddModel;
         
         /// <summary>
         /// lblBrand control.
@@ -238,13 +238,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.TextBox txtBrandTwo;
         
         /// <summary>
-        /// btnAddBrand control.
+        /// BtnAddBrand control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddBrand;
+        protected global::System.Web.UI.WebControls.Button BtnAddBrand;
         
         /// <summary>
         /// lblproduct control.
@@ -265,13 +265,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.FileUpload fupItemSheet;
         
         /// <summary>
-        /// btnLoadItems control.
+        /// BtnLoadItems control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnLoadItems;
+        protected global::System.Web.UI.WebControls.Button BtnLoadItems;
         
         /// <summary>
         /// imgLoadingItemImport control.
@@ -283,57 +283,57 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Image imgLoadingItemImport;
         
         /// <summary>
-        /// btnExportAll control.
+        /// BtnExportAll control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnExportAll;
+        protected global::System.Web.UI.WebControls.Button BtnExportAll;
         
         /// <summary>
-        /// btnExportClubs control.
+        /// BtnExportClubs control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnExportClubs;
+        protected global::System.Web.UI.WebControls.Button BtnExportClubs;
         
         /// <summary>
-        /// btnExportClothing control.
+        /// BtnExportClothing control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnExportClothing;
+        protected global::System.Web.UI.WebControls.Button BtnExportClothing;
         
         /// <summary>
-        /// btnExportAccessories control.
+        /// BtnExportAccessories control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnExportAccessories;
+        protected global::System.Web.UI.WebControls.Button BtnExportAccessories;
         
         /// <summary>
-        /// btnExportInvoices control.
+        /// BtnExportInvoices control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnExportInvoices;
+        protected global::System.Web.UI.WebControls.Button BtnExportInvoices;
         
         /// <summary>
-        /// btnExportEmails control.
+        /// BtnExportEmails control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnExportEmails;
+        protected global::System.Web.UI.WebControls.Button BtnExportEmails;
     }
 }

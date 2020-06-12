@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Data;
-using System.Linq;
 using System.Threading;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using SweetSpotDiscountGolfPOS.FP;
 using SweetSpotDiscountGolfPOS.OB;
 using SweetSpotDiscountGolfPOS.Misc;
@@ -15,11 +9,11 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class SalesCashOut : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU;
-        Reports R = new Reports();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly LocationManager LM = new LocationManager();
+        readonly Reports R = new Reports();
         //private static Cashout cashout;
-        LocationManager LM = new LocationManager();
+        CurrentUser CU;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -120,14 +114,14 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
         //Calculating the cashout
-        protected void btnCalculate_Click(object sender, EventArgs e)
+        protected void BtnCalculate_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnCalculate_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnCalculate_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                calculteMethod();
+                CalculteMethod();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -142,11 +136,11 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
         //Clearing the entered amounts
-        protected void btnClear_Click(object sender, EventArgs e)
+        protected void BtnClear_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnClear_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnClear_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Blanking the textboxes
@@ -169,14 +163,14 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void btnProcessReport_Click(object sender, EventArgs e)
+        protected void BtnProcessReport_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnProcessReport_Click";
+            string method = "BtnProcessReport_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {                
-                calculteMethod();
+                CalculteMethod();
                 object[] args = { DateTime.Parse(Request.QueryString["selectedDate"].ToString()), Convert.ToInt32(Request.QueryString["location"].ToString()) };
                 Cashout cashout = R.CallSelectedCashoutToReturn(args, objPageDetails);
 
@@ -196,7 +190,7 @@ namespace SweetSpotDiscountGolfPOS
 
                 MessageBox.ShowMessage("Cashout has been processed", this);
                 btnPrint.Enabled = true;
-                btnProcessReport.Enabled = false;
+                BtnProcessReport.Enabled = false;
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -210,11 +204,11 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        private void calculteMethod()
+        private void CalculteMethod()
         {
             //Collects current method for error tracking
-            string method = "calculateMethod";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "CalculateMethod";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //If nothing is entered, setting text to 0.00 and the total to 0
