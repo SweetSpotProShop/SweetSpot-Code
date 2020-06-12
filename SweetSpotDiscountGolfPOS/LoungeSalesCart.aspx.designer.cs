@@ -1660,6 +1660,15 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblMaster;
         
         /// <summary>
+        /// grdMasterCartItems control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView grdMasterCartItems;
+        
+        /// <summary>
         /// cellEachInvoice control.
         /// </summary>
         /// <remarks>
@@ -1696,6 +1705,15 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblCustomer;
         
         /// <summary>
+        /// lblCustomerDescription control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblCustomerDescription;
+        
+        /// <summary>
         /// txtCustomer control.
         /// </summary>
         /// <remarks>
@@ -1703,6 +1721,15 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtCustomer;
+        
+        /// <summary>
+        /// txtCustomerDescription control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtCustomerDescription;
         
         /// <summary>
         /// btnCustomerSelect control.
