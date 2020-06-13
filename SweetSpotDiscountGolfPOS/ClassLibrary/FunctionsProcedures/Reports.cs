@@ -353,9 +353,9 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "@fltManuallyCountedBasedOnReceiptsTradeIn, @fltManuallyCountedBasedOnReceiptsGiftCard, @fltManuallyCountedBasedOnReceiptsCash, "
                 + "@fltManuallyCountedBasedOnReceiptsDebit, @fltManuallyCountedBasedOnReceiptsMastercard, @fltManuallyCountedBasedOnReceiptsVisa, "
 
-                + "@fltSalesSubTotal, @fltGovernmentTaxAmount, @fltHarmonizedTaxAmount, @fltLiquorTaxAmount, @fltProvincialTaxAmount, "
-                + "@fltQuebecTaxAmount, @fltRetailTaxAmount, "
-                + "@fltCashDrawerOverShort, @bitIsCashoutFinalized, @bitIsCashoutProcessed, @intSalesCount)";
+                + "@fltSalesSubTotal, @fltGovernmentTaxAmount, @fltProvincialTaxAmount, @fltLiquorTaxAmount, "
+                
+                + "@fltCashDrawerOverShort, @bitIsCashoutFinalized, @bitIsCashoutProcessed)";
 
             object[][] parms =
             {
@@ -380,15 +380,15 @@ namespace SweetSpotDiscountGolfPOS.FP
 
                 new object[] { "@fltSalesSubTotal", cashout.fltSalesSubTotal },
                 new object[] { "@fltGovernmentTaxAmount", cashout.fltGovernmentTaxAmount },
-                new object[] { "@fltHarmonizedTaxAmount", 0 },
+                
                 new object[] { "@fltLiquorTaxAmount", cashout.fltLiquorTaxAmount },
                 new object[] { "@fltProvincialTaxAmount", cashout.fltProvincialTaxAmount },
-                new object[] { "@fltQuebecTaxAmount", 0 },
-                new object[] { "@fltRetailTaxAmount", 0 },
+                
+                
                 new object[] { "@fltCashDrawerOverShort", cashout.fltCashDrawerOverShort },
                 new object[] { "@bitIsCashoutFinalized", cashout.bitIsCashoutFinalized },
                 new object[] { "@bitIsCashoutProcessed", cashout.bitIsCashoutProcessed },
-                new object[] { "@intSalesCount", 0 }
+                
 
             };
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
