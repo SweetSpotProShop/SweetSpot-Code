@@ -60,7 +60,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -78,7 +78,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -96,7 +96,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -124,7 +124,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (indicator == 1)
                 {
-                    MessageBox.ShowMessage("No CashOuts have been processed for selected date range.", this);
+                    MessageBoxCustom.ShowMessage("No CashOuts have been processed for selected date range.", this);
                 }
             }
             //Exception catch
@@ -134,7 +134,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -160,7 +160,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (indicator == 1)
                 {
-                    MessageBox.ShowMessage("Taxes have not been charged for selected dates.", this);
+                    MessageBoxCustom.ShowMessage("Taxes have not been charged for selected dates.", this);
                 }
             }
             //Exception catch
@@ -170,7 +170,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -197,7 +197,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (indicator == 1)
                 {
-                    MessageBox.ShowMessage("No Discounts have been given for selected dates.", this);
+                    MessageBoxCustom.ShowMessage("No Discounts have been given for selected dates.", this);
                 }
             }
             //Exception catch
@@ -207,7 +207,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -235,7 +235,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (indicator == 1)
                 {
-                    MessageBox.ShowMessage("No Sales have been completed for selected dates.", this);
+                    MessageBoxCustom.ShowMessage("No Sales have been completed for selected dates.", this);
                 }
             }
             //Exception catch
@@ -245,7 +245,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -274,7 +274,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (indicator == 1)
                 {
-                    MessageBox.ShowMessage("No sales have been processed for selected dates.", this);
+                    MessageBoxCustom.ShowMessage("No sales have been processed for selected dates.", this);
                 }
             }
             //Exception catch
@@ -285,7 +285,7 @@ namespace SweetSpotDiscountGolfPOS
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //string prevPage = Convert.ToString(Session["prevPage"]);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
                 //Server.Transfer(prevPage, false);
@@ -313,7 +313,7 @@ namespace SweetSpotDiscountGolfPOS
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //string prevPage = Convert.ToString(Session["prevPage"]);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
                 //Server.Transfer(prevPage, false);
@@ -342,7 +342,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (indicator == 1)
                 {
-                    MessageBox.ShowMessage("No sales have been processed for selected dates.", this);
+                    MessageBoxCustom.ShowMessage("No sales have been processed for selected dates.", this);
                 }
             }
             //Exception catch
@@ -352,7 +352,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -380,7 +380,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (indicator == 1)
                 {
-                    MessageBox.ShowMessage("No changes to Invnetory for selected dates.", this);
+                    MessageBoxCustom.ShowMessage("No changes to Invnetory for selected dates.", this);
                 }
             }
             //Exception catch
@@ -390,7 +390,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -418,7 +418,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (indicator == 1)
                 {
-                    MessageBox.ShowMessage("No sales of Specific Apparel Items for selected dates.", this);
+                    MessageBoxCustom.ShowMessage("No sales of Specific Apparel Items for selected dates.", this);
                 }
             }
             //Exception catch
@@ -428,7 +428,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -456,7 +456,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (indicator == 1)
                 {
-                    MessageBox.ShowMessage("No sales of Specific Grip Items for selected dates.", this);
+                    MessageBoxCustom.ShowMessage("No sales of Specific Grip Items for selected dates.", this);
                 }
             }
             //Exception catch
@@ -466,7 +466,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }

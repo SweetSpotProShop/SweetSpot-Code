@@ -24,6 +24,7 @@ namespace SweetSpotDiscountGolfPOS
         double costofGoods;
         double subTotal;
         double salesDollars;
+        double totalSales;
         //double profitMargin;
         //int profitMarginCount = 0;
 
@@ -74,7 +75,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -94,18 +95,33 @@ namespace SweetSpotDiscountGolfPOS
                     subTotal += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltSubTotal"));
                     //profitMargin += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProfitMargin"));
                     salesDollars += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltSalesDollars"));
+                    totalSales += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltTotalSales"));
 
                     //profitMarginCount++;
                 }
                 else if (e.Row.RowType == DataControlRowType.Footer)
                 {
-                    e.Row.Cells[2].Text = string.Format("{0:C}", governmentTax);
-                    e.Row.Cells[3].Text = string.Format("{0:C}", provincialTax);
+                    e.Row.Cells[2].Text = string.Format("{0:C}", subTotal);
+                    e.Row.Cells[3].Text = string.Format("{0:C}", governmentTax);
                     e.Row.Cells[4].Text = string.Format("{0:C}", liquorTax);
-                    e.Row.Cells[5].Text = string.Format("{0:C}", costofGoods);
-                    e.Row.Cells[6].Text = string.Format("{0:C}", subTotal);
+                    e.Row.Cells[5].Text = string.Format("{0:C}", provincialTax);
+                    e.Row.Cells[6].Text = string.Format("{0:C}", totalSales);
                     e.Row.Cells[7].Text = string.Format("{0:P}", (salesDollars - costofGoods) / salesDollars);
-                    e.Row.Cells[8].Text = string.Format("{0:C}", salesDollars);
+                    e.Row.Cells[8].Text = string.Format("{0:C}", costofGoods);
+                    e.Row.Cells[9].Text = string.Format("{0:C}", salesDollars);
+
+                    if (provincialTax == 0)
+                    {
+                        GrdStats.Columns[5].Visible = false;
+                    }
+                    if (liquorTax == 0)
+                    {
+                        GrdStats.Columns[4].Visible = false;
+                    }
+                    if (governmentTax == 0)
+                    {
+                        GrdStats.Columns[3].Visible = false;
+                    }
                 }
             }
             //Exception catch
@@ -115,11 +131,12 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
+
         protected void BtnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -201,7 +218,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }

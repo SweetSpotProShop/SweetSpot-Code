@@ -49,7 +49,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -61,7 +61,7 @@ namespace SweetSpotDiscountGolfPOS
             //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                MessageBox.ShowMessage("Download for this report is currently not available.", this);
+                MessageBoxCustom.ShowMessage("Download for this report is currently not available.", this);
             }
             //Exception catch
             catch (ThreadAbortException) { }
@@ -70,7 +70,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }

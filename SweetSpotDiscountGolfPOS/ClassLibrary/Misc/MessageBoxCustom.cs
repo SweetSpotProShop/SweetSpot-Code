@@ -8,7 +8,7 @@ using System.Windows.Forms;
 namespace SweetSpotDiscountGolfPOS.Misc
 {
     //This class is used to create a popup message box
-    public class MessageBox
+    public class MessageBoxCustom
     {
         //This method creates a popup box with an alert based message
         public static void ShowMessage(string MessageText, Page MyPage)
