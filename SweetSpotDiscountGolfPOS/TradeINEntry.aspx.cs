@@ -45,7 +45,7 @@ namespace SweetSpotDiscountGolfPOS
             {
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //string prevPage = Convert.ToString(Session["prevPage"]);
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -64,7 +64,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -137,7 +137,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }

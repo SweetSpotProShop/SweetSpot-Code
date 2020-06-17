@@ -49,7 +49,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -75,7 +75,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -101,7 +101,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -127,7 +127,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -153,7 +153,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -179,7 +179,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -206,7 +206,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -234,7 +234,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -258,7 +258,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -279,7 +279,7 @@ namespace SweetSpotDiscountGolfPOS
                     if (!txtAmountRefunding.Text.Equals("0.00"))
                     {
                         //Displays message box that refund will need to = 0
-                        MessageBox.ShowMessage("Remaining Refund Does NOT Equal 0.", this);
+                        MessageBoxCustom.ShowMessage("Remaining Refund Does NOT Equal 0.", this);
                     }
                     else
                     {
@@ -294,14 +294,14 @@ namespace SweetSpotDiscountGolfPOS
                         }
                         else
                         {
-                            MessageBox.ShowMessage("At least one method of payment "
+                            MessageBoxCustom.ShowMessage("At least one method of payment "
                                 + "is required even for a $0.00 return.", this);
                         }
                     }
                 }
                 else
                 {
-                    MessageBox.ShowMessage("Invalid employee passcode entered. "
+                    MessageBoxCustom.ShowMessage("Invalid employee passcode entered. "
                     + "Please try again.", this);
                 }
             }
@@ -312,7 +312,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -345,7 +345,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -380,7 +380,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
@@ -465,7 +465,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Log all info into error table
                 ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }

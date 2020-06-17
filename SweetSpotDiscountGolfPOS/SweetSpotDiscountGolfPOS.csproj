@@ -173,7 +173,7 @@
     <Compile Include="ClassLibrary\Objects\Inventory.cs" />
     <Compile Include="ClassLibrary\Objects\Location.cs" />
     <Compile Include="ClassLibrary\FunctionsProcedures\LocationManager.cs" />
-    <Compile Include="ClassLibrary\Misc\MessageBox.cs" />
+    <Compile Include="ClassLibrary\Misc\MessageBoxCustom.cs" />
     <Compile Include="ClassLibrary\FunctionsProcedures\Reports.cs" />
     <Compile Include="ClassLibrary\Objects\Tax.cs" />
     <Compile Include="ClassLibrary\FunctionsProcedures\TaxManager.cs" />

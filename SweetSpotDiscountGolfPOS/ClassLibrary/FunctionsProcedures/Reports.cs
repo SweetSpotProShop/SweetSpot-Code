@@ -354,7 +354,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "@fltManuallyCountedBasedOnReceiptsDebit, @fltManuallyCountedBasedOnReceiptsMastercard, @fltManuallyCountedBasedOnReceiptsVisa, "
 
                 + "@fltSalesSubTotal, @fltGovernmentTaxAmount, @fltProvincialTaxAmount, @fltLiquorTaxAmount, "
-
+                
                 + "@fltCashDrawerOverShort, @bitIsCashoutFinalized, @bitIsCashoutProcessed)";
 
             object[][] parms =
@@ -387,7 +387,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 
                 new object[] { "@fltCashDrawerOverShort", cashout.fltCashDrawerOverShort },
                 new object[] { "@bitIsCashoutFinalized", cashout.bitIsCashoutFinalized },
-                new object[] { "@bitIsCashoutProcessed", cashout.bitIsCashoutProcessed }
+                new object[] { "@bitIsCashoutProcessed", cashout.bitIsCashoutProcessed },
                 
 
             };
