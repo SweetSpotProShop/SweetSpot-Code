@@ -38,34 +38,44 @@
         </div>
         <hr />
         <div>
+<<<<<<< Updated upstream
             <asp:GridView ID="grdSalesByDate" runat="server" AutoGenerateColumns="false" Width="60%" RowStyle-HorizontalAlign="Center" ShowFooter="true" OnRowDataBound="grdSalesByDate_RowDataBound">
+=======
+            <asp:GridView ID="GrdSalesByDate" runat="server" AutoGenerateColumns="false" Width="60%" RowStyle-HorizontalAlign="Center" ShowFooter="true" 
+				OnRowDataBound="GrdSalesByDate_RowDataBound" FooterStyle-Font-Bold="true" FooterStyle-HorizontalAlign="Center">
+>>>>>>> Stashed changes
                 <Columns>
                     <asp:TemplateField HeaderText="Date">
                         <ItemTemplate>
-                            <asp:Label ID="lblDate" runat="server" Text='<%#Eval("dtmInvoiceDate","{0: dd/MMM/yy}")%>' />
+                            <asp:Label ID="lblDate" runat="server" Text='<%# Eval("dtmInvoiceDate", "{0:dd/MMM/yy}")%>' />
                         </ItemTemplate>
                         <FooterTemplate>
                             <asp:Label ID="lblTotal" runat="server" Text="Totals:" />
                         </FooterTemplate>
                     </asp:TemplateField>
+					<asp:TemplateField HeaderText="Sales Dollars">
+                        <ItemTemplate>
+                            <asp:Label ID="lblSalesDollars" runat="server" Text='<%# Eval("fltSalesDollars", "{0:C}") %>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
 					<asp:TemplateField HeaderText="GST">
                         <ItemTemplate>
-                            <asp:Label ID="lblGSTAmount" runat="server" Text='<%#Eval("fltGovernmentTaxAmount","{0:C}") %>' />
+                            <asp:Label ID="lblGSTAmount" runat="server" Text='<%# Eval("fltGovernmentTaxAmount", "{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
 					<asp:TemplateField HeaderText="PST">
                         <ItemTemplate>
-                            <asp:Label ID="lblPSTAmount" runat="server" Text='<%#Eval("fltProvincialTaxAmount","{0:C}") %>' />
+                            <asp:Label ID="lblPSTAmount" runat="server" Text='<%# Eval("fltProvincialTaxAmount", "{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
 					<asp:TemplateField HeaderText="LCT">
                         <ItemTemplate>
-                            <asp:Label ID="lblLCTAmount" runat="server" Text='<%#Eval("fltLiquorTaxAmount","{0:C}") %>' />
+                            <asp:Label ID="lblLCTAmount" runat="server" Text='<%# Eval("fltLiquorTaxAmount", "{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Sales Dollars">
+                    <asp:TemplateField HeaderText="Total Sales">
                         <ItemTemplate>
-                            <asp:Label ID="lblSalesDollars" runat="server" Text='<%# (Convert.ToDouble(Eval("fltTotalSales")) + Convert.ToDouble(Eval("fltGovernmentTaxAmount")) + Convert.ToDouble(Eval("fltProvincialTaxAmount")) + Convert.ToDouble(Eval("fltLiquorTaxAmount"))).ToString("C") %>' />
+                            <asp:Label ID="lblTotalSales" runat="server" Text='<%# Eval("fltTotalSales", "{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
