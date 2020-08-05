@@ -1,28 +1,23 @@
 ﻿using OfficeOpenXml;
-using SweetShop;
-using SweetSpotDiscountGolfPOS.ClassLibrary;
-using SweetSpotProShop;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
-using System.Data.SqlClient;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using SweetSpotDiscountGolfPOS.FP;
+using SweetSpotDiscountGolfPOS.OB;
+using SweetSpotDiscountGolfPOS.Misc;
 
 namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsCOGSvsPM : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly LocationManager LM = new LocationManager();
+        readonly Reports R = new Reports();
         CurrentUser CU;
-        Reports R = new Reports();
-        LocationManager LM = new LocationManager();
-        
+
         int locationID;
         double tCost;
         double tPrice;
@@ -54,16 +49,16 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
+                        lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
                     }
                     else
                     {
-                        lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
+                        lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
                     }
                     //Binding the gridview
-                    inv = R.returnInvoicesForCOGS(startDate, endDate, locationID, objPageDetails);
-                    grdInvoiceSelection.DataSource = inv;
-                    grdInvoiceSelection.DataBind();
+                    inv = R.CallReturnInvoicesForCOGS(startDate, endDate, locationID, objPageDetails);
+                    GrdInvoiceSelection.DataSource = inv;
+                    GrdInvoiceSelection.DataBind();
                 }
             }
             //Exception catch
@@ -71,18 +66,18 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void lbtnInvoiceNumber_Click(object sender, EventArgs e)
+        protected void LbtnInvoiceNumber_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "lbtnInvoiceNumber_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "LbtnInvoiceNumber_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Text of the linkbutton
@@ -96,17 +91,17 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void grdInvoiceSelection_RowDataBound(object sender, GridViewRowEventArgs e)
+        protected void GrdInvoiceSelection_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            string method = "grdInvoiceSelection_RowDataBound";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "GrdInvoiceSelection_RowDataBound";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
@@ -115,7 +110,7 @@ namespace SweetSpotDiscountGolfPOS
                     Label discount = (Label)e.Row.FindControl("lblTotalDiscount");
                     if (percent.Text.Equals("True"))
                     {
-                        discount.Text = discount.Text + "%";
+                        discount.Text += "%";
                     }
                     else
                     {
@@ -148,24 +143,24 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnDownload_Click(object sender, EventArgs e)
+        protected void BtnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnDownload_Click";
+            string method = "BtnDownload_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
-                string loc = LM.ReturnLocationName(locationID, objPageDetails);
+                string loc = LM.CallReturnLocationName(locationID, objPageDetails);
                 string fileName = "COGS and PM Report - " + loc + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
@@ -212,9 +207,9 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }

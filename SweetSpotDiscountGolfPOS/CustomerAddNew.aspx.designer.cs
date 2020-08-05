@@ -247,75 +247,75 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblCountry;
         
         /// <summary>
-        /// ddlCountry control.
+        /// DdlCountry control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlCountry;
+        protected global::System.Web.UI.WebControls.DropDownList DdlCountry;
         
         /// <summary>
-        /// btnAddCustomer control.
+        /// BtnAddCustomer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddCustomer;
+        protected global::System.Web.UI.WebControls.Button BtnAddCustomer;
         
         /// <summary>
-        /// btnEditCustomer control.
+        /// BtnEditCustomer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnEditCustomer;
+        protected global::System.Web.UI.WebControls.Button BtnEditCustomer;
         
         /// <summary>
-        /// btnSaveCustomer control.
+        /// BtnSaveCustomer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSaveCustomer;
+        protected global::System.Web.UI.WebControls.Button BtnSaveCustomer;
         
         /// <summary>
-        /// btnStartSale control.
+        /// BtnStartSale control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnStartSale;
+        protected global::System.Web.UI.WebControls.Button BtnStartSale;
         
         /// <summary>
-        /// btnBackToSearch control.
+        /// BtnBackToSearch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnBackToSearch;
+        protected global::System.Web.UI.WebControls.Button BtnBackToSearch;
         
         /// <summary>
-        /// btnCancel control.
+        /// BtnCancel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCancel;
+        protected global::System.Web.UI.WebControls.Button BtnCancel;
         
         /// <summary>
-        /// grdInvoiceSelection control.
+        /// GrdInvoiceSelection control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView grdInvoiceSelection;
+        protected global::System.Web.UI.WebControls.GridView GrdInvoiceSelection;
     }
 }

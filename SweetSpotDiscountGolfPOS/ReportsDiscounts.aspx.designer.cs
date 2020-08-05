@@ -31,13 +31,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblReportDate;
         
         /// <summary>
-        /// grdInvoiceDisplay control.
+        /// GrdInvoiceDisplay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView grdInvoiceDisplay;
+        protected global::System.Web.UI.WebControls.GridView GrdInvoiceDisplay;
         
         /// <summary>
         /// btnPrint control.
@@ -49,12 +49,12 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Button btnPrint;
         
         /// <summary>
-        /// btnDownload control.
+        /// BtnDownload control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnDownload;
+        protected global::System.Web.UI.WebControls.Button BtnDownload;
     }
 }

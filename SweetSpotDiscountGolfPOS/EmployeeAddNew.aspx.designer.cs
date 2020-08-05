@@ -274,13 +274,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblCountry;
         
         /// <summary>
-        /// ddlCountry control.
+        /// DdlCountry control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlCountry;
+        protected global::System.Web.UI.WebControls.DropDownList DdlCountry;
         
         /// <summary>
         /// lblNewPassword control.
@@ -328,57 +328,57 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.TextBox txtNewPassword2;
         
         /// <summary>
-        /// btnSavePassword control.
+        /// BtnSavePassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSavePassword;
+        protected global::System.Web.UI.WebControls.Button BtnSavePassword;
         
         /// <summary>
-        /// btnAddEmployee control.
+        /// BtnAddEmployee control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddEmployee;
+        protected global::System.Web.UI.WebControls.Button BtnAddEmployee;
         
         /// <summary>
-        /// btnEditEmployee control.
+        /// BtnEditEmployee control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnEditEmployee;
+        protected global::System.Web.UI.WebControls.Button BtnEditEmployee;
         
         /// <summary>
-        /// btnSaveEmployee control.
+        /// BtnSaveEmployee control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSaveEmployee;
+        protected global::System.Web.UI.WebControls.Button BtnSaveEmployee;
         
         /// <summary>
-        /// btnBackToSearch control.
+        /// BtnBackToSearch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnBackToSearch;
+        protected global::System.Web.UI.WebControls.Button BtnBackToSearch;
         
         /// <summary>
-        /// btnCancel control.
+        /// BtnCancel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCancel;
+        protected global::System.Web.UI.WebControls.Button BtnCancel;
     }
 }

@@ -1,24 +1,21 @@
 ﻿using OfficeOpenXml;
-using SweetShop;
-using SweetSpotDiscountGolfPOS.ClassLibrary;
-using SweetSpotProShop;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using SweetSpotDiscountGolfPOS.FP;
+using SweetSpotDiscountGolfPOS.OB;
+using SweetSpotDiscountGolfPOS.Misc;
 
 namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsStoreStats : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        Reports R = new Reports();
-        LocationManager LM = new LocationManager();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly Reports R = new Reports();
+        readonly LocationManager LM = new LocationManager();
         CurrentUser CU;
 
         double governmentTax;
@@ -27,6 +24,7 @@ namespace SweetSpotDiscountGolfPOS
         double costofGoods;
         double subTotal;
         double salesDollars;
+        double totalSales;
         //double profitMargin;
         //int profitMarginCount = 0;
 
@@ -64,10 +62,10 @@ namespace SweetSpotDiscountGolfPOS
                         lblDates.Text = "Store stats on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy"); //+ " for " + LM.ReturnLocationName(locationID, objPageDetails);
                     }
                     //Binding the gridview
-                    DataTable stats = R.returnStoreStats(startDate, endDate, timeFrame, locationID, objPageDetails);
+                    DataTable stats = R.CallReturnStoreStats(startDate, endDate, timeFrame, objPageDetails);
 
-                    grdStats.DataSource = stats;
-                    grdStats.DataBind();
+                    GrdStats.DataSource = stats;
+                    GrdStats.DataBind();
                 }
             }
             //Exception catch
@@ -75,17 +73,17 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void grdStats_RowDataBound(object sender, GridViewRowEventArgs e)
+        protected void GrdStats_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             string method = "grdStats_RowDataBound";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
@@ -97,18 +95,33 @@ namespace SweetSpotDiscountGolfPOS
                     subTotal += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltSubTotal"));
                     //profitMargin += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProfitMargin"));
                     salesDollars += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltSalesDollars"));
+                    totalSales += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltTotalSales"));
 
                     //profitMarginCount++;
                 }
                 else if (e.Row.RowType == DataControlRowType.Footer)
                 {
-                    e.Row.Cells[2].Text = string.Format("{0:C}", governmentTax);
-                    e.Row.Cells[3].Text = string.Format("{0:C}", provincialTax);
+                    e.Row.Cells[2].Text = string.Format("{0:C}", subTotal);
+                    e.Row.Cells[3].Text = string.Format("{0:C}", governmentTax);
                     e.Row.Cells[4].Text = string.Format("{0:C}", liquorTax);
-                    e.Row.Cells[5].Text = string.Format("{0:C}", costofGoods);
-                    e.Row.Cells[6].Text = string.Format("{0:C}", subTotal);
+                    e.Row.Cells[5].Text = string.Format("{0:C}", provincialTax);
+                    e.Row.Cells[6].Text = string.Format("{0:C}", totalSales);
                     e.Row.Cells[7].Text = string.Format("{0:P}", (salesDollars - costofGoods) / salesDollars);
-                    e.Row.Cells[8].Text = string.Format("{0:C}", salesDollars);
+                    e.Row.Cells[8].Text = string.Format("{0:C}", costofGoods);
+                    e.Row.Cells[9].Text = string.Format("{0:C}", salesDollars);
+
+                    if (provincialTax == 0)
+                    {
+                        GrdStats.Columns[5].Visible = false;
+                    }
+                    if (liquorTax == 0)
+                    {
+                        GrdStats.Columns[4].Visible = false;
+                    }
+                    if (governmentTax == 0)
+                    {
+                        GrdStats.Columns[3].Visible = false;
+                    }
                 }
             }
             //Exception catch
@@ -116,14 +129,15 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnDownload_Click(object sender, EventArgs e)
+
+        protected void BtnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
             string method = "btnDownload_Click";
@@ -141,9 +155,9 @@ namespace SweetSpotDiscountGolfPOS
                 int locationID = Convert.ToInt32(passing[1]);
                 int timeFrame = Convert.ToInt32(passing[2]);
 
-                DataTable stats = R.returnStoreStats(startDate, endDate, timeFrame, locationID, objPageDetails);
+                DataTable stats = R.CallReturnStoreStats(startDate, endDate, timeFrame, objPageDetails);
 
-                string fileName = "Store Stats Report-" + LM.ReturnLocationName(locationID, objPageDetails) + "_" + startDate.ToShortDateString() + " - " + endDate.ToShortDateString() + ".xlsx";
+                string fileName = "Store Stats Report-" + LM.CallReturnLocationName(locationID, objPageDetails) + "_" + startDate.ToShortDateString() + " - " + endDate.ToShortDateString() + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
@@ -202,9 +216,9 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }

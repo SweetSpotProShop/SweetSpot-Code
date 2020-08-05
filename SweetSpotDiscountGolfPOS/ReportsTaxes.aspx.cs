@@ -1,23 +1,21 @@
 ﻿using OfficeOpenXml;
-using SweetShop;
-using SweetSpotDiscountGolfPOS.ClassLibrary;
-using SweetSpotProShop;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using SweetSpotDiscountGolfPOS.FP;
+using SweetSpotDiscountGolfPOS.OB;
+using SweetSpotDiscountGolfPOS.Misc;
 
 namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsTaxes : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        LocationManager LM = new LocationManager();
-        Reports R = new Reports();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly LocationManager LM = new LocationManager();
+        readonly Reports R = new Reports();
         CurrentUser CU;
 
         double colGST;
@@ -53,57 +51,12 @@ namespace SweetSpotDiscountGolfPOS
                     DateTime startDate = reportDates[0];
                     DateTime endDate = reportDates[1];
                     //Builds string to display in label
-                    lblTaxDate.Text = "Taxes Through: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
+                    lblTaxDate.Text = "Taxes Through: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
                     //Creating a cashout list and calling a method that grabs all mops and amounts paid
-                    List<TaxReport> taxReport = R.returnTaxReportDetails(startDate, endDate, Convert.ToInt32(passing[1]), objPageDetails);
+                    List<TaxReport> taxReport = R.CallReturnTaxReportDetails(startDate, endDate, Convert.ToInt32(passing[1]), objPageDetails);
 
-                    grdTaxList.DataSource = taxReport;
-                    grdTaxList.DataBind();
-                    //foreach (var salesDate in taxReport)
-                    //{
-                    //    if (salesDate.intLocationID == Convert.ToInt32(passing[1]))
-                    //    {
-                    //        if (salesDate.intTransactionTypeID == 1)
-                    //        {
-                    //            collected.Add(salesDate);
-                    //        }
-                    //        else if (salesDate.intTransactionTypeID == 2)
-                    //        {
-                    //            returned.Add(salesDate);
-                    //        }
-                    //        overall.Add(salesDate);
-                    //    }
-                    //}
-
-                    //grdTaxesCollected.DataSource = collected;
-                    //grdTaxesCollected.DataBind();
-                    //foreach (GridViewRow row in grdTaxesCollected.Rows)
-                    //{
-                    //    foreach (TableCell cell in row.Cells)
-                    //    {
-                    //        cell.Attributes.CssStyle["text-align"] = "center";
-                    //    }
-                    //}
-
-                    //grdTaxesReturned.DataSource = returned;
-                    //grdTaxesReturned.DataBind();
-                    //foreach (GridViewRow row in grdTaxesReturned.Rows)
-                    //{
-                    //    foreach (TableCell cell in row.Cells)
-                    //    {
-                    //        cell.Attributes.CssStyle["text-align"] = "center";
-                    //    }
-                    //}
-
-                    //grdTaxesOverall.DataSource = overall;
-                    //grdTaxesOverall.DataBind();
-                    //foreach (GridViewRow row in grdTaxesOverall.Rows)
-                    //{
-                    //    foreach (TableCell cell in row.Cells)
-                    //    {
-                    //        cell.Attributes.CssStyle["text-align"] = "center";
-                    //    }
-                    //}
+                    GrdTaxList.DataSource = taxReport;
+                    GrdTaxList.DataBind();
                 }
             }
             //Exception catch
@@ -111,108 +64,18 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void grdTaxesCollected_RowDataBound(object sender, GridViewRowEventArgs e)
-        {
-            //string method = "grdTaxesCollected_RowDataBound";
-            //object[] objPageDetails = { Session["currPage"].ToString(), method };
-            //try
-            //{
-            //    // check row type
-            //    if (e.Row.RowType == DataControlRowType.DataRow)
-            //    {
-            //        colGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmount"));
-            //        colPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmount"));
-            //    }
-            //    else if (e.Row.RowType == DataControlRowType.Footer)
-            //    {
-            //        e.Row.Cells[1].Text = String.Format("{0:C}", colGST);
-            //        e.Row.Cells[2].Text = String.Format("{0:C}", colPST);
-            //    }
-            //}
-            ////Exception catch
-            //catch (ThreadAbortException tae) { }
-            //catch (Exception ex)
-            //{
-            //    //Log all info into error table
-            //    ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-            //    //Display message box
-            //    MessageBox.ShowMessage("An Error has occurred and been logged. "
-            //        + "If you continue to receive this message please contact "
-            //        + "your system administrator.", this);
-            //}
-        }
-        protected void grdTaxesReturned_RowDataBound(object sender, GridViewRowEventArgs e)
-        {
-            //string method = "grdTaxesReturned_RowDataBound";
-            //object[] objPageDetails = { Session["currPage"].ToString(), method };
-            //try
-            //{
-            //    // check row type
-            //    if (e.Row.RowType == DataControlRowType.DataRow)
-            //    {
-            //        retGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmount"));
-            //        retPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmount"));
-            //    }
-            //    else if (e.Row.RowType == DataControlRowType.Footer)
-            //    {
-            //        e.Row.Cells[1].Text = String.Format("{0:C}", retGST);
-            //        e.Row.Cells[2].Text = String.Format("{0:C}", retPST);
-            //    }
-            //}
-            ////Exception catch
-            //catch (ThreadAbortException tae) { }
-            //catch (Exception ex)
-            //{
-            //    //Log all info into error table
-            //    ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-            //    //Display message box
-            //    MessageBox.ShowMessage("An Error has occurred and been logged. "
-            //        + "If you continue to receive this message please contact "
-            //        + "your system administrator.", this);
-            //}
-        }
-        protected void grdTaxesOverall_RowDataBound(object sender, GridViewRowEventArgs e)
-        {
-            //string method = "grdTaxesOverall_RowDataBound";
-            //object[] objPageDetails = { Session["currPage"].ToString(), method };
-            //try
-            //{
-            //    // check row type
-            //    if (e.Row.RowType == DataControlRowType.DataRow)
-            //    {
-            //        ovrGST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmount"));
-            //        ovrPST += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmount"));
-            //    }
-            //    else if (e.Row.RowType == DataControlRowType.Footer)
-            //    {
-            //        e.Row.Cells[1].Text = String.Format("{0:C}", ovrGST);
-            //        e.Row.Cells[2].Text = String.Format("{0:C}", ovrPST);
-            //    }
-            //}
-            ////Exception catch
-            //catch (ThreadAbortException tae) { }
-            //catch (Exception ex)
-            //{
-            //    //Log all info into error table
-            //    ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-            //    //Display message box
-            //    MessageBox.ShowMessage("An Error has occurred and been logged. "
-            //        + "If you continue to receive this message please contact "
-            //        + "your system administrator.", this);
-            //}
-        }
-        protected void printReport(object sender, EventArgs e)
+        protected void PrintReport(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "printReport";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "PrintReport";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             //Current method does nothing
             try
             { }
@@ -221,17 +84,17 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnDownload_Click(object sender, EventArgs e)
+        protected void BtnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnDownload_Click";
+            string method = "BtnDownload_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -243,9 +106,9 @@ namespace SweetSpotDiscountGolfPOS
                 DateTime startDate = reportDates[0];
                 DateTime endDate = reportDates[1];
 
-                string fileName = "Taxes Report-" + LM.ReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails) + "_" + startDate.ToShortDateString() + " - " + endDate.ToShortDateString() + ".xlsx";
+                string fileName = "Taxes Report-" + LM.CallReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails) + "_" + startDate.ToShortDateString() + " - " + endDate.ToShortDateString() + ".xlsx";
                 
-                List<TaxReport> taxReport = R.returnTaxReportDetails(startDate, endDate, Convert.ToInt32(passing[1]), objPageDetails);
+                List<TaxReport> taxReport = R.CallReturnTaxReportDetails(startDate, endDate, Convert.ToInt32(passing[1]), objPageDetails);
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
@@ -310,19 +173,18 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-
-        protected void grdTaxList_RowDataBound(object sender, GridViewRowEventArgs e)
+        protected void GrdTaxList_RowDataBound(object sender, GridViewRowEventArgs e)
         {
 
-            string method = "grdTaxesOverall_RowDataBound";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "GrdTaxesOverall_RowDataBound";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 // check row type
@@ -356,9 +218,9 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }

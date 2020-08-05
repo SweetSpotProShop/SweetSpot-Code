@@ -65,7 +65,7 @@
     <asp:Table runat="server">
         <asp:TableRow>
             <asp:TableCell>
-                <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('print');" />
+                <asp:Button CssClass="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('print');" />
             </asp:TableCell>
         </asp:TableRow>
     </asp:Table>

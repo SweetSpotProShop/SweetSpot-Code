@@ -31,13 +31,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Table tblInvoiceSearch;
         
         /// <summary>
-        /// calSearchDate control.
+        /// CalSearchDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Calendar calSearchDate;
+        protected global::System.Web.UI.WebControls.Calendar CalSearchDate;
         
         /// <summary>
         /// lblInvoiceSearch control.
@@ -58,21 +58,21 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.TextBox txtInvoiceSearch;
         
         /// <summary>
-        /// btnSearch control.
+        /// BtnSearch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSearch;
+        protected global::System.Web.UI.WebControls.Button BtnSearch;
         
         /// <summary>
-        /// grdInvoiceSelection control.
+        /// GrdInvoiceSelection control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView grdInvoiceSelection;
+        protected global::System.Web.UI.WebControls.GridView GrdInvoiceSelection;
     }
 }

@@ -71,7 +71,7 @@
             <h3>Available Items</h3>
             <hr />
             <asp:Label ID="lblInvalidQty" runat="server" Visible="false" Text="Invalid Quantity Entered" ForeColor="Red" />
-            <asp:GridView ID="grdInvoicedItems" runat="server" AutoGenerateColumns="false" OnRowDeleting="grdInvoicedItems_RowDeleting" RowStyle-HorizontalAlign="Center" >
+            <asp:GridView ID="GrdInvoicedItems" runat="server" AutoGenerateColumns="false" OnRowDeleting="GrdInvoicedItems_RowDeleting" RowStyle-HorizontalAlign="Center" >
                 <Columns>
                     <asp:TemplateField HeaderText="Return Item">
                         <ItemTemplate>
@@ -86,7 +86,7 @@
                                 <asp:Label ID="quantitySold" runat="server" Text='<%#Eval("intItemQuantity") %>' />
                             </div>
                             <div>
-                                <asp:TextBox ID="quantityToReturn" runat="server" AutoComplete="off" placeholder="Enter Quantity To Return" />
+                                <asp:TextBox ID="quantityToReturn" runat="server" AutoCompleteType="Disabled" placeholder="Enter Quantity To Return" />
                             </div>
                         </ItemTemplate>
                     </asp:TemplateField>
@@ -111,7 +111,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Amount to Refund">
                         <ItemTemplate>
-                            <asp:TextBox ID="txtReturnAmount" runat="server" AutoComplete="off" Text='<%# Convert.ToBoolean(Eval("bitIsDiscountPercent")) == false ? ((Convert.ToDouble(Eval("fltItemPrice")))-(Convert.ToDouble(Eval("fltItemDiscount")))).ToString("#0.00") : ((Convert.ToDouble(Eval("fltItemPrice")) - ((Convert.ToDouble(Eval("fltItemDiscount")) / 100) * Convert.ToDouble(Eval("fltItemPrice"))))).ToString("#0.00") %>' />
+                            <asp:TextBox ID="txtReturnAmount" runat="server" AutoCompleteType="Disabled" Text='<%# Convert.ToBoolean(Eval("bitIsDiscountPercent")) == false ? ((Convert.ToDouble(Eval("fltItemPrice")))-(Convert.ToDouble(Eval("fltItemDiscount")))).ToString("#0.00") : ((Convert.ToDouble(Eval("fltItemPrice")) - ((Convert.ToDouble(Eval("fltItemDiscount")) / 100) * Convert.ToDouble(Eval("fltItemPrice"))))).ToString("#0.00") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -119,7 +119,7 @@
             <hr />
             <h3>Return Cart</h3>
             <hr />
-            <asp:GridView ID="grdReturningItems" runat="server" AutoGenerateColumns="false" OnRowDeleting="grdReturningItems_RowDeleting" RowStyle-HorizontalAlign="Center" >
+            <asp:GridView ID="GrdReturningItems" runat="server" AutoGenerateColumns="false" OnRowDeleting="GrdReturningItems_RowDeleting" RowStyle-HorizontalAlign="Center" >
                 <Columns>
                     <asp:TemplateField HeaderText="Cancel Return">
                         <ItemTemplate>
@@ -150,8 +150,8 @@
             <asp:Label ID="lblReturnSubtotal" runat="server" Text="Return Subtotal:" />
             <asp:Label ID="lblReturnSubtotalDisplay" runat="server" />
             <hr />
-            <asp:Button ID="btnCancelReturn" runat="server" Text="Void Transaction" OnClick="btnCancelReturn_Click" CausesValidation="false" />
-            <asp:Button ID="btnProceedToReturnCheckout" runat="server" Text="Checkout" OnClick="btnProceedToReturnCheckout_Click" CausesValidation="false" />
+            <asp:Button ID="BtnCancelReturn" runat="server" Text="Void Transaction" OnClick="BtnCancelReturn_Click" CausesValidation="false" />
+            <asp:Button ID="BtnProceedToReturnCheckout" runat="server" Text="Checkout" OnClick="BtnProceedToReturnCheckout_Click" CausesValidation="false" />
         </asp:Panel>
     </div>
 </asp:Content>

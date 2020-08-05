@@ -137,7 +137,7 @@
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtTradeIn" runat="server" AutoComplete="off" Text="0.00" Width="60" />
+                            <asp:TextBox ID="txtTradeIn" runat="server" AutoCompleteType="Disabled" Text="0.00" Width="60" />
 <%--                            <asp:RegularExpressionValidator ID="revTradeIn"
                                 ControlToValidate="txtTradeIn"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -147,7 +147,7 @@
                                 runat="server" />--%>
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtGiftCard" runat="server" AutoComplete="off" Text="0.00" Width="60" />
+                            <asp:TextBox ID="txtGiftCard" runat="server" AutoCompleteType="Disabled" Text="0.00" Width="60" />
 <%--                            <asp:RegularExpressionValidator ID="revGiftCard"
                                 ControlToValidate="txtGiftCard"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -157,7 +157,7 @@
                                 runat="server" />--%>
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtCash" runat="server" AutoComplete="off" Text="0.00" Width="60" />
+                            <asp:TextBox ID="txtCash" runat="server" AutoCompleteType="Disabled" Text="0.00" Width="60" />
                             <%--<asp:RegularExpressionValidator ID="revCash"
                                 ControlToValidate="txtCash"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -167,7 +167,7 @@
                                 runat="server" />--%>
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtDebit" runat="server" AutoComplete="off" Text="0.00" Width="60" />
+                            <asp:TextBox ID="txtDebit" runat="server" AutoCompleteType="Disabled" Text="0.00" Width="60" />
                             <%--<asp:RegularExpressionValidator ID="revDebit"
                                 ControlToValidate="txtDebit"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -177,7 +177,7 @@
                                 runat="server" />--%>
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtMasterCard" runat="server" AutoComplete="off" Text="0.00" Width="60" />
+                            <asp:TextBox ID="txtMasterCard" runat="server" AutoCompleteType="Disabled" Text="0.00" Width="60" />
                             <%--<asp:RegularExpressionValidator ID="revMasterCard"
                                 ControlToValidate="txtMasterCard"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -187,7 +187,7 @@
                                 runat="server" />--%>
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtVisa" runat="server" AutoComplete="off" Text="0.00" Width="60" />
+                            <asp:TextBox ID="txtVisa" runat="server" AutoCompleteType="Disabled" Text="0.00" Width="60" />
 <%--                            <asp:RegularExpressionValidator ID="revVisa"
                                 ControlToValidate="txtVisa"
                                 ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -199,10 +199,10 @@
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:Button ID="btnCalculate" runat="server" Text="Calculate" OnClick="btnCalculate_Click" CausesValidation="True"/>
+                            <asp:Button ID="BtnCalculate" runat="server" Text="Calculate" OnClick="BtnCalculate_Click" CausesValidation="True"/>
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Button ID="btnClear" runat="server" Text="Clear" OnClick="btnClear_Click" />
+                            <asp:Button ID="BtnClear" runat="server" Text="Clear" OnClick="BtnClear_Click" />
                         </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>
@@ -240,8 +240,8 @@
                 <br />
                 <hr />
             </div>
-            <asp:Button class="noPrint" ID="btnProcessReport" runat="server" Text="Process Cashout" Width="200px" OnClick="btnProcessReport_Click" />
-            <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" Enabled="false" OnClientClick="CallPrint('print');" />
+            <asp:Button CssClass="noPrint" ID="BtnProcessReport" runat="server" Text="Process Cashout" Width="200px" OnClick="BtnProcessReport_Click" />
+            <asp:Button CssClass="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" Enabled="false" OnClientClick="CallPrint('print');" />
         </div>
     </div>
 </asp:Content>

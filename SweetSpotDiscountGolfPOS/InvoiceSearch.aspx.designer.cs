@@ -58,13 +58,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.TextBox txtInvoiceNum;
         
         /// <summary>
-        /// btnInvoiceSearch control.
+        /// BtnInvoiceSearch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnInvoiceSearch;
+        protected global::System.Web.UI.WebControls.Button BtnInvoiceSearch;
         
         /// <summary>
         /// tblInvoiceSearch control.
@@ -76,30 +76,30 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Table tblInvoiceSearch;
         
         /// <summary>
-        /// calStartDate control.
+        /// CalStartDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Calendar calStartDate;
+        protected global::System.Web.UI.WebControls.Calendar CalStartDate;
         
         /// <summary>
-        /// calEndDate control.
+        /// CalEndDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Calendar calEndDate;
+        protected global::System.Web.UI.WebControls.Calendar CalEndDate;
         
         /// <summary>
-        /// grdInvoiceSelection control.
+        /// GrdInvoiceSelection control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView grdInvoiceSelection;
+        protected global::System.Web.UI.WebControls.GridView GrdInvoiceSelection;
     }
 }

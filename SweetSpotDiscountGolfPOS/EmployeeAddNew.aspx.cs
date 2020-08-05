@@ -1,22 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using SweetShop;
-using SweetSpotDiscountGolfPOS.ClassLibrary;
-using SweetSpotProShop;
 using System.Threading;
-using System.Data;
+using SweetSpotDiscountGolfPOS.FP;
+using SweetSpotDiscountGolfPOS.OB;
+using SweetSpotDiscountGolfPOS.Misc;
 
 namespace SweetSpotDiscountGolfPOS
 {
     public partial class EmployeeAddNew : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        EmployeeManager EM = new EmployeeManager();
-        LocationManager LM = new LocationManager();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly EmployeeManager EM = new EmployeeManager();
+        readonly LocationManager LM = new LocationManager();
         CurrentUser CU;
         //private static Employee employee;
         
@@ -40,7 +35,7 @@ namespace SweetSpotDiscountGolfPOS
                     if (CU.employee.intJobID != 0)
                     {
                         //If user is not an admin then disable the edit employee button
-                        btnEditEmployee.Enabled = false;
+                        BtnEditEmployee.Enabled = false;
                     }
                     //Check to see if an employee was selected
                     if (Convert.ToInt32(Request.QueryString["employee"].ToString()) != -10)
@@ -48,16 +43,16 @@ namespace SweetSpotDiscountGolfPOS
                         if (!IsPostBack)
                         {
                             //Create an employee class
-                            Employee employee = EM.ReturnEmployee(Convert.ToInt32(Request.QueryString["employee"].ToString()), objPageDetails)[0];
+                            Employee employee = EM.CallReturnEmployee(Convert.ToInt32(Request.QueryString["employee"].ToString()), objPageDetails)[0];
                             //Fill asll lables with current selected employee info
                             txtFirstName.Text = employee.varFirstName.ToString();
                             txtLastName.Text = employee.varLastName.ToString();
 
-                            ddlJob.DataSource = EM.ReturnJobPosition(objPageDetails);
+                            ddlJob.DataSource = EM.CallReturnJobPosition(objPageDetails);
                             ddlJob.DataBind();
                             ddlJob.SelectedValue = employee.intJobID.ToString();
 
-                            ddlLocation.DataSource = LM.ReturnLocationDropDown(objPageDetails);
+                            ddlLocation.DataSource = LM.CallReturnLocationDropDown(objPageDetails);
                             ddlLocation.DataBind();
                             ddlLocation.SelectedValue = employee.location.intLocationID.ToString();
 
@@ -69,10 +64,10 @@ namespace SweetSpotDiscountGolfPOS
                             txtCity.Text = employee.varCityName.ToString();
                             txtPostalCode.Text = employee.varPostalCode.ToString();
                             ddlProvince.SelectedValue = employee.intProvinceID.ToString();
-                            ddlCountry.SelectedValue = employee.intCountryID.ToString();
-                            ddlCountry.DataSource = LM.ReturnCountryDropDown(objPageDetails);
-                            ddlCountry.DataBind();
-                            ddlProvince.DataSource = LM.ReturnProvinceDropDown(employee.intCountryID, objPageDetails);
+                            DdlCountry.SelectedValue = employee.intCountryID.ToString();
+                            DdlCountry.DataSource = LM.CallReturnCountryDropDown(objPageDetails);
+                            DdlCountry.DataBind();
+                            ddlProvince.DataSource = LM.CallReturnProvinceDropDown(employee.intCountryID, objPageDetails);
                             ddlProvince.DataBind();
                         }
                     }
@@ -80,19 +75,19 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         if (!IsPostBack)
                         {
-                            ddlJob.DataSource = EM.ReturnJobPosition(objPageDetails);
+                            ddlJob.DataSource = EM.CallReturnJobPosition(objPageDetails);
                             ddlJob.DataBind();
                             ddlJob.SelectedValue = CU.employee.intJobID.ToString();
 
-                            ddlLocation.DataSource = LM.ReturnLocationDropDown(objPageDetails);
+                            ddlLocation.DataSource = LM.CallReturnLocationDropDown(objPageDetails);
                             ddlLocation.DataBind();
                             ddlLocation.SelectedValue = CU.location.intLocationID.ToString();
                             
-                            ddlCountry.DataSource = LM.ReturnCountryDropDown(objPageDetails);
-                            ddlCountry.DataBind();
-                            ddlCountry.SelectedValue = CU.location.intCountryID.ToString();
+                            DdlCountry.DataSource = LM.CallReturnCountryDropDown(objPageDetails);
+                            DdlCountry.DataBind();
+                            DdlCountry.SelectedValue = CU.location.intCountryID.ToString();
 
-                            ddlProvince.DataSource = LM.ReturnProvinceDropDown(0, objPageDetails);
+                            ddlProvince.DataSource = LM.CallReturnProvinceDropDown(0, objPageDetails);
                             ddlProvince.DataBind();
                             ddlProvince.SelectedValue = CU.location.intProvinceID.ToString();
                         }
@@ -110,15 +105,15 @@ namespace SweetSpotDiscountGolfPOS
                         txtCity.Enabled = true;
                         txtPostalCode.Enabled = true;
                         ddlProvince.Enabled = true;
-                        ddlCountry.Enabled = true;
+                        DdlCountry.Enabled = true;
 
                         //hides and displays the proper buttons for access
-                        btnSaveEmployee.Visible = false;
-                        btnAddEmployee.Visible = true;
+                        BtnSaveEmployee.Visible = false;
+                        BtnAddEmployee.Visible = true;
                         pnlDefaultButton.DefaultButton = "btnAddEmployee";
-                        btnEditEmployee.Visible = false;
-                        btnCancel.Visible = false;
-                        btnBackToSearch.Visible = true;
+                        BtnEditEmployee.Visible = false;
+                        BtnCancel.Visible = false;
+                        BtnBackToSearch.Visible = true;
                     }
                 }
             }
@@ -127,17 +122,17 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnAddEmployee_Click(object sender, EventArgs e)
+        protected void BtnAddEmployee_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnAddEmployee_Click";
+            string method = "BtnAddEmployee_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -146,7 +141,7 @@ namespace SweetSpotDiscountGolfPOS
                 employee.varFirstName = txtFirstName.Text;
                 employee.varLastName = txtLastName.Text;
                 employee.intJobID = Convert.ToInt32(ddlJob.SelectedValue);
-                employee.location = LM.ReturnLocation(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails)[0];
+                employee.location = LM.CallReturnLocation(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails)[0];
                 employee.varEmailAddress = txtEmail.Text;
                 employee.varContactNumber = txtPrimaryPhoneNumber.Text;
                 employee.secondaryContactNumber = txtSecondaryPhoneNumber.Text;
@@ -155,10 +150,10 @@ namespace SweetSpotDiscountGolfPOS
                 employee.varCityName = txtCity.Text;
                 employee.varPostalCode = txtPostalCode.Text;
                 employee.intProvinceID = Convert.ToInt32(ddlProvince.SelectedValue);
-                employee.intCountryID = Convert.ToInt32(ddlCountry.SelectedValue);
+                employee.intCountryID = Convert.ToInt32(DdlCountry.SelectedValue);
 
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                nameValues.Set("employee", EM.AddEmployee(employee, objPageDetails).ToString());
+                nameValues.Set("employee", EM.CallAddEmployee(employee, objPageDetails).ToString());
                 Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
             }
             //Exception catch
@@ -166,18 +161,18 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnEditEmployee_Click(object sender, EventArgs e)
+        protected void BtnEditEmployee_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnEditEmployee_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnEditEmployee_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //transfers data from label into textbox for editing
@@ -193,59 +188,61 @@ namespace SweetSpotDiscountGolfPOS
                 ddlJob.Enabled = true;
                 ddlLocation.Enabled = true;
                 ddlProvince.Enabled = true;
-                ddlCountry.Enabled = true;
+                DdlCountry.Enabled = true;
 
                 //hides and displays the proper buttons for access
-                btnSaveEmployee.Visible = true;
+                BtnSaveEmployee.Visible = true;
                 pnlDefaultButton.DefaultButton = "btnSaveEmployee";
-                btnEditEmployee.Visible = false;
-                btnAddEmployee.Visible = false;
-                btnCancel.Visible = true;
-                btnBackToSearch.Visible = false;
+                BtnEditEmployee.Visible = false;
+                BtnAddEmployee.Visible = false;
+                BtnCancel.Visible = true;
+                BtnBackToSearch.Visible = false;
                 //Add or Update the password for employee
                 lblNewPassword.Visible = true;
                 txtNewPassword.Visible = true;
                 lblPasswordFormat.Visible = true;
                 lblNewPassword2.Visible = true;
                 txtNewPassword2.Visible = true;
-                btnSavePassword.Visible = true;
+                BtnSavePassword.Visible = true;
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnSaveEmployee_Click(object sender, EventArgs e)
+        protected void BtnSaveEmployee_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnSaveEmployee_Click";
+            string method = "BtnSaveEmployee_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Collects employee data to add to database
-                Employee employee = new Employee();
-                employee.intEmployeeID = Convert.ToInt32(Request.QueryString["employee"].ToString());
-                employee.varFirstName = txtFirstName.Text;
-                employee.varLastName = txtLastName.Text;
-                employee.intJobID = Convert.ToInt32(ddlJob.SelectedValue);
-                employee.location = LM.ReturnLocation(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails)[0];
-                employee.varEmailAddress = txtEmail.Text;
-                employee.varContactNumber = txtPrimaryPhoneNumber.Text;
-                employee.secondaryContactNumber = txtSecondaryPhoneNumber.Text;
-                employee.varAddress = txtPrimaryAddress.Text;
-                employee.secondaryAddress = txtSecondaryAddress.Text;
-                employee.varCityName = txtCity.Text;
-                employee.varPostalCode = txtPostalCode.Text;
-                employee.intProvinceID = Convert.ToInt32(ddlProvince.SelectedValue);
-                employee.intCountryID = Convert.ToInt32(ddlCountry.SelectedValue);
-                
+                Employee employee = new Employee
+                {
+                    intEmployeeID = Convert.ToInt32(Request.QueryString["employee"].ToString()),
+                    varFirstName = txtFirstName.Text,
+                    varLastName = txtLastName.Text,
+                    intJobID = Convert.ToInt32(ddlJob.SelectedValue),
+                    location = LM.CallReturnLocation(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails)[0],
+                    varEmailAddress = txtEmail.Text,
+                    varContactNumber = txtPrimaryPhoneNumber.Text,
+                    secondaryContactNumber = txtSecondaryPhoneNumber.Text,
+                    varAddress = txtPrimaryAddress.Text,
+                    secondaryAddress = txtSecondaryAddress.Text,
+                    varCityName = txtCity.Text,
+                    varPostalCode = txtPostalCode.Text,
+                    intProvinceID = Convert.ToInt32(ddlProvince.SelectedValue),
+                    intCountryID = Convert.ToInt32(DdlCountry.SelectedValue)
+                };
+
                 //changes all text boxes and dropdowns to labels
                 txtFirstName.Enabled = false;
                 txtLastName.Enabled = false;
@@ -259,25 +256,25 @@ namespace SweetSpotDiscountGolfPOS
                 txtCity.Enabled = false;
                 txtPostalCode.Enabled = false;
                 ddlProvince.Enabled = false;
-                ddlCountry.Enabled = false;
+                DdlCountry.Enabled = false;
 
                 //hides and displays the proper buttons for access
-                btnSaveEmployee.Visible = false;
-                btnEditEmployee.Visible = true;
+                BtnSaveEmployee.Visible = false;
+                BtnEditEmployee.Visible = true;
                 pnlDefaultButton.DefaultButton = "btnEditEmployee";
-                btnCancel.Visible = false;
-                btnAddEmployee.Visible = false;
-                btnBackToSearch.Visible = true;
+                BtnCancel.Visible = false;
+                BtnAddEmployee.Visible = false;
+                BtnBackToSearch.Visible = true;
                 lblNewPassword.Visible = false;
                 txtNewPassword.Visible = false;
                 lblPasswordFormat.Visible = false;
                 lblNewPassword2.Visible = false;
                 txtNewPassword2.Visible = false;
-                btnSavePassword.Visible = false;
+                BtnSavePassword.Visible = false;
 
                 //reloads current page
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                nameValues.Set("employee", EM.UpdateEmployee(employee, objPageDetails).ToString());
+                nameValues.Set("employee", EM.CallUpdateEmployee(employee, objPageDetails).ToString());
                 Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
             }
             //Exception catch
@@ -285,18 +282,18 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnCancel_Click(object sender, EventArgs e)
+        protected void BtnCancel_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnCancel_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnCancel_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //no changes saved, refreshes current page
@@ -307,18 +304,18 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnBackToSearch_Click(object sender, EventArgs e)
+        protected void BtnBackToSearch_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnBackToSearch_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnBackToSearch_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Changes page to the settings page
@@ -329,16 +326,16 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnSavePassword_Click(object sender, EventArgs e)
+        protected void BtnSavePassword_Click(object sender, EventArgs e)
         {
-            string method = "btnSavePassword_Click";
+            string method = "BtnSavePassword_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -346,24 +343,24 @@ namespace SweetSpotDiscountGolfPOS
                 if(Convert.ToInt32(txtNewPassword.Text) == Convert.ToInt32(txtNewPassword2.Text))
                 {
                     //Call method to add the new password
-                    bool bolAdded = EM.saveNewPassword(Convert.ToInt32(Request.QueryString["employee"].ToString()), Convert.ToInt32(txtNewPassword.Text), objPageDetails);
+                    bool bolAdded = EM.CallSaveNewPassword(Convert.ToInt32(Request.QueryString["employee"].ToString()), Convert.ToInt32(txtNewPassword.Text), objPageDetails);
                     //Check if the password was added or not
                     if (!bolAdded)
                     {
                         //The password was not added because it is already in use by employee
-                        MessageBox.ShowMessage("The password supplied is not available. Please try another password.", this);
+                        MessageBoxCustom.ShowMessage("The password supplied is not available. Please try another password.", this);
                     }
                     else
                     {
                         //The password was added, advise user and return to employee viewing
-                        MessageBox.ShowMessage("New password for employee saved.", this);
-                        btnCancel_Click(sender, e);
+                        MessageBoxCustom.ShowMessage("New password for employee saved.", this);
+                        BtnCancel_Click(sender, e);
                     }
                 }
                 else
                 {
                     //Passwords do not match
-                    MessageBox.ShowMessage("The passwords do not match. Please retype the passwords again.", this);
+                    MessageBoxCustom.ShowMessage("The passwords do not match. Please retype the passwords again.", this);
                 }
             }
             //Exception catch
@@ -371,21 +368,21 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void ddlCountry_SelectedIndexChanged(object sender, EventArgs e)
+        protected void DdlCountry_SelectedIndexChanged(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "ddlCountry_SelectedIndexChanged";
+            string method = "DdlCountry_SelectedIndexChanged";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                ddlProvince.DataSource = LM.ReturnProvinceDropDown(Convert.ToInt32(ddlCountry.SelectedValue), objPageDetails);
+                ddlProvince.DataSource = LM.CallReturnProvinceDropDown(Convert.ToInt32(DdlCountry.SelectedValue), objPageDetails);
                 ddlProvince.DataBind();
             }
             //Exception catch
@@ -393,9 +390,9 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }

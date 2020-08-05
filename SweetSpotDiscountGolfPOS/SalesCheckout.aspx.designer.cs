@@ -22,49 +22,49 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Panel pnlDefaultButton;
         
         /// <summary>
-        /// mopCash control.
+        /// MopCash control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button mopCash;
+        protected global::System.Web.UI.WebControls.Button MopCash;
         
         /// <summary>
-        /// mopVisa control.
+        /// MopVisa control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button mopVisa;
+        protected global::System.Web.UI.WebControls.Button MopVisa;
         
         /// <summary>
-        /// mopMasterCard control.
+        /// MopMasterCard control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button mopMasterCard;
+        protected global::System.Web.UI.WebControls.Button MopMasterCard;
         
         /// <summary>
-        /// mopDebit control.
+        /// MopDebit control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button mopDebit;
+        protected global::System.Web.UI.WebControls.Button MopDebit;
         
         /// <summary>
-        /// mopGiftCard control.
+        /// MopGiftCard control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button mopGiftCard;
+        protected global::System.Web.UI.WebControls.Button MopGiftCard;
         
         /// <summary>
         /// lblAmountPaid control.
@@ -202,13 +202,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblGovernmentAmount;
         
         /// <summary>
-        /// btnRemoveGov control.
+        /// BtnRemoveGov control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnRemoveGov;
+        protected global::System.Web.UI.WebControls.Button BtnRemoveGov;
         
         /// <summary>
         /// lblProvincial control.
@@ -229,13 +229,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblProvincialAmount;
         
         /// <summary>
-        /// btnRemoveProv control.
+        /// BtnRemoveProv control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnRemoveProv;
+        protected global::System.Web.UI.WebControls.Button BtnRemoveProv;
         
         /// <summary>
         /// lblLiquorTax control.
@@ -256,13 +256,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblLiquorTaxAmount;
         
         /// <summary>
-        /// btnRemoveLiq control.
+        /// BtnRemoveLiq control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnRemoveLiq;
+        protected global::System.Web.UI.WebControls.Button BtnRemoveLiq;
         
         /// <summary>
         /// lblBalance control.
@@ -310,40 +310,40 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.Label lblRemainingBalanceDueDisplay;
         
         /// <summary>
-        /// btnCancelSale control.
+        /// BtnCancelSale control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCancelSale;
+        protected global::System.Web.UI.WebControls.Button BtnCancelSale;
         
         /// <summary>
-        /// btnExitSale control.
+        /// BtnExitSale control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnExitSale;
+        protected global::System.Web.UI.WebControls.Button BtnExitSale;
         
         /// <summary>
-        /// btnReturnToCart control.
+        /// BtnReturnToCart control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnReturnToCart;
+        protected global::System.Web.UI.WebControls.Button BtnReturnToCart;
         
         /// <summary>
-        /// btnFinalize control.
+        /// BtnFinalize control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnFinalize;
+        protected global::System.Web.UI.WebControls.Button BtnFinalize;
         
         /// <summary>
         /// lblConfirmEmployee control.

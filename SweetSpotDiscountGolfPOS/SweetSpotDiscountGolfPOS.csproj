@@ -145,39 +145,39 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClassLibrary\Accessories.cs" />
-    <Compile Include="ClassLibrary\ImportExport.cs" />
-    <Compile Include="ClassLibrary\ItemChangeTracking.cs" />
-    <Compile Include="ClassLibrary\CustomerManager.cs" />
-    <Compile Include="ClassLibrary\InvoiceItemsManager.cs" />
-    <Compile Include="ClassLibrary\InvoiceMOPsManager.cs" />
-    <Compile Include="ClassLibrary\ItemsManager.cs" />
-    <Compile Include="ClassLibrary\MasterBIll.cs" />
-    <Compile Include="ClassLibrary\SalesCalculationManager.cs" />
-    <Compile Include="ClassLibrary\Cart.cs" />
-    <Compile Include="ClassLibrary\Cashout.cs" />
-    <Compile Include="ClassLibrary\CheckoutManager.cs" />
-    <Compile Include="ClassLibrary\Clothing.cs" />
-    <Compile Include="ClassLibrary\Clubs.cs" />
-    <Compile Include="ClassLibrary\CurrentUser.cs" />
-    <Compile Include="ClassLibrary\Customer.cs" />
-    <Compile Include="ClassLibrary\CustomExtensions.cs" />
-    <Compile Include="ClassLibrary\CustomMessageBox.cs" />
-    <Compile Include="ClassLibrary\Employee.cs" />
-    <Compile Include="ClassLibrary\EmployeeManager.cs" />
-    <Compile Include="ClassLibrary\ErrorReporting.cs" />
-    <Compile Include="ClassLibrary\Invoice.cs" />
-    <Compile Include="ClassLibrary\InvoiceItems.cs" />
-    <Compile Include="ClassLibrary\InvoiceMOPs.cs" />
-    <Compile Include="ClassLibrary\ItemDataUtilities.cs" />
-    <Compile Include="ClassLibrary\Inventory.cs" />
-    <Compile Include="ClassLibrary\Location.cs" />
-    <Compile Include="ClassLibrary\LocationManager.cs" />
-    <Compile Include="ClassLibrary\MessageBox.cs" />
-    <Compile Include="ClassLibrary\Reports.cs" />
-    <Compile Include="ClassLibrary\Tax.cs" />
-    <Compile Include="ClassLibrary\TaxManager.cs" />
-    <Compile Include="ClassLibrary\TaxReport.cs" />
+    <Compile Include="ClassLibrary\Objects\Accessories.cs" />
+    <Compile Include="ClassLibrary\FunctionsProcedures\ImportExport.cs" />
+    <Compile Include="ClassLibrary\Objects\ItemChangeTracking.cs" />
+    <Compile Include="ClassLibrary\FunctionsProcedures\CustomerManager.cs" />
+    <Compile Include="ClassLibrary\FunctionsProcedures\InvoiceItemsManager.cs" />
+    <Compile Include="ClassLibrary\FunctionsProcedures\InvoiceMOPsManager.cs" />
+    <Compile Include="ClassLibrary\FunctionsProcedures\ItemsManager.cs" />
+    <Compile Include="ClassLibrary\Junk\MasterBIll.cs" />
+    <Compile Include="ClassLibrary\FunctionsProcedures\SalesCalculationManager.cs" />
+    <Compile Include="ClassLibrary\Objects\Cart.cs" />
+    <Compile Include="ClassLibrary\Objects\Cashout.cs" />
+    <Compile Include="ClassLibrary\Objects\CheckoutManager.cs" />
+    <Compile Include="ClassLibrary\Objects\Clothing.cs" />
+    <Compile Include="ClassLibrary\Objects\Clubs.cs" />
+    <Compile Include="ClassLibrary\Objects\CurrentUser.cs" />
+    <Compile Include="ClassLibrary\Objects\Customer.cs" />
+    <Compile Include="ClassLibrary\Misc\CustomExtensions.cs" />
+    <Compile Include="ClassLibrary\Junk\CustomMessageBox.cs" />
+    <Compile Include="ClassLibrary\Objects\Employee.cs" />
+    <Compile Include="ClassLibrary\FunctionsProcedures\EmployeeManager.cs" />
+    <Compile Include="ClassLibrary\Misc\ErrorReporting.cs" />
+    <Compile Include="ClassLibrary\Objects\Invoice.cs" />
+    <Compile Include="ClassLibrary\Objects\InvoiceItems.cs" />
+    <Compile Include="ClassLibrary\Objects\InvoiceMOPs.cs" />
+    <Compile Include="ClassLibrary\FunctionsProcedures\ItemDataUtilities.cs" />
+    <Compile Include="ClassLibrary\Objects\Inventory.cs" />
+    <Compile Include="ClassLibrary\Objects\Location.cs" />
+    <Compile Include="ClassLibrary\FunctionsProcedures\LocationManager.cs" />
+    <Compile Include="ClassLibrary\Misc\MessageBoxCustom.cs" />
+    <Compile Include="ClassLibrary\FunctionsProcedures\Reports.cs" />
+    <Compile Include="ClassLibrary\Objects\Tax.cs" />
+    <Compile Include="ClassLibrary\FunctionsProcedures\TaxManager.cs" />
+    <Compile Include="ClassLibrary\Objects\TaxReport.cs" />
     <Compile Include="CustomerAddNew.aspx.cs">
       <DependentUpon>CustomerAddNew.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -192,7 +192,7 @@
     <Compile Include="CustomerHomePage.aspx.designer.cs">
       <DependentUpon>CustomerHomePage.aspx</DependentUpon>
     </Compile>
-    <Compile Include="ClassLibrary\DatabaseCalls.cs" />
+    <Compile Include="ClassLibrary\Misc\DatabaseCalls.cs" />
     <Compile Include="EmployeeAddNew.aspx.cs">
       <DependentUpon>EmployeeAddNew.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -221,7 +221,7 @@
     <Compile Include="InventoryHomePage.aspx.designer.cs">
       <DependentUpon>InventoryHomePage.aspx</DependentUpon>
     </Compile>
-    <Compile Include="ClassLibrary\InvoiceManager.cs" />
+    <Compile Include="ClassLibrary\FunctionsProcedures\InvoiceManager.cs" />
     <Compile Include="LoginPage.aspx.cs">
       <DependentUpon>LoginPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -484,6 +484,7 @@
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

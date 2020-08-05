@@ -58,111 +58,111 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.DropDownList ddlDatePeriod;
         
         /// <summary>
-        /// calStartDate control.
+        /// CalStartDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Calendar calStartDate;
+        protected global::System.Web.UI.WebControls.Calendar CalStartDate;
         
         /// <summary>
-        /// calEndDate control.
+        /// CalEndDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Calendar calEndDate;
+        protected global::System.Web.UI.WebControls.Calendar CalEndDate;
         
         /// <summary>
-        /// btnCashOutReport control.
+        /// BtnCashOutReport control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCashOutReport;
+        protected global::System.Web.UI.WebControls.Button BtnCashOutReport;
         
         /// <summary>
-        /// btnDiscountReport control.
+        /// BtnDiscountReport control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnDiscountReport;
+        protected global::System.Web.UI.WebControls.Button BtnDiscountReport;
         
         /// <summary>
-        /// btnTaxReport control.
+        /// BtnTaxReport control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnTaxReport;
+        protected global::System.Web.UI.WebControls.Button BtnTaxReport;
         
         /// <summary>
-        /// btnSalesByDateReport control.
+        /// BtnSalesByDateReport control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSalesByDateReport;
+        protected global::System.Web.UI.WebControls.Button BtnSalesByDateReport;
         
         /// <summary>
-        /// btnExtensiveInvoice control.
+        /// BtnExtensiveInvoice control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnExtensiveInvoice;
+        protected global::System.Web.UI.WebControls.Button BtnExtensiveInvoice;
         
         /// <summary>
-        /// btnCostOfInventory control.
+        /// BtnCostOfInventory control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCostOfInventory;
+        protected global::System.Web.UI.WebControls.Button BtnCostOfInventory;
         
         /// <summary>
-        /// btnStoreStatsReport control.
+        /// BtnStoreStatsReport control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnStoreStatsReport;
+        protected global::System.Web.UI.WebControls.Button BtnStoreStatsReport;
         
         /// <summary>
-        /// btnInvnetoryChangeReport control.
+        /// BtnInvnetoryChangeReport control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnInvnetoryChangeReport;
+        protected global::System.Web.UI.WebControls.Button BtnInvnetoryChangeReport;
         
         /// <summary>
-        /// btnSpecificApparelReport control.
+        /// BtnSpecificApparelReport control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSpecificApparelReport;
+        protected global::System.Web.UI.WebControls.Button BtnSpecificApparelReport;
         
         /// <summary>
-        /// btnSpecificGripReport control.
+        /// BtnSpecificGripReport control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSpecificGripReport;
+        protected global::System.Web.UI.WebControls.Button BtnSpecificGripReport;
     }
 }

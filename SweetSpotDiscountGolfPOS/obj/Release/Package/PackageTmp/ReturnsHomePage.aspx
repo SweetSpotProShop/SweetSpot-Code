@@ -22,9 +22,9 @@
             <asp:Table ID="tblInvoiceSearch" runat="server" >
                 <asp:TableRow>
                     <asp:TableCell RowSpan="3" Width="20%">
-                        <asp:Calendar ID="calSearchDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4"
+                        <asp:Calendar ID="CalSearchDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4"
                             DayNameFormat="Shortest" Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="184px" 
-                            Width="200px" OnSelectionChanged="calSearchDate_SelectionChanged" >
+                            Width="200px" OnSelectionChanged="CalSearchDate_SelectionChanged" >
                             <DayHeaderStyle BackColor="#5FD367" Font-Bold="True" Font-Size="7pt" />
                             <NextPrevStyle VerticalAlign="Bottom" />
                             <OtherMonthDayStyle ForeColor="#808080" />
@@ -41,18 +41,18 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtInvoiceSearch" runat="server" AutoComplete="off" />
+                        <asp:TextBox ID="txtInvoiceSearch" runat="server" AutoCompleteType="Disabled" />
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:Button ID="btnSearch" runat="server" Width="150" Text="Search" OnClick="btnSearch_Click" />
+                        <asp:Button ID="BtnSearch" runat="server" Width="150" Text="Search" OnClick="BtnSearch_Click" />
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
             <hr />
             <div>
-                <asp:GridView ID="grdInvoiceSelection" runat="server" RowStyle-HorizontalAlign="Center" AutoGenerateColumns="false" Width="100%" OnRowCommand="grdInvoiceSelection_RowCommand">
+                <asp:GridView ID="GrdInvoiceSelection" runat="server" RowStyle-HorizontalAlign="Center" AutoGenerateColumns="false" Width="100%" OnRowCommand="GrdInvoiceSelection_RowCommand">
                     <Columns>
                         <asp:TemplateField HeaderText="Invoice Number">
                             <ItemTemplate>

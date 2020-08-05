@@ -33,7 +33,7 @@
                         <li><a href="InventoryHomePage.aspx">INVENTORY</a></li>
                         <li><a href="ReportsHomePage.aspx">REPORTS</a></li>
                         <li><a href="SettingsHomePage.aspx">SETTINGS</a></li>
-						<li><a href="LoungeSims.aspx">SIMULATOR LOUNGE</a></li>
+						<%--<li><a href="LoungeSims.aspx">SIMULATOR LOUNGE</a></li>--%>
                     </ul>
                 </div>
                 <div id="image_simple">
@@ -41,7 +41,7 @@
                 </div>
 
                 <div id="button_simple">
-                    <asp:Button ID="Button1" runat="server" Text="LogOut" OnClick="btnLogout_Click" />
+                    <asp:Button ID="Button1" runat="server" Text="LogOut" OnClick="BtnLogout_Click" />
                 </div>
                 <link rel="stylesheet" type="text/css" href="CSS/MainStyleSheet.css" />
             </asp:ContentPlaceHolder>

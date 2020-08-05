@@ -1,25 +1,19 @@
-﻿using SweetShop;
-using SweetSpotDiscountGolfPOS.ClassLibrary;
-using SweetSpotProShop;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Globalization;
-using System.Data;
-using System.Linq;
 using System.Threading;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
+using SweetSpotDiscountGolfPOS.FP;
+using SweetSpotDiscountGolfPOS.OB;
+using SweetSpotDiscountGolfPOS.Misc;
 
 namespace SweetSpotDiscountGolfPOS
 {
     public partial class SalesCashOut : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU;
-        Reports R = new Reports();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly LocationManager LM = new LocationManager();
+        readonly Reports R = new Reports();
         //private static Cashout cashout;
-        LocationManager LM = new LocationManager();
+        CurrentUser CU;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -45,8 +39,8 @@ namespace SweetSpotDiscountGolfPOS
                         DateTime selectedDate = DateTime.Parse(Request.QueryString["selectedDate"].ToString());
                         int locationID = Convert.ToInt32(Request.QueryString["location"].ToString());
                         object[] args = { selectedDate, locationID };
-                        lblCashoutDate.Text = "Cashout on: " + selectedDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
-                        if (R.CashoutExists(args, objPageDetails))
+                        lblCashoutDate.Text = "Cashout on: " + selectedDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
+                        if (R.CallCashoutExists(args, objPageDetails))
                         {
                             cashout = R.CallSelectedCashoutToReturn(args, objPageDetails);
 
@@ -102,7 +96,7 @@ namespace SweetSpotDiscountGolfPOS
                             cashout.fltManuallyCountedBasedOnReceiptsMastercard = 0;
                             cashout.fltManuallyCountedBasedOnReceiptsVisa = 0;
                             cashout.fltCashDrawerOverShort = 0;
-                            R.insertCashout(cashout, objPageDetails);
+                            R.CallInsertCashout(cashout, objPageDetails);
                         }
                     }
                 }
@@ -112,41 +106,41 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
         //Calculating the cashout
-        protected void btnCalculate_Click(object sender, EventArgs e)
+        protected void BtnCalculate_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnCalculate_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnCalculate_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                calculteMethod();
+                CalculteMethod();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
         //Clearing the entered amounts
-        protected void btnClear_Click(object sender, EventArgs e)
+        protected void BtnClear_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnClear_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnClear_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Blanking the textboxes
@@ -162,21 +156,21 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnProcessReport_Click(object sender, EventArgs e)
+        protected void BtnProcessReport_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnProcessReport_Click";
+            string method = "BtnProcessReport_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {                
-                calculteMethod();
+                CalculteMethod();
                 object[] args = { DateTime.Parse(Request.QueryString["selectedDate"].ToString()), Convert.ToInt32(Request.QueryString["location"].ToString()) };
                 Cashout cashout = R.CallSelectedCashoutToReturn(args, objPageDetails);
 
@@ -192,29 +186,29 @@ namespace SweetSpotDiscountGolfPOS
                 cashout.bitIsCashoutFinalized = false;
                 cashout.intEmployeeID = CU.employee.intEmployeeID;
 
-                R.UpdateCashout(cashout, objPageDetails);
+                R.CallUpdateCashout(cashout, objPageDetails);
 
-                MessageBox.ShowMessage("Cashout has been processed", this);
+                MessageBoxCustom.ShowMessage("Cashout has been processed", this);
                 btnPrint.Enabled = true;
-                btnProcessReport.Enabled = false;
+                BtnProcessReport.Enabled = false;
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        private void calculteMethod()
+        private void CalculteMethod()
         {
             //Collects current method for error tracking
-            string method = "calculateMethod";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "CalculateMethod";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //If nothing is entered, setting text to 0.00 and the total to 0
@@ -255,9 +249,9 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }

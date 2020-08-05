@@ -43,11 +43,11 @@
         <asp:Label ID="lblPurchasesMadeDate" Font-Bold="true" runat="server" />
         <hr />
         <div>
-            <asp:GridView ID="grdPurchasesMade" runat="server" Width="75%" AutoGenerateColumns="false" ShowFooter="true" OnRowDataBound="grdPurchasesMade_RowDataBound">
+            <asp:GridView ID="GrdPurchasesMade" runat="server" Width="75%" AutoGenerateColumns="false" ShowFooter="true" OnRowDataBound="GrdPurchasesMade_RowDataBound">
                 <Columns>
                     <asp:TemplateField HeaderText="Receipt Number" HeaderStyle-Width="20%">
                         <ItemTemplate>
-                            <asp:LinkButton ID="lbtnReceiptNumber" runat="server" Text='<%#Eval("receiptNumber") %>' OnClick="lbtnReceiptNumber_Click" />
+                            <asp:LinkButton ID="LbtnReceiptNumber" runat="server" Text='<%#Eval("receiptNumber") %>' OnClick="LbtnReceiptNumber_Click" />
                         </ItemTemplate>
                         <FooterTemplate>
                             <asp:Label ID="lblTotals" runat="server" Text="Totals:" />
@@ -63,8 +63,8 @@
         <br />
         <hr />
     </div>
-    <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('Purchases');" />
-    <asp:Button class="noPrint" ID="btnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="btnDownload_Click" />
+    <asp:Button CssClass="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('Purchases');" />
+    <asp:Button CssClass="noPrint" ID="BtnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="BtnDownload_Click" />
     <script>
         function printReport(printable) {
             window.print();

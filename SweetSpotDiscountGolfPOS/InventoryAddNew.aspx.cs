@@ -1,25 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using SweetShop;
-using SweetSpotProShop;
-using SweetSpotDiscountGolfPOS.ClassLibrary;
 using System.Threading;
+using SweetSpotDiscountGolfPOS.FP;
+using SweetSpotDiscountGolfPOS.OB;
+using SweetSpotDiscountGolfPOS.Misc;
 
 namespace SweetSpotDiscountGolfPOS
 {
     public partial class InventoryAddNew : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        CurrentUser CU;
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly ItemDataUtilities IDU = new ItemDataUtilities();
+        readonly ItemsManager IM = new ItemsManager();
+        readonly LocationManager LM = new LocationManager();
         ItemChangeTracking changeItem;
-        ItemDataUtilities IDU = new ItemDataUtilities();
-        ItemsManager IM = new ItemsManager();
-        LocationManager LM = new LocationManager();
-        
+        CurrentUser CU;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
@@ -40,7 +39,7 @@ namespace SweetSpotDiscountGolfPOS
                     if (CU.employee.intJobID != 0)
                     {
                         //If user is not an admin then disable the edit item button
-                        btnEditItem.Enabled = false;
+                        BtnEditItem.Enabled = false;
                     }
                     //Check to see if an item was selected
                     if (Convert.ToInt32(Request.QueryString["inventory"].ToString()) != -10)
@@ -49,14 +48,14 @@ namespace SweetSpotDiscountGolfPOS
                         {
                             ItemChangeTracking tempItem = new ItemChangeTracking();
                             //Grabs a list of objects that match the sku in query string. There should only ever be 1 that is returned
-                            List<Object> o = IDU.ReturnListOfObjectsFromThreeTablesForInventoryAddNew(Convert.ToInt32(Request.QueryString["inventory"].ToString()), objPageDetails, DateTime.Now, CU.location.intProvinceID);
-                            ddlBrand.DataSource = IM.ReturnDropDownForBrand(objPageDetails);
+                            List<Object> o = IDU.CallReturnListOfObjectsFromThreeTablesForInventoryAddNew(Convert.ToInt32(Request.QueryString["inventory"].ToString()), objPageDetails, DateTime.Now, CU.location.intProvinceID);
+                            ddlBrand.DataSource = IM.CallReturnDropDownForBrand(objPageDetails);
                             ddlBrand.DataBind();
-                            ddlLocation.DataSource = LM.ReturnLocationDropDown(objPageDetails);
+                            ddlLocation.DataSource = LM.CallReturnLocationDropDown(objPageDetails);
                             ddlLocation.DataBind();
-                            ddlType.DataSource = IM.ReturnDropDownForItemType(objPageDetails);
+                            ddlType.DataSource = IM.CallReturnDropDownForItemType(objPageDetails);
                             ddlType.DataBind();
-                            ddlModel.DataSource = IM.ReturnDropDownForModel(objPageDetails);
+                            ddlModel.DataSource = IM.CallReturnDropDownForModel(objPageDetails);
                             ddlModel.DataBind();
                             if (o[0] is Clubs)
                             {
@@ -81,8 +80,8 @@ namespace SweetSpotDiscountGolfPOS
                                 chkUsed.Checked = club.bitIsUsedProduct;
                                 txtComments.Text = club.varAdditionalInformation.ToString();
 
-                                grdInventoryTaxes.DataSource = club.lstTaxTypePerInventoryItem;
-                                grdInventoryTaxes.DataBind();
+                                GrdInventoryTaxes.DataSource = club.lstTaxTypePerInventoryItem;
+                                GrdInventoryTaxes.DataBind();
 
                                 tempItem.intInventoryID = club.intInventoryID;
                                 tempItem.fltOriginalCost = club.fltCost;
@@ -125,8 +124,8 @@ namespace SweetSpotDiscountGolfPOS
                                 txtDexterity.Visible = false;
                                 chkUsed.Visible = false;
 
-                                grdInventoryTaxes.DataSource = accessory.lstTaxTypePerInventoryItem;
-                                grdInventoryTaxes.DataBind();
+                                GrdInventoryTaxes.DataSource = accessory.lstTaxTypePerInventoryItem;
+                                GrdInventoryTaxes.DataBind();
 
                                 tempItem.intInventoryID = accessory.intInventoryID;
                                 tempItem.fltOriginalCost = accessory.fltCost;
@@ -167,8 +166,8 @@ namespace SweetSpotDiscountGolfPOS
                                 txtDexterity.Visible = false;
                                 chkUsed.Visible = false;
 
-                                grdInventoryTaxes.DataSource = clothing.lstTaxTypePerInventoryItem;
-                                grdInventoryTaxes.DataBind();
+                                GrdInventoryTaxes.DataSource = clothing.lstTaxTypePerInventoryItem;
+                                GrdInventoryTaxes.DataBind();
 
                                 tempItem.intInventoryID = clothing.intInventoryID;
                                 tempItem.fltOriginalCost = clothing.fltCost;
@@ -178,7 +177,7 @@ namespace SweetSpotDiscountGolfPOS
                                     + "; Size: " + clothing.varSize.ToString() + "; Colour: " + clothing.varColour.ToString() + "; Gender: " + clothing.varGender.ToString()
                                     + "; Style: " + clothing.varStyle.ToString() + "; Comments: " + clothing.varAdditionalInformation.ToString();
                             }
-                            btnCreateSimilar.Visible = true;
+                            BtnCreateSimilar.Visible = true;
                             changeItem = tempItem;
                             Session["changer"] = changeItem;
                         }
@@ -197,16 +196,16 @@ namespace SweetSpotDiscountGolfPOS
                         txtShaft.Enabled = true;
                         txtComments.Enabled = true;
 
-                        btnCreateSimilar.Visible = false;
+                        BtnCreateSimilar.Visible = false;
                         if (!IsPostBack)
                         {
-                            ddlBrand.DataSource = IM.ReturnDropDownForBrand(objPageDetails);
+                            ddlBrand.DataSource = IM.CallReturnDropDownForBrand(objPageDetails);
                             ddlBrand.DataBind();
-                            ddlLocation.DataSource = LM.ReturnLocationDropDown(objPageDetails);
+                            ddlLocation.DataSource = LM.CallReturnLocationDropDown(objPageDetails);
                             ddlLocation.DataBind();
-                            ddlType.DataSource = IM.ReturnDropDownForItemType(objPageDetails);
+                            ddlType.DataSource = IM.CallReturnDropDownForItemType(objPageDetails);
                             ddlType.DataBind();
-                            ddlModel.DataSource = IM.ReturnDropDownForModel(objPageDetails);
+                            ddlModel.DataSource = IM.CallReturnDropDownForModel(objPageDetails);
                             ddlModel.DataBind();
                             ddlLocation.SelectedValue = CU.location.intLocationID.ToString();
                             ddlType.SelectedValue = "1";
@@ -333,12 +332,12 @@ namespace SweetSpotDiscountGolfPOS
                             }
                         }
                         //hides and displays the proper buttons for access
-                        btnSaveItem.Visible = false;
-                        btnAddItem.Visible = true;
+                        BtnSaveItem.Visible = false;
+                        BtnAddItem.Visible = true;
                         pnlDefaultButton.DefaultButton = "btnAddItem";
-                        btnEditItem.Visible = false;
-                        btnCancel.Visible = false;
-                        btnBackToSearch.Visible = true;
+                        BtnEditItem.Visible = false;
+                        BtnCancel.Visible = false;
+                        BtnBackToSearch.Visible = true;
                     }
                 }
             }
@@ -347,17 +346,17 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnAddItem_Click(object sender, EventArgs e)
+        protected void BtnAddItem_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnAddItem_Click";
+            string method = "BtnAddItem_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -368,7 +367,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     Clubs club = new Clubs();
                     //Transfers all info into Club class
-                    string[] inventoryInfo = IDU.ReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                    string[] inventoryInfo = IDU.CallReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
                     club.intInventoryID = Convert.ToInt32(inventoryInfo[1]);
                     club.varSku = inventoryInfo[0].ToString();
                     club.fltCost = Convert.ToDouble(txtCost.Text);
@@ -394,7 +393,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     Accessories accessory = new Accessories();
                     //Transfers all info into Accessory class
-                    string[] inventoryInfo = IDU.ReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                    string[] inventoryInfo = IDU.CallReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
                     accessory.intInventoryID = Convert.ToInt32(inventoryInfo[1]);
                     accessory.varSku = inventoryInfo[0].ToString();
                     accessory.intBrandID = Convert.ToInt32(ddlBrand.SelectedValue);
@@ -415,7 +414,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     Clothing clothing = new Clothing();
                     //Transfers all info into Clothing class
-                    string[] inventoryInfo = IDU.ReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                    string[] inventoryInfo = IDU.CallReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
                     clothing.intInventoryID = Convert.ToInt32(inventoryInfo[1]);
                     clothing.varSku = inventoryInfo[0].ToString();
                     clothing.intBrandID = Convert.ToInt32(ddlBrand.SelectedValue);
@@ -443,18 +442,18 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnEditItem_Click(object sender, EventArgs e)
+        protected void BtnEditItem_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnEditItem_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnEditItem_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 txtCost.Enabled = true;
@@ -487,30 +486,30 @@ namespace SweetSpotDiscountGolfPOS
                     txtNumberofClubs.Enabled = true;
                 }
                 //hides and displays the proper buttons for access
-                btnSaveItem.Visible = true;
+                BtnSaveItem.Visible = true;
                 pnlDefaultButton.DefaultButton = "btnSaveItem";
-                btnEditItem.Visible = false;
-                btnAddItem.Visible = false;
-                btnCancel.Visible = true;
-                btnBackToSearch.Visible = false;
-                btnCreateSimilar.Visible = false;
+                BtnEditItem.Visible = false;
+                BtnAddItem.Visible = false;
+                BtnCancel.Visible = true;
+                BtnBackToSearch.Visible = false;
+                BtnCreateSimilar.Visible = false;
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnSaveItem_Click(object sender, EventArgs e)
+        protected void BtnSaveItem_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnSaveItem_Click";
+            string method = "BtnSaveItem_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -527,24 +526,26 @@ namespace SweetSpotDiscountGolfPOS
                 object o = new object();
                 if (Convert.ToInt32(ddlType.SelectedValue) == 1)
                 {
-                    Clubs club = new Clubs();
-                    //if item type is club then save as club class
-                    club.intInventoryID = Convert.ToInt32(Request.QueryString["inventory"].ToString());
-                    club.fltCost = Convert.ToDouble(txtCost.Text);
-                    club.intBrandID = Convert.ToInt32(ddlBrand.SelectedValue);
-                    club.fltPrice = Convert.ToDouble(txtPrice.Text);
-                    club.intQuantity = Convert.ToInt32(txtQuantity.Text);
-                    club.intLocationID = Convert.ToInt32(ddlLocation.SelectedValue);
-                    club.varTypeOfClub = txtClubType.Text;
-                    club.intModelID = Convert.ToInt32(ddlModel.SelectedValue);
-                    club.varShaftType = txtShaft.Text;
-                    club.varNumberOfClubs = txtNumberofClubs.Text;
-                    club.varClubSpecification = txtClubSpec.Text;
-                    club.varShaftSpecification = txtShaftSpec.Text;
-                    club.varShaftFlexability = txtShaftFlex.Text;
-                    club.varClubDexterity = txtDexterity.Text;
-                    club.varAdditionalInformation = txtComments.Text;
-                    club.bitIsUsedProduct = chkUsed.Checked;
+                    Clubs club = new Clubs
+                    {
+                        //if item type is club then save as club class
+                        intInventoryID = Convert.ToInt32(Request.QueryString["inventory"].ToString()),
+                        fltCost = Convert.ToDouble(txtCost.Text),
+                        intBrandID = Convert.ToInt32(ddlBrand.SelectedValue),
+                        fltPrice = Convert.ToDouble(txtPrice.Text),
+                        intQuantity = Convert.ToInt32(txtQuantity.Text),
+                        intLocationID = Convert.ToInt32(ddlLocation.SelectedValue),
+                        varTypeOfClub = txtClubType.Text,
+                        intModelID = Convert.ToInt32(ddlModel.SelectedValue),
+                        varShaftType = txtShaft.Text,
+                        varNumberOfClubs = txtNumberofClubs.Text,
+                        varClubSpecification = txtClubSpec.Text,
+                        varShaftSpecification = txtShaftSpec.Text,
+                        varShaftFlexability = txtShaftFlex.Text,
+                        varClubDexterity = txtDexterity.Text,
+                        varAdditionalInformation = txtComments.Text,
+                        bitIsUsedProduct = chkUsed.Checked
+                    };
                     o = club as object;
 
                     changeItem.fltNewCost = club.fltCost;
@@ -567,19 +568,21 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (Convert.ToInt32(ddlType.SelectedValue) == 2)
                 {
-                    Accessories accessory = new Accessories();
-                    //if item type is accesory then save as accessory class
-                    accessory.intInventoryID = Convert.ToInt32(Request.QueryString["inventory"].ToString());
-                    accessory.intBrandID = Convert.ToInt32(ddlBrand.SelectedValue);
-                    accessory.fltCost = Convert.ToDouble(txtCost.Text);
-                    accessory.fltPrice = Convert.ToDouble(txtPrice.Text);
-                    accessory.intQuantity = Convert.ToInt32(txtQuantity.Text);
-                    accessory.intLocationID = Convert.ToInt32(ddlLocation.SelectedValue);
-                    accessory.varSize = txtNumberofClubs.Text;
-                    accessory.varColour = txtShaft.Text;
-                    accessory.varTypeOfAccessory = txtClubType.Text;
-                    accessory.intModelID = Convert.ToInt32(ddlModel.SelectedValue);
-                    accessory.varAdditionalInformation = txtComments.Text;
+                    Accessories accessory = new Accessories
+                    {
+                        //if item type is accesory then save as accessory class
+                        intInventoryID = Convert.ToInt32(Request.QueryString["inventory"].ToString()),
+                        intBrandID = Convert.ToInt32(ddlBrand.SelectedValue),
+                        fltCost = Convert.ToDouble(txtCost.Text),
+                        fltPrice = Convert.ToDouble(txtPrice.Text),
+                        intQuantity = Convert.ToInt32(txtQuantity.Text),
+                        intLocationID = Convert.ToInt32(ddlLocation.SelectedValue),
+                        varSize = txtNumberofClubs.Text,
+                        varColour = txtShaft.Text,
+                        varTypeOfAccessory = txtClubType.Text,
+                        intModelID = Convert.ToInt32(ddlModel.SelectedValue),
+                        varAdditionalInformation = txtComments.Text
+                    };
                     o = accessory as object;
 
                     changeItem.fltNewCost = accessory.fltCost;
@@ -595,19 +598,21 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (Convert.ToInt32(ddlType.SelectedValue) == 3)
                 {
-                    Clothing clothing = new Clothing();
-                    //if item type is clothing then save as clothing class
-                    clothing.intInventoryID = Convert.ToInt32(Request.QueryString["inventory"].ToString());
-                    clothing.intBrandID = Convert.ToInt32(ddlBrand.SelectedValue);
-                    clothing.fltCost = Convert.ToDouble(txtCost.Text);
-                    clothing.fltPrice = Convert.ToDouble(txtPrice.Text);
-                    clothing.intQuantity = Convert.ToInt32(txtQuantity.Text);
-                    clothing.intLocationID = Convert.ToInt32(ddlLocation.SelectedValue);
-                    clothing.varSize = txtNumberofClubs.Text;
-                    clothing.varColour = txtShaft.Text;
-                    clothing.varGender = txtClubSpec.Text;
-                    clothing.varStyle = txtClubType.Text;
-                    clothing.varAdditionalInformation = txtComments.Text;
+                    Clothing clothing = new Clothing
+                    {
+                        //if item type is clothing then save as clothing class
+                        intInventoryID = Convert.ToInt32(Request.QueryString["inventory"].ToString()),
+                        intBrandID = Convert.ToInt32(ddlBrand.SelectedValue),
+                        fltCost = Convert.ToDouble(txtCost.Text),
+                        fltPrice = Convert.ToDouble(txtPrice.Text),
+                        intQuantity = Convert.ToInt32(txtQuantity.Text),
+                        intLocationID = Convert.ToInt32(ddlLocation.SelectedValue),
+                        varSize = txtNumberofClubs.Text,
+                        varColour = txtShaft.Text,
+                        varGender = txtClubSpec.Text,
+                        varStyle = txtClubType.Text,
+                        varAdditionalInformation = txtComments.Text
+                    };
                     o = clothing as object;
 
                     changeItem.fltNewCost = clothing.fltCost;
@@ -622,13 +627,13 @@ namespace SweetSpotDiscountGolfPOS
                     txtNumberofClubs.Enabled = false;
                 }
                 //hides and displays the proper buttons for access
-                btnSaveItem.Visible = false;
-                btnEditItem.Visible = true;
+                BtnSaveItem.Visible = false;
+                BtnEditItem.Visible = true;
                 pnlDefaultButton.DefaultButton = "btnEditItem";
-                btnCancel.Visible = false;
-                btnAddItem.Visible = false;
-                btnBackToSearch.Visible = true;
-                btnCreateSimilar.Visible = true;
+                BtnCancel.Visible = false;
+                BtnAddItem.Visible = false;
+                BtnBackToSearch.Visible = true;
+                BtnCreateSimilar.Visible = true;
 
                 object[] extra = { CU.employee.intEmployeeID, CU.location.intLocationID };
                 IDU.SaveInventoryChanges(changeItem, extra, objPageDetails);
@@ -643,18 +648,18 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnCancel_Click(object sender, EventArgs e)
+        protected void BtnCancel_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnCancel_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnCancel_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //no changes saved, refreshes current page
@@ -665,18 +670,18 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnBackToSearch_Click(object sender, EventArgs e)
+        protected void BtnBackToSearch_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnBackToSearch_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnBackToSearch_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Changes page to the inventory home page
@@ -687,18 +692,18 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void ddlType_SelectedIndexChanged(object sender, EventArgs e)
+        protected void DdlType_SelectedIndexChanged(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "ddlType_SelectedIndexChanged";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "DdlType_SelectedIndexChanged";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
             }
@@ -707,17 +712,17 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnCreateSimilar_Click(object sender, EventArgs e)
+        protected void BtnCreateSimilar_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnCreateSimilar_Click";
+            string method = "BtnCreateSimilar_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -728,7 +733,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     Clubs club = new Clubs();
                     //Transfers all info into Club class
-                    string[] inventoryInfo = IDU.ReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                    string[] inventoryInfo = IDU.CallReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
                     club.intInventoryID = Convert.ToInt32(inventoryInfo[1]);
                     club.varSku = inventoryInfo[0].ToString();
                     club.fltCost = Convert.ToDouble(txtCost.Text);
@@ -754,7 +759,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     Accessories accessory = new Accessories();
                     //Transfers all info into Accessory class
-                    string[] inventoryInfo = IDU.ReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                    string[] inventoryInfo = IDU.CallReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
                     accessory.intInventoryID = Convert.ToInt32(inventoryInfo[1]);
                     accessory.varSku = inventoryInfo[0].ToString();
                     accessory.intBrandID = Convert.ToInt32(ddlBrand.SelectedValue);
@@ -775,7 +780,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     Clothing clothing = new Clothing();
                     //Transfers all info into Clothing class
-                    string[] inventoryInfo = IDU.ReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                    string[] inventoryInfo = IDU.CallReturnMaxSku(typeID, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
                     clothing.intInventoryID = Convert.ToInt32(inventoryInfo[1]);
                     clothing.varSku = inventoryInfo[0].ToString();
                     clothing.intBrandID = Convert.ToInt32(ddlBrand.SelectedValue);
@@ -803,14 +808,14 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void grdInventoryTaxes_RowDataBound(object sender, GridViewRowEventArgs e)
+        protected void GrdInventoryTaxes_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
@@ -821,12 +826,12 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
         }
-        protected void grdInventoryTaxes_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void GrdInventoryTaxes_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            string method = "grdInventoryTaxes_RowCommand";
+            string method = "GrdInventoryTaxes_RowCommand";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             int index = ((GridViewRow)((LinkButton)e.CommandSource).NamingContainer).RowIndex;
-            bool chargeTax = Convert.ToBoolean(((CheckBox)grdInventoryTaxes.Rows[index].Cells[3].FindControl("chkChargeTax")).Checked);
+            bool chargeTax = Convert.ToBoolean(((CheckBox)GrdInventoryTaxes.Rows[index].Cells[3].FindControl("chkChargeTax")).Checked);
             if (chargeTax)
             {
                 chargeTax = false;

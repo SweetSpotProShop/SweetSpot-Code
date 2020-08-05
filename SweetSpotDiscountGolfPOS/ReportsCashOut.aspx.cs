@@ -1,26 +1,24 @@
 ﻿using OfficeOpenXml;
-using SweetShop;
-using SweetSpotDiscountGolfPOS.ClassLibrary;
-using SweetSpotProShop;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using SweetSpotDiscountGolfPOS.FP;
+using SweetSpotDiscountGolfPOS.OB;
+using SweetSpotDiscountGolfPOS.Misc;
 
 namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsCashOut : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        LocationManager LM = new LocationManager();
-        Reports R = new Reports();
-        CurrentUser CU;
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly LocationManager LM = new LocationManager();
+        readonly Reports R = new Reports();
         DataTable dt = new DataTable();
+        CurrentUser CU;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -46,10 +44,10 @@ namespace SweetSpotDiscountGolfPOS
                         DateTime[] reportDates = (DateTime[])passing[0];
                         DateTime startDate = reportDates[0];
                         DateTime endDate = reportDates[1];
-                        lblDates.Text = "Cashout report for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
-                        dt = R.ReturnCashoutsForSelectedDates(passing, objPageDetails);
-                        grdCashoutByDate.DataSource = dt;
-                        grdCashoutByDate.DataBind();
+                        lblDates.Text = "Cashout report for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
+                        dt = R.CallReturnCashoutsForSelectedDates(passing, objPageDetails);
+                        GrdCashoutByDate.DataSource = dt;
+                        GrdCashoutByDate.DataBind();
                     }
                 }
             }
@@ -58,17 +56,17 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnDownload_Click(object sender, EventArgs e)
+        protected void BtnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnDownload_Click";
+            string method = "BtnDownload_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -78,12 +76,12 @@ namespace SweetSpotDiscountGolfPOS
                 DateTime startDate = reportDates[0];
                 DateTime endDate = reportDates[1];
                 int locationID = Convert.ToInt32(passing[1]);
-                dt = R.ReturnCashoutsForSelectedDates(passing, objPageDetails);
+                dt = R.CallReturnCashoutsForSelectedDates(passing, objPageDetails);
 
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
-                string fileName = "CashOut Report by Date - " + LM.ReturnLocationName(locationID, objPageDetails) + ".xlsx";
+                string fileName = "CashOut Report by Date - " + LM.CallReturnLocationName(locationID, objPageDetails) + ".xlsx";
 
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
@@ -161,7 +159,7 @@ namespace SweetSpotDiscountGolfPOS
                         //Autofit columns
                         salesExport.Cells[2, 1, recordIndex + 1, 11].AutoFitColumns();
                         //Incrementng the row
-                        recordIndex = recordIndex + 2;
+                        recordIndex += 2;
                     }
                     Response.Clear();
                     Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");
@@ -175,17 +173,17 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void grdCashoutByDate_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void GrdCashoutByDate_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "grdCashoutByDate_RowCommand";
+            string method = "GrdCashoutByDate_RowCommand";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -200,15 +198,15 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (e.CommandName == "FinalizeCashout")
                 {
-                    R.FinalizeCashout(e.CommandArgument.ToString(), objPageDetails);
+                    R.CallFinalizeCashout(e.CommandArgument.ToString(), objPageDetails);
                     object[] passing = (object[])Session["reportInfo"];
                     DateTime[] reportDates = (DateTime[])passing[0];
                     DateTime startDate = reportDates[0];
                     DateTime endDate = reportDates[1];
                     int locationID = Convert.ToInt32(passing[1]);
-                    dt = R.ReturnCashoutsForSelectedDates(passing, objPageDetails);
-                    grdCashoutByDate.DataSource = dt;
-                    grdCashoutByDate.DataBind();
+                    dt = R.CallReturnCashoutsForSelectedDates(passing, objPageDetails);
+                    GrdCashoutByDate.DataSource = dt;
+                    GrdCashoutByDate.DataBind();
                 }
             }
             //Exception catch
@@ -216,18 +214,18 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void grdCashoutByDate_RowDataBound(object sender, GridViewRowEventArgs e)
+        protected void GrdCashoutByDate_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "grdCashoutByDate_RowDataBound";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "GrdCashoutByDate_RowDataBound";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
@@ -276,9 +274,9 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }

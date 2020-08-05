@@ -37,10 +37,10 @@
                         <asp:Label ID="lblInvoiceNum" runat="server" Text="Enter Invoice Number or SKU:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtInvoiceNum" runat="server" AutoComplete="off" Text="" />
+                        <asp:TextBox ID="txtInvoiceNum" runat="server" AutoCompleteType="Disabled" Text="" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnInvoiceSearch" runat="server" Text="Search for Invoices" OnClick="btnInvoiceSearch_Click" />
+                        <asp:Button ID="BtnInvoiceSearch" runat="server" Text="Search for Invoices" OnClick="BtnInvoiceSearch_Click" />
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
@@ -56,9 +56,9 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:Calendar ID="calStartDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4"
+                        <asp:Calendar ID="CalStartDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4"
                             DayNameFormat="Shortest" Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" 
-                            Height="184px" Width="200px" OnSelectionChanged="calStart_SelectionChanged">
+                            Height="184px" Width="200px" OnSelectionChanged="CalStart_SelectionChanged">
                             <DayHeaderStyle BackColor="#5FD367" Font-Bold="True" Font-Size="7pt" />
                             <NextPrevStyle VerticalAlign="Bottom" />
                             <OtherMonthDayStyle ForeColor="#808080" />
@@ -70,9 +70,9 @@
                         </asp:Calendar>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Calendar ID="calEndDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" 
+                        <asp:Calendar ID="CalEndDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" 
                             DayNameFormat="Shortest" Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" 
-                            Height="182px" Width="200px" OnSelectionChanged="calEnd_SelectionChanged">
+                            Height="182px" Width="200px" OnSelectionChanged="CalEnd_SelectionChanged">
                             <DayHeaderStyle BackColor="#5FD367" Font-Bold="True" Font-Size="7pt" />
                             <NextPrevStyle VerticalAlign="Bottom" />
                             <OtherMonthDayStyle ForeColor="#808080" />
@@ -87,9 +87,9 @@
             </asp:Table>
             <hr />
             <div>
-                <asp:GridView ID="grdInvoiceSelection" runat="server" AutoGenerateColumns="false" Width="100%" 
-					OnRowCommand="grdInvoiceSelection_RowCommand" RowStyle-HorizontalAlign="Center"
-					OnRowDataBound="grdInvoiceSelection_RowDataBound" >
+                <asp:GridView ID="GrdInvoiceSelection" runat="server" AutoGenerateColumns="false" Width="100%" 
+					OnRowCommand="GrdInvoiceSelection_RowCommand" RowStyle-HorizontalAlign="Center"
+					OnRowDataBound="GrdInvoiceSelection_RowDataBound" >
                     <Columns>
                         <asp:TemplateField HeaderText="View Invoice">
                             <ItemTemplate>
@@ -136,7 +136,6 @@
                                 <asp:Label ID="lblPaymentName" runat="server" Text='<%#Eval("varPaymentName") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
-
                         <asp:TemplateField HeaderText="Total">
                             <ItemTemplate>
                                 <asp:Label ID="lblAmountPaid" runat="server" Text='<%#Eval("fltAmountPaid","{0:C}") %>' />

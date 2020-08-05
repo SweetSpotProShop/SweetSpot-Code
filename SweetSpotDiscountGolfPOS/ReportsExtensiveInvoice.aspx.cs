@@ -1,22 +1,23 @@
 ﻿using OfficeOpenXml;
-using SweetShop;
-using SweetSpotDiscountGolfPOS.ClassLibrary;
-using SweetSpotProShop;
 using System;
 using System.Data;
 using System.IO;
 using System.Threading;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using SweetSpotDiscountGolfPOS.FP;
+using SweetSpotDiscountGolfPOS.OB;
+using SweetSpotDiscountGolfPOS.Misc;
 
 namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsExtensiveInvoice : System.Web.UI.Page
     {
+        
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly LocationManager LM = new LocationManager();
+        readonly Reports R = new Reports();
         CurrentUser CU;
-        ErrorReporting ER = new ErrorReporting();
-        Reports R = new Reports();
-        LocationManager LM = new LocationManager();
 
         double shipping;
         double tradein;
@@ -56,17 +57,17 @@ namespace SweetSpotDiscountGolfPOS
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
-                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
+                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
                     }
                     else
                     {
-                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.ReturnLocationName(locationID, objPageDetails);
+                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
                     }
                     //DataTable invoices = R.returnExtensiveInvoices(startDate, endDate, locationID, objPageDetails);
 
-                    DataTable invoices2 = R.returnExtensiveInvoices2(startDate, endDate, locationID, objPageDetails);
-                    grdInvoices.DataSource = invoices2;
-                    grdInvoices.DataBind();
+                    DataTable invoices2 = R.CallReturnExtensiveInvoices2(startDate, endDate, locationID, objPageDetails);
+                    GrdInvoices.DataSource = invoices2;
+                    GrdInvoices.DataBind();
                 }
             }
             //Exception catch
@@ -74,18 +75,18 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void grdInvoices_RowDataBound(object sender, GridViewRowEventArgs e)
+        protected void GrdInvoices_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             //Collects current method for error tracking
-            string method = "grdInvoices_RowDataBound";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "GrdInvoices_RowDataBound";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
@@ -123,6 +124,19 @@ namespace SweetSpotDiscountGolfPOS
                     e.Row.Cells[11].Text = String.Format("{0:C}", revenue);
 
                     e.Row.Cells[12].Text = (revenue / salesDollars).ToString("P");
+
+                    if (liquorTax == 0)
+                    {
+                        GrdInvoices.Columns[8].Visible = false;
+                    }
+                    if (provincialTax == 0)
+                    {
+                        GrdInvoices.Columns[7].Visible = false;
+                    }
+                    if (governmentTax == 0)
+                    {
+                        GrdInvoices.Columns[6].Visible = false;
+                    }
                 }
             }
             //Exception catch
@@ -130,17 +144,17 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                                 + "If you continue to receive this message please contact "
                                 + "your system administrator.", this);
             }
         }
-        protected void btnDownload_Click(object sender, EventArgs e)
+        protected void BtnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnDownload_Click";
+            string method = "BtnDownload_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -153,8 +167,8 @@ namespace SweetSpotDiscountGolfPOS
                 DateTime startDate = reportDates[0];
                 DateTime endDate = reportDates[1];
 
-                DataTable invoices = R.returnExtensiveInvoices(startDate, endDate, Convert.ToInt32(repInfo[1]), objPageDetails);
-                string fileName = "Extensive Invoice Report-" + LM.ReturnLocationName(Convert.ToInt32(repInfo[1]), objPageDetails) + "_" + startDate.ToShortDateString() + " - " + endDate.ToShortDateString() + ".xlsx";
+                DataTable invoices = R.CallReturnExtensiveInvoices2(startDate, endDate, Convert.ToInt32(repInfo[1]), objPageDetails);
+                string fileName = "Extensive Invoice Report-" + LM.CallReturnLocationName(Convert.ToInt32(repInfo[1]), objPageDetails) + "_" + startDate.ToShortDateString() + " - " + endDate.ToShortDateString() + ".xlsx";
                 FileInfo newFile = new FileInfo(Path.Combine(pathDownload, fileName));
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
@@ -166,17 +180,18 @@ namespace SweetSpotDiscountGolfPOS
                     invoicesExport.Cells[2, 2].Value = "Shipping";
                     invoicesExport.Cells[2, 3].Value = "Trade-In Amount";
                     invoicesExport.Cells[2, 4].Value = "Total Discount";
-                    invoicesExport.Cells[2, 5].Value = "Pre-Tax";
-                    invoicesExport.Cells[2, 6].Value = "Government Tax";
-                    invoicesExport.Cells[2, 7].Value = "Provincial Tax";
-                    invoicesExport.Cells[2, 8].Value = "Liquor Tax";
-                    invoicesExport.Cells[2, 9].Value = "Sales Dollars";
-                    invoicesExport.Cells[2, 10].Value = "COGS";
-                    invoicesExport.Cells[2, 11].Value = "Revenue Earned";
-                    invoicesExport.Cells[2, 12].Value = "Profit Margin";
-                    invoicesExport.Cells[2, 13].Value = "Customer";
-                    invoicesExport.Cells[2, 14].Value = "Employee";
-                    invoicesExport.Cells[2, 15].Value = "Date";
+                    invoicesExport.Cells[2, 5].Value = "Sub-Total";
+                    invoicesExport.Cells[2, 6].Value = "Total Sales";
+                    invoicesExport.Cells[2, 7].Value = "Government Tax";
+                    invoicesExport.Cells[2, 8].Value = "Provincial Tax";
+                    invoicesExport.Cells[2, 9].Value = "Liquor Tax";
+                    invoicesExport.Cells[2, 10].Value = "Sales Dollars";
+                    invoicesExport.Cells[2, 11].Value = "COGS";
+                    invoicesExport.Cells[2, 12].Value = "Revenue Earned";
+                    invoicesExport.Cells[2, 13].Value = "Profit Margin";
+                    invoicesExport.Cells[2, 14].Value = "Customer";
+                    invoicesExport.Cells[2, 15].Value = "Employee";
+                    invoicesExport.Cells[2, 16].Value = "Date";
                     int recordIndex = 3;
                     foreach (DataRow row in invoices.Rows)
                     {
@@ -185,14 +200,14 @@ namespace SweetSpotDiscountGolfPOS
                         invoicesExport.Cells[recordIndex, 3].Value = Convert.ToDouble(row[4]).ToString("C"); //Trade-In
                         invoicesExport.Cells[recordIndex, 4].Value = Convert.ToDouble(row[5]).ToString("C"); //Discount
                         invoicesExport.Cells[recordIndex, 5].Value = Convert.ToDouble(row[6]).ToString("C"); //SubTotal
-                        invoicesExport.Cells[recordIndex, 6].Value = Convert.ToDouble(row[7]).ToString("C"); //TotalSales
-                        invoicesExport.Cells[recordIndex, 7].Value = Convert.ToDouble(row[8]).ToString("C"); //GST
-                        invoicesExport.Cells[recordIndex, 8].Value = Convert.ToDouble(row[9]).ToString("C"); //PST
-                        invoicesExport.Cells[recordIndex, 9].Value = Convert.ToDouble(row[10]).ToString("C"); //LCT
-                        invoicesExport.Cells[recordIndex, 10].Value = Convert.ToDouble(row[12]).ToString("C"); //SalesDollars
-                        invoicesExport.Cells[recordIndex, 11].Value = Convert.ToDouble(row[11]).ToString("C"); //Cost of Good
+                        invoicesExport.Cells[recordIndex, 6].Value = Convert.ToDouble(row[12]).ToString("C"); //TotalSales
+                        invoicesExport.Cells[recordIndex, 7].Value = Convert.ToDouble(row[7]).ToString("C"); //GST
+                        invoicesExport.Cells[recordIndex, 8].Value = Convert.ToDouble(row[8]).ToString("C"); //PST
+                        invoicesExport.Cells[recordIndex, 9].Value = Convert.ToDouble(row[9]).ToString("C"); //LCT
+                        invoicesExport.Cells[recordIndex, 10].Value = Convert.ToDouble(row[11]).ToString("C"); //SalesDollars
+                        invoicesExport.Cells[recordIndex, 11].Value = Convert.ToDouble(row[10]).ToString("C"); //Cost of Good
                         invoicesExport.Cells[recordIndex, 12].Value = Convert.ToDouble(row[13]).ToString("C"); //Revenue
-                        invoicesExport.Cells[recordIndex, 13].Value = (Convert.ToDouble(row[13]) / Convert.ToDouble(row[12])).ToString("P"); //Profit Margin
+                        invoicesExport.Cells[recordIndex, 13].Value = (Convert.ToDouble(row[13]) / Convert.ToDouble(row[11])).ToString("P"); //Profit Margin
                         invoicesExport.Cells[recordIndex, 14].Value = row[14].ToString(); //Cust
                         invoicesExport.Cells[recordIndex, 15].Value = row[15].ToString(); //Emp
                         invoicesExport.Cells[recordIndex, 16].Value = Convert.ToDateTime(row[1]).ToString("dd-MM-yyyy"); //Date
@@ -225,33 +240,42 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-
-        protected void grdInvoices_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void GrdInvoices_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method for error tracking
-            string method = "lbtnInvoiceNumber_Click";
+            string method = "GrdInvoices_RowCommand";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                string invoice = e.CommandArgument.ToString();
-                //Changes page to display a printable invoice
-                Response.Redirect("PrintableInvoice.aspx?invoice=" + invoice, false);
+                //Sets the string of the command argument(invoice number
+                int invoiceID = Convert.ToInt32(e.CommandArgument.ToString());
+                InvoiceManager IM = new InvoiceManager();
+                if (IM.InvoiceIsReturn(invoiceID, objPageDetails))
+                {
+                    //Changes page to display a printable invoice
+                    Response.Redirect("PrintableInvoiceReturn.aspx?invoice=" + invoiceID.ToString(), false);
+                }
+                else
+                {
+                    //Changes page to display a printable invoice
+                    Response.Redirect("PrintableInvoice.aspx?invoice=" + invoiceID.ToString(), false);
+                }
             }
             //Exception catch
             catch (ThreadAbortException) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }

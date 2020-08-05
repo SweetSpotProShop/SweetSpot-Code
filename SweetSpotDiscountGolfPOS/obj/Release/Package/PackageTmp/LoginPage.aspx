@@ -22,7 +22,7 @@
 <asp:Content ID="LoginPageContent" ContentPlaceHolderID="IndividualPageContent" runat="server">
     <div id="LoginPage">
         <asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnLogin">
-            <asp:Table ID="tblLogin" runat="server" class="auto-style1" >
+            <asp:Table ID="tblLogin" runat="server" CssClass="auto-style1" >
                 <asp:TableRow>
                     <asp:TableCell>
                         <asp:Label ID="lblLogin" runat="server" Font-Bold="true" Text="Login Form" />
@@ -33,7 +33,7 @@
                         <asp:Label ID="lblPassword" runat="server" Text="Password:" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtPasswordEntry" runat="server" AutoComplete="off" TextMode="Password" />
+                        <asp:TextBox ID="txtPasswordEntry" runat="server" AutoCompleteType="Disabled" TextMode="Password" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:RequiredFieldValidator ID="rfvTxtPasswordEntry" runat="server" ControlToValidate="txtPasswordEntry" ErrorMessage="Please enter a password" ForeColor="Red" />
@@ -42,7 +42,7 @@
                 <asp:TableRow>
                     <asp:TableCell />
                     <asp:TableCell>
-                        <asp:Button ID="btnLogin" runat="server" Text="Log In" OnClick="btnLogin_Click" Width="128px" />
+                        <asp:Button ID="BtnLogin" runat="server" Text="Log In" OnClick="BtnLogin_Click" Width="128px" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Label ID="lblError" runat="server" ForeColor="Red" />

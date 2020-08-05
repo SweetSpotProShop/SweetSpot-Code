@@ -4,17 +4,17 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using SweetShop;
-using SweetSpotDiscountGolfPOS.ClassLibrary;
-using SweetSpotProShop;
+using SweetSpotDiscountGolfPOS.FP;
+using SweetSpotDiscountGolfPOS.OB;
+using SweetSpotDiscountGolfPOS.Misc;
 using System.Threading;
 
 namespace SweetSpotDiscountGolfPOS
 {
     public partial class CustomerHomePage : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        CustomerManager CM = new CustomerManager();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly CustomerManager CM = new CustomerManager();
         CurrentUser CU;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -22,7 +22,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "CustomerHomePage";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -41,44 +41,44 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnCustomerSearch_Click(object sender, EventArgs e)
+        protected void BtnCustomerSearch_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "btnCustomerSearch_Click";
+            string method = "BtnCustomerSearch_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Looks through database and returns a list of customers
                 //based on the search criteria entered
                 //Binds the results to the gridview
-                grdCustomersSearched.Visible = true;
-                grdCustomersSearched.DataSource = CM.ReturnCustomerBasedOnText(txtSearch.Text, objPageDetails);
-                grdCustomersSearched.DataBind();
+                GrdCustomersSearched.Visible = true;
+                GrdCustomersSearched.DataSource = CM.CallReturnCustomerBasedOnText(txtSearch.Text, objPageDetails);
+                GrdCustomersSearched.DataBind();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnAddNewCustomer_Click(object sender, EventArgs e)
+        protected void BtnAddNewCustomer_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "btnAddNewCustomer_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnAddNewCustomer_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Opens the page to add a new customer
@@ -89,18 +89,18 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void grdCustomersSearched_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void GrdCustomersSearched_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "grdCustomersSearched_RowCommand";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "GrdCustomersSearched_RowCommand";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 if (e.CommandName == "ViewProfile")
@@ -125,36 +125,36 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void grdCustomersSearched_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        protected void GrdCustomersSearched_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "grdCustomersSearched_PageIndexChanging";
+            string method = "GrdCustomersSearched_PageIndexChanging";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                grdCustomersSearched.PageIndex = e.NewPageIndex;
+                GrdCustomersSearched.PageIndex = e.NewPageIndex;
                 //Looks through database and returns a list of customers
                 //based on the search criteria entered
                 //Binds the results to the gridview
-                grdCustomersSearched.Visible = true;
-                grdCustomersSearched.DataSource = CM.ReturnCustomerBasedOnText(txtSearch.Text, objPageDetails);
-                grdCustomersSearched.DataBind();
+                GrdCustomersSearched.Visible = true;
+                GrdCustomersSearched.DataSource = CM.CallReturnCustomerBasedOnText(txtSearch.Text, objPageDetails);
+                GrdCustomersSearched.DataBind();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                                 + "If you continue to receive this message please contact "
                                 + "your system administrator.", this);
             }

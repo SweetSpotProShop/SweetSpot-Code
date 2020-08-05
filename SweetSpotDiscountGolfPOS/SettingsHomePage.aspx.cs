@@ -1,37 +1,34 @@
 ﻿using OfficeOpenXml;
 using OfficeOpenXml.Style;
-using SweetShop;
-using SweetSpotDiscountGolfPOS.ClassLibrary;
-using SweetSpotProShop;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using SweetSpotDiscountGolfPOS.FP;
+using SweetSpotDiscountGolfPOS.OB;
+using SweetSpotDiscountGolfPOS.Misc;
 
 
 namespace SweetSpotDiscountGolfPOS
 {
     public partial class SettingsHomePage : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly EmployeeManager EM = new EmployeeManager();
+        readonly Reports R = new Reports();
+        readonly TaxManager TM = new TaxManager();
+        readonly LocationManager LM = new LocationManager();
+        readonly DatabaseCalls DBC = new DatabaseCalls();
+        readonly CustomerManager CM = new CustomerManager();
         CurrentUser CU;
-        EmployeeManager EM = new EmployeeManager();
-        Reports R = new Reports();
-        TaxManager TM = new TaxManager();
-        LocationManager LM = new LocationManager();
-        DatabaseCalls DBC = new DatabaseCalls();
 
-        //SweetShopManager ssm = new SweetShopManager();
         internal static readonly Page aspx;
         public int counter;
         public int total;
@@ -63,16 +60,16 @@ namespace SweetSpotDiscountGolfPOS
                     //Checks if the user is an Admin
                     if (CU.employee.intJobID != 0)
                     {
-                        btnAddNewEmployee.Enabled = false;
-                        btnLoadItems.Enabled = false;
+                        BtnAddNewEmployee.Enabled = false;
+                        BtnLoadItems.Enabled = false;
                     }
                     if (!IsPostBack)
                     {
-                        ddlProvince.DataSource = LM.ReturnProvinceDropDown(0, objPageDetails);
-                        ddlProvince.DataBind();
-                        ddlProvince.SelectedValue = CU.location.intProvinceID.ToString();
-                        ddlTax.DataSource = TM.GatherTaxListFromDateAndProvince(CU.location.intProvinceID, Convert.ToDateTime(lblCurrentDate.Text), objPageDetails);
-                        ddlTax.DataBind();
+                        DdlProvince.DataSource = LM.CallReturnProvinceDropDown(0, objPageDetails);
+                        DdlProvince.DataBind();
+                        DdlProvince.SelectedValue = CU.location.intProvinceID.ToString();
+                        DdlTax.DataSource = TM.GatherTaxListFromDateAndProvince(CU.location.intProvinceID, Convert.ToDateTime(lblCurrentDate.Text), objPageDetails);
+                        DdlTax.DataBind();
                     }
                 }
             }
@@ -81,18 +78,18 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnAddNewEmployee_Click(object sender, EventArgs e)
+        protected void BtnAddNewEmployee_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnAddNewEmployee_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnAddNewEmployee_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Change to Employee add new page
@@ -103,18 +100,18 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void grdEmployeesSearched_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void GrdEmployeesSearched_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             //Collects current method for error tracking
-            string method = "grdEmployeesSearched_RowCommand";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "GrdEmployeesSearched_RowCommand";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Checks if the string is view profile
@@ -129,43 +126,43 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnEmployeeSearch_Click(object sender, EventArgs e)
+        protected void BtnEmployeeSearch_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnEmployeeSearch_Click";
+            string method = "BtnEmployeeSearch_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                grdEmployeesSearched.Visible = true;
+                GrdEmployeesSearched.Visible = true;
                 //Binds the employee list to grid view
-                grdEmployeesSearched.DataSource = EM.ReturnEmployeeBasedOnText(txtSearch.Text, objPageDetails);
-                grdEmployeesSearched.DataBind();
+                GrdEmployeesSearched.DataSource = EM.CallReturnEmployeeBasedOnText(txtSearch.Text, objPageDetails);
+                GrdEmployeesSearched.DataBind();
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
 
         //Importing
-        protected void btnLoadItems_Click(object sender, EventArgs e)
+        protected void BtnLoadItems_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnLoadItems_Click";
+            string method = "BtnLoadItems_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -213,12 +210,14 @@ namespace SweetSpotDiscountGolfPOS
                         else
                         {
                             //Calls method to import the requested file
+#pragma warning disable IDE0067 // Dispose objects before losing scope
                             DataTable errors = new DataTable();
-                            //errors.Columns.Add("sku");
-                            //errors.Columns.Add("brandError");
-                            //errors.Columns.Add("modelError");
-                            //errors.Columns.Add("identifierError");
-                            errors = R.uploadItems(fupItemSheet, CU, objPageDetails);
+#pragma warning restore IDE0067 // Dispose objects before losing scope
+                               //errors.Columns.Add("sku");
+                               //errors.Columns.Add("brandError");
+                               //errors.Columns.Add("modelError");
+                               //errors.Columns.Add("identifierError");
+                            errors = R.CallUploadItems(fupItemSheet, CU, objPageDetails);
                             if (errors.Rows.Count != 0)
                             {
                                 //Loops through the errors datatable pulling the sku's from there and entering them into an array
@@ -274,7 +273,7 @@ namespace SweetSpotDiscountGolfPOS
                                     }
                                 }                                
                                 worksheet.Cells[1, 26].Value = "Errors Found. The skus that are highlighted in red have an issue with either their brand or model. This could be a spelling mistake or the brand and/or model are not in the database.";
-                                //MessageBox.ShowMessage("Errors Found. The skus that are highlighted in red have an issue with either their brand or model. This could be a spelling mistake or the brand and/or model are not in the database.", this);
+                                //MessageBoxCustom.ShowMessage("Errors Found. The skus that are highlighted in red have an issue with either their brand or model. This could be a spelling mistake or the brand and/or model are not in the database.", this);
                                 string fileName = fupItemSheet.FileName + "_ErrorsFound";
                                 //Sets the attributes and writes file
                                 Response.Clear();
@@ -285,7 +284,7 @@ namespace SweetSpotDiscountGolfPOS
                             }
                             else
                             {
-                                MessageBox.ShowMessage("Importing Complete", this);
+                                MessageBoxCustom.ShowMessage("Importing Complete", this);
                             }
                         }
                     }
@@ -296,47 +295,20 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
             imgLoadingItemImport.Visible = false;
         }
-        //protected void btnImportCustomers_Click(object sender, EventArgs e)
-        //{
-        //    //Collects current method for error tracking
-        //    string method = "btnImportCustomers_Click";
-        //    object[] objPageDetails = { Session["currPage"].ToString(), method };
-        //    try
-        //    {
-        //        //Verifies file has been selected
-        //        if (fupCustomers.HasFile)
-        //        {
-        //            //Calls method to import the requested file
-        //            R.importCustomers(fupCustomers);
-        //        }
-        //        //Show that it is done
-        //        MessageBox.ShowMessage("Importing Complete", this);
-        //    }
-        //    //Exception catch
-        //    catch (ThreadAbortException tae) { }
-        //    catch (Exception ex)
-        //    {
-        //        //Log all info into error table
-        //        ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-        //        //Display message box
-        //        MessageBox.ShowMessage("An Error has occurred and been logged. "
-        //            + "If you continue to receive this message please contact "
-        //            + "your system administrator.", this);
-        //    }
-        //}
+
         //Exporting
-        protected void btnExportAll_Click(object sender, EventArgs e)
+        protected void BtnExportAll_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnExportAll_Click";
+            string method = "BtnExportAll_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -346,24 +318,24 @@ namespace SweetSpotDiscountGolfPOS
                 string filename = "AllItems - " + DateTime.Now.ToString("dd.MM.yyyy") + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + "TotalInventory.xlsx");
                 //With the craeted file do all intenal code
-                R.itemExports("all", newFile, filename, objPageDetails);
+                R.CallItemExports("all", newFile, filename, objPageDetails);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnExportClubs_Click(object sender, EventArgs e)
+        protected void BtnExportClubs_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnExportClubs_Click";
+            string method = "BtnExportClubs_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -373,24 +345,24 @@ namespace SweetSpotDiscountGolfPOS
                 string filename = "AllClubs - " + DateTime.Now.ToString("dd.MM.yyyy") + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + filename);
                 //With the craeted file do all intenal code
-                R.itemExports("clubs", newFile, filename, objPageDetails);
+                R.CallItemExports("clubs", newFile, filename, objPageDetails);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnExportClothing_Click(object sender, EventArgs e)
+        protected void BtnExportClothing_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnExportClothing_Click";
+            string method = "BtnExportClothing_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -400,24 +372,24 @@ namespace SweetSpotDiscountGolfPOS
                 string filename = "AllClothing - " + DateTime.Now.ToString("dd.MM.yyyy") + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + filename);
                 //With the created file do all intenal code
-                R.itemExports("clothing", newFile, filename, objPageDetails);
+                R.CallItemExports("clothing", newFile, filename, objPageDetails);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnExportAccessories_Click(object sender, EventArgs e)
+        protected void BtnExportAccessories_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnExportAccessories_Click";
+            string method = "BtnExportAccessories_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
@@ -427,25 +399,25 @@ namespace SweetSpotDiscountGolfPOS
                 string filename = "AllAccessories - " + DateTime.Now.ToString("dd.MM.yyyy") + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + filename);
                 //With the craeted file do all intenal code
-                R.itemExports("accessories", newFile, filename, objPageDetails);
+                R.CallItemExports("accessories", newFile, filename, objPageDetails);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnExportInvoices_Click(object sender, EventArgs e)
+        protected void BtnExportInvoices_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnExportInvoices_Click";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "BtnExportInvoices_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Sets up database connection
@@ -550,43 +522,43 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void ddlProvince_SelectedIndexChanged(object sender, EventArgs e)
+        protected void DdlProvince_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string method = "ddlProvince_SelectedIndexChanged";
+            string method = "DdlProvince_SelectedIndexChanged";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                ddlTax.DataSource = TM.GatherTaxListFromDateAndProvince(Convert.ToInt32(ddlProvince.SelectedValue), Convert.ToDateTime(lblCurrentDate.Text), objPageDetails);
-                ddlTax.DataBind();
+                DdlTax.DataSource = TM.GatherTaxListFromDateAndProvince(Convert.ToInt32(DdlProvince.SelectedValue), Convert.ToDateTime(lblCurrentDate.Text), objPageDetails);
+                DdlTax.DataBind();
             }
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void ddlTax_SelectedIndexChanged(object sender, EventArgs e)
+        protected void DdlTax_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string method = "ddlTax_SelectedIndexChanged";
+            string method = "DdlTax_SelectedIndexChanged";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                List<Tax> taxes = TM.ReturnTaxListBasedOnDate(Convert.ToDateTime(lblCurrentDate.Text), Convert.ToInt32(ddlProvince.SelectedValue), objPageDetails);
+                List<Tax> taxes = TM.ReturnTaxListBasedOnDate(Convert.ToDateTime(lblCurrentDate.Text), Convert.ToInt32(DdlProvince.SelectedValue), objPageDetails);
                 foreach (var tax in taxes)
                 {
-                    if (tax.intTaxID == Convert.ToInt32(ddlTax.SelectedValue))
+                    if (tax.intTaxID == Convert.ToInt32(DdlTax.SelectedValue))
                     {
                         lblCurrentDisplay.Text = tax.fltTaxRate.ToString("#0.00");
                     }
@@ -597,20 +569,20 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnSaveTheTax_Click(object sender, EventArgs e)
+        protected void BtnSaveTheTax_Click(object sender, EventArgs e)
         {
-            string method = "btnSaveTheTax_Click";
+            string method = "BtnSaveTheTax_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                TM.InsertNewTaxRate(Convert.ToInt32(ddlProvince.SelectedValue), Convert.ToInt32(ddlTax.SelectedValue), Convert.ToDateTime(txtDate.Text), Convert.ToDouble(txtNewRate.Text), objPageDetails);
+                TM.CallInsertNewTaxRate(Convert.ToInt32(DdlProvince.SelectedValue), Convert.ToInt32(DdlTax.SelectedValue), Convert.ToDateTime(txtDate.Text), Convert.ToDouble(txtNewRate.Text), objPageDetails);
                 txtDate.Text = "";
                 txtNewRate.Text = "";
             }
@@ -619,18 +591,18 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
 
-        public void callJS()
+        public void CallJS()
         {
-            string method = "callJS";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            string method = "CallJS";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 Page.ClientScript.RegisterStartupScript(GetType(), "upl", "UpdateProgressLabel();", true);
@@ -640,32 +612,21 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnExportEmails_Click(object sender, EventArgs e)
+        protected void BtnExportEmails_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnExportEmails_Click";
+            string method = "BtnExportEmails_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                //Sets up database connection
-                string connectionString = ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString;
-                SqlConnection sqlCon = new SqlConnection(connectionString);
-                //Selects everything form the invoice table
-                DataTable emailTable = new DataTable();
-                using (var cmd = new SqlCommand("getCustomerEmailAll", sqlCon)) //Calling the SP   
-                using (var da = new SqlDataAdapter(cmd))
-                {
-                    //Executing the SP
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    da.Fill(emailTable);
-                }
+                DataTable emailTable = CM.CallReturnCustomerEmailAddresses(objPageDetails);
                 DataColumnCollection headers = emailTable.Columns;
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -704,17 +665,18 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnAddModel_Click(object sender, EventArgs e)
+
+        protected void BtnAddModel_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnAddModel_Click";
+            string method = "BtnAddModel_Click";
             string strQueryName = "btnAddModel_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
@@ -736,13 +698,13 @@ namespace SweetSpotDiscountGolfPOS
                     }
                     else
                     {
-                        MessageBox.ShowMessage("The models do not match. "
+                        MessageBoxCustom.ShowMessage("The models do not match. "
                                 + "Please retype the model name again.", this);
                     }
                 }
                 else
                 {
-                    MessageBox.ShowMessage("Both fields require user input", this);
+                    MessageBoxCustom.ShowMessage("Both fields require user input", this);
                 }
             }
             //Exception catch
@@ -750,17 +712,17 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnAddBrand_Click(object sender, EventArgs e)
+        protected void BtnAddBrand_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
-            string method = "btnAddBrand_Click";
+            string method = "BtnAddBrand_Click";
             string strQueryName = "btnAddBrand_Click";
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
@@ -782,13 +744,13 @@ namespace SweetSpotDiscountGolfPOS
                     }
                     else
                     {
-                        MessageBox.ShowMessage("The brands do not match. "
+                        MessageBoxCustom.ShowMessage("The brands do not match. "
                                 + "Please retype the brand name again.", this);
                     }
                 }
                 else
                 {
-                    MessageBox.ShowMessage("Both fields require user input", this);
+                    MessageBoxCustom.ShowMessage("Both fields require user input", this);
                 }
             }
             //Exception catch
@@ -796,9 +758,9 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }

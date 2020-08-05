@@ -1,22 +1,22 @@
-﻿using SweetShop;
-using SweetSpotDiscountGolfPOS.ClassLibrary;
-using SweetSpotProShop;
-using System;
+﻿using System;
 using System.Data;
 using System.Drawing;
 using System.Threading;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using SweetSpotDiscountGolfPOS.FP;
+using SweetSpotDiscountGolfPOS.OB;
+using SweetSpotDiscountGolfPOS.Misc;
 
 namespace SweetSpotDiscountGolfPOS
 {
     public partial class LoungeSims : System.Web.UI.Page
     {
-        ErrorReporting ER = new ErrorReporting();
-        InvoiceManager IM = new InvoiceManager();
-        CurrentUser CU;
+        readonly ErrorReporting ER = new ErrorReporting();
+        readonly InvoiceManager IM = new InvoiceManager();
         private static DataTable programmed;
+        CurrentUser CU;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -35,7 +35,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     CU = (CurrentUser)Session["currentUser"];
 
-                    programmed = IM.ReturnSeatedTables(objPageDetails);
+                    programmed = IM.CallReturnSeatedTables(objPageDetails);
                     ButtonCheck(Page);
                 }
             }
@@ -44,17 +44,17 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnSimulator_Click(object sender, EventArgs e)
+        protected void BtnSimulator_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "btnSimulator_Click";
+            string method = "BtnSimulator_Click";
             try
             {
                 Button pressedBTN = (Button)sender;
@@ -68,17 +68,17 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnPlayer_Click(object sender, EventArgs e)
+        protected void BtnPlayer_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "btnPlayer_Click";
+            string method = "BtnPlayer_Click";
             try
             {
                 Button pressedBTN = (Button)sender;
@@ -92,17 +92,17 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnTable_Click(object sender, EventArgs e)
+        protected void BtnTable_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "btnTable_Click";
+            string method = "BtnTable_Click";
             try
             {
                 Button pressedBTN = (Button)sender;
@@ -116,17 +116,17 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-        protected void btnSeat_Click(object sender, EventArgs e)
+        protected void BtnSeat_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "btnSeat_Click";
+            string method = "BtnSeat_Click";
             try
             {
                 Button pressedBTN = (Button)sender;
@@ -140,21 +140,22 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
         }
-
         private void ButtonCheck(Control control)
         {
             foreach (Control c in control.Controls)
             {
                 if (c is Button)
                 {
+#pragma warning disable IDE0020 // Use pattern matching
                     Button button = (Button)c;
+#pragma warning restore IDE0020 // Use pattern matching
                     foreach (DataRow dr in programmed.Rows)
                     {
                         if (button.ID.ToString() == dr[0].ToString() || button.ID.ToString() == (dr[0].ToString() + dr[1].ToString()).ToString())
@@ -177,11 +178,10 @@ namespace SweetSpotDiscountGolfPOS
                 }
             }
         }
-
-        protected void btnEditMode_Click(object sender, EventArgs e)
+        protected void BtnEditMode_Click(object sender, EventArgs e)
         {
             //Collects current method and page for error tracking
-            string method = "btnEditMode_Click";
+            string method = "BtnEditMode_Click";
             try
             {
                 CU.isSimEditMode = true;
@@ -193,9 +193,9 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.logError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
                 //Display message box
-                MessageBox.ShowMessage("An Error has occurred and been logged. "
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
