@@ -115,7 +115,7 @@
                             
                         </asp:TableCell>
                         <asp:TableCell>
-                            
+                            <asp:Button ID="BtnExportInvoices" runat="server" Width="200" Text="Export Invoices" OnClick="BtnExportInvoices_Click" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <%--<asp:TableRow>

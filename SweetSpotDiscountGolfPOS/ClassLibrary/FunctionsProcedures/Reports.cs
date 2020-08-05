@@ -2313,5 +2313,90 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
         }
+        public void CallExportInvoiceDateRange(DateTime[] dtm, FileInfo newFile, string fileName)
+        {
+            ExportInvoiceDateRange(dtm, newFile, fileName);
+        }
+        private void ExportInvoiceDateRange(DateTime[] dtm, FileInfo newFile, string fileName)
+        {
+            object[][] parms =
+            {
+                new object[] { "@startDate", dtm[0] },
+                new object[] { "@endDate", dtm[1] }
+            };
+
+            //Selects everything form the invoice table
+            System.Data.DataTable dtim = DBC.MakeDataBaseCallToReturnDataTableFromStoredProcedure("getInvoiceAll", parms);
+            DataColumnCollection dcimHeaders = dtim.Columns;
+
+            //Selects everything form the invoice item table
+            System.Data.DataTable dtii = DBC.MakeDataBaseCallToReturnDataTableFromStoredProcedure("getInvoiceItemAll", parms);
+            DataColumnCollection dciiHeaders = dtii.Columns;
+
+            //Selects everything form the invoice mop table
+            System.Data.DataTable dtimo = DBC.MakeDataBaseCallToReturnDataTableFromStoredProcedure("getInvoiceMOPAll", parms);
+            DataColumnCollection dcimoHeaders = dtimo.Columns;
+
+
+            using (ExcelPackage xlPackage = new ExcelPackage(newFile))
+            {
+                //Creates a seperate sheet for each data table
+                ExcelWorksheet invoiceMain = xlPackage.Workbook.Worksheets.Add("Invoice Main");
+                ExcelWorksheet invoiceItems = xlPackage.Workbook.Worksheets.Add("Invoice Items");
+                ExcelWorksheet invoiceMOPS = xlPackage.Workbook.Worksheets.Add("Invoice MOPS");
+                // write to sheet                  
+
+                //Export main invoice
+                for (int i = 1; i <= dtim.Rows.Count; i++)
+                {
+                    for (int j = 1; j < dtim.Columns.Count + 1; j++)
+                    {
+                        if (i == 1)
+                        {
+                            invoiceMain.Cells[i, j].Value = dcimHeaders[j - 1].ToString();
+                        }
+                        else
+                        {
+                            invoiceMain.Cells[i, j].Value = dtim.Rows[i - 1][j - 1];
+                        }
+                    }
+                }
+                //Export item invoice
+                for (int i = 1; i <= dtii.Rows.Count; i++)
+                {
+                    for (int j = 1; j < dtii.Columns.Count + 1; j++)
+                    {
+                        if (i == 1)
+                        {
+                            invoiceItems.Cells[i, j].Value = dciiHeaders[j - 1].ToString();
+                        }
+                        else
+                        {
+                            invoiceItems.Cells[i, j].Value = dtii.Rows[i - 1][j - 1];
+                        }
+                    }
+                }
+                //Export mop invoice
+                for (int i = 1; i <= dtimo.Rows.Count; i++)
+                {
+                    for (int j = 1; j < dtimo.Columns.Count + 1; j++)
+                    {
+                        if (i == 1)
+                        {
+                            invoiceMOPS.Cells[i, j].Value = dcimoHeaders[j - 1].ToString();
+                        }
+                        else
+                        {
+                            invoiceMOPS.Cells[i, j].Value = dtimo.Rows[i - 1][j - 1];
+                        }
+                    }
+                }
+                HttpContext.Current.Response.Clear();
+                HttpContext.Current.Response.AddHeader("content-disposition", "attachment; filename=" + fileName);
+                HttpContext.Current.Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                HttpContext.Current.Response.BinaryWrite(xlPackage.GetAsByteArray());
+                HttpContext.Current.Response.End();
+            }
+        }
     }
 }
