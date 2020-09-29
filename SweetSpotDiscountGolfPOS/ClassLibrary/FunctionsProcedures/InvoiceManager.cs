@@ -1296,5 +1296,29 @@ namespace SweetSpotDiscountGolfPOS.FP
         {
             return ReturnInvoicesBasedOnSearchCriteria(stDate, endDate, searchTxt, locationID, objPageDetails);
         }
+
+
+
+
+        public List<int> CallListofInvoicesForDayForLocation(DateTime startDate, DateTime endDate, int selectedValue, object[] objPageDetails)
+        {
+            return ListofInvoicesForDayForLocation(startDate, endDate, selectedValue, objPageDetails);
+        }
+        private List<int> ListofInvoicesForDayForLocation(DateTime startDate, DateTime endDate, int selectedValue, object[] objPageDetails)
+        {
+            string strQueryName = "ListofInvoicesForDayForLocation";
+            string sqlCmd = "SELECT intInvoiceID FROM tbl_invoice WHERE dtmInvoiceDate BETWEEN @dtmStartDate AND @dtmEndDate";
+            object[][] parms =
+            {
+                new object[] { "@dtmStartDate", startDate },
+                new object[] { "@dtmEndDate", endDate }
+            };
+            return ConvertFromDataTableToInts(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
+        }
+        private List<int> ConvertFromDataTableToInts(DataTable dt)
+        {
+            List<int> invoice = dt.AsEnumerable().Select(row => Convert.ToInt32(row.Field<int>("intInvoiceID"))).ToList();            
+            return invoice;
+        }
     }
 }

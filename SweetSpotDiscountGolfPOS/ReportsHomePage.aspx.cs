@@ -4,6 +4,7 @@ using System.IO;
 using SweetSpotDiscountGolfPOS.FP;
 using SweetSpotDiscountGolfPOS.OB;
 using SweetSpotDiscountGolfPOS.Misc;
+using System.Collections.Generic;
 
 namespace SweetSpotDiscountGolfPOS
 {
@@ -506,6 +507,19 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
 
+        protected void BtnCreatePDFFiles_Click(object sender, EventArgs e)
+        {
+            string method = "BtnCreatePDFFiles";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            InvoiceManager IM = new InvoiceManager();
+            PdfCustomerInvoice pdf = new PdfCustomerInvoice();
+            List<int> invoices = IM.CallListofInvoicesForDayForLocation(CalStartDate.SelectedDate, CalEndDate.SelectedDate, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+            foreach(int inv in invoices)
+            {
+                pdf.GenerateInvoiceSaveFile(IM.CallReturnInvoice(Convert.ToInt32(inv), objPageDetails)[0], objPageDetails);
+            }
+
+        }
         protected DateTime[] GetDateRange()
         {
             if (ddlDatePeriod.SelectedItem.Text.Equals("Month"))

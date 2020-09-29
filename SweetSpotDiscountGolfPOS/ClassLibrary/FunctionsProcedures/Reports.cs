@@ -2333,21 +2333,25 @@ namespace SweetSpotDiscountGolfPOS.FP
             System.Data.DataTable dtii = DBC.MakeDataBaseCallToReturnDataTableFromStoredProcedure("getInvoiceItemAll", parms);
             DataColumnCollection dciiHeaders = dtii.Columns;
 
+            //Selects everything form the invoice item tax table
+            System.Data.DataTable dtiit = DBC.MakeDataBaseCallToReturnDataTableFromStoredProcedure("getInvoiceItemTaxAll", parms);
+            DataColumnCollection dciitHeaders = dtiit.Columns;
+
             //Selects everything form the invoice mop table
             System.Data.DataTable dtimo = DBC.MakeDataBaseCallToReturnDataTableFromStoredProcedure("getInvoiceMOPAll", parms);
             DataColumnCollection dcimoHeaders = dtimo.Columns;
-
 
             using (ExcelPackage xlPackage = new ExcelPackage(newFile))
             {
                 //Creates a seperate sheet for each data table
                 ExcelWorksheet invoiceMain = xlPackage.Workbook.Worksheets.Add("Invoice Main");
                 ExcelWorksheet invoiceItems = xlPackage.Workbook.Worksheets.Add("Invoice Items");
+                ExcelWorksheet invoiceItemsTax = xlPackage.Workbook.Worksheets.Add("Invoice Item Tax");
                 ExcelWorksheet invoiceMOPS = xlPackage.Workbook.Worksheets.Add("Invoice MOPS");
                 // write to sheet                  
 
                 //Export main invoice
-                for (int i = 1; i <= dtim.Rows.Count; i++)
+                for (int i = 1; i <= dtim.Rows.Count + 1; i++)
                 {
                     for (int j = 1; j < dtim.Columns.Count + 1; j++)
                     {
@@ -2357,12 +2361,12 @@ namespace SweetSpotDiscountGolfPOS.FP
                         }
                         else
                         {
-                            invoiceMain.Cells[i, j].Value = dtim.Rows[i - 1][j - 1];
+                            invoiceMain.Cells[i, j].Value = dtim.Rows[i - 2][j - 1];
                         }
                     }
                 }
                 //Export item invoice
-                for (int i = 1; i <= dtii.Rows.Count; i++)
+                for (int i = 1; i <= dtii.Rows.Count + 1; i++)
                 {
                     for (int j = 1; j < dtii.Columns.Count + 1; j++)
                     {
@@ -2371,13 +2375,28 @@ namespace SweetSpotDiscountGolfPOS.FP
                             invoiceItems.Cells[i, j].Value = dciiHeaders[j - 1].ToString();
                         }
                         else
+                        {       
+                            invoiceItems.Cells[i, j].Value = dtii.Rows[i - 2][j - 1];
+                        }
+                    }
+                }
+                //Export item tax invoice
+                for (int i = 1; i <= dtiit.Rows.Count + 1; i++)
+                {
+                    for (int j = 1; j < dtiit.Columns.Count + 1; j++)
+                    {
+                        if (i == 1)
                         {
-                            invoiceItems.Cells[i, j].Value = dtii.Rows[i - 1][j - 1];
+                            invoiceItemsTax.Cells[i, j].Value = dciitHeaders[j - 1].ToString();
+                        }
+                        else
+                        {
+                            invoiceItemsTax.Cells[i, j].Value = dtiit.Rows[i - 2][j - 1];
                         }
                     }
                 }
                 //Export mop invoice
-                for (int i = 1; i <= dtimo.Rows.Count; i++)
+                for (int i = 1; i <= dtimo.Rows.Count + 1; i++)
                 {
                     for (int j = 1; j < dtimo.Columns.Count + 1; j++)
                     {
@@ -2387,10 +2406,11 @@ namespace SweetSpotDiscountGolfPOS.FP
                         }
                         else
                         {
-                            invoiceMOPS.Cells[i, j].Value = dtimo.Rows[i - 1][j - 1];
+                            invoiceMOPS.Cells[i, j].Value = dtimo.Rows[i - 2][j - 1];
                         }
                     }
                 }
+
                 HttpContext.Current.Response.Clear();
                 HttpContext.Current.Response.AddHeader("content-disposition", "attachment; filename=" + fileName);
                 HttpContext.Current.Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";

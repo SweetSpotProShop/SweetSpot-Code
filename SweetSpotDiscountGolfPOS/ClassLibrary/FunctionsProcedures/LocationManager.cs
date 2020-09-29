@@ -58,14 +58,14 @@ namespace SweetSpotDiscountGolfPOS.FP
             //return ConvertFromDataTableToLocation(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
         }
         //Provinve/State Name based on Province/State ID
-        private string ReturnProvinceName(int provID, object[] objPageDetails)
+        private string ReturnProvinceName(int provinceID, object[] objPageDetails)
         {
             string strQueryName = "ReturnProvinceName";
-            string sqlCmd = "SELECT provName FROM tbl_provState WHERE provStateID = @provStateID";
+            string sqlCmd = "SELECT varProvinceName FROM tbl_provState WHERE intProvinceID = @intProvinceID";
 
             object[][] parms =
             {
-                 new object[] { "@provStateID", provID }
+                 new object[] { "@intProvinceID", provinceID }
             };
 
             return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
