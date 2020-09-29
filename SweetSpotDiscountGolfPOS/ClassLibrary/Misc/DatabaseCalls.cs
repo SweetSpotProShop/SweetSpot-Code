@@ -66,6 +66,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
             return ReturnDataTableFromStoredProcedure(procedureName, parms);
         }
 
+
         private DataTable ReturnDataTableData(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
         {
             string strParameters = "";
@@ -83,6 +84,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
             QueryStringCapture(sqlCmd, strParameters, objPageDetails, strQueryName);
             cmd.Connection = con;
             SqlDataAdapter da = new SqlDataAdapter(cmd);
+            da.SelectCommand.CommandTimeout = 300;
             da.Fill(dt);
             //Returns a datatable
             return dt;
@@ -115,6 +117,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
             QueryStringCapture(sqlCmd, strParameters, objPageDetails, strQueryName);
             cmd.Connection = con;
             SqlDataAdapter da = new SqlDataAdapter(cmd);
+            da.SelectCommand.CommandTimeout = 300;
             da.Fill(dt);
             //Returns a datatable
             return dt;
