@@ -279,7 +279,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
             pdfRenderer.Document = pdfD.Clone();
             pdfRenderer.RenderDocument();
             // Send PDF to browser
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "/SweetSpotDiscountGolf_Invoices/";
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Desktop\\SweetSpotDiscountGolf_Invoices\\";
 
             string currYear = invoice.dtmInvoiceDate.Year.ToString(); //DateTime.Today.Year.ToString();
             string currMonth = DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(invoice.dtmInvoiceDate.Month); //(DateTime.Today.Month);
@@ -460,60 +460,18 @@ namespace SweetSpotDiscountGolfPOS.Misc
             itemRow.HeadingFormat = true;
             itemRow.Format.Alignment = ParagraphAlignment.Center;
             itemRow.Format.Font.Bold = true;
-            itemRow.Cells[0].AddParagraph("SKU #");
-            itemRow.Cells[0].Format.Alignment = ParagraphAlignment.Left;
-            itemRow.Cells[1].AddParagraph("Description");
-            itemRow.Cells[1].Format.Alignment = ParagraphAlignment.Left;
-            itemRow.Cells[2].AddParagraph("Retail Price");
-            itemRow.Cells[2].Format.Alignment = ParagraphAlignment.Left;
-            itemRow.Cells[3].AddParagraph("Discounts/ Bonus Applied");
-            itemRow.Cells[3].Format.Alignment = ParagraphAlignment.Left;
-            itemRow.Cells[4].AddParagraph("Quantity");
-            itemRow.Cells[4].Format.Alignment = ParagraphAlignment.Left;
-            itemRow.Cells[5].AddParagraph("Sale Price");
-            itemRow.Cells[5].Format.Alignment = ParagraphAlignment.Left;
-            itemRow.Cells[6].AddParagraph("Extended Price");
-            itemRow.Cells[6].Format.Alignment = ParagraphAlignment.Left;
+
+            FillHeaders(invoice.intInvoiceSubNumber, itemRow);
+
             invoiceItems.SetEdge(0, 0, 6, 1, Edge.Box, BorderStyle.Single, 0.75, Colors.Black);
             //Adding the items to the invoiceItems table
-            double totalExtendedPrice = 0;
+            double totalInvoicePrice = 0;
             foreach (InvoiceItems item in invoice.invoiceItems)
             {
-                double quantity = Convert.ToDouble(item.intItemQuantity);
-                double price = Convert.ToDouble(item.fltItemPrice);
-                double discountAmount = 0;
-                if (item.bitIsDiscountPercent)
-                {
-                    discountAmount = Math.Floor(price * (item.fltItemDiscount / 100));
-                }
-                else
-                {
-                    discountAmount = item.fltItemDiscount;
-                }
-                double salePrice = (price - discountAmount);
-                double extendedPrice = salePrice * quantity;
-                Row itemDetailsRow = new Row();
-                itemDetailsRow = invoiceItems.AddRow();
-                itemDetailsRow.TopPadding = 1.5;
-                itemDetailsRow.Cells[0].VerticalAlignment = VerticalAlignment.Center;
-                itemDetailsRow.Cells[1].Format.Alignment = ParagraphAlignment.Left;
-                itemDetailsRow.Cells[0].AddParagraph(item.varSku.ToString());           //SKU
-                itemDetailsRow.Cells[1].AddParagraph(item.varItemDescription.ToString());   //Description
-                itemDetailsRow.Cells[2].AddParagraph(price.ToString("C"));           //Price
-                if (item.bitIsDiscountPercent)
-                {
-                    itemDetailsRow.Cells[3].AddParagraph((item.fltItemDiscount / 100).ToString("P"));         //Discount
-                }
-                else
-                {
-                    itemDetailsRow.Cells[3].AddParagraph((discountAmount).ToString("C"));         //Discount
-                }
-                itemDetailsRow.Cells[4].AddParagraph(quantity.ToString());              //Quantity
-                itemDetailsRow.Cells[5].AddParagraph(salePrice.ToString("C"));       //Sale Price
-                itemDetailsRow.Cells[6].AddParagraph(extendedPrice.ToString("C"));   //Extended Price      
-                totalExtendedPrice += extendedPrice;
-                invoiceItems.SetEdge(0, invoiceItems.Rows.Count - 2, 6, 1, Edge.Box, BorderStyle.Single, 0.75);
+                totalInvoicePrice += FillItemCalculations(invoice, invoiceItems, item);
             }
+
+            invoiceItems.SetEdge(0, invoiceItems.Rows.Count - 2, 6, 1, Edge.Box, BorderStyle.Single, 0.75);
             //invoiceTotals table
             invoiceTotals.Style = "Table";
             invoiceTotals.Format.Font.Color = Colors.Black;
@@ -525,7 +483,6 @@ namespace SweetSpotDiscountGolfPOS.Misc
             totalsColumn.Format.Alignment = ParagraphAlignment.Right;
             Row totalsRow = invoiceTotals.AddRow();
             totalsRow.Borders.Visible = false;
-
 
             //Discounts
             totalsRow = invoiceTotals.AddRow();
@@ -598,7 +555,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
                 }
             }
 
-            if (governmentTax > 0)
+            if (governmentTax != 0)
             {
                 totalsRow = invoiceTotals.AddRow();
                 totalsRow.Cells[1].Borders.Visible = false;
@@ -606,10 +563,9 @@ namespace SweetSpotDiscountGolfPOS.Misc
                 totalsRow.Cells[1].Format.Font.Bold = true;
                 totalsRow.Cells[1].Format.Alignment = ParagraphAlignment.Right;
                 totalsRow.Cells[2].AddParagraph(governmentTax.ToString("C"));
-                totalExtendedPrice += governmentTax;
+                totalInvoicePrice += governmentTax;
             }
-
-            if (provincialTax > 0)
+            if (provincialTax != 0)
             {
                 totalsRow = invoiceTotals.AddRow();
                 totalsRow.Cells[1].Borders.Visible = false;
@@ -617,10 +573,9 @@ namespace SweetSpotDiscountGolfPOS.Misc
                 totalsRow.Cells[1].Format.Font.Bold = true;
                 totalsRow.Cells[1].Format.Alignment = ParagraphAlignment.Right;
                 totalsRow.Cells[2].AddParagraph(provincialTax.ToString("C"));
-                totalExtendedPrice += provincialTax;
+                totalInvoicePrice += provincialTax;
             }
-
-            if (liquorTax > 0)
+            if (liquorTax != 0)
             {
                 totalsRow = invoiceTotals.AddRow();
                 totalsRow.Cells[1].Borders.Visible = false;
@@ -628,7 +583,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
                 totalsRow.Cells[1].Format.Font.Bold = true;
                 totalsRow.Cells[1].Format.Alignment = ParagraphAlignment.Right;
                 totalsRow.Cells[2].AddParagraph(liquorTax.ToString("C"));
-                totalExtendedPrice += liquorTax;
+                totalInvoicePrice += liquorTax;
             }
 
             //Total Paid
@@ -637,7 +592,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
             totalsRow.Cells[1].Borders.Visible = false;
             totalsRow.Cells[1].Format.Font.Bold = true;
             totalsRow.Cells[1].Format.Alignment = ParagraphAlignment.Right;
-            totalsRow.Cells[2].AddParagraph(totalExtendedPrice.ToString("C"));
+            totalsRow.Cells[2].AddParagraph(totalInvoicePrice.ToString("C"));
 
             invoiceTotals.AddRow();
             
@@ -669,18 +624,6 @@ namespace SweetSpotDiscountGolfPOS.Misc
                 row.Cells[2].AddParagraph(mop.fltAmountPaid.ToString("C"));
             }
 
-
-            //Row tenderRow = new Row();
-            //changeRow = invoiceMops.AddRow();
-            //changeRow.TopPadding = 1.5;
-            //changeRow.Cells[1].AddParagraph("Change");
-            //changeRow.Cells[2].AddParagraph(invoice.fltChangeAmount.ToString("C"));
-            //Row changeRow = new Row();
-            //changeRow = invoiceMops.AddRow();
-            //changeRow.TopPadding = 1.5;
-            //changeRow.Cells[1].AddParagraph("Change");
-            //changeRow.Cells[2].AddParagraph(invoice.fltChangeAmount.ToString("C"));
-
             //Notes
             Paragraph invoiceNotes = pdfD.LastSection.AddParagraph();
             invoiceNotes.Format.Font.Color = Colors.Black;
@@ -692,6 +635,89 @@ namespace SweetSpotDiscountGolfPOS.Misc
             invoiceNotes.AddText("Comments: " + invoice.varAdditionalInformation);
 
             return pdfD;
+        }
+
+        private void FillHeaders(int invoiceSub, Row itemRow)
+        {
+            ParagraphAlignment pa = ParagraphAlignment.Left;
+
+            string desc1 = "Retail Price";
+            string desc2 = "Discounts/ Bonus Applied";
+            string desc3 = "Retail Price";
+
+            if (invoiceSub > 1)
+            {
+                desc1 = "Sold At";
+                desc2 = "Non Refundable";
+                desc3 = "Returned At";
+            }
+
+            itemRow.Cells[0].AddParagraph("SKU #");
+            itemRow.Cells[1].AddParagraph("Description");
+            itemRow.Cells[2].AddParagraph(desc1);
+            itemRow.Cells[3].AddParagraph(desc2);
+            itemRow.Cells[4].AddParagraph("Quantity");
+            itemRow.Cells[5].AddParagraph(desc3);
+            itemRow.Cells[6].AddParagraph("Extended Price");
+
+            itemRow.Cells[0].Format.Alignment = pa;
+            itemRow.Cells[1].Format.Alignment = pa;
+            itemRow.Cells[2].Format.Alignment = pa;
+            itemRow.Cells[3].Format.Alignment = pa;
+            itemRow.Cells[4].Format.Alignment = pa;
+            itemRow.Cells[5].Format.Alignment = pa;
+            itemRow.Cells[6].Format.Alignment = pa;
+        }
+        private double FillItemCalculations(Invoice invoice, Table invoiceItems, InvoiceItems item)
+        {
+            double quantity = Convert.ToDouble(item.intItemQuantity);
+
+            double priceSold = 0;
+            double discountNonRefund = 0;
+            double retailReturned = 0;
+            double extendedPrice = 0;
+
+            if (invoice.intInvoiceSubNumber > 1)
+            {
+                if (item.bitIsDiscountPercent)
+                {
+                    priceSold = (item.fltItemDiscount / 100) * item.fltItemPrice;
+                }
+                else
+                {
+                    priceSold = item.fltItemPrice - item.fltItemDiscount;
+                }
+                discountNonRefund = priceSold + item.fltItemRefund;
+                retailReturned = item.fltItemRefund;
+            }
+            else
+            {
+                priceSold = Convert.ToDouble(item.fltItemPrice);
+                if (item.bitIsDiscountPercent)
+                {
+                    discountNonRefund = Math.Floor(priceSold * (item.fltItemDiscount / 100));
+                }
+                else
+                {
+                    discountNonRefund = item.fltItemDiscount;
+                }
+                retailReturned = priceSold - discountNonRefund;
+            }
+            extendedPrice = retailReturned * quantity;
+
+            Row itemDetailsRow = new Row();
+            itemDetailsRow = invoiceItems.AddRow();
+            itemDetailsRow.TopPadding = 1.5;
+            itemDetailsRow.Cells[0].VerticalAlignment = VerticalAlignment.Center;
+            itemDetailsRow.Cells[1].Format.Alignment = ParagraphAlignment.Left;
+            itemDetailsRow.Cells[0].AddParagraph(item.varSku.ToString());           //SKU
+            itemDetailsRow.Cells[1].AddParagraph(item.varItemDescription.ToString());   //Description
+            itemDetailsRow.Cells[2].AddParagraph(priceSold.ToString("C"));           //Price
+            itemDetailsRow.Cells[3].AddParagraph(discountNonRefund.ToString("C"));         //Discount
+            itemDetailsRow.Cells[4].AddParagraph(quantity.ToString());              //Quantity
+            itemDetailsRow.Cells[5].AddParagraph(retailReturned.ToString("C"));       //Retail Price
+            itemDetailsRow.Cells[6].AddParagraph(extendedPrice.ToString("C"));   //Extended Price
+            return extendedPrice;
         }
     }
 }

@@ -121,7 +121,7 @@ namespace SweetSpotDiscountGolfPOS
                         grdItemsSoldList.DataSource = invoice.invoiceItems;
                         grdItemsSoldList.DataBind();
 
-                        //Displays the total amount ppaid
+                        //Displays the total amount paid
                         //Binds the payment methods to a gridview
                         grdMOPS.DataSource = invoice.invoiceMops;
                         grdMOPS.DataBind();
