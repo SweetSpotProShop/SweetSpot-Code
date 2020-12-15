@@ -38,18 +38,18 @@
                             </asp:TableRow>
                             <asp:TableRow>
                                 <asp:TableCell>
-                                    <asp:Button ID="mopCash" runat="server" Text="Cash" OnClick="mopCash_Click" Width="163px" OnClientClick="return confirm('Confirm Cash');" />
+                                    <asp:Button ID="MopCash" runat="server" Text="Cash" OnClick="MopCash_Click" Width="163px" OnClientClick="return confirm('Confirm Cash');" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:Button ID="mopCheque" runat="server" Text="Cheque" OnClick="mopCheque_Click" Width="163px" OnClientClick="return confirm('Confirm Cheque');" />
+                                    <asp:Button ID="MopCheque" runat="server" Text="Cheque" OnClick="MopCheque_Click" Width="163px" OnClientClick="return confirm('Confirm Cheque');" />
                                 </asp:TableCell>
                             </asp:TableRow>
                             <asp:TableRow>
                                 <asp:TableCell>
-                                    <asp:Button ID="mopDebit" runat="server" Text="Debit" OnClick="mopDebit_Click" Width="163px" OnClientClick="return confirm('Confirm Debit');" />
+                                    <asp:Button ID="MopDebit" runat="server" Text="Debit" OnClick="MopDebit_Click" Width="163px" OnClientClick="return confirm('Confirm Debit');" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:Button ID="mopGiftCard" runat="server" Text="Gift Card" OnClick="mopGiftCard_Click" Width="163px" OnClientClick="return confirm('Confirm Gift Card');" />
+                                    <asp:Button ID="MopGiftCard" runat="server" Text="Gift Card" OnClick="MopGiftCard_Click" Width="163px" OnClientClick="return confirm('Confirm Gift Card');" />
                                 </asp:TableCell>
                             </asp:TableRow>
                             <asp:TableRow>
@@ -62,7 +62,7 @@
                                     <asp:Label ID="lblPurchaseAmount" runat="server" Text="Purchase Amount:" Width="163px" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:TextBox ID="txtPurchaseAmount" runat="server" AutoComplete="off" Width="159px" />
+                                    <asp:TextBox ID="txtPurchaseAmount" runat="server" AutoCompleteType="Disabled" Width="159px" />
                                 </asp:TableCell>
                             </asp:TableRow>
                         </asp:Table>
@@ -74,7 +74,7 @@
                                     <asp:Label ID="lblChequeNumber" runat="server" Text="Enter Cheque Number:" />
                                 </asp:TableCell>
                                 <asp:TableCell>
-                                    <asp:TextBox ID="txtChequeNumber" runat="server" AutoComplete="off" Text="0000" />
+                                    <asp:TextBox ID="txtChequeNumber" runat="server" AutoCompleteType="Disabled" Text="0000" />
                                     <asp:RegularExpressionValidator ID="revChequeNumber"
                                         ControlToValidate="txtChequeNumber"
                                         ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
@@ -128,20 +128,20 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:Button ID="btnCancelPurchase" runat="server" Text="Cancel Purchase" OnClick="btnCancelPurchase_Click" Width="163px" />
+                        <asp:Button ID="BtnCancelPurchase" runat="server" Text="Cancel Purchase" OnClick="BtnCancelPurchase_Click" Width="163px" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnReturnToPurchaseCart" runat="server" Text="Return To Purchases" OnClick="btnReturnToPurchaseCart_Click" Width="163px" />
+                        <asp:Button ID="BtnReturnToPurchaseCart" runat="server" Text="Return To Purchases" OnClick="BtnReturnToPurchaseCart_Click" Width="163px" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnFinalizePurchase" runat="server" Text="Process Purchase" OnClick="btnFinalizePurchase_Click" Width="163px" />
+                        <asp:Button ID="BtnFinalizePurchase" runat="server" Text="Process Purchase" OnClick="BtnFinalizePurchase_Click" Width="163px" />
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
             <p>
                 Comments: 
                 <br />
-                <asp:TextBox ID="txtComments" runat="server" AutoComplete="off" TextMode="MultiLine" />
+                <asp:TextBox ID="txtComments" runat="server" AutoCompleteType="Disabled" TextMode="MultiLine" />
             </p>
         </asp:Panel>
     </div>

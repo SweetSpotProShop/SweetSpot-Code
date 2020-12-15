@@ -89,6 +89,22 @@ namespace SweetSpotDiscountGolfPOS
                             lblLCTDisplay.Text = cashout.fltLiquorTaxAmount.ToString("C");
                             lblPreTaxDisplay.Text = (cashout.fltSalesSubTotal + cashout.fltSystemCountedBasedOnSystemTradeIn).ToString("C");
 
+                            if (cashout.fltGovernmentTaxAmount == 0)
+                            {
+                                lblGSTS.Visible = false;
+                                lblGSTDisplay.Visible = false;
+                            }
+                            if (cashout.fltProvincialTaxAmount == 0)
+                            {
+                                lblPSTS.Visible = false;
+                                lblPSTDisplay.Visible = false;
+                            }
+                            if (cashout.fltLiquorTaxAmount == 0)
+                            {
+                                lblLCTS.Visible = false;
+                                lblLCTDisplay.Visible = false;
+                            }
+
                             cashout.fltManuallyCountedBasedOnReceiptsTradeIn = 0;
                             cashout.fltManuallyCountedBasedOnReceiptsGiftCard = 0;
                             cashout.fltManuallyCountedBasedOnReceiptsCash = 0;
@@ -187,6 +203,11 @@ namespace SweetSpotDiscountGolfPOS
                 cashout.intEmployeeID = CU.employee.intEmployeeID;
 
                 R.CallUpdateCashout(cashout, objPageDetails);
+
+                //this is where we will put the update query
+                //update the daily sales data table
+
+                R.CollectAndStoreDailySalesData(cashout.dtmCashoutDate, cashout.intLocationID, objPageDetails);
 
                 MessageBoxCustom.ShowMessage("Cashout has been processed", this);
                 btnPrint.Enabled = true;

@@ -13,8 +13,8 @@
         <asp:Label ID="lbluser" runat="server" Visible="false" Text="You have Admin Access" />
     </div>
     <hr />
-    <asp:GridView ID="grdSameDaySales" runat="server" AutoGenerateColumns="False" Width="100%" ShowFooter="true" OnRowCommand="grdSameDaySales_RowCommand"
-		OnRowDataBound="grdSameDaySales_RowDataBound" RowStyle-HorizontalAlign="Center">
+    <asp:GridView ID="GrdSameDaySales" runat="server" AutoGenerateColumns="False" Width="100%" ShowFooter="true" OnRowCommand="GrdSameDaySales_RowCommand"
+		OnRowDataBound="GrdSameDaySales_RowDataBound" RowStyle-HorizontalAlign="Center" FooterStyle-HorizontalAlign="Center" FooterStyle-Font-Bold="true">
         <Columns>
             <asp:TemplateField HeaderText="Invoice Number">
                 <ItemTemplate>

@@ -37,8 +37,8 @@
         </div>
         <hr />
         <div>
-            <asp:GridView ID="grdCashoutByDate" runat="server" AutoGenerateColumns="false" Width="100%" RowStyle-HorizontalAlign="Center" 
-                OnRowCommand="grdCashoutByDate_RowCommand" OnRowDataBound="grdCashoutByDate_RowDataBound" >
+            <asp:GridView ID="GrdCashoutByDate" runat="server" AutoGenerateColumns="false" Width="100%" RowStyle-HorizontalAlign="Center" 
+                OnRowCommand="GrdCashoutByDate_RowCommand" OnRowDataBound="GrdCashoutByDate_RowDataBound" >
                 <Columns>
                     <asp:TemplateField HeaderText="Date">
                         <ItemTemplate>
@@ -159,10 +159,10 @@
     <asp:Table runat="server">
         <asp:TableRow>
             <asp:TableCell>
-                <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('print');" />
+                <asp:Button CssClass="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('print');" />
             </asp:TableCell>
             <asp:TableCell>
-                <asp:Button class="noPrint" ID="btnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="btnDownload_Click" />
+                <asp:Button CssClass="noPrint" ID="BtnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="BtnDownload_Click" />
             </asp:TableCell>
         </asp:TableRow>
     </asp:Table>

@@ -57,21 +57,21 @@
 	<div id="Cart">
 		<asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="btnInventorySearch">
 			<asp:Label ID="lblCustomer" runat="server" Text="Customer Name:" />
-			<asp:TextBox ID="txtCustomer" runat="server" AutoComplete="off" />
-			<asp:Button ID="btnCustomerSelect" runat="server" Text="Change Customer" OnClick="btnCustomerSelect_Click" CausesValidation="false" />
+			<asp:TextBox ID="txtCustomer" runat="server" AutoCompleteType="Disabled" />
+			<asp:Button ID="BtnCustomerSelect" runat="server" Text="Change Customer" OnClick="BtnCustomerSelect_Click" CausesValidation="false" />
 			<div>
 				<br />
 				<div>
-					<asp:GridView ID="grdCustomersSearched" runat="server" AutoGenerateColumns="false" ShowFooter="true"
-						OnRowCommand="grdCustomersSearched_RowCommand" AllowPaging="True" PageSize="5"
-						OnPageIndexChanging="grdCustomersSearched_PageIndexChanging">
+					<asp:GridView ID="GrdCustomersSearched" runat="server" AutoGenerateColumns="false" ShowFooter="true"
+						OnRowCommand="GrdCustomersSearched_RowCommand" AllowPaging="True" PageSize="5"
+						OnPageIndexChanging="GrdCustomersSearched_PageIndexChanging">
 						<Columns>
 							<asp:TemplateField HeaderText="Switch Customer">
 								<ItemTemplate>
 									<asp:LinkButton ID="lbtnSwitchCustomer" CommandName="SwitchCustomer" CommandArgument='<%#Eval("intCustomerID") %>' Text="Switch Customer" runat="server" />
 								</ItemTemplate>
 								<FooterTemplate>
-									<asp:Button ID="btnAddCustomer" runat="server" Text="Add Customer" OnClick="btnAddCustomer_Click" />
+									<asp:Button ID="BtnAddCustomer" runat="server" Text="Add Customer" OnClick="BtnAddCustomer_Click" />
 								</FooterTemplate>
 							</asp:TemplateField>
 							<asp:TemplateField HeaderText="Customer Name">
@@ -80,10 +80,10 @@
 								</ItemTemplate>
 								<FooterTemplate>
 									<div>
-										<asp:TextBox ID="txtFirstName" runat="server" AutoComplete="off" placeholder="First Name" ToolTip="First Name" />
+										<asp:TextBox ID="txtFirstName" runat="server" AutoCompleteType="Disabled" placeholder="First Name" ToolTip="First Name" />
 									</div>
 									<div>
-										<asp:TextBox ID="txtLastName" runat="server" AutoComplete="off" placeholder="Last Name" ToolTip="Last Name" />
+										<asp:TextBox ID="txtLastName" runat="server" AutoCompleteType="Disabled" placeholder="Last Name" ToolTip="Last Name" />
 									</div>
 								</FooterTemplate>
 							</asp:TemplateField>
@@ -93,7 +93,7 @@
 								</ItemTemplate>
 								<FooterTemplate>
 									<div>
-										<asp:TextBox ID="txtPhoneNumber" runat="server" AutoComplete="off" placeholder="Phone Number" ToolTip="Phone Number" />
+										<asp:TextBox ID="txtPhoneNumber" runat="server" AutoCompleteType="Disabled" placeholder="Phone Number" ToolTip="Phone Number" />
 									</div>
 								</FooterTemplate>
 							</asp:TemplateField>
@@ -103,7 +103,7 @@
 								</ItemTemplate>
 								<FooterTemplate>
 									<div>
-										<asp:TextBox ID="txtEmail" runat="server" AutoComplete="off" placeholder="Email" ToolTip="Email" />
+										<asp:TextBox ID="txtEmail" runat="server" AutoCompleteType="Disabled" placeholder="Email" ToolTip="Email" />
 									</div>
 									<div>
 										<asp:CheckBox ID="chkMarketingEnrollment" runat="server" Text="Marketing Enrollment" />
@@ -116,15 +116,15 @@
 				<br />
 			</div>
 			<%--//Radio button for InStore or Shipping--%>
-			<asp:RadioButton ID="rdbInStorePurchase" runat="server" Text="In Store" Checked="True" GroupName="rgSales" OnCheckedChanged="rdbInStorePurchase_CheckedChanged" AutoPostBack="true" />
-			<asp:RadioButton ID="rdbShipping" runat="server" Text="Shipping" GroupName="rgSales" OnCheckedChanged="rdbShipping_CheckedChanged" AutoPostBack="true" />
+			<asp:RadioButton ID="RdbInStorePurchase" runat="server" Text="In Store" Checked="True" GroupName="rgSales" OnCheckedChanged="RdbInStorePurchase_CheckedChanged" AutoPostBack="true" />
+			<asp:RadioButton ID="RdbShipping" runat="server" Text="Shipping" GroupName="rgSales" OnCheckedChanged="RdbShipping_CheckedChanged" AutoPostBack="true" />
 			<asp:Label ID="lblShipping" runat="server" Text="Amount:" />
-			<asp:TextBox ID="txtShippingAmount" runat="server" AutoComplete="off" Text="0.00" />
-			<asp:DropDownList ID="ddlShippingProvince" runat="server" DataTextField="varProvinceName" DataValueField="intProvinceID" 
-				Enabled="false" Visible="false" OnSelectedIndexChanged="ddlShippingProvince_SelectedIndexChanged" AutoPostBack="true" />
+			<asp:TextBox ID="txtShippingAmount" runat="server" AutoCompleteType="Disabled" Text="0.00" />
+			<asp:DropDownList ID="DdlShippingProvince" runat="server" DataTextField="varProvinceName" DataValueField="intProvinceID" 
+				Enabled="false" Visible="false" OnSelectedIndexChanged="DdlShippingProvince_SelectedIndexChanged" AutoPostBack="true" />
 			<asp:Label ID="lblShippingWarning" runat="server" Visible="false" />
 			<div>
-				<asp:Button ID="btnJumpToInventory" Text="Jump to Inventory" OnClick="btnJumpToInventory_Click" runat="server" />
+				<asp:Button ID="BtnJumpToInventory" Text="Jump to Inventory" OnClick="BtnJumpToInventory_Click" runat="server" />
 			</div>
 
 			<div style="text-align: right">
@@ -136,14 +136,14 @@
 				<hr />
 			</div>
 			<div>
-				<asp:TextBox ID="txtSearch" runat="server" AutoComplete="off" />
-				<asp:Button ID="btnInventorySearch" runat="server" Width="150" Text="Inventory Search" OnClick="btnInventorySearch_Click" />
-				<asp:Button ID="btnAddTradeIn" runat="server" Text="Add Trade In" Width="150" OnClick="btnAddTradeIn_Click" />
-				<asp:Button ID="btnClearSearch" runat="server" Width="150" Text="Clear Search Results" OnClick="btnClearSearch_Click" />				
-				<asp:Button ID="btnRefreshCart" runat="server" Text="Refresh Cart" Width="150" OnClick="btnRefreshCart_Click" Visible="false" />
+				<asp:TextBox ID="txtSearch" runat="server" AutoCompleteType="Disabled" />
+				<asp:Button ID="BtnInventorySearch" runat="server" Width="150" Text="Inventory Search" OnClick="BtnInventorySearch_Click" />
+				<asp:Button ID="BtnAddTradeIn" runat="server" Text="Add Trade In" Width="150" OnClick="BtnAddTradeIn_Click" />
+				<asp:Button ID="BtnClearSearch" runat="server" Width="150" Text="Clear Search Results" OnClick="BtnClearSearch_Click" />				
+				<asp:Button ID="BtnRefreshCart" runat="server" Text="Refresh Cart" Width="150" OnClick="BtnRefreshCart_Click" Visible="false" />
 			</div>
 			<hr />
-			<asp:GridView ID="grdInventorySearched" runat="server" AutoGenerateColumns="False" OnRowCommand="grdInventorySearched_RowCommand" RowStyle-HorizontalAlign="Center">
+			<asp:GridView ID="GrdInventorySearched" runat="server" AutoGenerateColumns="False" OnRowCommand="GrdInventorySearched_RowCommand" RowStyle-HorizontalAlign="Center">
 				<Columns>
 					<asp:TemplateField HeaderText="Add Item">
 						<ItemTemplate>
@@ -154,7 +154,7 @@
 					<asp:TemplateField HeaderText="In Stock">
 						<ItemTemplate>
 							<div>
-								<asp:TextBox ID="quantityToAdd" runat="server" AutoComplete="off" placeholder="Enter Quantity To Add" />
+								<asp:TextBox ID="quantityToAdd" runat="server" AutoCompleteType="Disabled" placeholder="Enter Quantity To Add" />
 							</div>
 							<div>
 								<asp:Label ID="QuantityInOrder" Text='<%#Eval("intItemQuantity")%>' runat="server" />
@@ -182,7 +182,7 @@
 								<asp:CheckBox ID="chkDiscountPercent" runat="server" Text="Discount by Percent" />
 							</div>
 							<div>
-								<asp:TextBox ID="txtAmountDiscount" runat="server" AutoComplete="off" placeholder="Enter Amount" />
+								<asp:TextBox ID="txtAmountDiscount" runat="server" AutoCompleteType="Disabled" placeholder="Enter Amount" />
 							</div>
 						</ItemTemplate>
 					</asp:TemplateField>					
@@ -202,8 +202,8 @@
 			<h3>Cart</h3>
 			<hr />
 			<asp:Label ID="lblInvalidQty" runat="server" Visible="false" Text="Invalid Quantity Entered" ForeColor="Red" />
-			<asp:GridView ID="grdCartItems" EmptyDataText=" No Records Found" runat="server" AutoGenerateColumns="false"
-				Style="margin-right: 0px" OnRowEditing="OnRowEditing" OnRowDataBound="grdCartItems_RowDataBound" 
+			<asp:GridView ID="GrdCartItems" EmptyDataText=" No Records Found" runat="server" AutoGenerateColumns="false"
+				Style="margin-right: 0px" OnRowEditing="OnRowEditing" OnRowDataBound="GrdCartItems_RowDataBound" 
 				OnRowUpdating="OnRowUpdating" OnRowCancelingEdit="ORowCanceling" OnRowDeleting="OnRowDeleting" RowStyle-HorizontalAlign="Center">
 				<Columns>
 					<asp:TemplateField HeaderText="Remove Item">
@@ -244,7 +244,7 @@
 						<EditItemTemplate>
 							<asp:CheckBox ID="ckbPercentageEdit" Checked='<%# Convert.ToBoolean(Eval("bitIsDiscountPercent")) %>' runat="server" Text="Discount by Percent" Enabled="true" />
 							<div id="divAmountEdit" class="txt" runat="server">
-								<asp:TextBox ID="txtAmnt" runat="server" AutoComplete="off" Text='<%# Eval("fltItemDiscount") %>' Enabled="true" />
+								<asp:TextBox ID="txtAmnt" runat="server" AutoCompleteType="Disabled" Text='<%# Eval("fltItemDiscount") %>' Enabled="true" />
 							</div>
 						</EditItemTemplate>
 					</asp:TemplateField>
@@ -273,16 +273,16 @@
 			<asp:Table runat="server">
 				<asp:TableRow>
 					<asp:TableCell>
-						<asp:Button ID="btnCancelSale" runat="server" Text="Void Transaction" OnClick="btnCancelSale_Click" Width="163px" CausesValidation="false" />
+						<asp:Button ID="BtnCancelSale" runat="server" Text="Void Transaction" OnClick="BtnCancelSale_Click" Width="163px" CausesValidation="false" />
 					</asp:TableCell>
 					<asp:TableCell>
-						<asp:Button ID="btnExitSale" runat="server" Text="Hold Sale" OnClick="btnExitSale_Click" Width="163px" CausesValidation="false" />
+						<asp:Button ID="BtnExitSale" runat="server" Text="Hold Sale" OnClick="BtnExitSale_Click" Width="163px" CausesValidation="false" />
 					</asp:TableCell>
 					<asp:TableCell>
 						<%--<asp:Button ID="btnLayaway" runat="server" Text="Layaway" OnClick="btnLayaway_Click" Width="163px" CausesValidation="false" Visible="false" />--%>
 					</asp:TableCell>
 					<asp:TableCell>
-						<asp:Button ID="btnProceedToCheckout" runat="server" Text="Checkout" OnClick="btnProceedToCheckout_Click" Width="163px" CausesValidation="false" />
+						<asp:Button ID="BtnProceedToCheckout" runat="server" Text="Checkout" OnClick="BtnProceedToCheckout_Click" Width="163px" CausesValidation="false" />
 					</asp:TableCell>
 				</asp:TableRow>
 			</asp:Table>

@@ -20,8 +20,11 @@ namespace SweetSpotDiscountGolfPOS
 
         double salesDollars;
         double governmentTax;
-        double provincialTax;
+        double harmonizedTax;
         double liquorTax;
+        double provincialTax;
+        double quebecTax;
+        double retailTax;
         double totalSales;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -83,31 +86,48 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     salesDollars += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltSalesDollars"));
                     governmentTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltGovernmentTaxAmount"));
-                    provincialTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmount"));
+                    harmonizedTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltHarmonizedTaxAmount"));
                     liquorTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltLiquorTaxAmount"));
+                    provincialTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProvincialTaxAmount"));
+                    quebecTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltquebecTaxAmount"));
+                    retailTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltretailTaxAmount"));
                     totalSales += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltTotalSales"));
                 }
                 else if (e.Row.RowType == DataControlRowType.Footer)
                 {
                     e.Row.Cells[1].Text = String.Format("{0:C}", salesDollars);
                     e.Row.Cells[2].Text = String.Format("{0:C}", governmentTax);
-                    e.Row.Cells[3].Text = String.Format("{0:C}", provincialTax);
+                    e.Row.Cells[3].Text = String.Format("{0:C}", harmonizedTax);
                     e.Row.Cells[4].Text = String.Format("{0:C}", liquorTax);
-                    e.Row.Cells[5].Text = String.Format("{0:C}", totalSales);
+                    e.Row.Cells[5].Text = String.Format("{0:C}", provincialTax);
+                    e.Row.Cells[6].Text = String.Format("{0:C}", quebecTax);
+                    e.Row.Cells[7].Text = String.Format("{0:C}", retailTax);
+                    e.Row.Cells[8].Text = String.Format("{0:C}", totalSales);
 
+                    if (governmentTax == 0)
+                    {
+                        GrdSalesByDate.Columns[2].Visible = false;
+                    }
+                    if (harmonizedTax == 0)
+                    {
+                        GrdSalesByDate.Columns[3].Visible = false;
+                    }
                     if (liquorTax == 0)
                     {
                         GrdSalesByDate.Columns[4].Visible = false;
                     }
                     if (provincialTax == 0)
                     {
-                        GrdSalesByDate.Columns[3].Visible = false;
+                        GrdSalesByDate.Columns[5].Visible = false;
                     }
-                    if (governmentTax == 0)
+                    if (quebecTax == 0)
                     {
-                        GrdSalesByDate.Columns[2].Visible = false;
+                        GrdSalesByDate.Columns[6].Visible = false;
                     }
-
+                    if (retailTax == 0)
+                    {
+                        GrdSalesByDate.Columns[7].Visible = false;
+                    }
                 }
             }
             //Exception catch
@@ -150,28 +170,37 @@ namespace SweetSpotDiscountGolfPOS
                     salesExport.Cells[2, 1].Value = "Date";
                     salesExport.Cells[2, 2].Value = "Sales Dollars";
                     salesExport.Cells[2, 3].Value = "GST";
-                    salesExport.Cells[2, 4].Value = "PST";
+                    salesExport.Cells[2, 4].Value = "HST";
                     salesExport.Cells[2, 5].Value = "LCT";
-                    salesExport.Cells[2, 6].Value = "Total Sales";
+                    salesExport.Cells[2, 6].Value = "PST";
+                    salesExport.Cells[2, 7].Value = "QST";
+                    salesExport.Cells[2, 8].Value = "RST";
+                    salesExport.Cells[2, 9].Value = "Total Sales";
                     int recordIndex = 3;
                     foreach (DataRow row in dt.Rows)
                     {
                         DateTime d = (DateTime)row[0];
                         salesExport.Cells[recordIndex, 1].Value = d.ToString("d");
-                        salesExport.Cells[recordIndex, 2].Value = Convert.ToDouble(row[5]).ToString("C");
-                        salesExport.Cells[recordIndex, 3].Value = Convert.ToDouble(row[2]).ToString("C");
-                        salesExport.Cells[recordIndex, 4].Value = Convert.ToDouble(row[3]).ToString("C");
-                        salesExport.Cells[recordIndex, 5].Value = Convert.ToDouble(row[4]).ToString("C");
-                        salesExport.Cells[recordIndex, 6].Value = Convert.ToDouble(row[6]).ToString("C");
+                        salesExport.Cells[recordIndex, 2].Value = Convert.ToDouble(row[7]).ToString("C");
+                        salesExport.Cells[recordIndex, 3].Value = Convert.ToDouble(row[1]).ToString("C");
+                        salesExport.Cells[recordIndex, 4].Value = Convert.ToDouble(row[2]).ToString("C");
+                        salesExport.Cells[recordIndex, 5].Value = Convert.ToDouble(row[3]).ToString("C");
+                        salesExport.Cells[recordIndex, 6].Value = Convert.ToDouble(row[4]).ToString("C");
+                        salesExport.Cells[recordIndex, 7].Value = Convert.ToDouble(row[5]).ToString("C");
+                        salesExport.Cells[recordIndex, 8].Value = Convert.ToDouble(row[6]).ToString("C");
+                        salesExport.Cells[recordIndex, 9].Value = Convert.ToDouble(row[9]).ToString("C");
                         recordIndex++;
                     }
 
                     salesExport.Cells[recordIndex + 1, 1].Value = "Totals:";
                     salesExport.Cells[recordIndex + 1, 2].Value = salesDollars.ToString("C");
                     salesExport.Cells[recordIndex + 1, 3].Value = governmentTax.ToString("C");
-                    salesExport.Cells[recordIndex + 1, 4].Value = provincialTax.ToString("C");
+                    salesExport.Cells[recordIndex + 1, 4].Value = harmonizedTax.ToString("C");
                     salesExport.Cells[recordIndex + 1, 5].Value = liquorTax.ToString("C");
-                    salesExport.Cells[recordIndex + 1, 6].Value = totalSales.ToString("C");
+                    salesExport.Cells[recordIndex + 1, 6].Value = provincialTax.ToString("C");
+                    salesExport.Cells[recordIndex + 1, 7].Value = quebecTax.ToString("C");
+                    salesExport.Cells[recordIndex + 1, 8].Value = retailTax.ToString("C");
+                    salesExport.Cells[recordIndex + 1, 9].Value = totalSales.ToString("C");
 
 
                     Response.Clear();

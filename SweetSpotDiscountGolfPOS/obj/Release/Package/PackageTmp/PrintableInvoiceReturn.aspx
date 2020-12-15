@@ -141,7 +141,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Discounts/Bonus Applied">
                         <ItemTemplate>
-                            <asp:Label ID="discount" Text='<%# ((Convert.ToDouble(Eval("fltItemPrice")) + Convert.ToDouble(Eval("fltItemRefund"))) * Convert.ToDouble(Eval("intItemQuantity"))).ToString("C") %>' runat="server" />
+                            <asp:Label ID="discount" Text='<%# ((Convert.ToBoolean(Eval("bitIsDiscountPercent")) == false ? Convert.ToDouble(Eval("fltItemPrice")) - Convert.ToDouble(Eval("fltItemDiscount")) : (Convert.ToDouble(Eval("fltItemDiscount")) / 100) * Convert.ToDouble(Eval("fltItemPrice"))) - Convert.ToDouble(Eval("fltItemRefund"))).ToString("C") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Quantity">
@@ -261,7 +261,7 @@
         <%--added a cssclass here for testing--%>
         <asp:Button ID="btnPrint" CssClass="noPrint" runat="server" Text="Print" Width="100px" OnClientClick="CallPrint('print', 'disclaimer');" />
         <br />
-        <asp:Button ID="btnHome" runat="server" Text="Home" Width="100px" OnClick="btnHome_Click" />
+        <asp:Button ID="BtnHome" runat="server" Text="Home" Width="100px" OnClick="BtnHome_Click" />
         <br />
     </div>
     <div id="disclaimer">

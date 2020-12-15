@@ -69,7 +69,7 @@
                             <asp:Label runat="server" ID="lblPSTS" Text="PST" Width="100%" />
                         </asp:TableCell>
 						<asp:TableCell Width="9%">
-                            <asp:Label runat="server" ID="LblLCTS" Text="LCT" Width="100%" />
+                            <asp:Label runat="server" ID="lblLCTS" Text="LCT" Width="100%" />
                         </asp:TableCell>
                         <asp:TableCell Width="9%">
                             <asp:Label runat="server" ID="lblTotalS" Text="Total" Width="100%" />

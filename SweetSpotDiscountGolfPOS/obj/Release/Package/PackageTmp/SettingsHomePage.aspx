@@ -15,18 +15,18 @@
             <asp:Table ID="tblEmployee" runat="server">
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:TextBox ID="txtSearch" runat="server" AutoComplete="off" />
+                        <asp:TextBox ID="txtSearch" runat="server" AutoCompleteType="Disabled" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnEmployeeSearch" runat="server" Width="150" Text="Employee Search" OnClick="btnEmployeeSearch_Click" />
+                        <asp:Button ID="BtnEmployeeSearch" runat="server" Width="150" Text="Employee Search" OnClick="BtnEmployeeSearch_Click" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnAddNewEmployee" runat="server" Width="150" Text="Add New Employee" OnClick="btnAddNewEmployee_Click" />
+                        <asp:Button ID="BtnAddNewEmployee" runat="server" Width="150" Text="Add New Employee" OnClick="BtnAddNewEmployee_Click" />
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
             <hr />
-            <asp:GridView ID="grdEmployeesSearched" AutoGenerateColumns="false" runat="server" OnRowCommand="grdEmployeesSearched_RowCommand">
+            <asp:GridView ID="GrdEmployeesSearched" AutoGenerateColumns="false" runat="server" OnRowCommand="GrdEmployeesSearched_RowCommand">
                 <Columns>
                     <asp:TemplateField HeaderText="View Profile">
                         <ItemTemplate>
@@ -74,9 +74,9 @@
                             <asp:Label ID="lblProvince" runat="server" Text="Province:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:DropDownList ID="ddlProvince" runat="server" AutoPostBack="true" 
+                            <asp:DropDownList ID="DdlProvince" runat="server" AutoPostBack="true" 
                                 DataTextField="varProvinceName" DataValueField="intProvinceID" 
-                                OnSelectedIndexChanged="ddlProvince_SelectedIndexChanged" />
+                                OnSelectedIndexChanged="DdlProvince_SelectedIndexChanged" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
@@ -84,10 +84,10 @@
                             <asp:Label ID="lblTax" runat="server" Text="Tax:" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:DropDownList ID="ddlTax" runat="server" AutoPostBack="true" 
+                            <asp:DropDownList ID="DdlTax" runat="server" AutoPostBack="true" 
                                 DataTextField="varTaxName" DataValueField="intTaxID" 
-                                OnSelectedIndexChanged="ddlTax_SelectedIndexChanged" 
-                                OnPreRender="ddlTax_SelectedIndexChanged" />
+                                OnSelectedIndexChanged="DdlTax_SelectedIndexChanged" 
+                                OnPreRender="DdlTax_SelectedIndexChanged" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label ID="lblCurrentDate" runat="server" Visible="false" />
@@ -109,17 +109,17 @@
                             <asp:Label ID="lblCurrentDisplay" runat="server" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtNewRate" runat="server" AutoComplete="off" />
+                            <asp:TextBox ID="txtNewRate" runat="server" AutoCompleteType="Disabled" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:TextBox ID="txtDate" runat="server" AutoComplete="off" />
+                            <asp:TextBox ID="txtDate" runat="server" AutoCompleteType="Disabled" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell>
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Button ID="btnSaveTheTax" Text="Set New Tax Rate" runat="server" OnClick="btnSaveTheTax_Click" />
+                            <asp:Button ID="BtnSaveTheTax" Text="Set New Tax Rate" runat="server" OnClick="BtnSaveTheTax_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
                         </asp:TableCell>
@@ -136,22 +136,22 @@
                         <asp:TableCell>
                             <asp:Label ID="lblModel" runat="server" Text="Model" />
                             <div>
-                                <asp:TextBox ID="txtModelOne" runat="server" AutoComplete="off" placeholder="Model" />
+                                <asp:TextBox ID="txtModelOne" runat="server" AutoCompleteType="Disabled" placeholder="Model" />
                             </div>
                             <div>
-                                <asp:TextBox ID="txtModelTwo" runat="server" AutoComplete="off" placeholder="Confirm Model" />
+                                <asp:TextBox ID="txtModelTwo" runat="server" AutoCompleteType="Disabled" placeholder="Confirm Model" />
                             </div>
-                            <asp:Button ID="btnAddModel" runat="server" Width="150" Text="Add Model" OnClick="btnAddModel_Click" />
+                            <asp:Button ID="BtnAddModel" runat="server" Width="150" Text="Add Model" OnClick="BtnAddModel_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label ID="lblBrand" runat="server" Text="Brand" />
                             <div>
-                                <asp:TextBox ID="txtBrandOne" runat="server" AutoComplete="off" placeholder="Brand" />
+                                <asp:TextBox ID="txtBrandOne" runat="server" AutoCompleteType="Disabled" placeholder="Brand" />
                             </div>
                             <div>
-                                <asp:TextBox ID="txtBrandTwo" runat="server"  AutoComplete="off" placeholder="Confirm Brand" />
+                                <asp:TextBox ID="txtBrandTwo" runat="server"  AutoCompleteType="Disabled" placeholder="Confirm Brand" />
                             </div>
-                            <asp:Button ID="btnAddBrand" runat="server" Width="150" Text="Add Brand" OnClick="btnAddBrand_Click" />
+                            <asp:Button ID="BtnAddBrand" runat="server" Width="150" Text="Add Brand" OnClick="BtnAddBrand_Click" />
                         </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>
@@ -168,7 +168,7 @@
                             <div>
                                 <asp:FileUpload ID="fupItemSheet" runat="server" />
                             </div>
-                            <asp:Button ID="btnLoadItems" runat="server" Width="150" Text="Import Items" OnClick="btnLoadItems_Click" />
+                            <asp:Button ID="BtnLoadItems" runat="server" Width="150" Text="Import Items" OnClick="BtnLoadItems_Click" />
                             <%--The actual button--%>
                             <asp:Image id="imgLoadingItemImport" ImageUrl="~/Images/ajax-loader.gif" visible="false"  runat="server"/>
                         </asp:TableCell>
@@ -186,12 +186,12 @@
             <hr />
             <h2>Export Items To Excel</h2>
             <hr />
-            <asp:Button ID="btnExportAll" runat="server" Width="150" Text="Export All" OnClick="btnExportAll_Click" />
-            <asp:Button ID="btnExportClubs" runat="server" Width="150" Text="Export Clubs" OnClick="btnExportClubs_Click" />
-            <asp:Button ID="btnExportClothing" runat="server" Width="150" Text="Export Clothing" OnClick="btnExportClothing_Click" />
-            <asp:Button ID="btnExportAccessories" runat="server" Width="150" Text="Export Accessories" OnClick="btnExportAccessories_Click" />
-            <asp:Button ID="btnExportInvoices" runat="server" Width="150" Text="Export Invoices" OnClick="btnExportInvoices_Click" />
-            <asp:Button ID="btnExportEmails" runat="server" Width="150" Text="Export Emails" OnClick="btnExportEmails_Click" />
+            <asp:Button ID="BtnExportAll" runat="server" Width="150" Text="Export All" OnClick="BtnExportAll_Click" />
+            <asp:Button ID="BtnExportClubs" runat="server" Width="150" Text="Export Clubs" OnClick="BtnExportClubs_Click" />
+            <asp:Button ID="BtnExportClothing" runat="server" Width="150" Text="Export Clothing" OnClick="BtnExportClothing_Click" />
+            <asp:Button ID="BtnExportAccessories" runat="server" Width="150" Text="Export Accessories" OnClick="BtnExportAccessories_Click" />
+            <%--<asp:Button ID="BtnExportInvoices" runat="server" Width="150" Text="Export Invoices" OnClick="BtnExportInvoices_Click" />--%>
+            <asp:Button ID="BtnExportEmails" runat="server" Width="150" Text="Export Emails" OnClick="BtnExportEmails_Click" />
             <script>
                 function UpdateProgressLabel() {
                     alert("TEST");

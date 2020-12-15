@@ -38,11 +38,11 @@
         <asp:Label ID="lblDates" runat="server" Font-Bold="true" />
         <hr />
 
-        <asp:GridView ID="grdInvoiceSelection" runat="server" AutoGenerateColumns="false" ShowFooter="true" Width="100%" RowStyle-HorizontalAlign="Center" OnRowDataBound="grdInvoiceSelection_RowDataBound">
+        <asp:GridView ID="GrdInvoiceSelection" runat="server" AutoGenerateColumns="false" ShowFooter="true" Width="100%" RowStyle-HorizontalAlign="Center" OnRowDataBound="GrdInvoiceSelection_RowDataBound">
             <Columns>
                 <asp:TemplateField HeaderText="Invoice Number" HeaderStyle-Width="20%">
                     <ItemTemplate>
-                        <asp:LinkButton ID="lbtnInvoiceNumber" runat="server" Text='<%#Eval("invoice")%>' OnClick="lbtnInvoiceNumber_Click" />
+                        <asp:LinkButton ID="LbtnInvoiceNumber" runat="server" Text='<%#Eval("invoice")%>' OnClick="LbtnInvoiceNumber_Click" />
                     </ItemTemplate>
                     <FooterTemplate>
                         <asp:Label ID="lblTotal" runat="server" Text="Totals:" />
@@ -81,10 +81,10 @@
     <asp:Table runat="server">
         <asp:TableRow>
             <asp:TableCell>
-                <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('print');" />
+                <asp:Button CssClass="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('print');" />
             </asp:TableCell>
             <asp:TableCell>
-                <asp:Button class="noPrint" ID="btnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="btnDownload_Click" />
+                <asp:Button CssClass="noPrint" ID="BtnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="BtnDownload_Click" />
             </asp:TableCell>
         </asp:TableRow>
     </asp:Table>

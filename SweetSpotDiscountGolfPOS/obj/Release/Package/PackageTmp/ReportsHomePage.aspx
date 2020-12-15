@@ -44,9 +44,9 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:Calendar ID="calStartDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest"
-                            Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="184px" Width="200px" AutoPostBack="false"
-                            OnSelectionChanged="calStart_SelectionChanged">
+                        <asp:Calendar ID="CalStartDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest"
+                            Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="184px" Width="200px" 
+                            OnSelectionChanged="CalStart_SelectionChanged">
                             <DayHeaderStyle BackColor="#5FD367" Font-Bold="True" Font-Size="7pt" />
                             <NextPrevStyle VerticalAlign="Bottom" />
                             <OtherMonthDayStyle ForeColor="#808080" />
@@ -58,9 +58,9 @@
                         </asp:Calendar>
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Calendar ID="calEndDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest"
+                        <asp:Calendar ID="CalEndDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest"
                             Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="182px" Width="200px"
-                            OnSelectionChanged="calEnd_SelectionChanged">
+                            OnSelectionChanged="CalEnd_SelectionChanged">
                             <DayHeaderStyle BackColor="#5FD367" Font-Bold="True" Font-Size="7pt" />
                             <NextPrevStyle VerticalAlign="Bottom" />
                             <OtherMonthDayStyle ForeColor="#808080" />
@@ -78,44 +78,44 @@
                 <asp:Table runat="server">
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:Button ID="btnCashOutReport" runat="server" Text="CashOut Report" Width="200px" OnClick="btnCashOutReport_Click" />
+                            <asp:Button ID="BtnCashOutReport" runat="server" Text="CashOut Report" Width="200px" OnClick="BtnCashOutReport_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Button ID="btnDiscountReport" runat="server" Text="Discount Report" Width="200px" OnClick="btnDiscountReport_Click" />
+                            <asp:Button ID="BtnDiscountReport" runat="server" Text="Discount Report" Width="200px" OnClick="BtnDiscountReport_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Button ID="btnTaxReport" runat="server" Text="Tax Report" Width="200px" OnClick="btnTaxReport_Click" />
+                            <asp:Button ID="BtnTaxReport" runat="server" Text="Tax Report" Width="200px" OnClick="BtnTaxReport_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Button ID="btnSalesByDateReport" runat="server" Text="Sales By Date Report" Width="200px" OnClick="btnSalesByDate_Click" />
-                        </asp:TableCell>
-                    </asp:TableRow>
-                    <asp:TableRow>
-                        <asp:TableCell>
-                            <asp:Button ID="btnExtensiveInvoice" runat="server" Text="Extensive Invoice" Width="200px" Onclick="btnExtensiveInvoice_Click" />							
-                        </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Button ID="btnCostOfInventory" runat="server" Text="Cost of Inventory" Width="200px" OnClick="btnCostOfInventory_Click" />
-                        </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Button ID="btnStoreStatsReport" runat="server" Text="Store Stats Report" Width="200px" OnClick="btnStoreStatsReport_Click" />
-                        </asp:TableCell>
-                        <asp:TableCell>
-                            <asp:Button ID="btnInvnetoryChangeReport" runat="server" Text="Inventory Change Report" Width="200px" OnClick="btnInventoryChangeReport_Click" />
+                            <asp:Button ID="BtnSalesByDateReport" runat="server" Text="Sales By Date Report" Width="200px" OnClick="BtnSalesByDate_Click" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:Button ID="btnSpecificApparelReport" runat="server" Text="Specific Apparel Report" Width="200px" OnClick="btnSpecificApparelReport_Click" />
+                            <asp:Button ID="BtnExtensiveInvoice" runat="server" Text="Extensive Invoice" Width="200px" Onclick="BtnExtensiveInvoice_Click" />							
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Button ID="btnSpecificGripReport" runat="server" Text="Specific Grip Report" Width="200px" OnClick="btnSpecificGripReport_Click" />
+                            <asp:Button ID="BtnCostOfInventory" runat="server" Text="Cost of Inventory" Width="200px" OnClick="BtnCostOfInventory_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            
+                            <asp:Button ID="BtnStoreStatsReport" runat="server" Text="Store Stats Report" Width="200px" OnClick="BtnStoreStatsReport_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            
+                            <asp:Button ID="BtnInvnetoryChangeReport" runat="server" Text="Inventory Change Report" Width="200px" OnClick="BtnInventoryChangeReport_Click" />
+                        </asp:TableCell>
+                    </asp:TableRow>
+                    <asp:TableRow>
+                        <asp:TableCell>
+                            <asp:Button ID="BtnSpecificApparelReport" runat="server" Text="Specific Apparel Report" Width="200px" OnClick="BtnSpecificApparelReport_Click" />
+                        </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:Button ID="BtnSpecificGripReport" runat="server" Text="Specific Grip Report" Width="200px" OnClick="BtnSpecificGripReport_Click" />
+                        </asp:TableCell>
+                        <asp:TableCell>
+                            <%-- <asp:Button ID="BtnCreatePDFFiles" runat="server" Width="200" Text="Create PDFs" OnClick="BtnCreatePDFFiles_Click" /> --%>
+                        </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:Button ID="BtnExportInvoices" runat="server" Width="200" Text="Export Invoices" OnClick="BtnExportInvoices_Click" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <%--<asp:TableRow>

@@ -687,7 +687,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
                 {
                     priceSold = item.fltItemPrice - item.fltItemDiscount;
                 }
-                discountNonRefund = priceSold + item.fltItemRefund;
+                discountNonRefund = priceSold - item.fltItemRefund;
                 retailReturned = item.fltItemRefund;
             }
             else

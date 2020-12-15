@@ -23,20 +23,20 @@
             <asp:Table runat="server">
                 <asp:TableRow>
                     <asp:TableCell>
-                        <asp:Button ID="btnQuickSale" runat="server" Width="150" Text="Quick Sale" OnClick="btnQuickSale_Click" />
+                        <asp:Button ID="BtnQuickSale" runat="server" Width="150" Text="Quick Sale" OnClick="BtnQuickSale_Click" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnReturns" runat="server" Width="150" Text="Process Return" OnClick="btnReturns_Click" />
+                        <asp:Button ID="BtnReturns" runat="server" Width="150" Text="Process Return" OnClick="BtnReturns_Click" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnInvoiceSearch" runat="server" Text="Search for Invoices" OnClick="btnInvoiceSearch_Click" />
+                        <asp:Button ID="BtnInvoiceSearch" runat="server" Text="Search for Invoices" OnClick="BtnInvoiceSearch_Click" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Button ID="btnProcessCashOut" runat="server" Text="Process CashOut" OnClick="btnProcessCashOut_Click" />
+                        <asp:Button ID="BtnProcessCashOut" runat="server" Text="Process CashOut" OnClick="BtnProcessCashOut_Click" />
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:Calendar ID="calSearchDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest" 
-                            Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="184px" Width="200px" OnSelectionChanged="calSearchDate_SelectionChanged" >
+                        <asp:Calendar ID="CalSearchDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest" 
+                            Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="184px" Width="200px" OnSelectionChanged="CalSearchDate_SelectionChanged" >
                             <DayHeaderStyle BackColor="#5FD367" Font-Bold="True" Font-Size="7pt" />
                             <NextPrevStyle VerticalAlign="Bottom" />
                             <OtherMonthDayStyle ForeColor="#808080" />
@@ -55,7 +55,7 @@
             <h2>Current Open Sales</h2>
             <hr />
             <div>
-                <asp:GridView ID="grdCurrentOpenSales" runat="server" AutoGenerateColumns="false" Width="100%" OnRowCommand="grdCurrentOpenSales_RowCommand" RowStyle-HorizontalAlign="Center" >
+                <asp:GridView ID="GrdCurrentOpenSales" runat="server" AutoGenerateColumns="false" Width="100%" OnRowCommand="GrdCurrentOpenSales_RowCommand" RowStyle-HorizontalAlign="Center" >
                     <Columns>
                         <asp:TemplateField HeaderText="View Invoice">
                             <ItemTemplate>

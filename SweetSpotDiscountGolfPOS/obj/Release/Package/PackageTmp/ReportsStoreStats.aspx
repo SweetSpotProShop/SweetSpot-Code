@@ -24,7 +24,8 @@
             <asp:Label ID="lblDates" runat="server" Font-Bold="true" />
         </div>
         <div>
-            <asp:GridView ID="grdStats" runat="server" AutoGenerateColumns="false" ShowFooter="true" RowStyle-HorizontalAlign="Center" OnRowDataBound="grdStats_RowDataBound">
+            <asp:GridView ID="GrdStats" runat="server" AutoGenerateColumns="false" ShowFooter="true" RowStyle-HorizontalAlign="Center" OnRowDataBound="GrdStats_RowDataBound"
+				FooterStyle-Font-Bold="true" FooterStyle-HorizontalAlign="Center">
                 <Columns>
                     <asp:TemplateField HeaderText="Grouped By">
                         <ItemTemplate>
@@ -41,9 +42,24 @@
                             <asp:Label ID="lblLocationName" runat="server" Text='<%#Eval("varLocationName")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
+					<asp:TemplateField HeaderText="Sub-Total">
+                        <ItemTemplate>
+                            <asp:Label ID="lblSalesPreTax" runat="server" Text='<%#Eval("fltSubTotal", "{0:C}")%>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:TemplateField HeaderText="GST">
                         <ItemTemplate>
                             <asp:Label ID="lblGovernmentTax" runat="server" Text='<%#Eval("fltGovernmentTaxAmount", "{0:C}")%>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+					<%--<asp:TemplateField HeaderText="HST">
+                        <ItemTemplate>
+                            <asp:Label ID="lblHarmonizedTax" runat="server" Text='<%#Eval("fltHarmonizedTaxAmount", "{0:C}")%>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>--%>
+					<asp:TemplateField HeaderText="LCT">
+                        <ItemTemplate>
+                            <asp:Label ID="lblLiquorTax" runat="server" Text='<%#Eval("fltLiquorTaxAmount", "{0:C}")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="PST">
@@ -51,26 +67,31 @@
                             <asp:Label ID="lblProvincialTax" runat="server" Text='<%#Eval("fltProvincialTaxAmount", "{0:C}")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
-					<asp:TemplateField HeaderText="LCT">
+					<%--<asp:TemplateField HeaderText="QST">
                         <ItemTemplate>
-                            <asp:Label ID="lblLiquorTax" runat="server" Text='<%#Eval("fltLiquorTaxAmount", "{0:C}")%>' />
+                            <asp:Label ID="lblQuebecTax" runat="server" Text='<%#Eval("fltQuebecTaxAmount", "{0:C}")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Cost of Goods Sold">
+					<asp:TemplateField HeaderText="RST">
                         <ItemTemplate>
-                            <asp:Label ID="lblCostofGoods" runat="server" Text='<%#Eval("fltCostofGoods", "{0:C}")%>' />
+                            <asp:Label ID="lblRetailTax" runat="server" Text='<%#Eval("fltRetailTaxAmount", "{0:C}")%>' />
                         </ItemTemplate>
-                    </asp:TemplateField>
-					<asp:TemplateField HeaderText="Sales Pre-Tax">
+                    </asp:TemplateField>--%>
+					<asp:TemplateField HeaderText="Total Sales">
                         <ItemTemplate>
-                            <asp:Label ID="lblSalesPreTax" runat="server" Text='<%#Eval("fltSubTotal", "{0:C}")%>' />
+                            <asp:Label ID="lblTotalSales" runat="server" Text='<%#Eval("fltTotalSales", "{0:C}")%>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Profit Margin">
                         <ItemTemplate>
                             <asp:Label ID="lblProfitMargin" runat="server" Text='<%#Eval("fltProfitMargin", "{0:P}")%>' />
                         </ItemTemplate>
-                    </asp:TemplateField>                    
+                    </asp:TemplateField>
+					<asp:TemplateField HeaderText="Cost of Goods Sold">
+                        <ItemTemplate>
+                            <asp:Label ID="lblCostofGoods" runat="server" Text='<%#Eval("fltCostofGoods", "{0:C}")%>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:TemplateField HeaderText="Sales Dollars">
                         <ItemTemplate>
                             <asp:Label ID="lblSalesDollars" runat="server" Text='<%#Eval("fltSalesDollars", "{0:C}")%>' />
@@ -84,10 +105,10 @@
         <asp:Table runat="server">
             <asp:TableRow>
                 <asp:TableCell>
-                    <asp:Button class="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('print');" />
+                    <asp:Button CssClass="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('print');" />
                 </asp:TableCell>
                 <asp:TableCell>
-                    <asp:Button class="noPrint" ID="btnDownload" runat="server" Text="Download" Visible="true" Width="200px" Onclick="btnDownload_Click"/>
+                    <asp:Button CssClass="noPrint" ID="BtnDownload" runat="server" Text="Download" Visible="true" Width="200px" Onclick="BtnDownload_Click"/>
                 </asp:TableCell>
             </asp:TableRow>
         </asp:Table>
