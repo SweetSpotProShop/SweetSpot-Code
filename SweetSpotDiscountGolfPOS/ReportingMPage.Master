@@ -1,0 +1,108 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="ReportingMPage.master.cs" Inherits="SweetSpotDiscountGolfPOS.ReportingMPage" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+	<title>Sweet Spot Discount Golf</title>
+	<asp:ContentPlaceHolder ID="head" runat="server">
+	</asp:ContentPlaceHolder>
+	<style media="print">
+		.noPrint {
+			display: none;
+			/*margin-left: 0;*/
+		}
+
+		.yesPrint {
+			display: inline-block !important;
+			/* margin-right:100px;
+           float: right;*/
+			margin-left: 10px !important;
+		}
+	</style>
+</head>
+<body>
+	<form id="form1" runat="server">
+		<div>
+			<asp:ContentPlaceHolder ID="SPMaster" runat="server">
+				<div id="menu_simple">
+					<ul>
+						<li><a href="HomePage.aspx">HOME</a></li>
+						<li><a href="CustomerHomePage.aspx">CUSTOMERS</a></li>
+						<li><a href="SalesHomePage.aspx">SALES</a></li>
+						<li><a href="InventoryHomePage.aspx">INVENTORY</a></li>
+						<li><a href="ReportsHomePage.aspx">REPORTS</a></li>
+						<li><a href="SettingsHomePage.aspx">SETTINGS</a></li>
+						<%--<li><a href="LoungeSims.aspx">SIMULATOR LOUNGE</a></li>--%>
+					</ul>
+				</div>
+				<div id="image_simple">
+
+					<asp:Table ID="tblReportCriteriaSelection" runat="server">
+						<asp:TableRow>
+							<asp:TableCell RowSpan="4">
+								<asp:Calendar ID="CalStartDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest"
+									Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="184px" Width="200px" >
+									<DayHeaderStyle BackColor="#5FD367" Font-Bold="True" Font-Size="7pt" />
+									<NextPrevStyle VerticalAlign="Bottom" />
+									<OtherMonthDayStyle ForeColor="#808080" />
+									<SelectedDayStyle BackColor="#666666" Font-Bold="True" ForeColor="White" />
+									<SelectorStyle BackColor="#CCCCCC" />
+									<TitleStyle BackColor="#005555" BorderColor="Black" Font-Bold="True" />
+									<TodayDayStyle BackColor="#CCCCCC" ForeColor="Black" />
+									<WeekendDayStyle BackColor="#FFFFCC" />
+								</asp:Calendar>
+							</asp:TableCell>
+							<asp:TableCell>
+		                        <asp:Label runat="server" Text="Select date type:"/>                        
+							</asp:TableCell>
+							<asp:TableCell RowSpan="4">
+								<asp:Calendar ID="CalEndDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest"
+									Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="182px" Width="200px" >
+									<DayHeaderStyle BackColor="#5FD367" Font-Bold="True" Font-Size="7pt" />
+									<NextPrevStyle VerticalAlign="Bottom" />
+									<OtherMonthDayStyle ForeColor="#808080" />
+									<SelectedDayStyle BackColor="#666666" Font-Bold="True" ForeColor="White" />
+									<SelectorStyle BackColor="#CCCCCC" />
+									<TitleStyle BackColor="#005555" BorderColor="Black" Font-Bold="True" />
+									<TodayDayStyle BackColor="#CCCCCC" ForeColor="Black" />
+									<WeekendDayStyle BackColor="#FFFFCC" />
+								</asp:Calendar>
+							</asp:TableCell>
+						</asp:TableRow>
+						<asp:TableRow>
+							<asp:TableCell>
+								<asp:DropDownList ID="ddlDatePeriod" runat="server" AutoPostBack="false">
+									<asp:ListItem Text="Day" Value="1" />
+									<asp:ListItem Text="Week" Value="2" />
+									<asp:ListItem Text="Month" Value="3" />
+								</asp:DropDownList>
+							</asp:TableCell>
+						</asp:TableRow>
+						<asp:TableRow>
+							<asp:TableCell>
+								<asp:Label runat="server" Text="Select Location:" />
+							</asp:TableCell>
+						</asp:TableRow>
+						<asp:TableRow>
+							<asp:TableCell>
+								<asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="false"
+									DataTextField="varCityName" DataValueField="intLocationID" Visible="true" />
+							</asp:TableCell>
+						</asp:TableRow>
+					</asp:Table>
+				</div>
+
+				<div id="button_simple">
+					<asp:Button ID="Button1" runat="server" Text="LogOut" OnClick="BtnLogout_Click" />
+				</div>
+				<link rel="stylesheet" type="text/css" href="CSS/MainStyleSheet.css" />
+			</asp:ContentPlaceHolder>
+			<div id="indentContent">
+				<asp:ContentPlaceHolder ID="IndividualPageContent" runat="server">
+				</asp:ContentPlaceHolder>
+			</div>
+		</div>
+	</form>
+</body>
+</html>

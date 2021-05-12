@@ -1,4 +1,4 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="MasterPage.master.cs" Inherits="SweetSpotDiscountGolfPOS.MasterPage" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="MasterPage.Master.cs" Inherits="SweetSpotDiscountGolfPOS.MasterPage" %>
 
 <!DOCTYPE html>
 

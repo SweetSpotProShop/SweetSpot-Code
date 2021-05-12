@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Web.UI;
 
 namespace SweetSpotDiscountGolfPOS.Misc
 {
@@ -36,5 +36,28 @@ namespace SweetSpotDiscountGolfPOS.Misc
             DateTime monthStart = new DateTime(date.Year, date.Month, 1);
             return monthStart.AddMonths(1).AddDays(-1);
         }
+
+
+        public static Control CallFindControlRecursive(Control control, string id)
+        {
+            return FindControlRecursive(control, id);
+        }
+        private static Control FindControlRecursive(Control control, string id)
+        {
+            Control returnControl = control.FindControl(id);
+            if (returnControl == null)
+            {
+                foreach (Control child in control.Controls)
+                {
+                    returnControl = FindControlRecursive(child, id);
+                    if (returnControl != null && returnControl.ID == id)
+                    {
+                        return returnControl;
+                    }
+                }
+            }
+            return returnControl;
+        }
+
     }
 }

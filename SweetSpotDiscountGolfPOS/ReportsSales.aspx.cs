@@ -47,6 +47,13 @@ namespace SweetSpotDiscountGolfPOS
                     DateTime startDate = reportDates[0];
                     DateTime endDate = reportDates[1];
                     int locationID = (int)passing[1];
+
+                    Calendar calStartDate = (Calendar)Master.FindControl("form1").FindControl("SPMaster").FindControl("tblReportCriteriaSelection").FindControl("calStartDate");
+                    calStartDate.SelectedDate = startDate;
+
+                    Calendar calEndDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "calEndDate");
+                    calEndDate.SelectedDate = endDate;
+
                     //Builds string to display in label
                     if (startDate == endDate)
                     {
