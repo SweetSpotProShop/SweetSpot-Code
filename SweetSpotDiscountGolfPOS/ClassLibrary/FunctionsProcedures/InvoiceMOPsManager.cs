@@ -145,9 +145,9 @@ namespace SweetSpotDiscountGolfPOS.FP
             {
                 new object[] { "@intInvoiceID", invoicePayment.intInvoiceID },
                 new object[] { "@intPaymentID", invoicePayment.intPaymentID },
-                new object[] { "@fltAmountPaid", invoicePayment.fltAmountPaid },
-                new object[] { "@fltTenderedAmount", invoicePayment.fltTenderedAmount },
-                new object[] { "@fltCustomerChange", invoicePayment.fltCustomerChange }
+                new object[] { "@fltAmountPaid", Math.Round(invoicePayment.fltAmountPaid, 2) },
+                new object[] { "@fltTenderedAmount", Math.Round(invoicePayment.fltTenderedAmount, 2) },
+                new object[] { "@fltCustomerChange", Math.Round(invoicePayment.fltCustomerChange, 2) }
             };
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
@@ -162,7 +162,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@intReceiptID", payment.intInvoiceID },
                 new object[] { "@intPaymentID", payment.intPaymentID },
                 new object[] { "@intChequeNumber", payment.intChequeNumber },
-                new object[] { "@fltAmountPaid", payment.fltAmountPaid }
+                new object[] { "@fltAmountPaid", Math.Round(payment.fltAmountPaid, 2) }
             };
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);

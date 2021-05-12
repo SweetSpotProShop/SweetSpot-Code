@@ -55,7 +55,7 @@ namespace SweetSpotDiscountGolfPOS
                         lblTradeInsDisplay.Text = invoice.fltTotalTradeIn.ToString("C");
                         lblShippingDisplay.Text = invoice.fltShippingCharges.ToString("C");
 
-                        double governmentTax = 0;
+                        double governmentTax = 0 + invoice.fltShippingTaxAmount;
                         double provincialTax = 0;
                         double liquorTax = 0;
 

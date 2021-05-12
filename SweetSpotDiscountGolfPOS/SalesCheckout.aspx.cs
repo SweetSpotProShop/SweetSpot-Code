@@ -700,11 +700,11 @@ namespace SweetSpotDiscountGolfPOS
                     BtnRemoveLiq.Text = "Add " + liquorName.ToString();
                 }
 
-                lblGovernmentAmount.Text = governmentTax.ToString("C");
+                lblGovernmentAmount.Text = (governmentTax + invoice.fltShippingTaxAmount).ToString("C");
                 lblProvincialAmount.Text = provincialTax.ToString("C");
                 lblLiquorTaxAmount.Text = liquorTax.ToString("C");
 
-                double tx = governmentTax + provincialTax + liquorTax;
+                double tx = governmentTax + provincialTax + liquorTax + invoice.fltShippingTaxAmount;
 
                 //***Assign each item to its Label.
                 lblTotalInCartAmount.Text = (invoice.fltSubTotal + invoice.fltTotalDiscount - invoice.fltTotalTradeIn).ToString("C");

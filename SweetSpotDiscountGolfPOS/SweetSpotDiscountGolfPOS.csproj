@@ -163,6 +163,7 @@
   <ItemGroup>
     <Compile Include="ClassLibrary\Misc\CreatePDF.cs" />
     <Compile Include="ClassLibrary\Misc\CreatePDFPartTwo.cs" />
+    <Compile Include="ClassLibrary\Misc\TemporaryItems.cs" />
     <Compile Include="ClassLibrary\Objects\Accessories.cs" />
     <Compile Include="ClassLibrary\FunctionsProcedures\ImportExport.cs" />
     <Compile Include="ClassLibrary\Objects\ItemChangeTracking.cs" />

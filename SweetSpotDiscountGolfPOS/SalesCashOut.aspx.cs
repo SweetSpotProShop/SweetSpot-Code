@@ -53,8 +53,12 @@ namespace SweetSpotDiscountGolfPOS
 
                             lblPreTaxDisplay.Text = (cashout.fltSalesSubTotal + cashout.fltSystemCountedBasedOnSystemTradeIn).ToString("C");
                             lblGSTDisplay.Text = cashout.fltGovernmentTaxAmount.ToString("C");
-                            lblPSTDisplay.Text = cashout.fltProvincialTaxAmount.ToString("C");
+                            lblHSTDisplay.Text = cashout.fltHarmonizedTaxAmount.ToString("C");
                             lblLCTDisplay.Text = cashout.fltLiquorTaxAmount.ToString("C");
+                            lblPSTDisplay.Text = cashout.fltProvincialTaxAmount.ToString("C");
+                            lblQSTDisplay.Text = cashout.fltQuebecTaxAmount.ToString("C");
+                            lblRSTDisplay.Text = cashout.fltRetailTaxAmount.ToString("C");
+
 
                             lblTotalDisplay.Text = (cashout.fltSystemCountedBasedOnSystemTradeIn + cashout.fltSystemCountedBasedOnSystemGiftCard + cashout.fltSystemCountedBasedOnSystemCash 
                                 + cashout.fltSystemCountedBasedOnSystemDebit + cashout.fltSystemCountedBasedOnSystemMastercard + cashout.fltSystemCountedBasedOnSystemVisa).ToString("C");
@@ -85,25 +89,12 @@ namespace SweetSpotDiscountGolfPOS
                             lblTotalDisplay.Text = (cashout.fltSystemCountedBasedOnSystemVisa + cashout.fltSystemCountedBasedOnSystemMastercard + cashout.fltSystemCountedBasedOnSystemCash 
                                 + cashout.fltSystemCountedBasedOnSystemGiftCard + cashout.fltSystemCountedBasedOnSystemDebit + (cashout.fltSystemCountedBasedOnSystemTradeIn)).ToString("C");
                             lblGSTDisplay.Text = cashout.fltGovernmentTaxAmount.ToString("C");
-                            lblPSTDisplay.Text = cashout.fltProvincialTaxAmount.ToString("C");
+                            lblHSTDisplay.Text = cashout.fltHarmonizedTaxAmount.ToString("C");
                             lblLCTDisplay.Text = cashout.fltLiquorTaxAmount.ToString("C");
+                            lblPSTDisplay.Text = cashout.fltProvincialTaxAmount.ToString("C");
+                            lblQSTDisplay.Text = cashout.fltQuebecTaxAmount.ToString("C");
+                            lblRSTDisplay.Text = cashout.fltRetailTaxAmount.ToString("C");
                             lblPreTaxDisplay.Text = (cashout.fltSalesSubTotal + cashout.fltSystemCountedBasedOnSystemTradeIn).ToString("C");
-
-                            if (cashout.fltGovernmentTaxAmount == 0)
-                            {
-                                lblGSTS.Visible = false;
-                                lblGSTDisplay.Visible = false;
-                            }
-                            if (cashout.fltProvincialTaxAmount == 0)
-                            {
-                                lblPSTS.Visible = false;
-                                lblPSTDisplay.Visible = false;
-                            }
-                            if (cashout.fltLiquorTaxAmount == 0)
-                            {
-                                lblLCTS.Visible = false;
-                                lblLCTDisplay.Visible = false;
-                            }
 
                             cashout.fltManuallyCountedBasedOnReceiptsTradeIn = 0;
                             cashout.fltManuallyCountedBasedOnReceiptsGiftCard = 0;
@@ -113,6 +104,37 @@ namespace SweetSpotDiscountGolfPOS
                             cashout.fltManuallyCountedBasedOnReceiptsVisa = 0;
                             cashout.fltCashDrawerOverShort = 0;
                             R.CallInsertCashout(cashout, objPageDetails);
+                        }
+
+                        if (cashout.fltGovernmentTaxAmount == 0)
+                        {
+                            cellGSTS.Visible = false;
+                            cellGSTDisplay.Visible = false;
+                        }
+                        if (cashout.fltHarmonizedTaxAmount == 0)
+                        {
+                            cellHSTS.Visible = false;
+                            cellHSTDisplay.Visible = false;
+                        }
+                        if (cashout.fltLiquorTaxAmount == 0)
+                        {
+                            cellLCTS.Visible = false;
+                            cellLCTDisplay.Visible = false;
+                        }
+                        if (cashout.fltProvincialTaxAmount == 0)
+                        {
+                            cellPSTS.Visible = false;
+                            cellPSTDisplay.Visible = false;
+                        }
+                        if (cashout.fltQuebecTaxAmount == 0)
+                        {
+                            cellQSTS.Visible = false;
+                            cellQSTDisplay.Visible = false;
+                        }
+                        if (cashout.fltRetailTaxAmount == 0)
+                        {
+                            cellRSTS.Visible = false;
+                            cellRSTDisplay.Visible = false;
                         }
                     }
                 }
@@ -206,7 +228,6 @@ namespace SweetSpotDiscountGolfPOS
 
                 //this is where we will put the update query
                 //update the daily sales data table
-
                 R.CollectAndStoreDailySalesData(cashout.dtmCashoutDate, cashout.intLocationID, objPageDetails);
 
                 MessageBoxCustom.ShowMessage("Cashout has been processed", this);

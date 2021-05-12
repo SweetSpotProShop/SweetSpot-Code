@@ -518,21 +518,22 @@ namespace SweetSpotDiscountGolfPOS
                 //PdfCustomerInvoice pdf = new PdfCustomerInvoice();
                 //List<int> invoices = IM.CallListofInvoicesForDayForLocation(CalStartDate.SelectedDate, CalEndDate.SelectedDate, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
                 //foreach (int inv in invoices)
-                List<int> locations = new List<int> { 1, 2, 8, 10};
+                //List<int> locations = new List<int> { 0 };
+                int loc = 0;
                 List<DateTime> selectedDates = new List<DateTime>();
                 for (DateTime date = CalStartDate.SelectedDate; date <= CalEndDate.SelectedDate; date = date.AddDays(1))
                 {
                     selectedDates.Add(date);
                 }
 
-                foreach (int loc in locations)
-                {
+                //foreach (int loc in locations)
+                //{
                     foreach (DateTime dtm in selectedDates)
                     {
                         //pdf.GenerateInvoiceSaveFile(IM.CallReturnInvoice(Convert.ToInt32(inv), objPageDetails)[0], objPageDetails);
                         R.CollectAndStoreDailySalesData(dtm, loc, objPageDetails);
                     }
-                }
+                //}
 
                 //MessageBoxCustom.ShowMessage("PDFs between " + CalStartDate.SelectedDate.ToString("dd.MM.yyyy") + " and " + CalEndDate.SelectedDate.ToString("dd.MM.yyyy") + " have been created.", this);
                 MessageBoxCustom.ShowMessage("Daily Sales data between " + CalStartDate.SelectedDate.ToString("dd.MM.yyyy") + " and " + CalEndDate.SelectedDate.ToString("dd.MM.yyyy") + " have been added to database.", this);
@@ -549,6 +550,31 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
+
+        protected void btnUpdatingTaxes_Click(object sender, EventArgs e)
+        {
+            string method = "btnUpdatingTaxes";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
+            {
+                TemporaryItems TI = new TemporaryItems();
+                TI.UpdateTaxesInTaxTable(CalStartDate.SelectedDate, CalEndDate.SelectedDate, objPageDetails);
+
+                MessageBoxCustom.ShowMessage("Taxes have been updated for " + CalStartDate.SelectedDate.ToString("dd.MM.yyyy") + " and " + CalEndDate.SelectedDate.ToString("dd.MM.yyyy") + ".", this);
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                //Display message box
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+
         protected DateTime[] GetDateRange()
         {
             if (ddlDatePeriod.SelectedItem.Text.Equals("Month"))

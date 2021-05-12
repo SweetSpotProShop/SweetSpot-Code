@@ -118,20 +118,20 @@
                             <asp:Button ID="BtnExportInvoices" runat="server" Width="200" Text="Export Invoices" OnClick="BtnExportInvoices_Click" />
                         </asp:TableCell>
                     </asp:TableRow>
-                    <%--<asp:TableRow>
+                    <asp:TableRow>
                         <asp:TableCell>
-							<asp:Button ID="btnCOGSvsPMReport" runat="server" Text="COGS & Profit Margin Report" Width="200px" OnClick="btnCOGSvsPMReport_Click" />
-							<asp:Button ID="btnItemsSold" runat="server" Text="Items Sold" Width="200px" Onclick="btnItemsSold_Click" />
+							<%--<asp:Button ID="btnUpdatingTaxes" runat="server" Text="Update Taxes between Date Range" Width="200px" OnClick="btnUpdatingTaxes_Click" />--%>
+							<%--<asp:Button ID="btnItemsSold" runat="server" Text="Items Sold" Width="200px" Onclick="btnItemsSold_Click" />--%>
                         </asp:TableCell>
                         <asp:TableCell>
-							<asp:Button ID="btnTradeInsByDateReport" runat="server" Text="Trade Ins By Date" Width="200px" Onclick="btnTradeInsByDateReport_Click" />
-							<asp:Button ID="btnPurchasesReport" runat="server" Text="Purchases Report" Width="200px" OnClick="btnPurchasesReport_Click" />
+							<%--<asp:Button ID="btnTradeInsByDateReport" runat="server" Text="Trade Ins By Date" Width="200px" Onclick="btnTradeInsByDateReport_Click" />
+							<asp:Button ID="btnPurchasesReport" runat="server" Text="Purchases Report" Width="200px" OnClick="btnPurchasesReport_Click" />--%>
                         </asp:TableCell>
                         <asp:TableCell>
-							<asp:Button ID="btnPaymentsByDateReport" runat="server" Text="Payments By Date" Width="200px" Onclick="btnPaymentsByDateReport_Click" />
-							<asp:Button ID="btnMostSold" runat="server" Text="Top Selling Items Report" Width="200px" Onclick="btnMostSold_Click" />
+							<%--<asp:Button ID="btnPaymentsByDateReport" runat="server" Text="Payments By Date" Width="200px" Onclick="btnPaymentsByDateReport_Click" />
+							<asp:Button ID="btnMostSold" runat="server" Text="Top Selling Items Report" Width="200px" Onclick="btnMostSold_Click" />--%>
                         </asp:TableCell>
-                    </asp:TableRow>--%>
+                    </asp:TableRow>
                 </asp:Table>
             </div>
             <hr />

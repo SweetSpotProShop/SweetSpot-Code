@@ -250,6 +250,8 @@ namespace SweetSpotDiscountGolfPOS.FP
             //Gather remaining Totals (taxes, subtotal(including shipping), tradein)
             System.Data.DataTable dt2 = ReturnAdditionTotalsForCashout(startDate, locationID, objPageDetails);
 
+
+
             //Save all into a cashout and return
             Cashout cashout = new Cashout
             {
@@ -262,16 +264,12 @@ namespace SweetSpotDiscountGolfPOS.FP
                 fltSystemCountedBasedOnSystemMastercard = Convert.ToDouble(dt1.Rows[0][4].ToString()),
                 fltSystemCountedBasedOnSystemVisa = Convert.ToDouble(dt1.Rows[0][5].ToString()),
                 fltSalesSubTotal = Convert.ToDouble(dt2.Rows[0][1].ToString()),
-                fltGovernmentTaxAmount = Convert.ToDouble(dt2.Rows[0][2].ToString()),
-                fltLiquorTaxAmount = Convert.ToDouble(dt2.Rows[0][4].ToString()),
-                fltProvincialTaxAmount = Convert.ToDouble(dt2.Rows[0][3].ToString())
-
-                //cashout.fltHarmonizedTaxAmount = Convert.ToDouble(dt2.Rows[0][3].ToString());
-                //cashout.fltLiquorTaxAmount = Convert.ToDouble(dt2.Rows[0][4].ToString());
-                //cashout.fltProvincialTaxAmount = Convert.ToDouble(dt2.Rows[0][5].ToString());
-                //cashout.fltQuebecTaxAmount = Convert.ToDouble(dt2.Rows[0][6].ToString());
-                //cashout.fltRetailTaxAmount = Convert.ToDouble(dt2.Rows[0][7].ToString());
-                //cashout.intSalesCount = Convert.ToDouble(dt2.Rows[0][8].ToString());
+                fltGovernmentTaxAmount = Convert.ToDouble(dt2.Rows[0][2].ToString()) + Convert.ToDouble(dt2.Rows[0][4].ToString()),
+                fltHarmonizedTaxAmount = Convert.ToDouble(dt2.Rows[0][3].ToString()) + Convert.ToDouble(dt2.Rows[0][5].ToString()),
+                fltLiquorTaxAmount = Convert.ToDouble(dt2.Rows[0][6].ToString()),
+                fltProvincialTaxAmount = Convert.ToDouble(dt2.Rows[0][7].ToString()),
+                fltQuebecTaxAmount = Convert.ToDouble(dt2.Rows[0][8].ToString()),
+                fltRetailTaxAmount = Convert.ToDouble(dt2.Rows[0][9].ToString())
             };
 
             return cashout;
@@ -308,28 +306,51 @@ namespace SweetSpotDiscountGolfPOS.FP
             //    + "fltLiquorTaxAmount FROM tbl_invoice I WHERE I.dtmInvoiceDate = @dtmStartDate AND I.intLocationID = @intLocationID";
 
             string sqlCmd = "SELECT ISNULL(SUM(I.fltTotalTradeIn), 0) AS fltTotalTradeIn, ISNULL(SUM(I.fltSubTotal), 0) + ISNULL(SUM(I.fltShippingCharges), 0) AS "
-                + "fltSalesSubTotal, (SELECT SUM(GT.fltTaxAmount) AS fltGovernmentTaxAmount FROM(SELECT ROUND(ISNULL(SUM(fltTaxAmount), 0), 2) AS fltTaxAmount FROM "
+                + "fltSalesSubTotal, SUM(CASE WHEN I.bitIsShipping = 1 THEN CASE WHEN(I.intShippingProvinceID = 1 OR I.intShippingProvinceID = 3 OR "
+                + "I.intShippingProvinceID = 4 OR I.intShippingProvinceID = 5 OR I.intShippingProvinceID = 6 OR I.intShippingProvinceID = 9 OR "
+                + "I.intShippingProvinceID = 12 OR I.intShippingProvinceID = 13) THEN I.fltShippingTaxAmount ELSE 0 END ELSE 0 END) AS fltShippingGSTAmount, SUM("
+                + "CASE WHEN I.bitIsShipping = 1 THEN CASE WHEN(I.intShippingProvinceID = 2 OR I.intShippingProvinceID = 7 OR I.intShippingProvinceID = 8 OR "
+                + "I.intShippingProvinceID = 10 OR I.intShippingProvinceID = 11) THEN I.fltShippingTaxAmount ELSE 0 END ELSE 0 END) AS fltShippingHSTAmount, "
+                + "(SELECT SUM(GT.fltTaxAmount) AS fltGovernmentTaxAmount FROM (SELECT ROUND(ISNULL(SUM(fltTaxAmount), 0), 2) AS fltTaxAmount FROM "
                 + "tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItem II ON II.intInvoiceItemID = IIT.intInvoiceItemID JOIN tbl_invoice I ON I.intInvoiceID = "
                 + "II.intInvoiceID WHERE I.dtmInvoiceDate = @dtmStartDate AND I.intLocationID = @intLocationID AND IIT.bitIsTaxCharged = 1 AND IIT.intTaxTypeID "
-                + "IN(SELECT intTaxID FROM tbl_taxType WHERE varTaxName = 'GST' OR varTaxName = 'HST') UNION SELECT ROUND(ISNULL(SUM(fltTaxAmount), 0), 2) AS "
-                + "fltTaxAmount FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItemReturns IIR ON IIR.intInvoiceItemID = IIT.intInvoiceItemID JOIN tbl_invoice I ON "
-                + "I.intInvoiceID = IIR.intInvoiceID WHERE I.dtmInvoiceDate = @dtmStartDate AND I.intLocationID = @intLocationID AND IIT.bitIsTaxCharged = 1 AND "
-                + "IIT.intTaxTypeID IN(SELECT intTaxID FROM tbl_taxType WHERE varTaxName = 'GST' OR varTaxName = 'HST')) AS GT) AS fltGovernmentTaxAmount, (SELECT "
-                + "SUM(PT.fltTaxAmount) AS fltProvincialTaxAmount FROM(SELECT ROUND(ISNULL(SUM(fltTaxAmount), 0), 2) AS fltTaxAmount FROM tbl_invoiceItemTaxes IIT "
-                + "JOIN tbl_invoiceItem II ON II.intInvoiceItemID = IIT.intInvoiceItemID JOIN tbl_invoice I ON I.intInvoiceID = II.intInvoiceID WHERE "
-                + "I.dtmInvoiceDate = @dtmStartDate AND I.intLocationID = @intLocationID AND IIT.bitIsTaxCharged = 1 AND IIT.intTaxTypeID IN(SELECT intTaxID FROM "
-                + "tbl_taxType WHERE varTaxName = 'PST' OR varTaxName = 'RST' OR varTaxName = 'QST') UNION SELECT ROUND(ISNULL(SUM(fltTaxAmount), 0), 2) AS "
-                + "fltTaxAmount FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItemReturns IIR ON IIR.intInvoiceItemID = IIT.intInvoiceItemID JOIN tbl_invoice I ON "
-                + "I.intInvoiceID = IIR.intInvoiceID WHERE I.dtmInvoiceDate = @dtmStartDate AND I.intLocationID = @intLocationID AND IIT.bitIsTaxCharged = 1 AND "
-                + "IIT.intTaxTypeID IN(SELECT intTaxID FROM tbl_taxType WHERE varTaxName = 'PST' OR varTaxName = 'RST' OR varTaxName = 'QST')) AS PT) AS "
-                + "fltProvincialTaxAmount, (SELECT SUM(LT.fltTaxAmount) AS fltLiquorTaxAmount FROM(SELECT ROUND(ISNULL(SUM(fltTaxAmount), 0), 2) AS fltTaxAmount "
-                + "FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItem II ON II.intInvoiceItemID = IIT.intInvoiceItemID JOIN tbl_invoice I ON I.intInvoiceID = "
-                + "II.intInvoiceID WHERE I.dtmInvoiceDate = @dtmStartDate AND I.intLocationID = @intLocationID AND IIT.bitIsTaxCharged = 1 AND IIT.intTaxTypeID "
-                + "IN(SELECT intTaxID FROM tbl_taxType WHERE varTaxName = 'LCT') UNION SELECT ROUND(ISNULL(SUM(fltTaxAmount), 0), 2) AS fltTaxAmount FROM "
+                + "IN(SELECT intTaxID FROM tbl_taxType WHERE varTaxName = 'GST') UNION SELECT ROUND(ISNULL(SUM(fltTaxAmount), 0), 2) AS fltTaxAmount FROM "
                 + "tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItemReturns IIR ON IIR.intInvoiceItemID = IIT.intInvoiceItemID JOIN tbl_invoice I ON I.intInvoiceID = "
                 + "IIR.intInvoiceID WHERE I.dtmInvoiceDate = @dtmStartDate AND I.intLocationID = @intLocationID AND IIT.bitIsTaxCharged = 1 AND IIT.intTaxTypeID "
-                + "IN(SELECT intTaxID FROM tbl_taxType WHERE varTaxName = 'LCT')) AS LT) AS fltLiquorTaxAmount FROM tbl_invoice I WHERE I.dtmInvoiceDate = "
-                + "@dtmStartDate AND I.intLocationID = @intLocationID";
+                + "IN(SELECT intTaxID FROM tbl_taxType WHERE varTaxName = 'GST')) AS GT) AS fltGovernmentTaxAmount, (SELECT SUM(HT.fltTaxAmount) AS "
+                + "fltHarmonizedTaxAmount FROM (SELECT ROUND(ISNULL(SUM(fltTaxAmount), 0), 2) AS fltTaxAmount FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItem "
+                + "II ON II.intInvoiceItemID = IIT.intInvoiceItemID JOIN tbl_invoice I ON I.intInvoiceID = II.intInvoiceID WHERE I.dtmInvoiceDate = @dtmStartDate "
+                + "AND I.intLocationID = @intLocationID AND IIT.bitIsTaxCharged = 1 AND IIT.intTaxTypeID IN(SELECT intTaxID FROM tbl_taxType WHERE varTaxName = "
+                + "'HST') UNION SELECT ROUND(ISNULL(SUM(fltTaxAmount), 0), 2) AS fltTaxAmount FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItemReturns IIR ON "
+                + "IIR.intInvoiceItemID = IIT.intInvoiceItemID JOIN tbl_invoice I ON I.intInvoiceID = IIR.intInvoiceID WHERE I.dtmInvoiceDate = @dtmStartDate AND "
+                + "I.intLocationID = @intLocationID AND IIT.bitIsTaxCharged = 1 AND IIT.intTaxTypeID IN(SELECT intTaxID FROM tbl_taxType WHERE varTaxName = 'HST')) "
+                + "AS HT) AS fltHarmonizedTaxAmount, (SELECT SUM(LT.fltTaxAmount) AS fltLiquorTaxAmount FROM (SELECT ROUND(ISNULL(SUM(fltTaxAmount), 0), 2) AS "
+                + "fltTaxAmount FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItem II ON II.intInvoiceItemID = IIT.intInvoiceItemID JOIN tbl_invoice I ON "
+                + "I.intInvoiceID = II.intInvoiceID WHERE I.dtmInvoiceDate = @dtmStartDate AND I.intLocationID = @intLocationID AND IIT.bitIsTaxCharged = 1 AND "
+                + "IIT.intTaxTypeID IN(SELECT intTaxID FROM tbl_taxType WHERE varTaxName = 'LCT') UNION SELECT ROUND(ISNULL(SUM(fltTaxAmount), 0), 2) AS fltTaxAmount "
+                + "FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItemReturns IIR ON IIR.intInvoiceItemID = IIT.intInvoiceItemID JOIN tbl_invoice I ON I.intInvoiceID = "
+                + "IIR.intInvoiceID WHERE I.dtmInvoiceDate = @dtmStartDate AND I.intLocationID = @intLocationID AND IIT.bitIsTaxCharged = 1 AND IIT.intTaxTypeID "
+                + "IN(SELECT intTaxID FROM tbl_taxType WHERE varTaxName = 'LCT')) AS LT) AS fltLiquorTaxAmount, (SELECT SUM(PT.fltTaxAmount) AS fltProvincialTaxAmount "
+                + "FROM (SELECT ROUND(ISNULL(SUM(fltTaxAmount), 0), 2) AS fltTaxAmount FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItem II ON II.intInvoiceItemID = "
+                + "IIT.intInvoiceItemID JOIN tbl_invoice I ON I.intInvoiceID = II.intInvoiceID WHERE I.dtmInvoiceDate = @dtmStartDate AND I.intLocationID = "
+                + "@intLocationID AND IIT.bitIsTaxCharged = 1 AND IIT.intTaxTypeID IN(SELECT intTaxID FROM tbl_taxType WHERE varTaxName = 'PST') UNION SELECT "
+                + "ROUND(ISNULL(SUM(fltTaxAmount), 0), 2) AS fltTaxAmount FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItemReturns IIR ON IIR.intInvoiceItemID = "
+                + "IIT.intInvoiceItemID JOIN tbl_invoice I ON I.intInvoiceID = IIR.intInvoiceID WHERE I.dtmInvoiceDate = @dtmStartDate AND I.intLocationID = "
+                + "@intLocationID AND IIT.bitIsTaxCharged = 1 AND IIT.intTaxTypeID IN(SELECT intTaxID FROM tbl_taxType WHERE varTaxName = 'PST')) AS PT) AS "
+                + "fltProvincialTaxAmount, (SELECT SUM(QT.fltTaxAmount) AS fltQuebecTaxAmount FROM (SELECT ROUND(ISNULL(SUM(fltTaxAmount), 0), 2) AS fltTaxAmount "
+                + "FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItem II ON II.intInvoiceItemID = IIT.intInvoiceItemID JOIN tbl_invoice I ON I.intInvoiceID = "
+                + "II.intInvoiceID WHERE I.dtmInvoiceDate = @dtmStartDate AND I.intLocationID = @intLocationID AND IIT.bitIsTaxCharged = 1 AND IIT.intTaxTypeID "
+                + "IN(SELECT intTaxID FROM tbl_taxType WHERE varTaxName = 'QST') UNION SELECT ROUND(ISNULL(SUM(fltTaxAmount), 0), 2) AS fltTaxAmount FROM "
+                + "tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItemReturns IIR ON IIR.intInvoiceItemID = IIT.intInvoiceItemID JOIN tbl_invoice I ON I.intInvoiceID = "
+                + "IIR.intInvoiceID WHERE I.dtmInvoiceDate = @dtmStartDate AND I.intLocationID = @intLocationID AND IIT.bitIsTaxCharged = 1 AND IIT.intTaxTypeID "
+                + "IN(SELECT intTaxID FROM tbl_taxType WHERE varTaxName = 'QST')) AS QT) AS fltQuebecTaxAmount, (SELECT SUM(RT.fltTaxAmount) AS fltRetailTaxAmount "
+                + "FROM (SELECT ROUND(ISNULL(SUM(fltTaxAmount), 0), 2) AS fltTaxAmount FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItem II ON II.intInvoiceItemID = "
+                + "IIT.intInvoiceItemID JOIN tbl_invoice I ON I.intInvoiceID = II.intInvoiceID WHERE I.dtmInvoiceDate = @dtmStartDate AND I.intLocationID = "
+                + "@intLocationID AND IIT.bitIsTaxCharged = 1 AND IIT.intTaxTypeID IN(SELECT intTaxID FROM tbl_taxType WHERE varTaxName = 'RST') UNION SELECT "
+                + "ROUND(ISNULL(SUM(fltTaxAmount), 0), 2) AS fltTaxAmount FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItemReturns IIR ON IIR.intInvoiceItemID = "
+                + "IIT.intInvoiceItemID JOIN tbl_invoice I ON I.intInvoiceID = IIR.intInvoiceID WHERE I.dtmInvoiceDate = @dtmStartDate AND I.intLocationID = "
+                + "@intLocationID AND IIT.bitIsTaxCharged = 1 AND IIT.intTaxTypeID IN(SELECT intTaxID FROM tbl_taxType WHERE varTaxName = 'RST')) AS RT) AS "
+                + "fltRetailTaxAmount FROM tbl_invoice I WHERE I.dtmInvoiceDate = @dtmStartDate AND I.intLocationID = @intLocationID";
 
             object[][] parms =
             {
@@ -352,7 +373,8 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "@fltManuallyCountedBasedOnReceiptsTradeIn, @fltManuallyCountedBasedOnReceiptsGiftCard, @fltManuallyCountedBasedOnReceiptsCash, "
                 + "@fltManuallyCountedBasedOnReceiptsDebit, @fltManuallyCountedBasedOnReceiptsMastercard, @fltManuallyCountedBasedOnReceiptsVisa, "
 
-                + "@fltSalesSubTotal, @fltGovernmentTaxAmount, @fltProvincialTaxAmount, @fltLiquorTaxAmount, "
+                + "@fltSalesSubTotal, @fltGovernmentTaxAmount, @fltHarmonizedTaxAmount, @fltLiquorTaxAmount, "
+                + "@fltProvincialTaxAmount, @fltQuebecTaxAmount, @fltRetailTaxAmount, "
 
                 + "@fltCashDrawerOverShort, @bitIsCashoutFinalized, @bitIsCashoutProcessed)";
 
@@ -379,10 +401,11 @@ namespace SweetSpotDiscountGolfPOS.FP
 
                 new object[] { "@fltSalesSubTotal", cashout.fltSalesSubTotal },
                 new object[] { "@fltGovernmentTaxAmount", cashout.fltGovernmentTaxAmount },
-
+                new object[] { "@fltHarmonizedTaxAmount", cashout.fltHarmonizedTaxAmount },
                 new object[] { "@fltLiquorTaxAmount", cashout.fltLiquorTaxAmount },
                 new object[] { "@fltProvincialTaxAmount", cashout.fltProvincialTaxAmount },
-
+                new object[] { "@fltQuebecTaxAmount", cashout.fltQuebecTaxAmount },
+                new object[] { "@fltRetailTaxAmount", cashout.fltRetailTaxAmount },
 
                 new object[] { "@fltCashDrawerOverShort", cashout.fltCashDrawerOverShort },
                 new object[] { "@bitIsCashoutFinalized", cashout.bitIsCashoutFinalized },
@@ -666,7 +689,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "SUM(ROUND(fltSubTotal, 2)) AS fltSubTotal, SUM(ROUND(fltGSTCollected, 2) + ROUND(fltGSTReturned, 2) + ROUND(fltHSTCollected, 2) + ROUND(fltHSTReturned, "
                 + "2) + ROUND(fltLCTCollected, 2) + ROUND(fltLCTReturned, 2) + ROUND(fltPSTCollected, 2) + ROUND(fltPSTReturned, 2) + ROUND(fltQSTCollected, 2) + ROUND("
                 + "fltQSTReturned, 2) + ROUND(fltRSTCollected, 2) + ROUND(fltRSTReturned, 2) + ROUND(fltSubTotal, 2)) AS fltTotalSales FROM tbl_dailySalesData WHERE "
-                + "dtmSalesDataDate BETWEEN '2020-01-01' AND '2020-12-10' AND intLocationID = 0 GROUP BY dtmSalesDataDate ORDER BY dtmSalesDataDate";
+                + "dtmSalesDataDate BETWEEN @dtmStartDate AND @dtmEndDate AND intLocationID = 0 GROUP BY dtmSalesDataDate ORDER BY dtmSalesDataDate";
             object[][] parms =
             {
                 new object[] { "@dtmStartDate", dtm[0] },
@@ -1408,8 +1431,11 @@ namespace SweetSpotDiscountGolfPOS.FP
                 fltManuallyCountedBasedOnReceiptsVisa = row.Field<double>("fltManuallyCountedBasedOnReceiptsVisa"),
                 fltSalesSubTotal = row.Field<double>("fltSalesSubTotal"),
                 fltGovernmentTaxAmount = row.Field<double>("fltGovernmentTaxAmount"),
-                fltProvincialTaxAmount = row.Field<double>("fltProvincialTaxAmount"),
+                fltHarmonizedTaxAmount = row.Field<double>("fltHarmonizedTaxAmount"),
                 fltLiquorTaxAmount = row.Field<double>("fltLiquorTaxAmount"),
+                fltProvincialTaxAmount = row.Field<double>("fltProvincialTaxAmount"),
+                fltQuebecTaxAmount = row.Field<double>("fltQuebecTaxAmount"),
+                fltRetailTaxAmount = row.Field<double>("fltRetailTaxAmount"),
                 fltCashDrawerOverShort = row.Field<double>("fltCashDrawerOverShort"),
                 bitIsCashoutFinalized = row.Field<bool>("bitIsCashoutFinalized"),
                 bitIsCashoutProcessed = row.Field<bool>("bitIsCashoutProcessed"),
@@ -1516,7 +1542,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "(SELECT CONCAT(L.varLocationName, '-', L.varCityName) FROM tbl_location L WHERE L.intLocationID = DSD.intLocationID) AS varLocationName, "
                 + "fltGSTCollected, fltGSTReturned, fltPSTCollected, fltPSTReturned, fltHSTCollected, fltHSTReturned, fltQSTCollected, fltQSTReturned, "
                 + "fltRSTCollected, fltRSTReturned, fltLCTCollected, fltLCTReturned, fltSalesDollars, fltSubTotal, fltCostGoodsSold FROM tbl_dailySalesData DSD "
-                + "WHERE dtmSalesDataDate BETWEEN '2020-01-01' AND '2020-12-11') AS ABC ";
+                + "WHERE dtmSalesDataDate BETWEEN @dtmStartDate AND @dtmEndDate) AS ABC ";
 
             string startQuery;
             string endQuery;
@@ -1832,8 +1858,8 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "= @fltSystemCountedBasedOnSystemGiftCard, fltSystemCountedBasedOnSystemCash = @fltSystemCountedBasedOnSystemCash, fltSystemCountedBasedOnSystemDebit "
                 + "= @fltSystemCountedBasedOnSystemDebit, fltSystemCountedBasedOnSystemMastercard = @fltSystemCountedBasedOnSystemMastercard, "
                 + "fltSystemCountedBasedOnSystemVisa = @fltSystemCountedBasedOnSystemVisa, fltSalesSubTotal = @fltSalesSubTotal, fltGovernmentTaxAmount = "
-                + "@fltGovernmentTaxAmount, fltProvincialTaxAmount = @fltProvincialTaxAmount, fltLiquorTaxAmount = @fltLiquorTaxAmount " //, fltHarmonizedTaxAmount = "
-                                                                                                                                         //+ "@fltHarmonizedTaxAmount, fltQuebecTaxAmount = @fltQuebecTaxAmount, fltRetailTaxAmount = @fltRetailTaxAmount, intSalesCount = @intSalesCount "
+                + "@fltGovernmentTaxAmount, fltProvincialTaxAmount = @fltProvincialTaxAmount, fltLiquorTaxAmount = @fltLiquorTaxAmount, fltHarmonizedTaxAmount = "
+                + "@fltHarmonizedTaxAmount, fltQuebecTaxAmount = @fltQuebecTaxAmount, fltRetailTaxAmount = @fltRetailTaxAmount "
                 + "WHERE dtmCashoutDate = @dtmCashoutDate AND intLocationID = @intLocationID";
 
             object[][] parms =
@@ -1849,10 +1875,9 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@fltGovernmentTaxAmount", cashout.fltGovernmentTaxAmount },
                 new object[] { "@fltProvincialTaxAmount", cashout.fltProvincialTaxAmount },
                 new object[] { "@fltLiquorTaxAmount", cashout.fltLiquorTaxAmount },
-                //new object[] { "@fltHarmonizedTaxAmount", cashout.fltHarmonizedTaxAmount },
-                //new object[] { "@fltQuebecTaxAmount", cashout.fltQuebecTaxAmount },
-                //new object[] { "@fltRetailTaxAmount", cashout.fltRetailTaxAmount },
-                //new object[] { "@intSalesCount", cashout.intSalesCount },
+                new object[] { "@fltHarmonizedTaxAmount", cashout.fltHarmonizedTaxAmount },
+                new object[] { "@fltQuebecTaxAmount", cashout.fltQuebecTaxAmount },
+                new object[] { "@fltRetailTaxAmount", cashout.fltRetailTaxAmount },
                 new object[] { "@intLocationID", cashout.intLocationID }
             };
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
@@ -1864,8 +1889,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "fltSystemCountedBasedOnSystemCash, fltSystemCountedBasedOnSystemDebit, fltSystemCountedBasedOnSystemMastercard, fltSystemCountedBasedOnSystemVisa, "
                 + "fltManuallyCountedBasedOnReceiptsTradeIn, fltManuallyCountedBasedOnReceiptsGiftCard, fltManuallyCountedBasedOnReceiptsCash, "
                 + "fltManuallyCountedBasedOnReceiptsDebit, fltManuallyCountedBasedOnReceiptsMastercard, fltManuallyCountedBasedOnReceiptsVisa, fltSalesSubTotal, "
-                + "fltGovernmentTaxAmount, " //fltHarmonizedTaxAmount, 
-                + "fltLiquorTaxAmount, fltProvincialTaxAmount, " //fltQuebecTaxAmount, fltRetailTaxAmount, "
+                + "fltGovernmentTaxAmount, fltHarmonizedTaxAmount, fltLiquorTaxAmount, fltProvincialTaxAmount, fltQuebecTaxAmount, fltRetailTaxAmount, "
                 + "fltCashDrawerOverShort, bitIsCashoutFinalized, bitIsCashoutProcessed " //, intSalesCount 
                 + "FROM tbl_cashout WHERE dtmCashoutDate = @dtmCashoutDate AND "
                 + "intLocationID = @intLocationID";
@@ -1912,7 +1936,8 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "@fltManuallyCountedBasedOnReceiptsGiftCard, fltManuallyCountedBasedOnReceiptsCash = @fltManuallyCountedBasedOnReceiptsCash, "
                 + "fltManuallyCountedBasedOnReceiptsDebit = @fltManuallyCountedBasedOnReceiptsDebit, fltManuallyCountedBasedOnReceiptsMastercard = "
                 + "@fltManuallyCountedBasedOnReceiptsMastercard, fltManuallyCountedBasedOnReceiptsVisa = @fltManuallyCountedBasedOnReceiptsVisa, fltSalesSubTotal = "
-                + "@fltSalesSubTotal, fltGovernmentTaxAmount = @fltGovernmentTaxAmount, fltProvincialTaxAmount = @fltProvincialTaxAmount, fltLiquorTaxAmount = @fltLiquorTaxAmount, "
+                + "@fltSalesSubTotal, fltGovernmentTaxAmount = @fltGovernmentTaxAmount, fltHarmonizedTaxAmount = @fltHarmonizedTaxAmount, fltLiquorTaxAmount = @fltLiquorTaxAmount, "
+                + "fltProvincialTaxAmount = @fltProvincialTaxAmount, fltQuebecTaxAmount = @fltQuebecTaxAmount, fltRetailTaxAmount = @fltRetailTaxAmount, "
                 + "fltCashDrawerOverShort = @fltCashDrawerOverShort, bitIsCashoutFinalized = @bitIsCashoutFinalized, bitIsCashoutProcessed = @bitIsCashoutProcessed, intEmployeeID "
                 + "= @intEmployeeID WHERE dtmCashoutDate = @dtmCashoutDate AND intLocationID = @intLocationID";
 
@@ -1934,8 +1959,11 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@fltManuallyCountedBasedOnReceiptsVisa", cashout.fltManuallyCountedBasedOnReceiptsVisa },
                 new object[] { "@fltSalesSubTotal", cashout.fltSalesSubTotal },
                 new object[] { "@fltGovernmentTaxAmount", cashout.fltGovernmentTaxAmount },
-                new object[] { "@fltProvincialTaxAmount", cashout.fltProvincialTaxAmount },
+                new object[] { "@fltHarmonizedTaxAmount", cashout.fltHarmonizedTaxAmount },
                 new object[] { "@fltLiquorTaxAmount", cashout.fltLiquorTaxAmount },
+                new object[] { "@fltProvincialTaxAmount", cashout.fltProvincialTaxAmount },
+                new object[] { "@fltQuebecTaxAmount", cashout.fltQuebecTaxAmount },
+                new object[] { "@fltRetailTaxAmount", cashout.fltRetailTaxAmount },
                 new object[] { "@fltCashDrawerOverShort", cashout.fltCashDrawerOverShort },
                 new object[] { "@bitIsCashoutFinalized", cashout.bitIsCashoutFinalized },
                 new object[] { "@bitIsCashoutProcessed", cashout.bitIsCashoutProcessed },
@@ -1974,56 +2002,57 @@ namespace SweetSpotDiscountGolfPOS.FP
         private System.Data.DataTable ReturnDailySalesStatsForLocationAndDate(DateTime dtmDate, int intLocationID, object[] objPageDetails)
         {
             string strQueryName = "ReturnDailySalesStatsForLocationAndDate";
-            string sqlCmd = "SELECT dtmInvoiceDate, intLocationID, ROUND(SUM(fltSubTotal), 2) AS fltSubTotal, ROUND(SUM(fltGovernmentTaxCollected), 2) AS fltGovernmentTaxCollected, "
-                + "ROUND(SUM(fltGovernmentTaxReturned), 2) AS fltGovernmentTaxReturned, ROUND(SUM(fltProvincialTaxCollected), 2) AS fltProvincialTaxCollected, ROUND(SUM("
-                + "fltProvincialTaxReturned), 2) AS fltProvincialTaxReturned, ROUND(SUM(fltHarmonizedSalesTaxCollected), 2) AS fltHarmonizedSalesTaxCollected, ROUND(SUM("
-                + "fltHarmonizedSalesTaxReturned), 2) AS fltHarmonizedSalesTaxReturned, ROUND(SUM(fltRetailSalesTaxCollected), 2) AS fltRetailSalesTaxCollected, ROUND("
-                + "SUM(fltRetailSalesTaxReturned), 2) AS fltRetailSalesTaxReturned, ROUND(SUM(fltQuebecSalesTaxCollected), 2) AS fltQuebecSalesTaxCollected, ROUND(SUM("
-                + "fltQuebecSalesTaxReturned), 2) AS fltQuebecSalesTaxReturned, ROUND(SUM(fltLiquorConsumptionTaxCollected), 2) AS fltLiquorConsumptionTaxCollected, "
-                + "ROUND(SUM(fltLiquorConsumptionTaxReturned), 2) AS fltLiquorConsumptionTaxReturned, ROUND(SUM(fltSalesDollars), 2) AS fltSalesDollars, ROUND(SUM("
-                + "fltCostofGoods), 2) AS fltCostofGoods FROM(SELECT I.intInvoiceID, I.dtmInvoiceDate, I.intLocationID, fltSubTotal AS 'fltSubTotal', CASE WHEN EXISTS("
-                + "SELECT II.intInvoiceID FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) THEN(SELECT SUM(CASE WHEN(IIT.intTaxTypeID = 1 AND "
-                + "IIT.bitIsTaxCharged = 1) THEN IIT.fltTaxAmount ELSE 0 END) FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItem II ON II.intInvoiceItemID = "
-                + "IIT.intInvoiceItemID WHERE II.intInvoiceID = I.intInvoiceID) ELSE 0 END AS fltGovernmentTaxCollected, CASE WHEN EXISTS(SELECT IIR.intInvoiceID FROM "
-                + "tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) THEN(SELECT SUM(CASE WHEN(IIT.intTaxTypeID = 1 AND IIT.bitIsTaxCharged = 1) THEN "
-                + "IIT.fltTaxAmount ELSE 0 END) FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItemReturns IIR ON IIR.intInvoiceItemID = IIT.intInvoiceItemID WHERE "
-                + "IIR.intInvoiceID = I.intInvoiceID) ELSE 0 END AS fltGovernmentTaxReturned, CASE WHEN EXISTS(SELECT II.intInvoiceID FROM tbl_invoiceItem II WHERE "
-                + "II.intInvoiceID = I.intInvoiceID) THEN(SELECT SUM(CASE WHEN(IIT.intTaxTypeID = 2 AND IIT.bitIsTaxCharged = 1) THEN IIT.fltTaxAmount ELSE 0 END) FROM "
-                + "tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItem II ON II.intInvoiceItemID = IIT.intInvoiceItemID WHERE II.intInvoiceID = I.intInvoiceID) ELSE 0 END AS "
-                + "fltProvincialTaxCollected, CASE WHEN EXISTS(SELECT IIR.intInvoiceID FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) THEN("
-                + "SELECT SUM(CASE WHEN(IIT.intTaxTypeID = 2 AND IIT.bitIsTaxCharged = 1) THEN IIT.fltTaxAmount ELSE 0 END) FROM tbl_invoiceItemTaxes IIT JOIN "
-                + "tbl_invoiceItemReturns IIR ON IIR.intInvoiceItemID = IIT.intInvoiceItemID WHERE IIR.intInvoiceID = I.intInvoiceID) ELSE 0 END AS fltProvincialTaxReturned, "
-                + "CASE WHEN EXISTS(SELECT II.intInvoiceID FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) THEN(SELECT SUM(CASE WHEN(IIT.intTaxTypeID = 3 "
-                + "AND IIT.bitIsTaxCharged = 1) THEN IIT.fltTaxAmount ELSE 0 END) FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItem II ON II.intInvoiceItemID = "
-                + "IIT.intInvoiceItemID WHERE II.intInvoiceID = I.intInvoiceID) ELSE 0 END AS fltHarmonizedSalesTaxCollected, CASE WHEN EXISTS(SELECT IIR.intInvoiceID FROM "
-                + "tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) THEN(SELECT SUM(CASE WHEN(IIT.intTaxTypeID = 3 AND IIT.bitIsTaxCharged = 1) THEN "
-                + "IIT.fltTaxAmount ELSE 0 END) FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItemReturns IIR ON IIR.intInvoiceItemID = IIT.intInvoiceItemID WHERE "
-                + "IIR.intInvoiceID = I.intInvoiceID) ELSE 0 END AS fltHarmonizedSalesTaxReturned, CASE WHEN EXISTS(SELECT II.intInvoiceID FROM tbl_invoiceItem II WHERE "
-                + "II.intInvoiceID = I.intInvoiceID) THEN(SELECT SUM(CASE WHEN(IIT.intTaxTypeID = 4 AND IIT.bitIsTaxCharged = 1) THEN IIT.fltTaxAmount ELSE 0 END) FROM "
-                + "tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItem II ON II.intInvoiceItemID = IIT.intInvoiceItemID WHERE II.intInvoiceID = I.intInvoiceID) ELSE 0 END AS "
-                + "fltRetailSalesTaxCollected, CASE WHEN EXISTS(SELECT IIR.intInvoiceID FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) THEN(SELECT "
-                + "SUM(CASE WHEN(IIT.intTaxTypeID = 4 AND IIT.bitIsTaxCharged = 1) THEN IIT.fltTaxAmount ELSE 0 END) FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItemReturns "
-                + "IIR ON IIR.intInvoiceItemID = IIT.intInvoiceItemID WHERE IIR.intInvoiceID = I.intInvoiceID) ELSE 0 END AS fltRetailSalesTaxReturned, CASE WHEN EXISTS("
-                + "SELECT II.intInvoiceID FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) THEN(SELECT SUM(CASE WHEN(IIT.intTaxTypeID = 5 AND "
-                + "IIT.bitIsTaxCharged = 1) THEN IIT.fltTaxAmount ELSE 0 END) FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItem II ON II.intInvoiceItemID = "
-                + "IIT.intInvoiceItemID WHERE II.intInvoiceID = I.intInvoiceID) ELSE 0 END AS fltQuebecSalesTaxCollected, CASE WHEN EXISTS(SELECT IIR.intInvoiceID FROM "
-                + "tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) THEN(SELECT SUM(CASE WHEN(IIT.intTaxTypeID = 5 AND IIT.bitIsTaxCharged = 1) THEN "
-                + "IIT.fltTaxAmount ELSE 0 END) FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItemReturns IIR ON IIR.intInvoiceItemID = IIT.intInvoiceItemID WHERE "
-                + "IIR.intInvoiceID = I.intInvoiceID) ELSE 0 END AS fltQuebecSalesTaxReturned, CASE WHEN EXISTS(SELECT II.intInvoiceID FROM tbl_invoiceItem II WHERE "
-                + "II.intInvoiceID = I.intInvoiceID) THEN(SELECT SUM(CASE WHEN(IIT.intTaxTypeID = 6 AND IIT.bitIsTaxCharged = 1) THEN IIT.fltTaxAmount ELSE 0 END) FROM "
-                + "tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItem II ON II.intInvoiceItemID = IIT.intInvoiceItemID WHERE II.intInvoiceID = I.intInvoiceID) ELSE 0 END AS "
-                + "fltLiquorConsumptionTaxCollected, CASE WHEN EXISTS(SELECT IIR.intInvoiceID FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) THEN("
-                + "SELECT SUM(CASE WHEN(IIT.intTaxTypeID = 6 AND IIT.bitIsTaxCharged = 1) THEN IIT.fltTaxAmount ELSE 0 END) FROM tbl_invoiceItemTaxes IIT JOIN "
-                + "tbl_invoiceItemReturns IIR ON IIR.intInvoiceItemID = IIT.intInvoiceItemID WHERE IIR.intInvoiceID = I.intInvoiceID) ELSE 0 END AS "
-                + "fltLiquorConsumptionTaxReturned, CASE WHEN EXISTS(SELECT II.intInvoiceID FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) THEN(SELECT SUM("
-                + "CASE WHEN bitIsClubTradeIn = 1 THEN 0 ELSE(fltItemPrice - CASE WHEN bitIsDiscountPercent = 1 THEN(fltItemPrice * (fltItemDiscount / 100)) ELSE "
-                + "fltItemDiscount END) * intItemQuantity END) FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) WHEN EXISTS(SELECT IIR.intInvoiceID FROM "
-                + "tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) THEN(SELECT SUM(CASE WHEN bitIsClubTradeIn = 1 THEN 0 ELSE(fltItemRefund * "
+            string sqlCmd = "SELECT dtmInvoiceDate, intLocationID, ROUND(ISNULL(SUM(fltSubTotal), 0), 2) AS fltSubTotal, ROUND(ISNULL(SUM(fltGovernmentTaxCollected), "
+                + "0), 2) AS fltGovernmentTaxCollected, ROUND(ISNULL(SUM(fltGovernmentTaxReturned), 0), 2) AS fltGovernmentTaxReturned, ROUND(ISNULL(SUM("
+                + "fltProvincialTaxCollected), 0), 2) AS fltProvincialTaxCollected, ROUND(ISNULL(SUM(fltProvincialTaxReturned), 0), 2) AS fltProvincialTaxReturned, "
+                + "ROUND(ISNULL(SUM(fltHarmonizedSalesTaxCollected), 0), 2) AS fltHarmonizedSalesTaxCollected, ROUND(ISNULL(SUM(fltHarmonizedSalesTaxReturned), 0), 2) "
+                + "AS fltHarmonizedSalesTaxReturned, ROUND(ISNULL(SUM(fltRetailSalesTaxCollected), 0), 2) AS fltRetailSalesTaxCollected, ROUND(ISNULL(SUM("
+                + "fltRetailSalesTaxReturned), 0), 2) AS fltRetailSalesTaxReturned, ROUND(ISNULL(SUM(fltQuebecSalesTaxCollected), 0), 2) AS fltQuebecSalesTaxCollected, "
+                + "ROUND(ISNULL(SUM(fltQuebecSalesTaxReturned), 0), 2) AS fltQuebecSalesTaxReturned, ROUND(ISNULL(SUM(fltLiquorConsumptionTaxCollected), 0), 2) AS "
+                + "fltLiquorConsumptionTaxCollected, ROUND(ISNULL(SUM(fltLiquorConsumptionTaxReturned), 0), 2) AS fltLiquorConsumptionTaxReturned, ROUND(ISNULL(SUM("
+                + "fltSalesDollars), 0), 2) AS fltSalesDollars, ROUND(ISNULL(SUM(fltCostofGoods), 0), 2) AS fltCostofGoods FROM (SELECT I.intInvoiceID, I.dtmInvoiceDate, "
+                + "I.intLocationID, fltSubTotal AS 'fltSubTotal', CASE WHEN EXISTS(SELECT II.intInvoiceID FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) "
+                + "THEN (SELECT SUM(CASE WHEN(IIT.intTaxTypeID = 1 AND IIT.bitIsTaxCharged = 1) THEN IIT.fltTaxAmount ELSE 0 END) FROM tbl_invoiceItemTaxes IIT JOIN "
+                + "tbl_invoiceItem II ON II.intInvoiceItemID = IIT.intInvoiceItemID WHERE II.intInvoiceID = I.intInvoiceID) ELSE 0 END AS fltGovernmentTaxCollected, CASE "
+                + "WHEN EXISTS(SELECT IIR.intInvoiceID FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(CASE WHEN(IIT.intTaxTypeID "
+                + "= 1 AND IIT.bitIsTaxCharged = 1) THEN IIT.fltTaxAmount ELSE 0 END) FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItemReturns IIR ON IIR.intInvoiceItemID "
+                + "= IIT.intInvoiceItemID WHERE IIR.intInvoiceID = I.intInvoiceID) ELSE 0 END AS fltGovernmentTaxReturned, CASE WHEN EXISTS(SELECT II.intInvoiceID FROM "
+                + "tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(CASE WHEN(IIT.intTaxTypeID = 2 AND IIT.bitIsTaxCharged = 1) THEN "
+                + "IIT.fltTaxAmount ELSE 0 END) FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItem II ON II.intInvoiceItemID = IIT.intInvoiceItemID WHERE II.intInvoiceID = "
+                + "I.intInvoiceID) ELSE 0 END AS fltProvincialTaxCollected, CASE WHEN EXISTS(SELECT IIR.intInvoiceID FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID "
+                + "= I.intInvoiceID) THEN (SELECT SUM(CASE WHEN(IIT.intTaxTypeID = 2 AND IIT.bitIsTaxCharged = 1) THEN IIT.fltTaxAmount ELSE 0 END) FROM "
+                + "tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItemReturns IIR ON IIR.intInvoiceItemID = IIT.intInvoiceItemID WHERE IIR.intInvoiceID = I.intInvoiceID) ELSE 0 "
+                + "END AS fltProvincialTaxReturned, CASE WHEN EXISTS(SELECT II.intInvoiceID FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) THEN (SELECT "
+                + "SUM(CASE WHEN(IIT.intTaxTypeID = 3 AND IIT.bitIsTaxCharged = 1) THEN IIT.fltTaxAmount ELSE 0 END) FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItem II "
+                + "ON II.intInvoiceItemID = IIT.intInvoiceItemID WHERE II.intInvoiceID = I.intInvoiceID) ELSE 0 END AS fltHarmonizedSalesTaxCollected, CASE WHEN EXISTS("
+                + "SELECT IIR.intInvoiceID FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(CASE WHEN(IIT.intTaxTypeID = 3 AND "
+                + "IIT.bitIsTaxCharged = 1) THEN IIT.fltTaxAmount ELSE 0 END) FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItemReturns IIR ON IIR.intInvoiceItemID = "
+                + "IIT.intInvoiceItemID WHERE IIR.intInvoiceID = I.intInvoiceID) ELSE 0 END AS fltHarmonizedSalesTaxReturned, CASE WHEN EXISTS(SELECT II.intInvoiceID FROM "
+                + "tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(CASE WHEN(IIT.intTaxTypeID = 4 AND IIT.bitIsTaxCharged = 1) THEN "
+                + "IIT.fltTaxAmount ELSE 0 END) FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItem II ON II.intInvoiceItemID = IIT.intInvoiceItemID WHERE II.intInvoiceID = "
+                + "I.intInvoiceID) ELSE 0 END AS fltRetailSalesTaxCollected, CASE WHEN EXISTS(SELECT IIR.intInvoiceID FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID "
+                + "= I.intInvoiceID) THEN (SELECT SUM(CASE WHEN(IIT.intTaxTypeID = 4 AND IIT.bitIsTaxCharged = 1) THEN IIT.fltTaxAmount ELSE 0 END) FROM tbl_invoiceItemTaxes "
+                + "IIT JOIN tbl_invoiceItemReturns IIR ON IIR.intInvoiceItemID = IIT.intInvoiceItemID WHERE IIR.intInvoiceID = I.intInvoiceID) ELSE 0 END AS "
+                + "fltRetailSalesTaxReturned, CASE WHEN EXISTS(SELECT II.intInvoiceID FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(CASE "
+                + "WHEN(IIT.intTaxTypeID = 5 AND IIT.bitIsTaxCharged = 1) THEN IIT.fltTaxAmount ELSE 0 END) FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItem II ON "
+                + "II.intInvoiceItemID = IIT.intInvoiceItemID WHERE II.intInvoiceID = I.intInvoiceID) ELSE 0 END AS fltQuebecSalesTaxCollected, CASE WHEN EXISTS(SELECT "
+                + "IIR.intInvoiceID FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(CASE WHEN(IIT.intTaxTypeID = 5 AND "
+                + "IIT.bitIsTaxCharged = 1) THEN IIT.fltTaxAmount ELSE 0 END) FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItemReturns IIR ON IIR.intInvoiceItemID = "
+                + "IIT.intInvoiceItemID WHERE IIR.intInvoiceID = I.intInvoiceID) ELSE 0 END AS fltQuebecSalesTaxReturned, CASE WHEN EXISTS(SELECT II.intInvoiceID FROM "
+                + "tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(CASE WHEN(IIT.intTaxTypeID = 6 AND IIT.bitIsTaxCharged = 1) THEN "
+                + "IIT.fltTaxAmount ELSE 0 END) FROM tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItem II ON II.intInvoiceItemID = IIT.intInvoiceItemID WHERE II.intInvoiceID = "
+                + "I.intInvoiceID) ELSE 0 END AS fltLiquorConsumptionTaxCollected, CASE WHEN EXISTS(SELECT IIR.intInvoiceID FROM tbl_invoiceItemReturns IIR WHERE "
+                + "IIR.intInvoiceID = I.intInvoiceID) THEN (SELECT SUM(CASE WHEN(IIT.intTaxTypeID = 6 AND IIT.bitIsTaxCharged = 1) THEN IIT.fltTaxAmount ELSE 0 END) FROM "
+                + "tbl_invoiceItemTaxes IIT JOIN tbl_invoiceItemReturns IIR ON IIR.intInvoiceItemID = IIT.intInvoiceItemID WHERE IIR.intInvoiceID = I.intInvoiceID) ELSE 0 "
+                + "END AS fltLiquorConsumptionTaxReturned, CASE WHEN EXISTS(SELECT II.intInvoiceID FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) THEN "
+                + "(SELECT SUM(CASE WHEN bitIsClubTradeIn = 1 THEN 0 ELSE(fltItemPrice - CASE WHEN bitIsDiscountPercent = 1 THEN(fltItemPrice * (fltItemDiscount / 100)) "
+                + "ELSE fltItemDiscount END) * intItemQuantity END) FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) WHEN EXISTS(SELECT IIR.intInvoiceID "
+                + "FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) THEN(SELECT SUM(CASE WHEN bitIsClubTradeIn = 1 THEN 0 ELSE(fltItemRefund * "
                 + "intItemQuantity) END) FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) ELSE 0 END AS fltSalesDollars, CASE WHEN EXISTS(SELECT "
                 + "II.intInvoiceID FROM tbl_invoiceItem II WHERE II.intInvoiceID = I.intInvoiceID) THEN(SELECT SUM(fltItemCost * intItemQuantity) FROM tbl_invoiceItem II "
-                + "WHERE II.intInvoiceID = I.intInvoiceID) WHEN EXISTS(SELECT IIR.intInvoiceID FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) THEN "
-                + "(SELECT SUM(fltItemCost * intItemQuantity) FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) ELSE 0 END AS 'fltCostofGoods' FROM "
-                + "tbl_invoice I WHERE I.dtmInvoiceDate = @dtmDate AND I.intLocationID = @intLocationID) ABC GROUP BY dtmInvoiceDate, intLocationID";
+                + "WHERE II.intInvoiceID = I.intInvoiceID) WHEN EXISTS(SELECT IIR.intInvoiceID FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) "
+                + "THEN(SELECT SUM(fltItemCost * intItemQuantity) FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) ELSE 0 END AS 'fltCostofGoods' "
+                + "FROM tbl_invoice I WHERE I.dtmInvoiceDate = @dtmDate AND I.intLocationID = @intLocationID) ABC GROUP BY dtmInvoiceDate, intLocationID";
 
             object[][] parms =
             {

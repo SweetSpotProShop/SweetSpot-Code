@@ -83,6 +83,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
             QueryStringCapture(sqlCmd, strParameters, objPageDetails, strQueryName);
             cmd.Connection = con;
             SqlDataAdapter da = new SqlDataAdapter(cmd);
+            da.SelectCommand.CommandTimeout = 300;
             da.Fill(dt);
             //Returns a datatable
             return dt;
@@ -115,6 +116,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
             QueryStringCapture(sqlCmd, strParameters, objPageDetails, strQueryName);
             cmd.Connection = con;
             SqlDataAdapter da = new SqlDataAdapter(cmd);
+            da.SelectCommand.CommandTimeout = 300;
             da.Fill(dt);
             //Returns a datatable
             return dt;
