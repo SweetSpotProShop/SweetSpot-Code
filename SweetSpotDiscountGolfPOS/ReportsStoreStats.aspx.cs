@@ -44,28 +44,45 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    CU = (CurrentUser)Session["currentUser"];
-                    //Gathering the start and end dates
-                    object[] passing = (object[])Session["reportInfo"];
-                    DateTime[] reportDates = (DateTime[])passing[0];
-                    DateTime startDate = reportDates[0];
-                    DateTime endDate = reportDates[1];
-                    int locationID = Convert.ToInt32(passing[1]);
-                    int timeFrame = Convert.ToInt32(passing[2]);
-                    //Builds string to display in label
-                    if (startDate == endDate)
+                    if (!Page.IsPostBack)
                     {
-                        lblDates.Text = "Store stats on: " + startDate.ToString("dd/MMM/yy"); //+ " for " + LM.ReturnLocationName(locationID, objPageDetails);
-                    }
-                    else
-                    {
-                        lblDates.Text = "Store stats on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy"); //+ " for " + LM.ReturnLocationName(locationID, objPageDetails);
-                    }
-                    //Binding the gridview
-                    DataTable stats = R.CallReturnStoreStats(startDate, endDate, timeFrame, objPageDetails);
+                        CU = (CurrentUser)Session["currentUser"];
+                        //Gathering the start and end dates
+                        object[] passing = (object[])Session["reportInfo"];
+                        DateTime[] reportDates = (DateTime[])passing[0];
+                        DateTime startDate = reportDates[0];
+                        DateTime endDate = reportDates[1];
+                        int locationID = Convert.ToInt32(passing[1]);
+                        int timeFrame = Convert.ToInt32(passing[2]);
 
-                    GrdStats.DataSource = stats;
-                    GrdStats.DataBind();
+                        Calendar calStartDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalStartDate");
+                        calStartDate.SelectedDate = startDate;
+                        Calendar calEndDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalEndDate");
+                        calEndDate.SelectedDate = endDate;
+                        DropDownList ddlDatePeriod = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlDatePeriod");
+                        ddlDatePeriod.SelectedValue = timeFrame.ToString();
+                        DropDownList ddlLocation = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlLocation");
+                        DataTable dt = LM.CallReturnLocationDropDown(objPageDetails);
+                        dt.Rows.Add(99, "All Locations");
+                        ddlLocation.DataSource = dt;
+                        ddlLocation.DataBind();
+                        ddlLocation.SelectedValue = locationID.ToString();
+
+                        //Builds string to display in label
+                        if (startDate == endDate)
+                        {
+                            lblDates.Text = "Store stats on: " + startDate.ToString("dd/MMM/yy"); //+ " for " + LM.ReturnLocationName(locationID, objPageDetails);
+                        }
+                        else
+                        {
+                            lblDates.Text = "Store stats on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy"); //+ " for " + LM.ReturnLocationName(locationID, objPageDetails);
+                        }
+                        //Binding the gridview
+                        DataTable stats = R.CallReturnStoreStats(startDate, endDate, timeFrame, locationID, objPageDetails);
+
+                        GrdStats.DataSource = stats;
+                        GrdStats.DataBind();
+                    }
                 }
             }
             //Exception catch
@@ -155,7 +172,7 @@ namespace SweetSpotDiscountGolfPOS
                 int locationID = Convert.ToInt32(passing[1]);
                 int timeFrame = Convert.ToInt32(passing[2]);
 
-                DataTable stats = R.CallReturnStoreStats(startDate, endDate, timeFrame, objPageDetails);
+                DataTable stats = R.CallReturnStoreStats(startDate, endDate, timeFrame, locationID, objPageDetails);
 
                 string fileName = "Store Stats Report-" + LM.CallReturnLocationName(locationID, objPageDetails) + "_" + startDate.ToShortDateString() + " - " + endDate.ToShortDateString() + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);

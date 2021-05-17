@@ -41,7 +41,7 @@
                 </div>
 
                 <div id="button_simple">
-                    <asp:Button ID="Button1" runat="server" Text="LogOut" OnClick="BtnLogout_Click" />
+                    <asp:Button ID="Button1" runat="server" Text="Log Out" OnClick="BtnLogout_Click" />
                 </div>
                 <link rel="stylesheet" type="text/css" href="CSS/MainStyleSheet.css" />
             </asp:ContentPlaceHolder>

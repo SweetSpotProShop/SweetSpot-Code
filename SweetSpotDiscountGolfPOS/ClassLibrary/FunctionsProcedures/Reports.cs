@@ -1397,7 +1397,7 @@ namespace SweetSpotDiscountGolfPOS.FP
         }
 
         //******************STORE STATS REPORT***********************
-        private System.Data.DataTable ReturnStoreStats(DateTime startDate, DateTime endDate, int timeFrame, object[] objPageDetails)
+        private System.Data.DataTable ReturnStoreStats(DateTime startDate, DateTime endDate, int timeFrame, int locationID, object[] objPageDetails)
         {
             string strQueryName = "ReturnStoreStats";
             //string sqlCmd = "(SELECT I.intInvoiceID, YEAR(dtmInvoiceDate) AS dtmInvoiceYear, DATENAME(MONTH, dtmInvoiceDate) AS varMonthName, DATEADD(MONTH, DATEDIFF(MONTH, "
@@ -1455,7 +1455,12 @@ namespace SweetSpotDiscountGolfPOS.FP
             //    + "tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) ELSE 0 END AS 'fltCostofGoods', (SELECT CONCAT(varFirstName, ' ', varLastName) FROM "
             //    + "tbl_customers C WHERE C.intCustomerID = I.intCustomerID) AS 'varCustomerName', (SELECT CONCAT(varFirstName, ' ', varLastName) FROM tbl_employee E WHERE "
             //    + "E.intEmployeeID = I.intEmployeeID) AS 'varEmployeeName' FROM tbl_invoice I WHERE I.dtmInvoiceDate BETWEEN @dtmStartDate AND @dtmEndDate) AS ABC ";
+            string location = "";
 
+            if(locationID != 99)
+            {
+                location = " AND intLocationID = " + locationID;
+            }
 
             string sqlCmd = "(SELECT I.intInvoiceID, YEAR(dtmInvoiceDate) AS dtmInvoiceYear, DATENAME(MONTH, dtmInvoiceDate) AS varMonthName, DATEADD(MONTH, DATEDIFF("
                 + "MONTH, 0, dtmInvoiceDate), 0) AS dtmMonthDate, DATEADD(DAY, 1 - DATEPART(WEEKDAY, dtmInvoiceDate), CAST(dtmInvoiceDate AS DATE)) dtmWeekStartDate, "
@@ -1479,7 +1484,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "intItemQuantity) FROM tbl_invoiceItemReturns IIR WHERE IIR.intInvoiceID = I.intInvoiceID) ELSE 0 END AS 'fltCostofGoods', (SELECT CONCAT("
                 + "varFirstName, ' ', varLastName) FROM tbl_customers C WHERE C.intCustomerID = I.intCustomerID) AS 'varCustomerName', (SELECT CONCAT(varFirstName, "
                 + "' ', varLastName) FROM tbl_employee E WHERE E.intEmployeeID = I.intEmployeeID) AS 'varEmployeeName' FROM tbl_invoice I WHERE I.dtmInvoiceDate "
-                + "BETWEEN @dtmStartDate AND @dtmEndDate) AS ABC ";
+                + "BETWEEN @dtmStartDate AND @dtmEndDate" + location + ") AS ABC ";
 
             string startQuery;
             string endQuery;
@@ -1523,9 +1528,9 @@ namespace SweetSpotDiscountGolfPOS.FP
             sqlCmd = startQuery + sqlCmd + endQuery;
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public System.Data.DataTable CallReturnStoreStats(DateTime startDate, DateTime endDate, int timeFrame, object[] objPageDetails)
+        public System.Data.DataTable CallReturnStoreStats(DateTime startDate, DateTime endDate, int timeFrame, int locationID, object[] objPageDetails)
         {
-            return ReturnStoreStats(startDate, endDate, timeFrame, objPageDetails);
+            return ReturnStoreStats(startDate, endDate, timeFrame, locationID, objPageDetails);
         }
         public int VerifyStatsAvailable(object[] repInfo, object[] objPageDetails)
         {

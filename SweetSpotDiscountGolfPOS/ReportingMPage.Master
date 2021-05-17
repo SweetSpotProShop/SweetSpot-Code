@@ -39,6 +39,11 @@
 				<div id="image_simple">
 
 					<asp:Table ID="tblReportCriteriaSelection" runat="server">
+						<asp:TableHeaderRow>
+							<asp:TableHeaderCell ColumnSpan="4">
+								<h2>Report Selection Criteria</h2>
+							</asp:TableHeaderCell>
+						</asp:TableHeaderRow>
 						<asp:TableRow>
 							<asp:TableCell RowSpan="4">
 								<asp:Calendar ID="CalStartDate" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest"
@@ -53,7 +58,7 @@
 									<WeekendDayStyle BackColor="#FFFFCC" />
 								</asp:Calendar>
 							</asp:TableCell>
-							<asp:TableCell>
+							<asp:TableCell HorizontalAlign="Center">
 		                        <asp:Label runat="server" Text="Select date type:"/>                        
 							</asp:TableCell>
 							<asp:TableCell RowSpan="4">
@@ -71,7 +76,7 @@
 							</asp:TableCell>
 						</asp:TableRow>
 						<asp:TableRow>
-							<asp:TableCell>
+							<asp:TableCell HorizontalAlign="Center">
 								<asp:DropDownList ID="ddlDatePeriod" runat="server" AutoPostBack="false">
 									<asp:ListItem Text="Day" Value="1" />
 									<asp:ListItem Text="Week" Value="2" />
@@ -80,21 +85,24 @@
 							</asp:TableCell>
 						</asp:TableRow>
 						<asp:TableRow>
-							<asp:TableCell>
+							<asp:TableCell HorizontalAlign="Center">
 								<asp:Label runat="server" Text="Select Location:" />
 							</asp:TableCell>
 						</asp:TableRow>
 						<asp:TableRow>
-							<asp:TableCell>
+							<asp:TableCell HorizontalAlign="Center">
 								<asp:DropDownList ID="ddlLocation" runat="server" AutoPostBack="false"
 									DataTextField="varCityName" DataValueField="intLocationID" Visible="true" />
+							</asp:TableCell>
+							<asp:TableCell>
+								<asp:Button ID="btnRerunReport" runat="server" Text="Rerun" OnClick="btnRerunReport_Click" />
 							</asp:TableCell>
 						</asp:TableRow>
 					</asp:Table>
 				</div>
 
 				<div id="button_simple">
-					<asp:Button ID="Button1" runat="server" Text="LogOut" OnClick="BtnLogout_Click" />
+					<asp:Button ID="Button1" runat="server" Text="Log Out" OnClick="BtnLogout_Click" />
 				</div>
 				<link rel="stylesheet" type="text/css" href="CSS/MainStyleSheet.css" />
 			</asp:ContentPlaceHolder>
