@@ -157,7 +157,6 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-
         protected void BtnDownload_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking

@@ -689,7 +689,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "SUM(ROUND(fltSubTotal, 2)) AS fltSubTotal, SUM(ROUND(fltGSTCollected, 2) + ROUND(fltGSTReturned, 2) + ROUND(fltHSTCollected, 2) + ROUND(fltHSTReturned, "
                 + "2) + ROUND(fltLCTCollected, 2) + ROUND(fltLCTReturned, 2) + ROUND(fltPSTCollected, 2) + ROUND(fltPSTReturned, 2) + ROUND(fltQSTCollected, 2) + ROUND("
                 + "fltQSTReturned, 2) + ROUND(fltRSTCollected, 2) + ROUND(fltRSTReturned, 2) + ROUND(fltSubTotal, 2)) AS fltTotalSales FROM tbl_dailySalesData WHERE "
-                + "dtmSalesDataDate BETWEEN @dtmStartDate AND @dtmEndDate AND intLocationID = 0 GROUP BY dtmSalesDataDate ORDER BY dtmSalesDataDate";
+                + "dtmSalesDataDate BETWEEN @dtmStartDate AND @dtmEndDate AND intLocationID = @intLocationID GROUP BY dtmSalesDataDate ORDER BY dtmSalesDataDate";
             object[][] parms =
             {
                 new object[] { "@dtmStartDate", dtm[0] },
@@ -1536,7 +1536,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "SUM(fltCostGoodsSold)) / SUM(fltSalesDollars), 4) END AS fltProfitMargin, ROUND(ROUND(SUM(fltGSTCollected) + SUM(fltGSTReturned), 2) + "
                 + "ROUND(SUM(fltHSTCollected) + SUM(fltHSTReturned), 2) + ROUND(SUM(fltLCTCollected) + SUM(fltLCTReturned), 2) + ROUND(SUM(fltPSTCollected) "
                 + "+ SUM(fltPSTReturned), 2) + ROUND(SUM(fltQSTCollected) + SUM(fltQSTReturned), 2) + ROUND(SUM(fltRSTCollected) + SUM(fltRSTReturned), 2) +"
-                + "ROUND(SUM(fltSubTotal), 2), 2) AS fltTotalSales, ROUND(SUM(fltSalesDollars), 2) AS fltSalesDollars FROM (SELECT YEAR(dtmSalesDataDate) AS "
+                + "ROUND(SUM(fltSalesDollars), 2), 2) AS fltTotalSales, ROUND(SUM(fltSalesDollars), 2) AS fltSalesDollars FROM (SELECT YEAR(dtmSalesDataDate) AS "
                 + "dtmInvoiceYear, DATENAME(MONTH, dtmSalesDataDate) AS varMonthName, DATEADD(MONTH, DATEDIFF(MONTH, 0, dtmSalesDataDate), 0) AS dtmMonthDate, "
                 + "DATEADD(DAY, 1 - DATEPART(WEEKDAY, dtmSalesDataDate), CAST(dtmSalesDataDate AS DATE)) dtmWeekStartDate, dtmSalesDataDate AS dtmSelectedDate, "
                 + "(SELECT CONCAT(L.varLocationName, '-', L.varCityName) FROM tbl_location L WHERE L.intLocationID = DSD.intLocationID) AS varLocationName, "
