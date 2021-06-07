@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="ReportsSpecificGrip.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.ReportsSpecificGrip" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/ReportingMPage.Master" AutoEventWireup="true" CodeBehind="ReportsSpecificGrip.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.ReportsSpecificGrip" %>
 <asp:Content ID="ReportsPageContent" ContentPlaceHolderID="IndividualPageContent" runat="server">
     <div id="print">
         <script>

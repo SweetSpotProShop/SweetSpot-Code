@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="ReportsTaxes.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.ReportsTaxes" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/ReportingMPage.Master" AutoEventWireup="true" CodeBehind="ReportsTaxes.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.ReportsTaxes" %>
 
 <%--<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
