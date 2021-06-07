@@ -162,8 +162,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClassLibrary\FunctionsProcedures\CashoutUtilities.cs" />
     <Compile Include="ClassLibrary\Misc\CreatePDF.cs" />
     <Compile Include="ClassLibrary\Misc\CreatePDFPartTwo.cs" />
+    <Compile Include="ClassLibrary\Misc\ImportExport.cs" />
     <Compile Include="ClassLibrary\Misc\TemporaryItems.cs" />
     <Compile Include="ClassLibrary\Objects\Accessories.cs" />
     <Compile Include="ClassLibrary\FunctionsProcedures\ImportExport.cs" />
@@ -195,6 +197,7 @@
     <Compile Include="ClassLibrary\FunctionsProcedures\LocationManager.cs" />
     <Compile Include="ClassLibrary\Misc\MessageBoxCustom.cs" />
     <Compile Include="ClassLibrary\FunctionsProcedures\Reports.cs" />
+    <Compile Include="ClassLibrary\Objects\ReportInformation.cs" />
     <Compile Include="ClassLibrary\Objects\Tax.cs" />
     <Compile Include="ClassLibrary\FunctionsProcedures\TaxManager.cs" />
     <Compile Include="ClassLibrary\Objects\TaxReport.cs" />

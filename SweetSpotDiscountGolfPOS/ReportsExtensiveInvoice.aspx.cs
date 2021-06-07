@@ -13,7 +13,7 @@ namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsExtensiveInvoice : System.Web.UI.Page
     {
-        
+
         readonly ErrorReporting ER = new ErrorReporting();
         readonly LocationManager LM = new LocationManager();
         readonly Reports R = new Reports();
@@ -49,23 +49,12 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     CU = (CurrentUser)Session["currentUser"];
                     //Gathering the start and end dates
-                    object[] repInfo = (object[])Session["reportInfo"];
-                    DateTime[] reportDates = (DateTime[])repInfo[0];
-                    DateTime startDate = reportDates[0];
-                    DateTime endDate = reportDates[1];
-                    int locationID = Convert.ToInt32(repInfo[1]);
+                    ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
                     //Builds string to display in label
-                    if (startDate == endDate)
-                    {
-                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
-                    }
-                    else
-                    {
-                        lblDates.Text = "Extensive Invoice Report on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
-                    }
+                    lblDates.Text = "Extensive Invoice Report on: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString() + " for " + repInfo.varLocationName;
                     //DataTable invoices = R.returnExtensiveInvoices(startDate, endDate, locationID, objPageDetails);
 
-                    DataTable invoices2 = R.CallReturnExtensiveInvoices2(startDate, endDate, locationID, objPageDetails);
+                    DataTable invoices2 = R.CallReturnExtensiveInvoices2(repInfo, objPageDetails);
                     GrdInvoices.DataSource = invoices2;
                     GrdInvoices.DataBind();
                 }
@@ -116,7 +105,7 @@ namespace SweetSpotDiscountGolfPOS
                     e.Row.Cells[3].Text = String.Format("{0:C}", discount);
                     e.Row.Cells[4].Text = String.Format("{0:C}", subTotal);
                     e.Row.Cells[5].Text = String.Format("{0:C}", totalSales);
-                    e.Row.Cells[6].Text = String.Format("{0:C}", governmentTax);                    
+                    e.Row.Cells[6].Text = String.Format("{0:C}", governmentTax);
                     e.Row.Cells[7].Text = String.Format("{0:C}", provincialTax);
                     e.Row.Cells[8].Text = String.Format("{0:C}", liquorTax);
                     e.Row.Cells[9].Text = String.Format("{0:C}", salesDollars);
@@ -162,13 +151,9 @@ namespace SweetSpotDiscountGolfPOS
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
 
-                object[] repInfo = (object[])Session["reportInfo"];
-                DateTime[] reportDates = (DateTime[])repInfo[0];
-                DateTime startDate = reportDates[0];
-                DateTime endDate = reportDates[1];
-
-                DataTable invoices = R.CallReturnExtensiveInvoices2(startDate, endDate, Convert.ToInt32(repInfo[1]), objPageDetails);
-                string fileName = "Extensive Invoice Report-" + LM.CallReturnLocationName(Convert.ToInt32(repInfo[1]), objPageDetails) + "_" + startDate.ToShortDateString() + " - " + endDate.ToShortDateString() + ".xlsx";
+                ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
+                DataTable invoices = R.CallReturnExtensiveInvoices2(repInfo, objPageDetails);
+                string fileName = "Extensive Invoice Report-" + repInfo.varLocationName + "_" + repInfo.dtmStartDate.ToShortDateString() + " - " + repInfo.dtmEndDate.ToShortDateString() + ".xlsx";
                 FileInfo newFile = new FileInfo(Path.Combine(pathDownload, fileName));
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
@@ -226,7 +211,7 @@ namespace SweetSpotDiscountGolfPOS
                     invoicesExport.Cells[recordIndex + 1, 10].Value = salesDollars.ToString("C");
                     invoicesExport.Cells[recordIndex + 1, 11].Value = costofGoods.ToString("C");
                     invoicesExport.Cells[recordIndex + 1, 12].Value = revenue.ToString("C");
-                    invoicesExport.Cells[recordIndex + 1, 13].Value = (revenue / salesDollars).ToString("P");                   
+                    invoicesExport.Cells[recordIndex + 1, 13].Value = (revenue / salesDollars).ToString("P");
 
                     Response.Clear();
                     Response.AddHeader("content-disposition", "attachment; filename=\"" + fileName + "\"");

@@ -43,23 +43,12 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     CU = (CurrentUser)Session["currentUser"];
                     //Gathering the start and end dates
-                    object[] passing = (object[])Session["reportInfo"];
-                    DateTime[] reportDates = (DateTime[])passing[0];
-                    DateTime startDate = reportDates[0];
-                    DateTime endDate = reportDates[1];
-                    int locationID = (int)passing[1];
+                    ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
                     //Builds string to display in label
-                    if (startDate == endDate)
-                    {
-                        lblDates.Text = "Items sold on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
-                    }
-                    else
-                    {
-                        lblDates.Text = "Items sold on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
-                    }
-                    dt = R.CallReturnSalesByPaymentTypeForSelectedDate(passing, objPageDetails);
-                    GrdSalesByDate.DataSource = dt;
-                    GrdSalesByDate.DataBind();
+                    lblDates.Text = "Items sold on: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString() + " for " + repInfo.varLocationName;
+                    //dt = R.CallReturnSalesByPaymentTypeForSelectedDate(repInfo, objPageDetails);
+                    //GrdSalesByDate.DataSource = dt;
+                    //GrdSalesByDate.DataBind();
                 }
             }
             //Exception catch

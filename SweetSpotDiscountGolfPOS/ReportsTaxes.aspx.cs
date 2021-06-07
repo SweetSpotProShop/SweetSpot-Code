@@ -57,14 +57,11 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     CU = (CurrentUser)Session["currentUser"];
                     //Gathering the start and end dates
-                    object[] passing = (object[])Session["reportInfo"];
-                    DateTime[] reportDates = (DateTime[])passing[0];
-                    DateTime startDate = reportDates[0];
-                    DateTime endDate = reportDates[1];
+                    ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
                     //Builds string to display in label
-                    lblTaxDate.Text = "Taxes Through: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
+                    lblTaxDate.Text = "Taxes Through: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString() + " for " + repInfo.varLocationName;
                     //Creating a cashout list and calling a method that grabs all mops and amounts paid
-                    List<TaxReport> taxReport = R.CallReturnTaxReportDetails(startDate, endDate, Convert.ToInt32(passing[1]), objPageDetails);
+                    List<TaxReport> taxReport = R.CallReturnTaxReportDetails(repInfo, objPageDetails);
 
                     GrdTaxList.DataSource = taxReport;
                     GrdTaxList.DataBind();
@@ -112,14 +109,10 @@ namespace SweetSpotDiscountGolfPOS
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
 
-                object[] passing = (object[])Session["reportInfo"];
-                DateTime[] reportDates = (DateTime[])passing[0];
-                DateTime startDate = reportDates[0];
-                DateTime endDate = reportDates[1];
-
-                string fileName = "Taxes Report-" + LM.CallReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails) + "_" + startDate.ToShortDateString() + " - " + endDate.ToShortDateString() + ".xlsx";
+                ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
+                string fileName = "Taxes Report-" + repInfo.varLocationName + "_" + repInfo.dtmStartDate.ToShortDateString() + " - " + repInfo.dtmEndDate.ToShortDateString() + ".xlsx";
                 
-                List<TaxReport> taxReport = R.CallReturnTaxReportDetails(startDate, endDate, Convert.ToInt32(passing[1]), objPageDetails);
+                List<TaxReport> taxReport = R.CallReturnTaxReportDetails(repInfo, objPageDetails);
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {

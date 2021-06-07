@@ -33,7 +33,8 @@ namespace SweetSpotDiscountGolfPOS
 #pragma warning disable IDE0067 // Dispose objects before losing scope
                     DataTable list = new DataTable();
 #pragma warning restore IDE0067 // Dispose objects before losing scope
-                    list = R.CallCostOfInventoryReport(objPageDetails);
+                    ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
+                    list = R.CallCostOfInventoryReport(repInfo, objPageDetails);
                     //Checking if there are any values
                     if (list.Rows.Count > 0)
                     {

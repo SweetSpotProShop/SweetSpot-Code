@@ -11,8 +11,7 @@ namespace SweetSpotDiscountGolfPOS
     {
         readonly ErrorReporting ER = new ErrorReporting();
         readonly LocationManager LM = new LocationManager();
-        readonly Reports R = new Reports();
-        //private static Cashout cashout;
+        readonly CashoutUtilities COU = new CashoutUtilities();
         CurrentUser CU;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -40,9 +39,9 @@ namespace SweetSpotDiscountGolfPOS
                         int locationID = Convert.ToInt32(Request.QueryString["location"].ToString());
                         object[] args = { selectedDate, locationID };
                         lblCashoutDate.Text = "Cashout on: " + selectedDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
-                        if (R.CallCashoutExists(args, objPageDetails))
+                        if (COU.CallCashoutExists(args, objPageDetails))
                         {
-                            cashout = R.CallSelectedCashoutToReturn(args, objPageDetails);
+                            cashout = COU.CallSelectedCashoutToReturn(args, objPageDetails);
 
                             lblTradeInDisplay.Text = cashout.fltSystemCountedBasedOnSystemTradeIn.ToString("C");
                             lblGiftCardDisplay.Text = cashout.fltSystemCountedBasedOnSystemGiftCard.ToString("C");
@@ -79,7 +78,7 @@ namespace SweetSpotDiscountGolfPOS
                         else
                         {
                             //Creating a cashout list and calling a method that grabs all mops and amounts paid
-                            cashout = R.CreateNewCashout(selectedDate, locationID, objPageDetails);
+                            cashout = COU.CreateNewCashout(selectedDate, locationID, objPageDetails);
                             lblVisaDisplay.Text = cashout.fltSystemCountedBasedOnSystemVisa.ToString("C");
                             lblMasterCardDisplay.Text = cashout.fltSystemCountedBasedOnSystemMastercard.ToString("C");
                             lblCashDisplay.Text = cashout.fltSystemCountedBasedOnSystemCash.ToString("C");
@@ -103,7 +102,7 @@ namespace SweetSpotDiscountGolfPOS
                             cashout.fltManuallyCountedBasedOnReceiptsMastercard = 0;
                             cashout.fltManuallyCountedBasedOnReceiptsVisa = 0;
                             cashout.fltCashDrawerOverShort = 0;
-                            R.CallInsertCashout(cashout, objPageDetails);
+                            COU.CallInsertCashout(cashout, objPageDetails);
                         }
 
                         if (cashout.fltGovernmentTaxAmount == 0)
@@ -156,7 +155,6 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "BtnCalculate_Click";
-            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 CalculteMethod();
@@ -178,7 +176,6 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "BtnClear_Click";
-            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //Blanking the textboxes
@@ -210,7 +207,7 @@ namespace SweetSpotDiscountGolfPOS
             {                
                 CalculteMethod();
                 object[] args = { DateTime.Parse(Request.QueryString["selectedDate"].ToString()), Convert.ToInt32(Request.QueryString["location"].ToString()) };
-                Cashout cashout = R.CallSelectedCashoutToReturn(args, objPageDetails);
+                Cashout cashout = COU.CallSelectedCashoutToReturn(args, objPageDetails);
 
                 //Creates new cashout
                 cashout.fltManuallyCountedBasedOnReceiptsTradeIn = Convert.ToDouble(txtTradeIn.Text);
@@ -224,11 +221,11 @@ namespace SweetSpotDiscountGolfPOS
                 cashout.bitIsCashoutFinalized = false;
                 cashout.intEmployeeID = CU.employee.intEmployeeID;
 
-                R.CallUpdateCashout(cashout, objPageDetails);
+                COU.CallUpdateCashout(cashout, objPageDetails);
 
                 //this is where we will put the update query
                 //update the daily sales data table
-                R.CollectAndStoreDailySalesData(cashout.dtmCashoutDate, cashout.intLocationID, objPageDetails);
+                COU.CollectAndStoreDailySalesData(cashout.dtmCashoutDate, cashout.intLocationID, objPageDetails);
 
                 MessageBoxCustom.ShowMessage("Cashout has been processed", this);
                 btnPrint.Enabled = true;
@@ -250,7 +247,6 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "CalculateMethod";
-            //object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //If nothing is entered, setting text to 0.00 and the total to 0

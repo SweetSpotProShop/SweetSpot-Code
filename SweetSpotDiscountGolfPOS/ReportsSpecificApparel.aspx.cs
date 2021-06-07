@@ -35,14 +35,10 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     CU = (CurrentUser)Session["currentUser"];
                     //Gathering the start and end dates
-                    object[] repInfo = (object[])Session["reportInfo"];
-                    DateTime[] reportDates = (DateTime[])repInfo[0];
-                    DateTime startDate = reportDates[0];
-                    DateTime endDate = reportDates[1];
+                    ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
                     //Builds string to display in label
-                    if (startDate == endDate) { lblDates.Text = "Apparel sold through: " + startDate.ToString("dd/MMM/yy"); }
-                    else { lblDates.Text = "Apparel sold through: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy"); }
-                    GrdStats.DataSource = R.CallReturnSpecificApparelDataTableForReport(startDate, endDate, objPageDetails);
+                    lblDates.Text = "Apparel sold through: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString();
+                    GrdStats.DataSource = R.CallReturnSpecificApparelDataTableForReport(repInfo, objPageDetails);
                     GrdStats.DataBind();
                 }
             }

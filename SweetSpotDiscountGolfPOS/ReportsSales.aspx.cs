@@ -14,7 +14,6 @@ namespace SweetSpotDiscountGolfPOS
     public partial class ReportsSales : System.Web.UI.Page
     {
         readonly ErrorReporting ER = new ErrorReporting();
-        readonly LocationManager LM = new LocationManager();
         readonly Reports R = new Reports();
         CurrentUser CU;
 
@@ -45,21 +44,10 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     CU = (CurrentUser)Session["currentUser"];
                     //Gathering the start and end dates
-                    object[] passing = (object[])Session["reportInfo"];
-                    DateTime[] reportDates = (DateTime[])passing[0];
-                    DateTime startDate = reportDates[0];
-                    DateTime endDate = reportDates[1];
-                    int locationID = (int)passing[1];
+                    ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
                     //Builds string to display in label
-                    if (startDate == endDate)
-                    {
-                        lblDates.Text = "Items sold on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
-                    }
-                    else
-                    {
-                        lblDates.Text = "Items sold on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
-                    }
-                    DataTable dt = R.CallReturnSalesForSelectedDate(passing, objPageDetails);
+                    lblDates.Text = "Items sold on: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString() + " for " + repInfo.varLocationName;
+                    DataTable dt = R.CallReturnSalesForSelectedDate(repInfo, objPageDetails);
                     GrdSalesByDate.DataSource = dt;
                     GrdSalesByDate.DataBind();
                 }
@@ -153,13 +141,9 @@ namespace SweetSpotDiscountGolfPOS
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
 
-                object[] passing = (object[])Session["reportInfo"];
-                DateTime[] reportDates = (DateTime[])passing[0];
-                DateTime startDate = reportDates[0];
-                DateTime endDate = reportDates[1];
-
-                DataTable dt = R.CallReturnSalesForSelectedDate(passing, objPageDetails);
-                string fileName = "Sales Report by Date-" + LM.CallReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails) + "_" + startDate.ToShortDateString() + " - " + endDate.ToShortDateString() + ".xlsx";
+                ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
+                DataTable dt = R.CallReturnSalesForSelectedDate(repInfo, objPageDetails);
+                string fileName = "Sales Report by Date-" + repInfo.varLocationName + "_" + repInfo.dtmStartDate.ToShortDateString() + " - " + repInfo.dtmEndDate.ToShortDateString() + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {

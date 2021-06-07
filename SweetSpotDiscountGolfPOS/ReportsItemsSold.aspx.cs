@@ -42,23 +42,11 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     CU = (CurrentUser)Session["currentUser"];
                     //Gathering the start and end dates
-                    object[] passing = (object[])Session["reportInfo"];
-                    DateTime[] reportDates = (DateTime[])passing[0];
-                    DateTime startDate = reportDates[0];
-                    DateTime endDate = reportDates[1];
-                    int locationID = (int)passing[1];
+                    ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
                     //Builds string to display in label
-                    if (startDate == endDate)
-                    {
-                        lblDates.Text = "Items sold on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
-                    }
-                    else
-                    {
-                        lblDates.Text = "Items sold on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
-                    }
-
+                    lblDates.Text = "Items sold on: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString() + " for " + repInfo.varLocationName;
                     //Binding the gridview
-                    items = R.CallReturnItemsSold(startDate, endDate, locationID, objPageDetails);
+                    //items = R.CallReturnItemsSold(repInfo, objPageDetails);
                     //Checking if there are any values
                     if (items.Rows.Count > 0)
                     {
@@ -67,14 +55,7 @@ namespace SweetSpotDiscountGolfPOS
                     }
                     else
                     {
-                        if (startDate == endDate)
-                        {
-                            lblDates.Text = "There are no items sold for: " + startDate.ToString("d");
-                        }
-                        else
-                        {
-                            lblDates.Text = "There are no items sold for: " + startDate.ToString("d") + " to " + endDate.ToString("d");
-                        }
+                        lblDates.Text = "There are no items sold for: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString();
                     }
                 }
             }
@@ -179,9 +160,8 @@ namespace SweetSpotDiscountGolfPOS
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
-                object[] passing = (object[])Session["reportInfo"];
-                string loc = LM.CallReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
-                string fileName = "Items Sold Report - " + loc + ".xlsx";
+                ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
+                string fileName = "Items Sold Report - " + repInfo.varLocationName + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
@@ -196,7 +176,7 @@ namespace SweetSpotDiscountGolfPOS
                     itemsSoldExport.Cells[2, 5].Value = "Item Discount";
                     itemsSoldExport.Cells[2, 6].Value = "Item Profit";
                     int recordIndex = 3;
-                    foreach (DataRow i in items.Rows) 
+                    foreach (DataRow i in items.Rows)
                     {
                         //itemsSoldExport.Cells[recordIndex, 1].Value = i.invoice;
                         itemsSoldExport.Cells[recordIndex, 1].Value = i[0].ToString();

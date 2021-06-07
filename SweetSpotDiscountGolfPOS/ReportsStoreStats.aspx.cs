@@ -28,8 +28,6 @@ namespace SweetSpotDiscountGolfPOS
         double subTotal;
         double salesDollars;
         double totalSales;
-        //double profitMargin;
-        //int profitMarginCount = 0;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -49,24 +47,18 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     CU = (CurrentUser)Session["currentUser"];
                     //Gathering the start and end dates
-                    object[] passing = (object[])Session["reportInfo"];
-                    DateTime[] reportDates = (DateTime[])passing[0];
-                    DateTime startDate = reportDates[0];
-                    DateTime endDate = reportDates[1];
-                    int locationID = Convert.ToInt32(passing[1]);
-                    int timeFrame = Convert.ToInt32(passing[2]);
+                    ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
+                    //string locationName = "All Locations";
                     //Builds string to display in label
-                    if (startDate == endDate)
-                    {
-                        lblDates.Text = "Store stats on: " + startDate.ToString("dd/MMM/yy"); //+ " for " + LM.ReturnLocationName(locationID, objPageDetails);
-                    }
-                    else
-                    {
-                        lblDates.Text = "Store stats on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy"); //+ " for " + LM.ReturnLocationName(locationID, objPageDetails);
-                    }
-                    //Binding the gridview
-                    DataTable stats = R.CallReturnStoreStats(startDate, endDate, timeFrame, objPageDetails);
+                    //if (repInfo.intLocationID != 99)
+                    //{
+                    //    locationName = repInfo.varLocationName;
+                    //}
 
+                    lblDates.Text = "Store Stats through: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString() + " for " + repInfo.varLocationName;
+
+                    //Binding the gridview
+                    DataTable stats = R.CallReturnStoreStats(repInfo, objPageDetails);
                     GrdStats.DataSource = stats;
                     GrdStats.DataBind();
                 }
@@ -99,11 +91,9 @@ namespace SweetSpotDiscountGolfPOS
                     retailTax += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltRetailTaxAmount"));
                     costofGoods += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltCostofGoods"));
                     subTotal += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltSubTotal"));
-                    //profitMargin += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltProfitMargin"));
                     salesDollars += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltSalesDollars"));
                     totalSales += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "fltTotalSales"));
 
-                    //profitMarginCount++;
                 }
                 else if (e.Row.RowType == DataControlRowType.Footer)
                 {
@@ -168,16 +158,10 @@ namespace SweetSpotDiscountGolfPOS
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
 
-                object[] passing = (object[])Session["reportInfo"];
-                DateTime[] reportDates = (DateTime[])passing[0];
-                DateTime startDate = reportDates[0];
-                DateTime endDate = reportDates[1];
-                int locationID = Convert.ToInt32(passing[1]);
-                int timeFrame = Convert.ToInt32(passing[2]);
+                ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
+                DataTable stats = R.CallReturnStoreStats(repInfo, objPageDetails);
 
-                DataTable stats = R.CallReturnStoreStats(startDate, endDate, timeFrame, objPageDetails);
-
-                string fileName = "Store Stats Report-" + LM.CallReturnLocationName(locationID, objPageDetails) + "_" + startDate.ToShortDateString() + " - " + endDate.ToShortDateString() + ".xlsx";
+                string fileName = "Store Stats Report-" + repInfo.varLocationName + "_" + repInfo.dtmStartDate.ToShortDateString() + " - " + repInfo.dtmEndDate.ToShortDateString() + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
@@ -199,14 +183,8 @@ namespace SweetSpotDiscountGolfPOS
                     int recordIndex = 3;
                     foreach (DataRow row in stats.Rows)
                     {
-                        //if (timeFrame == 3)
-                        //{
-                            statsExport.Cells[recordIndex, 1].Value = row[0].ToString();
-                        //}
-                        //else
-                        //{
-                            //statsExport.Cells[recordIndex, 1].Value = Convert.ToDateTime(row[0]).ToString("dd-MM-yyyy");
-                        //}
+                        statsExport.Cells[recordIndex, 1].Value = row[0].ToString();
+
                         statsExport.Cells[recordIndex, 2].Value = Convert.ToDouble(row[2]).ToString("C");
                         statsExport.Cells[recordIndex, 3].Value = Convert.ToDouble(row[3]).ToString("C");
                         statsExport.Cells[recordIndex, 4].Value = Convert.ToDouble(row[4]).ToString("C");
@@ -229,7 +207,7 @@ namespace SweetSpotDiscountGolfPOS
                     statsExport.Cells[recordIndex + 1, 7].Value = retailTax.ToString("C");
                     statsExport.Cells[recordIndex + 1, 8].Value = costofGoods.ToString("C");
                     statsExport.Cells[recordIndex + 1, 9].Value = subTotal.ToString("C");
-                    //statsExport.Cells[recordIndex + 1, 7].Value = (profitMargin / profitMarginCount).ToString("P");
+
                     statsExport.Cells[recordIndex + 1, 11].Value = salesDollars.ToString();
 
                     Response.Clear();

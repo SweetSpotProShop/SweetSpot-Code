@@ -43,20 +43,9 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     CU = (CurrentUser)Session["currentUser"];
                     //Gathering the start and end dates
-                    object[] repInfo = (object[])Session["reportInfo"];
-                    DateTime[] reportDates = (DateTime[])repInfo[0];
-                    DateTime startDate = reportDates[0];
-                    DateTime endDate = reportDates[1];
-                    int locationID = Convert.ToInt32(repInfo[1]);
+                    ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
                     //Builds string to display in label
-                    if (startDate == endDate)
-                    {
-                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
-                    }
-                    else
-                    {
-                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
-                    }
+                    lblReportDate.Text = "Discount Report on: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString() + " for " + repInfo.varLocationName;
                     DataTable discounts = R.CallReturnDiscountsBetweenDates(repInfo, objPageDetails);
                     GrdInvoiceDisplay.DataSource = discounts;
                     GrdInvoiceDisplay.DataBind();
@@ -119,15 +108,10 @@ namespace SweetSpotDiscountGolfPOS
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
 
-                object[] repInfo = (object[])Session["reportInfo"];
-                DateTime[] reportDates = (DateTime[])repInfo[0];
-                DateTime startDate = reportDates[0];
-                DateTime endDate = reportDates[1];
-                int locationID = Convert.ToInt32(repInfo[1]);
-
+                ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
                 DataTable discounts = R.CallReturnDiscountsBetweenDates(repInfo, objPageDetails);
 
-                string fileName = "Discount Report-" + LM.CallReturnLocationName(locationID, objPageDetails) + "_" + startDate.ToShortDateString() + " - " + endDate.ToShortDateString() + ".xlsx";
+                string fileName = "Discount Report-" + repInfo.varLocationName + "_" + repInfo.dtmStartDate.ToShortDateString() + " - " + repInfo.dtmEndDate.ToShortDateString() + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {

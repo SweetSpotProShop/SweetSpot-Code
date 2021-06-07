@@ -12,7 +12,7 @@ namespace SweetSpotDiscountGolfPOS
     {
         readonly ErrorReporting ER = new ErrorReporting();
         readonly InvoiceManager IM = new InvoiceManager();
-        //LocationManager LM = new LocationManager();
+        readonly CashoutUtilities COU = new CashoutUtilities();
         CurrentUser CU;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -53,7 +53,6 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-
         protected void BtnQuickSale_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -131,11 +130,11 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 Reports R = new Reports();
-                int indicator = R.VerifyCashoutCanBeProcessed(CU.location.intLocationID, CalSearchDate.SelectedDate, objPageDetails);
+                int indicator = COU.VerifyCashoutCanBeProcessed(CU.location.intLocationID, CalSearchDate.SelectedDate, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
                 {
-                    R.RemoveUnprocessedReturns(CU.location.intLocationID, CalSearchDate.SelectedDate, objPageDetails);
+                    COU.RemoveUnprocessedReturns(CU.location.intLocationID, CalSearchDate.SelectedDate, objPageDetails);
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                     nameValues.Set("selectedDate", CalSearchDate.SelectedDate.ToShortDateString());
                     nameValues.Set("location", CU.location.intLocationID.ToString());

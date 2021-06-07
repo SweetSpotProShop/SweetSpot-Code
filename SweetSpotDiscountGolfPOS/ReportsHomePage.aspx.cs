@@ -12,6 +12,7 @@ namespace SweetSpotDiscountGolfPOS
     {
         readonly ErrorReporting ER = new ErrorReporting();
         readonly LocationManager LM = new LocationManager();
+        readonly ImportExport IE = new ImportExport();
         readonly Reports R = new Reports();
         CurrentUser CU;
 
@@ -116,7 +117,12 @@ namespace SweetSpotDiscountGolfPOS
                 R.CallReportLogger(reportLog, objPageDetails);
                 //Stores report dates into Session
                 DateTime[] dtm = GetDateRange();
-                object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
+                string locationName = "All Locations";
+                if (Convert.ToInt32(ddlLocation.SelectedValue) != 99)
+                {
+                    locationName = LM.CallReturnLocationName(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                }
+                ReportInformation repInfo = new ReportInformation((DateTime)dtm[0], (DateTime)dtm[1], Convert.ToInt32(ddlDatePeriod.SelectedValue), Convert.ToInt32(ddlLocation.SelectedValue), locationName);
                 int indicator = R.CashoutsProcessed(repInfo, objPageDetails);
                 ////Check to see if there are sales first
                 if (indicator == 0)
@@ -140,8 +146,7 @@ namespace SweetSpotDiscountGolfPOS
                     + "If you continue to receive this message please contact "
                     + "your system administrator.", this);
             }
-        }
-        
+        }        
         //Displays taxes charged
         protected void BtnTaxReport_Click(object sender, EventArgs e)
         {
@@ -153,7 +158,12 @@ namespace SweetSpotDiscountGolfPOS
                 object[] reportLog = { 3, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = GetDateRange();
-                object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
+                string locationName = "All Locations";
+                if (Convert.ToInt32(ddlLocation.SelectedValue) != 99)
+                {
+                    locationName = LM.CallReturnLocationName(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                }
+                ReportInformation repInfo = new ReportInformation((DateTime)dtm[0], (DateTime)dtm[1], Convert.ToInt32(ddlDatePeriod.SelectedValue), Convert.ToInt32(ddlLocation.SelectedValue), locationName);
                 int indicator = R.VerifyTaxesCharged(repInfo, objPageDetails);
                 if (indicator == 0)
                 {
@@ -177,7 +187,6 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-
         //Displays the Discounts given
         protected void BtnDiscountReport_Click(object sender, EventArgs e)
         {
@@ -190,7 +199,12 @@ namespace SweetSpotDiscountGolfPOS
                 R.CallReportLogger(reportLog, objPageDetails);
                 //Stores report dates into Session
                 DateTime[] dtm = GetDateRange();
-                object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
+                string locationName = "All Locations";
+                if (Convert.ToInt32(ddlLocation.SelectedValue) != 99)
+                {
+                    locationName = LM.CallReturnLocationName(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                }
+                ReportInformation repInfo = new ReportInformation((DateTime)dtm[0], (DateTime)dtm[1], Convert.ToInt32(ddlDatePeriod.SelectedValue), Convert.ToInt32(ddlLocation.SelectedValue), locationName);
                 int indicator = R.VerifyInvoicesCompleted(repInfo, objPageDetails);
                 if (indicator == 0)
                 {
@@ -214,7 +228,6 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-
         //Displays sales totals grouped by date
         protected void BtnSalesByDate_Click(object sendr, EventArgs e)
         {
@@ -227,7 +240,12 @@ namespace SweetSpotDiscountGolfPOS
                 R.CallReportLogger(reportLog, objPageDetails);
                 //Stores report dates into Session
                 DateTime[] dtm = GetDateRange();
-                object[] repInfo = new object[] { dtm, Convert.ToInt32(ddlLocation.SelectedValue) };
+                string locationName = "All Locations";
+                if (Convert.ToInt32(ddlLocation.SelectedValue) != 99)
+                {
+                    locationName = LM.CallReturnLocationName(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                }
+                ReportInformation repInfo = new ReportInformation((DateTime)dtm[0], (DateTime)dtm[1], Convert.ToInt32(ddlDatePeriod.SelectedValue), Convert.ToInt32(ddlLocation.SelectedValue), locationName);
                 int indicator = R.VerifySalesHaveBeenMade(repInfo, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
@@ -252,7 +270,6 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-
         //Similar to the COGSvsPM report with a little more detail
         //only fixed download
         protected void BtnExtensiveInvoice_Click(object sender, EventArgs e)
@@ -266,7 +283,12 @@ namespace SweetSpotDiscountGolfPOS
                 R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = GetDateRange();
                 int loc = Convert.ToInt32(ddlLocation.SelectedValue);
-                object[] repInfo = new object[] { dtm, loc };
+                string locationName = "All Locations";
+                if (Convert.ToInt32(ddlLocation.SelectedValue) != 99)
+                {
+                    locationName = LM.CallReturnLocationName(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                }
+                ReportInformation repInfo = new ReportInformation((DateTime)dtm[0], (DateTime)dtm[1], Convert.ToInt32(ddlDatePeriod.SelectedValue), Convert.ToInt32(ddlLocation.SelectedValue), locationName);
                 int indicator = R.VerifySalesHaveBeenMade(repInfo, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
@@ -293,7 +315,6 @@ namespace SweetSpotDiscountGolfPOS
                 //Server.Transfer(prevPage, false);
             }
         }
-
         //Displays the total cost of currently stocked inventory
         //only fixed download
         protected void BtnCostOfInventory_Click(object sender, EventArgs e)
@@ -305,6 +326,14 @@ namespace SweetSpotDiscountGolfPOS
             {
                 object[] reportLog = { 12, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
+                DateTime[] dtm = GetDateRange();
+                string locationName = "All Locations";
+                if (Convert.ToInt32(ddlLocation.SelectedValue) != 99)
+                {
+                    locationName = LM.CallReturnLocationName(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                }
+                ReportInformation repInfo = new ReportInformation(dtm[0], dtm[1], Convert.ToInt32(ddlDatePeriod.SelectedValue), Convert.ToInt32(ddlLocation.SelectedValue), locationName);
+                Session["reportInfo"] = repInfo;
                 Response.Redirect("ReportsCostOfInventory.aspx", false);
             }
             //Exception catch
@@ -321,7 +350,6 @@ namespace SweetSpotDiscountGolfPOS
                 //Server.Transfer(prevPage, false);
             }
         }
-
         //Another report similar to COGSvsPM and Extensive Invoice, can be broken out by month, week, or day.
         //only fixed download
         protected void BtnStoreStatsReport_Click(object sender, EventArgs e)
@@ -334,8 +362,12 @@ namespace SweetSpotDiscountGolfPOS
                 object[] reportLog = { 13, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = GetDateRange();
-                int loc = Convert.ToInt32(ddlLocation.SelectedValue);
-                object[] repInfo = new object[] { dtm, loc, ddlDatePeriod.SelectedValue.ToString() };
+                string locationName = "All Locations";
+                if (Convert.ToInt32(ddlLocation.SelectedValue) != 99)
+                {
+                    locationName = LM.CallReturnLocationName(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                }
+                ReportInformation repInfo = new ReportInformation((DateTime)dtm[0], (DateTime)dtm[1], Convert.ToInt32(ddlDatePeriod.SelectedValue), Convert.ToInt32(ddlLocation.SelectedValue), locationName);
                 int indicator = R.VerifyStatsAvailable(repInfo, objPageDetails);
                 if (indicator == 0)
                 {
@@ -359,7 +391,6 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-
         //Displays chnages made to inventory items in a date range
         //only fixed download
         protected void BtnInventoryChangeReport_Click(object sender, EventArgs e)
@@ -372,7 +403,12 @@ namespace SweetSpotDiscountGolfPOS
                 object[] reportLog = { 16, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = GetDateRange();
-                object[] repInfo = new object[] { dtm };
+                string locationName = "All Locations";
+                if (Convert.ToInt32(ddlLocation.SelectedValue) != 99)
+                {
+                    locationName = LM.CallReturnLocationName(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                }
+                ReportInformation repInfo = new ReportInformation((DateTime)dtm[0], (DateTime)dtm[1], Convert.ToInt32(ddlDatePeriod.SelectedValue), Convert.ToInt32(ddlLocation.SelectedValue), locationName);
                 int indicator = R.VerifyInventoryChange(repInfo, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
@@ -397,7 +433,6 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-
         //Displays specific apparel skus sold, their average cost, average price, and profit margin
         //only fixed download
         protected void BtnSpecificApparelReport_Click(object sender, EventArgs e)
@@ -410,7 +445,12 @@ namespace SweetSpotDiscountGolfPOS
                 object[] reportLog = { 14, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = GetDateRange();
-                object[] repInfo = new object[] { dtm };
+                string locationName = "All Locations";
+                if (Convert.ToInt32(ddlLocation.SelectedValue) != 99)
+                {
+                    locationName = LM.CallReturnLocationName(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                }
+                ReportInformation repInfo = new ReportInformation((DateTime)dtm[0], (DateTime)dtm[1], Convert.ToInt32(ddlDatePeriod.SelectedValue), Convert.ToInt32(ddlLocation.SelectedValue), locationName);
                 int indicator = R.VerifySpecificApparel(repInfo, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
@@ -435,7 +475,6 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-
         //Displays specific apparel skus sold, their average cost, average price, and profit margin
         //only fixed download
         protected void BtnSpecificGripReport_Click(object sender, EventArgs e)
@@ -448,7 +487,12 @@ namespace SweetSpotDiscountGolfPOS
                 object[] reportLog = { 15, CU.employee.intEmployeeID, CU.location.intLocationID };
                 R.CallReportLogger(reportLog, objPageDetails);
                 DateTime[] dtm = GetDateRange();
-                object[] repInfo = new object[] { dtm };
+                string locationName = "All Locations";
+                if (Convert.ToInt32(ddlLocation.SelectedValue) != 99)
+                {
+                    locationName = LM.CallReturnLocationName(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                }
+                ReportInformation repInfo = new ReportInformation((DateTime)dtm[0], (DateTime)dtm[1], Convert.ToInt32(ddlDatePeriod.SelectedValue), Convert.ToInt32(ddlLocation.SelectedValue), locationName);
                 int indicator = R.VerifySpecificGrip(repInfo, objPageDetails);
                 //Check to see if there are sales first
                 if (indicator == 0)
@@ -473,7 +517,6 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-
         protected void BtnExportInvoices_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -491,7 +534,7 @@ namespace SweetSpotDiscountGolfPOS
                 string filename = "Invoices-" + startDate.ToString("dd.MM.yyyy") + " To " + endDate.ToString("dd.MM.yyyy") + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + filename);
 
-                R.CallExportInvoiceDateRange(dtm, newFile, filename);
+                IE.CallExportInvoiceDateRange(dtm, newFile, filename);
 
                 MessageBoxCustom.ShowMessage("Invoices between " + startDate.ToString("dd.MM.yyyy") + " and " + endDate.ToString("dd.MM.yyyy") + " have been exported.", this);
             }
@@ -507,7 +550,6 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-
         //protected void BtnCreatePDFFiles_Click(object sender, EventArgs e)
         //{
         //    string method = "BtnCreatePDFFiles";
@@ -525,7 +567,6 @@ namespace SweetSpotDiscountGolfPOS
         //        {
         //            selectedDates.Add(date);
         //        }
-
         //        foreach (int loc in locations)
         //        {
         //            foreach (DateTime dtm in selectedDates)
@@ -534,7 +575,6 @@ namespace SweetSpotDiscountGolfPOS
         //                R.CollectAndStoreDailySalesData(dtm, loc, objPageDetails);
         //            }
         //        }
-
         //        //MessageBoxCustom.ShowMessage("PDFs between " + CalStartDate.SelectedDate.ToString("dd.MM.yyyy") + " and " + CalEndDate.SelectedDate.ToString("dd.MM.yyyy") + " have been created.", this);
         //        MessageBoxCustom.ShowMessage("Daily Sales data between " + CalStartDate.SelectedDate.ToString("dd.MM.yyyy") + " and " + CalEndDate.SelectedDate.ToString("dd.MM.yyyy") + " have been added to database.", this);
         //    }
@@ -550,30 +590,29 @@ namespace SweetSpotDiscountGolfPOS
         //            + "your system administrator.", this);
         //    }
         //}
+        //protected void btnUpdatingTaxes_Click(object sender, EventArgs e)
+        //{
+        //    string method = "btnUpdatingTaxes";
+        //    object[] objPageDetails = { Session["currPage"].ToString(), method };
+        //    try
+        //    {
+        //        TemporaryItems TI = new TemporaryItems();
+        //        TI.UpdateTaxesInTaxTable(CalStartDate.SelectedDate, CalEndDate.SelectedDate, objPageDetails);
 
-        protected void btnUpdatingTaxes_Click(object sender, EventArgs e)
-        {
-            string method = "btnUpdatingTaxes";
-            object[] objPageDetails = { Session["currPage"].ToString(), method };
-            try
-            {
-                TemporaryItems TI = new TemporaryItems();
-                TI.UpdateTaxesInTaxTable(CalStartDate.SelectedDate, CalEndDate.SelectedDate, objPageDetails);
-
-                MessageBoxCustom.ShowMessage("Taxes have been updated for " + CalStartDate.SelectedDate.ToString("dd.MM.yyyy") + " and " + CalEndDate.SelectedDate.ToString("dd.MM.yyyy") + ".", this);
-            }
-            //Exception catch
-            catch (ThreadAbortException tae) { }
-            catch (Exception ex)
-            {
-                //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-                //Display message box
-                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator.", this);
-            }
-        }
+        //        MessageBoxCustom.ShowMessage("Taxes have been updated for " + CalStartDate.SelectedDate.ToString("dd.MM.yyyy") + " and " + CalEndDate.SelectedDate.ToString("dd.MM.yyyy") + ".", this);
+        //    }
+        //    //Exception catch
+        //    catch (ThreadAbortException tae) { }
+        //    catch (Exception ex)
+        //    {
+        //        //Log all info into error table
+        //        ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+        //        //Display message box
+        //        MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
+        //            + "If you continue to receive this message please contact "
+        //            + "your system administrator.", this);
+        //    }
+        //}
 
         protected DateTime[] GetDateRange()
         {

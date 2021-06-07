@@ -38,12 +38,25 @@ namespace SweetSpotDiscountGolfPOS.Misc
             return monthStart.AddMonths(1).AddDays(-1);
         }
 
-        public static Control CallFindControlRecursive(Control ctl, string name)
+        public static Control CallFindControlRecursive(Control control, string id)
         {
-            return FindControlRecursive(ctl, name);
+            return FindControlRecursive(control, id);
         }
-        private static Control FindControlRecursive(Control ctl, string name)
+        private static Control FindControlRecursive(Control control, string id)
         {
+            Control returnControl = control.FindControl(id);
+            if (returnControl == null)
+            {
+                foreach (Control child in control.Controls)
+                {
+                    returnControl = FindControlRecursive(child, id);
+                    if (returnControl != null && returnControl.ID == id)
+                    {
+                        return returnControl;
+                    }
+                }
+            }
+            return returnControl;
 
         }
     }

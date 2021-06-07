@@ -57,7 +57,12 @@ namespace SweetSpotDiscountGolfPOS
                         ddlLocation.Enabled = true;
                     }
                     //populate gridview with todays sales
-                    GrdSameDaySales.DataSource = R.CallGetInvoiceBySaleDate(DateTime.Today, DateTime.Today, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                    ReportInformation repInfo = new ReportInformation();
+                    repInfo.dtmStartDate = DateTime.Today;
+                    repInfo.dtmEndDate = DateTime.Today;
+                    repInfo.intLocationID = Convert.ToInt32(ddlLocation.SelectedValue);
+
+                    GrdSameDaySales.DataSource = R.CallGetInvoiceBySaleDate(repInfo, objPageDetails);
                     GrdSameDaySales.DataBind();
                     MergeRows(GrdSameDaySales);
                 }

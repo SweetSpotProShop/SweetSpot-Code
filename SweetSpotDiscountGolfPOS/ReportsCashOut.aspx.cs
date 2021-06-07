@@ -15,7 +15,7 @@ namespace SweetSpotDiscountGolfPOS
     public partial class ReportsCashOut : System.Web.UI.Page
     {
         readonly ErrorReporting ER = new ErrorReporting();
-        readonly LocationManager LM = new LocationManager();
+        readonly CashoutUtilities COU = new CashoutUtilities();
         readonly Reports R = new Reports();
         DataTable dt = new DataTable();
         CurrentUser CU;
@@ -40,12 +40,9 @@ namespace SweetSpotDiscountGolfPOS
                     if (!IsPostBack)
                     {
                         //Gathering the start and end dates
-                        object[] passing = (object[])Session["reportInfo"];
-                        DateTime[] reportDates = (DateTime[])passing[0];
-                        DateTime startDate = reportDates[0];
-                        DateTime endDate = reportDates[1];
-                        lblDates.Text = "Cashout report for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
-                        dt = R.CallReturnCashoutsForSelectedDates(passing, objPageDetails);
+                        ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
+                        lblDates.Text = "Cashout report for: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString() + " for " + repInfo.varLocationName;
+                        dt = R.CallReturnCashoutsForSelectedDates(repInfo, objPageDetails);
                         GrdCashoutByDate.DataSource = dt;
                         GrdCashoutByDate.DataBind();
                     }
@@ -71,17 +68,13 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Gathering the start and end dates
-                object[] passing = (object[])Session["reportInfo"];
-                DateTime[] reportDates = (DateTime[])passing[0];
-                DateTime startDate = reportDates[0];
-                DateTime endDate = reportDates[1];
-                int locationID = Convert.ToInt32(passing[1]);
-                dt = R.CallReturnCashoutsForSelectedDates(passing, objPageDetails);
+                ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
+                dt = R.CallReturnCashoutsForSelectedDates(repInfo, objPageDetails);
 
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
-                string fileName = "CashOut Report by Date - " + LM.CallReturnLocationName(locationID, objPageDetails) + ".xlsx";
+                string fileName = "CashOut Report by Date - " + repInfo.varLocationName + ".xlsx";
 
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
@@ -198,13 +191,9 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (e.CommandName == "FinalizeCashout")
                 {
-                    R.CallFinalizeCashout(e.CommandArgument.ToString(), objPageDetails);
-                    object[] passing = (object[])Session["reportInfo"];
-                    DateTime[] reportDates = (DateTime[])passing[0];
-                    DateTime startDate = reportDates[0];
-                    DateTime endDate = reportDates[1];
-                    int locationID = Convert.ToInt32(passing[1]);
-                    dt = R.CallReturnCashoutsForSelectedDates(passing, objPageDetails);
+                    COU.CallFinalizeCashout(e.CommandArgument.ToString(), objPageDetails);
+                    ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
+                    dt = R.CallReturnCashoutsForSelectedDates(repInfo, objPageDetails);
                     GrdCashoutByDate.DataSource = dt;
                     GrdCashoutByDate.DataBind();
                 }
