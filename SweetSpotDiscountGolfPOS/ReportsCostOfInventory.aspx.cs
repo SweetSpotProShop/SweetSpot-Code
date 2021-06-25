@@ -4,12 +4,14 @@ using System.Threading;
 using SweetSpotDiscountGolfPOS.FP;
 using SweetSpotDiscountGolfPOS.OB;
 using SweetSpotDiscountGolfPOS.Misc;
+using System.Web.UI.WebControls;
 
 namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsCostOfInventory : System.Web.UI.Page
     {
         readonly ErrorReporting ER = new ErrorReporting();
+        readonly LocationManager LM = new LocationManager();
         readonly Reports R = new Reports();
         CurrentUser CU;
         protected void Page_Load(object sender, EventArgs e)
@@ -28,18 +30,32 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    CU = (CurrentUser)Session["currentUser"];
-                    //Binding the gridview
-#pragma warning disable IDE0067 // Dispose objects before losing scope
-                    DataTable list = new DataTable();
-#pragma warning restore IDE0067 // Dispose objects before losing scope
-                    ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
-                    list = R.CallCostOfInventoryReport(repInfo, objPageDetails);
-                    //Checking if there are any values
-                    if (list.Rows.Count > 0)
+                    if (!IsPostBack)
                     {
-                        grdCostOfInventory.DataSource = list;
-                        grdCostOfInventory.DataBind();
+                        CU = (CurrentUser)Session["currentUser"];
+                        //Binding the gridview
+                        ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
+
+                        Calendar calStartDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalStartDate");
+                        calStartDate.SelectedDate = repInfo.dtmStartDate;
+                        Calendar calEndDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalEndDate");
+                        calEndDate.SelectedDate = repInfo.dtmEndDate;
+                        DropDownList ddlDatePeriod = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlDatePeriod");
+                        ddlDatePeriod.SelectedValue = repInfo.intGroupTimeFrame.ToString();
+                        DropDownList ddlLocation = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlLocation");
+                        DataTable dt = LM.CallReturnLocationDropDown(objPageDetails);
+                        dt.Rows.Add(99, "All Locations");
+                        ddlLocation.DataSource = dt;
+                        ddlLocation.DataBind();
+                        ddlLocation.SelectedValue = repInfo.intLocationID.ToString();
+
+                        DataTable resultSet = R.CallCostOfInventoryReport(repInfo, objPageDetails);
+                        //Checking if there are any values
+                        if (resultSet.Rows.Count > 0)
+                        {
+                            grdCostOfInventory.DataSource = resultSet;
+                            grdCostOfInventory.DataBind();
+                        }
                     }
                 }
             }

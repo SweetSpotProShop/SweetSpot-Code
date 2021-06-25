@@ -8,6 +8,7 @@ using System.Web.UI.WebControls;
 using SweetSpotDiscountGolfPOS.FP;
 using SweetSpotDiscountGolfPOS.OB;
 using SweetSpotDiscountGolfPOS.Misc;
+using System.Data;
 
 namespace SweetSpotDiscountGolfPOS
 {
@@ -55,16 +56,32 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    CU = (CurrentUser)Session["currentUser"];
-                    //Gathering the start and end dates
-                    ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
-                    //Builds string to display in label
-                    lblTaxDate.Text = "Taxes Through: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString() + " for " + repInfo.varLocationName;
-                    //Creating a cashout list and calling a method that grabs all mops and amounts paid
-                    List<TaxReport> taxReport = R.CallReturnTaxReportDetails(repInfo, objPageDetails);
+                    if (!IsPostBack)
+                    {
+                        CU = (CurrentUser)Session["currentUser"];
+                        //Gathering the start and end dates
+                        ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
 
-                    GrdTaxList.DataSource = taxReport;
-                    GrdTaxList.DataBind();
+                        Calendar calStartDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalStartDate");
+                        calStartDate.SelectedDate = repInfo.dtmStartDate;
+                        Calendar calEndDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalEndDate");
+                        calEndDate.SelectedDate = repInfo.dtmEndDate;
+                        DropDownList ddlDatePeriod = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlDatePeriod");
+                        ddlDatePeriod.SelectedValue = repInfo.intGroupTimeFrame.ToString();
+                        DropDownList ddlLocation = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlLocation");
+                        DataTable dt = LM.CallReturnLocationDropDown(objPageDetails);
+                        dt.Rows.Add(99, "All Locations");
+                        ddlLocation.DataSource = dt;
+                        ddlLocation.DataBind();
+                        ddlLocation.SelectedValue = repInfo.intLocationID.ToString();
+
+                        //Builds string to display in label
+                        lblTaxDate.Text = "Taxes Through: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString() + " for " + repInfo.varLocationName;
+                        //Creating a cashout list and calling a method that grabs all mops and amounts paid
+                        List<TaxReport> taxReport = R.CallReturnTaxReportDetails(repInfo, objPageDetails);
+                        GrdTaxList.DataSource = taxReport;
+                        GrdTaxList.DataBind();
+                    }
                 }
             }
             //Exception catch

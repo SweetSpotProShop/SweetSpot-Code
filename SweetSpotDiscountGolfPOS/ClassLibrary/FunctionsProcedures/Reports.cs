@@ -40,7 +40,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
-        //^^^^^^^^^^^^^^^^^^^^CASHOUT REPORT^^^^^^^^^^^^^^^^^^^^
+        //^^^^^^^^^^^^^^^^^^^^CASHOUT REPORT^^^^^^^^^^^^^^^^^^^^ (this report does not do group by)
         public int CashoutsProcessed(ReportInformation repInfo, object[] objPageDetails)
         {
             int indicator = 0;
@@ -75,22 +75,27 @@ namespace SweetSpotDiscountGolfPOS.FP
         private DataTable ReturnCashoutsForSelectedDates(ReportInformation repInfo, object[] objPageDetails)
         {
             string strQueryName = "ReturnCashoutsForSelectedDates";
+            string varLocationName = "";
+            if (repInfo.intLocationID != 99)
+            {
+                varLocationName = " AND intLocationID = " + repInfo.intLocationID;
+            }
             string sqlCmd = "SELECT dtmCashoutDate, intLocationID, fltSystemCountedBasedOnSystemTradeIn, fltManuallyCountedBasedOnReceiptsTradeIn, "
                 + "fltSystemCountedBasedOnSystemGiftCard, fltManuallyCountedBasedOnReceiptsGiftCard, fltSystemCountedBasedOnSystemCash, "
                 + "fltManuallyCountedBasedOnReceiptsCash, fltSystemCountedBasedOnSystemDebit, fltManuallyCountedBasedOnReceiptsDebit, "
                 + "fltSystemCountedBasedOnSystemMastercard, fltManuallyCountedBasedOnReceiptsMastercard, fltSystemCountedBasedOnSystemVisa, "
                 + "fltManuallyCountedBasedOnReceiptsVisa, fltCashDrawerOverShort, bitIsCashoutProcessed, bitIsCashoutFinalized FROM "
-                + "tbl_cashout WHERE dtmCashoutDate BETWEEN @dtmStartDate AND @dtmEndDate AND intLocationID = @intLocationID";
+                + "tbl_cashout WHERE dtmCashoutDate BETWEEN @dtmStartDate AND @dtmEndDate" + varLocationName;
             object[][] parms =
             {
                 new object[] { "@dtmStartDate", repInfo.dtmStartDate.ToShortDateString() },
-                new object[] { "@dtmEndDate", repInfo.dtmEndDate.ToShortDateString() },
-                new object[] { "@intLocationID", repInfo.intLocationID }
+                new object[] { "@dtmEndDate", repInfo.dtmEndDate.ToShortDateString() }
             };
+
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
-        //^^^^^^^^^^^^^^^^^^^^TAX REPORT^^^^^^^^^^^^^^^^^^^^
+        //^^^^^^^^^^^^^^^^^^^^TAX REPORT^^^^^^^^^^^^^^^^^^^^ (Done)
         public int VerifyTaxesCharged(ReportInformation repInfo, object[] objPageDetails)
         {
             int indicator = 0;
@@ -126,19 +131,82 @@ namespace SweetSpotDiscountGolfPOS.FP
         private List<TaxReport> ReturnTaxReportDetails(ReportInformation repInfo, object[] objPageDetails)
         {
             string strQueryName = "returnTaxReportDetails";
-            string sqlCmd = "SELECT dtmSalesDataDate AS dtmInvoiceDate, ISNULL(fltGSTCollected, 0) AS fltGovernmentTaxAmountCollected, ISNULL(fltPSTCollected, 0) "
-                + "AS fltProvincialTaxAmountCollected, ISNULL(fltLCTCollected, 0) AS fltLiquorTaxAmountCollected, ISNULL(fltGSTReturned, 0) AS "
-                + "fltGovernmentTaxAmountReturned, ISNULL(fltPSTReturned, 0) AS fltProvincialTaxAmountReturned, ISNULL(fltLCTReturned, 0) AS fltLiquorTaxAmountReturned, "
-                + "ISNULL(fltHSTCollected, 0) AS fltHarmonizedTaxAmountCollected, ISNULL(fltQSTCollected, 0) AS fltQuebecTaxAmountCollected, ISNULL(fltRSTCollected, 0) "
-                + "AS fltRetailTaxAmountCollected, ISNULL(fltHSTReturned, 0) AS fltHarmonizedTaxAmountReturned, ISNULL(fltQSTReturned, 0) AS fltQuebecTaxAmountReturned, "
-                + "ISNULL(fltRSTReturned, 0) AS fltRetailTaxAmountReturned FROM tbl_dailySalesData WHERE dtmSalesDataDate BETWEEN @dtmStartDate AND @dtmEndDate AND "
-                + "intLocationID = @intLocationID ORDER BY dtmInvoiceDate ASC";
+            string varLocationName = "";
+            string sqlCmd = "";
+            string startQuery = "";
+            string endQuery = "";
+
+            if (repInfo.intLocationID != 99)
+            {
+                varLocationName = " AND strLocationName = " + repInfo.intLocationID;
+            }
+            if (repInfo.intGroupTimeFrame > 0)
+            {
+                sqlCmd = "varLocationName, ROUND(SUM(fltGovernmentTaxAmountCollected), 2) AS fltGovernmentTaxAmountCollected, ROUND(SUM("
+                    + "fltHarmonizedTaxAmountCollected), 2) AS fltHarmonizedTaxAmountCollected, ROUND(SUM(fltLiquorTaxAmountCollected), 2) AS "
+                    + "fltLiquorTaxAmountCollected, ROUND(SUM(fltProvincialTaxAmountCollected), 2) AS fltProvincialTaxAmountCollected, ROUND(SUM("
+                    + "fltQuebecTaxAmountCollected), 2) AS fltQuebecTaxAmountCollected, ROUND(SUM(fltRetailTaxAmountCollected), 2) AS "
+                    + "fltRetailTaxAmountCollected, ROUND(SUM(fltGovernmentTaxAmountReturned), 2) AS fltGovernmentTaxAmountReturned, ROUND(SUM("
+                    + "fltHarmonizedTaxAmountReturned), 2) AS fltHarmonizedTaxAmountReturned, ROUND(SUM(fltLiquorTaxAmountReturned), 2) AS "
+                    + "fltLiquorTaxAmountReturned, ROUND(SUM(fltProvincialTaxAmountReturned), 2) AS fltProvincialTaxAmountReturned, ROUND(SUM("
+                    + "fltQuebecTaxAmountReturned), 2) AS fltQuebecTaxAmountReturned, ROUND(SUM(fltRetailTaxAmountReturned), 2) AS "
+                    + "fltRetailTaxAmountReturned FROM (SELECT YEAR(dtmSalesDataDate) AS dtmInvoiceYear, DATENAME(MONTH, dtmSalesDataDate) AS "
+                    + "varMonthName, DATEADD(MONTH, DATEDIFF(MONTH, 0, dtmSalesDataDate), 0) AS dtmMonthDate, DATEADD(DAY, 1 - DATEPART(WEEKDAY, "
+                    + "dtmSalesDataDate), CAST(dtmSalesDataDate AS DATE)) dtmWeekStartDate, dtmSalesDataDate AS dtmSelectedDate,  "
+                    + "CASE WHEN varLocationName = 'Golf Traders' THEN varLocationName + ' - ' + varCityName ELSE varLocationName END AS varLocationName, "
+                    + "ISNULL(fltGSTCollected, 0) AS fltGovernmentTaxAmountCollected, ISNULL(fltHSTCollected, 0) AS fltHarmonizedTaxAmountCollected, "
+                    + "ISNULL(fltLCTCollected, 0) AS fltLiquorTaxAmountCollected, ISNULL(fltPSTCollected, 0) AS fltProvincialTaxAmountCollected, "
+                    + "ISNULL(fltQSTCollected, 0) AS fltQuebecTaxAmountCollected, ISNULL(fltRSTCollected, 0) AS fltRetailTaxAmountCollected, ISNULL("
+                    + "fltGSTReturned, 0) AS fltGovernmentTaxAmountReturned, ISNULL(fltHSTReturned, 0) AS fltHarmonizedTaxAmountReturned, ISNULL("
+                    + "fltLCTReturned, 0) AS fltLiquorTaxAmountReturned, ISNULL(fltPSTReturned, 0) AS fltProvincialTaxAmountReturned, ISNULL("
+                    + "fltQSTReturned, 0) AS fltQuebecTaxAmountReturned, ISNULL(fltRSTReturned, 0) AS fltRetailTaxAmountReturned FROM tbl_dailySalesData "
+                    + "DSD JOIN tbl_location L ON L.intLocationID = DSD.intLocationID WHERE dtmSalesDataDate BETWEEN @dtmStartDate AND @dtmEndDate"
+                    + varLocationName + ") AS ABC";
+            }
+            else
+            {
+                sqlCmd = "SELECT varInvoiceNumber AS selection, varLocationName, ROUND(SUM(fltGovernmentTaxAmountCollected), 2) AS fltGovernmentTaxAmountCollected, "
+                    + "ROUND(SUM(fltHarmonizedTaxAmountCollected), 2) AS fltHarmonizedTaxAmountCollected, ROUND(SUM(fltLiquorTaxAmountCollected), 2) AS fltLiquorTaxAmountCollected, "
+                    + "ROUND(SUM(fltProvincialTaxAmountCollected), 2) AS fltProvincialTaxAmountCollected, ROUND(SUM(fltQuebecTaxAmountCollected), 2) AS fltQuebecTaxAmountCollected, "
+                    + "ROUND(SUM(fltRetailTaxAmountCollected), 2) AS fltRetailTaxAmountCollected, ROUND(SUM(fltGovernmentTaxAmountReturned), 2) AS fltGovernmentTaxAmountReturned, "
+                    + "ROUND(SUM(fltHarmonizedTaxAmountReturned), 2) AS fltHarmonizedTaxAmountReturned, ROUND(SUM(fltLiquorTaxAmountReturned), 2) AS fltLiquorTaxAmountReturned, "
+                    + "ROUND(SUM(fltProvincialTaxAmountReturned), 2) AS fltProvincialTaxAmountReturned, ROUND(SUM(fltQuebecTaxAmountReturned), 2) AS fltQuebecTaxAmountReturned, "
+                    + "ROUND(SUM(fltRetailTaxAmountReturned), 2) AS fltRetailTaxAmountReturned FROM (SELECT dtmInvoiceDate, varInvoiceNumber + '-' + CAST(intInvoiceSubNumber AS "
+                    + "VARCHAR) AS varInvoiceNumber, CASE WHEN varLocationName = 'Golf Traders' THEN varLocationName + ' - ' + varCityName ELSE varLocationName END AS varLocationName, "
+                    + "CASE WHEN intInvoiceSubNumber = 1 THEN fltGovernmentTaxAmount ELSE 0 END AS fltGovernmentTaxAmountCollected, /*CASE WHEN intInvoiceSubNumber = 1 THEN "
+                    + "fltHarmonizedTaxAmount ELSE 0 END*/0 AS fltHarmonizedTaxAmountCollected, CASE WHEN intInvoiceSubNumber = 1 THEN fltLiquorTaxAmount ELSE 0 END AS "
+                    + "fltLiquorTaxAmountCollected, CASE WHEN intInvoiceSubNumber = 1 THEN fltProvincialTaxAmount ELSE 0 END AS fltProvincialTaxAmountCollected, /*CASE WHEN "
+                    + "intInvoiceSubNumber = 1 THEN fltQuebecTaxAmount ELSE 0 END*/0 AS fltQuebecTaxAmountCollected, /*CASE WHEN intInvoiceSubNumber = 1 THEN fltRetailTaxAmount ELSE 0 "
+                    + "END*/0 AS fltRetailTaxAmountCollected, CASE WHEN intInvoiceSubNumber != 1 THEN fltGovernmentTaxAmount ELSE 0 END AS fltGovernmentTaxAmountReturned, /*CASE WHEN "
+                    + "intInvoiceSubNumber != 1 THEN fltHarmonizedTaxAmount ELSE 0 END*/0 AS fltHarmonizedTaxAmountReturned, CASE WHEN intInvoiceSubNumber != 1 THEN fltLiquorTaxAmount "
+                    + "ELSE 0 END AS fltLiquorTaxAmountReturned, CASE WHEN intInvoiceSubNumber != 1 THEN fltProvincialTaxAmount ELSE 0 END AS fltProvincialTaxAmountReturned, /*CASE "
+                    + "WHEN intInvoiceSubNumber != 1 THEN fltQuebecTaxAmount ELSE 0 END*/0 AS fltQuebecTaxAmountReturned, /*CASE WHEN intInvoiceSubNumber != 1 THEN fltRetailTaxAmount "
+                    + "ELSE 0 END*/0 AS fltRetailTaxAmountReturned FROM tbl_invoice I JOIN tbl_location L on L.intLocationID = I.intLocationID WHERE dtmInvoiceDate BETWEEN @dtmStartDate "
+                    + "AND @dtmEndDate" + varLocationName + ") AS ABC GROUP BY varInvoiceNumber, varLocationName ";
+            }
+
             object[][] parms =
             {
                 new object[] { "@dtmStartDate", repInfo.dtmStartDate.ToShortDateString() },
-                new object[] { "@dtmEndDate", repInfo.dtmEndDate.ToShortDateString() },
-                new object[] { "@intLocationID", repInfo.intLocationID }
+                new object[] { "@dtmEndDate", repInfo.dtmEndDate.ToShortDateString() }
             };
+
+            switch(repInfo.intGroupTimeFrame)
+            {
+                case 1:
+                    startQuery = "SELECT FORMAT(dtmSelectedDate, 'dd/MM/yyyy') AS selection, ";
+                    endQuery = "GROUP BY dtmSelectedDate, varLocationName ORDER BY dtmSelectedDate, varLocationName";
+                    break;
+                case 2:
+                    startQuery = "SELECT FORMAT(CAST(dtmWeekStartDate AS DATE), 'dd/MM/yyyy') AS selection, ";
+                    endQuery = "GROUP BY dtmWeekStartDate, varLocationName ORDER BY dtmWeekStartDate, varLocationName";
+                    break;
+                case 3:
+                    startQuery = "SELECT dtmMonthDate, CONCAT(varMonthName, ' / ', dtmInvoiceYear) AS selection, ";
+                    endQuery = "GROUP BY dtmMonthDate, varLocationName, dtmInvoiceYear, varMonthName ORDER BY dtmMonthDate, dtmInvoiceYear, varMonthName, varLocationName";
+                    break;
+            }
+            sqlCmd = startQuery + sqlCmd + endQuery;
             return ConvertTaxReportFromDataTable(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
         }
         private List<TaxReport> ConvertTaxReportFromDataTable(DataTable dt)
@@ -164,7 +232,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             return taxReport;
         }
 
-        //^^^^^^^^^^^^^^^^^^^^DISCOUNT REPORT^^^^^^^^^^^^^^^^^^^^
+        //^^^^^^^^^^^^^^^^^^^^DISCOUNT REPORT^^^^^^^^^^^^^^^^^^^^ (Working On)
         public int VerifyInvoicesCompleted(ReportInformation repInfo, object[] objPageDetails)
         {
             int indicator = 0;
@@ -200,23 +268,62 @@ namespace SweetSpotDiscountGolfPOS.FP
         {
             string strQueryName = "returnDiscountsBetweenDates";
             //This method returns all invoices with discounts between two dates
-            string sqlCmd = "SELECT TD.intInvoiceID, I2.varInvoiceNumber, I2.intInvoiceSubNumber, I2.dtmInvoiceDate, (SELECT CONCAT(varFirstName, ' ', varLastName) FROM tbl_customers "
-                + "WHERE intCustomerID = I2.intCustomerID) AS customerName, (SELECT CONCAT(varFirstName, ' ', varLastName) FROM tbl_employee WHERE intEmployeeID = I2.intEmployeeID) AS "
-                + "employeeName, I2.fltTotalDiscount, I2.fltBalanceDue, TD.fltGovernmentTaxAmount, TD.fltProvincialTaxAmount, TD.fltLiquorTaxAmount FROM tbl_invoice I2 JOIN(SELECT "
-                + "I.intInvoiceID, IIT.fltGovernmentTaxAmount, IIT.fltProvincialTaxAmount, IIT.fltLiquorTaxAmount FROM tbl_invoice I JOIN tbl_invoiceItem II ON II.intInvoiceID = "
-                + "I.intInvoiceID JOIN(SELECT intInvoiceID, ROUND(ISNULL([GST], 0) + ISNULL([HST], 0), 2) AS fltGovernmentTaxAmount, ROUND(ISNULL([PST], 0) +ISNULL([RST], 0) +ISNULL("
-                + "[QST], 0), 2) AS fltProvincialTaxAmount, ROUND(ISNULL([LCT], 0), 2) AS fltLiquorTaxAmount FROM(SELECT II.intInvoiceID, TT.varTaxName, SUM(IIT.fltTaxAmount) AS "
-                + "fltTaxAmount FROM tbl_invoiceItemTaxes IIT JOIN tbl_taxType TT ON TT.intTaxID = IIT.intTaxTypeID JOIN tbl_invoiceItem II ON II.intInvoiceItemID = "
-                + "IIT.intInvoiceItemID WHERE IIT.bitIsTaxCharged = 1 GROUP BY II.intInvoiceID, TT.varTaxName) PS1 PIVOT(SUM(fltTaxAmount) FOR varTaxName IN([GST], [HST], [PST], "
-                + "[RST], [QST], [LCT])) AS PVT1) IIT ON IIT.intInvoiceID = II.intInvoiceID WHERE fltTotalDiscount <> 0 AND dtmInvoiceDate BETWEEN @dtmStartDate AND @dtmEndDate AND "
-                + "intLocationID = @intLocationID GROUP BY I.intInvoiceID, IIT.fltGovernmentTaxAmount, IIT.fltProvincialTaxAmount, IIT.fltLiquorTaxAmount) TD ON TD.intInvoiceID = "
-                + "I2.intInvoiceID";
+            //string sqlCmd = "SELECT TD.intInvoiceID, I2.varInvoiceNumber, I2.intInvoiceSubNumber, I2.dtmInvoiceDate, (SELECT CONCAT(varFirstName, ' ', varLastName) FROM tbl_customers "
+            //    + "WHERE intCustomerID = I2.intCustomerID) AS customerName, (SELECT CONCAT(varFirstName, ' ', varLastName) FROM tbl_employee WHERE intEmployeeID = I2.intEmployeeID) AS "
+            //    + "employeeName, I2.fltTotalDiscount, I2.fltBalanceDue, TD.fltGovernmentTaxAmount, TD.fltProvincialTaxAmount, TD.fltLiquorTaxAmount FROM tbl_invoice I2 JOIN(SELECT "
+            //    + "I.intInvoiceID, IIT.fltGovernmentTaxAmount, IIT.fltProvincialTaxAmount, IIT.fltLiquorTaxAmount FROM tbl_invoice I JOIN tbl_invoiceItem II ON II.intInvoiceID = "
+            //    + "I.intInvoiceID JOIN(SELECT intInvoiceID, ROUND(ISNULL([GST], 0) + ISNULL([HST], 0), 2) AS fltGovernmentTaxAmount, ROUND(ISNULL([PST], 0) +ISNULL([RST], 0) +ISNULL("
+            //    + "[QST], 0), 2) AS fltProvincialTaxAmount, ROUND(ISNULL([LCT], 0), 2) AS fltLiquorTaxAmount FROM(SELECT II.intInvoiceID, TT.varTaxName, SUM(IIT.fltTaxAmount) AS "
+            //    + "fltTaxAmount FROM tbl_invoiceItemTaxes IIT JOIN tbl_taxType TT ON TT.intTaxID = IIT.intTaxTypeID JOIN tbl_invoiceItem II ON II.intInvoiceItemID = "
+            //    + "IIT.intInvoiceItemID WHERE IIT.bitIsTaxCharged = 1 GROUP BY II.intInvoiceID, TT.varTaxName) PS1 PIVOT(SUM(fltTaxAmount) FOR varTaxName IN([GST], [HST], [PST], "
+            //    + "[RST], [QST], [LCT])) AS PVT1) IIT ON IIT.intInvoiceID = II.intInvoiceID WHERE fltTotalDiscount <> 0 AND dtmInvoiceDate BETWEEN @dtmStartDate AND @dtmEndDate AND "
+            //    + "intLocationID = @intLocationID GROUP BY I.intInvoiceID, IIT.fltGovernmentTaxAmount, IIT.fltProvincialTaxAmount, IIT.fltLiquorTaxAmount) TD ON TD.intInvoiceID = "
+            //    + "I2.intInvoiceID";
+            string varLocationName = "";
+            if(repInfo.intLocationID != 99)
+            {
+                varLocationName = " AND intLocationID = " + repInfo.intLocationID;
+            }
+
+            string sqlCmd = "varLocationName, varInvoiceNumber, ROUND(SUM(fltTotalDiscount), 2) AS fltTotalDiscount, ROUND(SUM(fltBalanceDue), 2) AS fltBalanceDue, "
+                + "ROUND(SUM(fltGovernmentTaxAmount), 2) AS fltGovernmentTaxAmount, ROUND(SUM(fltHarmonnizedTaxAmount), 2) AS fltHarmonnizedTaxAmount, ROUND(SUM("
+                + "fltLiquorTaxAmount), 2) AS fltLiquorTaxAmount, ROUND(SUM(fltProvincialTaxAmount), 2) AS fltProvincialTaxAmount, ROUND(SUM(fltQuebecTaxAmount), 2) "
+                + "AS fltQuebecTaxAmount, ROUND(SUM(fltRetailTaxAmount), 2) AS fltRetailTaxAmount, ROUND(SUM(fltShippingTaxAmount), 2) AS fltShippingTaxAmount FROM "
+                + "(SELECT intInvoiceID, varInvoiceNumber, intInvoiceSubNumber, YEAR(dtmInvoiceDate) AS dtmInvoiceYear, DATENAME(MONTH, dtmInvoiceDate) AS varMonthName, "
+                + "DATEADD(MONTH, DATEDIFF(MONTH, 0, dtmInvoiceDate), 0) AS dtmMonthDate, DATEADD(DAY, 1 - DATEPART(WEEKDAY, dtmInvoiceDate), CAST(dtmInvoiceDate AS DATE"
+                + ")) dtmWeekStartDate, dtmInvoiceDate AS dtmSelectedDate, CASE WHEN varLocationName = 'Golf Traders' THEN varLocationName + ' - ' + varCityName ELSE "
+                + "varLocationName END AS varLocationName, (SELECT CONCAT(varFirstName, ' ', varLastName) FROM tbl_customers WHERE intCustomerID = I.intCustomerID) AS "
+                + "varCustomerName, (SELECT CONCAT(varFirstName, ' ', varLastName) FROM tbl_employee WHERE intEmployeeID = I.intEmployeeID) AS varEmployeeName, "
+                + "fltTotalDiscount, fltBalanceDue, fltGovernmentTaxAmount, 0 AS fltHarmonnizedTaxAmount, fltLiquorTaxAmount, fltProvincialTaxAmount, 0 AS "
+                + "fltQuebecTaxAmount, 0 AS fltRetailTaxAmount, 0 AS fltShippingTaxAmount FROM tbl_invoice I JOIN tbl_location L ON L.intLocationID = I.intLocationID "
+                + "WHERE fltTotalDiscount<> 0 AND dtmInvoiceDate BETWEEN" + varLocationName + ") AS ABC";
+
             object[][] parms =
             {
                 new object[] { "@dtmStartDate", repInfo.dtmStartDate.ToShortDateString() },
-                new object[] { "@dtmEndDate", repInfo.dtmEndDate.ToShortDateString() },
-                new object[] { "@intLocationID", repInfo.intLocationID }
+                new object[] { "@dtmEndDate", repInfo.dtmEndDate.ToShortDateString() }
             };
+
+            string startQuery;
+            string endQuery;
+
+            if (repInfo.intGroupTimeFrame == 1)
+            {
+                startQuery = "SELECT FORMAT(dtmSelectedDate, 'dd/MM/yyyy') AS selection, ";
+                endQuery = "GROUP BY dtmSelectedDate, varLocationName ORDER BY dtmSelectedDate, varLocationName";
+            }
+            else if (repInfo.intGroupTimeFrame == 2)
+            {
+                startQuery = "SELECT FORMAT(CAST(dtmWeekStartDate AS DATE), 'dd/MM/yyyy') AS selection, ";
+                endQuery = "GROUP BY dtmWeekStartDate, varLocationName ORDER BY dtmWeekStartDate, varLocationName";
+            }
+            else
+            {
+                startQuery = "SELECT dtmMonthDate, CONCAT(varMonthName, ' / ', dtmInvoiceYear) AS selection, ";
+                endQuery = "GROUP BY dtmMonthDate, varLocationName, dtmInvoiceYear, varMonthName ORDER BY dtmMonthDate, dtmInvoiceYear, varMonthName, varLocationName";
+            }
+
+            sqlCmd = startQuery + sqlCmd + endQuery;
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
@@ -309,7 +416,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
-        //^^^^^^^^^^^^^^^^^^^^STORE STATS REPORT^^^^^^^^^^^^^^^^^^^^
+        //^^^^^^^^^^^^^^^^^^^^STORE STATS REPORT^^^^^^^^^^^^^^^^^^^^ (Done)
         public int VerifyStatsAvailable(ReportInformation repInfo, object[] objPageDetails)
         {
             int indicator = 0;
@@ -343,11 +450,11 @@ namespace SweetSpotDiscountGolfPOS.FP
         private DataTable ReturnStoreStats(ReportInformation repInfo, object[] objPageDetails)
         {
             string strQueryName = "ReturnStoreStats";
-            string locationName = "";
+            string varLocationName = "";
 
             if (repInfo.intLocationID != 99)
             {
-                locationName = " AND intLocationID = " + repInfo.intLocationID;
+                varLocationName = " AND intLocationID = " + repInfo.intLocationID;
             }
 
             string sqlCmd = "varLocationName, ROUND(SUM(fltGSTCollected) + SUM(fltGSTReturned), 2) AS fltGovernmentTaxAmount, ROUND(SUM(fltHSTCollected) + "
@@ -361,10 +468,11 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "ROUND(SUM(fltSalesDollars), 2), 2) AS fltTotalSales, ROUND(SUM(fltSalesDollars), 2) AS fltSalesDollars FROM (SELECT YEAR(dtmSalesDataDate) AS "
                 + "dtmInvoiceYear, DATENAME(MONTH, dtmSalesDataDate) AS varMonthName, DATEADD(MONTH, DATEDIFF(MONTH, 0, dtmSalesDataDate), 0) AS dtmMonthDate, "
                 + "DATEADD(DAY, 1 - DATEPART(WEEKDAY, dtmSalesDataDate), CAST(dtmSalesDataDate AS DATE)) dtmWeekStartDate, dtmSalesDataDate AS dtmSelectedDate, "
-                + "(SELECT CONCAT(L.varLocationName, '-', L.varCityName) FROM tbl_location L WHERE L.intLocationID = DSD.intLocationID) AS varLocationName, "
+                //+ "(SELECT CONCAT(L.varLocationName, '-', L.varCityName) FROM tbl_location L WHERE L.intLocationID = DSD.intLocationID) AS varLocationName, "
+                + "CASE WHEN varLocationName = 'Golf Traders' THEN varLocationName +' - ' + varCityName ELSE varLocationName END AS varLocationName, "
                 + "fltGSTCollected, fltGSTReturned, fltPSTCollected, fltPSTReturned, fltHSTCollected, fltHSTReturned, fltQSTCollected, fltQSTReturned, "
                 + "fltRSTCollected, fltRSTReturned, fltLCTCollected, fltLCTReturned, fltSalesDollars, fltSubTotal, fltCostGoodsSold FROM tbl_dailySalesData DSD "
-                + "WHERE dtmSalesDataDate BETWEEN @dtmStartDate AND @dtmEndDate" + locationName + ") AS ABC ";
+                + "WHERE dtmSalesDataDate BETWEEN @dtmStartDate AND @dtmEndDate" + varLocationName + ") AS ABC ";
 
             string startQuery;
             string endQuery;

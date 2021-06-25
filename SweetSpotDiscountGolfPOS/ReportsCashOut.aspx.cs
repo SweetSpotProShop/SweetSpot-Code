@@ -16,8 +16,8 @@ namespace SweetSpotDiscountGolfPOS
     {
         readonly ErrorReporting ER = new ErrorReporting();
         readonly CashoutUtilities COU = new CashoutUtilities();
+        readonly LocationManager LM = new LocationManager();
         readonly Reports R = new Reports();
-        DataTable dt = new DataTable();
         CurrentUser CU;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -41,9 +41,22 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         //Gathering the start and end dates
                         ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
+                        Calendar calStartDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalStartDate");
+                        calStartDate.SelectedDate = repInfo.dtmStartDate;
+                        Calendar calEndDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalEndDate");
+                        calEndDate.SelectedDate = repInfo.dtmEndDate;
+                        DropDownList ddlDatePeriod = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlDatePeriod");
+                        ddlDatePeriod.SelectedValue = repInfo.intGroupTimeFrame.ToString();
+                        DropDownList ddlLocation = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlLocation");
+                        DataTable dt = LM.CallReturnLocationDropDown(objPageDetails);
+                        dt.Rows.Add(99, "All Locations");
+                        ddlLocation.DataSource = dt;
+                        ddlLocation.DataBind();
+                        ddlLocation.SelectedValue = repInfo.intLocationID.ToString();
+
                         lblDates.Text = "Cashout report for: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString() + " for " + repInfo.varLocationName;
-                        dt = R.CallReturnCashoutsForSelectedDates(repInfo, objPageDetails);
-                        GrdCashoutByDate.DataSource = dt;
+                        DataTable resultSet = R.CallReturnCashoutsForSelectedDates(repInfo, objPageDetails);
+                        GrdCashoutByDate.DataSource = resultSet;
                         GrdCashoutByDate.DataBind();
                     }
                 }
@@ -69,7 +82,7 @@ namespace SweetSpotDiscountGolfPOS
             {
                 //Gathering the start and end dates
                 ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
-                dt = R.CallReturnCashoutsForSelectedDates(repInfo, objPageDetails);
+                DataTable resultSet = R.CallReturnCashoutsForSelectedDates(repInfo, objPageDetails);
 
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -101,7 +114,7 @@ namespace SweetSpotDiscountGolfPOS
 
                     //salesExport.Cells[2, 2].Value = "Sales Dollars";
                     int recordIndex = 3;
-                    foreach (DataRow row in dt.Rows)
+                    foreach (DataRow row in resultSet.Rows)
                     {
                         //Date
                         DateTime d = (DateTime)row[0];
@@ -193,8 +206,8 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     COU.CallFinalizeCashout(e.CommandArgument.ToString(), objPageDetails);
                     ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
-                    dt = R.CallReturnCashoutsForSelectedDates(repInfo, objPageDetails);
-                    GrdCashoutByDate.DataSource = dt;
+                    DataTable resultSet = R.CallReturnCashoutsForSelectedDates(repInfo, objPageDetails);
+                    GrdCashoutByDate.DataSource = resultSet;
                     GrdCashoutByDate.DataBind();
                 }
             }

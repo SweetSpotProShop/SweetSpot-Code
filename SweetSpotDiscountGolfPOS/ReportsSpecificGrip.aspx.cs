@@ -2,15 +2,18 @@
 using System.Threading;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Linq;
 using SweetSpotDiscountGolfPOS.FP;
 using SweetSpotDiscountGolfPOS.OB;
 using SweetSpotDiscountGolfPOS.Misc;
+using System.Data;
 
 namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsSpecificGrip : System.Web.UI.Page
     {
         readonly ErrorReporting ER = new ErrorReporting();
+        readonly LocationManager LM = new LocationManager();
         readonly Reports R = new Reports();
         CurrentUser CU;
 
@@ -33,13 +36,30 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    CU = (CurrentUser)Session["currentUser"];
-                    //Gathering the start and end dates
-                    ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
-                    //Builds string to display in label
-                    lblDates.Text = "Grips sold through: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString();
-                    GrdStats.DataSource = R.CallReturnSpecificGripDataTableForReport(repInfo, objPageDetails);
-                    GrdStats.DataBind();
+                    if (!IsPostBack)
+                    {
+                        CU = (CurrentUser)Session["currentUser"];
+                        //Gathering the start and end dates
+                        ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
+
+                        Calendar calStartDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalStartDate");
+                        calStartDate.SelectedDate = repInfo.dtmStartDate;
+                        Calendar calEndDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalEndDate");
+                        calEndDate.SelectedDate = repInfo.dtmEndDate;
+                        DropDownList ddlDatePeriod = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlDatePeriod");
+                        ddlDatePeriod.SelectedValue = repInfo.intGroupTimeFrame.ToString();
+                        DropDownList ddlLocation = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlLocation");
+                        DataTable dt = LM.CallReturnLocationDropDown(objPageDetails);
+                        dt.Rows.Add(99, "All Locations");
+                        ddlLocation.DataSource = dt;
+                        ddlLocation.DataBind();
+                        ddlLocation.SelectedValue = repInfo.intLocationID.ToString();
+
+                        //Builds string to display in label
+                        lblDates.Text = "Grips sold through: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString();
+                        GrdStats.DataSource = R.CallReturnSpecificGripDataTableForReport(repInfo, objPageDetails);
+                        GrdStats.DataBind();
+                    }
                 }
             }
             //Exception catch

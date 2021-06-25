@@ -41,15 +41,31 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    CU = (CurrentUser)Session["currentUser"];
-                    //Gathering the start and end dates
-                    ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
-                    //Builds string to display in label
-                    lblReportDate.Text = "Discount Report on: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString() + " for " + repInfo.varLocationName;
-                    DataTable discounts = R.CallReturnDiscountsBetweenDates(repInfo, objPageDetails);
-                    GrdInvoiceDisplay.DataSource = discounts;
-                    GrdInvoiceDisplay.DataBind();
+                    if (!IsPostBack)
+                    {
+                        CU = (CurrentUser)Session["currentUser"];
+                        //Gathering the start and end dates
+                        ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
 
+                        Calendar calStartDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalStartDate");
+                        calStartDate.SelectedDate = repInfo.dtmStartDate;
+                        Calendar calEndDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalEndDate");
+                        calEndDate.SelectedDate = repInfo.dtmEndDate;
+                        DropDownList ddlDatePeriod = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlDatePeriod");
+                        ddlDatePeriod.SelectedValue = repInfo.intGroupTimeFrame.ToString();
+                        DropDownList ddlLocation = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlLocation");
+                        DataTable dt = LM.CallReturnLocationDropDown(objPageDetails);
+                        dt.Rows.Add(99, "All Locations");
+                        ddlLocation.DataSource = dt;
+                        ddlLocation.DataBind();
+                        ddlLocation.SelectedValue = repInfo.intLocationID.ToString();
+
+                        //Builds string to display in label
+                        lblReportDate.Text = "Discount Report on: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString() + " for " + repInfo.varLocationName;
+                        DataTable resultSet = R.CallReturnDiscountsBetweenDates(repInfo, objPageDetails);
+                        GrdInvoiceDisplay.DataSource = resultSet;
+                        GrdInvoiceDisplay.DataBind();
+                    }
                 }
             }
             //Exception catch

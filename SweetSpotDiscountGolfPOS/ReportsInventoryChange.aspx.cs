@@ -3,12 +3,15 @@ using System.Threading;
 using SweetSpotDiscountGolfPOS.FP;
 using SweetSpotDiscountGolfPOS.OB;
 using SweetSpotDiscountGolfPOS.Misc;
+using System.Web.UI.WebControls;
+using System.Data;
 
 namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsInventoryChange : System.Web.UI.Page
     {
         readonly ErrorReporting ER = new ErrorReporting();
+        readonly LocationManager LM = new LocationManager();
         readonly Reports R = new Reports();
         CurrentUser CU;
 
@@ -28,13 +31,30 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    CU = (CurrentUser)Session["currentUser"];
-                    //Gathering the start and end dates
-                    ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
-                    //Builds string to display in label
-                    lblDates.Text = "Changes in Inventory for: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString();
-                    grdStats.DataSource = R.CallReturnChangedInventoryForDateRange(repInfo, objPageDetails);
-                    grdStats.DataBind();
+                    if (!IsPostBack)
+                    {
+                        CU = (CurrentUser)Session["currentUser"];
+                        //Gathering the start and end dates
+                        ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
+
+                        Calendar calStartDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalStartDate");
+                        calStartDate.SelectedDate = repInfo.dtmStartDate;
+                        Calendar calEndDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalEndDate");
+                        calEndDate.SelectedDate = repInfo.dtmEndDate;
+                        DropDownList ddlDatePeriod = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlDatePeriod");
+                        ddlDatePeriod.SelectedValue = repInfo.intGroupTimeFrame.ToString();
+                        DropDownList ddlLocation = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlLocation");
+                        DataTable dt = LM.CallReturnLocationDropDown(objPageDetails);
+                        dt.Rows.Add(99, "All Locations");
+                        ddlLocation.DataSource = dt;
+                        ddlLocation.DataBind();
+                        ddlLocation.SelectedValue = repInfo.intLocationID.ToString();
+
+                        //Builds string to display in label
+                        lblDates.Text = "Changes in Inventory for: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString();
+                        grdStats.DataSource = R.CallReturnChangedInventoryForDateRange(repInfo, objPageDetails);
+                        grdStats.DataBind();
+                    }
                 }
             }
             //Exception catch
