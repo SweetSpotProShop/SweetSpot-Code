@@ -4,6 +4,7 @@ using System.IO;
 using SweetSpotDiscountGolfPOS.FP;
 using SweetSpotDiscountGolfPOS.OB;
 using SweetSpotDiscountGolfPOS.Misc;
+using System.Data;
 
 namespace SweetSpotDiscountGolfPOS
 {
@@ -38,7 +39,11 @@ namespace SweetSpotDiscountGolfPOS
                         //Sets the calendar and text boxes start and end dates
                         CalStartDate.SelectedDate = DateTime.Today;
                         CalEndDate.SelectedDate = DateTime.Today;
-                        ddlLocation.DataSource = LM.CallReturnLocationDropDown(objPageDetails);
+
+
+                        DataTable dt = LM.CallReturnLocationDropDown(objPageDetails);
+                        dt.Rows.Add(99, "All Locations");
+                        ddlLocation.DataSource = dt;
                         ddlLocation.DataBind();
                         ddlLocation.SelectedValue = CU.location.intLocationID.ToString();
                     }
