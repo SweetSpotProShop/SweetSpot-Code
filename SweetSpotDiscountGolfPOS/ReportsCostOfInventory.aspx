@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/ReportingMPage.Master" CodeBehind="ReportsCostOfInventory.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.ReportsCostOfInventory" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/MasterPage.Master" CodeBehind="ReportsCostOfInventory.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.ReportsCostOfInventory" %>
 
 <asp:Content ID="ReportsPageContent" ContentPlaceHolderID="IndividualPageContent" runat="server">
     <style media="print">

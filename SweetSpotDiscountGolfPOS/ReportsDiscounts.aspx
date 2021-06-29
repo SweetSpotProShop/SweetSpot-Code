@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/ReportingMPage.Master" AutoEventWireup="true" CodeBehind="ReportsDiscounts.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.ReportDiscounts" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="ReportsDiscounts.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.ReportDiscounts" %>
 
 <asp:Content ID="ReportsPageContent" ContentPlaceHolderID="IndividualPageContent" runat="server">
     <style media="print">
@@ -55,7 +55,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Customer Name" HeaderStyle-Width="18%">
                         <ItemTemplate>
-                            <asp:Label ID="lblCustomerName" runat="server" Text='<%#Eval("customerName") %>' />
+                            <asp:Label ID="lblCustomerName" runat="server" Text='<%#Eval("varCustomerName") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Discount" HeaderStyle-Width="17%">
@@ -70,7 +70,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Employee Name" HeaderStyle-Width="18%">
                         <ItemTemplate>
-                            <asp:Label ID="lblEmployeeName" runat="server" Text='<%#Eval("employeeName") %>' />
+                            <asp:Label ID="lblEmployeeName" runat="server" Text='<%#Eval("varEmployeeName") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>

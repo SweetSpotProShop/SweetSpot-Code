@@ -53,18 +53,18 @@ namespace SweetSpotDiscountGolfPOS
                         //Gathering the start and end dates
                         ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
 
-                        Calendar calStartDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalStartDate");
-                        calStartDate.SelectedDate = repInfo.dtmStartDate;
-                        Calendar calEndDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalEndDate");
-                        calEndDate.SelectedDate = repInfo.dtmEndDate;
-                        DropDownList ddlDatePeriod = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlDatePeriod");
-                        ddlDatePeriod.SelectedValue = repInfo.intGroupTimeFrame.ToString();
-                        DropDownList ddlLocation = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlLocation");
-                        DataTable dt = LM.CallReturnLocationDropDown(objPageDetails);
-                        dt.Rows.Add(99, "All Locations");
-                        ddlLocation.DataSource = dt;
-                        ddlLocation.DataBind();
-                        ddlLocation.SelectedValue = repInfo.intLocationID.ToString();
+                        //Calendar calStartDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalStartDate");
+                        //calStartDate.SelectedDate = repInfo.dtmStartDate;
+                        //Calendar calEndDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalEndDate");
+                        //calEndDate.SelectedDate = repInfo.dtmEndDate;
+                        //DropDownList ddlDatePeriod = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlDatePeriod");
+                        //ddlDatePeriod.SelectedValue = repInfo.intGroupTimeFrame.ToString();
+                        //DropDownList ddlLocation = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlLocation");
+                        //DataTable dt = LM.CallReturnLocationDropDown(objPageDetails);
+                        //dt.Rows.Add(99, "All Locations");
+                        //ddlLocation.DataSource = dt;
+                        //ddlLocation.DataBind();
+                        //ddlLocation.SelectedValue = repInfo.intLocationID.ToString();
 
                         //Builds string to display in label
                         lblDates.Text = "Extensive Invoice Report on: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString() + " for " + repInfo.varLocationName;

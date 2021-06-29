@@ -36,7 +36,6 @@
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:DropDownList ID="ddlDatePeriod" runat="server" AutoPostBack="false">
-							<asp:ListItem Text="Invoice" Value="0" />
                             <asp:ListItem Text="Day" Value="1" />
                             <asp:ListItem Text="Week" Value="2" />
                             <asp:ListItem Text="Month" Value="3" />
