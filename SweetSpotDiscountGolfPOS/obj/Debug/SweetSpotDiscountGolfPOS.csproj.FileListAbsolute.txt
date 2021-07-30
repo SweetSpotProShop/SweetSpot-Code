@@ -21,3 +21,4 @@ C:\Users\Voltron\Desktop\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\Sweet
 C:\Users\Voltron\Desktop\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.csproj.CopyComplete
 C:\Users\Voltron\Desktop\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.dll
 C:\Users\Voltron\Desktop\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.pdb
+C:\Users\Voltron\Desktop\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.csprojAssemblyReference.cache
