@@ -29,14 +29,9 @@ namespace SweetSpotDiscountGolfPOS.OB
         public double fltQuebecTaxAmount { get; set; }
         public double fltRetailTaxAmount { get; set; }
         public int intTransactionTypeID { get; set; }
-        //public string varTransactionName { get; set; }
         public string varAdditionalInformation { get; set; }
-        //public bool bitChargeGST { get; set; }
-        //public bool bitChargePST { get; set; }
-        //public bool bitChargeLCT { get; set; }
         public List<InvoiceItems> invoiceItems { get; set; }
         public List<InvoiceMOPs> invoiceMops { get; set; }
-        //public List<InvoiceItemTax> invoiceItemTaxes { get; set; }
 
         public Invoice() { }
     }

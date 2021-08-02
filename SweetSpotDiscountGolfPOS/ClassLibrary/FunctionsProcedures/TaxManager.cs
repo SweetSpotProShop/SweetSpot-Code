@@ -12,8 +12,6 @@ namespace SweetSpotDiscountGolfPOS.FP
     {
         readonly DatabaseCalls DBC = new DatabaseCalls();
 
-
-        
         //Converters
         private List<Tax> ConvertFromDataTableToTax(DataTable dt)
         {
