@@ -56,13 +56,14 @@ namespace SweetSpotDiscountGolfPOS
                                 customer = CM.CallReturnCustomer(Convert.ToInt32(Request.QueryString["customer"].ToString()), objPageDetails)[0],
                                 employee = CU.employee,
                                 location = CU.location,
+                                intShippingProvinceID = CU.location.intProvinceID,
                                 fltGovernmentTaxAmount = 0,
-                                fltProvincialTaxAmount = 0,
+                                fltHarmonizedTaxAmount = 0,
                                 fltLiquorTaxAmount = 0,
+                                fltProvincialTaxAmount = 0,
+                                fltQuebecTaxAmount = 0,
+                                fltRetailTaxAmount = 0,
                                 bitIsShipping = false,
-                                //newInvoice.bitChargeGST = true;
-                                //newInvoice.bitChargePST = true;
-                                //newInvoice.bitChargeLCT = true;
                                 intTransactionTypeID = 1,
                                 varAdditionalInformation = ""
                             };

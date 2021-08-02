@@ -638,60 +638,102 @@ namespace SweetSpotDiscountGolfPOS
                 string provincialName = "PST";
                 string liquorName = "LCT";
                 double governmentTax = 0;
-                double provincialTax = 0;
+                double harmonizedTax = 0;
                 double liquorTax = 0;
+                double provincialTax = 0;
+                double quebecTax = 0;
+                double retailTax = 0;
 
                 foreach (var invoiceItem in invoice.invoiceItems)
                 {
                     foreach (var invoiceItemTax in invoiceItem.invoiceItemTaxes)
                     {
-                        if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("GST", objPageDetails) || invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("HST", objPageDetails))
+                        if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("GST", objPageDetails))
                         {
                             if (invoiceItemTax.bitIsTaxCharged)
                             {
+                                governmentName = invoiceItemTax.varTaxName.ToString();
                                 governmentTax += invoiceItemTax.fltTaxAmount;
                                 lblGovernment.Visible = true;
                                 lblGovernment.Text = invoiceItemTax.varTaxName;
                                 lblGovernmentAmount.Visible = true;
                                 BtnRemoveGov.Visible = true;
-                                BtnRemoveGov.Text = "Remove " + invoiceItemTax.varTaxName.ToString();
+                                BtnRemoveGov.Text = "Remove " + governmentName.ToString();
                             }
-                            governmentName = invoiceItemTax.varTaxName.ToString();
                         }
-                        else if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("PST", objPageDetails) || invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("RST", objPageDetails) || invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("QST", objPageDetails))
+                        else if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("HST", objPageDetails))
                         {
                             if (invoiceItemTax.bitIsTaxCharged)
                             {
-                                provincialTax += invoiceItemTax.fltTaxAmount;
-                                lblProvincial.Visible = true;
-                                lblProvincial.Text = invoiceItemTax.varTaxName;
-                                lblProvincialAmount.Visible = true;
-                                BtnRemoveProv.Visible = true;
-                                BtnRemoveProv.Text = "Remove " + invoiceItemTax.varTaxName.ToString();
+                                governmentName = invoiceItemTax.varTaxName.ToString();
+                                harmonizedTax += invoiceItemTax.fltTaxAmount;
+                                lblGovernment.Visible = true;
+                                lblGovernment.Text = invoiceItemTax.varTaxName;
+                                lblGovernmentAmount.Visible = true;
+                                BtnRemoveGov.Visible = true;
+                                BtnRemoveGov.Text = "Remove " + governmentName.ToString();
                             }
-                            provincialName = invoiceItemTax.varTaxName.ToString();
                         }
                         else if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("LCT", objPageDetails))
                         {
                             if (invoiceItemTax.bitIsTaxCharged)
                             {
+                                liquorName = invoiceItemTax.varTaxName.ToString();
                                 liquorTax += invoiceItemTax.fltTaxAmount;
                                 lblLiquorTax.Visible = true;
                                 lblLiquorTax.Text = invoiceItemTax.varTaxName;
                                 lblLiquorTaxAmount.Visible = true;
                                 BtnRemoveLiq.Visible = true;
-                                BtnRemoveLiq.Text = "Remove " + invoiceItemTax.varTaxName.ToString();
+                                BtnRemoveLiq.Text = "Remove " + liquorName.ToString();
                             }
-                            liquorName = invoiceItemTax.varTaxName.ToString();
+                        }
+                        else if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("PST", objPageDetails))
+                        {
+                            if (invoiceItemTax.bitIsTaxCharged)
+                            {
+                                provincialName = invoiceItemTax.varTaxName.ToString();
+                                provincialTax += invoiceItemTax.fltTaxAmount;
+                                lblProvincial.Visible = true;
+                                lblProvincial.Text = invoiceItemTax.varTaxName;
+                                lblProvincialAmount.Visible = true;
+                                BtnRemoveProv.Visible = true;
+                                BtnRemoveProv.Text = "Remove " + provincialName.ToString();
+                            }
+                        }
+                        else if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("QST", objPageDetails))
+                        {
+                            if (invoiceItemTax.bitIsTaxCharged)
+                            {
+                                provincialName = invoiceItemTax.varTaxName.ToString();
+                                quebecTax += invoiceItemTax.fltTaxAmount;
+                                lblProvincial.Visible = true;
+                                lblProvincial.Text = invoiceItemTax.varTaxName;
+                                lblProvincialAmount.Visible = true;
+                                BtnRemoveProv.Visible = true;
+                                BtnRemoveProv.Text = "Remove " + provincialName.ToString();
+                            }
+                        }
+                        else if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("RST", objPageDetails))
+                        {
+                            if (invoiceItemTax.bitIsTaxCharged)
+                            {
+                                provincialName = invoiceItemTax.varTaxName.ToString();
+                                retailTax += invoiceItemTax.fltTaxAmount;
+                                lblProvincial.Visible = true;
+                                lblProvincial.Text = invoiceItemTax.varTaxName;
+                                lblProvincialAmount.Visible = true;
+                                BtnRemoveProv.Visible = true;
+                                BtnRemoveProv.Text = "Remove " + provincialName.ToString();
+                            }
                         }
                     }
                 }
 
-                if (governmentTax == 0)
+                if (governmentTax == 0 && harmonizedTax == 0)
                 {
                     BtnRemoveGov.Text = "Add " + governmentName.ToString();
                 }
-                if (provincialTax == 0)
+                if (provincialTax == 0 && quebecTax == 0 && retailTax == 0)
                 {
                     BtnRemoveProv.Text = "Add " + provincialName.ToString();
                 }
@@ -700,11 +742,11 @@ namespace SweetSpotDiscountGolfPOS
                     BtnRemoveLiq.Text = "Add " + liquorName.ToString();
                 }
 
-                lblGovernmentAmount.Text = governmentTax.ToString("C");
-                lblProvincialAmount.Text = provincialTax.ToString("C");
+                lblGovernmentAmount.Text = (governmentTax + harmonizedTax).ToString("C");
+                lblProvincialAmount.Text = (provincialTax + quebecTax + retailTax).ToString("C");
                 lblLiquorTaxAmount.Text = liquorTax.ToString("C");
 
-                double tx = governmentTax + provincialTax + liquorTax;
+                double tx = governmentTax + harmonizedTax + liquorTax + provincialTax + quebecTax + retailTax;
 
                 //***Assign each item to its Label.
                 lblTotalInCartAmount.Text = (invoice.fltSubTotal + invoice.fltTotalDiscount - invoice.fltTotalTradeIn).ToString("C");
@@ -717,6 +759,15 @@ namespace SweetSpotDiscountGolfPOS
                 lblRemainingBalanceDueDisplay.Text = ((invoice.fltBalanceDue + invoice.fltShippingCharges + tx) - dblAmountPaid).ToString("C");
                 txtAmountPaying.Text = ((invoice.fltBalanceDue + invoice.fltShippingCharges + tx) - dblAmountPaid).ToString("#0.00");
                 ButtonDisable(((invoice.fltBalanceDue + invoice.fltShippingCharges + tx) - dblAmountPaid));
+
+
+                invoice.fltGovernmentTaxAmount = governmentTax;
+                invoice.fltHarmonizedTaxAmount = harmonizedTax;
+                invoice.fltLiquorTaxAmount = liquorTax;
+                invoice.fltProvincialTaxAmount = provincialTax;
+                invoice.fltQuebecTaxAmount = quebecTax;
+                invoice.fltRetailTaxAmount = retailTax;
+                IM.CallUpdateCurrentInvoice(invoice, objPageDetails);
             }
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
