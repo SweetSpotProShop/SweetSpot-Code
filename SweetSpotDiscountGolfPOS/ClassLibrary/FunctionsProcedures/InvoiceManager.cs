@@ -266,12 +266,12 @@ namespace SweetSpotDiscountGolfPOS.FP
                 fltShippingCharges = row.Field<double>("fltShippingCharges"),
                 fltTotalDiscount = row.Field<double>("fltTotalDiscount"),
                 fltTotalTradeIn = row.Field<double>("fltTotalTradeIn"),
-                fltGovernmentTaxAmount = row.Field<int>("fltGovernmentTaxAmount"),
-                fltHarmonizedTaxAmount = row.Field<int>("fltHarmonizedTaxAmount"),
-                fltLiquorTaxAmount = row.Field<int>("fltLiquorTaxAmount"),
-                fltProvincialTaxAmount = row.Field<int>("fltProvincialTaxAmount"),
-                fltQuebecTaxAmount = row.Field<int>("fltQuebecTaxAmount"),
-                fltRetailTaxAmount = row.Field<int>("fltRetailTaxAmount"),
+                fltGovernmentTaxAmount = row.Field<double>("fltGovernmentTaxAmount"),
+                fltHarmonizedTaxAmount = row.Field<double>("fltHarmonizedTaxAmount"),
+                fltLiquorTaxAmount = row.Field<double>("fltLiquorTaxAmount"),
+                fltProvincialTaxAmount = row.Field<double>("fltProvincialTaxAmount"),
+                fltQuebecTaxAmount = row.Field<double>("fltQuebecTaxAmount"),
+                fltRetailTaxAmount = row.Field<double>("fltRetailTaxAmount"),
                 fltBalanceDue = row.Field<double>("fltBalanceDue"),
                 intTransactionTypeID = row.Field<int>("intTransactionTypeID"),
                 varAdditionalInformation = row.Field<string>("varAdditionalInformation")
@@ -449,7 +449,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             string strQueryName = "ReturnInvoicesBasedOnSearchForReturns";
             string sqlCmd = "SELECT I.intInvoiceID, I.varInvoiceNumber, I.intInvoiceSubNumber, I.dtmInvoiceDate, I.intCustomerID, I.intLocationID, "
                 + "(I.fltBalanceDue + I.fltShippingTaxAmount + I.fltGovernmentTaxAmount + I.fltHarmonizedTaxAmount + I.fltLiquorTaxAmount + "
-                + "I.fltProvincailTaxAmount + fltQuebecTaxAmount + fltRetailTaxAmount) AS fltBalanceDue FROM tbl_invoice I JOIN tbl_customers C "
+                + "I.fltProvincialTaxAmount + fltQuebecTaxAmount + fltRetailTaxAmount) AS fltBalanceDue FROM tbl_invoice I JOIN tbl_customers C "
                 + "ON I.intCustomerID = C.intCustomerID WHERE I.intInvoiceSubNumber = 1 AND (I.dtmInvoiceDate = @selectedDate";
 
             if (txtSearch != "")
