@@ -580,7 +580,7 @@ namespace SweetSpotDiscountGolfPOS
                     }
                 }
                 //MessageBoxCustom.ShowMessage("PDFs between " + CalStartDate.SelectedDate.ToString("dd.MM.yyyy") + " and " + CalEndDate.SelectedDate.ToString("dd.MM.yyyy") + " have been created.", this);
-                MessageBoxCustom.ShowMessage("Daily Sales data between " + CalStartDate.SelectedDate.ToString("dd.MM.yyyy") + " and " + CalEndDate.SelectedDate.ToString("dd.MM.yyyy") + " have been added to database.", this);
+                //MessageBoxCustom.ShowMessage("Daily Sales data between " + CalStartDate.SelectedDate.ToString("dd.MM.yyyy") + " and " + CalEndDate.SelectedDate.ToString("dd.MM.yyyy") + " have been added to database.", this);
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
