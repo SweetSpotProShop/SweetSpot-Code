@@ -13,6 +13,7 @@ namespace SweetSpotDiscountGolfPOS
     {
         readonly ErrorReporting ER = new ErrorReporting();
         readonly InvoiceManager IM = new InvoiceManager();
+        readonly TaxManager TM = new TaxManager();
         CurrentUser CU;
         //List<Tax> t = new List<Tax>();
         //TaxManager TM = new TaxManager();
@@ -403,16 +404,20 @@ namespace SweetSpotDiscountGolfPOS
                 gvCurrentMOPs.DataBind();
 
 
+
                 double governmentTax = 0;
-                double provincialTax = 0;
+                double harmonizedTax = 0;
                 double liquorTax = 0;
+                double provincialTax = 0;
+                double quebecTax = 0;
+                double retailTax = 0;
 
 
-                foreach(var invoiceItem in returnInvoice.invoiceItems)
+                foreach (var invoiceItem in returnInvoice.invoiceItems)
                 {
                     foreach(var invoiceItemTax in invoiceItem.invoiceItemTaxes)
                     {
-                        if(invoiceItemTax.intTaxTypeID == 1 || invoiceItemTax.intTaxTypeID == 3)
+                        if(invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("GST", objPageDetails))
                         {
                             if (invoiceItemTax.bitIsTaxCharged)
                             {
@@ -422,17 +427,17 @@ namespace SweetSpotDiscountGolfPOS
                                 lblGovernmentAmount.Visible = true;
                             }
                         }
-                        else if(invoiceItemTax.intTaxTypeID == 2 || invoiceItemTax.intTaxTypeID == 4 || invoiceItemTax.intTaxTypeID == 5)
+                        else if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("HST", objPageDetails))
                         {
                             if (invoiceItemTax.bitIsTaxCharged)
                             {
-                                provincialTax += invoiceItemTax.fltTaxAmount;
-                                lblProvincial.Visible = true;
-                                lblProvincial.Text = invoiceItemTax.varTaxName;
-                                lblProvincialAmount.Visible = true;
+                                harmonizedTax += invoiceItemTax.fltTaxAmount;
+                                lblGovernment.Visible = true;
+                                lblGovernment.Text = invoiceItemTax.varTaxName;
+                                lblGovernmentAmount.Visible = true;
                             }
                         }
-                        else if(invoiceItemTax.intTaxTypeID == 6)
+                        else if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("LCT", objPageDetails))
                         {
                             if (invoiceItemTax.bitIsTaxCharged)
                             {
@@ -442,14 +447,44 @@ namespace SweetSpotDiscountGolfPOS
                                 lblLiquorTaxAmount.Visible = true;
                             }
                         }
+                        else if(invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("PST", objPageDetails))
+                        {
+                            if (invoiceItemTax.bitIsTaxCharged)
+                            {
+                                provincialTax += invoiceItemTax.fltTaxAmount;
+                                lblProvincial.Visible = true;
+                                lblProvincial.Text = invoiceItemTax.varTaxName;
+                                lblProvincialAmount.Visible = true;
+                            }
+                        }
+                        else if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("QST", objPageDetails))
+                        {
+                            if (invoiceItemTax.bitIsTaxCharged)
+                            {
+                                quebecTax += invoiceItemTax.fltTaxAmount;
+                                lblProvincial.Visible = true;
+                                lblProvincial.Text = invoiceItemTax.varTaxName;
+                                lblProvincialAmount.Visible = true;
+                            }
+                        }
+                        else if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("RST", objPageDetails))
+                        {
+                            if (invoiceItemTax.bitIsTaxCharged)
+                            {
+                                retailTax += invoiceItemTax.fltTaxAmount;
+                                lblProvincial.Visible = true;
+                                lblProvincial.Text = invoiceItemTax.varTaxName;
+                                lblProvincialAmount.Visible = true;
+                            }
+                        }
                     }
                 }
 
-                lblGovernmentAmount.Text = governmentTax.ToString("C");
-                lblProvincialAmount.Text = provincialTax.ToString("C");
+                lblGovernmentAmount.Text = (governmentTax + harmonizedTax).ToString("C");
+                lblProvincialAmount.Text = (provincialTax + quebecTax + retailTax).ToString("C");
                 lblLiquorTaxAmount.Text = liquorTax.ToString("C");
 
-                double tx = governmentTax + provincialTax + liquorTax;
+                double tx = governmentTax + harmonizedTax + liquorTax + provincialTax + quebecTax + retailTax;
 
                 //Displays the remaining balance
                 lblRefundBalanceAmount.Text = (returnInvoice.fltBalanceDue + tx).ToString("C");
@@ -457,6 +492,14 @@ namespace SweetSpotDiscountGolfPOS
                 lblRemainingRefundDisplay.Text = ((returnInvoice.fltBalanceDue + tx) - dblAmountPaid).ToString("C");
                 txtAmountRefunding.Text = ((returnInvoice.fltBalanceDue + tx) - dblAmountPaid).ToString("#0.00");
                 ButtonDisable((returnInvoice.fltBalanceDue + tx) - dblAmountPaid);
+
+                returnInvoice.fltGovernmentTaxAmount = governmentTax;
+                returnInvoice.fltHarmonizedTaxAmount = harmonizedTax;
+                returnInvoice.fltLiquorTaxAmount = liquorTax;
+                returnInvoice.fltProvincialTaxAmount = provincialTax;
+                returnInvoice.fltQuebecTaxAmount = quebecTax;
+                returnInvoice.fltRetailTaxAmount = retailTax;
+                IM.CallUpdateCurrentInvoice(returnInvoice, objPageDetails);
             }
             //Exception catch
             catch (ThreadAbortException) { }

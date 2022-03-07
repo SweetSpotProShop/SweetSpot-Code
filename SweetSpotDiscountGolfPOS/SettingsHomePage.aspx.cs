@@ -413,122 +413,122 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
-        protected void BtnExportInvoices_Click(object sender, EventArgs e)
-        {
-            //Collects current method for error tracking
-            string method = "BtnExportInvoices_Click";
-            //object[] objPageDetails = { Session["currPage"].ToString(), method };
-            try
-            {
-                //Sets up database connection
-                string connectionString = ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString;
-                SqlConnection sqlCon = new SqlConnection(connectionString);
-                //Selects everything form the invoice table
-                DataTable dtim = new DataTable();
-                using (var cmd = new SqlCommand("getInvoiceAll", sqlCon)) //Calling the SP   
-                using (var da = new SqlDataAdapter(cmd))
-                {
-                    //Executing the SP
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    da.Fill(dtim);
-                }
-                DataColumnCollection dcimHeaders = dtim.Columns;
-                //Selects everything form the invoice item table
-                DataTable dtii = new DataTable();
-                using (var cmd = new SqlCommand("getInvoiceItemAll", sqlCon)) //Calling the SP   
-                using (var da = new SqlDataAdapter(cmd))
-                {
-                    //Executing the SP
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    da.Fill(dtii);
-                }
-                DataColumnCollection dciiHeaders = dtii.Columns;
-                //Selects everything form the invoice mop table
-                DataTable dtimo = new DataTable();
-                using (var cmd = new SqlCommand("getInvoiceMOPAll", sqlCon)) //Calling the SP   
-                using (var da = new SqlDataAdapter(cmd))
-                {
-                    //Executing the SP
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    da.Fill(dtimo);
-                }
-                DataColumnCollection dcimoHeaders = dtimo.Columns;
-                //Sets path and file name to download report to
-                string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-                string pathDownload = (pathUser + "\\Downloads\\");
-                FileInfo newFile = new FileInfo(pathDownload + "InvoiceReport.xlsx");
-                using (ExcelPackage xlPackage = new ExcelPackage(newFile))
-                {
-                    //Creates a seperate sheet for each data table
-                    ExcelWorksheet invoiceMain = xlPackage.Workbook.Worksheets.Add("Invoice Main");
-                    ExcelWorksheet invoiceItems = xlPackage.Workbook.Worksheets.Add("Invoice Items");
-                    ExcelWorksheet invoiceMOPS = xlPackage.Workbook.Worksheets.Add("Invoice MOPS");
-                    // write to sheet                  
+        //protected void BtnExportInvoices_Click(object sender, EventArgs e)
+        //{
+        //    //Collects current method for error tracking
+        //    string method = "BtnExportInvoices_Click";
+        //    //object[] objPageDetails = { Session["currPage"].ToString(), method };
+        //    try
+        //    {
+        //        //Sets up database connection
+        //        string connectionString = ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString;
+        //        SqlConnection sqlCon = new SqlConnection(connectionString);
+        //        //Selects everything form the invoice table
+        //        DataTable dtim = new DataTable();
+        //        using (var cmd = new SqlCommand("getInvoiceAll", sqlCon)) //Calling the SP   
+        //        using (var da = new SqlDataAdapter(cmd))
+        //        {
+        //            //Executing the SP
+        //            cmd.CommandType = CommandType.StoredProcedure;
+        //            da.Fill(dtim);
+        //        }
+        //        DataColumnCollection dcimHeaders = dtim.Columns;
+        //        //Selects everything form the invoice item table
+        //        DataTable dtii = new DataTable();
+        //        using (var cmd = new SqlCommand("getInvoiceItemAll", sqlCon)) //Calling the SP   
+        //        using (var da = new SqlDataAdapter(cmd))
+        //        {
+        //            //Executing the SP
+        //            cmd.CommandType = CommandType.StoredProcedure;
+        //            da.Fill(dtii);
+        //        }
+        //        DataColumnCollection dciiHeaders = dtii.Columns;
+        //        //Selects everything form the invoice mop table
+        //        DataTable dtimo = new DataTable();
+        //        using (var cmd = new SqlCommand("getInvoiceMOPAll", sqlCon)) //Calling the SP   
+        //        using (var da = new SqlDataAdapter(cmd))
+        //        {
+        //            //Executing the SP
+        //            cmd.CommandType = CommandType.StoredProcedure;
+        //            da.Fill(dtimo);
+        //        }
+        //        DataColumnCollection dcimoHeaders = dtimo.Columns;
+        //        //Sets path and file name to download report to
+        //        string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        //        string pathDownload = (pathUser + "\\Downloads\\");
+        //        FileInfo newFile = new FileInfo(pathDownload + "InvoiceReport.xlsx");
+        //        using (ExcelPackage xlPackage = new ExcelPackage(newFile))
+        //        {
+        //            //Creates a seperate sheet for each data table
+        //            ExcelWorksheet invoiceMain = xlPackage.Workbook.Worksheets.Add("Invoice Main");
+        //            ExcelWorksheet invoiceItems = xlPackage.Workbook.Worksheets.Add("Invoice Items");
+        //            ExcelWorksheet invoiceMOPS = xlPackage.Workbook.Worksheets.Add("Invoice MOPS");
+        //            // write to sheet                  
 
-                    //Export main invoice
-                    for (int i = 1; i <= dtim.Rows.Count; i++)
-                    {
-                        for (int j = 1; j < dtim.Columns.Count + 1; j++)
-                        {
-                            if (i == 1)
-                            {
-                                invoiceMain.Cells[i, j].Value = dcimHeaders[j - 1].ToString();
-                            }
-                            else
-                            {
-                                invoiceMain.Cells[i, j].Value = dtim.Rows[i - 1][j - 1];
-                            }
-                        }
-                    }
-                    //Export item invoice
-                    for (int i = 1; i <= dtii.Rows.Count; i++)
-                    {
-                        for (int j = 1; j < dtii.Columns.Count + 1; j++)
-                        {
-                            if (i == 1)
-                            {
-                                invoiceItems.Cells[i, j].Value = dciiHeaders[j - 1].ToString();
-                            }
-                            else
-                            {
-                                invoiceItems.Cells[i, j].Value = dtii.Rows[i - 1][j - 1];
-                            }
-                        }
-                    }
-                    //Export mop invoice
-                    for (int i = 1; i <= dtimo.Rows.Count; i++)
-                    {
-                        for (int j = 1; j < dtimo.Columns.Count + 1; j++)
-                        {
-                            if (i == 1)
-                            {
-                                invoiceMOPS.Cells[i, j].Value = dcimoHeaders[j - 1].ToString();
-                            }
-                            else
-                            {
-                                invoiceMOPS.Cells[i, j].Value = dtimo.Rows[i - 1][j - 1];
-                            }
-                        }
-                    }
-                    Response.Clear();
-                    Response.AddHeader("content-disposition", "attachment; filename=InvoiceReport.xlsx");
-                    Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                    Response.BinaryWrite(xlPackage.GetAsByteArray());
-                    Response.End();
-                }
-            }
-            //Exception catch
-            catch (ThreadAbortException tae) { }
-            catch (Exception ex)
-            {
-                //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
-                //Display message box
-                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
-                    + "If you continue to receive this message please contact "
-                    + "your system administrator.", this);
-            }
-        }
+        //            //Export main invoice
+        //            for (int i = 1; i <= dtim.Rows.Count; i++)
+        //            {
+        //                for (int j = 1; j < dtim.Columns.Count + 1; j++)
+        //                {
+        //                    if (i == 1)
+        //                    {
+        //                        invoiceMain.Cells[i, j].Value = dcimHeaders[j - 1].ToString();
+        //                    }
+        //                    else
+        //                    {
+        //                        invoiceMain.Cells[i, j].Value = dtim.Rows[i - 1][j - 1];
+        //                    }
+        //                }
+        //            }
+        //            //Export item invoice
+        //            for (int i = 1; i <= dtii.Rows.Count; i++)
+        //            {
+        //                for (int j = 1; j < dtii.Columns.Count + 1; j++)
+        //                {
+        //                    if (i == 1)
+        //                    {
+        //                        invoiceItems.Cells[i, j].Value = dciiHeaders[j - 1].ToString();
+        //                    }
+        //                    else
+        //                    {
+        //                        invoiceItems.Cells[i, j].Value = dtii.Rows[i - 1][j - 1];
+        //                    }
+        //                }
+        //            }
+        //            //Export mop invoice
+        //            for (int i = 1; i <= dtimo.Rows.Count; i++)
+        //            {
+        //                for (int j = 1; j < dtimo.Columns.Count + 1; j++)
+        //                {
+        //                    if (i == 1)
+        //                    {
+        //                        invoiceMOPS.Cells[i, j].Value = dcimoHeaders[j - 1].ToString();
+        //                    }
+        //                    else
+        //                    {
+        //                        invoiceMOPS.Cells[i, j].Value = dtimo.Rows[i - 1][j - 1];
+        //                    }
+        //                }
+        //            }
+        //            Response.Clear();
+        //            Response.AddHeader("content-disposition", "attachment; filename=InvoiceReport.xlsx");
+        //            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        //            Response.BinaryWrite(xlPackage.GetAsByteArray());
+        //            Response.End();
+        //        }
+        //    }
+        //    //Exception catch
+        //    catch (ThreadAbortException tae) { }
+        //    catch (Exception ex)
+        //    {
+        //        //Log all info into error table
+        //        ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+        //        //Display message box
+        //        MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
+        //            + "If you continue to receive this message please contact "
+        //            + "your system administrator.", this);
+        //    }
+        //}
         protected void DdlProvince_SelectedIndexChanged(object sender, EventArgs e)
         {
             string method = "DdlProvince_SelectedIndexChanged";

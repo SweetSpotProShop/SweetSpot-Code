@@ -190,7 +190,7 @@
             <asp:Button ID="BtnExportClubs" runat="server" Width="150" Text="Export Clubs" OnClick="BtnExportClubs_Click" />
             <asp:Button ID="BtnExportClothing" runat="server" Width="150" Text="Export Clothing" OnClick="BtnExportClothing_Click" />
             <asp:Button ID="BtnExportAccessories" runat="server" Width="150" Text="Export Accessories" OnClick="BtnExportAccessories_Click" />
-            <asp:Button ID="BtnExportInvoices" runat="server" Width="150" Text="Export Invoices" OnClick="BtnExportInvoices_Click" />
+            <%--<asp:Button ID="BtnExportInvoices" runat="server" Width="150" Text="Export Invoices" OnClick="BtnExportInvoices_Click" />--%>
             <asp:Button ID="BtnExportEmails" runat="server" Width="150" Text="Export Emails" OnClick="BtnExportEmails_Click" />
             <script>
                 function UpdateProgressLabel() {

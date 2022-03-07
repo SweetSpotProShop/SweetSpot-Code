@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading;
+using System.IO;
 using SweetSpotDiscountGolfPOS.FP;
 using SweetSpotDiscountGolfPOS.OB;
 using SweetSpotDiscountGolfPOS.Misc;
+using System.Data;
 
 namespace SweetSpotDiscountGolfPOS
 {
@@ -37,7 +39,11 @@ namespace SweetSpotDiscountGolfPOS
                         //Sets the calendar and text boxes start and end dates
                         CalStartDate.SelectedDate = DateTime.Today;
                         CalEndDate.SelectedDate = DateTime.Today;
-                        ddlLocation.DataSource = LM.CallReturnLocationDropDown(objPageDetails);
+
+
+                        DataTable dt = LM.CallReturnLocationDropDown(objPageDetails);
+                        dt.Rows.Add(99, "All Locations");
+                        ddlLocation.DataSource = dt;
                         ddlLocation.DataBind();
                         ddlLocation.SelectedValue = CU.location.intLocationID.ToString();
                     }
@@ -461,6 +467,39 @@ namespace SweetSpotDiscountGolfPOS
             }
             //Exception catch
             catch (ThreadAbortException) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                //Display message box
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+
+        protected void BtnExportInvoices_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "BtnExportInvoices_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
+            {
+
+                string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                string pathDownload = (pathUser + "\\Downloads\\");
+                DateTime[] dtm = GetDateRange();
+                DateTime startDate = dtm[0];
+                DateTime endDate = dtm[1];
+
+                string filename = "Invoices-" + startDate.ToString("dd.MM.yyyy") + " To " + endDate.ToString("dd.MM.yyyy") + ".xlsx";
+                FileInfo newFile = new FileInfo(pathDownload + filename);
+
+                R.CallExportInvoiceDateRange(dtm, newFile, filename);
+
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table

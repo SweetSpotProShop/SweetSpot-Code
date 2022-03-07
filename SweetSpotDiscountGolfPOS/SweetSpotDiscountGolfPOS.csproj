@@ -15,7 +15,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SweetSpotDiscountGolfPOS</RootNamespace>
     <AssemblyName>SweetSpotDiscountGolfPOS</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
@@ -98,6 +98,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Content Include="ReportingMPage.Master" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -276,6 +277,12 @@
     </Compile>
     <Compile Include="PurchasesCheckout.aspx.designer.cs">
       <DependentUpon>PurchasesCheckout.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ReportingMPage.Master.cs">
+      <DependentUpon>ReportingMPage.Master</DependentUpon>
+    </Compile>
+    <Compile Include="ReportingMPage.Master.designer.cs">
+      <DependentUpon>ReportingMPage.Master</DependentUpon>
     </Compile>
     <Compile Include="ReportsCOGSvsPM.aspx.cs">
       <DependentUpon>ReportsCOGSvsPM.aspx</DependentUpon>

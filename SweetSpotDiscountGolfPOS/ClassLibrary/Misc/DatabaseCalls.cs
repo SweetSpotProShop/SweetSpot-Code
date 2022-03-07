@@ -61,6 +61,11 @@ namespace SweetSpotDiscountGolfPOS.Misc
         {
             return ReturnDataTableDataFromArrayLists(sqlCmd, parms, search, objPageDetails, strQueryName);
         }
+        public DataTable MakeDataBaseCallToReturnDataTableFromStoredProcedure(string procedureName, object[][] parms)
+        {
+            return ReturnDataTableFromStoredProcedure(procedureName, parms);
+        }
+
 
         private DataTable ReturnDataTableData(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
         {
@@ -76,9 +81,10 @@ namespace SweetSpotDiscountGolfPOS.Misc
                 strParameters += parms[times][0].ToString() + ", " + parms[times][1].ToString() + " - ";
                 times++;
             }
-            QueryStringCapture(sqlCmd, strParameters, objPageDetails, strQueryName);
+            //QueryStringCapture(sqlCmd, strParameters, objPageDetails, strQueryName);
             cmd.Connection = con;
             SqlDataAdapter da = new SqlDataAdapter(cmd);
+            da.SelectCommand.CommandTimeout = 300;
             da.Fill(dt);
             //Returns a datatable
             return dt;
@@ -108,9 +114,10 @@ namespace SweetSpotDiscountGolfPOS.Misc
                 parmsTimes++;
                 searchTimes++;
             }
-            QueryStringCapture(sqlCmd, strParameters, objPageDetails, strQueryName);
+            //QueryStringCapture(sqlCmd, strParameters, objPageDetails, strQueryName);
             cmd.Connection = con;
             SqlDataAdapter da = new SqlDataAdapter(cmd);
+            da.SelectCommand.CommandTimeout = 300;
             da.Fill(dt);
             //Returns a datatable
             return dt;
@@ -129,7 +136,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
                 strParameters += parms[times][0].ToString() + ", " + parms[times][1].ToString() + " - ";
                 times++;
             }
-            QueryStringCapture(sqlCmd, strParameters, objPageDetails, strQueryName);
+            //QueryStringCapture(sqlCmd, strParameters, objPageDetails, strQueryName);
             cmd.Connection = con;
             con.Open();
             cmd.ExecuteNonQuery();
@@ -174,5 +181,23 @@ namespace SweetSpotDiscountGolfPOS.Misc
             cmd.ExecuteNonQuery();
             con.Close();
         }        
+        private DataTable ReturnDataTableFromStoredProcedure(string procedureName, object[][] parms)
+        {
+            SqlConnection sqlCon = new SqlConnection(ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString);
+            System.Data.DataTable dt = new DataTable();
+            using (var cmd = new SqlCommand(procedureName, sqlCon))
+            using (var da = new SqlDataAdapter(cmd))
+            {            
+                cmd.CommandType = CommandType.StoredProcedure;
+                int times = 0;
+                while (parms.Count() > times)
+                {
+                    cmd.Parameters.AddWithValue(parms[times][0].ToString(), parms[times][1]);
+                    times++;
+                }
+                da.Fill(dt);
+            }
+            return dt;
+        }
     }
 }
