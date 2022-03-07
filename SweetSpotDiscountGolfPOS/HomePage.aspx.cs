@@ -57,7 +57,12 @@ namespace SweetSpotDiscountGolfPOS
                         ddlLocation.Enabled = true;
                     }
                     //populate gridview with todays sales
-                    GrdSameDaySales.DataSource = R.CallGetInvoiceBySaleDate(DateTime.Today, DateTime.Today, Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                    ReportInformation repInfo = new ReportInformation();
+                    repInfo.dtmStartDate = DateTime.Today;
+                    repInfo.dtmEndDate = DateTime.Today;
+                    repInfo.intLocationID = Convert.ToInt32(ddlLocation.SelectedValue);
+
+                    GrdSameDaySales.DataSource = R.CallGetInvoiceBySaleDate(repInfo, objPageDetails);
                     GrdSameDaySales.DataBind();
                     MergeRows(GrdSameDaySales);
                 }
@@ -67,7 +72,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -141,7 +146,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -183,7 +188,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -214,7 +219,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

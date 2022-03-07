@@ -15,9 +15,9 @@ namespace SweetSpotDiscountGolfPOS
     public partial class ReportsCashOut : System.Web.UI.Page
     {
         readonly ErrorReporting ER = new ErrorReporting();
+        readonly CashoutUtilities COU = new CashoutUtilities();
         readonly LocationManager LM = new LocationManager();
         readonly Reports R = new Reports();
-        DataTable dt = new DataTable();
         CurrentUser CU;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -40,13 +40,23 @@ namespace SweetSpotDiscountGolfPOS
                     if (!IsPostBack)
                     {
                         //Gathering the start and end dates
-                        object[] passing = (object[])Session["reportInfo"];
-                        DateTime[] reportDates = (DateTime[])passing[0];
-                        DateTime startDate = reportDates[0];
-                        DateTime endDate = reportDates[1];
-                        lblDates.Text = "Cashout report for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(Convert.ToInt32(passing[1]), objPageDetails);
-                        dt = R.CallReturnCashoutsForSelectedDates(passing, objPageDetails);
-                        GrdCashoutByDate.DataSource = dt;
+                        ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
+                        //Calendar calStartDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalStartDate");
+                        //calStartDate.SelectedDate = repInfo.dtmStartDate;
+                        //Calendar calEndDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalEndDate");
+                        //calEndDate.SelectedDate = repInfo.dtmEndDate;
+                        //DropDownList ddlDatePeriod = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlDatePeriod");
+                        //ddlDatePeriod.SelectedValue = repInfo.intGroupTimeFrame.ToString();
+                        //DropDownList ddlLocation = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlLocation");
+                        DataTable dt = LM.CallReturnLocationDropDown(objPageDetails);
+                        //dt.Rows.Add(99, "All Locations");
+                        //ddlLocation.DataSource = dt;
+                        //ddlLocation.DataBind();
+                        //ddlLocation.SelectedValue = repInfo.intLocationID.ToString();
+
+                        lblDates.Text = "Cashout report for: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString() + " for " + repInfo.varLocationName;
+                        DataTable resultSet = R.CallReturnCashoutsForSelectedDates(repInfo, objPageDetails);
+                        GrdCashoutByDate.DataSource = resultSet;
                         GrdCashoutByDate.DataBind();
                     }
                 }
@@ -56,7 +66,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -71,17 +81,13 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //Gathering the start and end dates
-                object[] passing = (object[])Session["reportInfo"];
-                DateTime[] reportDates = (DateTime[])passing[0];
-                DateTime startDate = reportDates[0];
-                DateTime endDate = reportDates[1];
-                int locationID = Convert.ToInt32(passing[1]);
-                dt = R.CallReturnCashoutsForSelectedDates(passing, objPageDetails);
+                ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
+                DataTable resultSet = R.CallReturnCashoutsForSelectedDates(repInfo, objPageDetails);
 
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
-                string fileName = "CashOut Report by Date - " + LM.CallReturnLocationName(locationID, objPageDetails) + ".xlsx";
+                string fileName = "CashOut Report by Date - " + repInfo.varLocationName + ".xlsx";
 
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
@@ -108,7 +114,7 @@ namespace SweetSpotDiscountGolfPOS
 
                     //salesExport.Cells[2, 2].Value = "Sales Dollars";
                     int recordIndex = 3;
-                    foreach (DataRow row in dt.Rows)
+                    foreach (DataRow row in resultSet.Rows)
                     {
                         //Date
                         DateTime d = (DateTime)row[0];
@@ -173,7 +179,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -198,14 +204,10 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (e.CommandName == "FinalizeCashout")
                 {
-                    R.CallFinalizeCashout(e.CommandArgument.ToString(), objPageDetails);
-                    object[] passing = (object[])Session["reportInfo"];
-                    DateTime[] reportDates = (DateTime[])passing[0];
-                    DateTime startDate = reportDates[0];
-                    DateTime endDate = reportDates[1];
-                    int locationID = Convert.ToInt32(passing[1]);
-                    dt = R.CallReturnCashoutsForSelectedDates(passing, objPageDetails);
-                    GrdCashoutByDate.DataSource = dt;
+                    COU.CallFinalizeCashout(e.CommandArgument.ToString(), objPageDetails);
+                    ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
+                    DataTable resultSet = R.CallReturnCashoutsForSelectedDates(repInfo, objPageDetails);
+                    GrdCashoutByDate.DataSource = resultSet;
                     GrdCashoutByDate.DataBind();
                 }
             }
@@ -214,7 +216,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -274,7 +276,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

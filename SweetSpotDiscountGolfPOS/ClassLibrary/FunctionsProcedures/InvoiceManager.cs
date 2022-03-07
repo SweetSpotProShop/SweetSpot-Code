@@ -22,7 +22,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             LocationManager LM = new LocationManager();
             InvoiceItemsManager IIM = new InvoiceItemsManager();
             InvoiceMOPsManager IMM = new InvoiceMOPsManager();
-            //TaxManager TM = new TaxManager();
+            TaxManager TM = new TaxManager();
             List<Invoice> invoice = dt.AsEnumerable().Select(row =>
             new Invoice
             {
@@ -41,34 +41,34 @@ namespace SweetSpotDiscountGolfPOS.FP
                 fltShippingCharges = row.Field<double>("fltShippingCharges"),
                 fltTotalDiscount = row.Field<double>("fltTotalDiscount"),
                 fltTotalTradeIn = row.Field<double>("fltTotalTradeIn"),
+                //fltGovernmentTaxAmount = row.Field<double>("fltGovernmentTaxAmount"),
+                //fltProvincialTaxAmount = row.Field<double>("fltProvincialTaxAmount"),
                 fltBalanceDue = row.Field<double>("fltBalanceDue"),
                 invoiceItems = IIM.CallReturnInvoiceItems(row.Field<int>("intInvoiceID"), row.Field<DateTime>("dtmInvoiceDate"), row.Field<int>("intShippingProvinceID"), objPageDetails),
                 invoiceMops = IMM.CallReturnInvoiceMOPs(row.Field<int>("intInvoiceID"), objPageDetails),
-                fltGovernmentTaxAmount = row.Field<double>("fltGovernmentTaxAmount"),
-                fltHarmonizedTaxAmount = row.Field<double>("fltHarmonizedTaxAmount"),
-                fltLiquorTaxAmount = row.Field<double>("fltLiquorTaxAmount"),
-                fltProvincialTaxAmount = row.Field<double>("fltProvincialTaxAmount"),
-                fltQuebecTaxAmount = row.Field<double>("fltQuebecTaxAmount"),
-                fltRetailTaxAmount = row.Field<double>("fltRetailTaxAmount"),
                 intTransactionTypeID = row.Field<int>("intTransactionTypeID"),
                 varAdditionalInformation = row.Field<string>("varAdditionalInformation")
+                //bitChargeGST = row.Field<bool>("bitChargeGST"),
+                //bitChargePST = row.Field<bool>("bitChargePST"),
+                //bitChargeLCT = row.Field<bool>("bitChargeLCT")
             }).ToList();
-            //foreach (Invoice i in invoice)
-            //{
-            //    foreach (InvoiceItems ii in i.invoiceItems)
-            //    {
-            //        i.fltGovernmentTaxAmount += TM.ReturnGovernmentTaxTotal(ii.invoiceItemTaxes, objPageDetails);
-            //        i.fltHarmonizedTaxAmount += TM.ReturnHarmonizedTaxTotal(ii.invoiceItemTaxes, objPageDetails);
-            //        i.fltLiquorTaxAmount += TM.ReturnLiquorTaxTotal(ii.invoiceItemTaxes, objPageDetails);
-            //        i.fltProvincialTaxAmount += TM.ReturnProvincialTaxTotal(ii.invoiceItemTaxes, objPageDetails);
-            //        i.fltQuebecTaxAmount += TM.ReturnQuebecTaxTotal(ii.invoiceItemTaxes, objPageDetails);
-            //        i.fltRetailTaxAmount += TM.ReturnRetailTaxTotal(ii.invoiceItemTaxes, objPageDetails);
-            //    }
-            //}
+            foreach (Invoice i in invoice)
+            {
+                foreach (InvoiceItems ii in i.invoiceItems)
+                {
+                    i.fltGovernmentTaxAmount += TM.ReturnGovernmentTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                    i.fltHarmonizedTaxAmount += TM.ReturnHarmonizedTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                    i.fltLiquorTaxAmount += TM.ReturnLiquorTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                    i.fltProvincialTaxAmount += TM.ReturnProvincialTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                    i.fltQuebecTaxAmount += TM.ReturnQuebecTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                    i.fltRetailTaxAmount += TM.ReturnRetailTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                }
+            }
             return invoice;
         }
         private List<Invoice> ConvertFromDataTableToCurrentInvoice(DataTable dt, int provinceID, object[] objPageDetails)
         {
+            //TODO: Update ConvertFromDataTableToCurrentInvoice
             CustomerManager CM = new CustomerManager();
             EmployeeManager EM = new EmployeeManager();
             LocationManager LM = new LocationManager();
@@ -93,34 +93,35 @@ namespace SweetSpotDiscountGolfPOS.FP
                 fltShippingCharges = row.Field<double>("fltShippingCharges"),
                 fltTotalDiscount = row.Field<double>("fltTotalDiscount"),
                 fltTotalTradeIn = row.Field<double>("fltTotalTradeIn"),
+                //fltGovernmentTaxAmount = row.Field<double>("fltGovernmentTaxAmount"),
+                //fltProvincialTaxAmount = row.Field<double>("fltProvincialTaxAmount"),
                 fltBalanceDue = row.Field<double>("fltBalanceDue"),
                 invoiceItems = IIM.CallReturnInvoiceItemsCurrentSale(row.Field<int>("intInvoiceID"), row.Field<DateTime>("dtmInvoiceDate"), provinceID, objPageDetails),
                 invoiceMops = IMM.CallReturnInvoiceMOPsCurrentSale(row.Field<int>("intInvoiceID"), objPageDetails),
-                fltGovernmentTaxAmount = row.Field<double>("fltGovernmentTaxAmount"),
-                fltHarmonizedTaxAmount = row.Field<double>("fltHarmonizedTaxAmount"),
-                fltLiquorTaxAmount = row.Field<double>("fltLiquorTaxAmount"),
-                fltProvincialTaxAmount = row.Field<double>("fltProvincialTaxAmount"),
-                fltQuebecTaxAmount = row.Field<double>("fltQuebecTaxAmount"),
-                fltRetailTaxAmount = row.Field<double>("fltRetailTaxAmount"),
                 intTransactionTypeID = row.Field<int>("intTransactionTypeID"),
+                //varTransactionName = ReturnTransactionName(row.Field<int>("intTransactionTypeID"), objPageDetails),
                 varAdditionalInformation = row.Field<string>("varAdditionalInformation")
+                //bitChargeGST = row.Field<bool>("bitChargeGST"),
+                //bitChargePST = row.Field<bool>("bitChargePST"),
+                //bitChargeLCT = row.Field<bool>("bitChargeLCT")
             }).ToList();
-            //foreach (Invoice i in invoice)
-            //{
-            //    foreach (InvoiceItems ii in i.invoiceItems)
-            //    {
-            //        i.fltGovernmentTaxAmount += TM.ReturnGovernmentTaxTotal(ii.invoiceItemTaxes, objPageDetails);
-            //        i.fltHarmonizedTaxAmount += TM.ReturnHarmonizedTaxTotal(ii.invoiceItemTaxes, objPageDetails);
-            //        i.fltLiquorTaxAmount += TM.ReturnLiquorTaxTotal(ii.invoiceItemTaxes, objPageDetails);
-            //        i.fltProvincialTaxAmount += TM.ReturnProvincialTaxTotal(ii.invoiceItemTaxes, objPageDetails);
-            //        i.fltQuebecTaxAmount += TM.ReturnQuebecTaxTotal(ii.invoiceItemTaxes, objPageDetails);
-            //        i.fltRetailTaxAmount += TM.ReturnRetailTaxTotal(ii.invoiceItemTaxes, objPageDetails);
-            //    }
-            //}
+            foreach (Invoice i in invoice)
+            {
+                foreach (InvoiceItems ii in i.invoiceItems)
+                {
+                    i.fltGovernmentTaxAmount += TM.ReturnGovernmentTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                    i.fltHarmonizedTaxAmount += TM.ReturnHarmonizedTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                    i.fltLiquorTaxAmount += TM.ReturnLiquorTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                    i.fltProvincialTaxAmount += TM.ReturnProvincialTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                    i.fltQuebecTaxAmount += TM.ReturnQuebecTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                    i.fltRetailTaxAmount += TM.ReturnRetailTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                }
+            }
             return invoice;
         }
         private List<Invoice> ConvertFromDataTableToCurrentInvoice2(DataTable dt, object[] objPageDetails)
         {
+            //TODO: Update ConvertFromDataTableToCurrentInvoice
             CustomerManager CM = new CustomerManager();
             EmployeeManager EM = new EmployeeManager();
             LocationManager LM = new LocationManager();
@@ -140,6 +141,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 location = LM.CallReturnLocation(row.Field<int>("intLocationID"), objPageDetails)[0],
                 intShippingProvinceID = row.Field<int>("intShippingProvinceID"),
                 bitIsShipping = row.Field<bool>("bitIsShipping"),
+                fltShippingTaxAmount = row.Field<double>("fltShippingTaxAmount"),
                 fltSubTotal = row.Field<double>("fltSubTotal"),
                 fltShippingCharges = row.Field<double>("fltShippingCharges"),
                 fltTotalDiscount = row.Field<double>("fltTotalDiscount"),
@@ -147,27 +149,25 @@ namespace SweetSpotDiscountGolfPOS.FP
                 fltBalanceDue = row.Field<double>("fltBalanceDue"),
                 invoiceItems = IIM.CallReturnInvoiceItemsCurrentSale(row.Field<int>("intInvoiceID"), row.Field<DateTime>("dtmInvoiceDate"), row.Field<int>("intShippingProvinceID"), objPageDetails),
                 invoiceMops = IMM.CallReturnInvoiceMOPsCurrentSale(row.Field<int>("intInvoiceID"), objPageDetails),
-                fltGovernmentTaxAmount = row.Field<double>("fltGovernmentTaxAmount"),
-                fltHarmonizedTaxAmount = row.Field<double>("fltHarmonizedTaxAmount"),
-                fltLiquorTaxAmount = row.Field<double>("fltLiquorTaxAmount"),
-                fltProvincialTaxAmount = row.Field<double>("fltProvincialTaxAmount"),
-                fltQuebecTaxAmount = row.Field<double>("fltQuebecTaxAmount"),
-                fltRetailTaxAmount = row.Field<double>("fltRetailTaxAmount"),
                 intTransactionTypeID = row.Field<int>("intTransactionTypeID"),
+                //varTransactionName = ReturnTransactionName(row.Field<int>("intTransactionTypeID"), objPageDetails),
                 varAdditionalInformation = row.Field<string>("varAdditionalInformation")
+                //bitChargeGST = row.Field<bool>("bitChargeGST"),
+                //bitChargePST = row.Field<bool>("bitChargePST"),
+                //bitChargeLCT = row.Field<bool>("bitChargeLCT")
             }).ToList();
-            //foreach (Invoice i in invoice)
-            //{
-            //    foreach (InvoiceItems ii in i.invoiceItems)
-            //    {
-            //        i.fltGovernmentTaxAmount += TM.ReturnGovernmentTaxTotal(ii.invoiceItemTaxes, objPageDetails);
-            //        i.fltHarmonizedTaxAmount += TM.ReturnHarmonizedTaxTotal(ii.invoiceItemTaxes, objPageDetails);
-            //        i.fltLiquorTaxAmount += TM.ReturnLiquorTaxTotal(ii.invoiceItemTaxes, objPageDetails);
-            //        i.fltProvincialTaxAmount += TM.ReturnProvincialTaxTotal(ii.invoiceItemTaxes, objPageDetails);
-            //        i.fltQuebecTaxAmount += TM.ReturnQuebecTaxTotal(ii.invoiceItemTaxes, objPageDetails);
-            //        i.fltRetailTaxAmount += TM.ReturnRetailTaxTotal(ii.invoiceItemTaxes, objPageDetails);
-            //    }
-            //}
+            foreach (Invoice i in invoice)
+            {
+                foreach (InvoiceItems ii in i.invoiceItems)
+                {
+                    i.fltGovernmentTaxAmount += TM.ReturnGovernmentTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                    i.fltHarmonizedTaxAmount += TM.ReturnHarmonizedTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                    i.fltLiquorTaxAmount += TM.ReturnLiquorTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                    i.fltProvincialTaxAmount += TM.ReturnProvincialTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                    i.fltQuebecTaxAmount += TM.ReturnQuebecTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                    i.fltRetailTaxAmount += TM.ReturnRetailTaxTotal(ii.invoiceItemTaxes, objPageDetails);
+                }
+            }
             return invoice;
         }
         private List<Invoice> ConvertFromDataTableToPurchaseInvoice(DataTable dt, int provinceID, object[] objPageDetails)
@@ -195,12 +195,20 @@ namespace SweetSpotDiscountGolfPOS.FP
                 fltTotalDiscount = row.Field<double>("fltTotalDiscount"),
                 fltTotalTradeIn = row.Field<double>("fltTotalTradeIn"),
                 fltGovernmentTaxAmount = row.Field<double>("fltGovernmentTaxAmount"),
+                fltHarmonizedTaxAmount = row.Field<double>("fltHarmonizedTaxAmount"),
+                fltLiquorTaxAmount = row.Field<double>("fltLiquorTaxAmount"),
                 fltProvincialTaxAmount = row.Field<double>("fltProvincialTaxAmount"),
+                fltQuebecTaxAmount = row.Field<double>("fltQuebecTaxAmount"),
+                fltRetailTaxAmount = row.Field<double>("fltRetailTaxAmount"),
+                fltShippingTaxAmount = row.Field<double>("fltShippingTaxAmount"),
                 fltBalanceDue = row.Field<double>("fltBalanceDue"),
                 invoiceItems = IIM.CallReturnInvoiceItemsCurrentSale(Convert.ToInt32(row.Field<int>("intInvoiceID")), row.Field<DateTime>("dtmInvoiceDate"), provinceID, objPageDetails),
                 invoiceMops = IMM.CallReturnPurchaseMOPsCurrentSale(Convert.ToInt32(row.Field<int>("intInvoiceID")), objPageDetails),
                 intTransactionTypeID = row.Field<int>("intTransactionTypeID"),
-                varAdditionalInformation = row.Field<string>("varAdditionalInformation")
+                //varTransactionName = ReturnTransactionName(row.Field<int>("intTransactionTypeID"), objPageDetails),
+                varAdditionalInformation = row.Field<string>("varAdditionalInformation"),
+                //bitChargeGST = row.Field<bool>("bitChargeGST"),
+                //bitChargePST = row.Field<bool>("bitChargePST")
             }).ToList();
             return invoice;
         }
@@ -225,6 +233,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 invoiceItems = IIM.CallReturnInvoiceItemsReceipt(Convert.ToInt32(row.Field<int>("intReceiptID").ToString()), objPageDetails),
                 invoiceMops = IMM.CallReturnReceiptMOPsPurchase(Convert.ToInt32(row.Field<int>("intReceiptID").ToString()), objPageDetails),
                 intTransactionTypeID = row.Field<int>("intTransactionTypeID"),
+                //varTransactionName = ReturnTransactionName(row.Field<int>("intTransactionTypeID"), objPageDetails),
                 varAdditionalInformation = row.Field<string>("varAdditionalInformation")
             }).ToList();
             return invoice;
@@ -261,6 +270,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 employee = EM.CallReturnEmployee(row.Field<int>("intEmployeeID"), objPageDetails)[0],
                 location = LM.CallReturnLocation(row.Field<int>("intLocationID"), objPageDetails)[0],
                 intShippingProvinceID = row.Field<int>("intShippingProvinceID"),
+                fltShippingTaxAmount = row.Field<double>("fltShippingTaxAmount"),
                 bitIsShipping = row.Field<bool>("bitIsShipping"),
                 fltSubTotal = row.Field<double>("fltSubTotal"),
                 fltShippingCharges = row.Field<double>("fltShippingCharges"),
@@ -271,10 +281,13 @@ namespace SweetSpotDiscountGolfPOS.FP
                 fltLiquorTaxAmount = row.Field<double>("fltLiquorTaxAmount"),
                 fltProvincialTaxAmount = row.Field<double>("fltProvincialTaxAmount"),
                 fltQuebecTaxAmount = row.Field<double>("fltQuebecTaxAmount"),
-                fltRetailTaxAmount = row.Field<double>("fltRetailTaxAmount"),
+                fltRetailTaxAmount = row.Field<double>("fltRetailTaxAmount"),                
                 fltBalanceDue = row.Field<double>("fltBalanceDue"),
                 intTransactionTypeID = row.Field<int>("intTransactionTypeID"),
                 varAdditionalInformation = row.Field<string>("varAdditionalInformation")
+                //bitChargeGST = row.Field<bool>("bitChargeGST"),
+                //bitChargePST = row.Field<bool>("bitChargePST"),
+                //bitChargeLCT = row.Field<bool>("bitChargeLCT")
             }).ToList();
             return i;
         }
@@ -285,11 +298,12 @@ namespace SweetSpotDiscountGolfPOS.FP
         //Returns list of invoice based on an invoice string from the Final Table
         private List<Invoice> ReturnInvoice(int invoiceID, object[] objPageDetails)
         {
-            string strQueryName = "ReturnInvoice";
+            string strQueryName = "ReturnInvoice";            
             string sqlCmd = "SELECT intInvoiceID, varInvoiceNumber, intInvoiceSubNumber, dtmInvoiceDate, CAST(dtmInvoiceTime AS DATETIME) AS dtmInvoiceTime, "
                 + "intCustomerID, intEmployeeID, intLocationID, fltSubTotal, fltShippingCharges, intShippingProvinceID, bitIsShipping, fltShippingTaxAmount, "
                 + "fltTotalDiscount, fltTotalTradeIn, fltGovernmentTaxAmount, fltHarmonizedTaxAmount, fltLiquorTaxAmount, fltProvincialTaxAmount, "
-                + "fltQuebecTaxAmount, fltRetailTaxAmount, fltBalanceDue, intTransactionTypeID, varAdditionalInformation FROM tbl_invoice WHERE intInvoiceID = @intInvoiceID";
+                + "fltQuebecTaxAmount, fltRetailTaxAmount, fltBalanceDue, intTransactionTypeID, varAdditionalInformation, bitChargeGST, bitChargePST, bitChargeLCT "
+                + "FROM tbl_invoice WHERE intInvoiceID = @intInvoiceID";
 
             object[][] parms =
             {
@@ -322,8 +336,8 @@ namespace SweetSpotDiscountGolfPOS.FP
             string sqlCmd = "SELECT intInvoiceID, varInvoiceNumber, intInvoiceSubNumber, dtmInvoiceDate, CAST(dtmInvoiceTime AS DATETIME) AS dtmInvoiceTime, "
                 + "intCustomerID, intEmployeeID, intLocationID, fltSubTotal, fltShippingCharges, intShippingProvinceID, bitIsShipping, fltShippingTaxAmount, "
                 + "fltTotalDiscount, fltTotalTradeIn, fltGovernmentTaxAmount, fltHarmonizedTaxAmount, fltLiquorTaxAmount, fltProvincialTaxAmount, "
-                + "fltQuebecTaxAmount, fltRetailTaxAmount, fltBalanceDue, intTransactionTypeID, varAdditionalInformation FROM tbl_currentSalesInvoice "
-                + "WHERE intInvoiceID = @intInvoiceID";
+                + "fltQuebecTaxAmount, fltRetailTaxAmount, fltBalanceDue, intTransactionTypeID, varAdditionalInformation, bitChargeGST, bitChargePST, bitChargeLCT "
+                + "FROM tbl_currentSalesInvoice WHERE intInvoiceID = @intInvoiceID";
 
             object[][] parms =
             {
@@ -332,16 +346,16 @@ namespace SweetSpotDiscountGolfPOS.FP
 
             return ConvertFromDataTableToCurrentInvoice(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), provinceID, objPageDetails);
             //return ConvertFromDataTableToCurrentInvoice(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
-        }        
+        }
         private List<Invoice> ReturnCurrentInvoice2(int invoiceID, object[] objPageDetails)
         {
             string strQueryName = "ReturnCurrentInvoice";
             //TODO: Update ReturnCurrentInvoice
             string sqlCmd = "SELECT intInvoiceID, varInvoiceNumber, intInvoiceSubNumber, dtmInvoiceDate, CAST(dtmInvoiceTime AS DATETIME) AS dtmInvoiceTime, "
-                + "intCustomerID, intEmployeeID, intLocationID, fltSubTotal, fltShippingCharges, intShippingProvinceID, bitIsShipping, fltShippingTaxAmount, "
-                + "fltTotalDiscount, fltTotalTradeIn, fltGovernmentTaxAmount, fltHarmonizedTaxAmount, fltLiquorTaxAmount, fltProvincialTaxAmount, "
-                + "fltQuebecTaxAmount, fltRetailTaxAmount, fltBalanceDue, intTransactionTypeID, varAdditionalInformation FROM tbl_currentSalesInvoice "
-                + "WHERE intInvoiceID = @intInvoiceID";
+                + "intCustomerID, intEmployeeID, intLocationID, fltShippingCharges, intShippingProvinceID, bitIsShipping, fltTotalDiscount, "
+                + "fltTotalTradeIn, fltSubTotal, fltBalanceDue, fltGovernmentTaxAmount, fltHarmonizedTaxAmount, fltLiquorTaxAmount, fltProvincialTaxAmount, "
+                + "fltQuebecTaxAmount, fltRetailTaxAmount, fltShippingTaxAmount, intTransactionTypeID, varAdditionalInformation, bitChargeGST, bitChargePST, "
+                + "bitChargeLCT FROM tbl_currentSalesInvoice WHERE intInvoiceID = @intInvoiceID";
 
             object[][] parms =
             {
@@ -375,8 +389,8 @@ namespace SweetSpotDiscountGolfPOS.FP
             string sqlCmd = "SELECT intInvoiceID, varInvoiceNumber, intInvoiceSubNumber, dtmInvoiceDate, CAST(dtmInvoiceTime AS DATETIME) AS dtmInvoiceTime, "
                 + "intCustomerID, intEmployeeID, intLocationID, fltSubTotal, fltShippingCharges, intShippingProvinceID, bitIsShipping, fltShippingTaxAmount, "
                 + "fltTotalDiscount, fltTotalTradeIn, fltGovernmentTaxAmount, fltHarmonizedTaxAmount, fltLiquorTaxAmount, fltProvincialTaxAmount, "
-                + "fltQuebecTaxAmount, fltRetailTaxAmount, fltBalanceDue, intTransactionTypeID, varAdditionalInformation FROM tbl_currentSalesInvoice "
-                + "WHERE intLocationID = @intLocationID AND intTransactionTypeID = 1";
+                + "fltQuebecTaxAmount, fltRetailTaxAmount, fltBalanceDue, intTransactionTypeID, varAdditionalInformation, bitChargeGST, bitChargePST, bitChargeLCT "
+                + "FROM tbl_currentSalesInvoice WHERE intLocationID = @intLocationID AND intTransactionTypeID = 1";
 
             object[][] parms =
             {
@@ -393,8 +407,8 @@ namespace SweetSpotDiscountGolfPOS.FP
             string sqlCmd = "SELECT intInvoiceID, varInvoiceNumber, intInvoiceSubNumber, dtmInvoiceDate, CAST(dtmInvoiceTime AS DATETIME) AS dtmInvoiceTime, "
                 + "intCustomerID, intEmployeeID, intLocationID, fltSubTotal, fltShippingCharges, intShippingProvinceID, bitIsShipping, fltShippingTaxAmount, "
                 + "fltTotalDiscount, fltTotalTradeIn, fltGovernmentTaxAmount, fltHarmonizedTaxAmount, fltLiquorTaxAmount, fltProvincialTaxAmount, "
-                + "fltQuebecTaxAmount, fltRetailTaxAmount, fltBalanceDue, intTransactionTypeID, varAdditionalInformation FROM tbl_invoice WHERE "
-                + "intCustomerID = @intCustomerID ORDER BY dtmInvoiceDate DESC, dtmInvoiceTime DESC";
+                + "fltQuebecTaxAmount, fltRetailTaxAmount, fltBalanceDue, intTransactionTypeID, varAdditionalInformation, bitChargeGST, bitChargePST, bitChargeLCT "
+                + "FROM tbl_invoice WHERE intCustomerID = @intCustomerID ORDER BY dtmInvoiceDate DESC, dtmInvoiceTime DESC";
 
             object[][] parms =
             {
@@ -415,9 +429,9 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "CONCAT(C.varLastName, ', ', C.varFirstName) AS customerName, CONCAT(E.varLastName, ', ', E.varFirstName) AS employeeName, I.intLocationID, "
                 + "fltSubTotal, fltShippingCharges, intShippingProvinceID, bitIsShipping, fltShippingTaxAmount, fltTotalDiscount, fltTotalTradeIn, "
                 + "fltGovernmentTaxAmount, fltHarmonizedTaxAmount, fltLiquorTaxAmount, fltProvincialTaxAmount, fltQuebecTaxAmount, fltRetailTaxAmount, "
-                + "MP.varPaymentName, IM.fltAmountPaid, fltBalanceDue, intTransactionTypeID, varAdditionalInformation FROM tbl_invoice I JOIN tbl_invoiceMOP IM "
-                + "ON IM.intInvoiceID = I.intInvoiceID JOIN tbl_customers C ON C.intCustomerID = I.intCustomerID JOIN tbl_employee E ON E.intEmployeeID = "
-                + "I.intEmployeeID JOIN tbl_methodOfPayment MP ON MP.intPaymentID = IM.intPaymentID WHERE (";
+                + "MP.varPaymentName, IM.fltAmountPaid, fltBalanceDue, intTransactionTypeID, varAdditionalInformation, bitChargeGST, bitChargePST, bitChargeLCT "
+                + "FROM tbl_invoice I JOIN tbl_invoiceMOP IM ON IM.intInvoiceID = I.intInvoiceID JOIN tbl_customers C ON C.intCustomerID = I.intCustomerID "
+                + "JOIN tbl_employee E ON E.intEmployeeID = I.intEmployeeID JOIN tbl_methodOfPayment MP ON MP.intPaymentID = IM.intPaymentID WHERE (";
 
             if (searchTxt != "")
             {
@@ -448,7 +462,7 @@ namespace SweetSpotDiscountGolfPOS.FP
         {
             string strQueryName = "ReturnInvoicesBasedOnSearchForReturns";
             string sqlCmd = "SELECT I.intInvoiceID, I.varInvoiceNumber, I.intInvoiceSubNumber, I.dtmInvoiceDate, I.intCustomerID, I.intLocationID, "
-                + "(I.fltBalanceDue + I.fltShippingTaxAmount + I.fltGovernmentTaxAmount + I.fltHarmonizedTaxAmount + I.fltLiquorTaxAmount + "
+                + "(I.fltBalanceDue + I.fltShippingTaxAmount + I.fltGovernmentTaxAmount + fltHarmonizedTaxAmount + I.fltLiquorTaxAmount + "
                 + "I.fltProvincialTaxAmount + fltQuebecTaxAmount + fltRetailTaxAmount) AS fltBalanceDue FROM tbl_invoice I JOIN tbl_customers C "
                 + "ON I.intCustomerID = C.intCustomerID WHERE I.intInvoiceSubNumber = 1 AND (I.dtmInvoiceDate = @selectedDate";
 
@@ -465,18 +479,18 @@ namespace SweetSpotDiscountGolfPOS.FP
             return ConvertFromDataTableToInvoiceForReturns(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
             //return ConvertFromDataTableToInvoiceForReturns(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }        
-        private DataTable InventoryIDForTradeIn(int inventoryID, CurrentUser cu, object[] objPageDetails)
-        {
-            string strQueryName = "InventoryIDForTradeIn";
-            string sqlCmd = "SELECT intInventoryID FROM tbl_tradeInSkuPerLocation WHERE intInventoryID = @intInventoryID AND intLocationID = @intLocationID";
+        //private DataTable InventoryIDForTradeIn(int inventoryID, CurrentUser cu, object[] objPageDetails)
+        //{
+        //    string strQueryName = "InventoryIDForTradeIn";
+        //    string sqlCmd = "SELECT intInventoryID FROM tbl_tradeInSkuPerLocation WHERE intInventoryID = @intInventoryID AND intLocationID = @intLocationID";
 
-            object[][] parms =
-            {
-                new object[] { "@intInventoryID", inventoryID },
-                new object[] { "@intLocationID", cu.location.intLocationID }
-            };
-            return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
-        }
+        //    object[][] parms =
+        //    {
+        //        new object[] { "@intInventoryID", inventoryID },
+        //        new object[] { "@intLocationID", cu.location.intLocationID }
+        //    };
+        //    return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
+        //}
         private int CalculateNextInvoiceSubNum(string invoiceNumber, object[] objPageDetails)
         {
             string strQueryName = "CalculateNextInvoiceSubNum";
@@ -510,20 +524,20 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@intCustomerID", invoice.customer.intCustomerID },
                 new object[] { "@intEmployeeID", invoice.employee.intEmployeeID },
                 new object[] { "@intLocationID", invoice.location.intLocationID },
-                new object[] { "@fltSubTotal", invoice.fltSubTotal },
-                new object[] { "@fltShippingCharges", invoice.fltShippingCharges },
                 new object[] { "@intShippingProvinceID", invoice.intShippingProvinceID },
+                new object[] { "@fltShippingCharges", Math.Round(invoice.fltShippingCharges, 2) },
                 new object[] { "@bitIsShipping", invoice.bitIsShipping },
-                new object[] { "@fltTotalDiscount", invoice.fltTotalDiscount },
-                new object[] { "@fltTotalTradeIn", invoice.fltTotalTradeIn },
-                new object[] { "@fltGovernmentTaxAmount", invoice.fltGovernmentTaxAmount },
-                new object[] { "@fltHarmonizedTaxAmount", invoice.fltHarmonizedTaxAmount },
-                new object[] { "@fltLiquorTaxAmount", invoice.fltLiquorTaxAmount },
-                new object[] { "@fltProvincialTaxAmount", invoice.fltProvincialTaxAmount },
-                new object[] { "@fltQuebecTaxAmount", invoice.fltQuebecTaxAmount },
-                new object[] { "@fltRetailTaxAmount", invoice.fltRetailTaxAmount },
-                new object[] { "@fltShippingTaxAmount", invoice.fltShippingTaxAmount },
-                new object[] { "@fltBalanceDue", invoice.fltBalanceDue + invoice.fltShippingCharges },
+                new object[] { "@fltTotalDiscount", Math.Round(invoice.fltTotalDiscount, 2) },
+                new object[] { "@fltTotalTradeIn", Math.Round(invoice.fltTotalTradeIn, 2) },
+                new object[] { "@fltSubTotal", Math.Round(invoice.fltSubTotal, 2) },
+                new object[] { "@fltBalanceDue", Math.Round(invoice.fltBalanceDue + invoice.fltShippingCharges, 2) },
+                new object[] { "@fltGovernmentTaxAmount", Math.Round(invoice.fltGovernmentTaxAmount, 2) },
+                new object[] { "@fltHarmonizedTaxAmount", Math.Round(invoice.fltHarmonizedTaxAmount, 2) },
+                new object[] { "@fltLiquorTaxAmount", Math.Round(invoice.fltLiquorTaxAmount, 2) },
+                new object[] { "@fltProvincialTaxAmount", Math.Round(invoice.fltProvincialTaxAmount, 2) },
+                new object[] { "@fltQuebecTaxAmount", Math.Round(invoice.fltQuebecTaxAmount, 2) },
+                new object[] { "@fltRetailTaxAmount", Math.Round(invoice.fltRetailTaxAmount, 2) },
+                new object[] { "@fltShippingTaxAmount", Math.Round(invoice.fltShippingTaxAmount, 2) },
                 new object[] { "@intTransactionTypeID", 1 },
                 new object[] { "@varAdditionalInformation", invoice.varAdditionalInformation },
                 new object[] { "@bitChargeGST", true },
@@ -561,10 +575,10 @@ namespace SweetSpotDiscountGolfPOS.FP
                     new object[] { "@intInvoiceID", item.intInvoiceID },
                     new object[] { "@intInventoryID", item.intInventoryID },
                     new object[] { "@intItemQuantity", item.intItemQuantity },
-                    new object[] { "@fltItemCost", item.fltItemCost },
-                    new object[] { "@fltItemPrice", item.fltItemPrice },
-                    new object[] { "@fltItemDiscount", item.fltItemDiscount },
-                    new object[] { "@fltItemRefund", item.fltItemRefund },
+                    new object[] { "@fltItemCost", Math.Round(item.fltItemCost, 2) },
+                    new object[] { "@fltItemPrice", Math.Round(item.fltItemPrice, 2) },
+                    new object[] { "@fltItemDiscount", Math.Round(item.fltItemDiscount, 2) },
+                    new object[] { "@fltItemRefund", Math.Round(item.fltItemRefund, 2) },
                     new object[] { "@bitIsDiscountPercent", item.bitIsDiscountPercent },
                     new object[] { "@varItemDescription", item.varItemDescription },
                     new object[] { "@intItemTypeID", item.intItemTypeID },
@@ -586,7 +600,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                     {
                         new object[] { "@intInvoiceItemID", tax.intInvoiceItemID },
                         new object[] { "@intTaxTypeID", tax.intTaxTypeID },
-                        new object[] { "@fltTaxAmount", tax.fltTaxAmount },
+                        new object[] { "@fltTaxAmount", Math.Round(tax.fltTaxAmount, 2) },
                         new object[] { "@bitTaxCharged", tax.bitIsTaxCharged }
                     };
                     DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
@@ -635,9 +649,9 @@ namespace SweetSpotDiscountGolfPOS.FP
                     new object[] { "@intInvoicePaymentID", payment.intInvoicePaymentID },
                     new object[] { "@intInvoiceID", payment.intInvoiceID },
                     new object[] { "@intPaymentID", payment.intPaymentID },
-                    new object[] { "@fltAmountPaid", payment.fltAmountPaid },
-                    new object[] { "@fltTenderedAmount", payment.fltTenderedAmount },
-                    new object[] { "@fltCustomerChange", payment.fltCustomerChange }
+                    new object[] { "@fltAmountPaid", Math.Round(payment.fltAmountPaid, 2) },
+                    new object[] { "@fltTenderedAmount", Math.Round(payment.fltTenderedAmount, 2) },
+                    new object[] { "@fltCustomerChange", Math.Round(payment.fltCustomerChange, 2) }
                 };
                 DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
                 //DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
@@ -685,20 +699,20 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@intCustomerID", invoice.customer.intCustomerID },
                 new object[] { "@intEmployeeID", invoice.employee.intEmployeeID },
                 new object[] { "@intLocationID", invoice.location.intLocationID },
-                new object[] { "@fltSubTotal", 0 },
                 new object[] { "@fltShippingCharges", 0 },
-                new object[] { "@intShippingProvinceID", invoice.location.intProvinceID },
+                new object[] { "@intShippingProvinceID", invoice.intShippingProvinceID }, // invoice.location.intProvinceID },
                 new object[] { "@bitIsShipping", invoice.bitIsShipping },
                 new object[] { "@fltTotalDiscount", 0 },
                 new object[] { "@fltTotalTradeIn", 0 },
-                new object[] { "@fltGovernmentTaxAmount", invoice.fltGovernmentTaxAmount },
-                new object[] { "@fltHarmonizedTaxAmount", invoice.fltHarmonizedTaxAmount },
-                new object[] { "@fltLiquorTaxAmount", invoice.fltLiquorTaxAmount },
-                new object[] { "@fltProvincialTaxAmount", invoice.fltProvincialTaxAmount },
-                new object[] { "@fltQuebecTaxAmount", invoice.fltQuebecTaxAmount },
-                new object[] { "@fltRetailTaxAmount", invoice.fltRetailTaxAmount },
-                new object[] { "@fltShippingTaxAmount", invoice.fltShippingTaxAmount },
+                new object[] { "@fltSubTotal", 0 },
                 new object[] { "@fltBalanceDue", 0 },
+                new object[] { "@fltGovernmentTaxAmount", Math.Round(invoice.fltGovernmentTaxAmount, 2) },
+                new object[] { "@fltHarmonizedTaxAmount", Math.Round(invoice.fltHarmonizedTaxAmount, 2) },
+                new object[] { "@fltLiquorTaxAmount", Math.Round(invoice.fltLiquorTaxAmount, 2) },
+                new object[] { "@fltProvincialTaxAmount", Math.Round(invoice.fltProvincialTaxAmount, 2) },
+                new object[] { "@fltQuebecTaxAmount", Math.Round(invoice.fltQuebecTaxAmount, 2) },
+                new object[] { "@fltRetailTaxAmount", Math.Round(invoice.fltRetailTaxAmount, 2) },
+                new object[] { "@fltShippingTaxAmount", Math.Round(invoice.fltShippingTaxAmount, 2) },
                 new object[] { "@intTransactionTypeID", invoice.intTransactionTypeID },
                 new object[] { "@varAdditionalInformation", "" },
                 new object[] { "@bitChargeGST", true },
@@ -714,17 +728,18 @@ namespace SweetSpotDiscountGolfPOS.FP
         {
             string strQueryName = "ReturnCurrentInvoiceFromParms";
             string sqlCmd = "SELECT intInvoiceID, varInvoiceNumber, intInvoiceSubNumber, dtmInvoiceDate, CAST(dtmInvoiceTime AS DATETIME) AS dtmInvoiceTime, "
-                + "intCustomerID, intEmployeeID, intLocationID, fltSubTotal, fltShippingCharges, intShippingProvinceID, bitIsShipping, fltTotalDiscount, "
-                + "fltTotalTradeIn, fltGovernmentTaxAmount, fltHarmonizedTaxAmount, fltLiquorTaxAmount, fltProvincialTaxAmount, fltQuebecTaxAmount, "
-                + "fltRetailTaxAmount, fltShippingTaxAmount, fltBalanceDue, intTransactionTypeID, varAdditionalInformation FROM tbl_currentSalesInvoice "
-                + "WHERE varInvoiceNumber = @varInvoiceNumber AND intInvoiceSubNumber = @intInvoiceSubNumber AND dtmInvoiceDate = @dtmInvoiceDate AND "
-                + "dtmInvoiceTime = @dtmInvoiceTime AND intCustomerID = @intCustomerID AND intEmployeeID = @intEmployeeID AND intLocationID = @intLocationID "
-                + "AND fltSubTotal = @fltSubTotal AND fltShippingCharges = @fltShippingCharges AND intShippingProvinceID = @intShippingProvinceID AND "
-                + "bitIsShipping = @bitIsShipping AND fltTotalDiscount = @fltTotalDiscount AND fltTotalTradeIn = @fltTotalTradeIn AND fltGovernmentTaxAmount "
-                + "= @fltGovernmentTaxAmount AND fltHarmonizedTaxAmount = @fltHarmonizedTaxAmount AND fltLiquorTaxAmount = @fltLiquorTaxAmount AND "
-                + "fltProvincialTaxAmount = @fltProvincialTaxAmount AND fltQuebecTaxAmount = @fltQuebecTaxAmount AND fltRetailTaxAmount = @fltRetailTaxAmount "
-                + "AND fltShippingTaxAmount = @fltShippingTaxAmount AND fltBalanceDue = @fltBalanceDue AND intTransactionTypeID = @intTransactionTypeID AND "
-                + "varAdditionalInformation = @varAdditionalInformation";
+                + "intCustomerID, intEmployeeID, intLocationID, fltShippingCharges, intShippingProvinceID, bitIsShipping, fltTotalDiscount, fltTotalTradeIn, "
+                + "fltSubTotal, fltBalanceDue, fltGovernmentTaxAmount, fltHarmonizedTaxAmount, fltLiquorTaxAmount, fltProvincialTaxAmount, fltQuebecTaxAmount, "
+                + "fltRetailTaxAmount, fltShippingTaxAmount, intTransactionTypeID, varAdditionalInformation, bitChargeGST, bitChargePST, bitChargeLCT "
+                + "FROM tbl_currentSalesInvoice WHERE varInvoiceNumber = @varInvoiceNumber AND intInvoiceSubNumber = @intInvoiceSubNumber AND dtmInvoiceDate = "
+                + "@dtmInvoiceDate AND dtmInvoiceTime = @dtmInvoiceTime AND intCustomerID = @intCustomerID AND intEmployeeID = @intEmployeeID AND intLocationID "
+                + "= @intLocationID AND fltShippingCharges = @fltShippingCharges AND intShippingProvinceID = @intShippingProvinceID AND bitIsShipping = "
+                + "@bitIsShipping AND fltTotalDiscount = @fltTotalDiscount AND fltTotalTradeIn = @fltTotalTradeIn AND fltSubTotal = @fltSubTotal AND "
+                + "fltBalanceDue = @fltBalanceDue AND fltGovernmentTaxAmount = @fltGovernmentTaxAmount AND fltHarmonizedTaxAmount = @fltHarmonizedTaxAmount "
+                + "AND fltLiquorTaxAmount = @fltLiquorTaxAmount AND fltProvincialTaxAmount = @fltProvincialTaxAmount AND fltQuebecTaxAmount = @fltQuebecTaxAmount "
+                + "AND fltRetailTaxAmount = @fltRetailTaxAmount AND fltShippingTaxAmount = @fltShippingTaxAmount AND intTransactionTypeID = @intTransactionTypeID "
+                + "AND varAdditionalInformation = @varAdditionalInformation";
+            //AND bitChargeGST = @bitChargeGST AND bitChargePST = @bitChargePST AND bitChargeLCT = @bitChargeLCT";
 
             return ConvertFromDataTableToCurrentInvoice(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), provinceID, objPageDetails);
         }
@@ -749,13 +764,16 @@ namespace SweetSpotDiscountGolfPOS.FP
         private void UpdateCurrentInvoice(Invoice invoice, object[] objPageDetails)
         {
             string strQueryName = "UpdateCurrentInvoice";
-            string sqlCmd = "UPDATE tbl_currentSalesInvoice SET dtmInvoiceDate = @dtmInvoiceDate, dtmInvoiceTime = @dtmInvoiceTime, intCustomerID = @intCustomerID, "
-                + "intEmployeeID = @intEmployeeID, intLocationID = @intLocationID, fltSubTotal = @fltSubTotal, fltShippingCharges = @fltShippingCharges, "
-                + "intShippingProvinceID = @intShippingProvinceID, bitIsShipping = @bitIsShipping, fltTotalDiscount = @fltTotalDiscount, fltTotalTradeIn = "
-                + "@fltTotalTradeIn, fltGovernmentTaxAmount = @fltGovernmentTaxAmount, fltHarmonizedTaxAmount = @fltHarmonizedTaxAmount, fltLiquorTaxAmount = "
-                + "@fltLiquorTaxAmount, fltProvincialTaxAmount = @fltProvincialTaxAmount, fltQuebecTaxAmount = @fltQuebecTaxAmount, fltRetailTaxAmount = "
-                + "@fltRetailTaxAmount, fltShippingTaxAmount = @fltShippingTaxAmount, fltBalanceDue = @fltBalanceDue, intTransactionTypeID = @intTransactionTypeID, "
-                + "varAdditionalInformation = @varAdditionalInformation WHERE intInvoiceID = @intInvoiceID";
+            string sqlCmd = "UPDATE tbl_currentSalesInvoice SET "
+                + "dtmInvoiceDate = @dtmInvoiceDate, dtmInvoiceTime = @dtmInvoiceTime, "
+                + "intCustomerID = @intCustomerID, intEmployeeID = @intEmployeeID, intLocationID = @intLocationID, "
+                + "intShippingProvinceID = @intShippingProvinceID, fltShippingCharges = @fltShippingCharges, bitIsShipping = @bitIsShipping, "
+                + "fltTotalDiscount = @fltTotalDiscount, fltTotalTradeIn = @fltTotalTradeIn, fltSubTotal = @fltSubTotal, fltBalanceDue = @fltBalanceDue, "
+                + "fltGovernmentTaxAmount = @fltGovernmentTaxAmount, fltHarmonizedTaxAmount = @fltHarmonizedTaxAmount, fltLiquorTaxAmount = @fltLiquorTaxAmount, "
+                + "fltProvincialTaxAmount = @fltProvincialTaxAmount, fltQuebecTaxAmount = @fltQuebecTaxAmount, fltRetailTaxAmount = @fltRetailTaxAmount, "
+                + "fltShippingTaxAmount = @fltShippingTaxAmount, intTransactionTypeID = @intTransactionTypeID, varAdditionalInformation = @varAdditionalInformation, "
+                + "bitChargeGST = @bitChargeGST, bitChargeLCT = @bitChargeLCT, bitChargePST = @bitChargePST "
+                + "WHERE intInvoiceID = @intInvoiceID";
 
             object[][] parms =
             {
@@ -765,22 +783,25 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@intCustomerID", invoice.customer.intCustomerID },
                 new object[] { "@intEmployeeID", invoice.employee.intEmployeeID },
                 new object[] { "@intLocationID", invoice.location.intLocationID },
-                new object[] { "@fltSubTotal", invoice.fltSubTotal },
-                new object[] { "@fltShippingCharges", invoice.fltShippingCharges },
                 new object[] { "@intShippingProvinceID", invoice.intShippingProvinceID },
+                new object[] { "@fltShippingCharges", Math.Round(invoice.fltShippingCharges, 2) },
                 new object[] { "@bitIsShipping", invoice.bitIsShipping },
-                new object[] { "@fltTotalDiscount", invoice.fltTotalDiscount },
-                new object[] { "@fltTotalTradeIn", invoice.fltTotalTradeIn },
-                new object[] { "@fltGovernmentTaxAmount", invoice.fltGovernmentTaxAmount },
-                new object[] { "@fltHarmonizedTaxAmount", invoice.fltHarmonizedTaxAmount },
-                new object[] { "@fltLiquorTaxAmount", invoice.fltLiquorTaxAmount },
-                new object[] { "@fltProvincialTaxAmount", invoice.fltProvincialTaxAmount },
-                new object[] { "@fltQuebecTaxAmount", invoice.fltQuebecTaxAmount },
-                new object[] { "@fltRetailTaxAmount", invoice.fltRetailTaxAmount },
-                new object[] { "@fltShippingTaxAmount", invoice.fltShippingTaxAmount },
-                new object[] { "@fltBalanceDue", invoice.fltBalanceDue },
+                new object[] { "@fltTotalDiscount", Math.Round(invoice.fltTotalDiscount, 2) },
+                new object[] { "@fltTotalTradeIn", Math.Round(invoice.fltTotalTradeIn, 2) },
+                new object[] { "@fltSubTotal", Math.Round(invoice.fltSubTotal, 2) },
+                new object[] { "@fltBalanceDue", Math.Round(invoice.fltBalanceDue, 2) },
+                new object[] { "@fltGovernmentTaxAmount", Math.Round(invoice.fltGovernmentTaxAmount, 2) },
+                new object[] { "@fltHarmonizedTaxAmount", Math.Round(invoice.fltHarmonizedTaxAmount, 2) },
+                new object[] { "@fltLiquorTaxAmount", Math.Round(invoice.fltLiquorTaxAmount, 2) },
+                new object[] { "@fltProvincialTaxAmount", Math.Round(invoice.fltProvincialTaxAmount, 2) },
+                new object[] { "@fltQuebecTaxAmount", Math.Round(invoice.fltQuebecTaxAmount, 2) },
+                new object[] { "@fltRetailTaxAmount", Math.Round(invoice.fltRetailTaxAmount, 2) },
+                new object[] { "@fltShippingTaxAmount", Math.Round(invoice.fltShippingTaxAmount, 2) },
                 new object[] { "@intTransactionTypeID", invoice.intTransactionTypeID },
-                new object[] { "@varAdditionalInformation", invoice.varAdditionalInformation }
+                new object[] { "@varAdditionalInformation", invoice.varAdditionalInformation },
+                new object[] { "@bitChargeGST", true },
+                new object[] { "@bitChargePST", true },
+                new object[] { "@bitChargeLCT", true }
             };
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
@@ -944,7 +965,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@intCustomerID", receipt.customer.intCustomerID },
                 new object[] { "@intEmployeeID", receipt.employee.intEmployeeID },
                 new object[] { "@intLocationID", receipt.location.intLocationID },
-                new object[] { "@fltReceiptTotal", receipt.fltBalanceDue },
+                new object[] { "@fltReceiptTotal", Math.Round(receipt.fltBalanceDue, 2) },
                 new object[] { "@intTransactionTypeID", 5 },
                 new object[] { "@varAdditionalInformation", receipt.varAdditionalInformation }
             };
@@ -966,7 +987,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                     new object[] { "@intInventoryID", item.intInventoryID },
                     new object[] { "@intItemQuantity", item.intItemQuantity },
                     new object[] { "@varItemDescription", item.varItemDescription },
-                    new object[] { "@fltItemCost", item.fltItemCost }
+                    new object[] { "@fltItemCost", Math.Round(item.fltItemCost, 2) }
                 };
                 DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
                 //DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
@@ -986,7 +1007,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                     new object[] { "@intReceiptID", payment.intInvoiceID },
                     new object[] { "@intPaymentID", payment.intPaymentID },
                     new object[] { "@intChequeNumber", payment.intChequeNumber },
-                    new object[] { "@fltAmountPaid", payment.fltAmountPaid }
+                    new object[] { "@fltAmountPaid", Math.Round(payment.fltAmountPaid, 2) }
                 };
                 DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
                 //DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
@@ -1229,16 +1250,16 @@ namespace SweetSpotDiscountGolfPOS.FP
         {
             return ReturnCurrentInvoice2(invoiceID, objPageDetails);
         }
-        public bool InventoryIsInTradeInList(int inventoryID, CurrentUser cu, object[] objPageDetails)
-        {
-            bool tradeInFound = false;
-            DataTable dt = InventoryIDForTradeIn(inventoryID, cu, objPageDetails);
-            if (dt.Rows.Count > 0)
-            {
-                tradeInFound = true;
-            }
-            return tradeInFound;
-        }
+        //public bool InventoryIsInTradeInList(int inventoryID, CurrentUser cu, object[] objPageDetails)
+        //{
+        //    bool tradeInFound = false;
+        //    DataTable dt = InventoryIDForTradeIn(inventoryID, cu, objPageDetails);
+        //    if (dt.Rows.Count > 0)
+        //    {
+        //        tradeInFound = true;
+        //    }
+        //    return tradeInFound;
+        //}
         public void CallUpdateCurrentInvoice(Invoice invoice, object[] objPageDetails)
         {
             UpdateCurrentInvoice(invoice, objPageDetails);
@@ -1311,5 +1332,29 @@ namespace SweetSpotDiscountGolfPOS.FP
         {
             return ReturnInvoicesBasedOnSearchCriteria(stDate, endDate, searchTxt, locationID, objPageDetails);
         }
+
+
+
+
+        //public List<int> CallListofInvoicesForDayForLocation(DateTime startDate, DateTime endDate, int selectedValue, object[] objPageDetails)
+        //{
+        //    return ListofInvoicesForDayForLocation(startDate, endDate, selectedValue, objPageDetails);
+        //}
+        //private List<int> ListofInvoicesForDayForLocation(DateTime startDate, DateTime endDate, int selectedValue, object[] objPageDetails)
+        //{
+        //    string strQueryName = "ListofInvoicesForDayForLocation";
+        //    string sqlCmd = "SELECT intInvoiceID FROM tbl_invoice WHERE dtmInvoiceDate BETWEEN @dtmStartDate AND @dtmEndDate";
+        //    object[][] parms =
+        //    {
+        //        new object[] { "@dtmStartDate", startDate },
+        //        new object[] { "@dtmEndDate", endDate }
+        //    };
+        //    return ConvertFromDataTableToInts(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName));
+        //}
+        //private List<int> ConvertFromDataTableToInts(DataTable dt)
+        //{
+        //    List<int> invoice = dt.AsEnumerable().Select(row => Convert.ToInt32(row.Field<int>("intInvoiceID"))).ToList();            
+        //    return invoice;
+        //}
     }
 }

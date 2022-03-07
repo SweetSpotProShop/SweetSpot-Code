@@ -3,12 +3,15 @@ using System.Threading;
 using SweetSpotDiscountGolfPOS.FP;
 using SweetSpotDiscountGolfPOS.OB;
 using SweetSpotDiscountGolfPOS.Misc;
+using System.Web.UI.WebControls;
+using System.Data;
 
 namespace SweetSpotDiscountGolfPOS
 {
     public partial class ReportsInventoryChange : System.Web.UI.Page
     {
         readonly ErrorReporting ER = new ErrorReporting();
+        readonly LocationManager LM = new LocationManager();
         readonly Reports R = new Reports();
         CurrentUser CU;
 
@@ -28,18 +31,30 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    CU = (CurrentUser)Session["currentUser"];
-                    //Gathering the start and end dates
-                    object[] passing = (object[])Session["reportInfo"];
-                    DateTime[] reportDates = (DateTime[])passing[0];
-                    DateTime startDate = reportDates[0];
-                    DateTime endDate = reportDates[1];
-                    //Builds string to display in label
-                    if (startDate == endDate) { lblDates.Text = "Changes in Inventory for: " + startDate.ToString("dd/MMM/yy"); }
-                    else { lblDates.Text = "Changes in Inventory for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy"); }
+                    if (!IsPostBack)
+                    {
+                        CU = (CurrentUser)Session["currentUser"];
+                        //Gathering the start and end dates
+                        ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
 
-                    grdStats.DataSource = R.CallReturnChangedInventoryForDateRange(startDate, endDate, objPageDetails);
-                    grdStats.DataBind();
+                        //Calendar calStartDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalStartDate");
+                        //calStartDate.SelectedDate = repInfo.dtmStartDate;
+                        //Calendar calEndDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalEndDate");
+                        //calEndDate.SelectedDate = repInfo.dtmEndDate;
+                        //DropDownList ddlDatePeriod = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlDatePeriod");
+                        //ddlDatePeriod.SelectedValue = repInfo.intGroupTimeFrame.ToString();
+                        //DropDownList ddlLocation = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlLocation");
+                        //DataTable dt = LM.CallReturnLocationDropDown(objPageDetails);
+                        //dt.Rows.Add(99, "All Locations");
+                        //ddlLocation.DataSource = dt;
+                        //ddlLocation.DataBind();
+                        //ddlLocation.SelectedValue = repInfo.intLocationID.ToString();
+
+                        //Builds string to display in label
+                        lblDates.Text = "Changes in Inventory for: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString();
+                        grdStats.DataSource = R.CallReturnChangedInventoryForDateRange(repInfo, objPageDetails);
+                        grdStats.DataBind();
+                    }
                 }
             }
             //Exception catch
@@ -47,7 +62,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

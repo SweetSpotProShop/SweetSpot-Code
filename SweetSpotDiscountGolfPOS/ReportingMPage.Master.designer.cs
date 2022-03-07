@@ -85,13 +85,13 @@ namespace SweetSpotDiscountGolfPOS {
         protected global::System.Web.UI.WebControls.DropDownList ddlLocation;
         
         /// <summary>
-        /// btnRerunReport control.
+        /// BtnRerunReport control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnRerunReport;
+        protected global::System.Web.UI.WebControls.Button BtnRerunReport;
         
         /// <summary>
         /// Button1 control.

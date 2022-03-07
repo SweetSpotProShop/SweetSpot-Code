@@ -41,26 +41,31 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    CU = (CurrentUser)Session["currentUser"];
-                    //Gathering the start and end dates
-                    object[] repInfo = (object[])Session["reportInfo"];
-                    DateTime[] reportDates = (DateTime[])repInfo[0];
-                    DateTime startDate = reportDates[0];
-                    DateTime endDate = reportDates[1];
-                    int locationID = Convert.ToInt32(repInfo[1]);
-                    //Builds string to display in label
-                    if (startDate == endDate)
+                    if (!IsPostBack)
                     {
-                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
-                    }
-                    else
-                    {
-                        lblReportDate.Text = "Discount Report on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
-                    }
-                    DataTable discounts = R.CallReturnDiscountsBetweenDates(repInfo, objPageDetails);
-                    GrdInvoiceDisplay.DataSource = discounts;
-                    GrdInvoiceDisplay.DataBind();
+                        CU = (CurrentUser)Session["currentUser"];
+                        //Gathering the start and end dates
+                        ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
 
+                        //Calendar calStartDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalStartDate");
+                        //calStartDate.SelectedDate = repInfo.dtmStartDate;
+                        //Calendar calEndDate = (Calendar)CustomExtensions.CallFindControlRecursive(Master, "CalEndDate");
+                        //calEndDate.SelectedDate = repInfo.dtmEndDate;
+                        //DropDownList ddlDatePeriod = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlDatePeriod");
+                        //ddlDatePeriod.SelectedValue = repInfo.intGroupTimeFrame.ToString();
+                        //DropDownList ddlLocation = (DropDownList)CustomExtensions.CallFindControlRecursive(Master, "ddlLocation");
+                        //DataTable dt = LM.CallReturnLocationDropDown(objPageDetails);
+                        //dt.Rows.Add(99, "All Locations");
+                        //ddlLocation.DataSource = dt;
+                        //ddlLocation.DataBind();
+                        //ddlLocation.SelectedValue = repInfo.intLocationID.ToString();
+
+                        //Builds string to display in label
+                        lblReportDate.Text = "Discount Report on: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString() + " for " + repInfo.varLocationName;
+                        DataTable resultSet = R.CallReturnDiscountsBetweenDates(repInfo, objPageDetails);
+                        GrdInvoiceDisplay.DataSource = resultSet;
+                        GrdInvoiceDisplay.DataBind();
+                    }
                 }
             }
             //Exception catch
@@ -68,7 +73,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -101,7 +106,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -119,15 +124,10 @@ namespace SweetSpotDiscountGolfPOS
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
 
-                object[] repInfo = (object[])Session["reportInfo"];
-                DateTime[] reportDates = (DateTime[])repInfo[0];
-                DateTime startDate = reportDates[0];
-                DateTime endDate = reportDates[1];
-                int locationID = Convert.ToInt32(repInfo[1]);
-
+                ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
                 DataTable discounts = R.CallReturnDiscountsBetweenDates(repInfo, objPageDetails);
 
-                string fileName = "Discount Report-" + LM.CallReturnLocationName(locationID, objPageDetails) + "_" + startDate.ToShortDateString() + " - " + endDate.ToShortDateString() + ".xlsx";
+                string fileName = "Discount Report-" + repInfo.varLocationName + "_" + repInfo.dtmStartDate.ToShortDateString() + " - " + repInfo.dtmEndDate.ToShortDateString() + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
@@ -170,7 +170,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

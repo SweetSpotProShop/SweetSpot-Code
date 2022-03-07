@@ -17,6 +17,7 @@ namespace SweetSpotDiscountGolfPOS.OB
         public int intShippingProvinceID { get; set; }        
         public double fltShippingCharges { get; set; }
         public bool bitIsShipping { get; set; }
+        public double fltShippingTaxAmount { get; set; }
         public double fltTotalDiscount { get; set; }
         public double fltTotalTradeIn { get; set; }
         public double fltSubTotal { get; set; }
@@ -27,7 +28,6 @@ namespace SweetSpotDiscountGolfPOS.OB
         public double fltProvincialTaxAmount { get; set; }
         public double fltQuebecTaxAmount { get; set; }
         public double fltRetailTaxAmount { get; set; }
-        public double fltShippingTaxAmount { get; set; }
         public int intTransactionTypeID { get; set; }
         public string varAdditionalInformation { get; set; }
         public List<InvoiceItems> invoiceItems { get; set; }

@@ -141,7 +141,7 @@
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Discounts/Bonus Applied">
                         <ItemTemplate>
-                            <asp:Label ID="discount" Text='<%# ((Convert.ToDouble(Eval("fltItemPrice")) + Convert.ToDouble(Eval("fltItemRefund"))) * Convert.ToDouble(Eval("intItemQuantity"))).ToString("C") %>' runat="server" />
+                            <asp:Label ID="discount" Text='<%# ((Convert.ToBoolean(Eval("bitIsDiscountPercent")) == false ? Convert.ToDouble(Eval("fltItemPrice")) - Convert.ToDouble(Eval("fltItemDiscount")) : (Convert.ToDouble(Eval("fltItemDiscount")) / 100) * Convert.ToDouble(Eval("fltItemPrice"))) - Convert.ToDouble(Eval("fltItemRefund"))).ToString("C") %>' runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Quantity">

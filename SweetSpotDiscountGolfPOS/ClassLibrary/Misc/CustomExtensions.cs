@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Web.UI;
 
 namespace SweetSpotDiscountGolfPOS.Misc
@@ -37,7 +38,6 @@ namespace SweetSpotDiscountGolfPOS.Misc
             return monthStart.AddMonths(1).AddDays(-1);
         }
 
-
         public static Control CallFindControlRecursive(Control control, string id)
         {
             return FindControlRecursive(control, id);
@@ -57,7 +57,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
                 }
             }
             return returnControl;
-        }
 
+        }
     }
 }
