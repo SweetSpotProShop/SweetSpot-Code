@@ -466,6 +466,7 @@ namespace SweetSpotDiscountGolfPOS.FP
         }
         public void CollectAndStoreDailySalesData(DateTime dtmDate, int intLocationID, object[] objPageDetails)
         {
+            //UPDATE ON 3/06/22 GITHUB UPDATE #15
             //gather daily sales datat for date
             DataTable dt = CallReturnDailySalesStatsForLocationAndDate(dtmDate, intLocationID, objPageDetails);
             bool savedData = ReturnIfDailySalesDataAlreadyStored(dtmDate, intLocationID, objPageDetails);
@@ -566,6 +567,7 @@ namespace SweetSpotDiscountGolfPOS.FP
         }
         private void UpdateDailySalesData(DataTable dt, object[] objPageDetails)
         {
+            //UPDATE ON 3/06/22 GITHUB UPDATE #15
             string strQueryName = "UpdateDailySalesData";
             string sqlCmd = "UPDATE tbl_dailySalesData SET fltGSTCollected = @fltGSTCollected, fltGSTReturned = @fltGSTReturned, fltPSTCollected = @fltPSTCollected, "
                 + "fltPSTReturned = @fltPSTReturned, fltHSTCollected = @fltHSTCollected, fltHSTReturned = @fltHSTReturned, fltQSTCollected = @fltQSTCollected, "
@@ -596,6 +598,7 @@ namespace SweetSpotDiscountGolfPOS.FP
         }
         private void StoreNewDailySalesData(DataTable dt, object[] objPageDetails)
         {
+            //UPDATE ON 3/06/22 GITHUB UPDATE #15
             double costOfInv = ReturnCostOfInventoryForLocation(Convert.ToInt32(dt.Rows[0][1].ToString()), objPageDetails);
             string strQueryName = "StoreNewDailySalesData";
             string sqlCmd = "INSERT INTO tbl_dailySalesData VALUES(@dtmSalesDataDate, @intLocationID, @fltGSTCollected, @fltGSTReturned, @fltPSTCollected, @fltPSTReturned, "
