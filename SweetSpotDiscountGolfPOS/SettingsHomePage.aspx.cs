@@ -174,7 +174,7 @@ namespace SweetSpotDiscountGolfPOS
                     using (ExcelPackage xlPackage = new ExcelPackage(stream))
                     {
                         //Gets the first worksheet in the workbook
-                        ExcelWorksheet worksheet = xlPackage.Workbook.Worksheets[1];
+                        ExcelWorksheet worksheet = xlPackage.Workbook.Worksheets["Trade-in_Detail_Report_"];
                         //Gets the row count
                         var rowCnt = worksheet.Dimension.End.Row;
                         //Gets the column count
