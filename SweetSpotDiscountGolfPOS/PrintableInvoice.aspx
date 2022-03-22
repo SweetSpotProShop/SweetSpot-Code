@@ -156,7 +156,7 @@
 					</asp:TemplateField>
 					<asp:TemplateField HeaderText="Extended Price">
 						<ItemTemplate>
-							<asp:Label ID="extended" Text='<%# Convert.ToBoolean(Eval("bitIsDiscountPercent")) == false ? ((Convert.ToDouble(Eval("fltItemPrice"))-Convert.ToDouble(Eval("fltItemDiscount")))*Convert.ToDouble(Eval("intItemQuantity"))).ToString("C") : ((Convert.ToDouble(Eval("fltItemPrice")) - ((Convert.ToDouble(Eval("fltItemDiscount")) / 100) * Convert.ToDouble(Eval("fltItemPrice"))))*Convert.ToDouble(Eval("intItemQuantity"))).ToString("C") %>' runat="server" />
+							<asp:Label ID="extended" Text='<%# Convert.ToBoolean(Eval("bitIsDiscountPercent")) == false ? ((Convert.ToDouble(Eval("fltItemPrice"))-Convert.ToDouble(Eval("fltItemDiscount")))*Convert.ToDouble(Eval("intItemQuantity"))).ToString("C") : ((Convert.ToDouble(Eval("fltItemPrice")) - Convert.ToDouble(((Convert.ToDouble(Eval("fltItemDiscount")) / 100) * Convert.ToDouble(Eval("fltItemPrice")))))*Convert.ToDouble(Eval("intItemQuantity"))).ToString("C") %>' runat="server" />
 						</ItemTemplate>
 					</asp:TemplateField>
 				</Columns>

@@ -38,30 +38,19 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     CU = (CurrentUser)Session["currentUser"];
                     //Gathering the start and end dates
-                    object[] passing = (object[])Session["reportInfo"];
-                    DateTime[] reportDates = (DateTime[])passing[0];
-                    DateTime startDate = reportDates[0];
-                    DateTime endDate = reportDates[1];
-                    int locationID = (int)passing[1];
+                    ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
                     //Builds string to display in label
-                    if (startDate == endDate)
-                    {
-                        lblDates.Text = "Items sold for: " + startDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
-                    }
-                    else
-                    {
-                        lblDates.Text = "Items sold for: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
-                    }
+                    lblDates.Text = "Items sold for: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString() + " for " + repInfo.varLocationName;
                     //Binding the gridview
-                    items = R.CallMostSoldItemsReport(startDate, endDate, locationID, objPageDetails);
-                    brands = R.CallMostSoldBrandsReport(startDate, endDate, locationID, objPageDetails);
-                    models = R.CallMostSoldModelsReport(startDate, endDate, locationID, objPageDetails);
-                    grdItems.DataSource = items;
-                    grdItems.DataBind();
-                    grdBrands.DataSource = brands;
-                    grdBrands.DataBind();
-                    grdModels.DataSource = models;
-                    grdModels.DataBind();
+                    //items = R.CallMostSoldItemsReport(repInfo, objPageDetails);
+                    //brands = R.CallMostSoldBrandsReport(repInfo, objPageDetails);
+                    //models = R.CallMostSoldModelsReport(repInfo, objPageDetails);
+                    //grdItems.DataSource = items;
+                    //grdItems.DataBind();
+                    //grdBrands.DataSource = brands;
+                    //grdBrands.DataBind();
+                    //grdModels.DataSource = models;
+                    //grdModels.DataBind();
                 }
             }
             //Exception catch
@@ -69,7 +58,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -143,7 +132,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

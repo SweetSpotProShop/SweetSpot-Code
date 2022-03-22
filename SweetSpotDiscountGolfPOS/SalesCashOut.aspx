@@ -36,7 +36,7 @@
                 <br />
                 <asp:Table ID="tblCashout" runat="server" GridLines="Both" CssClass="CashoutTable" Width="100%">
                     <asp:TableRow Width="100%">
-                        <asp:TableCell ColumnSpan="11" Width="100%">
+                        <asp:TableCell ColumnSpan="14" Width="100%">
                             <asp:Label runat="server" ID="lblSales" Text="Sales" />
                         </asp:TableCell>
                     </asp:TableRow>
@@ -62,14 +62,23 @@
                         <asp:TableCell Width="9%">
                             <asp:Label runat="server" ID="lblPreTaxS" Text="Pre Tax" Width="100%" />
                         </asp:TableCell>
-                        <asp:TableCell Width="9%">
+                        <asp:TableCell ID="cellGSTS" Width="9%">
                             <asp:Label runat="server" ID="lblGSTS" Text="GST" Width="100%" />
                         </asp:TableCell>
-                        <asp:TableCell Width="9%">
+						<asp:TableCell ID="cellHSTS" Width="9%">
+                            <asp:Label runat="server" ID="lblHSTS" Text="HST" Width="100%" />
+                        </asp:TableCell>
+						<asp:TableCell ID="cellLCTS" Width="9%">
+                            <asp:Label runat="server" ID="lblLCTS" Text="LCT" Width="100%" />
+                        </asp:TableCell>
+                        <asp:TableCell ID="cellPSTS" Width="9%">
                             <asp:Label runat="server" ID="lblPSTS" Text="PST" Width="100%" />
                         </asp:TableCell>
-						<asp:TableCell Width="9%">
-                            <asp:Label runat="server" ID="LblLCTS" Text="LCT" Width="100%" />
+						<asp:TableCell ID="cellQSTS" Width="9%">
+                            <asp:Label runat="server" ID="lblQSTS" Text="QST" Width="100%" />
+                        </asp:TableCell>
+						<asp:TableCell ID="cellRSTS" Width="9%">
+                            <asp:Label runat="server" ID="lblRSTS" Text="RST" Width="100%" />
                         </asp:TableCell>
                         <asp:TableCell Width="9%">
                             <asp:Label runat="server" ID="lblTotalS" Text="Total" Width="100%" />
@@ -97,14 +106,23 @@
                         <asp:TableCell>
                             <asp:Label runat="server" ID="lblPreTaxDisplay" Text="" />
                         </asp:TableCell>
-                        <asp:TableCell>
+                        <asp:TableCell ID="cellGSTDisplay">
                             <asp:Label runat="server" ID="lblGSTDisplay" Text="" />
                         </asp:TableCell>
-                        <asp:TableCell>
+						<asp:TableCell ID="cellHSTDisplay">
+                            <asp:Label runat="server" ID="lblHSTDisplay" Text="" />
+                        </asp:TableCell>
+						<asp:TableCell ID="cellLCTDisplay">
+                            <asp:Label runat="server" ID="lblLCTDisplay" Text="" />
+                        </asp:TableCell>
+                        <asp:TableCell ID="cellPSTDisplay">
                             <asp:Label runat="server" ID="lblPSTDisplay" Text="" />
                         </asp:TableCell>
-						<asp:TableCell>
-                            <asp:Label runat="server" ID="lblLCTDisplay" Text="" />
+						<asp:TableCell ID="cellQSTDisplay">
+                            <asp:Label runat="server" ID="lblQSTDisplay" Text="" />
+                        </asp:TableCell>
+						<asp:TableCell ID="cellRSTDisplay">
+                            <asp:Label runat="server" ID="lblRSTDisplay" Text="" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label runat="server" ID="lblTotalDisplay" Text="" />

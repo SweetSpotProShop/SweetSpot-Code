@@ -59,14 +59,29 @@
                             <asp:Label ID="lblGSTAmount" runat="server" Text='<%# Eval("fltGovernmentTaxAmount", "{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
-					<asp:TemplateField HeaderText="PST">
+					<asp:TemplateField HeaderText="HST">
                         <ItemTemplate>
-                            <asp:Label ID="lblPSTAmount" runat="server" Text='<%# Eval("fltProvincialTaxAmount", "{0:C}") %>' />
+                            <asp:Label ID="lblHSTAmount" runat="server" Text='<%# Eval("fltHarmonizedTaxAmount", "{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
 					<asp:TemplateField HeaderText="LCT">
                         <ItemTemplate>
                             <asp:Label ID="lblLCTAmount" runat="server" Text='<%# Eval("fltLiquorTaxAmount", "{0:C}") %>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+					<asp:TemplateField HeaderText="PST">
+                        <ItemTemplate>
+                            <asp:Label ID="lblPSTAmount" runat="server" Text='<%# Eval("fltProvincialTaxAmount", "{0:C}") %>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+					<asp:TemplateField HeaderText="QST">
+                        <ItemTemplate>
+                            <asp:Label ID="lblQSTAmount" runat="server" Text='<%# Eval("fltQuebecTaxAmount", "{0:C}") %>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+					<asp:TemplateField HeaderText="RST">
+                        <ItemTemplate>
+                            <asp:Label ID="lblRSTAmount" runat="server" Text='<%# Eval("fltRetailTaxAmount", "{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Total Sales">

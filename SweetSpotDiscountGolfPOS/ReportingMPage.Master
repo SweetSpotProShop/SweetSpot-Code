@@ -95,7 +95,7 @@
 									DataTextField="varCityName" DataValueField="intLocationID" Visible="true" />
 							</asp:TableCell>
 							<asp:TableCell>
-								<asp:Button ID="btnRerunReport" runat="server" Text="Rerun" OnClick="btnRerunReport_Click" />
+								<asp:Button ID="BtnRerunReport" runat="server" Text="Rerun" OnClick="BtnRerunReport_Click" />
 							</asp:TableCell>
 						</asp:TableRow>
 					</asp:Table>

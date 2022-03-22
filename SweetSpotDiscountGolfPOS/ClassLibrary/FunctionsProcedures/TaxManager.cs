@@ -242,11 +242,9 @@ namespace SweetSpotDiscountGolfPOS.FP
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
+
+
         //Public calls
-        //public List<InvoiceItemTax> CallConversionFromDataTableToInvoiceItemTax2(DataTable dt)
-        //{
-        //    return ConvertFromDataTableToInvoiceItemTax2(dt);
-        //}
         public List<Tax> ReturnTaxListBasedOnDate(DateTime selectedDate, int provinceID, object[] objPageDetails)
         {
             return ConvertFromDataTableToTax(ReturnTaxListBasedOnDateAndProvinceForUpdate(provinceID, selectedDate, objPageDetails));
@@ -503,24 +501,25 @@ namespace SweetSpotDiscountGolfPOS.FP
             }
             return taxAmount;
         }
-        public double ReturnTaxPercentageForShipping(int shippingProvinceID, DateTime selectedDate, object[] objPageDetails)
+        public double ReturnTaxPercentageForShipping(int intShippingProvinceID, DateTime selectedDate, object[] objPageDetails)
         {
-            double taxPercentage = 0;
-            DataTable dt = ReturnTaxListBasedOnDateAndProvinceForUpdate(shippingProvinceID, selectedDate, objPageDetails);
-
+            double fltTaxPercentage = 0;
+            DataTable dt = ReturnTaxListBasedOnDateAndProvinceForUpdate(intShippingProvinceID, selectedDate, objPageDetails);
             foreach (DataRow dr in dt.Rows)
             {
                 if (Convert.ToInt32(dr[0]) == 1)
                 {
-                    taxPercentage = Convert.ToDouble(dr[1]);
+                    fltTaxPercentage = Convert.ToDouble(dr[1]);
                 }
-                else if (Convert.ToInt32(dr[0]) == 3)
+                else if(Convert.ToInt32(dr[0]) == 3)
                 {
-                    taxPercentage = Convert.ToDouble(dr[1]);
+                    fltTaxPercentage = Convert.ToDouble(dr[1]);
                 }
             }
-            return taxPercentage;
+            return fltTaxPercentage;
         }
+
+
         public int GatherTaxIDFromString(string taxName, object[] objPageDetails)
         {
             return ReturnTaxIDFromString(taxName, objPageDetails);

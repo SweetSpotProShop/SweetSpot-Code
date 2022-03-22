@@ -121,7 +121,7 @@ namespace SweetSpotDiscountGolfPOS
                         grdItemsSoldList.DataSource = invoice.invoiceItems;
                         grdItemsSoldList.DataBind();
 
-                        //Displays the total amount ppaid
+                        //Displays the total amount paid
                         //Binds the payment methods to a gridview
                         grdMOPS.DataSource = invoice.invoiceMops;
                         grdMOPS.DataBind();
@@ -133,7 +133,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -155,7 +155,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

@@ -51,7 +51,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -78,7 +78,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -106,7 +106,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -134,7 +134,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -162,7 +162,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -190,7 +190,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -220,7 +220,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -266,7 +266,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -311,7 +311,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -356,7 +356,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -383,7 +383,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -411,7 +411,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -476,7 +476,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -533,7 +533,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -566,7 +566,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -609,7 +609,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive the message please contact "
@@ -638,102 +638,60 @@ namespace SweetSpotDiscountGolfPOS
                 string provincialName = "PST";
                 string liquorName = "LCT";
                 double governmentTax = 0;
-                double harmonizedTax = 0;
-                double liquorTax = 0;
                 double provincialTax = 0;
-                double quebecTax = 0;
-                double retailTax = 0;
+                double liquorTax = 0;
 
                 foreach (var invoiceItem in invoice.invoiceItems)
                 {
                     foreach (var invoiceItemTax in invoiceItem.invoiceItemTaxes)
                     {
-                        if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("GST", objPageDetails))
+                        if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("GST", objPageDetails) || invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("HST", objPageDetails))
                         {
                             if (invoiceItemTax.bitIsTaxCharged)
                             {
-                                governmentName = invoiceItemTax.varTaxName.ToString();
                                 governmentTax += invoiceItemTax.fltTaxAmount;
                                 lblGovernment.Visible = true;
                                 lblGovernment.Text = invoiceItemTax.varTaxName;
                                 lblGovernmentAmount.Visible = true;
                                 BtnRemoveGov.Visible = true;
-                                BtnRemoveGov.Text = "Remove " + governmentName.ToString();
+                                BtnRemoveGov.Text = "Remove " + invoiceItemTax.varTaxName.ToString();
                             }
+                            governmentName = invoiceItemTax.varTaxName.ToString();
                         }
-                        else if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("HST", objPageDetails))
+                        else if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("PST", objPageDetails) || invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("RST", objPageDetails) || invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("QST", objPageDetails))
                         {
                             if (invoiceItemTax.bitIsTaxCharged)
                             {
-                                governmentName = invoiceItemTax.varTaxName.ToString();
-                                harmonizedTax += invoiceItemTax.fltTaxAmount;
-                                lblGovernment.Visible = true;
-                                lblGovernment.Text = invoiceItemTax.varTaxName;
-                                lblGovernmentAmount.Visible = true;
-                                BtnRemoveGov.Visible = true;
-                                BtnRemoveGov.Text = "Remove " + governmentName.ToString();
-                            }
-                        }
-                        else if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("LCT", objPageDetails))
-                        {
-                            if (invoiceItemTax.bitIsTaxCharged)
-                            {
-                                liquorName = invoiceItemTax.varTaxName.ToString();
-                                liquorTax += invoiceItemTax.fltTaxAmount;
-                                lblLiquorTax.Visible = true;
-                                lblLiquorTax.Text = invoiceItemTax.varTaxName;
-                                lblLiquorTaxAmount.Visible = true;
-                                BtnRemoveLiq.Visible = true;
-                                BtnRemoveLiq.Text = "Remove " + liquorName.ToString();
-                            }
-                        }
-                        else if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("PST", objPageDetails))
-                        {
-                            if (invoiceItemTax.bitIsTaxCharged)
-                            {
-                                provincialName = invoiceItemTax.varTaxName.ToString();
                                 provincialTax += invoiceItemTax.fltTaxAmount;
                                 lblProvincial.Visible = true;
                                 lblProvincial.Text = invoiceItemTax.varTaxName;
                                 lblProvincialAmount.Visible = true;
                                 BtnRemoveProv.Visible = true;
-                                BtnRemoveProv.Text = "Remove " + provincialName.ToString();
+                                BtnRemoveProv.Text = "Remove " + invoiceItemTax.varTaxName.ToString();
                             }
+                            provincialName = invoiceItemTax.varTaxName.ToString();
                         }
-                        else if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("QST", objPageDetails))
+                        else if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("LCT", objPageDetails))
                         {
                             if (invoiceItemTax.bitIsTaxCharged)
                             {
-                                provincialName = invoiceItemTax.varTaxName.ToString();
-                                quebecTax += invoiceItemTax.fltTaxAmount;
-                                lblProvincial.Visible = true;
-                                lblProvincial.Text = invoiceItemTax.varTaxName;
-                                lblProvincialAmount.Visible = true;
-                                BtnRemoveProv.Visible = true;
-                                BtnRemoveProv.Text = "Remove " + provincialName.ToString();
+                                liquorTax += invoiceItemTax.fltTaxAmount;
+                                lblLiquorTax.Visible = true;
+                                lblLiquorTax.Text = invoiceItemTax.varTaxName;
+                                lblLiquorTaxAmount.Visible = true;
+                                BtnRemoveLiq.Visible = true;
+                                BtnRemoveLiq.Text = "Remove " + invoiceItemTax.varTaxName.ToString();
                             }
-                        }
-                        else if (invoiceItemTax.intTaxTypeID == TM.GatherTaxIDFromString("RST", objPageDetails))
-                        {
-                            if (invoiceItemTax.bitIsTaxCharged)
-                            {
-                                provincialName = invoiceItemTax.varTaxName.ToString();
-                                retailTax += invoiceItemTax.fltTaxAmount;
-                                lblProvincial.Visible = true;
-                                lblProvincial.Text = invoiceItemTax.varTaxName;
-                                lblProvincialAmount.Visible = true;
-                                BtnRemoveProv.Visible = true;
-                                BtnRemoveProv.Text = "Remove " + provincialName.ToString();
-                            }
+                            liquorName = invoiceItemTax.varTaxName.ToString();
                         }
                     }
                 }
 
-                if (governmentTax == 0 && harmonizedTax == 0)
+                if (governmentTax == 0)
                 {
                     BtnRemoveGov.Text = "Add " + governmentName.ToString();
                 }
-                if (provincialTax == 0 && quebecTax == 0 && retailTax == 0)
+                if (provincialTax == 0)
                 {
                     BtnRemoveProv.Text = "Add " + provincialName.ToString();
                 }
@@ -742,11 +700,11 @@ namespace SweetSpotDiscountGolfPOS
                     BtnRemoveLiq.Text = "Add " + liquorName.ToString();
                 }
 
-                lblGovernmentAmount.Text = (governmentTax + harmonizedTax).ToString("C");
-                lblProvincialAmount.Text = (provincialTax + quebecTax + retailTax).ToString("C");
+                lblGovernmentAmount.Text = (governmentTax + invoice.fltShippingTaxAmount).ToString("C");
+                lblProvincialAmount.Text = provincialTax.ToString("C");
                 lblLiquorTaxAmount.Text = liquorTax.ToString("C");
 
-                double tx = governmentTax + harmonizedTax + liquorTax + provincialTax + quebecTax + retailTax;
+                double tx = governmentTax + provincialTax + liquorTax + invoice.fltShippingTaxAmount;
 
                 //***Assign each item to its Label.
                 lblTotalInCartAmount.Text = (invoice.fltSubTotal + invoice.fltTotalDiscount - invoice.fltTotalTradeIn).ToString("C");
@@ -759,21 +717,12 @@ namespace SweetSpotDiscountGolfPOS
                 lblRemainingBalanceDueDisplay.Text = ((invoice.fltBalanceDue + invoice.fltShippingCharges + tx) - dblAmountPaid).ToString("C");
                 txtAmountPaying.Text = ((invoice.fltBalanceDue + invoice.fltShippingCharges + tx) - dblAmountPaid).ToString("#0.00");
                 ButtonDisable(((invoice.fltBalanceDue + invoice.fltShippingCharges + tx) - dblAmountPaid));
-
-
-                invoice.fltGovernmentTaxAmount = governmentTax;
-                invoice.fltHarmonizedTaxAmount = harmonizedTax;
-                invoice.fltLiquorTaxAmount = liquorTax;
-                invoice.fltProvincialTaxAmount = provincialTax;
-                invoice.fltQuebecTaxAmount = quebecTax;
-                invoice.fltRetailTaxAmount = retailTax;
-                IM.CallUpdateCurrentInvoice(invoice, objPageDetails);
             }
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive the message please contact "

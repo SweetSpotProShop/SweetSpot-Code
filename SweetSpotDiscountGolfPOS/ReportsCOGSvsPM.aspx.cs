@@ -18,7 +18,6 @@ namespace SweetSpotDiscountGolfPOS
         readonly Reports R = new Reports();
         CurrentUser CU;
 
-        int locationID;
         double tCost;
         double tPrice;
         DataTable inv = new DataTable();
@@ -41,24 +40,13 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     CU = (CurrentUser)Session["currentUser"];
                     //Gathering the start and end dates
-                    object[] passing = (object[])Session["reportInfo"];
-                    DateTime[] reportDates = (DateTime[])passing[0];
-                    DateTime startDate = reportDates[0];
-                    DateTime endDate = reportDates[1];
-                    locationID = (int)passing[1];
+                    ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
                     //Builds string to display in label
-                    if (startDate == endDate)
-                    {
-                        lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
-                    }
-                    else
-                    {
-                        lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + startDate.ToString("dd/MMM/yy") + " to " + endDate.ToString("dd/MMM/yy") + " for " + LM.CallReturnLocationName(locationID, objPageDetails);
-                    }
+                    lblDates.Text = "Cost of Goods Sold & Profit Margin on: " + repInfo.dtmStartDate.ToShortDateString() + " to " + repInfo.dtmEndDate.ToShortDateString() + " for " + repInfo.varLocationName;
                     //Binding the gridview
-                    inv = R.CallReturnInvoicesForCOGS(startDate, endDate, locationID, objPageDetails);
-                    GrdInvoiceSelection.DataSource = inv;
-                    GrdInvoiceSelection.DataBind();
+                    //inv = R.CallReturnInvoicesForCOGS(repInfo, objPageDetails);
+                    //GrdInvoiceSelection.DataSource = inv;
+                    //GrdInvoiceSelection.DataBind();
                 }
             }
             //Exception catch
@@ -66,7 +54,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -91,7 +79,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -143,7 +131,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "
@@ -160,8 +148,8 @@ namespace SweetSpotDiscountGolfPOS
                 //Sets path and file name to download report to
                 string pathUser = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string pathDownload = (pathUser + "\\Downloads\\");
-                string loc = LM.CallReturnLocationName(locationID, objPageDetails);
-                string fileName = "COGS and PM Report - " + loc + ".xlsx";
+                ReportInformation repInfo = (ReportInformation)Session["reportInfo"];
+                string fileName = "COGS and PM Report - " + repInfo.varLocationName + ".xlsx";
                 FileInfo newFile = new FileInfo(pathDownload + fileName);
                 using (ExcelPackage xlPackage = new ExcelPackage(newFile))
                 {
@@ -207,7 +195,7 @@ namespace SweetSpotDiscountGolfPOS
             catch (Exception ex)
             {
                 //Log all info into error table
-                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]) + "-V3.2", method, this);
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
                 //Display message box
                 MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
                     + "If you continue to receive this message please contact "

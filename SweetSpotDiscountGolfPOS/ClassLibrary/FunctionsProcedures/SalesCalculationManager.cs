@@ -26,12 +26,12 @@ namespace SweetSpotDiscountGolfPOS.FP
                 if (invoiceItem.bitIsDiscountPercent)
                 {
                     //If the discount is a percentage
-                    singleDiscoount = invoiceItem.intItemQuantity * (invoiceItem.fltItemPrice * (invoiceItem.fltItemDiscount / 100));
+                    singleDiscoount = Math.Round(invoiceItem.intItemQuantity * (invoiceItem.fltItemPrice * (invoiceItem.fltItemDiscount / 100)), 2);
                 }
                 else
                 {
                     //If the discount is a dollar amount
-                    singleDiscoount = invoiceItem.intItemQuantity * invoiceItem.fltItemDiscount;
+                    singleDiscoount = Math.Round(invoiceItem.intItemQuantity * invoiceItem.fltItemDiscount, 2);
                 }
                 totalDiscount += singleDiscoount;
             }
@@ -53,12 +53,12 @@ namespace SweetSpotDiscountGolfPOS.FP
                 if (invoiceItem.bitIsClubTradeIn)
                 {
                     //Adding the trade in value to the total trade in amount
-                    singleTradeInAmount = invoiceItem.intItemQuantity * invoiceItem.fltItemPrice;
+                    singleTradeInAmount = Math.Round(invoiceItem.intItemQuantity * invoiceItem.fltItemPrice, 2);
                     totalTradeinAmount += singleTradeInAmount;
                 }
             }
             //Returns the total trade in amount for the cart
-            return totalTradeinAmount;
+            return Math.Round(totalTradeinAmount, 2);
         }
         //This method returns the total total amount of the cart
         private double returnTotalAmount(List<InvoiceItems> itemsSold, int loc, object[] objPageDetails)
@@ -73,12 +73,12 @@ namespace SweetSpotDiscountGolfPOS.FP
                 //Checks if the sku is outside of the range for the trade in sku's
                 if (!invoiceItem.bitIsClubTradeIn)
                 {
-                    singleTotalAmount = invoiceItem.intItemQuantity * invoiceItem.fltItemPrice;
+                    singleTotalAmount = Math.Round(invoiceItem.intItemQuantity * invoiceItem.fltItemPrice, 2);
                     totalTotalAmount += singleTotalAmount;
                 }
             }
             //Returns the total amount value of the cart
-            return totalTotalAmount;
+            return Math.Round(totalTotalAmount, 2);
         }
         //This method returns the total subtotal amount for the cart
         private double returnSubtotalAmount(List<InvoiceItems> itemsSold, int loc, object[] objPageDetails)
@@ -95,7 +95,17 @@ namespace SweetSpotDiscountGolfPOS.FP
             totalSubtotalAmount = totalSubtotalAmount - totalDiscountAmount;
             totalSubtotalAmount = totalSubtotalAmount - (totalTradeInAmount * (-1));
             //Returns the subtotal value of the cart
-            return totalSubtotalAmount;
+            return Math.Round(totalSubtotalAmount, 2);
+        }
+        private double returnShipingTaxAmount(Invoice invoice, object[] objPageDetails)
+        {
+            double fltShippingTaxAmount = 0;
+            TaxManager TM = new TaxManager();
+            if (invoice.fltShippingCharges > 0)
+            {
+                fltShippingTaxAmount = Math.Round(invoice.fltShippingCharges * TM.ReturnTaxPercentageForShipping(invoice.intShippingProvinceID, invoice.dtmInvoiceDate, objPageDetails), 2);
+            }
+            return Math.Round(fltShippingTaxAmount, 2);
         }
         private double returnReceiptSubtotalAmount(List<InvoiceItems> invoiceItems, int loc)
         {
@@ -104,81 +114,81 @@ namespace SweetSpotDiscountGolfPOS.FP
             //Loops through the cart and pulls each item
             foreach (var item in invoiceItems)
             {
-                singleTotalAmount = item.intItemQuantity * item.fltItemCost;
+                singleTotalAmount = Math.Round(item.intItemQuantity * item.fltItemCost, 2);
                 totalTotalAmount += singleTotalAmount;
             }
             //Returns the total amount value of the cart
             return totalTotalAmount * -1;
         }
         //This method returns the total refund subtotal amount **Checked and Verified
-        private double returnRefundTotalAmount(List<InvoiceItems> itemsSold)
-        {
-            double singleRefundSubtotalAmount = 0;
-            double totalRefundSubtotalAmount = 0;
-            //Loops through the cart and pulls each item
-            foreach (var cart in itemsSold)
-            {
-                singleRefundSubtotalAmount = cart.intItemQuantity * cart.fltItemRefund;
-                totalRefundSubtotalAmount += singleRefundSubtotalAmount;
-            }
-            //Returns the total refund subtotal amount
-            return totalRefundSubtotalAmount;
-        }
-        private double returnPurchaseAmount(List<InvoiceItems> itemsSold)
-        {
-            double singlePurchaseAmount = 0;
-            double totalPurchaseAmount = 0;
-            foreach (var cart in itemsSold)
-            {
-                singlePurchaseAmount = cart.intItemQuantity * cart.fltItemCost;
-                totalPurchaseAmount += singlePurchaseAmount;
-            }
-            //Returns the total amount of the cart
-            return totalPurchaseAmount * -1;
-        }
+        //private double returnRefundTotalAmount(List<InvoiceItems> itemsSold)
+        //{
+        //    double singleRefundSubtotalAmount = 0;
+        //    double totalRefundSubtotalAmount = 0;
+        //    //Loops through the cart and pulls each item
+        //    foreach (var cart in itemsSold)
+        //    {
+        //        singleRefundSubtotalAmount = cart.intItemQuantity * cart.fltItemRefund;
+        //        totalRefundSubtotalAmount += singleRefundSubtotalAmount;
+        //    }
+        //    //Returns the total refund subtotal amount
+        //    return totalRefundSubtotalAmount;
+        //}
+        //private double returnPurchaseAmount(List<InvoiceItems> itemsSold)
+        //{
+        //    double singlePurchaseAmount = 0;
+        //    double totalPurchaseAmount = 0;
+        //    foreach (var cart in itemsSold)
+        //    {
+        //        singlePurchaseAmount = cart.intItemQuantity * cart.fltItemCost;
+        //        totalPurchaseAmount += singlePurchaseAmount;
+        //    }
+        //    //Returns the total amount of the cart
+        //    return totalPurchaseAmount * -1;
+        //}
 
 
 
         //DB calls
-        private double returnRefundSubtotalAmount(string invoice, object[] objPageDetails)
-        {
-            string strQueryName = "returnRefundSubtotalAmount";
-            string sqlCmd = "SELECT (CASE WHEN SUM(itemRefund * quantity) IS NULL OR "
-                + "SUM(itemRefund * quantity) = '' THEN 0 ELSE SUM(itemRefund * quantity) END) "
-                + "AS totalRefund FROM tbl_currentSalesItems WHERE invoiceNum = @invoiceNum "
-                + "AND invoiceSubNum = @invoiceSubNum";
+        //private double returnRefundSubtotalAmount(string invoice, object[] objPageDetails)
+        //{
+        //    string strQueryName = "returnRefundSubtotalAmount";
+        //    string sqlCmd = "SELECT (CASE WHEN SUM(itemRefund * quantity) IS NULL OR "
+        //        + "SUM(itemRefund * quantity) = '' THEN 0 ELSE SUM(itemRefund * quantity) END) "
+        //        + "AS totalRefund FROM tbl_currentSalesItems WHERE invoiceNum = @invoiceNum "
+        //        + "AND invoiceSubNum = @invoiceSubNum";
 
-            object[][] parms =
-            {
-                new object[] { "@invoiceNum", Convert.ToInt32(invoice.Split('-')[1]) },
-                new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[2]) }
-            };
-            //Returns the total refund subtotal of the cart
-            DatabaseCalls dbc = new DatabaseCalls();
-            return dbc.MakeDataBaseCallToReturnDouble(sqlCmd, parms, objPageDetails, strQueryName);
-            //return dbc.MakeDataBaseCallToReturnDouble(sqlCmd, parms, objPageDetails, strQueryName);
-        }
-        //Finds and returns an array containing the upper and lower range for the trade in skus
-        private int[] tradeInSkuRange(int location, object[] objPageDetails)
-        {
-            string strQueryName = "tradeInSkuRange";
-            int[] range = new int[2];
-            string sqlCmd = "Select skuStartAt, skuStopAt from tbl_tradeInSkusForCart where locationID = @locationID";
+        //    object[][] parms =
+        //    {
+        //        new object[] { "@invoiceNum", Convert.ToInt32(invoice.Split('-')[1]) },
+        //        new object[] { "@invoiceSubNum", Convert.ToInt32(invoice.Split('-')[2]) }
+        //    };
+        //    //Returns the total refund subtotal of the cart
+        //    DatabaseCalls dbc = new DatabaseCalls();
+        //    return dbc.MakeDataBaseCallToReturnDouble(sqlCmd, parms, objPageDetails, strQueryName);
+        //    //return dbc.MakeDataBaseCallToReturnDouble(sqlCmd, parms, objPageDetails, strQueryName);
+        //}
+        ////Finds and returns an array containing the upper and lower range for the trade in skus
+        //private int[] tradeInSkuRange(int location, object[] objPageDetails)
+        //{
+        //    string strQueryName = "tradeInSkuRange";
+        //    int[] range = new int[2];
+        //    string sqlCmd = "Select skuStartAt, skuStopAt from tbl_tradeInSkusForCart where locationID = @locationID";
 
-            object[][] parms =
-            {
-                new object[] { "@locationID", location }
-            };
-            DatabaseCalls DBC = new DatabaseCalls();
-            DataTable dt = DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
-            //DataTable dt = dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
-            //Setting the values in the array
-            range[0] = dt.Rows[0].Field<int>("skuStartAt");
-            range[1] = dt.Rows[0].Field<int>("skuStopAt");
+        //    object[][] parms =
+        //    {
+        //        new object[] { "@locationID", location }
+        //    };
+        //    DatabaseCalls DBC = new DatabaseCalls();
+        //    DataTable dt = DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
+        //    //DataTable dt = dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName);
+        //    //Setting the values in the array
+        //    range[0] = dt.Rows[0].Field<int>("skuStartAt");
+        //    range[1] = dt.Rows[0].Field<int>("skuStopAt");
 
-            //Returns the range
-            return range;
-        }
+        //    //Returns the range
+        //    return range;
+        //}
 
 
 
@@ -190,7 +200,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             invoice.fltTotalDiscount = returnDiscount(invoice.invoiceItems);
             invoice.fltTotalTradeIn = returnTradeInAmount(invoice.invoiceItems, invoice.location.intLocationID, objPageDetails);
             invoice.fltBalanceDue = invoice.fltSubTotal;
-            
+            invoice.fltShippingTaxAmount = returnShipingTaxAmount(invoice, objPageDetails);
             return invoice;
         }
         public Invoice SaveAllInvoiceTotalsForReturn(Invoice invoice)
@@ -226,7 +236,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 if (!invoiceItem.bitIsClubTradeIn)
                 {
                     //Checks if the sku is outside of the range for the trade in sku's
-                    singleTotalAmount = invoiceItem.intItemQuantity * invoiceItem.fltItemRefund;
+                    singleTotalAmount = Math.Round(invoiceItem.intItemQuantity * invoiceItem.fltItemRefund, 2);
                     totalTotalAmount += singleTotalAmount;
                 }
             }
@@ -245,13 +255,12 @@ namespace SweetSpotDiscountGolfPOS.FP
                 if (invoiceItem.bitIsClubTradeIn)
                 {
                     //Adding the trade in value to the total trade in amount
-                    singleTradeInAmount = invoiceItem.intItemQuantity * invoiceItem.fltItemRefund;
+                    singleTradeInAmount = Math.Round(invoiceItem.intItemQuantity * invoiceItem.fltItemRefund, 2);
                     totalTradeinAmount += singleTradeInAmount;
                 }
             }
             //Returns the total trade in amount for the cart
             return totalTradeinAmount;
         }
-
     }
 }
