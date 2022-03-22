@@ -99,7 +99,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 invoiceItems = IIM.CallReturnInvoiceItemsCurrentSale(row.Field<int>("intInvoiceID"), row.Field<DateTime>("dtmInvoiceDate"), provinceID, objPageDetails),
                 invoiceMops = IMM.CallReturnInvoiceMOPsCurrentSale(row.Field<int>("intInvoiceID"), objPageDetails),
                 intTransactionTypeID = row.Field<int>("intTransactionTypeID"),
-                //varTransactionName = ReturnTransactionName(row.Field<int>("intTransactionTypeID"), objPageDetails),
+                varTransactionName = ReturnTransactionName(row.Field<int>("intTransactionTypeID"), objPageDetails),
                 varAdditionalInformation = row.Field<string>("varAdditionalInformation")
                 //bitChargeGST = row.Field<bool>("bitChargeGST"),
                 //bitChargePST = row.Field<bool>("bitChargePST"),
@@ -390,7 +390,9 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "intCustomerID, intEmployeeID, intLocationID, fltSubTotal, fltShippingCharges, intShippingProvinceID, bitIsShipping, fltShippingTaxAmount, "
                 + "fltTotalDiscount, fltTotalTradeIn, fltGovernmentTaxAmount, fltHarmonizedTaxAmount, fltLiquorTaxAmount, fltProvincialTaxAmount, "
                 + "fltQuebecTaxAmount, fltRetailTaxAmount, fltBalanceDue, intTransactionTypeID, varAdditionalInformation, bitChargeGST, bitChargePST, bitChargeLCT "
-                + "FROM tbl_currentSalesInvoice WHERE intLocationID = @intLocationID AND intTransactionTypeID = 1";
+                + "FROM tbl_currentSalesInvoice WHERE intLocationID = @intLocationID AND "
+                + "(intTransactionTypeID = (SELECT intTransactionTypeID FROM tbl_transactionType WHERE varTransactionName = 'Sale') "
+                + "OR intTransactionTypeID = (SELECT intTransactionTypeID FROM tbl_transactionType WHERE varTransactionName = 'On Hold'))";
 
             object[][] parms =
             {
@@ -877,18 +879,18 @@ namespace SweetSpotDiscountGolfPOS.FP
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        //private string ReturnTransactionName(int transactionTypeID, object[] objPageDetails)
-        //{
-        //    string strQueryName = "ReturnTransactionName";
-        //    string sqlCmd = "SELECT varTransactionName FROM tbl_transactionType WHERE intTransactionTypeID = @intTransactionTypeID";
+        private string ReturnTransactionName(int transactionTypeID, object[] objPageDetails)
+        {
+            string strQueryName = "ReturnTransactionName";
+            string sqlCmd = "SELECT varTransactionName FROM tbl_transactionType WHERE intTransactionTypeID = @intTransactionTypeID";
 
-        //    object[][] parms =
-        //    {
-        //        new object[] { "@intTransactionTypeID", transactionTypeID }
-        //    };
-        //    return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
-        //    //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
-        //}
+            object[][] parms =
+            {
+                new object[] { "@intTransactionTypeID", transactionTypeID }
+            };
+            return DBC.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+            //return dbc.MakeDataBaseCallToReturnString(sqlCmd, parms, objPageDetails, strQueryName);
+        }
         private bool VerifyMOPHasBeenAdded(int invoiceID, object[] objPageDetails)
         {
             string strQueryName = "VerifyMOPHasBeenAdded";
@@ -1333,8 +1335,22 @@ namespace SweetSpotDiscountGolfPOS.FP
             return ReturnInvoicesBasedOnSearchCriteria(stDate, endDate, searchTxt, locationID, objPageDetails);
         }
 
+        public int CallReturnTransactionID(string transactionName, object[] objPageDetails)
+        {
+            return ReturnTransactionID(transactionName, objPageDetails);
+        }
+        private int ReturnTransactionID(string transactionName, object[] objPageDetails)
+        {
+            string strQueryName = "ReturnTransactionID";
+            string sqlCmd = "SELECT intTransactionTypeID FROM tbl_transactionType WHERE varTransactionName = @varTransactionName";
 
+            object[][] parms = 
+            {
+                new object[] { "@varTransactionName", transactionName }
+            };
 
+            return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
+        }
 
         //public List<int> CallListofInvoicesForDayForLocation(DateTime startDate, DateTime endDate, int selectedValue, object[] objPageDetails)
         //{

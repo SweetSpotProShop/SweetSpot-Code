@@ -291,9 +291,12 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "BtnExitSale_Click";
-            //object[] objPageDetails = { Session["currPage"].ToString(), method };
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
+                invoice.intTransactionTypeID = Convert.ToInt32(IM.CallReturnTransactionID("On Hold", objPageDetails));
+                IM.CallUpdateCurrentInvoice(invoice, objPageDetails);
                 Response.Redirect("SalesHomePage.aspx", false);
             }
             //Exception catch
