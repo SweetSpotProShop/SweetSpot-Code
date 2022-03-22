@@ -81,7 +81,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 {
                     con = new SqlConnection(connectionString);
                     // get the first worksheet in the workbook
-                    ExcelWorksheet worksheet = xlPackage.Workbook.Worksheets[1];
+                    ExcelWorksheet worksheet = xlPackage.Workbook.Worksheets["Trade-in_Detail_Report_"];
                     var rowCnt = worksheet.Dimension.End.Row; //Gets the row count                   
                     var colCnt = worksheet.Dimension.End.Column; //Gets the column count
                     //***************************************************************************************************

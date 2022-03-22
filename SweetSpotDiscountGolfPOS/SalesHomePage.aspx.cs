@@ -134,7 +134,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Check to see if there are sales first
                 if (indicator == 0)
                 {
-                    COU.RemoveUnprocessedReturns(CU.location.intLocationID, CalSearchDate.SelectedDate, objPageDetails);
+                    COU.RemoveUnprocessedReturns(CU.location.intLocationID, CalSearchDate.SelectedDate, CU, objPageDetails);
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                     nameValues.Set("selectedDate", CalSearchDate.SelectedDate.ToShortDateString());
                     nameValues.Set("location", CU.location.intLocationID.ToString());
@@ -147,7 +147,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (indicator == 2)
                 {
-                    MessageBoxCustom.ShowMessage("There are still open transactions that need to be processed or cancelled.", this);
+                    MessageBoxCustom.ShowMessage("There are still Open Sales. Please put these On Hold or Void before proceeding.", this);
                 }
                 else if (indicator == 3)
                 {

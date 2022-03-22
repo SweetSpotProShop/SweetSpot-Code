@@ -398,11 +398,11 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //TODO: btnExitSale_Click is good as it doesn't read the new values. It removes the entry 
-                TaxManager TM = new TaxManager();
+                //TaxManager TM = new TaxManager();
                 Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
                 //object[] taxText = { "Remove GST", "Remove PST" };
                 //object[] results = TM.ReturnChargedTaxForSale(invoice, taxText, objPageDetails);
-                invoice.intTransactionTypeID = 1;
+                invoice.intTransactionTypeID = Convert.ToInt32(IM.CallReturnTransactionID("On Hold", objPageDetails));           
                 IM.CallUpdateCurrentInvoice(invoice, objPageDetails);
                 Response.Redirect("HomePage.aspx", false);
             }
@@ -510,6 +510,7 @@ namespace SweetSpotDiscountGolfPOS
                             invoice = IM.CallReturnCurrentInvoice(invoice.intInvoiceID, objPageDetails)[0];
                             invoice.employee = EM.CallReturnEmployeeFromPassword(Convert.ToInt32(txtEmployeePasscode.Text), objPageDetails)[0];
                             invoice.varAdditionalInformation = txtComments.Text;
+                            invoice.intTransactionTypeID = IM.CallReturnTransactionID("Sale", objPageDetails);
                             IM.FinalizeInvoice(invoice, "tbl_invoiceItem", objPageDetails);
                             var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                             nameValues.Set("invoice", invoice.intInvoiceID.ToString());
