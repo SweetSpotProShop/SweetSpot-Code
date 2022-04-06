@@ -552,10 +552,11 @@ namespace SweetSpotDiscountGolfPOS.FP
         private DataTable ReturnStoreStats(ReportInformation repInfo, object[] objPageDetails)
         {
             //UPDATE ON 3/06/22 GITHUB UPDATE #2
-            DateTime cutOverDate = new DateTime(2022, 04, 01);
+            //DateTime cutOverDate = new DateTime(2022, 04, 01);
 
-            if (DateTime.Today.Date > cutOverDate.Date)
-            {
+            //if (DateTime.Today.Date > cutOverDate.Date)
+            //{
+
                 string strQueryName = "ReturnStoreStats";
                 string varLocationName = "";
                 if (repInfo.intLocationID != 99)
@@ -607,11 +608,12 @@ namespace SweetSpotDiscountGolfPOS.FP
                 }
 
                 sqlCmd = startQuery + sqlCmd + endQuery;
-                return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
-            }
-            else
+                DataTable dt1 = DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
+                DataTable dt2 = new DataTable();
+            //}
+            if(DateTime.Today.Date == repInfo.dtmEndDate.Date)
             {
-                string strQueryName = "ReturnStoreStats";
+                string strQueryNameAddOn = "ReturnStoreStats";
                 string location = "";
 
                 if (repInfo.intLocationID != 99)
@@ -619,7 +621,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                     location = " AND intLocationID = @intLocationID";
                 }
 
-                string sqlCmd = "(SELECT I.intInvoiceID, YEAR(dtmInvoiceDate) AS dtmInvoiceYear, DATENAME(MONTH, dtmInvoiceDate) AS varMonthName, DATEADD(MONTH, DATEDIFF("
+                string sqlCmdAddOn = "(SELECT I.intInvoiceID, YEAR(dtmInvoiceDate) AS dtmInvoiceYear, DATENAME(MONTH, dtmInvoiceDate) AS varMonthName, DATEADD(MONTH, DATEDIFF("
                     + "MONTH, 0, dtmInvoiceDate), 0) AS dtmMonthDate, DATEADD(DAY, 1 - DATEPART(WEEKDAY, dtmInvoiceDate), CAST(dtmInvoiceDate AS DATE)) dtmWeekStartDate, "
                     + "dtmInvoiceDate AS dtmSelectedDate, (SELECT CONCAT(L.varLocationName, '-', L.varCityName) FROM tbl_location L WHERE L.intLocationID = "
                     + "I.intLocationID) AS varLocationName, CONCAT(I.varInvoiceNumber, '-', I.intInvoiceSubNumber) AS 'varInvoiceNumber', I.fltShippingCharges, ("
@@ -644,29 +646,29 @@ namespace SweetSpotDiscountGolfPOS.FP
                     + "' ', varLastName) FROM tbl_employee E WHERE E.intEmployeeID = I.intEmployeeID) AS 'varEmployeeName' FROM tbl_invoice I WHERE I.dtmInvoiceDate "
                     + "BETWEEN @dtmStartDate AND @dtmEndDate" + location + ") AS ABC ";
 
-                string startQuery;
-                string endQuery;
+                string startQueryAddOn;
+                string endQueryAddOn;
 
-                object[][] parms =
+                object[][] parmsAddOn =
                 {
-                new object[] { "@dtmStartDate", repInfo.dtmStartDate.ToShortDateString() },
-                new object[] { "@dtmEndDate", repInfo.dtmEndDate.ToShortDateString() }, 
-                new object[] { "@intLocationID", repInfo.intLocationID }
-            };
+                    new object[] { "@dtmStartDate", repInfo.dtmEndDate.ToShortDateString() },
+                    new object[] { "@dtmEndDate", repInfo.dtmEndDate.ToShortDateString() }, 
+                    new object[] { "@intLocationID", repInfo.intLocationID }
+                };
                 if (repInfo.intGroupTimeFrame == 1)
                 {
-                    startQuery = "SELECT FORMAT(dtmSelectedDate, 'dd/MM/yyyy') AS selection, varLocationName, ROUND(SUM(fltGovernmentTaxAmount), 2) AS fltGovernmentTaxAmount, "
+                    startQueryAddOn = "SELECT FORMAT(dtmSelectedDate, 'dd/MM/yyyy') AS selection, varLocationName, ROUND(SUM(fltGovernmentTaxAmount), 2) AS fltGovernmentTaxAmount, "
                         + "ROUND(SUM(fltHarmonizedTaxAmount), 2) AS fltHarmonizedTaxAmount, ROUND(SUM(fltProvincialTaxAmount), 2) AS fltProvincialTaxAmount, ROUND(SUM("
                         + "fltLiquorTaxAmount), 2) AS fltLiquorTaxAmount, ROUND(SUM(fltQuebecTaxAmount), 2) AS fltQuebecTaxAmount, ROUND(SUM(fltRetailTaxAmount), 2) AS "
                         + "fltRetailTaxAmount, ROUND(SUM(fltCostofGoods), "
                         + "2) AS fltCostofGoods, ROUND(SUM(fltSubTotal), 2) AS fltSubTotal, CASE WHEN SUM(fltSalesDollars) = 0 THEN 0 ELSE ROUND((SUM(fltSalesDollars) - SUM("
                         + "fltCostofGoods)) / SUM(fltSalesDollars), 4) END AS fltProfitMargin, ROUND(ROUND(SUM(fltGovernmentTaxAmount), 2) + ROUND(SUM(fltProvincialTaxAmount), "
                         + "2) + ROUND(SUM(fltLiquorTaxAmount), 2) + ROUND(SUM(fltSalesDollars), 2), 2) AS fltTotalSales, ROUND(SUM(fltSalesDollars), 2) AS fltSalesDollars FROM ";
-                    endQuery = "GROUP BY dtmSelectedDate, varLocationName ORDER BY dtmSelectedDate, varLocationName";
+                    endQueryAddOn = "GROUP BY dtmSelectedDate, varLocationName ORDER BY dtmSelectedDate, varLocationName";
                 }
                 else if (repInfo.intGroupTimeFrame == 2)
                 {
-                    startQuery = "SELECT FORMAT(CAST(dtmWeekStartDate AS DATE), 'dd/MM/yyyy') AS selection, varLocationName, ROUND(SUM(fltGovernmentTaxAmount), 2) AS "
+                    startQueryAddOn = "SELECT FORMAT(CAST(dtmWeekStartDate AS DATE), 'dd/MM/yyyy') AS selection, varLocationName, ROUND(SUM(fltGovernmentTaxAmount), 2) AS "
                         + "fltGovernmentTaxAmount, ROUND(SUM(fltHarmonizedTaxAmount), 2) AS fltHarmonizedTaxAmount, ROUND(SUM(fltProvincialTaxAmount), 2) AS fltProvincialTaxAmount, "
                         + "ROUND(SUM(fltLiquorTaxAmount), 2) AS fltLiquorTaxAmount, ROUND(SUM(fltQuebecTaxAmount), 2) AS fltQuebecTaxAmount, ROUND(SUM(fltRetailTaxAmount), 2) AS "
                         + "fltRetailTaxAmount, "
@@ -674,11 +676,11 @@ namespace SweetSpotDiscountGolfPOS.FP
                         + "SUM(fltSalesDollars) - SUM(fltCostofGoods)) / SUM(fltSalesDollars), 4) END AS fltProfitMargin, ROUND(ROUND(SUM(fltGovernmentTaxAmount), 2) + ROUND("
                         + "SUM(fltProvincialTaxAmount), 2) + ROUND(SUM(fltLiquorTaxAmount), 2) + ROUND(SUM(fltSalesDollars), 2), 2) AS fltTotalSales, ROUND(SUM(fltSalesDollars"
                         + "), 2) AS fltSalesDollars FROM ";
-                    endQuery = "GROUP BY dtmWeekStartDate, varLocationName ORDER BY dtmWeekStartDate, varLocationName";
+                    endQueryAddOn = "GROUP BY dtmWeekStartDate, varLocationName ORDER BY dtmWeekStartDate, varLocationName";
                 }
                 else
                 {
-                    startQuery = "SELECT dtmMonthDate, CONCAT(varMonthName, ' / ', dtmInvoiceYear) AS selection, varLocationName, ROUND(SUM(fltGovernmentTaxAmount), 2) AS "
+                    startQueryAddOn = "SELECT dtmMonthDate, CONCAT(varMonthName, ' / ', dtmInvoiceYear) AS selection, varLocationName, ROUND(SUM(fltGovernmentTaxAmount), 2) AS "
                         + "fltGovernmentTaxAmount, ROUND(SUM(fltHarmonizedTaxAmount), 2) AS fltHarmonizedTaxAmount, ROUND(SUM(fltProvincialTaxAmount), 2) AS fltProvincialTaxAmount, "
                         + "ROUND(SUM(fltLiquorTaxAmount), 2) AS fltLiquorTaxAmount, ROUND(SUM(fltQuebecTaxAmount), 2) AS fltQuebecTaxAmount, ROUND(SUM(fltRetailTaxAmount), 2) AS "
                         + "fltRetailTaxAmount, "
@@ -686,13 +688,23 @@ namespace SweetSpotDiscountGolfPOS.FP
                         + "SUM(fltSalesDollars) - SUM(fltCostofGoods)) / SUM(fltSalesDollars), 4) END AS fltProfitMargin, ROUND(ROUND(SUM(fltGovernmentTaxAmount), 2) + "
                         + "ROUND(SUM(fltProvincialTaxAmount), 2) + ROUND(SUM(fltLiquorTaxAmount), 2) + ROUND(SUM(fltSalesDollars), 2), 2) AS fltTotalSales, ROUND(SUM("
                         + "fltSalesDollars), 2) AS fltSalesDollars FROM ";
-                    endQuery = "GROUP BY dtmMonthDate, varLocationName, dtmInvoiceYear, varMonthName ORDER BY dtmMonthDate, dtmInvoiceYear, varMonthName, varLocationName";
+                    endQueryAddOn = "GROUP BY dtmMonthDate, varLocationName, dtmInvoiceYear, varMonthName ORDER BY dtmMonthDate, dtmInvoiceYear, varMonthName, varLocationName";
                 }
 
-                sqlCmd = startQuery + sqlCmd + endQuery;
-                return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
-
+                sqlCmdAddOn = startQueryAddOn + sqlCmdAddOn + endQueryAddOn;
+                dt2 = DBC.MakeDataBaseCallToReturnDataTable(sqlCmdAddOn, parmsAddOn, objPageDetails, strQueryNameAddOn);
             }
+
+            if(dt2.Rows.Count > 0)
+            {
+                //foreach(DataRow row in dt2.Rows)
+                //{
+                //    dt1.Rows.Add(row);
+                //}
+                dt1.Merge(dt2,true, MissingSchemaAction.Ignore);
+            }
+
+            return dt1;
         }
 
         //^^^^^^^^^^^^^^^^^^^^INVENTORY CHANGE REPORT^^^^^^^^^^^^^^^^^^^^
