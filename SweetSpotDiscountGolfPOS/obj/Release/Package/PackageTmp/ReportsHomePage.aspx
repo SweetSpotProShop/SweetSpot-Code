@@ -112,7 +112,7 @@
                             <asp:Button ID="BtnSpecificGripReport" runat="server" Text="Specific Grip Report" Width="200px" OnClick="BtnSpecificGripReport_Click" />
                         </asp:TableCell>
                         <asp:TableCell>
-                            <asp:Button ID="BtnCreatePDFFiles" runat="server" Width="200" Text="Store Daily Sales Data" OnClick="BtnCreatePDFFiles_Click" />
+                            <%--<asp:Button ID="BtnCreatePDFFiles" runat="server" Width="200" Text="Store Daily Sales Data" OnClick="BtnCreatePDFFiles_Click" />--%>
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Button ID="BtnExportInvoices" runat="server" Width="200" Text="Export Invoices" OnClick="BtnExportInvoices_Click" />

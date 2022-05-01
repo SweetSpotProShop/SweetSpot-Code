@@ -1352,6 +1352,28 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
         }
 
+
+        public void CallUpdateTransactionTypeID(int invoiceID, string transactionName, object[] objPageDetails)
+        {
+            UpdateTransactionTypeID(invoiceID, ReturnTransactionID(transactionName, objPageDetails), objPageDetails);
+        }
+        private void UpdateTransactionTypeID(int invoiceID, int transactionTypeID, object[] objPageDetails)
+        {
+            string strQueryName = "UpdateTransactionTypeID";
+            string sqlCmd = "UPDATE tbl_currentSalesInvoice SET "
+                + "intTransactionTypeID = @intTransactionTypeID "
+                + "WHERE intInvoiceID = @intInvoiceID";
+
+            object[][] parms =
+            {
+                new object[] { "@intInvoiceID", invoiceID },
+                new object[] { "@intTransactionTypeID", transactionTypeID }
+            };
+
+            DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+        }
+
+
         //public List<int> CallListofInvoicesForDayForLocation(DateTime startDate, DateTime endDate, int selectedValue, object[] objPageDetails)
         //{
         //    return ListofInvoicesForDayForLocation(startDate, endDate, selectedValue, objPageDetails);

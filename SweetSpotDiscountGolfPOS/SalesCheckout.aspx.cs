@@ -746,5 +746,17 @@ namespace SweetSpotDiscountGolfPOS
             object[] amounts = { paid, change };
             return amounts;
         }
+
+        protected int TaxChecker(Invoice invoice)
+        {
+            int intTaxIsValid = 0;
+            double approxGSTAmount = Math.Round(invoice.fltBalanceDue * 0.05, 2);
+            double actualGSTAmount = Math.Round(invoice.fltGovernmentTaxAmount, 2);
+            if (approxGSTAmount != actualGSTAmount)
+            {
+                intTaxIsValid = 1;
+            }
+            return intTaxIsValid;
+        }
     }
 }
