@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="SalesCheckout.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.SalesCheckout" %>
 
 <asp:Content ID="Content1" runat="server" ContentPlaceHolderID="head">
-	<style type="text/css">
+    <style type="text/css">
 		.auto-style1 {
 			height: 152px;
 		}
@@ -9,7 +9,7 @@
 </asp:Content>
 
 <asp:Content ID="NonActive" ContentPlaceHolderID="SPMaster" runat="server">
-	<div id="menu_simple">
+    <div id="menu_simple">
 		<ul>
 			<li><a>HOME</a></li>
 			<li><a>CUSTOMERS</a></li>
@@ -25,7 +25,7 @@
 	<link rel="stylesheet" type="text/css" href="CSS/MainStyleSheet.css" />
 </asp:Content>
 <asp:Content ID="CheckoutPageContent" ContentPlaceHolderID="IndividualPageContent" runat="server">
-	<h3>Transaction Details</h3>
+    <h3>Transaction Details</h3>
 	<div>
 		<%--REMEMBER TO SET DEFAULT BUTTON--%>
 		<asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="mopCash">
@@ -184,45 +184,33 @@
 					<asp:TableCell ColumnSpan="2">
 						<hr />
 						<asp:Label ID="lblRemainingBalanceDue" runat="server" Text="Remaining Balance Due" />
-					</asp:TableCell>
-					<asp:TableCell ColumnSpan="2">
+					</asp:TableCell><asp:TableCell ColumnSpan="2">
 						<hr />
 						<asp:Label ID="lblRemainingBalanceDueDisplay" runat="server" />
-					</asp:TableCell>
-				</asp:TableRow>
-				<asp:TableRow>
+					</asp:TableCell></asp:TableRow><asp:TableRow>
 					<asp:TableCell>
 						<asp:Button ID="BtnCancelSale" runat="server" Text="Void Transaction" OnClick="BtnCancelSale_Click" Width="163px" CausesValidation="false" />
-					</asp:TableCell>
-					<asp:TableCell>
+					</asp:TableCell><asp:TableCell>
 						<asp:Button ID="BtnExitSale" runat="server" Text="Hold Sale" OnClick="BtnExitSale_Click" Width="163px" CausesValidation="false" />
-					</asp:TableCell>
-					<asp:TableCell>
+					</asp:TableCell><asp:TableCell>
 						<%--<asp:Button ID="btnLayaway" runat="server" Text="Layaway" OnClick="btnLayaway_Click" Width="163px" CausesValidation="false" Visible="false" />--%>
-					</asp:TableCell>
-					<asp:TableCell>
+					</asp:TableCell><asp:TableCell>
 						<asp:Button ID="BtnReturnToCart" runat="server" Text="Sales Cart" OnClick="BtnReturnToCart_Click" Width="163px" CausesValidation="false" />
-					</asp:TableCell>
-					<asp:TableCell>
+					</asp:TableCell><asp:TableCell>
 						<asp:Button ID="BtnFinalize" runat="server" Text="Process Sale" OnClick="BtnFinalize_Click" Width="163px" CausesValidation="true" />
-					</asp:TableCell>
-				</asp:TableRow>
-				<asp:TableRow>
+					</asp:TableCell></asp:TableRow><asp:TableRow>
 					<asp:TableCell>
 						<asp:Label ID="lblConfirmEmployee" runat="server" Text="Enter Employee Passcode:" />
-					</asp:TableCell>
-					<asp:TableCell>
+					</asp:TableCell><asp:TableCell>
 						<asp:TextBox ID="txtEmployeePasscode" runat="server" AutoCompleteType="Disabled" TextMode="Password" />
-					</asp:TableCell>
-					<asp:TableCell>
+					</asp:TableCell><asp:TableCell>
 						<asp:RequiredFieldValidator ID="valEmployeePasscode" runat="server" ForeColor="red" ErrorMessage="Must Enter Passcode" ControlToValidate="txtEmployeePasscode" />
-					</asp:TableCell>
-				</asp:TableRow>
-			</asp:Table>
-			<p>
-				Comments:
-				<br />
-				<asp:TextBox ID="txtComments" runat="server" TextMode="MultiLine" AutoCompleteType="Disabled" />
+					</asp:TableCell><asp:TableCell>
+						<asp:Label ID="lblTaxDiscrepency" runat="server" ForeColor="Red" Visible="false" Text="GST amount shoud be: . Over/Under: ." />
+					</asp:TableCell><asp:TableCell>
+						<asp:CheckBox ID="chkProceed" runat="server" Text="Check Here to Proceed with Sale." Visible="false" />
+					</asp:TableCell></asp:TableRow></asp:Table><p>
+				Comments: <br /><asp:TextBox ID="txtComments" runat="server" TextMode="MultiLine" AutoCompleteType="Disabled" />
 				<asp:HiddenField ID="hdnTender" runat="server" Value="0" />
 				<asp:HiddenField ID="hdnChange" runat="server" Value="0" />
 			</p>
