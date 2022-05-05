@@ -534,7 +534,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else
                 {
-                    MessageBoxCustom.ShowMessage("If you wish to proceed you will need to check the Proceed With Sale box.", this);
+                    MessageBoxCustom.ShowMessage("If you wish to proceed you will need to correct the taxes.", this);
                 }
             }
             //Exception catch
@@ -762,6 +762,7 @@ namespace SweetSpotDiscountGolfPOS
             string strOU = "Over: $";
             double approxGSTAmount = Math.Round(invoice.fltSubTotal * 0.05, 2);
             double actualGSTAmount = Math.Round(invoice.fltGovernmentTaxAmount, 2);
+            chkProceed.Checked = true;
             if (approxGSTAmount != actualGSTAmount)
             {
                 intTaxIsValid = 1;
@@ -774,17 +775,17 @@ namespace SweetSpotDiscountGolfPOS
                 lblTaxDiscrepency.Text = "GST amount shoud be: " + approxGSTAmount.ToString() + ". " + strOU.ToString() + ".";
 
                 lblTaxDiscrepency.Visible = true;
-                chkProceed.Visible = true;
+                chkProceed.Checked = false;
             }
             return intTaxIsValid;
         }
         protected bool VerifyToProceedForFinalize()
         {
             bool bolProceed = true;
-            if(chkProceed.Visible == true)
-            {
+            //if(chkProceed.Visible == true)
+            //{
                 if (!chkProceed.Checked) { bolProceed = false; }
-            }
+            //}
             return bolProceed;
         }
     }
