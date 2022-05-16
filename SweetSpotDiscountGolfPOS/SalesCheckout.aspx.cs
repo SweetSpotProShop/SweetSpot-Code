@@ -22,7 +22,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "SalesCheckout.aspx";
-            //object[] objPageDetails = { Session["currPage"].ToString(), method };
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -43,7 +43,7 @@ namespace SweetSpotDiscountGolfPOS
                         //Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];                        
                         UpdatePageTotals();
                         Invoice invoice = (Invoice)Session["currentInvoice"];
-                        TaxChecker(invoice);
+                        TaxChecker(invoice, objPageDetails);
                     }
                 }
             }
@@ -756,7 +756,7 @@ namespace SweetSpotDiscountGolfPOS
             return amounts;
         }
 
-        protected int TaxChecker(Invoice invoice)
+        protected int TaxChecker(Invoice invoice, object[] objPageDetails)
         {
             int intTaxIsValid = 0;
             string strOU = "Over: $";
@@ -776,6 +776,7 @@ namespace SweetSpotDiscountGolfPOS
 
                 lblTaxDiscrepency.Visible = true;
                 chkProceed.Visible = true;
+                ER.CallLogTaxError(invoice, objPageDetails);
             }
             return intTaxIsValid;
         }
