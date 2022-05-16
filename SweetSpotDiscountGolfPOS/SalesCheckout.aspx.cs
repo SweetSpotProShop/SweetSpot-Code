@@ -762,7 +762,7 @@ namespace SweetSpotDiscountGolfPOS
             string strOU = "Over: $";
             double approxGSTAmount = Math.Round(invoice.fltSubTotal * 0.05, 2);
             double actualGSTAmount = Math.Round(invoice.fltGovernmentTaxAmount, 2);
-            chkProceed.Checked = true;
+            //chkProceed.Checked = true;
             if (approxGSTAmount != actualGSTAmount)
             {
                 intTaxIsValid = 1;
@@ -775,17 +775,17 @@ namespace SweetSpotDiscountGolfPOS
                 lblTaxDiscrepency.Text = "GST amount shoud be: " + approxGSTAmount.ToString() + ". " + strOU.ToString() + ".";
 
                 lblTaxDiscrepency.Visible = true;
-                chkProceed.Checked = false;
+                chkProceed.Visible = true;
             }
             return intTaxIsValid;
         }
         protected bool VerifyToProceedForFinalize()
         {
             bool bolProceed = true;
-            //if(chkProceed.Visible == true)
-            //{
+            if(chkProceed.Visible == true)
+            {
                 if (!chkProceed.Checked) { bolProceed = false; }
-            //}
+            }
             return bolProceed;
         }
     }
