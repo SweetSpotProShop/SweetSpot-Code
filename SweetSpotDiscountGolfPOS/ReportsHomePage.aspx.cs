@@ -618,6 +618,36 @@ namespace SweetSpotDiscountGolfPOS
         //    }
         //}
 
+        protected void BtnCharlynReport_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "BtnCharlynReport_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
+            {
+                DateTime[] dtm = GetDateRange();
+                string locationName = "All Locations";
+                if (Convert.ToInt32(ddlLocation.SelectedValue) != 99)
+                {
+                    locationName = LM.CallReturnLocationName(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails);
+                }
+                ReportInformation repInfo = new ReportInformation(dtm[0], dtm[1], Convert.ToInt32(ddlDatePeriod.SelectedValue), Convert.ToInt32(ddlLocation.SelectedValue), locationName);
+                Session["reportInfo"] = repInfo;
+                Response.Redirect("ReportsCharlynSales.aspx", false);
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
+                //Display message box
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+
         protected DateTime[] GetDateRange()
         {
             if (ddlDatePeriod.SelectedItem.Text.Equals("Month"))

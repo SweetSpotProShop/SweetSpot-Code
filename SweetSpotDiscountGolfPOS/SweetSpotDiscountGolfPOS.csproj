@@ -133,6 +133,7 @@
     <Content Include="ReportsDiscounts.aspx" />
     <Content Include="ReportsCashOut.aspx" />
     <Content Include="LoungeSims.aspx" />
+    <Content Include="ReportsCharlynSales.aspx" />
     <Content Include="ReportsSpecificGrip.aspx" />
     <Content Include="ReportsSpecificApparel.aspx" />
     <Content Include="ReportsInventoryChange.aspx" />
@@ -341,6 +342,13 @@
     </Compile>
     <Compile Include="LoungeSims.aspx.designer.cs">
       <DependentUpon>LoungeSims.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ReportsCharlynSales.aspx.cs">
+      <DependentUpon>ReportsCharlynSales.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ReportsCharlynSales.aspx.designer.cs">
+      <DependentUpon>ReportsCharlynSales.aspx</DependentUpon>
     </Compile>
     <Compile Include="ReportsSpecificGrip.aspx.cs">
       <DependentUpon>ReportsSpecificGrip.aspx</DependentUpon>
