@@ -52,7 +52,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 intProvinceID = row.Field<int>("intProvinceID"),
                 intCountryID = row.Field<int>("intCountryID"),
                 varPostalCode = row.Field<string>("varPostalCode"),
-                invoices = IM.CallReturnInvoiceByCustomers(row.Field<int>("intCustomerID"), objPageDetails),
+                //invoices = IM.CallReturnInvoiceByCustomers(row.Field<int>("intCustomerID"), objPageDetails),
                 bitSendMarketing = row.Field<bool>("bitSendMarketing")
             }).ToList();
             return customer;

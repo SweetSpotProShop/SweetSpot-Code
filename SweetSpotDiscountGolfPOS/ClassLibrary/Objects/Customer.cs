@@ -23,7 +23,7 @@ namespace SweetSpotDiscountGolfPOS.OB
         public int intCountryID { get; set; }
         public string varPostalCode { get; set; }
         public bool bitSendMarketing { get; set; }
-        public List<Invoice> invoices { get; set; }
+        //public List<Invoice> invoices { get; set; }
 
         public Customer() { }
     }

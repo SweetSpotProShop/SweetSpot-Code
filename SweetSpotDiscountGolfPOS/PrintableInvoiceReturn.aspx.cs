@@ -11,6 +11,7 @@ namespace SweetSpotDiscountGolfPOS
         readonly ErrorReporting ER = new ErrorReporting();
         readonly LocationManager LM = new LocationManager();
         readonly InvoiceManager IM = new InvoiceManager();
+        readonly CustomerManager CM = new CustomerManager();
         CurrentUser CU;
         //private static Invoice invoice;
         protected void Page_Load(object sender, EventArgs e)
@@ -34,21 +35,25 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         Invoice invoice = IM.CallReturnInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
 
+                        Customer cust = new Customer();
+                        cust = CM.CallReturnCustomer(invoice.intCustomerID, objPageDetails)[0];
                         //display information on receipt
-                        lblCustomerName.Text = invoice.customer.varFirstName.ToString() + " " + invoice.customer.varLastName.ToString();
-                        lblStreetAddress.Text = invoice.customer.varAddress.ToString();
-                        lblPostalAddress.Text = invoice.customer.varCityName.ToString() + ", " + LM.CallReturnProvinceName(invoice.customer.intProvinceID, objPageDetails) + " " + invoice.customer.varPostalCode.ToString();
-                        lblPhone.Text = invoice.customer.varContactNumber.ToString();
+                        lblCustomerName.Text = cust.varFirstName.ToString() + " " + cust.varLastName.ToString();
+                        lblStreetAddress.Text = cust.varAddress.ToString();
+                        lblPostalAddress.Text = cust.varCityName.ToString() + ", " + LM.CallReturnProvinceName(cust.intProvinceID, objPageDetails) + " " + cust.varPostalCode.ToString();
+                        lblPhone.Text = cust.varContactNumber.ToString();
                         lblinvoiceNum.Text = invoice.varInvoiceNumber.ToString() + "-" + invoice.intInvoiceSubNumber.ToString();
                         lblDate.Text = invoice.dtmInvoiceDate.ToString("dd/MMM/yy");
                         lblTime.Text = invoice.dtmInvoiceTime.ToString("h:mm tt");
 
+                        Location loco = new Location();
+                        loco = LM.CallReturnLocation(invoice.intLocationID, objPageDetails)[0];
                         //Display the location information
-                        lblSweetShopName.Text = invoice.location.varLocationName.ToString();
-                        lblSweetShopStreetAddress.Text = invoice.location.varAddress.ToString();
-                        lblSweetShopPostalAddress.Text = invoice.location.varCityName.ToString() + ", " + LM.CallReturnProvinceName(invoice.location.intProvinceID, objPageDetails) + " " + invoice.location.varPostalCode.ToString();
-                        lblSweetShopPhone.Text = invoice.location.varContactNumber.ToString();
-                        lblTaxNum.Text = invoice.location.varTaxNumber.ToString();
+                        lblSweetShopName.Text = loco.varLocationName.ToString();
+                        lblSweetShopStreetAddress.Text = loco.varAddress.ToString();
+                        lblSweetShopPostalAddress.Text = loco.varCityName.ToString() + ", " + LM.CallReturnProvinceName(loco.intProvinceID, objPageDetails) + " " + loco.varPostalCode.ToString();
+                        lblSweetShopPhone.Text = loco.varContactNumber.ToString();
+                        lblTaxNum.Text = loco.varTaxNumber.ToString();
 
                         double governmentTax = 0;
                         double provincialTax = 0;

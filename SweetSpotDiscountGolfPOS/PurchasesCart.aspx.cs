@@ -44,9 +44,12 @@ namespace SweetSpotDiscountGolfPOS
                         {
                             receipt.varInvoiceNumber = IM.CallReturnNextReceiptNumber(CU, objPageDetails);
                             receipt.intInvoiceSubNumber = 1;
-                            receipt.customer = CM.CallReturnCustomer(Convert.ToInt32(Request.QueryString["customer"].ToString()), objPageDetails)[0];
-                            receipt.employee = CU.employee;
-                            receipt.location = CU.location;
+                            //receipt.customer = CM.CallReturnCustomer(Convert.ToInt32(Request.QueryString["customer"].ToString()), objPageDetails)[0];
+                            //receipt.employee = CU.employee;
+                            //receipt.location = CU.location;
+                            receipt.intCustomerID = Convert.ToInt32(Request.QueryString["customer"].ToString());
+                            receipt.intEmployeeID = CU.employee.intEmployeeID;
+                            receipt.intLocationID = CU.location.intLocationID;
                             receipt.fltGovernmentTaxAmount = 0;
                             receipt.fltProvincialTaxAmount = 0;
                             receipt.intTransactionTypeID = 5;
@@ -60,9 +63,10 @@ namespace SweetSpotDiscountGolfPOS
                         }
 
                         //Checks if there is a Customer Number stored in the Session
-
+                        Customer cust = CM.CallReturnCustomer(receipt.intCustomerID, objPageDetails)[0];
                         //Set name in text box
-                        txtCustomer.Text = receipt.customer.varFirstName + " " + receipt.customer.varLastName;
+                        //txtCustomer.Text = receipt.customer.varFirstName + " " + receipt.customer.varLastName;
+                        txtCustomer.Text = cust.varFirstName + " " + cust.varLastName;
                         //display system time in Sales Page
                         DateTime today = DateTime.Today;
                         lblDateDisplay.Text = today.ToString("dd/MMM/yy");
@@ -143,12 +147,12 @@ namespace SweetSpotDiscountGolfPOS
                     intCountryID = CU.location.intCountryID,
                     varPostalCode = ""
                 };
-                C.intCustomerID = CM.CallAddCustomer(C, objPageDetails);
-                receipt.customer = C;
+                receipt.intCustomerID = CM.CallAddCustomer(C, objPageDetails);
+                //receipt.customer = C;
                 IM.CallUpdateCurrentInvoice(receipt, objPageDetails);
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("receipt", receipt.intInvoiceID.ToString());
-                nameValues.Set("customer", receipt.customer.intCustomerID.ToString());
+                nameValues.Set("customer", receipt.intCustomerID.ToString());
                 Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
             }
             //Exception catch
@@ -199,10 +203,11 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     //if command argument is SwitchCustomer, set the new key
                     receipt = IM.CallReturnCurrentInvoice(receipt.intInvoiceID, CU.location.intProvinceID, objPageDetails)[0];
-                    receipt.customer = CM.CallReturnCustomer(Convert.ToInt32(e.CommandArgument.ToString()), objPageDetails)[0];
+                    receipt.intCustomerID = Convert.ToInt32(e.CommandArgument.ToString());
+                    //receipt.customer = CM.CallReturnCustomer(Convert.ToInt32(e.CommandArgument.ToString()), objPageDetails)[0];
                     IM.CallUpdateCurrentInvoice(receipt, objPageDetails);
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                    nameValues.Set("customer", receipt.customer.intCustomerID.ToString());
+                    nameValues.Set("customer", receipt.intCustomerID.ToString());
                     nameValues.Set("receipt", receipt.intInvoiceID.ToString());
                     Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
                 }

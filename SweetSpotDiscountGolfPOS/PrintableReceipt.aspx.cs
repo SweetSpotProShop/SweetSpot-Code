@@ -9,6 +9,7 @@ namespace SweetSpotDiscountGolfPOS
     public partial class PrintableReceipt : System.Web.UI.Page
     {
         readonly ErrorReporting ER = new ErrorReporting();
+        readonly CustomerManager CM = new CustomerManager();
         readonly LocationManager LM = new LocationManager();
         readonly InvoiceManager IM = new InvoiceManager();
         CurrentUser CU;
@@ -34,19 +35,21 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         //Store in Customer class
                         Invoice invoice = IM.CallReturnPurchaseInvoice(Convert.ToInt32(Request.QueryString["receipt"].ToString()), objPageDetails)[0];
+                        Customer cust = CM.CallReturnCustomer(invoice.intCustomerID, objPageDetails)[0];
                         //display information on receipt
-                        lblCustomerName.Text = invoice.customer.varFirstName.ToString() + " " + invoice.customer.varLastName.ToString();
-                        lblStreetAddress.Text = invoice.customer.varAddress.ToString();
-                        lblPostalAddress.Text = invoice.customer.varCityName.ToString() + ", " + LM.CallReturnProvinceName(invoice.customer.intProvinceID, objPageDetails) + " " + invoice.customer.varPostalCode.ToString();
-                        lblPhone.Text = invoice.customer.varContactNumber.ToString();
+                        lblCustomerName.Text = cust.varFirstName.ToString() + " " + cust.varLastName.ToString();
+                        lblStreetAddress.Text = cust.varAddress.ToString();
+                        lblPostalAddress.Text = cust.varCityName.ToString() + ", " + LM.CallReturnProvinceName(cust.intProvinceID, objPageDetails) + " " + cust.varPostalCode.ToString();
+                        lblPhone.Text = cust.varContactNumber.ToString();
                         lblinvoiceNum.Text = invoice.varInvoiceNumber.ToString();
                         lblDate.Text = invoice.dtmInvoiceDate.ToString("dd/MMM/yy");
                         //Gather transaction type from Session
                         //Display the location information
-                        lblSweetShopName.Text = invoice.location.varLocationName.ToString();
-                        lblSweetShopStreetAddress.Text = invoice.location.varAddress.ToString();
-                        lblSweetShopPostalAddress.Text = invoice.location.varCityName.ToString() + ", " + LM.CallReturnProvinceName(invoice.location.intProvinceID, objPageDetails) + " " + invoice.location.varPostalCode.ToString();
-                        lblSweetShopPhone.Text = invoice.location.varContactNumber.ToString();
+                        Location loca = LM.CallReturnLocation(invoice.intLocationID, objPageDetails)[0];
+                        lblSweetShopName.Text = loca.varLocationName.ToString();
+                        lblSweetShopStreetAddress.Text = loca.varAddress.ToString();
+                        lblSweetShopPostalAddress.Text = loca.varCityName.ToString() + ", " + LM.CallReturnProvinceName(loca.intProvinceID, objPageDetails) + " " + loca.varPostalCode.ToString();
+                        lblSweetShopPhone.Text = loca.varContactNumber.ToString();
 
                         //Binds the cart to the grid view
                         grdItemsBoughtList.DataSource = invoice.invoiceItems;

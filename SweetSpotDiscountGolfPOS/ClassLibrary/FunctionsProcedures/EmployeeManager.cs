@@ -25,7 +25,8 @@ namespace SweetSpotDiscountGolfPOS.FP
                 varFirstName = row.Field<string>("varFirstName"),
                 varLastName = row.Field<string>("varLastName"),
                 intJobID = row.Field<int>("intJobID"),
-                location = LM.CallReturnLocation(row.Field<int>("intLocationID"), objPageDetails)[0],
+                //location = LM.CallReturnLocation(row.Field<int>("intLocationID"), objPageDetails)[0],
+                intLocationID = row.Field<int>("intLocationID"),
                 varEmailAddress = row.Field<string>("varEmailAddress"),
                 varContactNumber = row.Field<string>("varContactNumber"),
                 secondaryContactNumber = row.Field<string>("secondaryContactINT"),
@@ -120,7 +121,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@varFirstName", employee.varFirstName },
                 new object[] { "@varLastName", employee.varLastName },
                 new object[] { "@intJobID", employee.intJobID },
-                new object[] { "@intLocationID", employee.location.intLocationID },
+                new object[] { "@intLocationID", employee.intLocationID },
                 new object[] { "@varEmailAddress", employee.varEmailAddress },
                 new object[] { "@varContactNumber", employee.varContactNumber },
                 new object[] { "@secondaryContactINT", employee.secondaryContactNumber },
@@ -152,7 +153,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@varFirstName", employee.varFirstName },
                 new object[] { "@varLastName", employee.varLastName },
                 new object[] { "@intJobID", employee.intJobID },
-                new object[] { "@intLocationID", employee.location.intLocationID },
+                new object[] { "@intLocationID", employee.intLocationID },
                 new object[] { "@varEmailAddress", employee.varEmailAddress },
                 new object[] { "@varContactNumber", employee.varContactNumber },
                 new object[] { "@secondaryContactINT", employee.secondaryContactNumber },
@@ -253,21 +254,34 @@ namespace SweetSpotDiscountGolfPOS.FP
             return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
             //return dbc.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        private List<Employee> ReturnEmployeeFromPassword(int empPassword, object[] objPageDetails)
+        private int ReturnEmployeeFromPassword(int empPassword, object[] objPageDetails)
         {
             string strQueryName = "returnEmployeeFromPassword";
-            string sqlCmd = "SELECT E.intEmployeeID, varFirstName, varLastName, intJobID, intLocationID, varEmailAddress, "
-                + "varContactNumber, secondaryContactINT, varAddress, secondaryAddress, varCityName, intProvinceID, "
-                + "intCountryID, varPostalCode FROM tbl_employee E JOIN tbl_userInfo U ON U.intEmployeeID = E.intEmployeeID "
+            string sqlCmd = "SELECT E.intEmployeeID FROM tbl_employee E JOIN tbl_userInfo U ON U.intEmployeeID = E.intEmployeeID "
                 + "WHERE intUserPassword = @intUserPassword";
             object[][] parms =
             {
                 new object[] { "intUserPassword", empPassword }
             };
 
-            return ConvertFromDataTableToEmployee(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
+            return DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName);
             //return ConvertFromDataTableToEmployee(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
         }
+        //private List<Employee> ReturnEmployeeFromPassword(int empPassword, object[] objPageDetails)
+        //{
+        //    string strQueryName = "returnEmployeeFromPassword";
+        //    string sqlCmd = "SELECT E.intEmployeeID, varFirstName, varLastName, intJobID, intLocationID, varEmailAddress, "
+        //        + "varContactNumber, secondaryContactINT, varAddress, secondaryAddress, varCityName, intProvinceID, "
+        //        + "intCountryID, varPostalCode FROM tbl_employee E JOIN tbl_userInfo U ON U.intEmployeeID = E.intEmployeeID "
+        //        + "WHERE intUserPassword = @intUserPassword";
+        //    object[][] parms =
+        //    {
+        //        new object[] { "intUserPassword", empPassword }
+        //    };
+
+        //    return ConvertFromDataTableToEmployee(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
+        //    //return ConvertFromDataTableToEmployee(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName), objPageDetails);
+        //}
         private DataTable ReturnJobPosition(object[] objPageDetails)
         {
             string strQueryName = "ReturnJobPosition";
@@ -301,10 +315,14 @@ namespace SweetSpotDiscountGolfPOS.FP
         {
             return ReturnEmployeeBasedOnText(searchText, objPageDetails);
         }
-        public List<Employee> CallReturnEmployeeFromPassword(int empPassword, object[] objPageDetails)
+        public int CallReturnEmployeeFromPassword(int empPassword, object[] objPageDetails)
         {
             return ReturnEmployeeFromPassword(empPassword, objPageDetails);
         }
+        //public List<Employee> CallReturnEmployeeFromPassword(int empPassword, object[] objPageDetails)
+        //{
+        //    return ReturnEmployeeFromPassword(empPassword, objPageDetails);
+        //}
         public DataTable CallReturnJobPosition(object[] objPageDetails)
         {
             return ReturnJobPosition(objPageDetails);

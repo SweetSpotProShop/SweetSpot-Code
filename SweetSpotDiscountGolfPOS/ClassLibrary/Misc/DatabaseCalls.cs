@@ -138,6 +138,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
             }
             QueryStringCapture(sqlCmd, strParameters, objPageDetails, strQueryName);
             cmd.Connection = con;
+            cmd.CommandTimeout = 300;
             con.Open();
             cmd.ExecuteNonQuery();
             con.Close();
@@ -155,6 +156,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
                 times++;
             }
             cmd.Connection = con;
+            cmd.CommandTimeout = 300;
             con.Open();
             cmd.ExecuteNonQuery();
             con.Close();
@@ -177,6 +179,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
             cmd.Parameters.AddWithValue("@strParameters", strParameters);
 
             cmd.Connection = con;
+            cmd.CommandTimeout = 300;
             con.Open();
             cmd.ExecuteNonQuery();
             con.Close();
@@ -184,7 +187,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
         private DataTable ReturnDataTableFromStoredProcedure(string procedureName, object[][] parms)
         {
             SqlConnection sqlCon = new SqlConnection(ConfigurationManager.ConnectionStrings["SweetSpotDevConnectionString"].ConnectionString);
-            System.Data.DataTable dt = new DataTable();
+            DataTable dt = new DataTable();
             using (var cmd = new SqlCommand(procedureName, sqlCon))
             using (var da = new SqlDataAdapter(cmd))
             {            
@@ -195,6 +198,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
                     cmd.Parameters.AddWithValue(parms[times][0].ToString(), parms[times][1]);
                     times++;
                 }
+                da.SelectCommand.CommandTimeout = 300;
                 da.Fill(dt);
             }
             return dt;

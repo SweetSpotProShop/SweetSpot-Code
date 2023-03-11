@@ -53,9 +53,12 @@ namespace SweetSpotDiscountGolfPOS
                             {
                                 varInvoiceNumber = IM.CallReturnNextInvoiceNumberForNewInvoice(CU, objPageDetails),
                                 intInvoiceSubNumber = 1,
-                                customer = CM.CallReturnCustomer(Convert.ToInt32(Request.QueryString["customer"].ToString()), objPageDetails)[0],
-                                employee = CU.employee,
-                                location = CU.location,
+                                //customer = CM.CallReturnCustomer(Convert.ToInt32(Request.QueryString["customer"].ToString()), objPageDetails)[0],
+                                //employee = CU.employee,
+                                //location = CU.location,
+                                intCustomerID = Convert.ToInt32(Request.QueryString["customer"].ToString()),
+                                intEmployeeID = CU.employee.intEmployeeID,
+                                intLocationID = CU.location.intLocationID,
                                 intShippingProvinceID = CU.location.intProvinceID,
                                 fltGovernmentTaxAmount = 0,
                                 fltHarmonizedTaxAmount = 0,
@@ -70,7 +73,7 @@ namespace SweetSpotDiscountGolfPOS
                             invoice = IM.CallCreateInitialTotalsForTable(newInvoice, objPageDetails)[0];
 
                             var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                            nameValues.Set("customer", invoice.customer.intCustomerID.ToString());
+                            nameValues.Set("customer", invoice.intCustomerID.ToString());
                             nameValues.Set("invoice", invoice.intInvoiceID.ToString());
                             Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
                         }
@@ -79,11 +82,12 @@ namespace SweetSpotDiscountGolfPOS
                             invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
                         }
 
-                        DdlShippingProvince.DataSource = LM.CallReturnProvinceDropDown(invoice.location.intCountryID, objPageDetails);
+                        Customer cust = CM.CallReturnCustomer(invoice.intCustomerID, objPageDetails)[0];
+                        DdlShippingProvince.DataSource = LM.CallReturnProvinceDropDown(CU.location.intCountryID, objPageDetails);
                         DdlShippingProvince.SelectedValue = invoice.intShippingProvinceID.ToString();
                         DdlShippingProvince.DataBind();
 
-                        txtCustomer.Text = invoice.customer.varFirstName + " " + invoice.customer.varLastName;
+                        txtCustomer.Text = cust.varFirstName + " " + cust.varLastName;
                         lblDateDisplay.Text = DateTime.Today.ToString("dd/MMM/yy");
                         lblInvoiceNumberDisplay.Text = invoice.varInvoiceNumber + "-" + invoice.intInvoiceSubNumber;
                         //change to gather the items from table
@@ -324,7 +328,7 @@ namespace SweetSpotDiscountGolfPOS
                         //UpdateInvoiceTotal();
                         lblInvalidQty.Visible = false;
                         var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                        nameValues.Set("customer", invoice.customer.intCustomerID.ToString());
+                        nameValues.Set("customer", invoice.intCustomerID.ToString());
                         nameValues.Set("invoice", invoice.intInvoiceID.ToString());
                         Response.Redirect("SalesCheckout.aspx?" + nameValues, false);
                     }
@@ -456,13 +460,14 @@ namespace SweetSpotDiscountGolfPOS
                 };
                 int custNum = CM.CallAddCustomer(customer, objPageDetails);                
                 customer.intCustomerID = custNum;
-                invoice.customer = customer;
+                invoice.intCustomerID = custNum;
+                //invoice.customer = customer;
                 IM.CallUpdateCurrentInvoice(invoice, objPageDetails);
                 UpdateInvoiceTotals();
                 Session["currentInvoice"] = invoice;
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                 nameValues.Set("invoice", invoice.intInvoiceID.ToString());
-                nameValues.Set("customer", invoice.customer.intCustomerID.ToString());
+                nameValues.Set("customer", invoice.intCustomerID.ToString());
                 Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
             }
             //Exception catch
@@ -488,13 +493,15 @@ namespace SweetSpotDiscountGolfPOS
                 if (e.CommandName == "SwitchCustomer")
                 {
                     Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
-                    Customer C = CM.CallReturnCustomer(Convert.ToInt32(e.CommandArgument.ToString()), objPageDetails)[0];
-                    invoice.customer = C;
+                    //Customer C = CM.CallReturnCustomer(Convert.ToInt32(e.CommandArgument.ToString()), objPageDetails)[0];
+                    invoice.intCustomerID = Convert.ToInt32(e.CommandArgument.ToString());
+                    //invoice.customer = C;
                     IM.CallUpdateCurrentInvoice(invoice, objPageDetails);
                     UpdateInvoiceTotals();
                     Session["currentInvoice"] = invoice;
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                    nameValues.Set("customer", invoice.customer.intCustomerID.ToString());
+                    nameValues.Set("customer", invoice.intCustomerID.ToString());
+                    //nameValues.Set("customer", invoice.customer.intCustomerID.ToString());
                     nameValues.Set("invoice", invoice.intInvoiceID.ToString());
                     Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
                 }

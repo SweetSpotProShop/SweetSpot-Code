@@ -284,7 +284,8 @@ namespace SweetSpotDiscountGolfPOS
                     {
                         if (IM.CallVerifyMOPHasBeenAdded(returnInvoice.intInvoiceID, objPageDetails))
                         {
-                            returnInvoice.employee = EM.CallReturnEmployeeFromPassword(Convert.ToInt32(txtEmployeePasscode.Text), objPageDetails)[0];
+                            //returnInvoice.employee = EM.CallReturnEmployeeFromPassword(Convert.ToInt32(txtEmployeePasscode.Text), objPageDetails)[0];
+                            returnInvoice.intEmployeeID = EM.CallReturnEmployeeFromPassword(Convert.ToInt32(txtEmployeePasscode.Text), objPageDetails);
                             returnInvoice.varAdditionalInformation = txtComments.Text;
                             IM.FinalizeInvoice(returnInvoice, "tbl_invoiceItemReturns", objPageDetails);
                             var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());

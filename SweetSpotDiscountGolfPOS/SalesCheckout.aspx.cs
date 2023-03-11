@@ -511,7 +511,8 @@ namespace SweetSpotDiscountGolfPOS
                         {
                             //Stores all the Sales data to the database
                             invoice = IM.CallReturnCurrentInvoice(invoice.intInvoiceID, objPageDetails)[0];
-                            invoice.employee = EM.CallReturnEmployeeFromPassword(Convert.ToInt32(txtEmployeePasscode.Text), objPageDetails)[0];
+                            invoice.intEmployeeID = EM.CallReturnEmployeeFromPassword(Convert.ToInt32(txtEmployeePasscode.Text), objPageDetails);
+                            //invoice.Employee = EM.CallReturnEmployeeFromPassword(Convert.ToInt32(txtEmployeePasscode.Text), objPageDetails)[0];
                             invoice.varAdditionalInformation = txtComments.Text;
                             invoice.intTransactionTypeID = IM.CallReturnTransactionID("Sale", objPageDetails);
                             IM.FinalizeInvoice(invoice, "tbl_invoiceItem", objPageDetails);

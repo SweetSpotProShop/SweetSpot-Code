@@ -13,7 +13,8 @@ namespace SweetSpotDiscountGolfPOS.OB
         public string varFirstName { get; set; }
         public string varLastName { get; set; }
         public int intJobID { get; set; }
-        public Location location { get; set; }
+        //public Location location { get; set; }
+        public int intLocationID { get; set; }
         public string varEmailAddress { get; set; }
         public string varContactNumber { get; set; }
         public string secondaryContactNumber { get; set; }

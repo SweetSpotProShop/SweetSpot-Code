@@ -13,6 +13,7 @@ namespace SweetSpotDiscountGolfPOS
     public partial class ReturnsCart : System.Web.UI.Page
     {
         readonly ErrorReporting ER = new ErrorReporting();
+        readonly CustomerManager CM = new CustomerManager();
         readonly InvoiceManager IM = new InvoiceManager();
         readonly InvoiceItemsManager IIM = new InvoiceItemsManager();
         CurrentUser CU;
@@ -44,8 +45,8 @@ namespace SweetSpotDiscountGolfPOS
                         {
                             returnInvoice = returnInvoicesCalled[0];
                             returnInvoice.intInvoiceSubNumber = IM.CallCalculateNextInvoiceSubNum(returnInvoice.varInvoiceNumber, objPageDetails);
-                            returnInvoice.location = CU.location;
-                            returnInvoice.employee = CU.employee;
+                            returnInvoice.intLocationID = CU.location.intLocationID;
+                            returnInvoice.intEmployeeID = CU.employee.intEmployeeID;
                             returnInvoice.intTransactionTypeID = 2;
                             returnInvoice = IM.CallCreateInitialTotalsForTable(returnInvoice, objPageDetails)[0];
 
@@ -57,7 +58,9 @@ namespace SweetSpotDiscountGolfPOS
                         {
                             returnInvoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"]), CU.location.intProvinceID, objPageDetails)[0];
                         }
-                        lblCustomerDisplay.Text = returnInvoice.customer.varFirstName.ToString() + " " + returnInvoice.customer.varLastName.ToString();
+                        Customer cust = CM.CallReturnCustomer(returnInvoice.intCustomerID, objPageDetails)[0];
+                        //lblCustomerDisplay.Text = returnInvoice.customer.varFirstName.ToString() + " " + returnInvoice.customer.varLastName.ToString();
+                        lblCustomerDisplay.Text = cust.varFirstName.ToString() + " " + cust.varLastName.ToString();
                         lblInvoiceNumberDisplay.Text = returnInvoice.varInvoiceNumber + "-" + returnInvoice.intInvoiceSubNumber;
                         lblDateDisplay.Text = returnInvoice.dtmInvoiceDate.ToString("dd/MMM/yy");
                         //binds items in cart to gridview
