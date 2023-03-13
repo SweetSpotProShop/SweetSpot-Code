@@ -90,7 +90,9 @@ namespace SweetSpotDiscountGolfPOS.FP
                 //employee = EM.CallReturnEmployee(row.Field<int>("intEmployeeID"), objPageDetails)[0],
                 //location = LM.CallReturnLocation(row.Field<int>("intLocationID"), objPageDetails)[0],
                 intCustomerID = row.Field<int>("intCustomerID"),
+                varCustName = CM.CallReturnCustomerName(row.Field<int>("intCustomerID"), objPageDetails),
                 intEmployeeID = row.Field<int>("intEmployeeID"),
+                varEmpName = EM.CallReturnEmployeeName(row.Field<int>("intEmployeeID"), objPageDetails),
                 intLocationID = row.Field<int>("intLocationID"),
                 intShippingProvinceID = row.Field<int>("intShippingProvinceID"),
                 bitIsShipping = row.Field<bool>("bitIsShipping"),
@@ -267,7 +269,9 @@ namespace SweetSpotDiscountGolfPOS.FP
                 //customer = CM.CallReturnCustomer(row.Field<int>("intCustomerID"), objPageDetails)[0],
                 //location = LM.CallReturnLocation(row.Field<int>("intLocationID"), objPageDetails)[0],
                 intCustomerID = row.Field<int>("intCustomerID"),
+                varCustName = CM.CallReturnCustomerName(row.Field<int>("intCustomerID"), objPageDetails),
                 intLocationID = row.Field<int>("intLocationID"),
+                varLocName = LM.CallReturnLocationName(row.Field<int>("intLocationID"), objPageDetails),
                 fltBalanceDue = row.Field<double>("fltBalanceDue")
             }).ToList();
             return i;

@@ -256,5 +256,11 @@ namespace SweetSpotDiscountGolfPOS.FP
         {
             return ReturnCustomerBasedOnText(searchText, objPageDetails);
         }
+
+        public string CallReturnCustomerName(int customerID, object[] objPageDetails)
+        {
+            Customer cust = CallReturnCustomer(customerID, objPageDetails)[0];
+            return cust.varFirstName + " " + cust.varLastName;
+        }
     }
 }

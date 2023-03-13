@@ -343,5 +343,11 @@ namespace SweetSpotDiscountGolfPOS.FP
         {
             return ReturnCurrentUserFromPassword(password, objPageDetails);
         }
+
+        public string CallReturnEmployeeName(int employeeID, object[] objPageDetails)
+        {
+            Employee emp = CallReturnEmployee(employeeID, objPageDetails)[0];
+            return emp.varFirstName + " " + emp.varLastName;
+        }
     }
 }
