@@ -197,17 +197,20 @@ namespace SweetSpotDiscountGolfPOS.FP
         private List<InvoiceItemTax> ReturnTaxesAvailableForItem(InvoiceItems invoiceItem, int transactionTypeID, DateTime currentDateTime, int provinceID, object[] objPageDetails)
         {
             string strQueryName = "ReturnTaxesAvailableForItem";
+            InvoiceManager IM = new InvoiceManager();
             string sqlCmd = "SELECT CSI.intInvoiceItemID, TTPII.intTaxID AS intTaxTypeID, T.varTaxName, ITR.fltTaxRate, ";
 
-            if (transactionTypeID == 1 || transactionTypeID == 7)
+            if (transactionTypeID == IM.CallReturnTransactionID("Sale", objPageDetails) || transactionTypeID == IM.CallReturnTransactionID("On Hold", objPageDetails))
             {
-                sqlCmd += "CASE WHEN CSI.bitIsDiscountPercent = 1 THEN ROUND(((CSI.fltItemPrice - (CSI.fltItemPrice * (CSI.fltItemDiscount / "
-                    + "100))) * ITR.fltTaxRate) * CSI.intItemQuantity, 2) ELSE ROUND(((CSI.fltItemPrice - CSI.fltItemDiscount) * ITR.fltTaxRate) "
-                    + "* CSI.intItemQuantity, 2) END AS fltTaxAmount, ";
+                sqlCmd += "CASE WHEN CSI.bitIsDiscountPercent = 1 THEN " 
+                    + "ROUND(((CSI.fltItemPrice - (CSI.fltItemPrice * (CSI.fltItemDiscount / 100))) * ITR.fltTaxRate) * CSI.intItemQuantity, 2) "
+                    + "ELSE "
+                    + "ROUND(((CSI.fltItemPrice - CSI.fltItemDiscount) * ITR.fltTaxRate) * CSI.intItemQuantity, 2) "
+                    + "END AS fltTaxAmount, ";
             }
-            else if (transactionTypeID == 2)
+            else if (transactionTypeID == IM.CallReturnTransactionID("Return", objPageDetails))
             {
-                sqlCmd += "ROUND((CSI.fltItemRefund * ITR.fltTaxRate) * CSI.intItemQuantity, 2) AS fltTaxAmount, ";
+                sqlCmd += "ROUND((CSI.fltItemRefund * ITR.fltTaxRate) * CSI.intItemQuantity , 2) AS fltTaxAmount, ";
             }
 
             sqlCmd += "TTPII.bitChargeTax AS bitIsTaxCharged FROM tbl_currentSalesItems CSI JOIN tbl_taxTypePerInventoryItem TTPII ON "

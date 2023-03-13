@@ -217,7 +217,7 @@ namespace SweetSpotDiscountGolfPOS
                 GrdCartItems.DataSource = invoice.invoiceItems;
                 GrdCartItems.EditIndex = e.NewEditIndex;
                 GrdCartItems.DataBind();
-                ((CheckBoxList)GrdCartItems.Rows[e.NewEditIndex].Cells[9].FindControl("cblTaxes")).Enabled = true;
+                ((CheckBoxList)GrdCartItems.Rows[e.NewEditIndex].Cells[9].FindControl("cblTaxes")).Enabled = false;
 
             }
             //Exception catch
@@ -288,9 +288,12 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "BtnExitSale_Click";
-            //object[] objPageDetails = { Session["currPage"].ToString(), method };
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
+                Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
+                invoice.intTransactionTypeID = Convert.ToInt32(IM.CallReturnTransactionID("On Hold", objPageDetails));
+                IM.CallUpdateCurrentInvoice(invoice, objPageDetails);
                 Response.Redirect("SalesHomePage.aspx", false);
             }
             //Exception catch
@@ -313,19 +316,27 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
-                if (invoice.invoiceItems.Count > 0)
-                {
-                    //UpdateInvoiceTotal();
-                    lblInvalidQty.Visible = false;
-                    var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
-                    nameValues.Set("customer", invoice.customer.intCustomerID.ToString());
-                    nameValues.Set("invoice", invoice.intInvoiceID.ToString());
-                    Response.Redirect("SalesCheckout.aspx?" + nameValues, false);
-                }
-                else
-                {
-                    MessageBoxCustom.ShowMessage("There are no items on this transaction.", this);
-                }
+                //if (TaxChecker(invoice) == 0)
+                //{
+                    if (invoice.invoiceItems.Count > 0)
+                    {
+
+                        //UpdateInvoiceTotal();
+                        lblInvalidQty.Visible = false;
+                        var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                        nameValues.Set("customer", invoice.customer.intCustomerID.ToString());
+                        nameValues.Set("invoice", invoice.intInvoiceID.ToString());
+                        Response.Redirect("SalesCheckout.aspx?" + nameValues, false);
+                    }
+                    else
+                    {
+                        MessageBoxCustom.ShowMessage("There are no items on this transaction.", this);
+                    }
+                //}
+                //else
+                //{
+                    //MessageBoxCustom.ShowMessage("Taxes do not match. Make sure all items are being charged the correct tax.", this);
+                //}
             }
             //Exception catch
             catch (ThreadAbortException tae) { }
@@ -862,5 +873,7 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
+
+        
     }
 }

@@ -134,7 +134,7 @@ namespace SweetSpotDiscountGolfPOS
                 //Check to see if there are sales first
                 if (indicator == 0)
                 {
-                    COU.RemoveUnprocessedReturns(CU.location.intLocationID, CalSearchDate.SelectedDate, objPageDetails);
+                    COU.RemoveUnprocessedReturns(CU.location.intLocationID, CalSearchDate.SelectedDate, CU, objPageDetails);
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                     nameValues.Set("selectedDate", CalSearchDate.SelectedDate.ToShortDateString());
                     nameValues.Set("location", CU.location.intLocationID.ToString());
@@ -147,7 +147,7 @@ namespace SweetSpotDiscountGolfPOS
                 }
                 else if (indicator == 2)
                 {
-                    MessageBoxCustom.ShowMessage("There are still open transactions that need to be processed or cancelled.", this);
+                    MessageBoxCustom.ShowMessage("There are still Open Sales. Please put these On Hold or Void before proceeding.", this);
                 }
                 else if (indicator == 3)
                 {
@@ -170,7 +170,7 @@ namespace SweetSpotDiscountGolfPOS
         {
             //Collects current method for error tracking
             string method = "GrdCurrentOpenSales_RowCommand";
-            //object[] objPageDetails = { Session["currPage"].ToString(), method };
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
@@ -179,6 +179,9 @@ namespace SweetSpotDiscountGolfPOS
                 nameValues.Set("customer", ((Label)GrdCurrentOpenSales.Rows[index].Cells[11].FindControl("lblCustID")).Text);
                 int invoiceID = Convert.ToInt32(e.CommandArgument);
                 nameValues.Set("invoice", invoiceID.ToString());
+
+                IM.CallUpdateTransactionTypeID(invoiceID, "Sale", objPageDetails);
+
                 Response.Redirect(Request.Url.AbsolutePath + "?" + nameValues, false);
                 //Changes page to Sales Cart
                 Response.Redirect("SalesCart.aspx?" + nameValues, false);

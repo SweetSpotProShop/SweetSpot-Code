@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="SalesCheckout.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.SalesCheckout" %>
 
 <asp:Content ID="Content1" runat="server" ContentPlaceHolderID="head">
-	<style type="text/css">
+    <style type="text/css">
 		.auto-style1 {
 			height: 152px;
 		}
@@ -9,7 +9,7 @@
 </asp:Content>
 
 <asp:Content ID="NonActive" ContentPlaceHolderID="SPMaster" runat="server">
-	<div id="menu_simple">
+    <div id="menu_simple">
 		<ul>
 			<li><a>HOME</a></li>
 			<li><a>CUSTOMERS</a></li>
@@ -25,7 +25,7 @@
 	<link rel="stylesheet" type="text/css" href="CSS/MainStyleSheet.css" />
 </asp:Content>
 <asp:Content ID="CheckoutPageContent" ContentPlaceHolderID="IndividualPageContent" runat="server">
-	<h3>Transaction Details</h3>
+    <h3>Transaction Details</h3>
 	<div>
 		<%--REMEMBER TO SET DEFAULT BUTTON--%>
 		<asp:Panel ID="pnlDefaultButton" runat="server" DefaultButton="mopCash">
@@ -136,7 +136,6 @@
                                     <asp:Button ID="BtnRemoveProv" runat="server" Text="Remove PST" Width="163px" OnClick="BtnRemoveProvTax" Visible="false" CausesValidation="false" />
 								</asp:TableCell>
 							</asp:TableRow>
-
 							<asp:TableRow>
 								<asp:TableCell>
 									<asp:Label ID="lblLiquorTax" runat="server" Text="Liquor Tax:" Visible="false" />
@@ -148,7 +147,6 @@
                                     <asp:Button ID="BtnRemoveLiq" runat="server" Text="Remove LCT" Width="163px" OnClick="BtnRemoveLiqTax" Visible="false" CausesValidation="false" />
 								</asp:TableCell>
 							</asp:TableRow>
-
 							<asp:TableRow>
 								<asp:TableCell>
 									<asp:Label ID="lblBalance" runat="server" Text="Balance Due:" />
@@ -217,11 +215,16 @@
 					<asp:TableCell>
 						<asp:RequiredFieldValidator ID="valEmployeePasscode" runat="server" ForeColor="red" ErrorMessage="Must Enter Passcode" ControlToValidate="txtEmployeePasscode" />
 					</asp:TableCell>
+					<asp:TableCell>
+						<asp:Label ID="lblTaxDiscrepency" runat="server" ForeColor="Red" Visible="false" Text="GST amount shoud be: . Over/Under: ." />
+					</asp:TableCell>
+					<asp:TableCell>
+						<asp:CheckBox ID="chkProceed" runat="server" Text="Check Here to Proceed with Sale." Visible="false" />
+					</asp:TableCell>
 				</asp:TableRow>
 			</asp:Table>
 			<p>
-				Comments:
-				<br />
+				Comments: <br />
 				<asp:TextBox ID="txtComments" runat="server" TextMode="MultiLine" AutoCompleteType="Disabled" />
 				<asp:HiddenField ID="hdnTender" runat="server" Value="0" />
 				<asp:HiddenField ID="hdnChange" runat="server" Value="0" />

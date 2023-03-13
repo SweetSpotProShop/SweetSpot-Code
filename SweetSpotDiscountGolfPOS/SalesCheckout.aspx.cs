@@ -40,9 +40,10 @@ namespace SweetSpotDiscountGolfPOS
                         //TaxManager TM = new TaxManager();
 
                         //Checks if shipping was charged 
-                        //Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];
-                        Invoice invoice = (Invoice)Session["currentInvoice"];
+                        //Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];                        
                         UpdatePageTotals();
+                        Invoice invoice = (Invoice)Session["currentInvoice"];
+                        TaxChecker(invoice);
                     }
                 }
             }
@@ -398,11 +399,11 @@ namespace SweetSpotDiscountGolfPOS
             try
             {
                 //TODO: btnExitSale_Click is good as it doesn't read the new values. It removes the entry 
-                TaxManager TM = new TaxManager();
+                //TaxManager TM = new TaxManager();
                 Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
                 //object[] taxText = { "Remove GST", "Remove PST" };
                 //object[] results = TM.ReturnChargedTaxForSale(invoice, taxText, objPageDetails);
-                invoice.intTransactionTypeID = 1;
+                invoice.intTransactionTypeID = Convert.ToInt32(IM.CallReturnTransactionID("On Hold", objPageDetails));           
                 IM.CallUpdateCurrentInvoice(invoice, objPageDetails);
                 Response.Redirect("HomePage.aspx", false);
             }
@@ -490,11 +491,13 @@ namespace SweetSpotDiscountGolfPOS
             object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
-                CU = (CurrentUser)Session["currentUser"];
-                Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
-                //Employee
-                EmployeeManager EM = new EmployeeManager();
-                if (EM.ReturnCanEmployeeMakeSale(Convert.ToInt32(txtEmployeePasscode.Text), objPageDetails))
+                if (VerifyToProceedForFinalize())
+                {
+                    CU = (CurrentUser)Session["currentUser"];
+                    Invoice invoice = IM.CallReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), objPageDetails)[0];
+                    //Employee
+                    EmployeeManager EM = new EmployeeManager();
+                    if (EM.ReturnCanEmployeeMakeSale(Convert.ToInt32(txtEmployeePasscode.Text), objPageDetails))
                 {
                     //Checks the amount paid and the bypass check box
                     if (!txtAmountPaying.Text.Equals("0.00"))
@@ -510,6 +513,7 @@ namespace SweetSpotDiscountGolfPOS
                             invoice = IM.CallReturnCurrentInvoice(invoice.intInvoiceID, objPageDetails)[0];
                             invoice.employee = EM.CallReturnEmployeeFromPassword(Convert.ToInt32(txtEmployeePasscode.Text), objPageDetails)[0];
                             invoice.varAdditionalInformation = txtComments.Text;
+                            invoice.intTransactionTypeID = IM.CallReturnTransactionID("Sale", objPageDetails);
                             IM.FinalizeInvoice(invoice, "tbl_invoiceItem", objPageDetails);
                             var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
                             nameValues.Set("invoice", invoice.intInvoiceID.ToString());
@@ -522,10 +526,15 @@ namespace SweetSpotDiscountGolfPOS
                         }
                     }
                 }
+                    else
+                    {
+                        MessageBoxCustom.ShowMessage("Invalid employee passcode entered. "
+                        + "Please try again.", this);
+                    }
+                }
                 else
                 {
-                    MessageBoxCustom.ShowMessage("Invalid employee passcode entered. "
-                    + "Please try again.", this);
+                    MessageBoxCustom.ShowMessage("If you wish to proceed you will need to correct the taxes.", this);
                 }
             }
             //Exception catch
@@ -717,6 +726,7 @@ namespace SweetSpotDiscountGolfPOS
                 lblRemainingBalanceDueDisplay.Text = ((invoice.fltBalanceDue + invoice.fltShippingCharges + tx) - dblAmountPaid).ToString("C");
                 txtAmountPaying.Text = ((invoice.fltBalanceDue + invoice.fltShippingCharges + tx) - dblAmountPaid).ToString("#0.00");
                 ButtonDisable(((invoice.fltBalanceDue + invoice.fltShippingCharges + tx) - dblAmountPaid));
+                Session["currentInvoice"] = invoice;
             }
             catch (ThreadAbortException tae) { }
             catch (Exception ex)
@@ -744,6 +754,39 @@ namespace SweetSpotDiscountGolfPOS
             }
             object[] amounts = { paid, change };
             return amounts;
+        }
+
+        protected int TaxChecker(Invoice invoice)
+        {
+            int intTaxIsValid = 0;
+            string strOU = "Over: $";
+            double approxGSTAmount = Math.Round(invoice.fltSubTotal * 0.05, 2);
+            double actualGSTAmount = Math.Round(invoice.fltGovernmentTaxAmount, 2);
+            //chkProceed.Checked = true;
+            if (approxGSTAmount != actualGSTAmount)
+            {
+                intTaxIsValid = 1;
+                double dblDiscrepency = Math.Round((actualGSTAmount - approxGSTAmount), 2);
+                strOU = strOU.ToString() + dblDiscrepency.ToString();
+                if (approxGSTAmount > actualGSTAmount)
+                {
+                    strOU = "Under: $" + dblDiscrepency.ToString();
+                }
+                lblTaxDiscrepency.Text = "GST amount shoud be: " + approxGSTAmount.ToString() + ". " + strOU.ToString() + ".";
+
+                lblTaxDiscrepency.Visible = true;
+                chkProceed.Visible = true;
+            }
+            return intTaxIsValid;
+        }
+        protected bool VerifyToProceedForFinalize()
+        {
+            bool bolProceed = true;
+            if(chkProceed.Visible == true)
+            {
+                if (!chkProceed.Checked) { bolProceed = false; }
+            }
+            return bolProceed;
         }
     }
 }

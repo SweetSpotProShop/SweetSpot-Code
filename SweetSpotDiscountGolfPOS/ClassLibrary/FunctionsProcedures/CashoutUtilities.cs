@@ -51,12 +51,12 @@ namespace SweetSpotDiscountGolfPOS.FP
         {
             string strQueryName = "openTransactions";
             bool bolOT = false;
-            string sqlCmd = "SELECT COUNT(intCurrentInvoiceID) FROM tbl_currentSalesInvoice WHERE intTransactionTypeID = 1 "
-                + "AND intLocationID = @locationID AND dtmInvoiceDate = @dtmInvoiceDate";
+            string sqlCmd = "SELECT COUNT(intInvoiceID) FROM tbl_currentSalesInvoice WHERE intTransactionTypeID = (SELECT intTransactionTypeID FROM tbl_transactionType WHERE varTransactionName = 'Sale') "
+                + "AND intLocationID = @intLocationID AND dtmInvoiceDate = @dtmInvoiceDate";
             object[][] parms =
             {
-                new object[] { "@locationID", locationID },
-                new object[] { "@invoiceDate", selectedDate.ToString("yyyy-MM-dd")}
+                new object[] { "@intLocationID", locationID },
+                new object[] { "@dtmInvoiceDate", selectedDate.ToString("yyyy-MM-dd")}
             };
             if (DBC.MakeDataBaseCallToReturnInt(sqlCmd, parms, objPageDetails, strQueryName) > 0)
             {
@@ -82,13 +82,19 @@ namespace SweetSpotDiscountGolfPOS.FP
             }
             return bolCAD;
         }
-        public void RemoveUnprocessedReturns(int locationID, DateTime selectedDate, object[] objPageDetails)
+        public void RemoveUnprocessedReturns(int locationID, DateTime selectedDate, CurrentUser CU, object[] objPageDetails)
         {
+            InvoiceItemsManager IIM = new InvoiceItemsManager();
             DataTable dt = ReturnListOfOpenInvoices(locationID, selectedDate, objPageDetails);
             foreach (DataRow dtr in dt.Rows)
             {
                 RemoveOpenMopsFromCurrentSales(Convert.ToInt32(dtr[0]), objPageDetails);
                 RemoveOpenItemTaxesFromCurrentSales(Convert.ToInt32(dtr[0]), objPageDetails);
+                //need to add into stock Github Issue #20: On Hold Sales 
+                //Don't beleive this is needed as the only objects that should come through here are unprocessed returns.
+                //Anything that is a sale will already be delt with, anything on hold doesn't count
+                //IIM.LoopThroughTheItemsToReturnToInventory(Convert.ToInt32(dtr[0]), selectedDate, CU.location.intProvinceID, objPageDetails);
+
                 RemoveOpenItemsFromCurrentSales(Convert.ToInt32(dtr[0]), objPageDetails);
                 RemoveOpenInvoiceFromCurrentSales(Convert.ToInt32(dtr[0]), objPageDetails);
             }
@@ -97,7 +103,9 @@ namespace SweetSpotDiscountGolfPOS.FP
         {
             string strQueryName = "ReturnListOfReturnInvoices";
             string sqlCmd = "SELECT intInvoiceID FROM tbl_currentSalesInvoice WHERE dtmInvoiceDate BETWEEN @dtmStartDate AND @dtmEndDate "
-                + "AND intLocationID = @intLocationID";
+                + "AND intLocationID = @intLocationID AND intTransactionTypeID <> "
+                + "(SELECT intTransactionTypeID FROM tbl_transactionType WHERE varTransactionName = 'On Hold')";
+            //add intTransactionTypeID <> 3 GitHub Issue #20: On Hold Sales
             object[][] parms =
             {
                 new object[] { "@dtmStartDate", selectedDate.ToString("yyyy-MM-dd") },
