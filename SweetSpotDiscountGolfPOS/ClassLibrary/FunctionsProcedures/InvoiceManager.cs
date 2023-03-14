@@ -291,6 +291,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 //employee = EM.CallReturnEmployee(row.Field<int>("intEmployeeID"), objPageDetails)[0],
                 //location = LM.CallReturnLocation(row.Field<int>("intLocationID"), objPageDetails)[0],
                 intEmployeeID = row.Field<int>("intEmployeeID"),
+                varEmpName = EM.CallReturnEmployeeName(row.Field<int>("intEmployeeID"), objPageDetails),
                 intLocationID = row.Field<int>("intLocationID"),
                 intShippingProvinceID = row.Field<int>("intShippingProvinceID"),
                 fltShippingTaxAmount = row.Field<double>("fltShippingTaxAmount"),
