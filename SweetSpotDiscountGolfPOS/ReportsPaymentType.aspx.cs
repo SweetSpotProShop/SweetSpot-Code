@@ -23,6 +23,7 @@ namespace SweetSpotDiscountGolfPOS
         double salesGiftCard;
         double salesMastercard;
         double salesVisa;
+        double salesAmEx;
         DataTable dt = new DataTable();
 
         protected void Page_Load(object sender, EventArgs e)
@@ -76,6 +77,7 @@ namespace SweetSpotDiscountGolfPOS
                     salesGiftCard += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "GiftCard"));
                     salesMastercard += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "Mastercard"));
                     salesVisa += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "Visa"));
+                    salesAmEx += Convert.ToDouble(DataBinder.Eval(e.Row.DataItem, "AmEx"));
                 }
                 else if (e.Row.RowType == DataControlRowType.Footer)
                 {
@@ -84,6 +86,7 @@ namespace SweetSpotDiscountGolfPOS
                     e.Row.Cells[3].Text = String.Format("{0:C}", salesGiftCard);
                     e.Row.Cells[4].Text = String.Format("{0:C}", salesMastercard);
                     e.Row.Cells[5].Text = String.Format("{0:C}", salesVisa);
+                    e.Row.Cells[5].Text = String.Format("{0:C}", salesAmEx);
                 }
             }
             //Exception catch
@@ -124,6 +127,7 @@ namespace SweetSpotDiscountGolfPOS
                     paymentTypeExport.Cells[2, 4].Value = "Gift Card";
                     paymentTypeExport.Cells[2, 5].Value = "Mastercard";
                     paymentTypeExport.Cells[2, 6].Value = "Visa";
+                    paymentTypeExport.Cells[2, 67].Value = "AmEx";
                     int recordIndex = 3;
                     foreach (DataRow row in dt.Rows)
                     {
@@ -134,6 +138,7 @@ namespace SweetSpotDiscountGolfPOS
                         paymentTypeExport.Cells[recordIndex, 4].Value = row[3];
                         paymentTypeExport.Cells[recordIndex, 5].Value = row[4];
                         paymentTypeExport.Cells[recordIndex, 6].Value = row[5];
+                        paymentTypeExport.Cells[recordIndex, 7].Value = row[6];
                         recordIndex++;
                     }
                     Response.Clear();

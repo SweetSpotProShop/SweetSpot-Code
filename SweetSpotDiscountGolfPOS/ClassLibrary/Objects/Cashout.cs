@@ -19,12 +19,14 @@ namespace SweetSpotDiscountGolfPOS.OB
         public double fltSystemCountedBasedOnSystemDebit { get; set; }
         public double fltSystemCountedBasedOnSystemMastercard { get; set; }
         public double fltSystemCountedBasedOnSystemVisa { get; set; }
+        public double fltSystemCountedBasedOnSystemAmEx { get; set; }
         public double fltManuallyCountedBasedOnReceiptsTradeIn { get; set; }
         public double fltManuallyCountedBasedOnReceiptsGiftCard { get; set; }
         public double fltManuallyCountedBasedOnReceiptsCash { get; set; }
         public double fltManuallyCountedBasedOnReceiptsDebit { get; set; }
         public double fltManuallyCountedBasedOnReceiptsMastercard { get; set; }
         public double fltManuallyCountedBasedOnReceiptsVisa { get; set; }
+        public double fltManuallyCountedBasedOnReceiptsAmEx { get; set; }
         public double fltSalesSubTotal { get; set; }
         public double fltGovernmentTaxAmount { get; set; }
         public double fltHarmonizedTaxAmount { get; set; }

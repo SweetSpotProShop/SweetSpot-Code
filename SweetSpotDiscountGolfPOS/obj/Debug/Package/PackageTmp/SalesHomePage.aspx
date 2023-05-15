@@ -69,7 +69,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Customer Name">
                             <ItemTemplate>
-                                <asp:Label ID="lblCustomerName" runat="server" Text='<%#Eval("customer.varFirstName") + " " + Eval("customer.varLastName") %>' />
+                                <asp:Label ID="lblCustomerName" runat="server" Text='<%#Eval("varCustName") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Discount">
@@ -104,7 +104,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name">
                             <ItemTemplate>
-                                <asp:Label ID="lblEmployeeName" runat="server" Text='<%#Eval("employee.varFirstName") + " " + Eval("employee.varLastName") %>' />
+                                <asp:Label ID="lblEmployeeName" runat="server" Text='<%#Eval("varEmpName") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Type">
@@ -114,7 +114,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="CustID" Visible="false">
                             <ItemTemplate>
-                                <asp:Label ID="lblCustID" runat="server" Text='<%#Eval("customer.intCustomerID") %>' />
+                                <asp:Label ID="lblCustID" runat="server" Text='<%#Eval("intCustomerID") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>

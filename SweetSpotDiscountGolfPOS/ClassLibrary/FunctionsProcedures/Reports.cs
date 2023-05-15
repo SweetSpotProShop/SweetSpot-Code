@@ -89,7 +89,9 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "fltSystemCountedBasedOnSystemGiftCard, fltManuallyCountedBasedOnReceiptsGiftCard, fltSystemCountedBasedOnSystemCash, "
                 + "fltManuallyCountedBasedOnReceiptsCash, fltSystemCountedBasedOnSystemDebit, fltManuallyCountedBasedOnReceiptsDebit, "
                 + "fltSystemCountedBasedOnSystemMastercard, fltManuallyCountedBasedOnReceiptsMastercard, fltSystemCountedBasedOnSystemVisa, "
-                + "fltManuallyCountedBasedOnReceiptsVisa, fltCashDrawerOverShort, bitIsCashoutProcessed, bitIsCashoutFinalized FROM "
+                + "fltManuallyCountedBasedOnReceiptsVisa, "
+                + "fltSystemCountedBasedOnSystemAmEx, fltManuallyCountedBasedOnReceiptsAmEx, "
+                + "fltCashDrawerOverShort, bitIsCashoutProcessed, bitIsCashoutFinalized FROM "
                 + "tbl_cashout WHERE dtmCashoutDate BETWEEN @dtmStartDate AND @dtmEndDate" + varLocationName;
             object[][] parms =
             {

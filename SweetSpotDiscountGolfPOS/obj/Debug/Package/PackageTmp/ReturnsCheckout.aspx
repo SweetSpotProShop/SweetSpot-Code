@@ -56,6 +56,10 @@
                                     <asp:Button ID="MopGiftCard" runat="server" Text="Gift Card" OnClick="MopGiftCard_Click" Width="163px"
 										OnClientClick="return confirm('Confirm Gift Card');" CausesValidation="false" />
                                 </asp:TableCell>
+                                <asp:TableCell>
+                                    <asp:Button ID="MopAmEx" runat="server" Text="Americn Express" OnClick="MopAmEx_Click" Width="163px"
+										OnClientClick="return confirm('Confirm American Express');" CausesValidation="false" />
+                                </asp:TableCell>
                             </asp:TableRow>
                             <asp:TableRow>
                                 <asp:TableCell ColumnSpan="2">

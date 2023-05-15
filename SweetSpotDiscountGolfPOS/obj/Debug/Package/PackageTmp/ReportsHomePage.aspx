@@ -120,6 +120,7 @@
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell>
+                            <asp:Button ID="BtnCharlynReport" runat="server" Width="200" Text="Charlyn Sales Report" OnClick="BtnCharlynReport_Click" />
 							<%--<asp:Button ID="btnUpdatingTaxes" runat="server" Text="Update Taxes between Date Range" Width="200px" OnClick="btnUpdatingTaxes_Click" />--%>
 							<%--<asp:Button ID="btnItemsSold" runat="server" Text="Items Sold" Width="200px" Onclick="btnItemsSold_Click" />--%>
                         </asp:TableCell>

@@ -129,6 +129,22 @@
                             <asp:Label ID="lblVisaBalance" runat="server" ForeColor="Green" Text='<%# Convert.ToDouble(Eval("fltManuallyCountedBasedOnReceiptsVisa")) == Convert.ToDouble(Eval("fltSystemCountedBasedOnSystemVisa")) ? "Balanced" : "Discrepancy" %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
+
+                    <asp:TemplateField>
+                        <HeaderTemplate>
+                            AmEx<br />
+                            Receipts -<br />
+                            Sales
+                        </HeaderTemplate>
+                        <ItemTemplate>
+                            <asp:Label ID="lblAmExReceipts" runat="server" Text='<%#Eval("fltManuallyCountedBasedOnReceiptsAmEx","{0:C}") %>' />
+                            <br />
+                            <asp:Label ID="lblAmExSales" runat="server" Text='<%#Eval("fltSystemCountedBasedOnSystemAmEx","{0:C}") %>' />
+                            <br />
+                            <asp:Label ID="lblAmExBalance" runat="server" ForeColor="Green" Text='<%# Convert.ToDouble(Eval("fltManuallyCountedBasedOnReceiptsAmEx")) == Convert.ToDouble(Eval("fltSystemCountedBasedOnSystemVisa")) ? "Balanced" : "Discrepancy" %>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+
                     <asp:TemplateField HeaderText="Over/Short">
                         <ItemTemplate>
                             <asp:Label ID="lblOverShort" runat="server" Text='<%#Eval("fltCashDrawerOverShort","{0:C}")%>' />

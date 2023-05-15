@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SweetSpotDiscountGolfPOS {
-    
-    
-    public partial class ReturnsCheckout {
-        
+namespace SweetSpotDiscountGolfPOS
+{
+
+
+    public partial class ReturnsCheckout
+    {
+
         /// <summary>
         /// pnlDefaultButton control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel pnlDefaultButton;
-        
+
         /// <summary>
         /// MopCash control.
         /// </summary>
@@ -29,7 +31,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button MopCash;
-        
+
         /// <summary>
         /// MopVisa control.
         /// </summary>
@@ -38,7 +40,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button MopVisa;
-        
+
         /// <summary>
         /// MopMasterCard control.
         /// </summary>
@@ -47,7 +49,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button MopMasterCard;
-        
+
         /// <summary>
         /// MopDebit control.
         /// </summary>
@@ -56,7 +58,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button MopDebit;
-        
+
         /// <summary>
         /// MopGiftCard control.
         /// </summary>
@@ -65,7 +67,16 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button MopGiftCard;
-        
+
+        /// <summary>
+        /// MopAmEx control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button MopAmEx;
+
         /// <summary>
         /// lblRefundAmount control.
         /// </summary>
@@ -74,7 +85,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblRefundAmount;
-        
+
         /// <summary>
         /// txtAmountRefunding control.
         /// </summary>
@@ -83,7 +94,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtAmountRefunding;
-        
+
         /// <summary>
         /// tblTotals control.
         /// </summary>
@@ -92,7 +103,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Table tblTotals;
-        
+
         /// <summary>
         /// lblRefundSubTotal control.
         /// </summary>
@@ -101,7 +112,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblRefundSubTotal;
-        
+
         /// <summary>
         /// lblRefundSubTotalAmount control.
         /// </summary>
@@ -110,7 +121,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblRefundSubTotalAmount;
-        
+
         /// <summary>
         /// lblGovernment control.
         /// </summary>
@@ -119,7 +130,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblGovernment;
-        
+
         /// <summary>
         /// lblGovernmentAmount control.
         /// </summary>
@@ -128,7 +139,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblGovernmentAmount;
-        
+
         /// <summary>
         /// lblProvincial control.
         /// </summary>
@@ -137,7 +148,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblProvincial;
-        
+
         /// <summary>
         /// lblProvincialAmount control.
         /// </summary>
@@ -146,7 +157,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblProvincialAmount;
-        
+
         /// <summary>
         /// lblLiquorTax control.
         /// </summary>
@@ -155,7 +166,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblLiquorTax;
-        
+
         /// <summary>
         /// lblLiquorTaxAmount control.
         /// </summary>
@@ -164,7 +175,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblLiquorTaxAmount;
-        
+
         /// <summary>
         /// lblRefundBalance control.
         /// </summary>
@@ -173,7 +184,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblRefundBalance;
-        
+
         /// <summary>
         /// lblRefundBalanceAmount control.
         /// </summary>
@@ -182,7 +193,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblRefundBalanceAmount;
-        
+
         /// <summary>
         /// gvCurrentMOPs control.
         /// </summary>
@@ -191,7 +202,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvCurrentMOPs;
-        
+
         /// <summary>
         /// lblRemainingRefund control.
         /// </summary>
@@ -200,7 +211,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblRemainingRefund;
-        
+
         /// <summary>
         /// lblRemainingRefundDisplay control.
         /// </summary>
@@ -209,7 +220,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblRemainingRefundDisplay;
-        
+
         /// <summary>
         /// BtnCancelReturn control.
         /// </summary>
@@ -218,7 +229,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button BtnCancelReturn;
-        
+
         /// <summary>
         /// BtnReturnToCart control.
         /// </summary>
@@ -227,7 +238,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button BtnReturnToCart;
-        
+
         /// <summary>
         /// BtnFinalize control.
         /// </summary>
@@ -236,7 +247,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button BtnFinalize;
-        
+
         /// <summary>
         /// lblConfirmEmployee control.
         /// </summary>
@@ -245,7 +256,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblConfirmEmployee;
-        
+
         /// <summary>
         /// txtEmployeePasscode control.
         /// </summary>
@@ -254,7 +265,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtEmployeePasscode;
-        
+
         /// <summary>
         /// valEmployeePasscode control.
         /// </summary>
@@ -263,7 +274,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RequiredFieldValidator valEmployeePasscode;
-        
+
         /// <summary>
         /// txtComments control.
         /// </summary>

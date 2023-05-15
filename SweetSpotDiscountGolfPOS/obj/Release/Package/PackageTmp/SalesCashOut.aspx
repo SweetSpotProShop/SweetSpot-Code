@@ -60,6 +60,9 @@
                             <asp:Label runat="server" ID="lblVisaS" Text="Visa" Width="100%" />
                         </asp:TableCell>
                         <asp:TableCell Width="9%">
+                            <asp:Label runat="server" ID="lblAmEx" Text="AmEx" Width="100%" />
+                        </asp:TableCell>
+                        <asp:TableCell Width="9%">
                             <asp:Label runat="server" ID="lblPreTaxS" Text="Pre Tax" Width="100%" />
                         </asp:TableCell>
                         <asp:TableCell ID="cellGSTS" Width="9%">
@@ -102,6 +105,9 @@
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label runat="server" ID="lblVisaDisplay" Text="" />
+                        </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:Label runat="server" ID="lblAmExDisplay" Text="" />
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label runat="server" ID="lblPreTaxDisplay" Text="" />
@@ -151,6 +157,9 @@
                         </asp:TableCell>
                         <asp:TableCell>
                             <asp:Label runat="server" ID="lblVisaR" Text="Visa" />
+                        </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:Label runat="server" ID="lblAmExR" Text="AmEx" />
                         </asp:TableCell>
                     </asp:TableRow>
                     <asp:TableRow>
@@ -214,6 +223,17 @@
                                 ErrorMessage="numbers only"
                                 runat="server" />--%>
                         </asp:TableCell>
+                        <asp:TableCell>
+                            <asp:TextBox ID="txtAmEx" runat="server" AutoCompleteType="Disabled" Text="0.00" Width="60" />
+                            <%--<asp:RegularExpressionValidator ID="revAmEx"
+                                ControlToValidate="txtAmEx"
+                                ValidationExpression="[-+]?([0-9]*\.[0-9]+|[0-9]+)"
+                                Display="Static"
+                                EnableClientScript="true"
+                                ErrorMessage="numbers only"
+                                runat="server" />--%>
+                        </asp:TableCell>
+
                     </asp:TableRow>
                     <asp:TableRow>
                         <asp:TableCell>

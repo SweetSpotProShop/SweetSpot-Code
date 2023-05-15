@@ -184,6 +184,33 @@ namespace SweetSpotDiscountGolfPOS
             }
         }
 
+        //American Express
+        protected void MopAmEx_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "mopAmEx_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
+            {
+                if (txtAmountRefunding.Text != "")
+                {
+                    object[] amounts = { txtAmountRefunding.Text, 0 };
+                    PopulateGridviewMOP(Convert.ToDouble(txtAmountRefunding.Text), 3, amounts);
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
+                //Display message box
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+
         protected void OnRowDeleting(object sender, GridViewDeleteEventArgs e)
         {
             //Collects current method for error tracking
@@ -363,6 +390,7 @@ namespace SweetSpotDiscountGolfPOS
                     MopGiftCard.Enabled = false;
                     MopMasterCard.Enabled = false;
                     MopVisa.Enabled = false;
+                    MopAmEx.Enabled = false;
                 }
                 else
                 {
@@ -371,6 +399,7 @@ namespace SweetSpotDiscountGolfPOS
                     MopGiftCard.Enabled = true;
                     MopMasterCard.Enabled = true;
                     MopVisa.Enabled = true;
+                    MopAmEx.Enabled = true;
                 }
             }
             //Exception catch

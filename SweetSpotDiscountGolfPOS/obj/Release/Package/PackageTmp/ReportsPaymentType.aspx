@@ -73,6 +73,11 @@
                             <asp:Label ID="lblVisaPayments" runat="server" Text='<%#Eval("Visa","{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
+                    <asp:TemplateField HeaderText="AmEx">
+                        <ItemTemplate>
+                            <asp:Label ID="lblAmExPayments" runat="server" Text='<%#Eval("AmEx","{0:C}") %>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
                 </Columns>
             </asp:GridView>
         </div>
