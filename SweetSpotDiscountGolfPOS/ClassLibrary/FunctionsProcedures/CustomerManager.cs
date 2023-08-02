@@ -150,7 +150,8 @@ namespace SweetSpotDiscountGolfPOS.FP
         {
             string strQueryName = "ReturnCustomerEmailAddresses";
             string sqlCmd = "SELECT CONCAT(varFirstname, ' ', varLastName) AS varCustomerName, varEmailAddress, intCustomerID FROM tbl_customers WHERE "
-                + "bitSendMarketing = 1 AND varEmailAddress<> '' ORDER BY varLastName, varFirstName ASC";
+                //+ "bitSendMarketing = 1 AND varEmailAddress<> '' ORDER BY varLastName, varFirstName ASC";
+                + "varEmailAddress<> '' ORDER BY varLastName, varFirstName ASC";
             object[][] parms = { };
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
         }
