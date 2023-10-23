@@ -207,6 +207,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 fltSystemCountedBasedOnSystemDebit = Convert.ToDouble(dt1.Rows[0][2].ToString()),
                 fltSystemCountedBasedOnSystemMastercard = Convert.ToDouble(dt1.Rows[0][4].ToString()),
                 fltSystemCountedBasedOnSystemVisa = Convert.ToDouble(dt1.Rows[0][5].ToString()),
+                fltSystemCountedBasedOnSystemAmEx = Convert.ToDouble(dt1.Rows[0][6].ToString()),
                 fltSalesSubTotal = Convert.ToDouble(dt2.Rows[0][1].ToString()),
                 fltGovernmentTaxAmount = Convert.ToDouble(dt2.Rows[0][2].ToString()) + Convert.ToDouble(dt2.Rows[0][4].ToString()),
                 fltHarmonizedTaxAmount = Convert.ToDouble(dt2.Rows[0][3].ToString()) + Convert.ToDouble(dt2.Rows[0][5].ToString()),
@@ -223,7 +224,8 @@ namespace SweetSpotDiscountGolfPOS.FP
             string sqlCmd = "UPDATE tbl_cashout SET fltSystemCountedBasedOnSystemTradeIn = @fltSystemCountedBasedOnSystemTradeIn, fltSystemCountedBasedOnSystemGiftCard "
                 + "= @fltSystemCountedBasedOnSystemGiftCard, fltSystemCountedBasedOnSystemCash = @fltSystemCountedBasedOnSystemCash, fltSystemCountedBasedOnSystemDebit "
                 + "= @fltSystemCountedBasedOnSystemDebit, fltSystemCountedBasedOnSystemMastercard = @fltSystemCountedBasedOnSystemMastercard, "
-                + "fltSystemCountedBasedOnSystemVisa = @fltSystemCountedBasedOnSystemVisa, fltSalesSubTotal = @fltSalesSubTotal, fltGovernmentTaxAmount = "
+                + "fltSystemCountedBasedOnSystemVisa = @fltSystemCountedBasedOnSystemVisa, fltSystemCountedBasedOnSystemAmEx = @fltSystemCountedBasedOnSystemAmEx, "
+                + "fltSalesSubTotal = @fltSalesSubTotal, fltGovernmentTaxAmount = "
                 + "@fltGovernmentTaxAmount, fltProvincialTaxAmount = @fltProvincialTaxAmount, fltLiquorTaxAmount = @fltLiquorTaxAmount, fltHarmonizedTaxAmount = "
                 + "@fltHarmonizedTaxAmount, fltQuebecTaxAmount = @fltQuebecTaxAmount, fltRetailTaxAmount = @fltRetailTaxAmount "
                 + "WHERE dtmCashoutDate = @dtmCashoutDate AND intLocationID = @intLocationID";
@@ -237,6 +239,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@fltSystemCountedBasedOnSystemDebit", cashout.fltSystemCountedBasedOnSystemDebit },
                 new object[] { "@fltSystemCountedBasedOnSystemMastercard", cashout.fltSystemCountedBasedOnSystemMastercard },
                 new object[] { "@fltSystemCountedBasedOnSystemVisa", cashout.fltSystemCountedBasedOnSystemVisa },
+                new object[] { "@fltSystemCountedBasedOnSystemAmEx", cashout.fltSystemCountedBasedOnSystemAmEx },
                 new object[] { "@fltSalesSubTotal", cashout.fltSalesSubTotal },
                 new object[] { "@fltGovernmentTaxAmount", cashout.fltGovernmentTaxAmount },
                 new object[] { "@fltProvincialTaxAmount", cashout.fltProvincialTaxAmount },
@@ -253,8 +256,10 @@ namespace SweetSpotDiscountGolfPOS.FP
             string strQueryName = "ReturnSelectedCashout";
             string sqlCmd = "SELECT dtmCashoutDate, intLocationID, intEmployeeID, fltSystemCountedBasedOnSystemTradeIn, fltSystemCountedBasedOnSystemGiftCard, "
                 + "fltSystemCountedBasedOnSystemCash, fltSystemCountedBasedOnSystemDebit, fltSystemCountedBasedOnSystemMastercard, fltSystemCountedBasedOnSystemVisa, "
+                + "fltSystemCountedBasedOnSystemAmEx, "
                 + "fltManuallyCountedBasedOnReceiptsTradeIn, fltManuallyCountedBasedOnReceiptsGiftCard, fltManuallyCountedBasedOnReceiptsCash, "
-                + "fltManuallyCountedBasedOnReceiptsDebit, fltManuallyCountedBasedOnReceiptsMastercard, fltManuallyCountedBasedOnReceiptsVisa, fltSalesSubTotal, "
+                + "fltManuallyCountedBasedOnReceiptsDebit, fltManuallyCountedBasedOnReceiptsMastercard, fltManuallyCountedBasedOnReceiptsVisa, "
+                + "fltManuallyCountedBasedOnReceiptsAmEx, fltSalesSubTotal, "
                 + "fltGovernmentTaxAmount, fltHarmonizedTaxAmount, fltLiquorTaxAmount, fltProvincialTaxAmount, fltQuebecTaxAmount, fltRetailTaxAmount, "
                 + "fltCashDrawerOverShort, bitIsCashoutFinalized, bitIsCashoutProcessed " //, intSalesCount 
                 + "FROM tbl_cashout WHERE dtmCashoutDate = @dtmCashoutDate AND "
@@ -349,12 +354,14 @@ namespace SweetSpotDiscountGolfPOS.FP
                 fltSystemCountedBasedOnSystemDebit = row.Field<double>("fltSystemCountedBasedOnSystemDebit"),
                 fltSystemCountedBasedOnSystemMastercard = row.Field<double>("fltSystemCountedBasedOnSystemMastercard"),
                 fltSystemCountedBasedOnSystemVisa = row.Field<double>("fltSystemCountedBasedOnSystemVisa"),
+                fltSystemCountedBasedOnSystemAmEx = row.Field<double>("fltSystemCountedBasedOnSystemAmEx"),
                 fltManuallyCountedBasedOnReceiptsTradeIn = row.Field<double>("fltManuallyCountedBasedOnReceiptsTradeIn"),
                 fltManuallyCountedBasedOnReceiptsGiftCard = row.Field<double>("fltManuallyCountedBasedOnReceiptsGiftCard"),
                 fltManuallyCountedBasedOnReceiptsCash = row.Field<double>("fltManuallyCountedBasedOnReceiptsCash"),
                 fltManuallyCountedBasedOnReceiptsDebit = row.Field<double>("fltManuallyCountedBasedOnReceiptsDebit"),
                 fltManuallyCountedBasedOnReceiptsMastercard = row.Field<double>("fltManuallyCountedBasedOnReceiptsMastercard"),
                 fltManuallyCountedBasedOnReceiptsVisa = row.Field<double>("fltManuallyCountedBasedOnReceiptsVisa"),
+                fltManuallyCountedBasedOnReceiptsAmEx = row.Field<double>("fltManuallyCountedBasedOnReceiptsAmEx"),
                 fltSalesSubTotal = row.Field<double>("fltSalesSubTotal"),
                 fltGovernmentTaxAmount = row.Field<double>("fltGovernmentTaxAmount"),
                 fltHarmonizedTaxAmount = row.Field<double>("fltHarmonizedTaxAmount"),
@@ -380,8 +387,10 @@ namespace SweetSpotDiscountGolfPOS.FP
             string sqlCmd = "INSERT INTO tbl_cashout VALUES(@dtmCashoutDate, @dtmCashoutTime, @intLocationID, @intEmployeeID, "
                 + "@fltSystemCountedBasedOnSystemTradeIn, @fltSystemCountedBasedOnSystemGiftCard, @fltSystemCountedBasedOnSystemCash, "
                 + "@fltSystemCountedBasedOnSystemDebit, @fltSystemCountedBasedOnSystemMastercard, @fltSystemCountedBasedOnSystemVisa, "
+                + "@fltSystemCountedBasedOnSystemAmEx, "
                 + "@fltManuallyCountedBasedOnReceiptsTradeIn, @fltManuallyCountedBasedOnReceiptsGiftCard, @fltManuallyCountedBasedOnReceiptsCash, "
                 + "@fltManuallyCountedBasedOnReceiptsDebit, @fltManuallyCountedBasedOnReceiptsMastercard, @fltManuallyCountedBasedOnReceiptsVisa, "
+                + "@fltManuallyCountedBasedOnReceiptsAmEx, "
                 + "@fltSalesSubTotal, @fltGovernmentTaxAmount, @fltHarmonizedTaxAmount, @fltLiquorTaxAmount, "
                 + "@fltProvincialTaxAmount, @fltQuebecTaxAmount, @fltRetailTaxAmount, "
                 + "@fltCashDrawerOverShort, @bitIsCashoutFinalized, @bitIsCashoutProcessed)";
@@ -399,6 +408,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@fltSystemCountedBasedOnSystemDebit", cashout.fltSystemCountedBasedOnSystemDebit },
                 new object[] { "@fltSystemCountedBasedOnSystemMastercard", cashout.fltSystemCountedBasedOnSystemMastercard },
                 new object[] { "@fltSystemCountedBasedOnSystemVisa", cashout.fltSystemCountedBasedOnSystemVisa },
+                new object[] { "@fltSystemCountedBasedOnSystemAmEx", cashout.fltSystemCountedBasedOnSystemAmEx },
 
                 new object[] { "@fltManuallyCountedBasedOnReceiptsTradeIn", cashout.fltManuallyCountedBasedOnReceiptsTradeIn },
                 new object[] { "@fltManuallyCountedBasedOnReceiptsGiftCard", cashout.fltManuallyCountedBasedOnReceiptsGiftCard },
@@ -406,6 +416,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@fltManuallyCountedBasedOnReceiptsDebit", cashout.fltManuallyCountedBasedOnReceiptsDebit },
                 new object[] { "@fltManuallyCountedBasedOnReceiptsMastercard", cashout.fltManuallyCountedBasedOnReceiptsMastercard },
                 new object[] { "@fltManuallyCountedBasedOnReceiptsVisa", cashout.fltManuallyCountedBasedOnReceiptsVisa },
+                new object[] { "@fltManuallyCountedBasedOnReceiptsAmEx", cashout.fltManuallyCountedBasedOnReceiptsAmEx },
 
                 new object[] { "@fltSalesSubTotal", cashout.fltSalesSubTotal },
                 new object[] { "@fltGovernmentTaxAmount", cashout.fltGovernmentTaxAmount },
@@ -432,10 +443,12 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "fltSystemCountedBasedOnSystemGiftCard = @fltSystemCountedBasedOnSystemGiftCard, fltSystemCountedBasedOnSystemCash = @fltSystemCountedBasedOnSystemCash, "
                 + "fltSystemCountedBasedOnSystemDebit = @fltSystemCountedBasedOnSystemDebit, fltSystemCountedBasedOnSystemMastercard = "
                 + "@fltSystemCountedBasedOnSystemMastercard, fltSystemCountedBasedOnSystemVisa = @fltSystemCountedBasedOnSystemVisa, "
+                + "fltSystemCountedBasedOnSystemAmEx = @fltSystemCountedBasedOnSystemAmEx, "
                 + "fltManuallyCountedBasedOnReceiptsTradeIn = @fltManuallyCountedBasedOnReceiptsTradeIn, fltManuallyCountedBasedOnReceiptsGiftCard = "
                 + "@fltManuallyCountedBasedOnReceiptsGiftCard, fltManuallyCountedBasedOnReceiptsCash = @fltManuallyCountedBasedOnReceiptsCash, "
                 + "fltManuallyCountedBasedOnReceiptsDebit = @fltManuallyCountedBasedOnReceiptsDebit, fltManuallyCountedBasedOnReceiptsMastercard = "
-                + "@fltManuallyCountedBasedOnReceiptsMastercard, fltManuallyCountedBasedOnReceiptsVisa = @fltManuallyCountedBasedOnReceiptsVisa, fltSalesSubTotal = "
+                + "@fltManuallyCountedBasedOnReceiptsMastercard, fltManuallyCountedBasedOnReceiptsVisa = @fltManuallyCountedBasedOnReceiptsVisa, "
+                + "fltManuallyCountedBasedOnReceiptsAmEx = @fltManuallyCountedBasedOnReceiptsAmEx, fltSalesSubTotal = "
                 + "@fltSalesSubTotal, fltGovernmentTaxAmount = @fltGovernmentTaxAmount, fltHarmonizedTaxAmount = @fltHarmonizedTaxAmount, fltLiquorTaxAmount = @fltLiquorTaxAmount, "
                 + "fltProvincialTaxAmount = @fltProvincialTaxAmount, fltQuebecTaxAmount = @fltQuebecTaxAmount, fltRetailTaxAmount = @fltRetailTaxAmount, "
                 + "fltCashDrawerOverShort = @fltCashDrawerOverShort, bitIsCashoutFinalized = @bitIsCashoutFinalized, bitIsCashoutProcessed = @bitIsCashoutProcessed, intEmployeeID "
@@ -451,12 +464,14 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@fltSystemCountedBasedOnSystemDebit", cashout.fltSystemCountedBasedOnSystemDebit },
                 new object[] { "@fltSystemCountedBasedOnSystemMastercard", cashout.fltSystemCountedBasedOnSystemMastercard },
                 new object[] { "@fltSystemCountedBasedOnSystemVisa", cashout.fltSystemCountedBasedOnSystemVisa },
+                new object[] { "@fltSystemCountedBasedOnSystemAmEx", cashout.fltSystemCountedBasedOnSystemAmEx },
                 new object[] { "@fltManuallyCountedBasedOnReceiptsTradeIn", cashout.fltManuallyCountedBasedOnReceiptsTradeIn },
                 new object[] { "@fltManuallyCountedBasedOnReceiptsGiftCard", cashout.fltManuallyCountedBasedOnReceiptsGiftCard },
                 new object[] { "@fltManuallyCountedBasedOnReceiptsCash", cashout.fltManuallyCountedBasedOnReceiptsCash },
                 new object[] { "@fltManuallyCountedBasedOnReceiptsDebit", cashout.fltManuallyCountedBasedOnReceiptsDebit },
                 new object[] { "@fltManuallyCountedBasedOnReceiptsMastercard", cashout.fltManuallyCountedBasedOnReceiptsMastercard },
                 new object[] { "@fltManuallyCountedBasedOnReceiptsVisa", cashout.fltManuallyCountedBasedOnReceiptsVisa },
+                new object[] { "@fltManuallyCountedBasedOnReceiptsAmEx", cashout.fltManuallyCountedBasedOnReceiptsAmEx },
                 new object[] { "@fltSalesSubTotal", cashout.fltSalesSubTotal },
                 new object[] { "@fltGovernmentTaxAmount", cashout.fltGovernmentTaxAmount },
                 new object[] { "@fltHarmonizedTaxAmount", cashout.fltHarmonizedTaxAmount },

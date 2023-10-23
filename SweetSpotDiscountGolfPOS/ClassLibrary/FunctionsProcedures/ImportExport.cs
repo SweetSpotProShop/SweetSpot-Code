@@ -398,7 +398,6 @@ namespace SweetSpotDiscountGolfPOS.FP
             conTempDB.Close();
             return skusWithErrors;
         }
-
         private DataTable SpecialUpdateTool(FileUpload fupSU, string strRColumn, string strUColumn, CurrentUser cu, object[] objPageDetails)
         {
 
@@ -609,7 +608,6 @@ namespace SweetSpotDiscountGolfPOS.FP
             conTempDB.Close();
             return skusWithErrors;
         }
-
         public void ImportNewItem(DataRow row, CurrentUser cu, object[] objPageDetails)
         {
             ItemDataUtilities IDU = new ItemDataUtilities();

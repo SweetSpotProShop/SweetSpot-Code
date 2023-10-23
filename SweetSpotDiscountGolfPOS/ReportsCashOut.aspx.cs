@@ -107,10 +107,11 @@ namespace SweetSpotDiscountGolfPOS
                     salesExport.Cells[2, 6].Value = "Debit";
                     salesExport.Cells[2, 7].Value = "MasterCard";
                     salesExport.Cells[2, 8].Value = "Visa";
-                    salesExport.Cells[2, 9].Value = "Over/Short";
-                    salesExport.Cells[2, 10].Value = "Processed";
-                    salesExport.Cells[2, 11].Value = "Finalized";
-                    salesExport.Cells[2, 1, 2, 11].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
+                    salesExport.Cells[2, 9].Value = "AmEx";
+                    salesExport.Cells[2, 10].Value = "Over/Short";
+                    salesExport.Cells[2, 11].Value = "Processed";
+                    salesExport.Cells[2, 12].Value = "Finalized";
+                    salesExport.Cells[2, 1, 2, 13].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
 
                     //salesExport.Cells[2, 2].Value = "Sales Dollars";
                     int recordIndex = 3;
@@ -143,21 +144,25 @@ namespace SweetSpotDiscountGolfPOS
                         //Visa
                         salesExport.Cells[recordIndex, 8].Value = Convert.ToDouble(row[13].ToString());
                         salesExport.Cells[recordIndex + 1, 8].Value = Convert.ToDouble(row[12].ToString());
+
+                        //AmEx
+                        salesExport.Cells[recordIndex, 9].Value = Convert.ToDouble(row[15].ToString());
+                        salesExport.Cells[recordIndex + 1, 9].Value = Convert.ToDouble(row[14].ToString());
                         //Over/Short
-                        salesExport.Cells[recordIndex, 9, recordIndex + 1, 9].Merge = true;
-                        salesExport.Cells[recordIndex, 9].Value = Convert.ToDouble(row[14].ToString());
-                        salesExport.Cells[recordIndex, 9].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                        salesExport.Cells[recordIndex, 9].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
-                        //Processed
                         salesExport.Cells[recordIndex, 10, recordIndex + 1, 10].Merge = true;
-                        salesExport.Cells[recordIndex, 10].Value = row[15].ToString();
+                        salesExport.Cells[recordIndex, 10].Value = Convert.ToDouble(row[16].ToString());
                         salesExport.Cells[recordIndex, 10].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                         salesExport.Cells[recordIndex, 10].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
-                        //Finalized
+                        //Processed
                         salesExport.Cells[recordIndex, 11, recordIndex + 1, 11].Merge = true;
-                        salesExport.Cells[recordIndex, 11].Value = row[16].ToString();
+                        salesExport.Cells[recordIndex, 11].Value = row[17].ToString();
                         salesExport.Cells[recordIndex, 11].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                         salesExport.Cells[recordIndex, 11].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                        //Finalized
+                        salesExport.Cells[recordIndex, 12, recordIndex + 1, 12].Merge = true;
+                        salesExport.Cells[recordIndex, 12].Value = row[18].ToString();
+                        salesExport.Cells[recordIndex, 12].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        salesExport.Cells[recordIndex, 12].Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
                         //Border
                         salesExport.Cells[recordIndex, 1, recordIndex + 1, 11].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Medium);
                         //Converting numbers to numbers
