@@ -183,7 +183,7 @@ namespace SweetSpotDiscountGolfPOS
                         for (int i = 2; i <= rowCnt; i++) //Starts on 2 because excel starts at 1, and line 1 is headers
                         {
                             //Array of the cells that will need to be checked
-                            int[] cells = { 3, 5, 6, 12, 13, 15, 22 };
+                            int[] cells = { 4, 6, 7, 13, 14, 16, 23 };
                             foreach (int column in cells)
                             {
                                 //If there is no value in the column, proceed
@@ -233,28 +233,28 @@ namespace SweetSpotDiscountGolfPOS
                                     //Loop through the error array
                                     for (int j = 0; j < errorList.Length/4; j++) 
                                     {
-                                        //Column 3 = SKU
-                                        if ((worksheet.Cells[i, 3].Value).ToString().Equals(errorList[j,0].ToString()))
+                                        //Column 4 = SKU
+                                        if ((worksheet.Cells[i, 4].Value).ToString().Equals(errorList[j,0].ToString()))
                                         {
-                                            worksheet.Cells[i, 3].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                            worksheet.Cells[i, 3].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                            worksheet.Cells[i, 4].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                            worksheet.Cells[i, 4].Style.Fill.BackgroundColor.SetColor(Color.Red);
                                             //If brand caused an error
                                             if (Convert.ToInt32(errorList[j,1]) == 1)
-                                            {
-                                                worksheet.Cells[i, 5].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                                worksheet.Cells[i, 5].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
-                                            }
-                                            //If model caused an error
-                                            if(Convert.ToInt32(errorList[j, 2]) == 1)
                                             {
                                                 worksheet.Cells[i, 6].Style.Fill.PatternType = ExcelFillStyle.Solid;
                                                 worksheet.Cells[i, 6].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
                                             }
+                                            //If model caused an error
+                                            if(Convert.ToInt32(errorList[j, 2]) == 1)
+                                            {
+                                                worksheet.Cells[i, 7].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                                worksheet.Cells[i, 7].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                                            }
                                             //If secondary identifier(Destination) caused an error
                                             if (Convert.ToInt32(errorList[j,3]) == 1)
                                             {
-                                                worksheet.Cells[i, 22].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                                worksheet.Cells[i, 22].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                                                worksheet.Cells[i, 23].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                                worksheet.Cells[i, 23].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
                                             }
                                             break;
                                         }                                        
@@ -266,7 +266,7 @@ namespace SweetSpotDiscountGolfPOS
                                         worksheet.DeleteRow(i);
                                     }
                                 }                                
-                                worksheet.Cells[1, 26].Value = "Errors Found. The skus that are highlighted in red have an issue with either their brand or model. This could be a spelling mistake or the brand and/or model are not in the database.";
+                                worksheet.Cells[1, 28].Value = "Errors Found. The skus that are highlighted in red have an issue with either their brand or model. This could be a spelling mistake or the brand and/or model are not in the database.";
                                 //MessageBoxCustom.ShowMessage("Errors Found. The skus that are highlighted in red have an issue with either their brand or model. This could be a spelling mistake or the brand and/or model are not in the database.", this);
                                 string fileName = fupItemSheet.FileName + "_ErrorsFound";
                                 //Sets the attributes and writes file
@@ -296,6 +296,132 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
             imgLoadingItemImport.Visible = false;
+        }
+        protected void btnSpecialUpdateTool_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnSpecialUpdateTool_Click";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
+            {
+                int error = 0;
+                //Verifies file has been selected
+                if (fupSpecialUpdate.HasFile)
+                {
+                    //load the uploaded file into the memorystream
+                    using (MemoryStream stream = new MemoryStream(fupSpecialUpdate.FileBytes))
+                    //Lets the server know to use the excel package
+                    using (ExcelPackage xlPackage = new ExcelPackage(stream))
+                    {
+                        //Gets the first worksheet in the workbook
+                        ExcelWorksheet worksheet = xlPackage.Workbook.Worksheets["Special_Update"];
+                        //Gets the row count
+                        var rowCnt = worksheet.Dimension.End.Row;
+                        //Gets the column count
+                        var colCnt = worksheet.Dimension.End.Column;
+                        //Beginning the loop for data gathering
+                        for (int i = 2; i <= rowCnt; i++) //Starts on 2 because excel starts at 1, and line 1 is headers
+                        {
+                            //Array of the cells that will need to be checked
+                            int[] cells = { 1, 2 };
+                            foreach (int column in cells)
+                            {
+                                //If there is no value in the column, proceed
+                                if (worksheet.Cells[i, column].Value == null)
+                                {
+                                    worksheet.Cells[i, column].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                    worksheet.Cells[i, column].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                    error = 1;
+                                }
+                            }
+                        }
+                        //xlPackage.SaveAs(new FileInfo(@"c:\temp\myFile.xls"));
+                        if (error == 1)
+                        {
+                            //Sets the attributes and writes file
+                            Response.Clear();
+                            Response.AddHeader("content-disposition", "attachment; filename=" + fupSpecialUpdate.FileName + "_ErrorsFound" + ".xlsx");
+                            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                            Response.BinaryWrite(xlPackage.GetAsByteArray());
+                            Response.End();
+                        }
+                        else
+                        {
+                            //Calls method to import the requested file
+#pragma warning disable IDE0067 // Dispose objects before losing scope
+                            DataTable errors = new DataTable();
+#pragma warning restore IDE0067 // Dispose objects before losing scope
+                            string strReferenceColumn = ddlReferenceColumn.SelectedItem.Text;
+                            string strUpdateColumn = ddlSpecialUpdateColumn.SelectedItem.Text;
+                            errors = IE.CallSpecialUpdateTool(fupSpecialUpdate, strReferenceColumn, strUpdateColumn, CU, objPageDetails);
+                            if (errors.Rows.Count != 0)
+                            {
+                                //Loops through the errors datatable pulling the sku's from there and entering them into an array
+                                //Then loops through each row on the excel sheet and checks to compare against sku array
+                                //If it is not in there, that row is deleted
+                                object[,] errorList = new object[errors.Rows.Count, 4];
+                                ArrayList errorSkus = new ArrayList();
+                                for (int i = 0; i < errors.Rows.Count; i++)
+                                {
+                                    errorSkus.Add(errors.Rows[i][0]); //SKUs used for row deletion
+                                    errorList[i, 0] = errors.Rows[i][0].ToNullSafeString(); //SKU
+                                    errorList[i, 1] = errors.Rows[i][1].ToNullSafeString(); //SpecialUpdate
+                                }
+                                //Loop through the Excel sheet
+                                for (int i = rowCnt; i >= 2; i--)
+                                {
+                                    //Loop through the error array
+                                    for (int j = 0; j < errorList.Length / 4; j++)
+                                    {
+                                        //Column 4 = SKU
+                                        if ((worksheet.Cells[i, 1].Value).ToString().Equals(errorList[j, 0].ToString()))
+                                        {
+                                            //If brand caused an error
+                                            if (Convert.ToInt32(errorList[j, 1]) == 1)
+                                            {
+                                                worksheet.Cells[i, 2].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                                worksheet.Cells[i, 2].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                                            }
+                                            break;
+                                        }
+                                    }
+                                    //Check to see if the cell's sku is in the array, if it is not, delete the row
+                                    bool isInArray = errorSkus.IndexOf((worksheet.Cells[i, 1].Value).ToString()) != -1;
+                                    if (!isInArray)
+                                    {
+                                        worksheet.DeleteRow(i);
+                                    }
+                                }
+                                worksheet.Cells[1, 3].Value = "Sku is not in database for update";
+                                //MessageBoxCustom.ShowMessage("Errors Found. The skus that are highlighted in red have an issue with either their brand or model. This could be a spelling mistake or the brand and/or model are not in the database.", this);
+                                string fileName = fupSpecialUpdate.FileName + "_ErrorsFound";
+                                //Sets the attributes and writes file
+                                Response.Clear();
+                                Response.AddHeader("content-disposition", "attachment; filename=" + fileName + ".xlsx");
+                                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                                Response.BinaryWrite(xlPackage.GetAsByteArray());
+                                Response.End();
+                            }
+                            else
+                            {
+                                MessageBoxCustom.ShowMessage("Special Update Complete", this);
+                            }
+                        }
+                    }
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
+                //Display message box
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+            imgLoadingItemImport2.Visible = false;
         }
 
         //Exporting

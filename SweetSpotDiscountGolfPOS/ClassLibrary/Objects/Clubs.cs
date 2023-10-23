@@ -28,6 +28,7 @@ namespace SweetSpotDiscountGolfPOS.OB
         public int intLocationID { get; set; }
         public bool bitIsUsedProduct { get; set; }
         public string varAdditionalInformation { get; set; }
+        public string varProdID { get; set; }
         public List<TaxTypePerInventoryItem> lstTaxTypePerInventoryItem { get; set; }
 
         public Clubs() { }

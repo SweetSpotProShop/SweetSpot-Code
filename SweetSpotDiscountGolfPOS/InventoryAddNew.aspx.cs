@@ -79,6 +79,7 @@ namespace SweetSpotDiscountGolfPOS
                                 txtDexterity.Text = club.varClubDexterity.ToString();
                                 chkUsed.Checked = club.bitIsUsedProduct;
                                 txtComments.Text = club.varAdditionalInformation.ToString();
+                                txtProdID.Text = club.varProdID.ToString();
 
                                 GrdInventoryTaxes.DataSource = club.lstTaxTypePerInventoryItem;
                                 GrdInventoryTaxes.DataBind();
@@ -386,6 +387,7 @@ namespace SweetSpotDiscountGolfPOS
                     club.bitIsUsedProduct = chkUsed.Checked;
                     club.varAdditionalInformation = txtComments.Text;
                     club.intItemTypeID = typeID;
+                    club.varProdID = txtProdID.Text;
                     //stores club as an object
                     o = club as Object;
                 }
@@ -407,6 +409,7 @@ namespace SweetSpotDiscountGolfPOS
                     accessory.varColour = txtShaft.Text;
                     accessory.varTypeOfAccessory = txtClubType.Text;
                     accessory.varAdditionalInformation = txtComments.Text;
+                    accessory.varProdID = txtProdID.Text;
                     //stores accessory as an object
                     o = accessory as Object;
                 }
@@ -428,6 +431,7 @@ namespace SweetSpotDiscountGolfPOS
                     clothing.varGender = txtClubSpec.Text;
                     clothing.varStyle = txtClubType.Text;
                     clothing.varAdditionalInformation = txtComments.Text;
+                    clothing.varProdID = txtProdID.Text;
                     //stores clothing as an object
                     o = clothing as Object;
                 }
@@ -464,6 +468,7 @@ namespace SweetSpotDiscountGolfPOS
                 txtClubType.Enabled = true;
                 txtShaft.Enabled = true;
                 txtComments.Enabled = true;
+                txtProdID.Enabled = true;
 
                 if (Convert.ToInt32(ddlType.SelectedValue) == 1)
                 {
@@ -544,7 +549,8 @@ namespace SweetSpotDiscountGolfPOS
                         varShaftFlexability = txtShaftFlex.Text,
                         varClubDexterity = txtDexterity.Text,
                         varAdditionalInformation = txtComments.Text,
-                        bitIsUsedProduct = chkUsed.Checked
+                        bitIsUsedProduct = chkUsed.Checked,
+                        varProdID = txtProdID.Text
                     };
                     o = club as object;
 
@@ -581,7 +587,9 @@ namespace SweetSpotDiscountGolfPOS
                         varColour = txtShaft.Text,
                         varTypeOfAccessory = txtClubType.Text,
                         intModelID = Convert.ToInt32(ddlModel.SelectedValue),
-                        varAdditionalInformation = txtComments.Text
+                        varAdditionalInformation = txtComments.Text,
+                        varProdID = txtProdID.Text
+
                     };
                     o = accessory as object;
 
@@ -611,7 +619,8 @@ namespace SweetSpotDiscountGolfPOS
                         varColour = txtShaft.Text,
                         varGender = txtClubSpec.Text,
                         varStyle = txtClubType.Text,
-                        varAdditionalInformation = txtComments.Text
+                        varAdditionalInformation = txtComments.Text,
+                        varProdID = txtProdID.Text
                     };
                     o = clothing as object;
 
@@ -752,6 +761,7 @@ namespace SweetSpotDiscountGolfPOS
                     club.bitIsUsedProduct = chkUsed.Checked;
                     club.varAdditionalInformation = txtComments.Text;
                     club.intItemTypeID = typeID;
+                    club.varProdID = txtProdID.Text;
                     //stores club as an object
                     o = club as Object;
                 }
@@ -773,6 +783,7 @@ namespace SweetSpotDiscountGolfPOS
                     accessory.varColour = txtShaft.Text;
                     accessory.varTypeOfAccessory = txtClubType.Text;
                     accessory.varAdditionalInformation = txtComments.Text;
+                    accessory.varProdID = txtProdID.Text;
                     //stores accessory as an object
                     o = accessory as Object;
                 }
@@ -794,6 +805,7 @@ namespace SweetSpotDiscountGolfPOS
                     clothing.varGender = txtClubSpec.Text;
                     clothing.varStyle = txtClubType.Text;
                     clothing.varAdditionalInformation = txtComments.Text;
+                    clothing.varProdID = txtProdID.Text;
                     //stores clothing as an object
                     o = clothing as Object;
                 }

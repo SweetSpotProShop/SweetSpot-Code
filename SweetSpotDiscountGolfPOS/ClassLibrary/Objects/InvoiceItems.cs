@@ -27,6 +27,7 @@ namespace SweetSpotDiscountGolfPOS.OB
         public List<InvoiceItemTax> invoiceItemTaxes { get; set; }
         public string varLocationName { get; set; }
         public string varAdditionalInformation { get; set; }
+        public string varProdID { get; set; }
 
         //May be able to amalgamate all into one and then remove the Items and ItemsManager Classes
         public InvoiceItems(){}

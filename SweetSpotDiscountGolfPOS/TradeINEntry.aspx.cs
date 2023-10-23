@@ -98,7 +98,8 @@ namespace SweetSpotDiscountGolfPOS
                     varClubDexterity = txtDexterity.Text,
                     varAdditionalInformation = txtComments.Text,
                     bitIsUsedProduct = true,
-                    intLocationID = CU.location.intLocationID
+                    intLocationID = CU.location.intLocationID,
+                    varProdID = txtProdID.Text
                 };
 
                 //this adds to the temp tradeIncart
@@ -122,7 +123,8 @@ namespace SweetSpotDiscountGolfPOS
                     fltItemRefund = 0,
                     bitIsDiscountPercent = false,
                     bitIsClubTradeIn = true,
-                    intItemTypeID = 1
+                    intItemTypeID = 1,
+                    varProdID = tradeIN.varProdID
                 };
 
                 IIM.CallInsertItemIntoSalesCart(selectedTradeIn, invoice.intTransactionTypeID, invoice.dtmInvoiceDate, CU.location.intProvinceID, objPageDetails);

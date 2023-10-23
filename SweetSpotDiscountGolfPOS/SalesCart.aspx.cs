@@ -695,6 +695,7 @@ namespace SweetSpotDiscountGolfPOS
                         selectedSku.bitIsClubTradeIn = ((CheckBox)GrdInventorySearched.Rows[index].Cells[6].FindControl("chkTradeInSearch")).Checked;
                         selectedSku.intItemTypeID = Convert.ToInt32(((Label)GrdInventorySearched.Rows[index].Cells[7].FindControl("lblTypeIDSearch")).Text);
                         selectedSku.intItemQuantity = quantity;
+                        selectedSku.varProdID = ((Label)GrdInventorySearched.Rows[index].Cells[8].FindControl("lblProdID")).Text; //Find way to get varProdID to selectedSku
 
                         //add item to table and remove the added qty from current inventory
                         IIM.CallInsertItemIntoSalesCart(selectedSku, invoice.intTransactionTypeID, invoice.dtmInvoiceDate, Convert.ToInt32(DdlShippingProvince.SelectedValue), objPageDetails);

@@ -123,7 +123,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
             foreach (InvoiceItems item in invoice.invoiceItems)
             {
                 string sqlCmd = "INSERT INTO tblTaxErrorItems VALUES(@intInvoiceItemID, @intInvoiceID, @intInventoryID, @intItemQuantity, @fltItemCost, "
-                    + "@fltItemPrice, @fltItemDiscount, @fltItemRefund, @bitIsDiscountPercent, @varItemDescription, @intItemTypeID, @bitIsClubTradeIn)";
+                    + "@fltItemPrice, @fltItemDiscount, @fltItemRefund, @bitIsDiscountPercent, @varItemDescription, @intItemTypeID, @bitIsClubTradeIn, @varProdID)";
 
                 object[][] parms =
                 {
@@ -138,7 +138,8 @@ namespace SweetSpotDiscountGolfPOS.Misc
                     new object[] { "@bitIsDiscountPercent", item.bitIsDiscountPercent },
                     new object[] { "@varItemDescription", item.varItemDescription },
                     new object[] { "@intItemTypeID", item.intItemTypeID },
-                    new object[] { "@bitIsClubTradeIn", item.bitIsClubTradeIn }
+                    new object[] { "@bitIsClubTradeIn", item.bitIsClubTradeIn },
+                    new object[] { "@varProdID", item.varProdID }
                 };
                 DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             }

@@ -81,7 +81,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
                 strParameters += parms[times][0].ToString() + ", " + parms[times][1].ToString() + " - ";
                 times++;
             }
-            QueryStringCapture(sqlCmd, strParameters, objPageDetails, strQueryName);
+            //QueryStringCapture(sqlCmd, strParameters, objPageDetails, strQueryName);
             cmd.Connection = con;
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             da.SelectCommand.CommandTimeout = 600;
@@ -116,7 +116,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
                 parmsTimes++;
                 searchTimes++;
             }
-            QueryStringCapture(sqlCmd, strParameters, objPageDetails, strQueryName);
+            //QueryStringCapture(sqlCmd, strParameters, objPageDetails, strQueryName);
             cmd.Connection = con;
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             da.SelectCommand.CommandTimeout = 600;
@@ -140,7 +140,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
                 strParameters += parms[times][0].ToString() + ", " + parms[times][1].ToString() + " - ";
                 times++;
             }
-            QueryStringCapture(sqlCmd, strParameters, objPageDetails, strQueryName);
+            //QueryStringCapture(sqlCmd, strParameters, objPageDetails, strQueryName);
             cmd.Connection = con;
             cmd.CommandTimeout = 600;
             con.Open();

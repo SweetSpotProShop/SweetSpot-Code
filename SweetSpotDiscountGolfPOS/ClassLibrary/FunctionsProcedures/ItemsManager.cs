@@ -29,7 +29,8 @@ namespace SweetSpotDiscountGolfPOS.FP
                 //intLocationID = row.Field<int>("intLocationID"),
                 //varLocationName = row.Field<string>("varLocationName"),
                 intItemTypeID = row.Field<int>("intItemTypeID"),                
-                varAdditionalInformation = row.Field<string>("varAdditionalInformation")
+                varAdditionalInformation = row.Field<string>("varAdditionalInformation"),
+                varProdID = row.Field<string>("varProdID")
             }).ToList();
             return invoiceItems;
         }
@@ -47,7 +48,8 @@ namespace SweetSpotDiscountGolfPOS.FP
                 intLocationID = row.Field<int>("intLocationID"),
                 varLocationName = row.Field<string>("varLocationName"),
                 intItemTypeID = row.Field<int>("intItemTypeID"),
-                varAdditionalInformation = row.Field<string>("varAdditionalInformation")
+                varAdditionalInformation = row.Field<string>("varAdditionalInformation"),
+                varProdID = row.Field<string>("varProdID")
             }).ToList();
             return invoiceItems;
         }
@@ -83,10 +85,10 @@ namespace SweetSpotDiscountGolfPOS.FP
                         + "tbl_model M ON AC.intModelID = M.intModelID WHERE AC.intInventoryID = A.intInventoryID) AS varItemDescription, A.intLocationID, "
                         + "(SELECT L.varCityName FROM tbl_accessories AC JOIN tbl_location L ON AC.intLocationID = L.intLocationID WHERE AC.intInventoryID "
                         + "= A.intInventoryID) AS varLocationName, A.intQuantity AS intItemQuantity, A.fltPrice AS fltItemPrice, A.fltCost AS fltItemCost, "
-                        + "A.intItemTypeID, CAST(0 AS bit) AS bitIsUsedProduct, A.varAdditionalInformation FROM tbl_accessories A WHERE ((varSku LIKE '%" 
+                        + "A.intItemTypeID, CAST(0 AS bit) AS bitIsUsedProduct, A.varAdditionalInformation, A.varProdID FROM tbl_accessories A WHERE ((varSku LIKE '%" 
                         + array[i] + "%' OR intBrandID IN(SELECT intBrandID FROM tbl_brand WHERE varBrandName LIKE '%" + array[i] + "%') OR intModelID "
                         + "IN(SELECT intModelID FROM tbl_model WHERE varModelName LIKE '%" + array[i] + "%') OR CONCAT(varSize, varColour, "
-                        + "varTypeOfAccessory, varAdditionalInformation) LIKE '%" + array[i] + "%')) AND A.intQuantity > " + quantity + " ";
+                        + "varTypeOfAccessory, varAdditionalInformation, varProdID) LIKE '%" + array[i] + "%')) AND A.intQuantity > " + quantity + " ";
                 }
                 else
                 {
@@ -95,10 +97,10 @@ namespace SweetSpotDiscountGolfPOS.FP
                         + "B.intBrandID JOIN tbl_model M ON AC.intModelID = M.intModelID WHERE AC.intInventoryID = A.intInventoryID) AS varItemDescription"
                         + ", A.intLocationID, (SELECT L.varCityName FROM tbl_accessories AC JOIN tbl_location L ON AC.intLocationID = L.intLocationID "
                         + "WHERE AC.intInventoryID = A.intInventoryID) AS varLocationName, A.intQuantity AS intItemQuantity, A.fltPrice AS fltItemPrice, "
-                        + "A.fltCost AS fltItemCost, A.intItemTypeID, CAST(0 AS bit) AS bitIsUsedProduct, A.varAdditionalInformation FROM tbl_accessories "
+                        + "A.fltCost AS fltItemCost, A.intItemTypeID, CAST(0 AS bit) AS bitIsUsedProduct, A.varAdditionalInformation, A.varProdID FROM tbl_accessories "
                         + "A WHERE ((varSku LIKE '%" + array[i] + "%' OR intBrandID IN(SELECT intBrandID FROM tbl_brand WHERE varBrandName LIKE '%" 
                         + array[i] + "%') OR intModelID IN(SELECT intModelID FROM tbl_model WHERE varModelName LIKE '%" + array[i] + "%') OR CONCAT(varSize"
-                        + ", varColour, varTypeOfAccessory, varAdditionalInformation) LIKE '%" + array[i] + "%')) AND A.intQuantity > " + quantity + ") ";
+                        + ", varColour, varTypeOfAccessory, varAdditionalInformation, varProdID) LIKE '%" + array[i] + "%')) AND A.intQuantity > " + quantity + ") ";
                 }
             }
             sqlCmd += ") AS tblResult";
@@ -116,9 +118,9 @@ namespace SweetSpotDiscountGolfPOS.FP
                         + "' ' + CLO.varStyle AS varItemDescription FROM tbl_clothing CLO JOIN tbl_brand B ON CLO.intBrandID = B.intBrandID WHERE "
                         + "CLO.intInventoryID = CL.intInventoryID) AS varItemDescription, CL.intLocationID, (SELECT L.varCityName FROM tbl_clothing CLO JOIN tbl_location L ON "
                         + "CLO.intLocationID = L.intLocationID WHERE CLO.intInventoryID = CL.intInventoryID) AS varLocationName, CL.intQuantity AS intItemQuantity, CL.fltPrice AS fltItemPrice, "
-                        + "CL.fltCost AS fltItemCost, CL.intItemTypeID, CAST(0 AS bit) AS bitIsUsedProduct, CL.varAdditionalInformation FROM tbl_clothing CL WHERE ((varSku "
+                        + "CL.fltCost AS fltItemCost, CL.intItemTypeID, CAST(0 AS bit) AS bitIsUsedProduct, CL.varAdditionalInformation, CL.varProdID FROM tbl_clothing CL WHERE ((varSku "
                         + "LIKE '%" + array[i] + "%' OR intBrandID IN(SELECT intBrandID FROM tbl_brand WHERE varBrandName LIKE '%" + array[i] + "%') OR "
-                        + "CONCAT(varSize, varColour, varGender, varStyle, varAdditionalInformation) LIKE '%" + array[i] + "%')) AND CL.intQuantity > " 
+                        + "CONCAT(varSize, varColour, varGender, varStyle, varAdditionalInformation, varProdID) LIKE '%" + array[i] + "%')) AND CL.intQuantity > " 
                         + quantity + " ";
                 }
                 else
@@ -127,9 +129,9 @@ namespace SweetSpotDiscountGolfPOS.FP
                         + "CLO.varGender + ' ' + CLO.varStyle AS varItemDescription FROM tbl_clothing CLO JOIN tbl_brand B ON CLO.intBrandID = B.intBrandID "
                         + "WHERE CLO.intInventoryID = CL.intInventoryID) AS varItemDescription, CL.intLocationID, (SELECT L.varCityName FROM tbl_clothing CLO JOIN tbl_location "
                         + "L ON CLO.intLocationID = L.intLocationID WHERE CLO.intInventoryID = CL.intInventoryID) AS varLocationName, CL.intQuantity AS intItemQuantity, "
-                        + "CL.fltPrice AS fltItemPrice, CL.fltCost AS fltItemCost, CL.intItemTypeID, CAST(0 AS bit) AS bitIsUsedProduct, CL.varAdditionalInformation FROM tbl_clothing CL "
+                        + "CL.fltPrice AS fltItemPrice, CL.fltCost AS fltItemCost, CL.intItemTypeID, CAST(0 AS bit) AS bitIsUsedProduct, CL.varAdditionalInformation, CL.varProdID FROM tbl_clothing CL "
                         + "WHERE ((varSku LIKE '%" + array[i] + "%' OR intBrandID IN(SELECT intBrandID FROM tbl_brand WHERE varBrandName LIKE '%"
-                        + array[i] + "%') OR CONCAT(varSize, varColour, varGender, varStyle, varAdditionalInformation) LIKE '%" + array[i] + "%')) AND "
+                        + array[i] + "%') OR CONCAT(varSize, varColour, varGender, varStyle, varAdditionalInformation, varProdID) LIKE '%" + array[i] + "%')) AND "
                         + "CL.intQuantity > " + quantity + ") ";
                 }
             }
@@ -149,10 +151,10 @@ namespace SweetSpotDiscountGolfPOS.FP
                         + "varItemDescription FROM tbl_clubs CLU JOIN tbl_brand B ON CLU.intBrandID = B.intBrandID JOIN tbl_model M ON CLU.intModelID = "
                         + "M.intModelID WHERE CLU.intInventoryID = C.intInventoryID) AS varItemDescription, C.intLocationID, (SELECT L.varCityName FROM tbl_clubs CLU "
                         + "JOIN tbl_location L ON CLU.intLocationID = L.intLocationID WHERE CLU.intInventoryID = C.intInventoryID) AS varLocationName, "
-                        + "C.intQuantity AS intItemQuantity, C.fltPrice AS fltItemPrice, C.fltCost AS fltItemCost, C.intItemTypeID, C.bitIsUsedProduct, C.varAdditionalInformation FROM tbl_clubs C WHERE "
+                        + "C.intQuantity AS intItemQuantity, C.fltPrice AS fltItemPrice, C.fltCost AS fltItemCost, C.intItemTypeID, C.bitIsUsedProduct, C.varAdditionalInformation, C.varProdID FROM tbl_clubs C WHERE "
                         + "((varSku LIKE '%" + array[i] + "%' OR intBrandID IN(SELECT intBrandID FROM tbl_brand WHERE varBrandName LIKE '%" + array[i] 
                         + "%') OR intModelID IN(SELECT intModelID FROM tbl_model WHERE varModelName LIKE '%" + array[i] + "%') OR "
-                        + "CONCAT(varClubSpecification, varTypeOfClub, varShaftSpecification, varShaftFlexability, varClubDexterity) LIKE '%" + array[i] 
+                        + "CONCAT(varClubSpecification, varTypeOfClub, varShaftSpecification, varShaftFlexability, varClubDexterity, varProdID) LIKE '%" + array[i] 
                         + "%')) AND C.intQuantity > " + quantity + " ";
                 }
                 else
@@ -162,10 +164,10 @@ namespace SweetSpotDiscountGolfPOS.FP
                         + "varItemDescription FROM tbl_clubs CLU JOIN tbl_brand B ON CLU.intBrandID = B.intBrandID JOIN tbl_model M ON CLU.intModelID = "
                         + "M.intModelID WHERE CLU.intInventoryID = C.intInventoryID) AS varItemDescription, C.intLocationID, (SELECT L.varCityName FROM tbl_clubs CLU JOIN "
                         + "tbl_location L ON CLU.intLocationID = L.intLocationID WHERE CLU.intInventoryID = C.intInventoryID) AS varLocationName, "
-                        + "C.intQuantity AS intItemQuantity, C.fltPrice AS fltItemPrice, C.fltCost AS fltItemCost, C.intItemTypeID, C.bitIsUsedProduct, C.varAdditionalInformation FROM tbl_clubs C WHERE "
+                        + "C.intQuantity AS intItemQuantity, C.fltPrice AS fltItemPrice, C.fltCost AS fltItemCost, C.intItemTypeID, C.bitIsUsedProduct, C.varAdditionalInformation, C.varProdID FROM tbl_clubs C WHERE "
                         + "((varSku LIKE '%" + array[i] + "%' OR intBrandID IN(SELECT intBrandID FROM tbl_brand WHERE varBrandName LIKE '%" + array[i] 
                         + "%') OR intModelID IN(SELECT intModelID FROM tbl_model WHERE varModelName LIKE '%" + array[i] + "%') OR CONCAT(varClubSpecification, "
-                        + "varTypeOfClub, varShaftSpecification, varShaftFlexability, varClubDexterity) LIKE '%" + array[i] + "%')) AND C.intQuantity > " 
+                        + "varTypeOfClub, varShaftSpecification, varShaftFlexability, varClubDexterity, varProdID) LIKE '%" + array[i] + "%')) AND C.intQuantity > " 
                         + quantity + ") ";
                 }
             }
@@ -279,7 +281,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             string sqlCmd = "INSERT INTO tbl_tempTradeInCartSkus VALUES(@intInventoryID, @varSku, @intBrandID, @intModelID, @varTypeOfClub, "
                 + "@varShaftType, @varNumberOfClubs, @fltPremiumCharge, @fltCost, @fltPrice, @intQuantity, @varClubSpecification, "
                 + "@varShaftSpecification, @varShaftFlexability, @varClubDexterity, @intItemTypeID, @intLocationID, @bitIsUsedProduct, "
-                + "@varAdditionalInformation)";
+                + "@varAdditionalInformation, @varProdID)";
 
             object[][] parms =
             {
@@ -301,7 +303,8 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@intItemTypeID", tradeIn.intItemTypeID },
                 new object[] { "@intLocationID", tradeIn.intLocationID },
                 new object[] { "@bitIsUsedProduct", tradeIn.bitIsUsedProduct },
-                new object[] { "@varAdditionalInformation", tradeIn.varAdditionalInformation }
+                new object[] { "@varAdditionalInformation", tradeIn.varAdditionalInformation },
+                new object[] { "@varProdID", tradeIn.varProdID } 
             };
 
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
