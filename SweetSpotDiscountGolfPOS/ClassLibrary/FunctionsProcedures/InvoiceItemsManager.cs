@@ -54,6 +54,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 bitIsDiscountPercent = row.Field<bool>("bitIsDiscountPercent"),
                 intItemTypeID = row.Field<int>("intItemTypeID"),
                 bitIsClubTradeIn = row.Field<bool>("bitIsClubTradeIn"),
+                varProdID = row.Field<string>("varProdID"),
                 invoiceItemTaxes = ReturnInvoiceItemTaxesCurrent(row.Field<int>("intInvoiceItemID"), selectedDate, provinceID, objPageDetails)
             }).ToList();
             return invoiceItems;
@@ -76,6 +77,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 bitIsDiscountPercent = row.Field<bool>("bitIsDiscountPercent"),
                 intItemTypeID = row.Field<int>("intItemTypeID"),
                 bitIsClubTradeIn = row.Field<bool>("bitIsClubTradeIn"),
+                varProdID = row.Field<string>("varProdID"),
                 invoiceItemTaxes = ReturnInvoiceItemTaxes(row.Field<int>("intInvoiceItemID"), selectedDate, provinceID, objPageDetails)
             }).ToList();
             return invoiceItems;
@@ -90,6 +92,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 intInventoryID = row.Field<int>("intInventoryID"),
                 intItemQuantity = row.Field<int>("intItemQuantity"),
                 varItemDescription = row.Field<string>("varItemDescription"),
+                varProdID = row.Field<string>("varProdID"),
                 fltItemCost = row.Field<double>("intItemCost")
             }).ToList();
             return receiptItems;
@@ -114,6 +117,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 ii.intItemTypeID = temp.intItemTypeID;
                 ii.bitIsDiscountPercent = temp.bitIsDiscountPercent;
                 ii.varAdditionalInformation = temp.varAdditionalInformation;
+                ii.varProdID = temp.varProdID;
                 ii.invoiceItemTaxes = ReturnInvoiceItemTaxes(temp.intInvoiceItemID, selectedDate, provinceID, objPageDetails);
             }
             return invoiceItem;
@@ -130,6 +134,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 intItemTypeID = row.Field<int>("intItemTypeID"),
                 bitIsDiscountPercent = row.Field<bool>("bitIsDiscountPercent"),
                 varAdditionalInformation = row.Field<string>("varAdditionalInformation"),
+                varProdID = row.Field<string>("varProdID"),
                 varItemDescription = row.Field<string>("varItemDescription")
             }).ToList();
             return invoiceItem[0];
@@ -149,7 +154,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "C.intInventoryID = II.intInventoryID) THEN (SELECT C.varSku FROM tbl_clubs C WHERE C.intInventoryID = II.intInventoryID) WHEN EXISTS("
                 + "SELECT TI.intTradeInID FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = II.intInventoryID) THEN (SELECT TI.varSku FROM "
                 + "tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = II.intInventoryID) END AS varSku, II.varItemDescription, II.intItemQuantity, "
-                + "II.fltItemCost, II.fltItemPrice, II.fltItemDiscount, II.fltItemRefund, II.bitIsDiscountPercent, II.intItemTypeID, II.bitIsClubTradeIn "
+                + "II.fltItemCost, II.fltItemPrice, II.fltItemDiscount, II.fltItemRefund, II.bitIsDiscountPercent, II.intItemTypeID, II.bitIsClubTradeIn, II.varProdID "
                 + "FROM tbl_invoiceItem II WHERE II.intInvoiceID = @intInvoiceID UNION SELECT IR.intInvoiceItemID, IR.intInvoiceID, IR.intInventoryID, "
                 + "CASE WHEN EXISTS(SELECT A.intInventoryID FROM tbl_accessories A WHERE A.intInventoryID = IR.intInventoryID) THEN (SELECT A.varSku FROM "
                 + "tbl_accessories A WHERE A.intInventoryID = IR.intInventoryID) WHEN EXISTS(SELECT CL.intInventoryID FROM tbl_clothing CL WHERE "
@@ -158,7 +163,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "WHERE C.intInventoryID = IR.intInventoryID) WHEN EXISTS(SELECT TI.intTradeInID FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = "
                 + "IR.intInventoryID) THEN (SELECT TI.varSku FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = IR.intInventoryID) END AS varSku, "
                 + "IR.varItemDescription, IR.intItemQuantity, IR.fltItemCost, IR.fltItemPrice, IR.fltItemDiscount, IR.fltItemRefund, "
-                + "IR.bitIsDiscountPercent, IR.intItemTypeID, IR.bitIsClubTradeIn FROM tbl_invoiceItemReturns IR WHERE IR.intInvoiceID = @intInvoiceID";
+                + "IR.bitIsDiscountPercent, IR.intItemTypeID, IR.bitIsClubTradeIn, IR.varProdID FROM tbl_invoiceItemReturns IR WHERE IR.intInvoiceID = @intInvoiceID";
 
             object[][] parms =
             {
@@ -198,7 +203,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "C.intInventoryID = CSI.intInventoryID) THEN (SELECT C.varSku FROM tbl_clubs C WHERE C.intInventoryID = CSI.intInventoryID) WHEN "
                 + "EXISTS(SELECT TI.intTradeInID FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = CSI.intInventoryID) THEN (SELECT TI.varSku "
                 + "FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = CSI.intInventoryID) END AS varSku, varItemDescription, intItemQuantity, "
-                + "fltItemCost, fltItemPrice, fltItemDiscount, fltItemRefund, bitIsDiscountPercent, intItemTypeID, bitIsClubTradeIn FROM "
+                + "fltItemCost, fltItemPrice, fltItemDiscount, fltItemRefund, bitIsDiscountPercent, intItemTypeID, bitIsClubTradeIn, varProdID FROM "
                 + "tbl_currentSalesItems CSI WHERE intInvoiceID = @intInvoiceID";
             object[][] parms =
             {
@@ -231,14 +236,14 @@ namespace SweetSpotDiscountGolfPOS.FP
                     sqlCmd = "SELECT intInventoryID FROM tbl_accessories WHERE(varSku LIKE '%" + array[i] + "%'"
                     + "OR intBrandID IN(SELECT intBrandID FROM tbl_brand WHERE varBrandName LIKE '%" + array[i] + "%')"
                     + "OR intModelID IN(SELECT intModelID FROM tbl_model WHERE varModelName LIKE '%" + array[i] + "%')"
-                    + "OR CONCAT(varSize, varColour, varTypeOfAccessory, varAdditionalInformation) LIKE '%" + array[i] + "%')";
+                    + "OR CONCAT(varSize, varColour, varTypeOfAccessory, varAdditionalInformation, varProdID) LIKE '%" + array[i] + "%')";
                 }
                 else
                 {
                     sqlCmd += "INTERSECT(SELECT intInventoryID FROM tbl_accessories WHERE(varSku LIKE '%" + array[i] + "%'"
                     + "OR intBrandID IN(SELECT intBrandID FROM tbl_brand WHERE varBrandName LIKE '%" + array[i] + "%')"
                     + "OR intModelID IN(SELECT intModelID FROM tbl_model WHERE varModelName LIKE '%" + array[i] + "%')"
-                    + "OR CONCAT(varSize, varColour, varTypeOfAccessory, varAdditionalInformation) LIKE '%" + array[i] + "%'))";
+                    + "OR CONCAT(varSize, varColour, varTypeOfAccessory, varAdditionalInformation, varProdID) LIKE '%" + array[i] + "%'))";
                 }
             }
             return sqlCmd;
@@ -253,13 +258,13 @@ namespace SweetSpotDiscountGolfPOS.FP
                 {
                     sqlCmd = "SELECT intInventoryID FROM tbl_clothing WHERE(varSku LIKE '%" + array[i] + "%'"
                     + "OR intBrandID IN(SELECT intBrandID FROM tbl_brand WHERE varBrandName LIKE '%" + array[i] + "%')"
-                    + "OR CONCAT(varSize, varColour, varGender, varStyle, varAdditionalInformation) LIKE '%" + array[i] + "%')";
+                    + "OR CONCAT(varSize, varColour, varGender, varStyle, varAdditionalInformation, varProdID) LIKE '%" + array[i] + "%')";
                 }
                 else
                 {
                     sqlCmd += "INTERSECT(SELECT intInventoryID FROM tbl_clothing WHERE(varSku LIKE '%" + array[i] + "%'"
                     + "OR intBrandID IN(SELECT intBrandID FROM tbl_brand WHERE varBrandName LIKE '%" + array[i] + "%')"
-                    + "OR CONCAT(varSize, varColour, varGender, varStyle, varAdditionalInformation) LIKE '%" + array[i] + "%'))";
+                    + "OR CONCAT(varSize, varColour, varGender, varStyle, varAdditionalInformation, varProdID) LIKE '%" + array[i] + "%'))";
                 }
             }
             return sqlCmd;
@@ -276,7 +281,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                     + "OR intBrandID IN(SELECT intBrandID FROM tbl_brand WHERE varBrandName LIKE '%" + array[i] + "%')"
                     + "OR intModelID IN(SELECT intModelID FROM tbl_model WHERE varModelName LIKE '%" + array[i] + "%')"
                     + "OR CONCAT(varClubSpecification, varTypeOfClub, varShaftSpecification, varShaftFlexability, "
-                    + "varClubDexterity) LIKE '%" + array[i] + "%')";
+                    + "varClubDexterity, varProdID) LIKE '%" + array[i] + "%')";
                 }
                 else
                 {
@@ -284,7 +289,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                     + "OR intBrandID IN(SELECT intBrandID FROM tbl_brand WHERE varBrandName LIKE '%" + array[i] + "%')"
                     + "OR intModelID IN(SELECT intModelID FROM tbl_model WHERE varModelName LIKE '%" + array[i] + "%')"
                     + "OR CONCAT(varClubSpecification, varTypeOfClub, varShaftSpecification, varShaftFlexability, "
-                    + "varClubDexterity) LIKE '%" + array[i] + "%'))";
+                    + "varClubDexterity, varProdID) LIKE '%" + array[i] + "%'))";
                 }
             }
             return sqlCmd;
@@ -294,7 +299,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             string strQueryName = "InsertItemIntoSalesCart";
             string sqlCmd = "INSERT INTO tbl_currentSalesItems VALUES(@intInvoiceID, @intInventoryID, @intItemQuantity, "
                 + "@varItemDescription, @fltItemCost, @fltItemPrice, @fltItemDiscount, @fltItemRefund, @bitIsDiscountPercent, "
-                + "@bitIsClubTradeIn, @intItemTypeID)";
+                + "@bitIsClubTradeIn, @intItemTypeID, @varProdID)";
 
             object[][] parms =
             {
@@ -308,7 +313,8 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@fltItemRefund", II.fltItemRefund },
                 new object[] { "@bitIsDiscountPercent", II.bitIsDiscountPercent },
                 new object[] { "@bitIsClubTradeIn", II.bitIsClubTradeIn },
-                new object[] { "@intItemTypeID", II.intItemTypeID }
+                new object[] { "@intItemTypeID", II.intItemTypeID },
+                new object[] { "@varProdID", II.varProdID }
             };
             TaxManager TM = new TaxManager();
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
@@ -347,7 +353,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             string strQueryName = "ReturnItemsInTheCart";
             string sqlCmd = "SELECT intInvoiceItemID, intInvoiceID, intInventoryID, intItemQuantity, varItemDescription, "
                 + "fltItemCost, fltItemPrice, fltItemDiscount, fltItemRefund, bitIsDiscountPercent, bitIsClubTradeIn, "
-                + "intItemTypeID FROM tbl_currentSalesItems WHERE intInvoiceID = @intInvoiceID";
+                + "intItemTypeID, varProdID FROM tbl_currentSalesItems WHERE intInvoiceID = @intInvoiceID";
 
             object[][] parms =
             {
@@ -539,7 +545,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "C.intInventoryID = I.intInventoryID) THEN (SELECT C.varSku FROM tbl_clubs C WHERE C.intInventoryID = I.intInventoryID) WHEN EXISTS("
                 + "SELECT TI.intTradeInID FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = I.intInventoryID) THEN (SELECT TI.varSku FROM "
                 + "tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = I.intInventoryID) END AS varSku, varItemDescription, intItemQuantity, fltItemCost, "
-                + "fltItemPrice, fltItemDiscount, fltItemRefund, bitIsDiscountPercent, bitIsClubTradeIn, intItemTypeID FROM tbl_currentSalesItems I WHERE "
+                + "fltItemPrice, fltItemDiscount, fltItemRefund, bitIsDiscountPercent, bitIsClubTradeIn, intItemTypeID, varProdID FROM tbl_currentSalesItems I WHERE "
                 + "intInvoiceItemID = @intInvoiceItemID";
             object[][] parms =
             {
@@ -619,7 +625,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "WHEN EXISTS(SELECT C.intInventoryID FROM tbl_clubs C WHERE C.intInventoryID = II.intInventoryID) THEN (SELECT C.varSku FROM tbl_clubs C "
                 + "WHERE C.intInventoryID = II.intInventoryID) WHEN EXISTS(SELECT TI.intTradeInID FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID "
                 + "= II.intInventoryID) THEN (SELECT TI.varSku FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = II.intInventoryID) END AS varSku, "
-                + "varItemDescription, fltItemPrice, fltItemDiscount, fltItemCost, intItemTypeID, bitIsDiscountPercent, varAdditionalInformation FROM "
+                + "varItemDescription, fltItemPrice, fltItemDiscount, fltItemCost, intItemTypeID, bitIsDiscountPercent, varAdditionalInformation, varProdID FROM "
                 + "tbl_invoiceItem II JOIN tbl_invoice I ON I.intInvoiceID = II.intInvoiceID WHERE I.varInvoiceNumber = @varInvoiceNumber AND "
                 + "I.intInvoiceSubNumber = 1 AND II.intInventoryID = @intInventoryID";
 
@@ -653,7 +659,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "C.varAdditionalInformation FROM tbl_clubs C WHERE C.intInventoryID = I.intInventoryID) WHEN EXISTS("
                 + "SELECT TI.intTradeInID FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = I.intInventoryID) THEN ("
                 + "SELECT TI.varSku FROM tbl_tempTradeInCartSkus TI WHERE TI.intTradeInID = I.intInventoryID) END AS "
-                + "varAdditionalInformation FROM tbl_invoiceItem I WHERE intInvoiceItemID = @intInvoiceItemID";
+                + "varAdditionalInformation, varProdID FROM tbl_invoiceItem I WHERE intInvoiceItemID = @intInvoiceItemID";
 
             object[][] parms =
             {

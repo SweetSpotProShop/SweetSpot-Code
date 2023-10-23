@@ -33,7 +33,8 @@ namespace SweetSpotDiscountGolfPOS.FP
                 intQuantity = row.Field<int>("intQuantity"),
                 intItemTypeID = row.Field<int>("intItemTypeID"),
                 intLocationID = row.Field<int>("intLocationID"),
-                varAdditionalInformation = row.Field<string>("varAdditionalInformation")
+                varAdditionalInformation = row.Field<string>("varAdditionalInformation"),
+                varProdID = row.Field<string>("varProdID")
             }).ToList();
             foreach (Accessories a in accessories)
             {
@@ -58,7 +59,8 @@ namespace SweetSpotDiscountGolfPOS.FP
                 intQuantity = row.Field<int>("intQuantity"),
                 intItemTypeID = row.Field<int>("intItemTypeID"),
                 intLocationID = row.Field<int>("intLocationID"),
-                varAdditionalInformation = row.Field<string>("varAdditionalInformation")
+                varAdditionalInformation = row.Field<string>("varAdditionalInformation"),
+                varProdID =row.Field<string>("varProdID")
             }).ToList();
             foreach (Clothing c in clothing)
             {
@@ -89,7 +91,8 @@ namespace SweetSpotDiscountGolfPOS.FP
                 intItemTypeID = row.Field<int>("intItemTypeID"),
                 intLocationID = row.Field<int>("intLocationID"),
                 bitIsUsedProduct = row.Field<bool>("bitIsUsedProduct"),
-                varAdditionalInformation = row.Field<string>("varAdditionalInformation")
+                varAdditionalInformation = row.Field<string>("varAdditionalInformation"),
+                varProdID = row.Field<string>("varProdID")
             }).ToList();
             foreach (Clubs c in clubs)
             {
@@ -118,7 +121,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             string strQueryName = "ReturnListOfObjectsFromThreeTables";
             string sqlCmd = "SELECT intInventoryID, varSku, intBrandID, intModelID, varTypeOfClub, varShaftType, varNumberOfClubs, "
                 + "fltPremiumCharge, fltCost, fltPrice, intQuantity, varClubSpecification, varShaftSpecification, varShaftFlexability, "
-                + "varClubDexterity, intItemTypeID, intLocationID, bitIsUsedProduct, varAdditionalInformation FROM tbl_clubs WHERE "
+                + "varClubDexterity, intItemTypeID, intLocationID, bitIsUsedProduct, varAdditionalInformation, varProdID FROM tbl_clubs WHERE "
                 + "intInventoryID = @intInventoryID";
 
             object[][] parms =
@@ -130,13 +133,13 @@ namespace SweetSpotDiscountGolfPOS.FP
             //List<Clubs> c = ConvertFromDataTableToClubs(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
 
             sqlCmd = "SELECT intInventoryID, varSku, varSize, varColour, varGender, varStyle, fltPrice, fltCost, intBrandID, intQuantity, "
-                + "intItemTypeID, intLocationID, varAdditionalInformation FROM tbl_clothing WHERE intInventoryID = @intInventoryID";
+                + "intItemTypeID, intLocationID, varAdditionalInformation, varProdID FROM tbl_clothing WHERE intInventoryID = @intInventoryID";
 
             List<Clothing> cl = ConvertFromDataTableToClothingForInventoryAddNew(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), currentDate, provinceID, objPageDetails);
             //List<Clothing> cl = ConvertFromDataTableToClothing(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
 
             sqlCmd = "SELECT intInventoryID, varSku, varSize, varColour, fltPrice, fltCost, intBrandID, intModelID, varTypeOfAccessory, "
-                + "intQuantity, intItemTypeID, intLocationID, varAdditionalInformation FROM tbl_accessories WHERE intInventoryID = @intInventoryID";
+                + "intQuantity, intItemTypeID, intLocationID, varAdditionalInformation, varProdID FROM tbl_accessories WHERE intInventoryID = @intInventoryID";
 
             List<Accessories> a = ConvertFromDataTableToAccessoriesForInventoryAddNew(DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName), currentDate, provinceID, objPageDetails);
             //List<Accessories> a = ConvertFromDataTableToAccessories(dbc.returnDataTableData(sqlCmd, parms, objPageDetails, strQueryName));
@@ -266,7 +269,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             string strQueryName = "AddClubToDatabase";
             string sqlCmd = "INSERT INTO tbl_clubs VALUES(@intInventoryID, @varSku, @intBrandID, @intModelID, @varTypeOfClub, @varShaftType, @varNumberOfClubs, "
                 + "@fltPremiumCharge, @fltCost, @fltPrice, @intQuantity, @varClubSpecification, @varShaftSpecification, @varShaftFlexability, "
-                + "@varClubDexterity, @intItemTypeID, @intLocationID, @bitIsUsedProduct, @varAdditionalInformation)";
+                + "@varClubDexterity, @intItemTypeID, @intLocationID, @bitIsUsedProduct, @varAdditionalInformation, @varProdID)";
 
             object[][] parms =
             {
@@ -288,7 +291,8 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@intItemTypeID", club.intItemTypeID },
                 new object[] { "@intLocationID", club.intLocationID },
                 new object[] { "@bitIsUsedProduct", club.bitIsUsedProduct },
-                new object[] { "@varAdditionalInformation", club.varAdditionalInformation }
+                new object[] { "@varAdditionalInformation", club.varAdditionalInformation },
+                new object[] { "@varProdID", club.varProdID }
             };
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
@@ -298,7 +302,7 @@ namespace SweetSpotDiscountGolfPOS.FP
         {
             string strQueryName = "AddAccessoryToDatabase";
             string sqlCmd = "INSERT INTO tbl_accessories VALUES(@intInventoryID, @varSku, @varSize, @varColour, @fltPrice, @fltCost, @intBrandID, @intModelID, "
-                + "@varTypeOfAccessory, @intQuantity, @intItemTypeID, @intLocationID, @varAdditionalInformation)";
+                + "@varTypeOfAccessory, @intQuantity, @intItemTypeID, @intLocationID, @varAdditionalInformation, @varProdID)";
 
             object[][] parms =
             {
@@ -314,7 +318,8 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@intQuantity", accessory.intQuantity },
                 new object[] { "@intItemTypeID", accessory.intItemTypeID },
                 new object[] { "@intLocationID", accessory.intLocationID },
-                new object[] { "@varAdditionalInformation", accessory.varAdditionalInformation }
+                new object[] { "@varAdditionalInformation", accessory.varAdditionalInformation },
+                new object[] { "@varProdID", accessory.varProdID }
             };
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
@@ -324,7 +329,7 @@ namespace SweetSpotDiscountGolfPOS.FP
         {
             string strQueryName = "AddClothingToDatabase";
             string sqlCmd = "INSERT INTO tbl_clothing VALUES(@intInventoryID, @varSku, @varSize, @varColour, @varGender, @varStyle, @fltPrice, @fltCost, "
-                + "@intBrandID, @intQuantity, @intItemTypeID, @intLocationID, @varAdditionalInformation)";
+                + "@intBrandID, @intQuantity, @intItemTypeID, @intLocationID, @varAdditionalInformation, @varProdID)";
 
             object[][] parms =
             {
@@ -340,7 +345,8 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@intQuantity", clothing.intQuantity },
                 new object[] { "@intItemTypeID", clothing.intItemTypeID },
                 new object[] { "@intLocationID", clothing.intLocationID },
-                new object[] { "@varAdditionalInformation", clothing.varAdditionalInformation }
+                new object[] { "@varAdditionalInformation", clothing.varAdditionalInformation },
+                new object[] { "@varProdID", clothing.varProdID }
             };
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
@@ -387,7 +393,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "= @fltCost, fltPrice = @fltPrice, intQuantity = @intQuantity, varClubSpecification = @varClubSpecification, "
                 + "varShaftSpecification = @varShaftSpecification, varShaftFlexability = @varShaftFlexability, varClubDexterity = "
                 + "@varClubDexterity, intLocationID = @intLocationID, bitIsUsedProduct = @bitIsUsedProduct, varAdditionalInformation "
-                + "= @varAdditionalInformation WHERE intInventoryID = @intInventoryID";
+                + "= @varAdditionalInformation, varProdID = @varProdID WHERE intInventoryID = @intInventoryID";
 
             object[][] parms =
             {
@@ -407,7 +413,8 @@ namespace SweetSpotDiscountGolfPOS.FP
                  new object[] { "@varClubDexterity", club.varClubDexterity },
                  new object[] { "@intLocationID", club.intLocationID },
                  new object[] { "@bitIsUsedProduct", club.bitIsUsedProduct },
-                 new object[] { "@varAdditionalInformation", club.varAdditionalInformation }
+                 new object[] { "@varAdditionalInformation", club.varAdditionalInformation },
+                 new object[] { "@varProdID", club.varProdID }
             };
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
@@ -417,7 +424,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             string strQueryName = "UpdateAccessoryInDatabase";
             string sqlCmd = "UPDATE tbl_accessories SET varSize = @varSize, varColour = @varColour, fltPrice = @fltPrice, fltCost = @fltCost, "
                 + "intBrandID = @intBrandID, intModelID = @intModelID, varTypeOfAccessory = @varTypeOfAccessory, intQuantity = @intQuantity, "
-                + "intLocationID = @intLocationID, varAdditionalInformation = @varAdditionalInformation WHERE intInventoryID = @intInventoryID";
+                + "intLocationID = @intLocationID, varAdditionalInformation = @varAdditionalInformation, varProdID = @varProdID WHERE intInventoryID = @intInventoryID";
 
             object[][] parms =
             {
@@ -431,17 +438,89 @@ namespace SweetSpotDiscountGolfPOS.FP
                  new object[] { "@varTypeOfAccessory", accessory.varTypeOfAccessory },
                  new object[] { "@intQuantity", accessory.intQuantity },
                  new object[] { "@intLocationID", accessory.intLocationID },
-                 new object[] { "@varAdditionalInformation", accessory.varAdditionalInformation }
+                 new object[] { "@varAdditionalInformation", accessory.varAdditionalInformation },
+                 new object[] { "@varProdID", accessory.varProdID }
             };
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
+        }
+        public void SpecialUpdate(DataRow row, string strRColumn, string strUColumn, object[] objPageDetails)
+        {
+            SpecialUpdateInDatabase(row, strRColumn, strUColumn, objPageDetails);
+        }
+        private void SpecialUpdateInDatabase(DataRow row, string strRColumn, string strUColumn, object[] objPageDetails)
+        {
+            string strQueryName = "SpecialUpdateInDatabase";
+            string strSQLColumn = "";
+            string strUpdateString = "";
+            double dblUpdateDouble = 0.00;
+            int intUpdateInt = 0;
+
+            //If Statement to determin what type of data to store as.
+            if (strUColumn.ToString() == "ProdID" || strUColumn.ToString() == "Dexterity")
+            {
+                strUpdateString = row[1].ToString();
+                if(strUColumn.ToString() == "ProdID")
+                {
+                    strSQLColumn = "varProdID";
+                }
+                else if(strUColumn.ToString() == "Dexterity")
+                {
+                    strSQLColumn = "varClubDexterity";
+                }
+                string sqlCmd = "UPDATE tbl_clubs SET " + strSQLColumn + " = @varUpdateColumn WHERE var" + strRColumn + " = @varReferenceColumn";
+                object[][] parms =
+                {
+                 new object[] { "@varReferenceColumn", row[0].ToString() },
+                 new object[] { "@varUpdateColumn", strUpdateString }
+                };
+                DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            }
+            else if (strUColumn.ToString() == "Cost" || strUColumn.ToString() == "Price")
+            {
+                dblUpdateDouble = Convert.ToDouble(row[1]);
+                if (strUColumn.ToString() == "Cost")
+                {
+                    strSQLColumn = "fltCost";
+                }
+                else if (strUColumn.ToString() == "Price")
+                {
+                    strSQLColumn = "fltPrice";
+                }
+                string sqlCmd = "UPDATE tbl_clubs SET " + strSQLColumn + " = @varUpdateColumn WHERE var" + strRColumn + " = @varReferenceColumn";
+                object[][] parms =
+                {
+                 new object[] { "@varReferenceColumn", row[0].ToString() },
+                 new object[] { "@varUpdateColumn", dblUpdateDouble }
+                };
+                DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            }
+            else if (strUColumn.ToString() == "Location" || strUColumn.ToString() == "Quantity")
+            {
+                intUpdateInt = Convert.ToInt32(row[1]);
+                if (strUColumn.ToString() == "Location")
+                {
+                    strSQLColumn = "intLocationID";
+                }
+                else if (strUColumn.ToString() == "Quantity")
+                {
+                    strSQLColumn = "intQuantity";
+                }
+                string sqlCmd = "UPDATE tbl_clubs SET " + strSQLColumn + " = @varUpdateColumn WHERE var" + strRColumn + " = @varReferenceColumn";
+                object[][] parms =
+                {
+                 new object[] { "@varReferenceColumn", row[0].ToString() },
+                 new object[] { "@varUpdateColumn", intUpdateInt }
+                };
+                DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            }
         }
         private void UpdateClothingInDatabase(Clothing clothing, object[] objPageDetails)
         {
             string strQueryName = "UpdateClothingInDatabase";
             string sqlCmd = "UPDATE tbl_clothing SET varSize = @varSize, varColour = @varColour, varGender = @varGender, varStyle = @varStyle, "
                 + "fltPrice = @fltPrice, fltCost = @fltCost, intBrandID = @intBrandID, intQuantity = @intQuantity, intLocationID = @intLocationID, "
-                + "varAdditionalInformation = @varAdditionalInformation WHERE intInventoryID = @intInventoryID";
+                + "varAdditionalInformation = @varAdditionalInformation, varProdID = @varProdID WHERE intInventoryID = @intInventoryID";
 
             object[][] parms =
             {
@@ -455,7 +534,8 @@ namespace SweetSpotDiscountGolfPOS.FP
                  new object[] { "@intBrandID", clothing.intBrandID },
                  new object[] { "@intQuantity", clothing.intQuantity },
                  new object[] { "@intLocationID", clothing.intLocationID },
-                 new object[] { "@varAdditionalInformation", clothing.varAdditionalInformation }
+                 new object[] { "@varAdditionalInformation", clothing.varAdditionalInformation },
+                 new object[] { "@varProdID", clothing.varProdID }
             };
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
