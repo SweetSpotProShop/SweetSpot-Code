@@ -52,7 +52,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 intProvinceID = row.Field<int>("intProvinceID"),
                 intCountryID = row.Field<int>("intCountryID"),
                 varPostalCode = row.Field<string>("varPostalCode"),
-                invoices = IM.CallReturnInvoiceByCustomers(row.Field<int>("intCustomerID"), objPageDetails),
+                //invoices = IM.CallReturnInvoiceByCustomers(row.Field<int>("intCustomerID"), objPageDetails),
                 bitSendMarketing = row.Field<bool>("bitSendMarketing")
             }).ToList();
             return customer;
@@ -149,8 +149,9 @@ namespace SweetSpotDiscountGolfPOS.FP
         private DataTable ReturnCustomerEmailAddresses(object[] objPageDetails)
         {
             string strQueryName = "ReturnCustomerEmailAddresses";
-            string sqlCmd = "SELECT CONCAT(varFirstname, ' ', varLastName) AS varCustomerName, varEmailAddress FROM tbl_customers WHERE "
-                + "bitSendMarketing = 1 AND varEmailAddress<> '' ORDER BY varLastName, varFirstName ASC";
+            string sqlCmd = "SELECT CONCAT(varFirstname, ' ', varLastName) AS varCustomerName, varEmailAddress, intCustomerID FROM tbl_customers WHERE "
+                //+ "bitSendMarketing = 1 AND varEmailAddress<> '' ORDER BY varLastName, varFirstName ASC";
+                + "varEmailAddress<> '' ORDER BY varLastName, varFirstName ASC";
             object[][] parms = { };
             return DBC.MakeDataBaseCallToReturnDataTable(sqlCmd, parms, objPageDetails, strQueryName);
         }
@@ -255,6 +256,12 @@ namespace SweetSpotDiscountGolfPOS.FP
         public List<Customer> CallReturnCustomerBasedOnText(string searchText, object[] objPageDetails)
         {
             return ReturnCustomerBasedOnText(searchText, objPageDetails);
+        }
+
+        public string CallReturnCustomerName(int customerID, object[] objPageDetails)
+        {
+            Customer cust = CallReturnCustomer(customerID, objPageDetails)[0];
+            return cust.varFirstName + " " + cust.varLastName;
         }
     }
 }

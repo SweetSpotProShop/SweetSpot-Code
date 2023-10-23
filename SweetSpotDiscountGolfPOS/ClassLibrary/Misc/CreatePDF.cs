@@ -354,10 +354,13 @@ namespace SweetSpotDiscountGolfPOS.Misc
             Row hRow1 = headTable.AddRow();
             hRow1.Cells[0].AddImage(System.Web.HttpContext.Current.Server.MapPath("~/Images/combinedLogo.jpg"));
 
+            LocationManager LM = new LocationManager();
+            Location loco = LM.CallReturnLocation(invoice.intLocationID, objPageDetails)[0];
+
             Paragraph headP = hRow1.Cells[1].AddParagraph();
             headP.AddText("Invoice Number: " + invoice.varInvoiceNumber + "-" + invoice.intInvoiceSubNumber);
             headP.AddLineBreak();
-            headP.AddText("Tax Number: " + invoice.location.varTaxNumber);
+            headP.AddText("Tax Number: " + loco.varTaxNumber);
             headP.AddLineBreak();
             headP.AddText("Date: " + invoice.dtmInvoiceDate.ToShortDateString() + " " + invoice.dtmInvoiceTime.ToShortTimeString());
             header.Format.Font.Size = 9;
@@ -384,7 +387,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
             //Footer
             
             footer.AddParagraph("PLEASE NOTE: All used equipment is sold as is and it is understood that its' condition and usability may reflect prior use. "
-                + invoice.location.varLocationName + " assumes no responsibility beyond the point of sale. ALL SALES FINAL. Thank you for shopping at " + invoice.location.varLocationName + ".");
+                + loco.varLocationName + " assumes no responsibility beyond the point of sale. ALL SALES FINAL. Thank you for shopping at " + loco.varLocationName + ".");
             footer.Format.Font.Size = 6;
             footer.Format.Font.Color = Colors.Black;
             footer.Format.Font.Bold = true;
@@ -399,19 +402,20 @@ namespace SweetSpotDiscountGolfPOS.Misc
             userInfo.Format.Font.Color = Colors.Black;
             userInfo.AddRow();
             Row rowInfo = userInfo.AddRow();
+            CustomerManager CM = new CustomerManager();
+            Customer cust = CM.CallReturnCustomer(invoice.intCustomerID, objPageDetails)[0];
 
-            LocationManager LM = new LocationManager();
             //Customer Info
             Paragraph customerInfo = rowInfo.Cells[0].AddParagraph();
             customerInfo.AddLineBreak();
             customerInfo.AddLineBreak();
-            customerInfo.AddText(invoice.customer.varFirstName + " " + invoice.customer.varLastName);
+            customerInfo.AddText(cust.varFirstName + " " + cust.varLastName);
             customerInfo.AddLineBreak();
-            customerInfo.AddText(invoice.customer.varAddress);
+            customerInfo.AddText(cust.varAddress);
             customerInfo.AddLineBreak();
-            customerInfo.AddText(invoice.customer.varCityName + ", " + LM.CallReturnProvinceName(invoice.customer.intProvinceID, objPageDetails) + " " + invoice.customer.varPostalCode);
+            customerInfo.AddText(cust.varCityName + ", " + LM.CallReturnProvinceName(cust.intProvinceID, objPageDetails) + " " + cust.varPostalCode);
             customerInfo.AddLineBreak();
-            customerInfo.AddText(invoice.customer.varContactNumber);
+            customerInfo.AddText(cust.varContactNumber);
             customerInfo.AddLineBreak();
             customerInfo.AddLineBreak();
 
@@ -419,13 +423,13 @@ namespace SweetSpotDiscountGolfPOS.Misc
             Paragraph locationInfo = rowInfo.Cells[1].AddParagraph();
             locationInfo.AddLineBreak();
             locationInfo.AddLineBreak();
-            locationInfo.AddText(invoice.location.varLocationName);
+            locationInfo.AddText(loco.varLocationName);
             locationInfo.AddLineBreak();
-            locationInfo.AddText(invoice.location.varAddress);
+            locationInfo.AddText(loco.varAddress);
             locationInfo.AddLineBreak();
-            locationInfo.AddText(invoice.location.varCityName + ", " + LM.CallReturnProvinceName(invoice.location.intProvinceID, objPageDetails) + " " + invoice.location.varPostalCode);
+            locationInfo.AddText(loco.varCityName + ", " + LM.CallReturnProvinceName(loco.intProvinceID, objPageDetails) + " " + loco.varPostalCode);
             locationInfo.AddLineBreak();
-            locationInfo.AddText(invoice.location.varContactNumber);
+            locationInfo.AddText(loco.varContactNumber);
             locationInfo.AddLineBreak();
             locationInfo.AddLineBreak();
 

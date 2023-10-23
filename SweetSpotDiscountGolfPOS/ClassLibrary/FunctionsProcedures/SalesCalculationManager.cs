@@ -196,9 +196,9 @@ namespace SweetSpotDiscountGolfPOS.FP
         public Invoice SaveAllInvoiceTotals(Invoice invoice, object[] objPageDetails)
         {
             //invoice.invoiceItems = ReCalculateTheTaxes(invoice.invoiceItems);
-            invoice.fltSubTotal = returnSubtotalAmount(invoice.invoiceItems, invoice.location.intLocationID, objPageDetails);
+            invoice.fltSubTotal = returnSubtotalAmount(invoice.invoiceItems, invoice.intLocationID, objPageDetails);
             invoice.fltTotalDiscount = returnDiscount(invoice.invoiceItems);
-            invoice.fltTotalTradeIn = returnTradeInAmount(invoice.invoiceItems, invoice.location.intLocationID, objPageDetails);
+            invoice.fltTotalTradeIn = returnTradeInAmount(invoice.invoiceItems, invoice.intLocationID, objPageDetails);
             invoice.fltBalanceDue = invoice.fltSubTotal;
             invoice.fltShippingTaxAmount = returnShipingTaxAmount(invoice, objPageDetails);
             return invoice;
@@ -212,7 +212,7 @@ namespace SweetSpotDiscountGolfPOS.FP
         }
         public Invoice SaveAllReceiptTotals(Invoice invoice)
         {
-            invoice.fltSubTotal = returnReceiptSubtotalAmount(invoice.invoiceItems, invoice.location.intLocationID);
+            invoice.fltSubTotal = returnReceiptSubtotalAmount(invoice.invoiceItems, invoice.intLocationID);
             invoice.fltBalanceDue = invoice.fltSubTotal;
             return invoice;
         }

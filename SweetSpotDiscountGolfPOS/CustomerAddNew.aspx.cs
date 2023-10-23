@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using System.Web;
 using System.Web.UI.WebControls;
+using System.Collections.Generic;
 
 namespace SweetSpotDiscountGolfPOS
 {
@@ -60,7 +61,10 @@ namespace SweetSpotDiscountGolfPOS
                             chkEmailList.Checked = customer.bitSendMarketing;
 
                             //Binds invoice list to the grid view
-                            GrdInvoiceSelection.DataSource = customer.invoices;
+                            InvoiceManager IM = new InvoiceManager();
+                            List<Invoice> custInvoices = new List<Invoice>();
+                            custInvoices = IM.CallReturnInvoiceByCustomers(customer.intCustomerID, objPageDetails);
+                            GrdInvoiceSelection.DataSource = custInvoices;
                             GrdInvoiceSelection.DataBind();
                         }
                     }

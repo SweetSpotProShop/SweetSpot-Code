@@ -132,16 +132,16 @@ namespace SweetSpotDiscountGolfPOS
                                     invoices = InM.CallGatherInvoicesFromTable(Request.QueryString["pressedBTN"].ToString(), CU.location.intProvinceID, objPageDetails);
                                 }
 
-                                txtCustomer.Text = invoices[0].customer.varFirstName + " " + invoices[0].customer.varLastName;
+                                //txtCustomer.Text = invoices[0].customer.varFirstName + " " + invoices[0].customer.varLastName;
                                 txtCustomerDescription.Text = invoices[0].varAdditionalInformation;
 
-                                if (CM.IsGuestCustomer(invoices[0].customer.intCustomerID, invoices[0].location.intLocationID, objPageDetails))
-                                {
-                                    txtCustomer.Visible = false;
-                                    lblCustomer.Visible = false;
-                                    txtCustomerDescription.Visible = true;
-                                    lblCustomerDescription.Visible = true;
-                                }
+                                //if (CM.IsGuestCustomer(invoices[0].customer.intCustomerID, invoices[0].location.intLocationID, objPageDetails))
+                                //{
+                                //    txtCustomer.Visible = false;
+                                //    lblCustomer.Visible = false;
+                                //    txtCustomerDescription.Visible = true;
+                                //    lblCustomerDescription.Visible = true;
+                                //}
 
                                 lblInvoiceNumberDisplay.Text = invoices[0].varInvoiceNumber.ToString();
                                 lblDateDisplay.Text = invoices[0].dtmInvoiceDate.ToShortDateString() + " " + invoices[0].dtmInvoiceTime.ToShortTimeString();
@@ -199,10 +199,10 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     GrdCustomersSearched.Visible = true;
                     string searchText = txtCustomer.Text;
-                    if (CM.IsGuestCustomer(invoices[0].customer.intCustomerID, invoices[0].location.intLocationID, objPageDetails))
-                    {
-                        searchText = txtCustomerDescription.Text;
-                    }
+                    //if (CM.IsGuestCustomer(invoices[0].customer.intCustomerID, invoices[0].location.intLocationID, objPageDetails))
+                    //{
+                    //    searchText = txtCustomerDescription.Text;
+                    //}
                     GrdCustomersSearched.DataSource = CM.CallReturnCustomerBasedOnText(searchText, objPageDetails);
                     GrdCustomersSearched.DataBind();
                     if (GrdCustomersSearched.Rows.Count > 0)
@@ -249,7 +249,7 @@ namespace SweetSpotDiscountGolfPOS
                 customer.intCustomerID = customerNumber;
 
                 List<Invoice> invoices = (List<Invoice>)Session["invoiceList"];
-                invoices[0].customer = customer;
+                invoices[0].intCustomerID = customer.intCustomerID;
                 InM.CallUpdateCurrentInvoice(invoices[0], objPageDetails);
                 Session["invoiceList"] = invoices;
 
@@ -305,7 +305,7 @@ namespace SweetSpotDiscountGolfPOS
                 {
                     List<Invoice> invoices = (List<Invoice>)Session["invoiceList"];
                     Customer customer = CM.CallReturnCustomer(Convert.ToInt32(e.CommandArgument.ToString()), objPageDetails)[0];
-                    invoices[0].customer = customer;
+                    //invoices[0].customer = customer;
                     InM.CallUpdateCurrentInvoice(invoices[0], objPageDetails);
                     Session["invoiceList"] = invoices;
                     var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());

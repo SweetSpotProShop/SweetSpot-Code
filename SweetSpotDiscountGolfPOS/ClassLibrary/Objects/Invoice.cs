@@ -11,9 +11,15 @@ namespace SweetSpotDiscountGolfPOS.OB
         public int intInvoiceSubNumber { get; set; }
         public DateTime dtmInvoiceDate { get; set; }
         public DateTime dtmInvoiceTime { get; set; }
-        public Customer customer { get; set; }
-        public Employee employee { get; set; }
-        public Location location { get; set; }
+        //public Customer customer { get; set; }
+        //public Employee employee { get; set; }
+        //public Location location { get; set; }
+        public int intCustomerID { get; set; }
+        public string varCustName { get; set; }
+        public int intEmployeeID { get; set; }
+        public string varEmpName { get; set; }
+        public int intLocationID { get; set; }
+        public string varLocName { get; set; }
         public int intShippingProvinceID { get; set; }        
         public double fltShippingCharges { get; set; }
         public bool bitIsShipping { get; set; }

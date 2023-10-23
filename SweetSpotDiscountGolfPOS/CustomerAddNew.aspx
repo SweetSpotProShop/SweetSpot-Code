@@ -190,7 +190,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Employee Name">
                             <ItemTemplate>
-                                <asp:Label ID="lblEmployeeName" runat="server" Text='<%#Eval("employee.varFirstName") +" "+Eval("employee.varLastName") %>' />
+                                <asp:Label ID="lblEmployeeName" runat="server" Text='<%#Eval("varEmpName") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>

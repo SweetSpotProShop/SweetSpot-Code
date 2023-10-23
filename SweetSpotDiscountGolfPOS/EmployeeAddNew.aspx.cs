@@ -54,7 +54,7 @@ namespace SweetSpotDiscountGolfPOS
 
                             ddlLocation.DataSource = LM.CallReturnLocationDropDown(objPageDetails);
                             ddlLocation.DataBind();
-                            ddlLocation.SelectedValue = employee.location.intLocationID.ToString();
+                            ddlLocation.SelectedValue = employee.intLocationID.ToString();
 
                             txtEmail.Text = employee.varEmailAddress.ToString();
                             txtPrimaryPhoneNumber.Text = employee.varContactNumber.ToString();
@@ -141,7 +141,8 @@ namespace SweetSpotDiscountGolfPOS
                 employee.varFirstName = txtFirstName.Text;
                 employee.varLastName = txtLastName.Text;
                 employee.intJobID = Convert.ToInt32(ddlJob.SelectedValue);
-                employee.location = LM.CallReturnLocation(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails)[0];
+                //employee.location = LM.CallReturnLocation(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails)[0];
+                employee.intLocationID = Convert.ToInt32(ddlLocation.SelectedValue);
                 employee.varEmailAddress = txtEmail.Text;
                 employee.varContactNumber = txtPrimaryPhoneNumber.Text;
                 employee.secondaryContactNumber = txtSecondaryPhoneNumber.Text;
@@ -231,7 +232,8 @@ namespace SweetSpotDiscountGolfPOS
                     varFirstName = txtFirstName.Text,
                     varLastName = txtLastName.Text,
                     intJobID = Convert.ToInt32(ddlJob.SelectedValue),
-                    location = LM.CallReturnLocation(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails)[0],
+                    //location = LM.CallReturnLocation(Convert.ToInt32(ddlLocation.SelectedValue), objPageDetails)[0],
+                    intLocationID = Convert.ToInt32(ddlLocation.SelectedValue),
                     varEmailAddress = txtEmail.Text,
                     varContactNumber = txtPrimaryPhoneNumber.Text,
                     secondaryContactNumber = txtSecondaryPhoneNumber.Text,

@@ -530,8 +530,6 @@ namespace SweetSpotDiscountGolfPOS.FP
                 IDU.AddNewItemToDatabase(o, objPageDetails);
             }
         }
-
-
         public void CallItemExports(string selection, FileInfo newFile, string fileName, object[] objPageDetails)
         {
             ItemExports(selection, newFile, fileName, objPageDetails);

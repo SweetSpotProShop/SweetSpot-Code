@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="ReportsPaymentType.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.ReportsPaymentType" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.Master" AutoEventWireup="true" CodeBehind="ReportsCharlynSales.aspx.cs" Inherits="SweetSpotDiscountGolfPOS.ReportsCharlynSales" %>
 
 <asp:Content ID="ReportsPageContent" ContentPlaceHolderID="IndividualPageContent" runat="server">
     <style media="print">
@@ -38,44 +38,55 @@
         </div>
         <hr />
         <div>
-            <asp:GridView ID="GrdSalesByDate" runat="server" AutoGenerateColumns="false" Width="60%" RowStyle-HorizontalAlign="Center" ShowFooter="true" OnRowDataBound="GrdSalesByDate_RowDataBound">
+            <asp:GridView ID="GrdSalesByDate" runat="server" AutoGenerateColumns="false" Width="60%" RowStyle-HorizontalAlign="Center" ShowFooter="true" 
+				OnRowDataBound="GrdSalesByDate_RowDataBound" FooterStyle-Font-Bold="true" FooterStyle-HorizontalAlign="Center">
                 <Columns>
                     <asp:TemplateField HeaderText="Date">
                         <ItemTemplate>
-                            <asp:Label ID="lblDate" runat="server" Text='<%#Eval("invoiceDate","{0: dd/MMM/yy}")%>' />
+                            <asp:Label ID="lblDate" runat="server" Text='<%# Eval("dtmInvoiceDate", "{0:dd/MMM/yy}") %>' />
                         </ItemTemplate>
                         <FooterTemplate>
                             <asp:Label ID="lblTotal" runat="server" Text="Totals:" />
                         </FooterTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Cash">
+					<asp:TemplateField HeaderText="Sales Dollars">
                         <ItemTemplate>
-                            <asp:Label ID="lblCashPayments" runat="server" Text='<%#Eval("Cash","{0:C}") %>' />
+                            <asp:Label ID="lblSalesDollars" runat="server" Text='<%# Eval("fltSalesDollars", "{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Debit">
+					<asp:TemplateField HeaderText="GST">
                         <ItemTemplate>
-                            <asp:Label ID="lblDebitPayments" runat="server" Text='<%#Eval("Debit","{0:C}") %>' />
+                            <asp:Label ID="lblGSTAmount" runat="server" Text='<%# Eval("fltGovernmentTaxAmount", "{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Gift Card">
+					<asp:TemplateField HeaderText="HST">
                         <ItemTemplate>
-                            <asp:Label ID="lblGiftCardPayments" runat="server" Text='<%#Eval("GiftCard","{0:C}") %>' />
+                            <asp:Label ID="lblHSTAmount" runat="server" Text='<%# Eval("fltHarmonizedTaxAmount", "{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Mastercard">
+					<asp:TemplateField HeaderText="LCT">
                         <ItemTemplate>
-                            <asp:Label ID="lblMastercardPayments" runat="server" Text='<%#Eval("Mastercard","{0:C}") %>' />
+                            <asp:Label ID="lblLCTAmount" runat="server" Text='<%# Eval("fltLiquorTaxAmount", "{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Visa">
+					<asp:TemplateField HeaderText="PST">
                         <ItemTemplate>
-                            <asp:Label ID="lblVisaPayments" runat="server" Text='<%#Eval("Visa","{0:C}") %>' />
+                            <asp:Label ID="lblPSTAmount" runat="server" Text='<%# Eval("fltProvincialTaxAmount", "{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="AmEx">
+					<asp:TemplateField HeaderText="QST">
                         <ItemTemplate>
-                            <asp:Label ID="lblAmExPayments" runat="server" Text='<%#Eval("AmEx","{0:C}") %>' />
+                            <asp:Label ID="lblQSTAmount" runat="server" Text='<%# Eval("fltQuebecTaxAmount", "{0:C}") %>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+					<asp:TemplateField HeaderText="RST">
+                        <ItemTemplate>
+                            <asp:Label ID="lblRSTAmount" runat="server" Text='<%# Eval("fltRetailTaxAmount", "{0:C}") %>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    <asp:TemplateField HeaderText="Total Sales">
+                        <ItemTemplate>
+                            <asp:Label ID="lblTotalSales" runat="server" Text='<%# Eval("fltTotalSales", "{0:C}") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -90,7 +101,7 @@
                 <asp:Button CssClass="noPrint" ID="btnPrint" runat="server" Text="Print Report" Width="200px" OnClientClick="CallPrint('print');" />
             </asp:TableCell>
             <asp:TableCell>
-                <asp:Button CssClass="noPrint" ID="BtnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="BtnDownload_Click" />
+                <asp:Button CssClass="noPrint" ID="btnDownload" runat="server" Text="Download" Visible="true" Width="200px" OnClick="BtnDownload_Click" />
             </asp:TableCell>
         </asp:TableRow>
     </asp:Table>

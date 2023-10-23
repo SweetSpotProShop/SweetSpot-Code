@@ -22,7 +22,7 @@ namespace SweetSpotDiscountGolfPOS
             //Collects current method and page for error tracking
             string method = "Page_Load";
             Session["currPage"] = "SalesCheckout.aspx";
-            //object[] objPageDetails = { Session["currPage"].ToString(), method };
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
             try
             {
                 //checks if the user has logged in
@@ -43,7 +43,7 @@ namespace SweetSpotDiscountGolfPOS
                         //Invoice invoice = IM.ReturnCurrentInvoice(Convert.ToInt32(Request.QueryString["invoice"].ToString()), CU.location.intProvinceID, objPageDetails)[0];                        
                         UpdatePageTotals();
                         Invoice invoice = (Invoice)Session["currentInvoice"];
-                        TaxChecker(invoice);
+                        TaxChecker(invoice, objPageDetails);
                     }
                 }
             }
@@ -184,6 +184,35 @@ namespace SweetSpotDiscountGolfPOS
                     hdnTender.Value = txtAmountPaying.Text;
                     hdnChange.Value = "0";
                     PopulateGridviewMOP(Convert.ToDouble(txtAmountPaying.Text), 6, amounts);
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
+                //Display message box
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+
+        //American Express
+        protected void MopAmEx_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "mopAmEx_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
+            {
+                if (txtAmountPaying.Text != "")
+                {
+                    object[] amounts = { txtAmountPaying.Text, 0 };
+                    hdnTender.Value = txtAmountPaying.Text;
+                    hdnChange.Value = "0";
+                    PopulateGridviewMOP(Convert.ToDouble(txtAmountPaying.Text), 3, amounts);
                 }
             }
             //Exception catch
@@ -511,7 +540,8 @@ namespace SweetSpotDiscountGolfPOS
                         {
                             //Stores all the Sales data to the database
                             invoice = IM.CallReturnCurrentInvoice(invoice.intInvoiceID, objPageDetails)[0];
-                            invoice.employee = EM.CallReturnEmployeeFromPassword(Convert.ToInt32(txtEmployeePasscode.Text), objPageDetails)[0];
+                            invoice.intEmployeeID = EM.CallReturnEmployeeFromPassword(Convert.ToInt32(txtEmployeePasscode.Text), objPageDetails);
+                            //invoice.Employee = EM.CallReturnEmployeeFromPassword(Convert.ToInt32(txtEmployeePasscode.Text), objPageDetails)[0];
                             invoice.varAdditionalInformation = txtComments.Text;
                             invoice.intTransactionTypeID = IM.CallReturnTransactionID("Sale", objPageDetails);
                             IM.FinalizeInvoice(invoice, "tbl_invoiceItem", objPageDetails);
@@ -603,6 +633,7 @@ namespace SweetSpotDiscountGolfPOS
                     MopGiftCard.Enabled = false;
                     MopMasterCard.Enabled = false;
                     MopVisa.Enabled = false;
+                    MopAmEx.Enabled = false;
                 }
                 else
                 {
@@ -611,6 +642,7 @@ namespace SweetSpotDiscountGolfPOS
                     MopGiftCard.Enabled = true;
                     MopMasterCard.Enabled = true;
                     MopVisa.Enabled = true;
+                    MopAmEx.Enabled = true;
                 }
             }
             //Exception catch
@@ -756,7 +788,7 @@ namespace SweetSpotDiscountGolfPOS
             return amounts;
         }
 
-        protected int TaxChecker(Invoice invoice)
+        protected int TaxChecker(Invoice invoice, object[] objPageDetails)
         {
             int intTaxIsValid = 0;
             string strOU = "Over: $";
@@ -776,6 +808,7 @@ namespace SweetSpotDiscountGolfPOS
 
                 lblTaxDiscrepency.Visible = true;
                 chkProceed.Visible = true;
+                ER.CallLogTaxError(invoice, objPageDetails);
             }
             return intTaxIsValid;
         }
