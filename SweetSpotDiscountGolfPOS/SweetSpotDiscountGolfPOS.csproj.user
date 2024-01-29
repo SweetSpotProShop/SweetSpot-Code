@@ -2,7 +2,7 @@
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <UseIISExpress>true</UseIISExpress>
-    <NameOfLastUsedPublishProfile>C:\Users\Bishop\Documents\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\Properties\PublishProfiles\SweetSpotGolfShopDev - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>C:\Users\Bishop\Documents\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\Properties\PublishProfiles\SweetSpotGolfShop - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
     <Use64BitIISExpress>false</Use64BitIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
