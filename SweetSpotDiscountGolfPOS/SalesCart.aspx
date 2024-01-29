@@ -196,6 +196,11 @@
 							<asp:Label ID="lblTypeIDSearch" Text='<%# Eval("intItemTypeID") %>' runat="server" />
 						</ItemTemplate>
 					</asp:TemplateField>
+					<asp:TemplateField HeaderText="ProdID" Visible="false">
+						<ItemTemplate>
+							<asp:Label ID="lblProdID" Text='<%# Eval("varProdID") %>' runat="server" />
+						</ItemTemplate>
+					</asp:TemplateField>
 				</Columns>
 			</asp:GridView>
 			<hr />
