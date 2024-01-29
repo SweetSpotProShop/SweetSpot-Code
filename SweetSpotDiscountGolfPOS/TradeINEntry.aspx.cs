@@ -99,7 +99,7 @@ namespace SweetSpotDiscountGolfPOS
                     varAdditionalInformation = txtComments.Text,
                     bitIsUsedProduct = true,
                     intLocationID = CU.location.intLocationID,
-                    varProdID = txtProdID.Text
+                    varProdID = "TRADE-IN"
                 };
 
                 //this adds to the temp tradeIncart
