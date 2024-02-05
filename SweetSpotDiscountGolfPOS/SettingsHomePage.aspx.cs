@@ -260,7 +260,7 @@ namespace SweetSpotDiscountGolfPOS
                                         }                                        
                                     }
                                     //Check to see if the cell's sku is in the array, if it is not, delete the row
-                                    bool isInArray = errorSkus.IndexOf((worksheet.Cells[i, 3].Value).ToString()) != -1;
+                                    bool isInArray = errorSkus.IndexOf((worksheet.Cells[i, 4].Value).ToString()) != -1;
                                     if (!isInArray)
                                     {
                                         worksheet.DeleteRow(i);
@@ -274,7 +274,7 @@ namespace SweetSpotDiscountGolfPOS
                                 Response.AddHeader("content-disposition", "attachment; filename=" + fileName + ".xlsx");
                                 Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                                 Response.BinaryWrite(xlPackage.GetAsByteArray());
-                                Response.End();
+                                Response.End();                                
                             }
                             else
                             {

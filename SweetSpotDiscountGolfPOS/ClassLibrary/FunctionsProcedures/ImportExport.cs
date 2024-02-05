@@ -877,7 +877,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "fltPremiumCharge, fltCost, intQuantity, 0 AS ExtendedPrice, fltPrice, varAdditionalInformation, '' AS Image, varClubSpecification, "
                 + "varShaftSpecification, varShaftFlexability, varClubDexterity, (SELECT varSecondLocationID FROM tbl_location L WHERE L.intLocationID = "
                 + "C.intLocationID) AS locationSecondary, '' AS Received, 0 AS Paid, (SELECT varItemTypeName FROM tbl_itemType IT WHERE IT.intItemTypeID = "
-                + "C.intItemTypeID) AS itemType, bitIsUsedProduct FROM tbl_clubs C";
+                + "C.intItemTypeID) AS itemType, bitIsUsedProduct, varProdID FROM tbl_clubs C";
             return sqlCmd;
         }
         private string ExportAccessoryString()
