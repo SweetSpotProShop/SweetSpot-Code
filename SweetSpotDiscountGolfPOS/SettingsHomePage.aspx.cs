@@ -265,8 +265,8 @@ namespace SweetSpotDiscountGolfPOS
                                     {
                                         worksheet.DeleteRow(i);
                                     }
-                                }                                
-                                worksheet.Cells[1, 28].Value = "Errors Found. The skus that are highlighted in red have an issue with either their brand or model. This could be a spelling mistake or the brand and/or model are not in the database.";
+                                }
+                                worksheet.Cells[1, 28].Value = "Errors Found. The skus that are highlighted in red have an issue with either their Brand, Model, or Destination. This could be a spelling mistake or the Brand, Model and/or Destination are not in the database.";
                                 //MessageBoxCustom.ShowMessage("Errors Found. The skus that are highlighted in red have an issue with either their brand or model. This could be a spelling mistake or the brand and/or model are not in the database.", this);
                                 string fileName = fupItemSheet.FileName + "_ErrorsFound";
                                 //Sets the attributes and writes file

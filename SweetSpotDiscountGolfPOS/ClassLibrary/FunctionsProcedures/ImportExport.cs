@@ -144,7 +144,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                                 //***************ITEM TYPE****************
                                 3,
                                 //***************USED PRODUCT*************
-                                Convert.ToBoolean(worksheet.Cells[i, 27].Value),
+                                Convert.ToBoolean(false),
                                 //***************PROD ID******************
                                 (string)(worksheet.Cells[i,1].Value.ToNullSafeString())
                             );
@@ -194,7 +194,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                                 //***************ITEM TYPE***************
                                 2,
                                 //***************USED PRODUCT*************
-                                Convert.ToBoolean(worksheet.Cells[i, 27].Value),
+                                Convert.ToBoolean(false),
                                 //***************PROD ID******************
                                 (string)(worksheet.Cells[i, 1].Value.ToNullSafeString())
                             );
@@ -240,7 +240,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                                 //***************ITEM TYPE***************
                                 1,
                                 //***************USED PRODUCT*************
-                                Convert.ToBoolean(worksheet.Cells[i, 27].Value),
+                                Convert.ToBoolean(false),
                                 //***************PROD ID******************
                                 (string)(worksheet.Cells[i, 1].Value.ToNullSafeString())
                             );
