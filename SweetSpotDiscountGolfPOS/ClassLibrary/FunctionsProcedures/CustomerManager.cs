@@ -177,7 +177,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 new object[] { "@intProvinceID", customer.intProvinceID },
                 new object[] { "@intCountryID", customer.intCountryID },
                 new object[] { "@varPostalCode", customer.varPostalCode },
-                new object[] { "@bitSendMarketing", customer.bitSendMarketing }
+                new object[] { "@bitSendMarketing", true }
             };
 
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);

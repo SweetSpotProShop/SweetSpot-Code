@@ -640,22 +640,31 @@ namespace SweetSpotDiscountGolfPOS
                     //Creates a seperate sheet for each data table
                     ExcelWorksheet emailExport = xlPackage.Workbook.Worksheets.Add("Email List");
                     // write to sheet                  
-
+                    int intLastRow = 0;
                     //Export main invoice
                     for (int i = 1; i < emailTable.Rows.Count; i++)
                     {
+                        intLastRow = i;
                         for (int j = 1; j < emailTable.Columns.Count + 1; j++)
                         {
                             if (i == 1)
                             {
                                 emailExport.Cells[i, j].Value = headers[j - 1].ToString();
                             }
-                            else
-                            {
-                                emailExport.Cells[i, j].Value = emailTable.Rows[i - 1][j - 1];
-                            }
+                            //else
+                            //{
+                                emailExport.Cells[i + 1, j].Value = emailTable.Rows[i - 1][j - 1];
+                            //}
                         }
                     }
+
+
+                    for (int j = 1; j < emailTable.Columns.Count + 1; j++)
+                    {
+                        emailExport.Cells[intLastRow + 2, j].Value = emailTable.Rows[intLastRow][j-1];
+                    }
+
+
                     Response.Clear();
                     Response.AddHeader("content-disposition", "attachment; filename=Email List.xlsx");
                     Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
