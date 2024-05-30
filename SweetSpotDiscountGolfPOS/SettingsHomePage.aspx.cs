@@ -260,13 +260,13 @@ namespace SweetSpotDiscountGolfPOS
                                         }                                        
                                     }
                                     //Check to see if the cell's sku is in the array, if it is not, delete the row
-                                    bool isInArray = errorSkus.IndexOf((worksheet.Cells[i, 3].Value).ToString()) != -1;
+                                    bool isInArray = errorSkus.IndexOf((worksheet.Cells[i, 4].Value).ToString()) != -1;
                                     if (!isInArray)
                                     {
                                         worksheet.DeleteRow(i);
                                     }
-                                }                                
-                                worksheet.Cells[1, 28].Value = "Errors Found. The skus that are highlighted in red have an issue with either their brand or model. This could be a spelling mistake or the brand and/or model are not in the database.";
+                                }
+                                worksheet.Cells[1, 28].Value = "Errors Found. The skus that are highlighted in red have an issue with either their Brand, Model, or Destination. This could be a spelling mistake or the Brand, Model and/or Destination are not in the database.";
                                 //MessageBoxCustom.ShowMessage("Errors Found. The skus that are highlighted in red have an issue with either their brand or model. This could be a spelling mistake or the brand and/or model are not in the database.", this);
                                 string fileName = fupItemSheet.FileName + "_ErrorsFound";
                                 //Sets the attributes and writes file
@@ -274,7 +274,7 @@ namespace SweetSpotDiscountGolfPOS
                                 Response.AddHeader("content-disposition", "attachment; filename=" + fileName + ".xlsx");
                                 Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                                 Response.BinaryWrite(xlPackage.GetAsByteArray());
-                                Response.End();
+                                Response.End();                                
                             }
                             else
                             {
@@ -640,22 +640,31 @@ namespace SweetSpotDiscountGolfPOS
                     //Creates a seperate sheet for each data table
                     ExcelWorksheet emailExport = xlPackage.Workbook.Worksheets.Add("Email List");
                     // write to sheet                  
-
+                    int intLastRow = 0;
                     //Export main invoice
                     for (int i = 1; i < emailTable.Rows.Count; i++)
                     {
+                        intLastRow = i;
                         for (int j = 1; j < emailTable.Columns.Count + 1; j++)
                         {
                             if (i == 1)
                             {
                                 emailExport.Cells[i, j].Value = headers[j - 1].ToString();
                             }
-                            else
-                            {
-                                emailExport.Cells[i, j].Value = emailTable.Rows[i - 1][j - 1];
-                            }
+                            //else
+                            //{
+                                emailExport.Cells[i + 1, j].Value = emailTable.Rows[i - 1][j - 1];
+                            //}
                         }
                     }
+
+
+                    for (int j = 1; j < emailTable.Columns.Count + 1; j++)
+                    {
+                        emailExport.Cells[intLastRow + 2, j].Value = emailTable.Rows[intLastRow][j-1];
+                    }
+
+
                     Response.Clear();
                     Response.AddHeader("content-disposition", "attachment; filename=Email List.xlsx");
                     Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";

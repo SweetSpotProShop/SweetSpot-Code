@@ -101,6 +101,6 @@ C:\Users\Bishop\Documents\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\bin\de\
 C:\Users\Bishop\Documents\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\bin\de\PdfSharp.Charting.resources.dll
 C:\Users\Bishop\Documents\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.csproj.AssemblyReference.cache
 C:\Users\Bishop\Documents\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.csproj.CoreCompileInputs.cache
-C:\Users\Bishop\Documents\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.csproj.CopyComplete
 C:\Users\Bishop\Documents\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.dll
 C:\Users\Bishop\Documents\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpotDiscountGolfPOS.pdb
+C:\Users\Bishop\Documents\GitHub\SweetSpot-Code\SweetSpotDiscountGolfPOS\obj\Debug\SweetSpo.ECE45915.Up2Date

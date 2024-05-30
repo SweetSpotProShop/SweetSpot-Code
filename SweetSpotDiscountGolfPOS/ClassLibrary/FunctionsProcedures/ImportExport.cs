@@ -144,7 +144,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                                 //***************ITEM TYPE****************
                                 3,
                                 //***************USED PRODUCT*************
-                                Convert.ToBoolean(worksheet.Cells[i, 27].Value),
+                                Convert.ToBoolean(false),
                                 //***************PROD ID******************
                                 (string)(worksheet.Cells[i,1].Value.ToNullSafeString())
                             );
@@ -194,7 +194,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                                 //***************ITEM TYPE***************
                                 2,
                                 //***************USED PRODUCT*************
-                                Convert.ToBoolean(worksheet.Cells[i, 27].Value),
+                                Convert.ToBoolean(false),
                                 //***************PROD ID******************
                                 (string)(worksheet.Cells[i, 1].Value.ToNullSafeString())
                             );
@@ -240,7 +240,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                                 //***************ITEM TYPE***************
                                 1,
                                 //***************USED PRODUCT*************
-                                Convert.ToBoolean(worksheet.Cells[i, 27].Value),
+                                Convert.ToBoolean(false),
                                 //***************PROD ID******************
                                 (string)(worksheet.Cells[i, 1].Value.ToNullSafeString())
                             );
@@ -877,7 +877,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 + "fltPremiumCharge, fltCost, intQuantity, 0 AS ExtendedPrice, fltPrice, varAdditionalInformation, '' AS Image, varClubSpecification, "
                 + "varShaftSpecification, varShaftFlexability, varClubDexterity, (SELECT varSecondLocationID FROM tbl_location L WHERE L.intLocationID = "
                 + "C.intLocationID) AS locationSecondary, '' AS Received, 0 AS Paid, (SELECT varItemTypeName FROM tbl_itemType IT WHERE IT.intItemTypeID = "
-                + "C.intItemTypeID) AS itemType, bitIsUsedProduct FROM tbl_clubs C";
+                + "C.intItemTypeID) AS itemType, bitIsUsedProduct, varProdID FROM tbl_clubs C";
             return sqlCmd;
         }
         private string ExportAccessoryString()

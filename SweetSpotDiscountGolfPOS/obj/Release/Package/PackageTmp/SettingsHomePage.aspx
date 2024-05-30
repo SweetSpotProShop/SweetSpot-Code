@@ -164,21 +164,77 @@
                 <asp:Table runat="server" GridLines="Both" BorderStyle="Solid" BorderWidth="1px" BorderColor="Black">
                     <asp:TableRow>
                         <asp:TableCell>
-                            <asp:Label ID="lblproduct" runat="server" Text="Import Items" />
-                            <div>
-                                <asp:FileUpload ID="fupItemSheet" runat="server" />
-                            </div>
-                            <asp:Button ID="BtnLoadItems" runat="server" Width="150" Text="Import Items" OnClick="BtnLoadItems_Click" />
-                            <%--The actual button--%>
-                            <asp:Image id="imgLoadingItemImport" ImageUrl="~/Images/ajax-loader.gif" visible="false"  runat="server"/>
+                            <asp:Table runat="server">
+                                <asp:TableHeaderRow>
+                                    <asp:TableHeaderCell>
+                                        <asp:Label ID="lblproduct" runat="server" Text="Import Items" />
+                                    </asp:TableHeaderCell>                                    
+                                </asp:TableHeaderRow>
+                                <asp:TableRow>
+                                    <asp:TableCell>
+                                        <asp:FileUpload ID="fupItemSheet" runat="server" />
+                                    </asp:TableCell>
+                                </asp:TableRow>
+                                <asp:TableRow>
+                                    <asp:TableCell>
+                                        <asp:Button ID="BtnLoadItems" runat="server" Width="150" Text="Import Items" OnClick="BtnLoadItems_Click" />
+                                        <%--The actual button--%>
+                                        <asp:Image id="imgLoadingItemImport" ImageUrl="~/Images/ajax-loader.gif" visible="false"  runat="server"/>
+                                    </asp:TableCell>
+                                </asp:TableRow>
+                            </asp:Table>
                         </asp:TableCell>
-                        <%--<asp:TableCell>
-                            <asp:Label ID="lblLoadCustomers" runat="server" Text="Import Customers" />
-                            <div>
-                                <asp:FileUpload ID="fupCustomers" runat="server" />
-                            </div>
-                            <asp:Button ID="btnImportCustomers" runat="server" Width="150" Text="Import Customers" OnClientClick="showImage" OnClick="btnImportCustomers_Click" />
-                        </asp:TableCell>--%>
+                        <asp:TableCell>
+                            <asp:Table runat="server">
+                                <asp:TableHeaderRow>
+                                    <asp:TableHeaderCell>
+                                        <asp:Label ID="lblSpecialUpdateTool" runat="server" Text="Special Update Tool" />
+                                    </asp:TableHeaderCell>                                    
+                                </asp:TableHeaderRow>
+                                <asp:TableRow>
+                                    <asp:TableCell>
+                                        <asp:FileUpload ID="fupSpecialUpdate" runat="server"/>
+                                    </asp:TableCell>
+                                </asp:TableRow>
+                                <asp:TableRow>
+                                    <asp:TableCell>
+                                        <asp:Label ID="lblReferenceColumn" runat="server" Text="Reference Column" />
+                                    </asp:TableCell>
+                                    <asp:TableCell>
+                                        <asp:DropDownList ID="ddlReferenceColumn" runat="server">
+
+                                            <asp:ListItem Enabled="true" Text="Select Subject" Value="-1"/>
+                                            <asp:ListItem Text="SKU" Value="1"/>
+
+                                        </asp:DropDownList>
+                                    </asp:TableCell>
+                                </asp:TableRow>
+                                <asp:TableRow>
+                                    <asp:TableCell>
+                                        <asp:Label ID="lblSpecialUpateColumn" runat="server" Text="Update Column" />
+                                    </asp:TableCell>
+                                    <asp:TableCell>
+                                        <asp:DropDownList ID="ddlSpecialUpdateColumn" runat="server">
+                                            
+                                            <asp:ListItem Enabled="true" Text="Select Subject" Value="-1"/>
+                                            <asp:ListItem Text="Location" Value="1"/>
+                                            <asp:ListItem Text="Cost" Value="2"/>
+                                            <asp:ListItem Text="Price" Value="3"/>
+                                            <asp:ListItem Text="ProdID" Value="4"/>
+                                            <asp:ListItem Text="Quantity" Value="5"/>
+                                            <asp:ListItem Text="Dexterity" Value="6"/>
+
+                                        </asp:DropDownList>
+                                    </asp:TableCell>
+                                </asp:TableRow>
+                                <asp:TableRow>
+                                    <asp:TableCell>
+                                        <asp:Button ID="btnSpecialUpdateTool" runat="server" Width="150" Text="Run Update Tool" OnClick="btnSpecialUpdateTool_Click" />
+                                        <asp:Image id="imgLoadingItemImport2" ImageUrl="~/Images/ajax-loader.gif" visible="false"  runat="server"/>
+                                    </asp:TableCell>
+                                </asp:TableRow>
+                            </asp:Table>
+                        </asp:TableCell>
                     </asp:TableRow>
                 </asp:Table>
             </div>
