@@ -223,6 +223,7 @@
                                             <asp:ListItem Text="ProdID" Value="4"/>
                                             <asp:ListItem Text="Quantity" Value="5"/>
                                             <asp:ListItem Text="Dexterity" Value="6"/>
+                                            <asp:ListItem Text="Comments" Value="7"/>
 
                                         </asp:DropDownList>
                                     </asp:TableCell>

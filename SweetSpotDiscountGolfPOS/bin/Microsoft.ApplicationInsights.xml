@@ -7992,8 +7992,8 @@
         </member>
         <member name="T:Microsoft.ApplicationInsights.Metrics.MetricManager">
             <summary>A metric manager coordinates metrics aggregation at a specific scope.
-            It keeps track of the known metrics and is ultimataly respnsibe for correctly
-            initializeing metric data time series.
+            It keeps track of the known metrics and is ultimately responsibe for correctly
+            initializing metric data time series.
             Note that a metric manager deals with zero dimensional time series.
             Metric objects are multidimensional collections of such series and the manager 
             merely holds a collection of such containers for its scope.</summary>
@@ -8163,7 +8163,7 @@
         </member>
         <member name="T:Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement">
             <summary>Abstracts the configuration for a metric series aggregated using the "measurement" aggregation kind.
-            A mear=surement is best suited for metrics describing sizes or durations.
+            A measurement is best suited for metrics describing sizes or durations.
             It contains the Min, Max, Sum and Count of values tracked during an aggregation period.</summary>
         </member>
         <member name="M:Microsoft.ApplicationInsights.Metrics.MetricSeriesConfigurationForMeasurement.#ctor(System.Boolean)">
@@ -8670,6 +8670,9 @@
             <summary>
             Asynchronously Flushes the in-memory buffer and any metrics being pre-aggregated.
             </summary>
+            <remarks>
+            <a href="https://go.microsoft.com/fwlink/?linkid=525722#flushing-data">Learn more</a>
+            </remarks>
             <returns>
             Returns true when telemetry data is transferred out of process (application insights server or local storage) and are emitted before the flush invocation.
             Returns false when transfer of telemetry data to server has failed with non-retriable http status.

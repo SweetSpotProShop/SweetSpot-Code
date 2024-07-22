@@ -193,7 +193,7 @@
                                 </asp:TableHeaderRow>
                                 <asp:TableRow>
                                     <asp:TableCell>
-                                        <asp:FileUpload ID="fupSpecialUpdate" runat="server" />
+                                        <asp:FileUpload ID="fupSpecialUpdate" runat="server"/>
                                     </asp:TableCell>
                                 </asp:TableRow>
                                 <asp:TableRow>
@@ -201,7 +201,12 @@
                                         <asp:Label ID="lblReferenceColumn" runat="server" Text="Reference Column" />
                                     </asp:TableCell>
                                     <asp:TableCell>
-                                        <asp:DropDownList ID="ddlReferenceColumn" runat="server" />
+                                        <asp:DropDownList ID="ddlReferenceColumn" runat="server">
+
+                                            <asp:ListItem Enabled="true" Text="Select Subject" Value="-1"/>
+                                            <asp:ListItem Text="SKU" Value="1"/>
+
+                                        </asp:DropDownList>
                                     </asp:TableCell>
                                 </asp:TableRow>
                                 <asp:TableRow>
@@ -209,7 +214,17 @@
                                         <asp:Label ID="lblSpecialUpateColumn" runat="server" Text="Update Column" />
                                     </asp:TableCell>
                                     <asp:TableCell>
-                                        <asp:DropDownList ID="ddlSpecialUpdateColumn" runat="server" />
+                                        <asp:DropDownList ID="ddlSpecialUpdateColumn" runat="server">
+                                            
+                                            <asp:ListItem Enabled="true" Text="Select Subject" Value="-1"/>
+                                            <asp:ListItem Text="Location" Value="1"/>
+                                            <asp:ListItem Text="Cost" Value="2"/>
+                                            <asp:ListItem Text="Price" Value="3"/>
+                                            <asp:ListItem Text="ProdID" Value="4"/>
+                                            <asp:ListItem Text="Quantity" Value="5"/>
+                                            <asp:ListItem Text="Dexterity" Value="6"/>
+
+                                        </asp:DropDownList>
                                     </asp:TableCell>
                                 </asp:TableRow>
                                 <asp:TableRow>

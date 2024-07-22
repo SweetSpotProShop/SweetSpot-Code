@@ -1,24 +1,4 @@
 {
-  "dependencies": {
-    "secrets1": {
-      "restored": true,
-      "restoreTime": "2024-05-30T22:10:20.0227279Z"
-    },
-    "appInsights1": {
-      "restored": true,
-      "restoreTime": "2024-05-30T22:10:22.0387273Z"
-    }
-  },
-  "parameters": {
-    "appInsights1.resourceGroupName": {
-      "Name": "appInsights1.resourceGroupName",
-      "Type": "resourceGroup",
-      "Value": "sweetspot"
-    },
-    "appInsights1.subscriptionId": {
-      "Name": "appInsights1.subscriptionId",
-      "Type": "subscription",
-      "Value": "e088f9f1-aeed-401e-b8db-8bac796c43cd"
-    }
-  }
+  "dependencies": {},
+  "parameters": {}
 }

@@ -411,7 +411,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             DataTable listItems = new DataTable();
 
             listItems.Columns.Add("varReferenceColumn");
-            listItems.Columns.Add("varUdateColumn");
+            listItems.Columns.Add("varUpdateColumn");
 
             //Database connections
             SqlConnection con = new SqlConnection(connectionString);
@@ -463,6 +463,16 @@ namespace SweetSpotDiscountGolfPOS.FP
                                 (string)(worksheet.Cells[i, 2].Value.ToNullSafeString())
                                 );
                             strUpdateColumnQueryString = "varVarParameter VARCHAR(50),";
+                        }
+                        else if (strUColumn.ToString() == "Comments")
+                        {
+                            listItems.Rows.Add(
+                                //***************Reference Column**********************
+                                worksheet.Cells[i, 1].Value.ToNullSafeString(),
+                                //***************Update Column***************
+                                (string)(worksheet.Cells[i, 2].Value.ToNullSafeString())
+                                );
+                            strUpdateColumnQueryString = "fltVarParameter VARCHAR(200), ";
                         }
                         else if (strUColumn.ToString() == "Cost" || strUColumn.ToString() == "Price")
                         {
@@ -545,7 +555,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                         cmd.Parameters.AddWithValue("@varReferenceColumn", row[0].ToString());
 
 
-                        if (strUColumn.ToString() == "Location" || strUColumn.ToString() == "ProdID" || strUColumn.ToString() == "Dexterity")
+                        if (strUColumn.ToString() == "Location" || strUColumn.ToString() == "ProdID" || strUColumn.ToString() == "Dexterity" || strUColumn.ToString() == "Comments")
                         {
                             cmd.Parameters.AddWithValue("@varUpdateColumn", row[1].ToString());
                         }

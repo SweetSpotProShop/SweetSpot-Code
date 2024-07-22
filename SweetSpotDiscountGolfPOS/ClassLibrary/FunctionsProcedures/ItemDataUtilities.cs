@@ -476,6 +476,19 @@ namespace SweetSpotDiscountGolfPOS.FP
                 };
                 DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             }
+            else if (strUColumn.ToString() == "Comments")
+            {
+                strUpdateString = row[1].ToString();
+                strSQLColumn = "varAdditionalInformation";
+                
+                string sqlCmd = "UPDATE tbl_clubs SET " + strSQLColumn + " = CONCAT(varAdditionalInformation, ' ', @varUpdateColumn) WHERE var" + strRColumn + " = @varReferenceColumn";
+                object[][] parms =
+                {
+                 new object[] { "@varReferenceColumn", row[0].ToString() },
+                 new object[] { "@varUpdateColumn", strUpdateString }
+                };
+                DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
+            }
             else if (strUColumn.ToString() == "Cost" || strUColumn.ToString() == "Price")
             {
                 dblUpdateDouble = Convert.ToDouble(row[1]);

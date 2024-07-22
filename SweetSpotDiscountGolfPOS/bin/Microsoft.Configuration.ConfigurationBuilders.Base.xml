@@ -4,6 +4,81 @@
         <name>Microsoft.Configuration.ConfigurationBuilders.Base</name>
     </assembly>
     <members>
+        <member name="T:Microsoft.Configuration.ConfigurationBuilders.KeyValueEnabled">
+            <summary>
+            Possible modes (or behaviors) for key/value substitution.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Configuration.ConfigurationBuilders.KeyValueEnabled.Enabled">
+            <summary>
+            Will execute KeyValueConfigurationBuilder and throw on error.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Configuration.ConfigurationBuilders.KeyValueEnabled.Disabled">
+            <summary>
+            Will not execute KeyValueConfigurationBuilder.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Configuration.ConfigurationBuilders.KeyValueEnabled.Optional">
+            <summary>
+            Will execute KeyValueConfigurationBuilder but not report errors.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Configuration.ConfigurationBuilders.KeyValueEnabled.True">
+            <summary>
+            Same as Enabled.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Configuration.ConfigurationBuilders.KeyValueEnabled.False">
+            <summary>
+            Same as Disabled.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Configuration.ConfigurationBuilders.RecursionGuardValues">
+            <summary>
+            Possible behaviors when dealing with config builder recursion.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Configuration.ConfigurationBuilders.RecursionGuardValues.Throw">
+            <summary>
+            [Default] Throw when reprocessing the same section.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Configuration.ConfigurationBuilders.RecursionGuardValues.Stop">
+            <summary>
+            [!!May yield unexpected results in recursive conditions!!] Stop recursing, return without processing.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Configuration.ConfigurationBuilders.RecursionGuardValues.Allow">
+            <summary>
+            [!!May result in deadlocks or stack overflow in recursive conditions!!] Do nothing. Continue recursing.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Configuration.ConfigurationBuilders.RecursionGuard">
+            <summary>
+            Disposable object to help detect and handle problems with recursion.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Configuration.ConfigurationBuilders.KeyValueConfigBuilderException">
+            <summary>
+            An exception that wraps the root failure due to non-config exceptions while processing Key Value Config Builders.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Configuration.ConfigurationBuilders.KeyValueConfigBuilderException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Configuration.ConfigurationBuilders.KeyValueConfigBuilderException"/> class.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Configuration.ConfigurationBuilders.KeyValueConfigurationErrorsException">
+            <summary>
+            An exception that wraps the root failure due to config exceptions while processing Key Value Config Builders.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Configuration.ConfigurationBuilders.KeyValueConfigurationErrorsException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Configuration.ConfigurationBuilders.KeyValueConfigurationErrorsException"/> class.
+            </summary>
+        </member>
         <member name="T:Microsoft.Configuration.ConfigurationBuilders.SectionHandler`1">
             <summary>
             A class to be used by <see cref="T:Microsoft.Configuration.ConfigurationBuilders.KeyValueConfigBuilder"/>s to apply key/value config pairs to .Net configuration sections.
@@ -17,10 +92,18 @@
         </member>
         <member name="M:Microsoft.Configuration.ConfigurationBuilders.SectionHandler`1.GetEnumerator">
             <summary>
-            Gets an <see cref="T:System.Collections.Generic.IEnumerator`1"/> that iterates over the key/value pairs contained in the assigned <see cref="P:Microsoft.Configuration.ConfigurationBuilders.SectionHandler`1.ConfigSection"/>. />
+            Obsolete: Please implement <see cref="M:Microsoft.Configuration.ConfigurationBuilders.SectionHandler`1.KeysValuesAndState" /> to provide enumeration compatible with <see cref="F:Microsoft.Configuration.ConfigurationBuilders.KeyValueMode.Token"/>
             </summary>
             <returns>An enumerator over pairs consisting of the existing key for a config value in the config section, and an object reference
             for the key/value pair to be passed in to <see cref="M:Microsoft.Configuration.ConfigurationBuilders.SectionHandler`1.InsertOrUpdate(System.String,System.String,System.String,System.Object)"/> while processing the config section.</returns>
+        </member>
+        <member name="M:Microsoft.Configuration.ConfigurationBuilders.SectionHandler`1.KeysValuesAndState">
+            <summary>
+            Gets an <see cref="T:System.Collections.Generic.IEnumerable`1"/> for iterating over the key/value pairs contained in the assigned <see cref="P:Microsoft.Configuration.ConfigurationBuilders.SectionHandler`1.ConfigSection"/>. />
+            </summary>
+            <returns>An <see cref="T:System.Collections.Generic.IEnumerable`1"/> of <see cref="T:System.Tuple`3"/> for iterating over each key/value pair contained in 
+            the config section. Each Tuple contains the 'key', 'value', and a 'state' object which is passed back to this SectionHandler
+            when updating records with <see cref="M:Microsoft.Configuration.ConfigurationBuilders.SectionHandler`1.InsertOrUpdate(System.String,System.String,System.String,System.Object)"/>.</returns>
         </member>
         <member name="M:Microsoft.Configuration.ConfigurationBuilders.SectionHandler`1.InsertOrUpdate(System.String,System.String,System.String,System.Object)">
             <summary>
@@ -56,11 +139,12 @@
             <param name="oldKey">The old key name for the app setting, or null.</param>
             <param name="oldItem">The old key name for the app setting, or null., or null.</param>
         </member>
-        <member name="M:Microsoft.Configuration.ConfigurationBuilders.AppSettingsSectionHandler.GetEnumerator">
+        <member name="M:Microsoft.Configuration.ConfigurationBuilders.AppSettingsSectionHandler.KeysValuesAndState">
             <summary>
-            Gets an <see cref="T:System.Collections.Generic.IEnumerator`1"/> that iterates over the key/value pairs contained in the assigned <see cref="P:Microsoft.Configuration.ConfigurationBuilders.SectionHandler`1.ConfigSection"/>. />
+            Gets an <see cref="T:System.Collections.Generic.IEnumerable`1"/> for iterating over the key/value pairs contained in the assigned <see cref="P:Microsoft.Configuration.ConfigurationBuilders.SectionHandler`1.ConfigSection"/>. />
             </summary>
-            <returns>An enumerator over pairs where both values of the pair are the existing key for each setting in the appSettings section.</returns>
+            <returns>An enumerator over tuples where the values of the tuple are the existing key for each setting, the old value for the
+            setting, and the existing key for the setting again as the state which will be returned unmodified when updating.</returns>
         </member>
         <member name="M:Microsoft.Configuration.ConfigurationBuilders.AppSettingsSectionHandler.TryGetOriginalCase(System.String)">
             <summary>
@@ -85,16 +169,51 @@
             <param name="newKey">The updated key name for the connection string.</param>
             <param name="newValue">The updated value for the connection string.</param>
             <param name="oldKey">The old key name for the connection string, or null.</param>
-            <param name="oldItem">A reference to the old <see cref="T:System.Configuration.ConnectionStringSettings"/> object obtained by <see cref="M:Microsoft.Configuration.ConfigurationBuilders.ConnectionStringsSectionHandler.GetEnumerator"/>, or null.</param>
+            <param name="oldItem">A reference to the old <see cref="T:System.Configuration.ConnectionStringSettings"/> object obtained by <see cref="M:Microsoft.Configuration.ConfigurationBuilders.ConnectionStringsSectionHandler.KeysValuesAndState"/>, or null.</param>
         </member>
-        <member name="M:Microsoft.Configuration.ConfigurationBuilders.ConnectionStringsSectionHandler.GetEnumerator">
+        <member name="M:Microsoft.Configuration.ConfigurationBuilders.ConnectionStringsSectionHandler.KeysValuesAndState">
             <summary>
-            Gets an <see cref="T:System.Collections.Generic.IEnumerator`1"/> that iterates over the key/value pairs contained in the assigned <see cref="P:Microsoft.Configuration.ConfigurationBuilders.SectionHandler`1.ConfigSection"/>. />
+            Gets an <see cref="T:System.Collections.Generic.IEnumerable`1"/> for iterating over the key/value pairs contained in the assigned <see cref="P:Microsoft.Configuration.ConfigurationBuilders.SectionHandler`1.ConfigSection"/>. />
             </summary>
-            <returns>An enumerator over pairs where the key is the existing name for each setting in the connectionStrings section, and the value
-            is a reference to the <see cref="T:System.Configuration.ConnectionStringSettings"/> object referred to by that name.</returns>
+            <returns>An enumerator over tuples where the values of the tuple are the existing name for each connection string, the value of 
+            the connection string, and a reference to the <see cref="T:System.Configuration.ConnectionStringSettings"/> object itself which will be returned to
+            us as a reference state object when updating the config record.</returns>
         </member>
         <member name="M:Microsoft.Configuration.ConfigurationBuilders.ConnectionStringsSectionHandler.TryGetOriginalCase(System.String)">
+            <summary>
+            Attempt to lookup the original key casing so it can be preserved during greedy updates which would otherwise lose
+            the original casing in favor of the casing used in the config source.
+            </summary>
+            <param name="requestedKey">The key to find original casing for.</param>
+            <returns>A string containing the key with original casing from the config section, or the key as passed in if no match
+            can be found.</returns>
+        </member>
+        <member name="T:Microsoft.Configuration.ConfigurationBuilders.ConnectionStringsSectionHandler2">
+            <summary>
+            A class that can be used by <see cref="T:Microsoft.Configuration.ConfigurationBuilders.KeyValueConfigBuilder"/>s to apply key/value config pairs to <see cref="T:System.Configuration.ConnectionStringsSection"/>
+            with special 'tagging' to allow updating both the 'connectionString' attribute as well as the 'providerName' attribute.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Configuration.ConfigurationBuilders.ConnectionStringsSectionHandler2.InsertOrUpdate(System.String,System.String,System.String,System.Object)">
+            <summary>
+            Updates an existing connection string attribute in the assigned <see cref="P:Microsoft.Configuration.ConfigurationBuilders.SectionHandler`1.ConfigSection"/> with a new name and a new value. The old
+            connection string setting can be located using the <paramref name="oldItem"/> parameter. If an old connection string is not found, a new connection
+            string should be inserted.
+            </summary>
+            <param name="newKey">The updated key name for the connection string. May be post-fixed with attribute tag.</param>
+            <param name="newValue">The updated value for the connection string.</param>
+            <param name="oldKey">The old key name for the connection string, or null. May be post-fixed with attribute tag.</param>
+            <param name="oldItem">A reference to the old <see cref="T:System.Configuration.ConnectionStringSettings"/> object obtained by <see cref="M:Microsoft.Configuration.ConfigurationBuilders.ConnectionStringsSectionHandler2.KeysValuesAndState"/>, or null.</param>
+        </member>
+        <member name="M:Microsoft.Configuration.ConfigurationBuilders.ConnectionStringsSectionHandler2.KeysValuesAndState">
+            <summary>
+            Gets an <see cref="T:System.Collections.Generic.IEnumerable`1"/> for iterating over the key/value pairs contained in the assigned <see cref="P:Microsoft.Configuration.ConfigurationBuilders.SectionHandler`1.ConfigSection"/>. />
+            </summary>
+            <returns>An enumerator over tuples where the values of the tuple are the existing name for each connection string, the value of 
+            the connection string or the value of the provider name, and a reference to the <see cref="T:System.Configuration.ConnectionStringSettings"/> object itself
+            which will be returned to us as a reference state object when updating the config record.</returns>
+        </member>
+        <member name="M:Microsoft.Configuration.ConfigurationBuilders.ConnectionStringsSectionHandler2.TryGetOriginalCase(System.String)">
             <summary>
             Attempt to lookup the original key casing so it can be preserved during greedy updates which would otherwise lose
             the original casing in favor of the casing used in the config source.
@@ -123,11 +242,12 @@
             Utility methods commonly used by KeyValueConfigBuilders. 
             </summary>
         </member>
-        <member name="M:Microsoft.Configuration.ConfigurationBuilders.Utils.MapPath(System.String)">
+        <member name="M:Microsoft.Configuration.ConfigurationBuilders.Utils.MapPath(System.String,System.Configuration.ConfigurationSection)">
             <summary>
             Returns the physical file path that corresponds to the specified relative path. 
             </summary>
             <param name="path"></param>
+            <param name="configSection"></param>
             <returns></returns>
         </member>
         <member name="T:Microsoft.Configuration.ConfigurationBuilders.KeyValueConfigBuilder">
@@ -152,6 +272,16 @@
             Specifies whether the config builder should cause errors if the backing source cannot be found.
             </summary>
         </member>
+        <member name="P:Microsoft.Configuration.ConfigurationBuilders.KeyValueConfigBuilder.IsOptional">
+            <summary>
+            Specifies whether the config builder should cause errors if the backing source cannot be found.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Configuration.ConfigurationBuilders.KeyValueConfigBuilder.Enabled">
+            <summary>
+            Specifies whether the config builder should cause errors if the backing source cannot be found, or even run at all.
+            </summary>
+        </member>
         <member name="P:Microsoft.Configuration.ConfigurationBuilders.KeyValueConfigBuilder.EscapeValues">
             <summary>
             Specifies whether the config builder should cause errors if the backing source cannot be found.
@@ -159,7 +289,22 @@
         </member>
         <member name="P:Microsoft.Configuration.ConfigurationBuilders.KeyValueConfigBuilder.TokenPattern">
             <summary>
-            Gets or sets a regular expression used for matching tokens in raw xml during Greedy substitution.
+            Gets or sets a regular expression used for matching tokens during 'Token' substitution.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Configuration.ConfigurationBuilders.KeyValueConfigBuilder.Recursion">
+            <summary>
+            Gets or sets the behavior to use when recursion is detected.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Configuration.ConfigurationBuilders.KeyValueConfigBuilder.CharacterMap">
+            <summary>
+            Gets or sets a string-represented mapping of characters to apply when mapping keys. Escape with doubles. Ex "@=a,$=S" or "a-z=a,,z,0-9=0,,9"
+            </summary>
+        </member>
+        <member name="P:Microsoft.Configuration.ConfigurationBuilders.KeyValueConfigBuilder.CurrentSection">
+            <summary>
+            Gets the ConfigurationSection object that is currently being processed by this builder.
             </summary>
         </member>
         <member name="M:Microsoft.Configuration.ConfigurationBuilders.KeyValueConfigBuilder.GetValue(System.String)">
@@ -225,6 +370,11 @@
             individual builders in some other cases.
             </summary>
         </member>
+        <member name="M:Microsoft.Configuration.ConfigurationBuilders.KeyValueConfigBuilder.ProcessConfigurationSection(System.Configuration.ConfigurationSection)">
+            <summary>
+             (Warning: Overriding may interfere with recursion detection.)
+            </summary>
+        </member>
         <member name="T:Microsoft.Configuration.ConfigurationBuilders.KeyValueMode">
             <summary>
             Possible modes (or behaviors) for key/value substitution.
@@ -240,9 +390,9 @@
             Inserts all 'values' regardless of the previous existence of the 'key.' Only operates on known key/value config sections.
             </summary>
         </member>
-        <member name="F:Microsoft.Configuration.ConfigurationBuilders.KeyValueMode.Expand">
+        <member name="F:Microsoft.Configuration.ConfigurationBuilders.KeyValueMode.Token">
             <summary>
-            Replace 'key'-specifying tokens in raw xml with 'values.' Operates on any config section.
+            Replace 'key'-specifying tokens in the 'key' or 'value' parts of a config entry.
             </summary>
         </member>
     </members>
