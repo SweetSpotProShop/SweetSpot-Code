@@ -1,0 +1,48 @@
+﻿@model YourNamespace.YourModel
+
+<div class="Inventory-container">
+    <!-- Top Section -->
+    <div class="InventoryTop-section">
+        <input type="text" class="form-control" id="SearchInventory" name="SearchInventory" placeholder="Search..."/>
+        <button type="button" class="btn btn-primary">Search</button>
+    </div>
+
+    <!-- Grid -->
+    <div class="Inventory-content">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Add Item</th>
+                    <th>Sku</th>
+                    <th>In Stock</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Discount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.YourEnumerableList)
+                {
+                    <tr>
+                        <td>
+                            <button type="button" class="btn btn-success">Add</button>
+                        </td>
+                        <td>@item.Sku</td>
+                        <td>
+                            <input type="text" class="form-control" placeholder="@item.InStock" />
+                        </td>
+                        <td>@item.Description</td>
+                        <td>@item.Price</td>
+                        <td>
+                            <input type="text" class="form-control" placeholder="@item.Discount" />
+                            <div>
+                                <input type="checkbox" @(item.DiscountChecked ? "checked" : "") />
+                                <label class="form-check-label">Discount by Percent</label>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

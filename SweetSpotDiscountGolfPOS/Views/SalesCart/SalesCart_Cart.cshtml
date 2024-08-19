@@ -1,0 +1,72 @@
+﻿@model YourNamespace.YourModel
+
+<div class="Cart-container">
+    <!-- Grid -->
+    <div class="Cart-content">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Remove Item</th>
+                    <th>Edit Item</th>
+                    <th>SKU</th>
+                    <th>Quantity</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Discount</th>
+                    <th>Taxes</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.YourEnumerableList)
+                {
+                    <tr>
+                        <td>
+                            <button type="button" class="btn btn-danger">Remove</button>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-primary edit-button">Edit</button>
+                        </td>
+                        <td>@item.Sku</td>
+                        <td>
+                            <input type="text" class="form-control quantity-input" value="@item.Quantity" readonly />
+                        </td>
+                        <td>@item.Description</td>
+                        <td>@item.Price</td>
+                        <td>
+                            <input type="text" class="form-control discount-input" value="@item.Discount" readonly />
+                            <div>
+                                <input type="checkbox" class="discount-checkbox" @if (item.IsDiscountApplied) { <text> checked</text> } disabled />
+                                <label>Discount Applied</label>
+                            </div>
+                        </td>
+                        <td>@item.Taxes</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <button type="button" id="toggleEditButton" class="btn btn-warning">Edit</button>
+    </div>
+</div>
+
+<script>
+    document.getElementById('toggleEditButton').addEventListener('click', function() {
+        var isEditing = this.innerText === 'Save';
+        var quantityInputs = document.querySelectorAll('.quantity-input');
+        var discountInputs = document.querySelectorAll('.discount-input');
+        var discountCheckboxes = document.querySelectorAll('.discount-checkbox');
+
+        quantityInputs.forEach(function(input) {
+            input.readOnly = !isEditing;
+        });
+
+        discountInputs.forEach(function(input) {
+            input.readOnly = !isEditing;
+        });
+
+        discountCheckboxes.forEach(function(checkbox) {
+            checkbox.disabled = isEditing;
+        });
+
+        this.innerText = isEditing ? 'Edit' : 'Save';
+    });
+</script>

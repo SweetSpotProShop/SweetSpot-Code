@@ -1,0 +1,213 @@
+﻿/*.costDetail {
+    display: none;
+}
+
+.cost:hover .costDetail {
+    display: block;
+    position: absolute;
+    text-align: left;
+    max-width: 300px;
+    max-height: 300px;
+    overflow: auto;
+    background-color: #fff;
+    border: 2px solid #bbb;
+    padding: 3px;
+}
+.priceDetail {
+    display: none;
+}
+
+.price:hover .priceDetail {
+    display: block;
+    position: absolute;
+    text-align: left;
+    max-width: 300px;
+    max-height: 300px;
+    overflow: auto;
+    background-color: #fff;
+    border: 2px solid #bbb;
+    padding: 3px;
+}*/
+
+
+
+.SalesCartBody {
+    display: flex;
+}
+
+
+
+.SalesCartSidebar {
+    width: 200px;
+    position: fixed;
+    height: 100%;
+    background-color: #f4f4f4;
+    padding: 20px;
+}
+
+
+
+.SalesCartContent {
+    margin-left: 220px; /* Width of the sidebar + some margin */
+    padding: 20px;
+    width: 100%;
+}
+
+
+
+.SalesCartLabel-Group, .SalesCartButton-Group {
+    margin-bottom: 20px;
+}
+
+
+
+.SalesCartLabel-Group div {
+    margin-bottom: 10px;
+}
+
+
+
+.SalesCartHidden-Label {
+    display: none;
+}
+
+
+
+.SalesCartButton-Group {
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+.SalesCartButton-Group button {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+
+
+.SalesCartButton-Group button:hover {
+    background-color: #0056b3;
+}
+
+
+
+.CustomerHeader-elements {
+    margin-bottom: 20px;
+}
+
+    .CustomerHeader-elements label {
+        margin-right: 10px;
+    }
+
+    .CustomerHeader-elements input[type="text"] {
+        margin-right: 10px;
+    }
+
+.CustomerSearchGrid-container {
+    height: 300px; /* Set your desired height */
+    overflow-y: scroll;
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f4f4f4;
+}
+
+.CustomerSearchFooter {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #f4f4f4;
+    border-top: 1px solid #ddd;
+}
+
+.CustomerSearchFooter-column {
+    flex: 1;
+    padding: 0 10px;
+}
+
+.CustomerSearchFooter input[type="text"] {
+    width: 100%;
+    margin-bottom: 5px;
+    padding: 5px;
+}
+
+.CustomerSearchFooter input[type="checkbox"] {
+    margin-left: 5px;
+}
+
+.CustomerSearchFooter button {
+    width: 100%;
+    padding: 5px;
+}
+
+.Inventory-container {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.InventoryTop-section {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+    .InventoryTop-section label {
+        margin-right: 10px;
+    }
+
+    .InventoryTop-section input[type="text"] {
+        margin-right: 10px;
+    }
+
+.Inventory-content {
+    max-height: 400px; /* Adjust height as needed */
+    overflow-y: auto;
+}
+
+
+
+.Cart-container {
+    width: 100%;
+    margin: 0 auto;
+}
+.Cart-content {
+    max-height: 400px; /* Adjust height as needed */
+    overflow-y: auto;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
