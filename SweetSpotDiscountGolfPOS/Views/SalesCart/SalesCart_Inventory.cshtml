@@ -1,4 +1,4 @@
-﻿@model YourNamespace.YourModel
+﻿@model IEnumerable<SweetSpotDiscountGolfPOS.Models.SalesCartInventory>
 
 <div class="Inventory-container">
     <!-- Top Section -->
@@ -21,22 +21,22 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.YourEnumerableList)
+                @foreach (var item in Model)
                 {
                     <tr>
                         <td>
                             <button type="button" class="btn btn-success">Add</button>
                         </td>
-                        <td>@item.Sku</td>
+                        <td>@item.varSku</td>
                         <td>
-                            <input type="text" class="form-control" placeholder="@item.InStock" />
+                            <input type="text" class="form-control" placeholder="@item.intQuantity" />
                         </td>
-                        <td>@item.Description</td>
-                        <td>@item.Price</td>
+                        <td>@item.varDescription</td>
+                        <td>@item.fltPrice</td>
                         <td>
-                            <input type="text" class="form-control" placeholder="@item.Discount" />
+                            <input type="text" class="form-control" placeholder="@item.fltDiscount" />
                             <div>
-                                <input type="checkbox" @(item.DiscountChecked ? "checked" : "") />
+                                <input type="checkbox" @(item.bitIsDiscountPercent ? "checked" : "") />
                                 <label class="form-check-label">Discount by Percent</label>
                             </div>
                         </td>

@@ -1,4 +1,4 @@
-﻿@model YourNamespace.YourModel
+﻿@model IEnumerable<SweetSpotDiscountGolfPOS.Models.SalesCartInventory>
 
 <div class="Cart-container">
     <!-- Grid -->
@@ -17,7 +17,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.YourEnumerableList)
+                @foreach (var item in Model)
                 {
                     <tr>
                         <td>
@@ -26,20 +26,20 @@
                         <td>
                             <button type="button" class="btn btn-primary edit-button">Edit</button>
                         </td>
-                        <td>@item.Sku</td>
+                        <td>@item.varSku</td>
                         <td>
-                            <input type="text" class="form-control quantity-input" value="@item.Quantity" readonly />
+                            <input type="text" class="form-control quantity-input" value="@item.intQuantity" readonly />
                         </td>
-                        <td>@item.Description</td>
-                        <td>@item.Price</td>
+                        <td>@item.varDescription</td>
+                        <td>@item.fltPrice</td>
                         <td>
-                            <input type="text" class="form-control discount-input" value="@item.Discount" readonly />
+                            <input type="text" class="form-control discount-input" value="@item.fltDiscount" readonly />
                             <div>
-                                <input type="checkbox" class="discount-checkbox" @if (item.IsDiscountApplied) { <text> checked</text> } disabled />
+                                <input type="checkbox" class="discount-checkbox" @if (item.bitIsDiscountPercent) { <text> checked</text> } disabled />
                                 <label>Discount Applied</label>
                             </div>
                         </td>
-                        <td>@item.Taxes</td>
+
                     </tr>
                 }
             </tbody>

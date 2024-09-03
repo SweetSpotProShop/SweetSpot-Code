@@ -7,11 +7,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SweetSpotDiscountGolfPOS {
-    
-    
-    public partial class SalesHomePage {
-        
+namespace SweetSpotDiscountGolfPOS
+{
+
+
+    public partial class SalesHomePage
+    {
+
         /// <summary>
         /// pnlDefaultButton control.
         /// </summary>
@@ -20,7 +22,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel pnlDefaultButton;
-        
+
         /// <summary>
         /// BtnQuickSale control.
         /// </summary>
@@ -29,7 +31,16 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button BtnQuickSale;
-        
+
+        /// <summary>
+        /// BtnMVCTestSale control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button BtnMVCTestSale;
+
         /// <summary>
         /// BtnReturns control.
         /// </summary>
@@ -38,7 +49,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button BtnReturns;
-        
+
         /// <summary>
         /// BtnInvoiceSearch control.
         /// </summary>
@@ -47,7 +58,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button BtnInvoiceSearch;
-        
+
         /// <summary>
         /// BtnProcessCashOut control.
         /// </summary>
@@ -56,7 +67,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button BtnProcessCashOut;
-        
+
         /// <summary>
         /// CalSearchDate control.
         /// </summary>
@@ -65,7 +76,7 @@ namespace SweetSpotDiscountGolfPOS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Calendar CalSearchDate;
-        
+
         /// <summary>
         /// GrdCurrentOpenSales control.
         /// </summary>

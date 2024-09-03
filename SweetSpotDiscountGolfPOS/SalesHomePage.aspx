@@ -24,6 +24,7 @@
                 <asp:TableRow>
                     <asp:TableCell>
                         <asp:Button ID="BtnQuickSale" runat="server" Width="150" Text="Quick Sale" OnClick="BtnQuickSale_Click" />
+                        <asp:Button ID="BtnMVCTestSale" runat="server" Width="150" Text="MVC Test Sale" OnClick="BtnMVCTestSale_Click" />
                     </asp:TableCell>
                     <asp:TableCell>
                         <asp:Button ID="BtnReturns" runat="server" Width="150" Text="Process Return" OnClick="BtnReturns_Click" />

@@ -1,5 +1,5 @@
 ﻿
-@model IEnumerable<SweetSpotDiscountGolfPOS.Models.Customer>
+@model IEnumerable<SweetSpotDiscountGolfPOS.Models.SalesCartCustomer>
     
     <div class="CustomerHeader-elements">
         <label for="CustomerHeaderLabel">Customer Name:</label>
@@ -22,13 +22,13 @@
                     <tr>
                         <td>
                             <form asp-action="SwitchCustomer" method="post">
-                                <input type="hidden" name="CustomerId" value="@customer.CustomerId" />
+                                <input type="hidden" name="CustomerId" value="@customer.intCustomerID" />
                                 <button type="submit">Switch</button>
                             </form>
                         </td>
-                        <td>@customer.FirstName @customer.LastName</td>
-                        <td>@customer.PhoneNumber</td>
-                        <td>@customer.Email</td>
+                        <td>@customer.varFirstName @customer.varLastName</td>
+                        <td>@customer.varContactNumber</td>
+                        <td>@customer.varEmailAddress</td>
                     </tr>
                 }
             </tbody>
@@ -51,33 +51,3 @@
             </div>
         </div>
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

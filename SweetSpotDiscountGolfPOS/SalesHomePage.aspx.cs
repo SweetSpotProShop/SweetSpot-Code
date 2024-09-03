@@ -79,6 +79,34 @@ namespace SweetSpotDiscountGolfPOS
                     + "your system administrator.", this);
             }
         }
+
+        protected void BtnMVCTestSale_Click(object sender, EventArgs e)
+        {
+            //Collects current method for error tracking
+            string method = "btnMVCTestSale_Click";
+            //object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
+            {
+                var nameValues = HttpUtility.ParseQueryString(Request.QueryString.ToString());
+                nameValues.Set("customer", "1");
+                string invoice = "-10";
+                nameValues.Set("invoice", invoice);
+                //Changes page to Sales Cart
+                //Response.Redirect("~/Views/SalesCart/_Layout?" + nameValues, false);
+                Response.Redirect("~/SalesCart/Index?" + nameValues, false);
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
+                //Display message box
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
         protected void BtnReturns_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
