@@ -214,7 +214,7 @@
                                         <asp:Label ID="lblSpecialUpateColumn" runat="server" Text="Update Column" />
                                     </asp:TableCell>
                                     <asp:TableCell>
-                                        <asp:DropDownList ID="ddlSpecialUpdateColumn" runat="server">
+                                        <asp:DropDownList ID="ddlSpecialUpdateColumn" OnSelectedIndexChanged="ddlSpecialUpdateColumn_SelectedIndexChanged" AutoPostBack="true" runat="server">
                                             
                                             <asp:ListItem Enabled="true" Text="Select Subject" Value="-1"/>
                                             <asp:ListItem Text="Location" Value="1"/>
@@ -228,6 +228,20 @@
                                         </asp:DropDownList>
                                     </asp:TableCell>
                                 </asp:TableRow>
+
+                                <asp:TableRow>
+                                    <asp:TableCell>
+                                        <asp:Label ID="LblTableSelect" runat="server" Text="Select Table" />
+                                    </asp:TableCell>
+                                    <asp:TableCell>
+                                        <asp:DropDownList ID="DdlTableSelect" runat="server">
+                                            <asp:ListItem Text="Clubs" Value="1"/>
+                                            <asp:ListItem Text="Clothing" Value="2"/>
+                                            <asp:ListItem Text="Accessories" Value="3"/>
+                                        </asp:DropDownList>
+                                    </asp:TableCell>
+                                </asp:TableRow>
+
                                 <asp:TableRow>
                                     <asp:TableCell>
                                         <asp:Button ID="btnSpecialUpdateTool" runat="server" Width="150" Text="Run Update Tool" OnClick="btnSpecialUpdateTool_Click" />

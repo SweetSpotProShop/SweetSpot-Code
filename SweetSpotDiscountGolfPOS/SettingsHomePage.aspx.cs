@@ -297,6 +297,39 @@ namespace SweetSpotDiscountGolfPOS
             }
             imgLoadingItemImport.Visible = false;
         }
+
+
+        protected void ddlSpecialUpdateColumn_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string method = "ddlSpecialUpdateColumn_SelectedIndexChanged";
+            object[] objPageDetails = { Session["currPage"].ToString(), method };
+            try
+            {
+                if(Convert.ToInt32(ddlSpecialUpdateColumn.SelectedValue) == 6)
+                {
+                    DdlTableSelect.SelectedValue = "1";
+                    DdlTableSelect.Enabled = false;
+                }
+                else
+                {
+                    DdlTableSelect.Enabled = true;
+                }
+            }
+            //Exception catch
+            catch (ThreadAbortException tae) { }
+            catch (Exception ex)
+            {
+                //Log all info into error table
+                ER.CallLogError(ex, CU.employee.intEmployeeID, Convert.ToString(Session["currPage"]), method, this);
+                //Display message box
+                MessageBoxCustom.ShowMessage("An Error has occurred and been logged. "
+                    + "If you continue to receive this message please contact "
+                    + "your system administrator.", this);
+            }
+        }
+
+
+
         protected void btnSpecialUpdateTool_Click(object sender, EventArgs e)
         {
             //Collects current method for error tracking
@@ -353,7 +386,16 @@ namespace SweetSpotDiscountGolfPOS
 #pragma warning restore IDE0067 // Dispose objects before losing scope
                             string strReferenceColumn = ddlReferenceColumn.SelectedItem.Text;
                             string strUpdateColumn = ddlSpecialUpdateColumn.SelectedItem.Text;
-                            errors = IE.CallSpecialUpdateTool(fupSpecialUpdate, strReferenceColumn, strUpdateColumn, CU, objPageDetails);
+                            string strUpdateTable = "tbl_clubs";
+                            if (Convert.ToInt32(DdlTableSelect.SelectedValue) == 2)
+                            {
+                                strUpdateTable = "tbl_clothing";
+                            }
+                            else if (Convert.ToInt32(DdlTableSelect.SelectedValue) == 3)
+                            {
+                                strUpdateTable = "tbl_accessories";
+                            }
+                            errors = IE.CallSpecialUpdateTool(fupSpecialUpdate, strReferenceColumn, strUpdateColumn, strUpdateTable,CU, objPageDetails);
                             if (errors.Rows.Count != 0)
                             {
                                 //Loops through the errors datatable pulling the sku's from there and entering them into an array

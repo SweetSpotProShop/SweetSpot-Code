@@ -20,9 +20,9 @@ namespace SweetSpotDiscountGolfPOS.FP
         {
             return UploadItems(fup, cu, objPageDetails);
         }
-        public DataTable CallSpecialUpdateTool(FileUpload fupSU, string strRColumn, string strUColumn, CurrentUser cu, object[] objPageDetails)
+        public DataTable CallSpecialUpdateTool(FileUpload fupSU, string strRColumn, string strUColumn, string strUTable, CurrentUser cu, object[] objPageDetails)
         {
-            return SpecialUpdateTool(fupSU, strRColumn, strUColumn, cu, objPageDetails);
+            return SpecialUpdateTool(fupSU, strRColumn, strUColumn, strUTable, cu, objPageDetails);
         }
         private DataTable UploadItems(FileUpload fup, CurrentUser cu, object[] objPageDetails)
         {
@@ -398,7 +398,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             conTempDB.Close();
             return skusWithErrors;
         }
-        private DataTable SpecialUpdateTool(FileUpload fupSU, string strRColumn, string strUColumn, CurrentUser cu, object[] objPageDetails)
+        private DataTable SpecialUpdateTool(FileUpload fupSU, string strRColumn, string strUColumn, string strUTable, CurrentUser cu, object[] objPageDetails)
         {
 
 
@@ -603,7 +603,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                     foreach (DataRow row in temp.Rows)
                     {
                         //loop through just one, and it will know the itemID because we set it ealier in the process                            
-                        IDU.SpecialUpdate(row, strRColumn, strUColumn, objPageDetails);
+                        IDU.SpecialUpdate(row, strRColumn, strUColumn, strUTable, objPageDetails);
                     }
                 }
             }
