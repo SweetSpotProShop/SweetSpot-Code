@@ -3,28 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|c:\\users\\bishop\\documents\\github\\sweetspot-code\\sweetspotdiscountgolfpos\\views\\salescart\\salescart_customerselection.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|solutionrelative:sweetspotdiscountgolfpos\\views\\salescart\\salescart_customerselection.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|c:\\users\\bishop\\documents\\github\\sweetspot-code\\sweetspotdiscountgolfpos\\salescart.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|solutionrelative:sweetspotdiscountgolfpos\\salescart.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|c:\\users\\bishop\\documents\\github\\sweetspot-code\\sweetspotdiscountgolfpos\\models\\salescartinventory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|solutionrelative:sweetspotdiscountgolfpos\\models\\salescartinventory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|c:\\users\\bishop\\documents\\github\\sweetspot-code\\sweetspotdiscountgolfpos\\models\\salescartcustomer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|solutionrelative:sweetspotdiscountgolfpos\\models\\salescartcustomer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|c:\\users\\bishop\\documents\\github\\sweetspot-code\\sweetspotdiscountgolfpos\\classlibrary\\misc\\databasecalls.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|solutionrelative:sweetspotdiscountgolfpos\\classlibrary\\misc\\databasecalls.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|c:\\users\\bishop\\documents\\github\\sweetspot-code\\sweetspotdiscountgolfpos\\models\\asyncinvoicemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|solutionrelative:sweetspotdiscountgolfpos\\models\\asyncinvoicemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|c:\\users\\bishop\\documents\\github\\sweetspot-code\\sweetspotdiscountgolfpos\\views\\salescart\\salescart_customerselection.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|solutionrelative:sweetspotdiscountgolfpos\\views\\salescart\\salescart_customerselection.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|c:\\users\\bishop\\documents\\github\\sweetspot-code\\sweetspotdiscountgolfpos\\models\\asyncdatabasecalls.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|solutionrelative:sweetspotdiscountgolfpos\\models\\asyncdatabasecalls.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|c:\\users\\bishop\\documents\\github\\sweetspot-code\\sweetspotdiscountgolfpos\\models\\salescartinvoice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -33,6 +25,14 @@
     {
       "AbsoluteMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|c:\\users\\bishop\\documents\\github\\sweetspot-code\\sweetspotdiscountgolfpos\\controllers\\salescartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|solutionrelative:sweetspotdiscountgolfpos\\controllers\\salescartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|c:\\users\\bishop\\documents\\github\\sweetspot-code\\sweetspotdiscountgolfpos\\models\\salescartinventory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|solutionrelative:sweetspotdiscountgolfpos\\models\\salescartinventory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|c:\\users\\bishop\\documents\\github\\sweetspot-code\\sweetspotdiscountgolfpos\\models\\salescartcustomer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|solutionrelative:sweetspotdiscountgolfpos\\models\\salescartcustomer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|c:\\users\\bishop\\documents\\github\\sweetspot-code\\sweetspotdiscountgolfpos\\saleshomepage.aspx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -45,14 +45,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\sweetspotdiscountgolfpos\\views\\salescart\\salescart_inventory.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|solutionrelative:sweetspotdiscountgolfpos\\views\\salescart\\salescart_inventory.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\sweetspotdiscountgolfpos\\salescart.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
-      "RelativeMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|solutionrelative:sweetspotdiscountgolfpos\\salescart.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\sweetspotdiscountgolfpos\\saleshomepage.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}",
-      "RelativeMoniker": "D:0:0:{8D714C76-C9C5-42AB-B8ED-649BFF050071}|SweetSpotDiscountGolfPOS\\SweetSpotDiscountGolfPOS.csproj|solutionrelative:sweetspotdiscountgolfpos\\saleshomepage.aspx||{57312C73-6202-49E9-B1E1-40EA1A6DC1F6}"
     }
   ],
   "DocumentGroupContainers": [
@@ -66,13 +58,13 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "SalesCart_CustomerSelection.cshtml",
               "DocumentMoniker": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Views\\SalesCart\\SalesCart_CustomerSelection.cshtml",
               "RelativeDocumentMoniker": "SweetSpotDiscountGolfPOS\\Views\\SalesCart\\SalesCart_CustomerSelection.cshtml",
               "ToolTip": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Views\\SalesCart\\SalesCart_CustomerSelection.cshtml",
               "RelativeToolTip": "SweetSpotDiscountGolfPOS\\Views\\SalesCart\\SalesCart_CustomerSelection.cshtml",
-              "ViewState": "AQIAAA4AAAAAAAAAAAAowBMAAAAqAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAAAqAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2024-08-24T20:55:23.24Z",
               "EditorCaption": ""
@@ -87,7 +79,8 @@
               "RelativeToolTip": "SweetSpotDiscountGolfPOS\\Views\\SalesCart\\SalesCart_Inventory.cshtml",
               "ViewState": "AQIAAAYAAAAAAAAAAAAAABcAAAArAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-08-24T20:55:24.142Z"
+              "WhenOpened": "2024-08-24T20:55:24.142Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -99,40 +92,7 @@
               "RelativeToolTip": "SweetSpotDiscountGolfPOS\\Views\\SalesCart\\SalesCart_Cart.cshtml",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAAArAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-08-24T20:54:21.336Z"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "Orientation": 0,
-      "VerticalTabListWidth": 256,
-      "FloatingWindowState": {
-        "Id": "eeac66b4-4cd8-4a9e-b2aa-2dc8dc219c82",
-        "Display": 0,
-        "X": 239,
-        "Y": 247,
-        "Width": 945,
-        "Height": 586,
-        "WindowState": 0
-      },
-      "DocumentGroups": [
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 0,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "SalesCartController.cs",
-              "DocumentMoniker": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Controllers\\SalesCartController.cs",
-              "RelativeDocumentMoniker": "SweetSpotDiscountGolfPOS\\Controllers\\SalesCartController.cs",
-              "ToolTip": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Controllers\\SalesCartController.cs",
-              "RelativeToolTip": "SweetSpotDiscountGolfPOS\\Controllers\\SalesCartController.cs",
-              "ViewState": "AQIAAAoAAAAAAAAAAAAIwBkAAAARAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-08-24T19:50:02.681Z",
+              "WhenOpened": "2024-08-24T20:54:21.336Z",
               "EditorCaption": ""
             }
           ]
@@ -144,12 +104,12 @@
       "VerticalTabListWidth": 256,
       "FloatingWindowState": {
         "Id": "df2bca4a-c873-43be-9e0e-d8a0e223e999",
-        "Display": 0,
-        "X": 84,
-        "Y": 170,
+        "Display": 1,
+        "X": -60,
+        "Y": 186,
         "Width": 1095,
         "Height": 507,
-        "WindowState": 2
+        "WindowState": 0
       },
       "DocumentGroups": [
         {
@@ -164,7 +124,7 @@
               "RelativeDocumentMoniker": "SweetSpotDiscountGolfPOS\\SalesHomePage.aspx.cs",
               "ToolTip": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\SalesHomePage.aspx.cs",
               "RelativeToolTip": "SweetSpotDiscountGolfPOS\\SalesHomePage.aspx.cs",
-              "ViewState": "AQIAAD0AAAAAAAAAAAAmwGEAAAABAAAA",
+              "ViewState": "AQIAAEYAAAAAAAAAAAAowGEAAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-24T19:15:23.529Z",
               "EditorCaption": ""
@@ -177,44 +137,10 @@
       "Orientation": 0,
       "VerticalTabListWidth": 256,
       "FloatingWindowState": {
-        "Id": "41c76750-843a-44c3-9a58-2d44dcb01d36",
-        "Display": 0,
-        "X": 103,
-        "Y": 100,
-        "Width": 1095,
-        "Height": 507,
-        "WindowState": 0
-      },
-      "DocumentGroups": [
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 0,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "SalesCartCustomer.cs",
-              "DocumentMoniker": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Models\\SalesCartCustomer.cs",
-              "RelativeDocumentMoniker": "SweetSpotDiscountGolfPOS\\Models\\SalesCartCustomer.cs",
-              "ToolTip": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Models\\SalesCartCustomer.cs",
-              "RelativeToolTip": "SweetSpotDiscountGolfPOS\\Models\\SalesCartCustomer.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABIAAAAYAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-01T14:48:46.344Z",
-              "EditorCaption": ""
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "Orientation": 0,
-      "VerticalTabListWidth": 256,
-      "FloatingWindowState": {
         "Id": "cb8c123e-c89e-454d-a52b-000a1d1c4fee",
         "Display": 0,
-        "X": 190,
-        "Y": 164,
+        "X": 161,
+        "Y": 122,
         "Width": 1095,
         "Height": 504,
         "WindowState": 0
@@ -222,17 +148,30 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 3,
+              "Title": "AsyncDatabaseCalls.cs",
+              "DocumentMoniker": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Models\\AsyncDatabaseCalls.cs",
+              "RelativeDocumentMoniker": "SweetSpotDiscountGolfPOS\\Models\\AsyncDatabaseCalls.cs",
+              "ToolTip": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Models\\AsyncDatabaseCalls.cs",
+              "RelativeToolTip": "SweetSpotDiscountGolfPOS\\Models\\AsyncDatabaseCalls.cs",
+              "ViewState": "AQIAAB0AAAAAAAAAAAAtwC4AAABYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-08T15:21:57.283Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "AsyncInvoiceManager.cs",
               "DocumentMoniker": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Models\\AsyncInvoiceManager.cs",
               "RelativeDocumentMoniker": "SweetSpotDiscountGolfPOS\\Models\\AsyncInvoiceManager.cs",
               "ToolTip": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Models\\AsyncInvoiceManager.cs",
               "RelativeToolTip": "SweetSpotDiscountGolfPOS\\Models\\AsyncInvoiceManager.cs",
-              "ViewState": "AQIAAAsAAAAAAAAAAAAQwAsAAAARAAAA",
+              "ViewState": "AQIAABAAAAAAAAAAAAAgwFEAAAA2AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-09-02T15:36:03.86Z",
               "EditorCaption": ""
@@ -245,136 +184,10 @@
       "Orientation": 0,
       "VerticalTabListWidth": 256,
       "FloatingWindowState": {
-        "Id": "92e02333-0469-4645-937f-b56ff7a6baed",
-        "Display": 0,
-        "X": 298,
-        "Y": 101,
-        "Width": 920,
-        "Height": 788,
-        "WindowState": 0
-      },
-      "DocumentGroups": [
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 1,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "SalesCart.aspx",
-              "DocumentMoniker": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\SalesCart.aspx",
-              "RelativeDocumentMoniker": "SweetSpotDiscountGolfPOS\\SalesCart.aspx",
-              "ToolTip": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\SalesCart.aspx",
-              "RelativeToolTip": "SweetSpotDiscountGolfPOS\\SalesCart.aspx",
-              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2024-09-01T15:05:43.929Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "SalesCart.aspx.cs",
-              "DocumentMoniker": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\SalesCart.aspx.cs",
-              "RelativeDocumentMoniker": "SweetSpotDiscountGolfPOS\\SalesCart.aspx.cs",
-              "ToolTip": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\SalesCart.aspx.cs",
-              "RelativeToolTip": "SweetSpotDiscountGolfPOS\\SalesCart.aspx.cs",
-              "ViewState": "AQIAAC4AAAAAAAAAAAAgwMIAAABLAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-01T15:05:40.71Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "SalesHomePage.aspx",
-              "DocumentMoniker": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\SalesHomePage.aspx",
-              "RelativeDocumentMoniker": "SweetSpotDiscountGolfPOS\\SalesHomePage.aspx",
-              "ToolTip": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\SalesHomePage.aspx",
-              "RelativeToolTip": "SweetSpotDiscountGolfPOS\\SalesHomePage.aspx",
-              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000195|",
-              "WhenOpened": "2024-08-24T19:10:55.115Z"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "Orientation": 0,
-      "VerticalTabListWidth": 256,
-      "FloatingWindowState": {
-        "Id": "ccae7cc9-7793-43f7-9d2f-9933f82b7d5d",
-        "Display": 0,
-        "X": 298,
-        "Y": 208,
-        "Width": 1095,
-        "Height": 507,
-        "WindowState": 0
-      },
-      "DocumentGroups": [
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 0,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "SalesCartInventory.cs",
-              "DocumentMoniker": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Models\\SalesCartInventory.cs",
-              "RelativeDocumentMoniker": "SweetSpotDiscountGolfPOS\\Models\\SalesCartInventory.cs",
-              "ToolTip": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Models\\SalesCartInventory.cs",
-              "RelativeToolTip": "SweetSpotDiscountGolfPOS\\Models\\SalesCartInventory.cs",
-              "ViewState": "AQIAAA8AAAAAAAAAAAA6wBkAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-01T15:01:51.242Z",
-              "EditorCaption": ""
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "Orientation": 0,
-      "VerticalTabListWidth": 256,
-      "FloatingWindowState": {
         "Id": "e8add8c9-a719-40e1-abd9-35af82d499e6",
-        "Display": 0,
-        "X": 133,
-        "Y": 160,
-        "Width": 1095,
-        "Height": 507,
-        "WindowState": 0
-      },
-      "DocumentGroups": [
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 0,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "SalesCartInvoice.cs",
-              "DocumentMoniker": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Models\\SalesCartInvoice.cs",
-              "RelativeDocumentMoniker": "SweetSpotDiscountGolfPOS\\Models\\SalesCartInvoice.cs",
-              "ToolTip": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Models\\SalesCartInvoice.cs",
-              "RelativeToolTip": "SweetSpotDiscountGolfPOS\\Models\\SalesCartInvoice.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-02T15:33:34.192Z",
-              "EditorCaption": ""
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "Orientation": 0,
-      "VerticalTabListWidth": 256,
-      "FloatingWindowState": {
-        "Id": "b4b5323a-cdd2-45b8-b6b5-b310b683ea28",
-        "Display": 0,
-        "X": 140,
-        "Y": 140,
+        "Display": 1,
+        "X": 250,
+        "Y": 155,
         "Width": 1095,
         "Height": 507,
         "WindowState": 0
@@ -387,14 +200,108 @@
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "DatabaseCalls.cs",
-              "DocumentMoniker": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\ClassLibrary\\Misc\\DatabaseCalls.cs",
-              "RelativeDocumentMoniker": "SweetSpotDiscountGolfPOS\\ClassLibrary\\Misc\\DatabaseCalls.cs",
-              "ToolTip": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\ClassLibrary\\Misc\\DatabaseCalls.cs",
-              "RelativeToolTip": "SweetSpotDiscountGolfPOS\\ClassLibrary\\Misc\\DatabaseCalls.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Title": "SalesCartInvoice.cs",
+              "DocumentMoniker": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Models\\SalesCartInvoice.cs",
+              "RelativeDocumentMoniker": "SweetSpotDiscountGolfPOS\\Models\\SalesCartInvoice.cs",
+              "ToolTip": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Models\\SalesCartInvoice.cs",
+              "RelativeToolTip": "SweetSpotDiscountGolfPOS\\Models\\SalesCartInvoice.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-02T15:37:56.852Z",
+              "WhenOpened": "2024-09-02T15:33:34.192Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "SalesCartCustomer.cs",
+              "DocumentMoniker": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Models\\SalesCartCustomer.cs",
+              "RelativeDocumentMoniker": "SweetSpotDiscountGolfPOS\\Models\\SalesCartCustomer.cs",
+              "ToolTip": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Models\\SalesCartCustomer.cs",
+              "RelativeToolTip": "SweetSpotDiscountGolfPOS\\Models\\SalesCartCustomer.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABIAAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-01T14:48:46.344Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "SalesCartInventory.cs",
+              "DocumentMoniker": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Models\\SalesCartInventory.cs",
+              "RelativeDocumentMoniker": "SweetSpotDiscountGolfPOS\\Models\\SalesCartInventory.cs",
+              "ToolTip": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Models\\SalesCartInventory.cs",
+              "RelativeToolTip": "SweetSpotDiscountGolfPOS\\Models\\SalesCartInventory.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABkAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-01T15:01:51.242Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "FloatingWindowState": {
+        "Id": "eeac66b4-4cd8-4a9e-b2aa-2dc8dc219c82",
+        "Display": 1,
+        "X": 256,
+        "Y": 102,
+        "Width": 945,
+        "Height": 586,
+        "WindowState": 0
+      },
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "SalesCartController.cs",
+              "DocumentMoniker": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Controllers\\SalesCartController.cs",
+              "RelativeDocumentMoniker": "SweetSpotDiscountGolfPOS\\Controllers\\SalesCartController.cs",
+              "ToolTip": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\Controllers\\SalesCartController.cs",
+              "RelativeToolTip": "SweetSpotDiscountGolfPOS\\Controllers\\SalesCartController.cs",
+              "ViewState": "AQIAAAoAAAAAAAAAAAAIwBYAAABHAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-24T19:50:02.681Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "FloatingWindowState": {
+        "Id": "92e02333-0469-4645-937f-b56ff7a6baed",
+        "Display": 1,
+        "X": 212,
+        "Y": 116,
+        "Width": 30,
+        "Height": 87,
+        "WindowState": 0
+      },
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "SalesCart.aspx.cs",
+              "DocumentMoniker": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\SalesCart.aspx.cs",
+              "RelativeDocumentMoniker": "SweetSpotDiscountGolfPOS\\SalesCart.aspx.cs",
+              "ToolTip": "C:\\Users\\Bishop\\Documents\\GitHub\\SweetSpot-Code\\SweetSpotDiscountGolfPOS\\SalesCart.aspx.cs",
+              "RelativeToolTip": "SweetSpotDiscountGolfPOS\\SalesCart.aspx.cs",
+              "ViewState": "AQIAACUAAAAAAAAAAAAgwEgAAABIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-01T15:05:40.71Z",
               "EditorCaption": ""
             }
           ]

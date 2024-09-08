@@ -6,10 +6,6 @@ namespace SweetSpotDiscountGolfPOS.Models
     //The invoice class is used to keep track or populate the printable invoice webpage with the current invoice's information
     public class SalesCartInvoice
     {
-
-
-
-
         public int intInvoiceID { get; set; }
         public string varInvoiceNumber { get; set; }
         public int intInvoiceSubNumber { get; set; }

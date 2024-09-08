@@ -5,14 +5,13 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 
-namespace SweetSpotDiscountGolfPOS.Misc
+namespace SweetSpotDiscountGolfPOS.Models
 {
-    public class DatabaseCalls
+    public class AsyncDatabaseCalls
     {
-        public DatabaseCalls()
-        { }
+        public AsyncDatabaseCalls() { }
         //These do not track query strings        
-        public string MakeDataBaseCallToReturnString(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
+        public string MakeDataBaseCallToReturnString(string sqlCmd, object[][] parms)
         {
             try
             {
@@ -45,7 +44,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
                 return -10;
             }
         }
-        public void MakeDataBaseCallToNonReturnDataQuery(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
+        public void MakeDataBaseCallToNonReturnDataQuery(string sqlCmd, object[][] parms)
         {
             ExecuteNonReturnQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
@@ -67,7 +66,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
         }
 
 
-        private DataTable ReturnDataTableData(string sqlCmd, object[][] parms, object[] objPageDetails, string strQueryName)
+        private DataTable ReturnDataTableData(string sqlCmd, object[][] parms)
         {
             string strParameters = "";
             System.Data.DataTable dt = new System.Data.DataTable();
@@ -81,7 +80,7 @@ namespace SweetSpotDiscountGolfPOS.Misc
                 strParameters += parms[times][0].ToString() + ", " + parms[times][1].ToString() + " - ";
                 times++;
             }
-            //QueryStringCapture(sqlCmd, strParameters, objPageDetails, strQueryName);
+            
             cmd.Connection = con;
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             da.SelectCommand.CommandTimeout = 600;
