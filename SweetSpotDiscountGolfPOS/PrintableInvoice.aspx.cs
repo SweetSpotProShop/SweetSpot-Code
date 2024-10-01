@@ -120,7 +120,7 @@ namespace SweetSpotDiscountGolfPOS
                             grdItemsSoldList.Columns[3].HeaderText = "Non Refundable";
                             grdItemsSoldList.Columns[5].HeaderText = "Returned At";
                         }
-
+                        lblComments.Text = invoice.varAdditionalInformation.ToString();
                         //Binds the cart to the grid view
                         grdItemsSoldList.DataSource = invoice.invoiceItems;
                         grdItemsSoldList.DataBind();
