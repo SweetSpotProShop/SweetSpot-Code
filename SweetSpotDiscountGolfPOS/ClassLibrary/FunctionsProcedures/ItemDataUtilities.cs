@@ -444,11 +444,11 @@ namespace SweetSpotDiscountGolfPOS.FP
             DBC.MakeDataBaseCallToNonReturnDataQuery(sqlCmd, parms, objPageDetails, strQueryName);
             //dbc.executeInsertQuery(sqlCmd, parms, objPageDetails, strQueryName);
         }
-        public void SpecialUpdate(DataRow row, string strRColumn, string strUColumn, object[] objPageDetails)
+        public void SpecialUpdate(DataRow row, string strRColumn, string strUColumn, string strUTable, object[] objPageDetails)
         {
-            SpecialUpdateInDatabase(row, strRColumn, strUColumn, objPageDetails);
+            SpecialUpdateInDatabase(row, strRColumn, strUColumn, strUTable, objPageDetails);
         }
-        private void SpecialUpdateInDatabase(DataRow row, string strRColumn, string strUColumn, object[] objPageDetails)
+        private void SpecialUpdateInDatabase(DataRow row, string strRColumn, string strUColumn, string strUTable, object[] objPageDetails)
         {
             string strQueryName = "SpecialUpdateInDatabase";
             string strSQLColumn = "";
@@ -456,7 +456,7 @@ namespace SweetSpotDiscountGolfPOS.FP
             double dblUpdateDouble = 0.00;
             int intUpdateInt = 0;
 
-            //If Statement to determin what type of data to store as.
+            //If Statement to determine what type of data to store as.
             if (strUColumn.ToString() == "ProdID" || strUColumn.ToString() == "Dexterity")
             {
                 strUpdateString = row[1].ToString();
@@ -468,7 +468,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 {
                     strSQLColumn = "varClubDexterity";
                 }
-                string sqlCmd = "UPDATE tbl_clubs SET " + strSQLColumn + " = @varUpdateColumn WHERE var" + strRColumn + " = @varReferenceColumn";
+                string sqlCmd = "UPDATE " + strUTable + " SET " + strSQLColumn + " = @varUpdateColumn WHERE var" + strRColumn + " = @varReferenceColumn";
                 object[][] parms =
                 {
                  new object[] { "@varReferenceColumn", row[0].ToString() },
@@ -481,7 +481,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 strUpdateString = row[1].ToString();
                 strSQLColumn = "varAdditionalInformation";
                 
-                string sqlCmd = "UPDATE tbl_clubs SET " + strSQLColumn + " = CONCAT(varAdditionalInformation, ' ', @varUpdateColumn) WHERE var" + strRColumn + " = @varReferenceColumn";
+                string sqlCmd = "UPDATE " + strUTable + " SET " + strSQLColumn + " = CONCAT(varAdditionalInformation, ' ', @varUpdateColumn) WHERE var" + strRColumn + " = @varReferenceColumn";
                 object[][] parms =
                 {
                  new object[] { "@varReferenceColumn", row[0].ToString() },
@@ -500,7 +500,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 {
                     strSQLColumn = "fltPrice";
                 }
-                string sqlCmd = "UPDATE tbl_clubs SET " + strSQLColumn + " = @varUpdateColumn WHERE var" + strRColumn + " = @varReferenceColumn";
+                string sqlCmd = "UPDATE " + strUTable + " SET " + strSQLColumn + " = @varUpdateColumn WHERE var" + strRColumn + " = @varReferenceColumn";
                 object[][] parms =
                 {
                  new object[] { "@varReferenceColumn", row[0].ToString() },
@@ -519,7 +519,7 @@ namespace SweetSpotDiscountGolfPOS.FP
                 {
                     strSQLColumn = "intQuantity";
                 }
-                string sqlCmd = "UPDATE tbl_clubs SET " + strSQLColumn + " = @varUpdateColumn WHERE var" + strRColumn + " = @varReferenceColumn";
+                string sqlCmd = "UPDATE " + strUTable + " SET " + strSQLColumn + " = @varUpdateColumn WHERE var" + strRColumn + " = @varReferenceColumn";
                 object[][] parms =
                 {
                  new object[] { "@varReferenceColumn", row[0].ToString() },

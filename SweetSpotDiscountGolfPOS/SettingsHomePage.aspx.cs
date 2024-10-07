@@ -353,7 +353,18 @@ namespace SweetSpotDiscountGolfPOS
 #pragma warning restore IDE0067 // Dispose objects before losing scope
                             string strReferenceColumn = ddlReferenceColumn.SelectedItem.Text;
                             string strUpdateColumn = ddlSpecialUpdateColumn.SelectedItem.Text;
-                            errors = IE.CallSpecialUpdateTool(fupSpecialUpdate, strReferenceColumn, strUpdateColumn, CU, objPageDetails);
+
+                            string strUpdateTable = "tbl_clubs";
+                            if (Convert.ToInt32(DdlTableSelect.SelectedValue) == 2)
+                            {
+                                strUpdateTable = "tbl_clothing";
+                            }
+                            else if (Convert.ToInt32(DdlTableSelect.SelectedValue) == 3)
+                            {
+                                strUpdateTable = "tbl_accessories";
+                            }
+
+                            errors = IE.CallSpecialUpdateTool(fupSpecialUpdate, strReferenceColumn, strUpdateColumn, strUpdateTable, CU, objPageDetails);
                             if (errors.Rows.Count != 0)
                             {
                                 //Loops through the errors datatable pulling the sku's from there and entering them into an array
